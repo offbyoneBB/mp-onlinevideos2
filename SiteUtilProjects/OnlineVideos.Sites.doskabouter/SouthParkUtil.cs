@@ -65,7 +65,7 @@ namespace OnlineVideos.Sites
 
         private enum SouthParkCountry { Unknown, World, Nl, De };
 
-        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<String> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             sh.SetSubtitleText(video, this.GetTrackingInfo, true);
 
@@ -167,7 +167,7 @@ namespace OnlineVideos.Sites
             return res;
         }
 
-        public override string getPlaylistItemUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
+        public override string GetPlaylistItemVideoUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
         {
             if (String.IsNullOrEmpty(chosenPlaybackOption))
                 return clonedVideoInfo.VideoUrl;

@@ -52,7 +52,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             return getVideos(((RssLink)category).Url, 0);
         }
@@ -90,7 +90,7 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return getVideos(bareUrl, newStart);
         }
@@ -155,7 +155,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             JToken videoInfo = GetWebData<JToken>(video.VideoUrl);
             JArray subTitles = videoInfo["media"]["subtitles"] as JArray;
@@ -170,7 +170,7 @@ namespace OnlineVideos.Sites
                 }
             }
 
-            string papiurl = base.getUrl(video);
+            string papiurl = base.GetVideoUrl(video);
 
             string data = GetWebData(papiurl);
             byte[] bytes = Convert.FromBase64String(data);

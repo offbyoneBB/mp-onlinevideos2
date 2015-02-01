@@ -18,9 +18,9 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), Description("Chose the default Quality that will be preselected.")]
         Quality DefaultQuality = Quality.High;
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
-            var result = base.getUrl(video);
+            var result = base.GetVideoUrl(video);
             if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 1)
             {
                 var quality = video.PlaybackOptions.FirstOrDefault(po => po.Key == DefaultQuality.ToString());
@@ -34,7 +34,7 @@ namespace OnlineVideos.Sites
             // 3.a extra step to get a playlist file if needed
             if (regEx_PlaylistUrl != null)
             {
-                string dataPage = GetWebData(resultUrl, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
+                string dataPage = GetWebData(resultUrl, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
                 Match matchPlaylistUrl = regEx_PlaylistUrl.Match(dataPage);
                 if (matchPlaylistUrl.Success)
                 {
@@ -83,7 +83,7 @@ namespace OnlineVideos.Sites
             if (isSearch)
             {
                 result = new List<VideoInfo>();
-                if (string.IsNullOrEmpty(data)) data = GetWebData(url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
+                if (string.IsNullOrEmpty(data)) data = GetWebData(url, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
                 Match m = Regex.Match(data, SearchResultVideoListRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
                 while (m.Success)
                 {

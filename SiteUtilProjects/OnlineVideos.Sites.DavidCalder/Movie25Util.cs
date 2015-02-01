@@ -79,15 +79,15 @@ namespace OnlineVideos.Sites.DavidCalder
       }
     }
 
-    public override List<VideoInfo> getVideoList(Category category)
+    public override List<VideoInfo> GetVideos(Category category)
     {
-      List<VideoInfo> videos = base.getVideoList(category);
+      List<VideoInfo> videos = base.GetVideos(category);
       TMDB.BackgroundWorker worker = new TMDB.BackgroundWorker();
       worker.start(videos);
       return videos;
     }
 
-    public List<VideoInfo> getVideoChoices(VideoInfo video)
+    public List<VideoInfo> GetVideoChoices(VideoInfo video)
     {
       List<VideoInfo> videos = new List<VideoInfo>();
       if (video.Other.GetType() == typeof(TMDbVideoDetails))
@@ -110,18 +110,18 @@ namespace OnlineVideos.Sites.DavidCalder
       return videos;
     }
 
-    public override List<VideoInfo> Search(string query)
+    public override List<ISearchResultItem> Search(string query, string category = null)
     {
       searchUrl = string.Format("http://www.movie25.so/search.php?key={0}&submit=", query.Replace(" ", "+"));
-      List<VideoInfo> videos = base.Search(searchUrl);
+      List<ISearchResultItem> videos = base.Search(searchUrl, category);
       TMDB.BackgroundWorker worker = new TMDB.BackgroundWorker();
-      worker.start(videos);
+      worker.start(videos.ConvertAll<VideoInfo>(v => v as VideoInfo));
       return videos;
     }
 
-    public override List<VideoInfo> getNextPageVideos()
+    public override List<VideoInfo> GetNextPageVideos()
     {
-      List<VideoInfo> videos = base.getNextPageVideos();
+      List<VideoInfo> videos = base.GetNextPageVideos();
       TMDB.BackgroundWorker worker = new TMDB.BackgroundWorker();
       worker.start(videos);
       return videos;

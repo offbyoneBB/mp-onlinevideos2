@@ -18,7 +18,7 @@ namespace OnlineVideos.Hoster
 
         private string requestFileInformation(string url, CookieContainer cc)
         {
-            string webData = SiteUtilBase.GetWebData(url, cc);
+            string webData = SiteUtilBase.GetWebData(url, cookies: cc);
             if (!string.IsNullOrEmpty(webData))
             {
                 if (!string.IsNullOrEmpty(getRegExData(@"(?<exists>This\sfile\sdoesn\'t\sexist,\sor\shas\sbeen\sremoved\s?\.)", webData, "exists")))
@@ -31,8 +31,8 @@ namespace OnlineVideos.Hoster
         {
             //Get HTML from url
             CookieContainer cc = new CookieContainer();
-            string webData1 = requestFileInformation("http://my-entertainment.biz/forum/content.php?r=3938", cc); 
-            string page = SiteUtilBase.GetWebData(url, cc);
+            string webData1 = requestFileInformation("http://my-entertainment.biz/forum/content.php?r=3938", cc);
+            string page = SiteUtilBase.GetWebData(url, cookies: cc);
             if (!string.IsNullOrEmpty(page))
             {
                 //Extract file url from HTML

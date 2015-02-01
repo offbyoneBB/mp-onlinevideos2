@@ -26,7 +26,7 @@ namespace OnlineVideos.Sites
         
         private static Regex rtmpUrlRegex = new Regex(@"(?<rtmp>rtmpe?)://(?<host>[^/]+)/(?<app>[^&]*)&(?<leftover>.*)", RegexOptions.Compiled);
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string result = string.Empty;
             string videoId = string.Empty;

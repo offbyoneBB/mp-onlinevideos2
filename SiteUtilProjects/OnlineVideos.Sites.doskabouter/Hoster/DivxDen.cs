@@ -26,7 +26,7 @@ namespace OnlineVideos.Hoster
             string[] urlParts = url.Split('/');
 
             string postData = @"op=download1&usr_login=&id=" + urlParts[3] + "&fname=" + urlParts[4] + "&referer=&method_free=Free+Stream";
-            string webData = GenericSiteUtil.GetWebDataFromPost(url, postData);
+            string webData = GenericSiteUtil.GetWebData(url, postData);
             string packed = GetSubString(webData, @"return p}", @"</script>");
             packed = packed.Replace(@"\'", @"'");
             string unpacked = UnPack(packed);

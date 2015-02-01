@@ -49,7 +49,7 @@ namespace OnlineVideos.Hoster.Base
         {
             string page = webData;
             if (webData == null)
-                page = SiteUtilBase.GetWebData(url);
+                page = SiteUtilBase.GetWebData<string>(url);
 
             if (!string.IsNullOrEmpty(page))
             {
@@ -66,7 +66,7 @@ namespace OnlineVideos.Hoster.Base
         {
             string page = webData;
             if (webData == null)
-                page = SiteUtilBase.GetWebData(url);
+                page = SiteUtilBase.GetWebData<string>(url);
 
             if (!string.IsNullOrEmpty(page))
             {

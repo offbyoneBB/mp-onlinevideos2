@@ -24,7 +24,7 @@ namespace OnlineVideos.Hoster
 
         private string requestFileInformation(string url, CookieContainer cc)
         {
-            string webData = SiteUtilBase.GetWebData(url, cc);
+            string webData = SiteUtilBase.GetWebData(url, cookies: cc);
             if (!string.IsNullOrEmpty(webData))
             {
                 if (!string.IsNullOrEmpty(getRegExData(@"(?<exists>This\sfile\sdoesn\'t\sexist,\sor\shas\sbeen\sremoved\s?\.)", webData, "exists")))
@@ -52,7 +52,7 @@ namespace OnlineVideos.Hoster
                 if (!string.IsNullOrEmpty(dlLink))
                 {
                     string tempLink = new Uri(new Uri(string.Format("{0}{1}", "http://www.", getHosterUrl())), dlLink).AbsoluteUri;
-                    string webData = SiteUtilBase.GetWebData(tempLink, cc, referer);
+                    string webData = SiteUtilBase.GetWebData(tempLink, cookies: cc, referer: referer);
                     if (!string.IsNullOrEmpty(webData))
                     {
                         XmlDocument doc = new XmlDocument();
@@ -106,7 +106,7 @@ namespace OnlineVideos.Hoster
 
             Thread.Sleep(iWaitTime * 1001);
 
-            string webDataLink = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
+            string webDataLink = SiteUtilBase.GetWebData(url, postData, cc, url);
 
             string dlLink = getDlLink(webDataLink, cc, url);
             if (string.IsNullOrEmpty(dlLink)) return string.Empty;

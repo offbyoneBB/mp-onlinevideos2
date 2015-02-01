@@ -62,7 +62,7 @@ namespace OnlineVideos.Sites
                 //User not logged in, but would like to be...
                 cc = new CookieContainer();
                 //log in, use this.cc to get the log in response cookies
-                GetWebDataFromPost(loginPostUrl, string.Format(loginPostDataFormatString, HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password)), cc);
+                GetWebData(loginPostUrl, string.Format(loginPostDataFormatString, HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password)), cc);
                 if (!isLoggedIn())
                 {
                     //Failed to log in, use a new cookie container next time
@@ -77,7 +77,7 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
-            HtmlDocument doc = GetWebData<HtmlDocument>("http://www.swefilmer.com", GetCookie());
+            HtmlDocument doc = GetWebData<HtmlDocument>("http://www.swefilmer.com", cookies: GetCookie());
             var ul = doc.DocumentNode.SelectSingleNode("//ul[@id = 'ul_categories']");
             Category tv = new Category() { Name = "TV-Serier", HasSubCategories = true, SubCategories = new List<Category>() };
             foreach (var a in ul.SelectNodes("li/ul/li/a"))
@@ -98,7 +98,7 @@ namespace OnlineVideos.Sites
 
         private List<VideoInfo> Videos(string url)
         {
-            HtmlDocument doc = GetWebData<HtmlDocument>(url, GetCookie());
+            HtmlDocument doc = GetWebData<HtmlDocument>(url, cookies: GetCookie());
             var divs = doc.DocumentNode.SelectNodes("//div[@class = 'moviefilm']");
             List<VideoInfo> videos = new List<VideoInfo>();
             foreach (var div in divs)
@@ -147,7 +147,7 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             var url = (category as RssLink).Url;
             url = url.Substring(0, url.LastIndexOf("-") + 1);
@@ -170,7 +170,7 @@ namespace OnlineVideos.Sites
             return Videos(url);
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return Videos(nextPageUrl);
         }
@@ -183,19 +183,19 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             List<ISearchResultItem> results = new List<ISearchResultItem>();
             Videos("http://www.swefilmer.com/search.php?keywords=" + HttpUtility.UrlEncode(query)).ForEach(v => results.Add(v));
             return results;
         }
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             string decodedBase64 = "";
             string bestUrl = "";
             video.PlaybackOptions = new Dictionary<string, string>();
-            HtmlDocument doc = GetWebData<HtmlDocument>(video.VideoUrl, GetCookie());
+            HtmlDocument doc = GetWebData<HtmlDocument>(video.VideoUrl, cookies: GetCookie());
             var playerholder = doc.DocumentNode.SelectSingleNode("//div[@id = 'Playerholder']");
             if (playerholder == null)
                 throw new OnlineVideosException("You have to logged in to be able to watch this video");

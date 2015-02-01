@@ -24,7 +24,7 @@ namespace OnlineVideos.Sites.DavidCalder
       string[] parts = url.Split(new[] { "/" }, StringSplitOptions.None);
       string Referer = "http://uploadc.com/player/6.6/jwplayer.flash.swf";
 
-      string data = SiteUtilBase.GetWebData(url, cc);
+      string data = SiteUtilBase.GetWebData(url, cookies: cc);
       if (!string.IsNullOrEmpty(data))
       {
         Match match = Regex.Match(data, @"<input\stype=""hidden""\sname=""(?<name>[^""]+)""\svalue=""(?<value>[^""]+)"">");
@@ -36,9 +36,9 @@ namespace OnlineVideos.Sites.DavidCalder
           postData += match.Groups["name"].Value + "=" + match.Groups["value"].Value;
           match = match.NextMatch();
         }
-        data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
+        data = SiteUtilBase.GetWebData(url, postData, cc, url);
         System.Threading.Thread.Sleep(Convert.ToInt32(3) * 1001);
-        data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
+        data = SiteUtilBase.GetWebData(url, postData, cc, url);
 
         Match n1 = Regex.Match(data, @"""sources""\s:\s\[\s*{\s*""file""\s:\s""(?<url>[^""]+)"",\s*""default""\s:\strue,\s*""label""\s:\s""720""\s*}\s*\]");
         if (n1.Success)
@@ -86,7 +86,7 @@ namespace OnlineVideos.Sites.DavidCalder
       CookieContainer cc = new CookieContainer();
       string postData = String.Empty;
 
-      string data = SiteUtilBase.GetWebData(url, cc);
+      string data = SiteUtilBase.GetWebData(url, cookies: cc);
       if (!string.IsNullOrEmpty(data))
       {
         Match match = Regex.Match(data, @"<input\stype=""hidden""\sname=""(?<name>[^""]+)""\svalue=""(?<value>[^""]+)"">");
@@ -99,9 +99,9 @@ namespace OnlineVideos.Sites.DavidCalder
           match = match.NextMatch();
         }
 
-        data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
+        data = SiteUtilBase.GetWebData(url, postData, cc, url);
         System.Threading.Thread.Sleep(Convert.ToInt32(5) * 1001);
-        data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
+        data = SiteUtilBase.GetWebData(url, postData, cc, url);
 
         Match n = Regex.Match(data, @"file""\s\:\s""(?<url>[^""]*)"",\s*""default""\s:\s[^.]*,\s*""label""\s:\s""720");
         Match n1 = Regex.Match(data, @"file""\s\:\s""(?<url>[^""]*)"",\s*""default""\s:\s[^.]*,\s*""label""\s:\s""480");
@@ -128,7 +128,7 @@ namespace OnlineVideos.Sites.DavidCalder
       string postData = String.Empty;
       string Referer = "http://vidspot.net/player/6.6/jwplayer.flash.swf";
 
-      string data = SiteUtilBase.GetWebData(url, cc);
+      string data = SiteUtilBase.GetWebData(url, cookies: cc);
       if (!string.IsNullOrEmpty(data))
       {
         Match match = Regex.Match(data, @"<input\stype=""hidden""\sname=""(?<name>[^""]+)""\svalue=""(?<value>[^""]+)"">");
@@ -141,9 +141,9 @@ namespace OnlineVideos.Sites.DavidCalder
           match = match.NextMatch();
         }
 
-        data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
+        data = SiteUtilBase.GetWebData(url, postData, cc, url);
         System.Threading.Thread.Sleep(Convert.ToInt32(3) * 1001);
-        data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
+        data = SiteUtilBase.GetWebData(url, postData, cc, url);
 
         Match n = Regex.Match(data, @"""sources""\s:\s\[\s*{\s*""file""\s:\s""(?<url>[^""]+)"",\s*""default""\s:\strue,\s*""label""\s:\s""720""\s*}\s*\]");
         if (n.Success)
@@ -166,7 +166,7 @@ namespace OnlineVideos.Sites.DavidCalder
     {
       CookieContainer cc = new CookieContainer();
 
-      string data = SiteUtilBase.GetWebData(url, cc);
+      string data = SiteUtilBase.GetWebData(url, cookies: cc);
       if (!string.IsNullOrEmpty(data))
       {
         Match match = Regex.Match(data, @"<IFRAME\sSRC=""(?<url>[^""]*)""");
@@ -194,7 +194,7 @@ namespace OnlineVideos.Sites.DavidCalder
       string postData = String.Empty;
       string Referer = "http://vshare.eu/player/6.6/jwplayer.flash.swf";
 
-      string data = SiteUtilBase.GetWebData(url, cc);
+      string data = SiteUtilBase.GetWebData(url, cookies: cc);
       if (!string.IsNullOrEmpty(data))
       {
         Match match = Regex.Match(data, @"<input\stype=""hidden""\sname=""(?<name>[^""]+)""\svalue=""(?<value>[^""]+)"">");
@@ -208,9 +208,9 @@ namespace OnlineVideos.Sites.DavidCalder
         }
         postData += "&referer=&method_free=Continue";
 
-        data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
+        data = SiteUtilBase.GetWebData(url, postData, cc, url);
         System.Threading.Thread.Sleep(Convert.ToInt32(3) * 1001);
-        data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
+        data = SiteUtilBase.GetWebData(url, postData, cc, url);
 
         Match n = Regex.Match(data, @"config:{file:'(?<url>[^']+)','provider':'http'}");
         if (n.Success)
@@ -235,7 +235,7 @@ namespace OnlineVideos.Sites.DavidCalder
       string postData = String.Empty;
       string Referer = "http://played.to/player/6.6/jwplayer.flash.swf";
 
-      string data = SiteUtilBase.GetWebData(url, cc);
+      string data = SiteUtilBase.GetWebData(url, cookies: cc);
       if (!string.IsNullOrEmpty(data))
       {
         Match match = Regex.Match(data, @"<input\stype=""hidden""\sname=""(?<name>[^""]+)""\svalue=""(?<value>[^""]+)"">");
@@ -249,7 +249,7 @@ namespace OnlineVideos.Sites.DavidCalder
         }
         postData += "&imhuman=Continue+to+Video";
 
-        data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
+        data = SiteUtilBase.GetWebData(url, postData, cc, url);
         System.Threading.Thread.Sleep(1 * 1001);
         Match n = Regex.Match(data, @"{\s*file:\s*""(?<url>[^""]*)""");
         if (n.Success)
@@ -272,7 +272,7 @@ namespace OnlineVideos.Sites.DavidCalder
       string postData = String.Empty;
       string Referer = "http://vodlocker.com/player/6.6/jwplayer.flash.swf";
 
-      string data = SiteUtilBase.GetWebData(url, cc);
+      string data = SiteUtilBase.GetWebData(url, cookies: cc);
 
       if (!string.IsNullOrEmpty(data))
       {
@@ -290,9 +290,9 @@ namespace OnlineVideos.Sites.DavidCalder
         postData = postData.Insert(postData.IndexOf("&hash="), "&referer=" + Referer);
         postData += "&imhuman=Proceed+to+video";
 
-        data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
+        data = SiteUtilBase.GetWebData(url, postData, cc, url);
         System.Threading.Thread.Sleep(Convert.ToInt32(3) * 1001);
-        data = SiteUtilBase.GetWebDataFromPost(url, postData, cc, url);
+        data = SiteUtilBase.GetWebData(url, postData, cc, url);
 
         Match n = Regex.Match(data, @"file:\s""(?<url>[^""]+)""");
         if (n.Success)

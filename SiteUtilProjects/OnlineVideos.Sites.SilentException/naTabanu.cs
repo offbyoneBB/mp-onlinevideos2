@@ -79,7 +79,7 @@ namespace OnlineVideos.Sites
             // code not used, always go to else!
             if (false && parentCategory is RssLink && regEx_dynamicSubCategories != null)
             {
-                string data = GetWebData((parentCategory as RssLink).Url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
+                string data = GetWebData((parentCategory as RssLink).Url, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
                 if (!string.IsNullOrEmpty(data))
                 {
                     parentCategory.SubCategories = new List<Category>();
@@ -153,7 +153,7 @@ namespace OnlineVideos.Sites
         private int DiscoverDynamicSeries(Category parentCategory)
         {
             int result = 0;
-            string data = GetWebData(seriesCategoryUrl, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
+            string data = GetWebData(seriesCategoryUrl, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
             if (!string.IsNullOrEmpty(data) && !string.IsNullOrEmpty(seriesCategoryRegex))
             {
                 Regex regEx_seriesCategory = new Regex(seriesCategoryRegex);
@@ -191,9 +191,9 @@ namespace OnlineVideos.Sites
             return false;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
-            string result = base.getUrl(video);
+            string result = base.GetVideoUrl(video);
 
             if (string.IsNullOrEmpty(result))
             {
@@ -204,11 +204,11 @@ namespace OnlineVideos.Sites
                 regEx_FileUrl = new Regex(altFileUrlRegex);
                 try
                 {
-                    result = base.getUrl(video);
+                    result = base.GetVideoUrl(video);
                     if (string.IsNullOrEmpty(result))
                     {
                         regEx_FileUrl = new Regex(altFileUrlRegex2);
-                        result = base.getUrl(video);
+                        result = base.GetVideoUrl(video);
                     }
                 }
                 finally
@@ -221,10 +221,10 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<String> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<String> urls = new List<String>();
-            string resultUrl = getUrl(video);
+            string resultUrl = GetVideoUrl(video);
 
             if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
             {
@@ -285,7 +285,7 @@ namespace OnlineVideos.Sites
             return urls;
         }
 
-        public override string getPlaylistItemUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
+        public override string GetPlaylistItemVideoUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
         {
             Uri uri = new Uri(clonedVideoInfo.VideoUrl);
             //chosenPlaybackOption = "";

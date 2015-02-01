@@ -34,7 +34,7 @@ namespace OnlineVideos.Sites
     }
 
 
-    public override string getUrl(VideoInfo video)
+    public override string GetVideoUrl(VideoInfo video)
     {
       if (video.VideoUrl.Contains("+"))
       {
@@ -75,7 +75,7 @@ namespace OnlineVideos.Sites
       }
       else
       {
-        return base.getUrl(video);
+        return base.GetVideoUrl(video);
       }
     }
 
@@ -265,7 +265,7 @@ namespace OnlineVideos.Sites
     }
 
 
-    public override List<VideoInfo> getVideoList(Category category)
+    public override List<VideoInfo> GetVideos(Category category)
     {
       List<VideoInfo> res = new List<VideoInfo>();
       string[] myString = category.Other.ToString().Split(',');
@@ -549,11 +549,11 @@ namespace OnlineVideos.Sites
     #region Search
     public override bool CanSearch { get { return true; } }
 
-    public override List<VideoInfo> Search(string query)
+    public override List<ISearchResultItem> Search(string query, string category = null)
     {
       Category search = new Category();
       search.Other = "search," + query;
-      return getVideoList(search);
+      return GetVideos(search).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
     }
 
     #endregion

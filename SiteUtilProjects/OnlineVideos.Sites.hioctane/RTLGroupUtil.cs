@@ -19,7 +19,7 @@ namespace OnlineVideos.Sites
 			var result = base.DiscoverDynamicCategories();
 			if (!string.IsNullOrEmpty(baseUrl2))
 			{
-				string data = GetWebData(baseUrl2, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
+				string data = GetWebData(baseUrl2, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
 				if (!string.IsNullOrEmpty(data))
 				{
 					return ParseCategories(data);
@@ -28,7 +28,7 @@ namespace OnlineVideos.Sites
 			return result;
 		}
 
-		public override String getUrl(VideoInfo video)
+		public override String GetVideoUrl(VideoInfo video)
 		{
 			string data = GetWebData(HttpUtility.HtmlDecode(video.VideoUrl));
 

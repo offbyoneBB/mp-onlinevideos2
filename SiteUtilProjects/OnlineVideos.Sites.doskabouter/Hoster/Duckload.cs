@@ -24,9 +24,9 @@ namespace OnlineVideos.Hoster
 
             }
             CookieContainer cc = new CookieContainer();
-            string page = SiteUtilBase.GetWebData(url, cc);
+            string page = SiteUtilBase.GetWebData(url, cookies: cc);
             System.Threading.Thread.Sleep(10001);
-            page = SiteUtilBase.GetWebDataFromPost(url, "secret=&next=true", cc, url);
+            page = SiteUtilBase.GetWebData(url, "secret=&next=true", cc, url);
 
             if (!string.IsNullOrEmpty(page))
             {
@@ -44,7 +44,7 @@ namespace OnlineVideos.Hoster
                     if (o.Success)
                     {
                         videoType = VideoType.flv;
-                        page = SiteUtilBase.GetWebData("http://flash.duckload.com/video//video_api.php?showTopBar=undefined&cookie=undefined&id=" + o.Groups["id"].Value, cc);
+                        page = SiteUtilBase.GetWebData("http://flash.duckload.com/video//video_api.php?showTopBar=undefined&cookie=undefined&id=" + o.Groups["id"].Value, cookies: cc);
                         string ident = Regex.Match(page, @"""ident"":\s""(?<ident>[^""]+)"",").Groups["ident"].Value;
                         string link = Regex.Match(page, @"""link"":\s""(?<link>[^""]+)""").Groups["link"].Value.Replace("\\/", "/");
                         return String.Format("http://dl{0}.duckload.com/{1}", ident, link);

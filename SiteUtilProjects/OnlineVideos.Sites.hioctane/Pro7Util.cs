@@ -28,7 +28,7 @@ namespace OnlineVideos.Sites
             if (!string.IsNullOrEmpty(atomFeedUrlRegex)) regEx_atomFeedUrl = new Regex(atomFeedUrlRegex, defaultRegexOptions);
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> videoList = new List<VideoInfo>();
 
@@ -62,7 +62,7 @@ namespace OnlineVideos.Sites
             return videoList;
         }
 
-        public override String getUrl(VideoInfo video)
+        public override String GetVideoUrl(VideoInfo video)
         {
             string webData = HttpUtility.UrlDecode(GetWebData(video.VideoUrl));
             string url = string.Empty;

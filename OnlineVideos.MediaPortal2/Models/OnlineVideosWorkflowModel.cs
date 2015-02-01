@@ -173,7 +173,7 @@ namespace OnlineVideos.MediaPortal2
                     BackgroundTask.Instance.Start<List<VideoInfo>>(
 						() =>
 						{
-							return SelectedSite.Site.getVideoList(categoryModel.Category);
+							return SelectedSite.Site.GetVideos(categoryModel.Category);
                         },
                         (success, videos) =>
 						{
@@ -196,7 +196,7 @@ namespace OnlineVideos.MediaPortal2
 				BackgroundTask.Instance.Start<List<VideoInfo>>(
 					() =>
 					{
-						return SelectedSite.Site.getNextPageVideos();
+						return SelectedSite.Site.GetNextPageVideos();
 					},
 					(success, nextPageVideos) =>
 					{
@@ -214,13 +214,13 @@ namespace OnlineVideos.MediaPortal2
             }
             else
             {
-				if (SelectedSite.Site is IChoice && videoModel.VideoInfo.HasDetails)
+				if (SelectedSite.Site is Sites.IChoice && videoModel.VideoInfo.HasDetails)
                 {
                     // get details videos and show details view
                     BackgroundTask.Instance.Start<List<VideoInfo>>(
 						() =>
 						{
-                            return ((IChoice)SelectedSite.Site).getVideoChoices(videoModel.VideoInfo);
+                            return ((Sites.IChoice)SelectedSite.Site).GetVideoChoices(videoModel.VideoInfo);
                         },
 						(success, choices) =>
                         {
@@ -238,7 +238,7 @@ namespace OnlineVideos.MediaPortal2
 					BackgroundTask.Instance.Start<List<string>>(
 						() =>
                         {
-							return SelectedSite.Site.getMultipleVideoUrls(videoModel.VideoInfo);
+							return SelectedSite.Site.GetMultipleVideoUrls(videoModel.VideoInfo);
                         },
 						(success, urls) =>
 						{
@@ -268,7 +268,7 @@ namespace OnlineVideos.MediaPortal2
 			BackgroundTask.Instance.Start<List<string>>(
 				() =>
                 {
-					return SelectedSite.Site.getMultipleVideoUrls(videoModel.VideoInfo);
+					return SelectedSite.Site.GetMultipleVideoUrls(videoModel.VideoInfo);
                 },
 				(success, urls) =>
                 {
@@ -296,7 +296,7 @@ namespace OnlineVideos.MediaPortal2
 			BackgroundTask.Instance.Start<List<ISearchResultItem>>(
 				() =>
 				{
-                    return SelectedSite.Site.DoSearch(SearchString);
+                    return SelectedSite.Site.Search(SearchString);
                 
 				},
 				(success, result) =>

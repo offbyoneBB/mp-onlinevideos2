@@ -31,7 +31,7 @@ namespace OnlineVideos.Sites.DavidCalder
       return base.GetTrackingInfo(video);
     }
 
-    public override List<VideoInfo> getVideoList(Category category)
+    public override List<VideoInfo> GetVideos(Category category)
     {
       RssLink link = category as RssLink;
       string page = SiteUtilBase.GetWebData(link.Url);
@@ -40,7 +40,7 @@ namespace OnlineVideos.Sites.DavidCalder
       {
         link.Url = n.Groups["url"].Value;
       }
-      return base.getVideoList(link);
+      return base.GetVideos(link);
     }
 
     public override VideoInfo CreateVideoInfo()
@@ -55,7 +55,7 @@ namespace OnlineVideos.Sites.DavidCalder
         CookieContainer cc = new CookieContainer();
         string newUrl = base.PlaybackOptions[url];
         string stripedurl = newUrl.Substring(newUrl.IndexOf("http://mopvideo"));
-        string data = SiteUtilBase.GetWebData(stripedurl, cc, newUrl);
+        string data = SiteUtilBase.GetWebData(stripedurl, cookies: cc, referer: newUrl);
 
         //<a href="http://hoster/ekqiej2ito9p"
         Match n = Regex.Match(data, @"<a\shref=""(?<url>[^""]*)""[^>]*>");

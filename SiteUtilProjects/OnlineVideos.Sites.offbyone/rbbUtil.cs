@@ -45,17 +45,17 @@ namespace OnlineVideos.Sites
 
 		public override bool CanSearch { get { return true; } }
 
-		public override List<ISearchResultItem> DoSearch(string query)
+		public override List<ISearchResultItem> Search(string query, string category = null)
 		{
 			return getVideos(string.Format(searchUrl, HttpUtility.UrlEncode(query)), true, true).ConvertAll<ISearchResultItem>(i => i as ISearchResultItem);
 		}
 
-		public override List<VideoInfo> getVideoList(Category category)
+		public override List<VideoInfo> GetVideos(Category category)
 		{
 			return getVideos((category as RssLink).Url, true);
 		}
 
-		public override List<VideoInfo> getNextPageVideos()
+		public override List<VideoInfo> GetNextPageVideos()
 		{
 			return getVideos(nextPageUrl, false);
 		}
@@ -153,12 +153,12 @@ namespace OnlineVideos.Sites
 			}
 		}
 
-		public List<VideoInfo> getVideoChoices(VideoInfo video)
+		public List<VideoInfo> GetVideoChoices(VideoInfo video)
 		{
 			return (video as RbbVideoInfo).Children;
 		}
 
-		public override string getUrl(VideoInfo video)
+		public override string GetVideoUrl(VideoInfo video)
 		{
 			//video.PlaybackOptions = new Dictionary<string, string>();
 

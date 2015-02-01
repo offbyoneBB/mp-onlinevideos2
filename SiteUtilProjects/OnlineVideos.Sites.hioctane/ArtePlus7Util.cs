@@ -37,7 +37,7 @@ namespace OnlineVideos.Sites
             return Settings.Categories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             var result = new List<VideoInfo>();
             var doc = GetWebData<HtmlDocument>((category as RssLink).Url);
@@ -56,7 +56,7 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public override String getUrl(VideoInfo video)
+        public override String GetVideoUrl(VideoInfo video)
         {
             video.PlaybackOptions = new Dictionary<string, string>();
             var json = GetWebData<JObject>(video.VideoUrl);
@@ -95,9 +95,9 @@ namespace OnlineVideos.Sites
 
         public override bool CanSearch { get { return true; } }
 
-        public override List<VideoInfo> Search(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
-            var result = new List<VideoInfo>();
+            var result = new List<ISearchResultItem>();
             string url = language == Language.DE ? "http://www.arte.tv/guide/de/suchergebnisse?keyword={0}" : "http://www.arte.tv/guide/fr/resultats-de-recherche?keyword={0}";
             var doc = SiteUtilBase.GetWebData<HtmlDocument>(String.Format(url, HttpUtility.UrlEncode("kreta")));
             var list = doc.DocumentNode.Descendants("div").Where(div => !String.IsNullOrEmpty(div.GetAttributeValue("arte_vp_url", "")));

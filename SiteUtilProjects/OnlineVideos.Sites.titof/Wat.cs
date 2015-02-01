@@ -96,12 +96,12 @@ namespace OnlineVideos.Sites
 
         }
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {            
             return _getVideosUrl(video);
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> listVideos = new List<VideoInfo>();
 

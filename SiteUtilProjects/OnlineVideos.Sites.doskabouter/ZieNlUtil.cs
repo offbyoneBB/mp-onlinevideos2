@@ -92,24 +92,24 @@ namespace OnlineVideos.Sites
             return base.Parse(baseUrl, content);
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             string webData = (string)category.Other;
             string jsonData = jsonRegex.Match(webData).Groups["content"].Value;
             return ParseData(jsonData);
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             string webData = MyGetWebData(nextPageUrl);
             return ParseData(webData);
         }
 
-        public override List<VideoInfo> Search(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
-            string webData = GetWebDataFromPost(searchUrl, string.Format(searchPostString, query));
+            string webData = GetWebData(searchUrl, string.Format(searchPostString, query));
             string jsonData = jsonRegex.Match(webData).Groups["content"].Value;
-            return ParseData(jsonData);
+            return ParseData(jsonData).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
         }
 
         private static string MyGetWebData(string url)

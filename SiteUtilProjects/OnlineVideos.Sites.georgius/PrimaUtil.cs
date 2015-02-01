@@ -93,7 +93,7 @@ namespace OnlineVideos.Sites.georgius
         public override int DiscoverDynamicCategories()
         {
             int dynamicCategoriesCount = 0;
-            String baseWebData = SiteUtilBase.GetWebData(PrimaUtil.baseUrl, null, null, null, true);
+            String baseWebData = SiteUtilBase.GetWebData(PrimaUtil.baseUrl, forceUTF8: true);
 
             int index = baseWebData.IndexOf(PrimaUtil.dynamicCategoryStart);
             if (index > 0)
@@ -145,7 +145,7 @@ namespace OnlineVideos.Sites.georgius
             }
             RssLink category = (RssLink)parentCategory;
 
-            String baseWebData = SiteUtilBase.GetWebData(url, null, null, null, true);
+            String baseWebData = SiteUtilBase.GetWebData(url, forceUTF8: true);
 
             int startIndex = baseWebData.IndexOf(PrimaUtil.showListBlockStart);
             if (startIndex >= 0)
@@ -236,7 +236,7 @@ namespace OnlineVideos.Sites.georgius
             if (!String.IsNullOrEmpty(pageUrl))
             {
                 this.nextPageUrl = String.Empty;
-                String baseWebData = SiteUtilBase.GetWebData(pageUrl, null, null, null, true);
+                String baseWebData = SiteUtilBase.GetWebData(pageUrl, forceUTF8: true);
 
                 int startIndex = baseWebData.IndexOf(PrimaUtil.showEpisodesBlockStart);
                 if (startIndex >= 0)
@@ -342,13 +342,13 @@ namespace OnlineVideos.Sites.georgius
             return videoList;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             this.currentStartIndex = 0;
             return this.GetVideoList(category);
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return this.GetVideoList(this.currentCategory);
         }
@@ -365,10 +365,10 @@ namespace OnlineVideos.Sites.georgius
             }
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
-            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
-            String episodeJS = SiteUtilBase.GetWebData(PrimaUtil.episodeUrlJS, null, video.VideoUrl, null, true);
+            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, forceUTF8: true);
+            String episodeJS = SiteUtilBase.GetWebData(PrimaUtil.episodeUrlJS, referer: video.VideoUrl, forceUTF8: true);
             baseWebData = HttpUtility.HtmlDecode(baseWebData);
 
             video.PlaybackOptions = new Dictionary<string, string>();

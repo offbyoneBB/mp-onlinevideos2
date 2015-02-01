@@ -38,7 +38,7 @@ namespace OnlineVideos.Sites
             regEx_dynamicSubLevel1Categories = regEx_dynamicSubCategories;
 
             CookieContainer tmpCc = new CookieContainer();
-            string result = GetWebDataFromPost(@"https://secure.nicovideo.jp/secure/login?site=niconico",
+            string result = GetWebData(@"https://secure.nicovideo.jp/secure/login?site=niconico",
                 String.Format("next_url=&mail={0}&password={1}", emailAddress, password),
                 tmpCc);
 
@@ -103,13 +103,13 @@ namespace OnlineVideos.Sites
             return res;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             string data = GetNicoWebData(((RssLink)category).Url);
             return Parse(baseUrl, data);
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             Match m = Regex.Match(video.VideoUrl, @"/(?<id>sm\d*)", defaultRegexOptions);
             if (m.Success)
@@ -118,12 +118,12 @@ namespace OnlineVideos.Sites
                 CookieContainer tmpCc = new CookieContainer();
                 tmpCc.Add(cc.GetCookies(new Uri(baseUrl)));
 
-                GetWebData(String.Format(@"http://www.nicovideo.jp/watch/{0}", id), tmpCc);// for getting cookies
+                GetWebData(String.Format(@"http://www.nicovideo.jp/watch/{0}", id), cookies: tmpCc);// for getting cookies
 
                 fileUrlPostString = "v=" + id;
                 string oldUrl = video.VideoUrl;
                 video.VideoUrl = @"http://flapi.nicovideo.jp/api/getflv";
-                string res = HttpUtility.UrlDecode(base.getUrl(video));
+                string res = HttpUtility.UrlDecode(base.GetVideoUrl(video));
                 video.VideoUrl = oldUrl;
                 HttpUrl result = new HttpUrl(res);
 
@@ -134,15 +134,15 @@ namespace OnlineVideos.Sites
             return String.Empty;
         }
 
-        public override List<VideoInfo> Search(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             string data = GetNicoWebData(String.Format(searchUrl, query));
-            return Parse(baseUrl, data);
+            return Parse(baseUrl, data).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
         }
 
         private string GetNicoWebData(string url)
         {
-            return GetWebData(url, null, headers, cc, null, forceUTF8Encoding, allowUnsafeHeaders, null, true);
+            return GetWebData(url,cookies: cc, forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, headers: headers, cache: true);
         }
 
         protected override CookieContainer GetCookie()

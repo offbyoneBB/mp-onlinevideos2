@@ -468,12 +468,12 @@ namespace SiteParser
                     selected = selected.Parent;
                     nodeTitle = selected.Tag as string;
                     selected.Nodes.RemoveAt(selected.Nodes.Count - 1);
-                    videos = generic.getNextPageVideos();
+                    videos = generic.GetNextPageVideos();
                 }
                 else
                 {
                     selected.Nodes.Clear();
-                    videos = generic.getVideoList(parentCat);
+                    videos = generic.GetVideos(parentCat);
                 }
                 foreach (VideoInfo video in videos)
                 {
@@ -508,7 +508,7 @@ namespace SiteParser
 
             GuiToUtil(generic);
 
-            List<VideoInfo> videos = generic.Search(SearchQueryTextBox.Text);
+            List<ISearchResultItem> videos = generic.Search(SearchQueryTextBox.Text);
 
             TreeNode node = new TreeNode(string.Format("Search for '{0}' ({1})", SearchQueryTextBox.Text, videos.Count));
             node.Tag = string.Format(searchUrlTextBox.Text, SearchQueryTextBox.Text);
@@ -602,10 +602,10 @@ namespace SiteParser
                 string post = (string)GetProperty(generic, "fileUrlPostString");
                 if (String.IsNullOrEmpty(post))
                     webData = SiteUtilBase.GetWebData(playListUrlResultTextBox.Text, forceUTF8: GetForceUTF8(),
-                            cc: GetCookieContainer());
+                            cookies: GetCookieContainer());
                 else
-                    webData = SiteUtilBase.GetWebDataFromPost(playListUrlResultTextBox.Text, post, forceUTF8: GetForceUTF8(),
-                            cc: GetCookieContainer());
+                    webData = SiteUtilBase.GetWebData(playListUrlResultTextBox.Text, post, forceUTF8: GetForceUTF8(),
+                            cookies: GetCookieContainer());
 
                 Form2 f2 = new Form2();
                 fileUrlRegexTextBox.Text = f2.Execute(fileUrlRegexTextBox.Text, webData, playListUrlResultTextBox.Text,

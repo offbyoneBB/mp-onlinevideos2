@@ -107,15 +107,15 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        public override String getUrl(VideoInfo video)
+        public override String GetVideoUrl(VideoInfo video)
         {
-            string vidUrl = base.getUrl(video);
+            string vidUrl = base.GetVideoUrl(video);
             string videoId = vidUrl.Split('/')[3];
 
             string postData = String.Format(@"uid={0}&type=video&capabilities=%7B%22isIE%22%3Atrue%2C%22isFirefox%22%3Afalse%2C%22isChrome%22%3Afalse%2C%22isWebKit%22%3Afalse%2C%22isMobile%22%3Afalse%2C%22isTablet%22%3Afalse%2C%22isHandset%22%3Afalse%2C%22isIOS%22%3Afalse%2C%22isIOSHandset%22%3Afalse%2C%22isIOSTablet%22%3Afalse%2C%22isAndroid%22%3Afalse%2C%22isAndroidTablet%22%3Afalse%2C%22isAndroidHandset%22%3Afalse%2C%22isKindle%22%3Afalse%2C%22hasCanvasSupport%22%3Afalse%2C%22hasTouchSupport%22%3Afalse%2C%22hasFlashSupport%22%3Atrue%2C%22hasVideoSupport%22%3Afalse%7D&context=%7B%22userId%22%3A%2210097%22%2C%22groupId%22%3A%2210171%22%2C%22privateLayout%22%3Afalse%2C%22layoutId%22%3A%221368%22%7D&serviceClassName=org.sesameworkshop.service.UmpServiceUtil&serviceMethodName=getMediaItem&serviceParameters=%5B%22uid%22%2C%22type%22%2C%22capabilities%22%2C%22context%22%5D&doAsUserId=",
                 videoId);
 
-            string data = GetWebDataFromPost(@"http://www.sesamestreet.org/c/portal/json_service", postData, referer: vidUrl);
+            string data = GetWebData(@"http://www.sesamestreet.org/c/portal/json_service", postData, referer: vidUrl);
 
             JObject contentData = (JObject)JObject.Parse(data);
             string url = null;

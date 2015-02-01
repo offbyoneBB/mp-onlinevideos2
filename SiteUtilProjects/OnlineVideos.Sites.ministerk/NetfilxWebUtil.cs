@@ -236,13 +236,11 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             headers.Add("User-Agent", OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
             headers.Add("Referer", url);
             // No caching in this case.
-            string data = GetWebData(url, null, headers, cc, proxy, false, false, null, false);
-            var htmlDoc = new HtmlAgilityPack.HtmlDocument();
-            htmlDoc.LoadHtml(data);
+            var htmlDoc = GetWebData<HtmlAgilityPack.HtmlDocument>(url, null, cookies: cc, proxy: proxy, headers: headers, cache: false);
             HtmlNode form = htmlDoc.DocumentNode.SelectSingleNode("//form[@id = 'login-form']");
             HtmlNode authInput = form.SelectSingleNode("//input[@name = 'authURL']");
             string authUrl = authInput != null ? authInput.GetAttributeValue("value", "") : "";
-            data = GetWebDataFromPost(url, string.Format(loginPostData, HttpUtility.UrlEncode(authUrl), HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password)), cc, proxy: proxy);
+            var data = GetWebData(url, string.Format(loginPostData, HttpUtility.UrlEncode(authUrl), HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password)), cc, proxy: proxy);
             if (!IsLoggedIn(data))
             {
                 cc = null;
@@ -269,7 +267,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
             if (!isLoadingProfile)
                 LoadProfiles();
-            string data = GetWebData(url, cc, proxy: proxy);
+            string data = GetWebData(url, cookies: cc, proxy: proxy);
             if (GetAuthUrl)
             {
                 Regex rgx = new Regex(@"\""authURL\"":""([^\""]*)");
@@ -910,7 +908,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         #region Videos
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             if (category.IsPlayNow())
             {
@@ -946,7 +944,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
         }
 
-        public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             List<ISearchResultItem> results = new List<ISearchResultItem>();
             string data = MyGetWebData(string.Format(searchUrl, apiRoot, HttpUtility.UrlEncode(query), MaxSearchResults));
@@ -1042,7 +1040,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     trackId = other["TrackId"];
                     title = selectedItem.Title;
                 }
-                GetWebDataFromPost(string.Format(addRemoveMyListUrl, ShaktiApi, BuildId),
+                GetWebData(string.Format(addRemoveMyListUrl, ShaktiApi, BuildId),
                     string.Format(addRemoveMyListPostData, addMyListOperation, videoId, trackId, latestAuthUrl),
                     cc);
                 result.RefreshCurrentItems = true;
@@ -1068,7 +1066,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     title = selectedItem.Title;
                 }
                 ContextMenuExecutionResult result = new ContextMenuExecutionResult();
-                GetWebDataFromPost(string.Format(addRemoveMyListUrl, ShaktiApi, BuildId),
+                GetWebData(string.Format(addRemoveMyListUrl, ShaktiApi, BuildId),
                     string.Format(addRemoveMyListPostData, removeMyListOperation, videoId, trackId, latestAuthUrl),
                     cc);
                 result.RefreshCurrentItems = true;

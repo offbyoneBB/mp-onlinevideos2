@@ -129,7 +129,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }               
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             // reset paging fields
             currentStart = 0;
@@ -164,7 +164,7 @@ namespace OnlineVideos.Sites
             return GetVideos(Agent.GetMCETeasers(teaserlist, TeaserListChoiceType.CurrentBroadcasts));
         }
 
-        public override String getUrl(VideoInfo video)
+        public override String GetVideoUrl(VideoInfo video)
         {
             if (video.PlaybackOptions == null)
             {
@@ -176,7 +176,7 @@ namespace OnlineVideos.Sites
                     {
 						if (vid.facets != null && vid.facets.Any(s => s == "restriction_useragent"))
 							continue;
-						string myUrl = vid.url.EndsWith(".asx") ? SiteUtilBase.ParseASX(vid.url)[0] : vid.url;
+						string myUrl = vid.url.EndsWith(".asx") ? Utils.ParseASX(GetWebData(vid.url))[0] : vid.url;
 						string extensions = myUrl.Substring(myUrl.LastIndexOf('.'));
 						myUrl = vid.url.EndsWith(".f4m") ? vid.url + "?g=" + Utils.GetRandomLetters(12) + "&hdcore=3.0.3" : vid.url;
 						uint bitrate = vid.bruttoBitrateSpecified ? vid.bruttoBitrate : vid.audioBitrate + vid.videoBitrate;
@@ -250,7 +250,7 @@ namespace OnlineVideos.Sites
             get { return nextPageAvailable; }
         }
         
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             var teaserlist = Agent.Aktuellste(ConfigurationHelper.GetAktuellsteServiceUrl(RestAgent.Configuration), currentCategory.Url, pageSize, currentStart + pageSize, false);
             if (teaserlist != null && teaserlist.teasers.Length > 0)
@@ -272,10 +272,11 @@ namespace OnlineVideos.Sites
 
         public override bool CanSearch { get { return true; } }
 
-        public override List<VideoInfo> Search(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             var teaserlist = Agent.DetailsSuche(ConfigurationHelper.GetSucheServiceUrl(), query, 50, 0);
-            return GetVideos(Agent.GetMCETeasers(teaserlist, TeaserListChoiceType.Search));
+            return GetVideos(Agent.GetMCETeasers(teaserlist, TeaserListChoiceType.Search))
+                .ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
         }
 
         #endregion

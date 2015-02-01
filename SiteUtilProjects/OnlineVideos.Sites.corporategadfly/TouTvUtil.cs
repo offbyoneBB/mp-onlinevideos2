@@ -161,7 +161,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
         
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> result = new List<VideoInfo>();
             
@@ -228,7 +228,7 @@ namespace OnlineVideos.Sites
             return result;
         }
                 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string playListUrl = getPlaylistUrl(video.VideoUrl);
             if (String.IsNullOrEmpty(playListUrl))

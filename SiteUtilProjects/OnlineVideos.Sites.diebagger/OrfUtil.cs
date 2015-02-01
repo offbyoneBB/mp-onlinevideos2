@@ -159,7 +159,7 @@ namespace OnlineVideos.Sites
             return Settings.Categories.Count;
         }
 
-        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<String> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             Log.Info("Get multiple urls: " + video.VideoUrl);
             if ((CategoryType)video.Other == CategoryType.VOD)
@@ -211,19 +211,19 @@ namespace OnlineVideos.Sites
                         {
                             videoUrl = m.Groups["url"].Value;
                             videoUrl = ORF_BASE + videoUrl;
-                            return ParseASX(videoUrl);
+                            return Utils.ParseASX(GetWebData(videoUrl));
                         }
                     }
                 }
             }
             else
             {
-                return base.getMultipleVideoUrls(video, inPlaylist);
+                return base.GetMultipleVideoUrls(video, inPlaylist);
             }
             return null;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             Log.Info("Get url: " + video.VideoUrl);
             if ((CategoryType)video.Other == CategoryType.Live)
@@ -271,10 +271,10 @@ namespace OnlineVideos.Sites
                     }
                 }
             }
-            return base.getUrl(video);
+            return base.GetVideoUrl(video);
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             CategoryType type = (CategoryType)category.Other;
 

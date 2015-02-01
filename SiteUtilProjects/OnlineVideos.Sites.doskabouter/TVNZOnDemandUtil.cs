@@ -82,9 +82,9 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories == null ? 0 : parentCategory.SubCategories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
-            string webData = GetWebData((category as RssLink).Url, null, null, null, true);
+            string webData = GetWebData((category as RssLink).Url, forceUTF8: true);
             List<VideoInfo> res = new List<VideoInfo>();
             if (!string.IsNullOrEmpty(webData))
             {
@@ -133,13 +133,13 @@ namespace OnlineVideos.Sites
             return res;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
-            string url = base.getUrl(video);
+            string url = base.GetVideoUrl(video);
             if (String.IsNullOrEmpty(url) && video.Other != null)
             {
                 video.VideoUrl = video.Other as string;
-                return base.getUrl(video);
+                return base.GetVideoUrl(video);
             }
             return url;
         }

@@ -68,7 +68,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             string data = GetWebData<string>((category as RssLink).Url);
             HtmlDocument doc = new HtmlDocument();
@@ -163,14 +163,14 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string url = "";
             if ((video.Other as ITrackingInfo).VideoKind == VideoKind.Movie)
             {
                 if (!string.IsNullOrEmpty(video.SubtitleUrl))
                 {
-                    video.SubtitleText = GetWebData(video.SubtitleUrl, null, null, null, true, false, null, Encoding.UTF8);
+                    video.SubtitleText = GetWebData(video.SubtitleUrl, forceUTF8: true, encoding: Encoding.UTF8);
                     video.SubtitleUrl = null;
                 }
                 url = video.VideoUrl;
@@ -190,7 +190,7 @@ namespace OnlineVideos.Sites
                     if (track != null)
                     {
                         subtitle = track.GetAttributeValue("src", "");
-                        subtitle = GetWebData(subtitle, null, null, null, true, false, null, Encoding.UTF8);
+                        subtitle = GetWebData(subtitle, forceUTF8: true, encoding: Encoding.UTF8);
                         video.SubtitleText = subtitle;
                     }
                 }
@@ -214,7 +214,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             List<ISearchResultItem> results = new List<ISearchResultItem>();
             foreach (Category c in GenerateSubCategories(new RssLink() { Name = "Search", Url = "http://tfplay.org/search/?q=" + HttpUtility.UrlDecode(query) }))

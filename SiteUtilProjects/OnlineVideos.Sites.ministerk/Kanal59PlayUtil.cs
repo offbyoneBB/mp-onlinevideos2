@@ -70,7 +70,7 @@ namespace OnlineVideos.Sites
             return Settings.Categories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             string videosUrl = string.Format("{0}/getMobileSeasonContent?programId={1}&seasonNumber={2}&format=FLASH", apiBaseUrl, (category.ParentCategory as RssLink).Url, (category as RssLink).Url);
             JObject data = GetWebData<JObject>(videosUrl);
@@ -138,7 +138,7 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<String> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             if (!string.IsNullOrEmpty(video.SubtitleUrl) && retrieveSubtitles)
             {

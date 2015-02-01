@@ -32,7 +32,7 @@ namespace OnlineVideos.Sites
             return Settings.Categories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             string data = GetWebData(((RssLink)category).Url);
             int p = data.IndexOf('{');

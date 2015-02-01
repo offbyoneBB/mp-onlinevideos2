@@ -81,7 +81,7 @@ namespace OnlineVideos.Sites
         public override int DiscoverSubCategories(Category parentCategory)
         {
             // currently: only for Videos
-            string data = GetWebData((parentCategory as RssLink).Url, newcc);
+            string data = GetWebData((parentCategory as RssLink).Url, cookies: newcc);
             if (!string.IsNullOrEmpty(data))
             {
                 parentCategory.SubCategories = new List<Category>();
@@ -101,7 +101,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories == null ? 0 : parentCategory.SubCategories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             if (kind.Live.Equals(category.Other))
                 return GetVideoListFromLive(category);
@@ -112,7 +112,7 @@ namespace OnlineVideos.Sites
         private List<VideoInfo> GetVideoListFromVideo(Category category)
         {
             XmlDocument doc = new XmlDocument();
-            string webData = GetWebData(((RssLink)category).Url, newcc);
+            string webData = GetWebData(((RssLink)category).Url, cookies: newcc);
             doc.LoadXml(webData);
             List<VideoInfo> result = new List<VideoInfo>();
             foreach (XmlNode node in doc.SelectNodes("//catchups"))
@@ -139,12 +139,12 @@ namespace OnlineVideos.Sites
 
         private List<VideoInfo> GetVideoListFromLive(Category category)
         {
-            string webData = GetWebData(((RssLink)category).Url, newcc);
+            string webData = GetWebData(((RssLink)category).Url, cookies: newcc);
 
             string url = baseUrl + String.Format(@"_wsvideoshop_/JsonProductService.svc/GetAllProducts?device=1&isocode={0}&languageid={1}&hkey={2}&userid={3}",
                 tld.ToUpperInvariant(), getValue(webData, "languageid"),
                 getValue(webData, "hashkey"), getValue(webData, "userid"));
-            webData = GetWebData(url, newcc);
+            webData = GetWebData(url, cookies: newcc);
 
             JToken alldata = JObject.Parse(webData) as JToken;
             JArray jVideos = alldata["PlayerObj"] as JArray;
@@ -172,7 +172,7 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             if (kind.Video.Equals(video.Other))
                 return GetUrlFromVideo(video);
@@ -181,7 +181,7 @@ namespace OnlineVideos.Sites
 
         private string GetUrlFromVideo(VideoInfo video)
         {
-            string getData = GetWebData(video.VideoUrl, newcc);
+            string getData = GetWebData(video.VideoUrl, cookies: newcc);
             Match m = Regex.Match(getData, @"<param\sname=""InitParams""\svalue=""lang=(?<lang>[^,]*),geoloc=(?<geoloc>[^,]*),realip=(?<realip>[^,]*),ut=(?<ut>[^,]*),ht=(?<ht>[^,]*),rt=(?<rt>[^,]*),vidid=(?<vidid>[^,]*),cuvid=(?<cuvid>[^,]*),prdid=(?<prdid>[^""]*)""\s/>");
             string postData;
             bool catchUp = m.Groups["vidid"].Value == "-1";

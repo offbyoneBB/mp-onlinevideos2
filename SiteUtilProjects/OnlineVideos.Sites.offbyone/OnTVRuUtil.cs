@@ -49,13 +49,13 @@ namespace OnlineVideos.Sites
 
 
         
-		public override List<VideoInfo> getVideoList(Category category)
+		public override List<VideoInfo> GetVideos(Category category)
 		{
             List<VideoInfo> loRssItemList = parseEpisodes(((RssLink)category).Url);
 			return loRssItemList;
 		}
 
-        public override String getUrl(VideoInfo video)
+        public override String GetVideoUrl(VideoInfo video)
 		{
             String lsHtml = GetWebData(video.VideoUrl);
 

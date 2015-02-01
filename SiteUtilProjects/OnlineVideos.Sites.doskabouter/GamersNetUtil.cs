@@ -13,11 +13,11 @@ namespace OnlineVideos.Sites
                 return base.DiscoverSubCategories(parentCategory);
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             string other = category.Other as string;
             if (other == null)
-                return base.getVideoList(category);
+                return base.GetVideos(category);
             else
                 return Parse(baseUrl, other);
         }

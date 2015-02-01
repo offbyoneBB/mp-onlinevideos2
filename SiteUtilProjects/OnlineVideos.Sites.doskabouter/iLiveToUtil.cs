@@ -8,7 +8,7 @@ namespace OnlineVideos.Sites
 {
     public class iLiveToUtil : GenericSiteUtil
     {
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string webData = GetWebData(video.VideoUrl);
             Match m = Regex.Match(webData, fileUrlRegEx, defaultRegexOptions);

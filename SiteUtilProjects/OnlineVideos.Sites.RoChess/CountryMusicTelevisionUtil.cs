@@ -17,7 +17,7 @@ namespace OnlineVideos.Sites.RoChess
 		{
 			string resolvedUrl = GetRedirectedUrl(playlistUrl);
 			string page = HttpUtility.ParseQueryString(new Uri(resolvedUrl).Query)["CONFIG_URL"];
-			string config = GetWebData(page, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
+			string config = GetWebData(page, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
 			playlistUrl = Regex.Match(config, configFileRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture).Groups["url"].Value;
 			return base.GetPlaybackOptions(HttpUtility.HtmlDecode(playlistUrl));
 		}

@@ -38,7 +38,7 @@ namespace SiteParser
 
         public string Execute(string regexString, string url, string[] names, bool cleanupValues, bool forceUTF8, CookieContainer cc)
         {
-            string webData = SiteUtilBase.GetWebData(url, forceUTF8: forceUTF8, cc: cc);
+            string webData = SiteUtilBase.GetWebData(url, forceUTF8: forceUTF8, cookies: cc);
             return Execute(regexString, webData, url, names, cleanupValues);
         }
 

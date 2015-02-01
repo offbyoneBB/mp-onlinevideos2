@@ -65,7 +65,7 @@ namespace OnlineVideos.Sites
         }
 
         private string lastid = null;
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             var node2 = category.Other as HtmlNode;
             if (node2 == null)
@@ -102,11 +102,11 @@ namespace OnlineVideos.Sites
             return myParse2(node2);
         }
 
-        public override List<VideoInfo> Search(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             lastid = null;
             query = HttpUtility.UrlEncode(query);
-            return Parse(string.Format(searchUrl, query), null);
+            return Parse(string.Format(searchUrl, query), null).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
         }
 
         private void AddLapsetSubs(HtmlNode node, Category parentCategory)

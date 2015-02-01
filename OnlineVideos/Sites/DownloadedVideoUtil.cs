@@ -71,7 +71,7 @@ namespace OnlineVideos.Sites
 							cat.Thumb = Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Icons\" + siteName + ".png");
 							cachedCategories.Add(cat.Name, cat);
 						}
-						cat.EstimatedVideoCount = (uint)files.Count(f => isPossibleVideo(f.Name));
+						cat.EstimatedVideoCount = (uint)files.Count(f => IsPossibleVideo(f.Name));
 						Settings.Categories.Add(cat);
 					}
 				}
@@ -82,7 +82,7 @@ namespace OnlineVideos.Sites
             return Settings.Categories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
 			return getVideoList((category as RssLink).Url, "*", category.Name == Translation.Instance.All);
         }        
@@ -96,7 +96,7 @@ namespace OnlineVideos.Sites
 
                 foreach (FileInfo file in files)
                 {
-                    if (isPossibleVideo(file.Name) && PassesAgeCheck(file.FullName))
+                    if (IsPossibleVideo(file.Name) && PassesAgeCheck(file.FullName))
                     {
 						string description_xml = "";
 						string airdate_xml = "";
@@ -221,7 +221,7 @@ namespace OnlineVideos.Sites
 				FileInfo[] files = new DirectoryInfo((selectedCategory as RssLink).Url).GetFiles("*", selectedCategory.Name == Translation.Instance.All ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
                 foreach (FileInfo file in files)
                 {
-                    if (isPossibleVideo(file.Name))
+                    if (IsPossibleVideo(file.Name))
                     {
                         try
                         {
@@ -248,7 +248,7 @@ namespace OnlineVideos.Sites
 			}
 		}
 
-		public override bool isPossibleVideo(string fsUrl)
+		public override bool IsPossibleVideo(string fsUrl)
 		{
 			if (string.IsNullOrEmpty(fsUrl)) return false; // empty string is not a video
 			string extension = Path.GetExtension(fsUrl);
@@ -261,41 +261,41 @@ namespace OnlineVideos.Sites
 
         public override bool CanSearch { get { return true; } }
 
-        public override List<VideoInfo> Search(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
-            query = query.Replace(' ', '*');
-            if (!query.StartsWith("*")) query = "*" + query;
-            if (!query.EndsWith("*")) query += "*";
-            return getVideoList(OnlineVideoSettings.Instance.DownloadDir, query, true);
+            query = FixQuery(query);
+            return getVideoList(OnlineVideoSettings.Instance.DownloadDir, query, true)
+                .ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
         }
 
         #endregion
 
         #region IFilter Member
 
-        public List<VideoInfo> filterVideoList(Category category, int maxResult, string orderBy, string timeFrame)
+        public List<VideoInfo> FilterVideos(Category category, int maxResult, string orderBy, string timeFrame)
         {
             lastSort = orderBy;
-            return getVideoList(category);
+            return GetVideos(category);
         }
 
-        public List<VideoInfo> filterSearchResultList(string query, int maxResult, string orderBy, string timeFrame)
+        public List<VideoInfo> FilterSearchResults(string query, int maxResult, string orderBy, string timeFrame)
         {
             lastSort = orderBy;
-            return Search(query);
+            query = FixQuery(query);
+            return getVideoList(OnlineVideoSettings.Instance.DownloadDir, query, true);
         }
 
-        public List<VideoInfo> filterSearchResultList(string query, string category, int maxResult, string orderBy, string timeFrame)
+        public List<VideoInfo> FilterSearchResults(string query, string category, int maxResult, string orderBy, string timeFrame)
         {
             return null;
         }
 
-        public List<int> getResultSteps()
+        public List<int> GetResultSteps()
         {
             return new List<int>();
         }
 
-        public Dictionary<string, string> getOrderbyList()
+        public Dictionary<string, string> GetOrderByOptions()
         {
             Dictionary<string, string> options = new Dictionary<string, string>();
 			options.Add(Translation.Instance.Date, "date");
@@ -304,7 +304,7 @@ namespace OnlineVideos.Sites
             return options;
         }
 
-        public Dictionary<string, string> getTimeFrameList()
+        public Dictionary<string, string> GetTimeFrameOptions()
         {
             return new Dictionary<string,string>();
         }
@@ -329,6 +329,14 @@ namespace OnlineVideos.Sites
             }
             catch { }
             return false;
+        }
+
+        string FixQuery(string query)
+        {
+            query = query.Replace(' ', '*');
+            if (!query.StartsWith("*")) query = "*" + query;
+            if (!query.EndsWith("*")) query += "*";
+            return query;
         }
     }
 }

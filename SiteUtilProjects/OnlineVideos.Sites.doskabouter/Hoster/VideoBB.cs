@@ -20,7 +20,7 @@ namespace OnlineVideos.Hoster
 
         private string requestFileInformation(string url, CookieContainer cc)
         {
-            string webData = SiteUtilBase.GetWebData(url, cc);
+            string webData = SiteUtilBase.GetWebData(url, cookies: cc);
             if (!string.IsNullOrEmpty(webData))
             {
                 if (!string.IsNullOrEmpty(getRegExData(@"(?<exists>This\video\swas\seither\sdeleted\sby\sthe\suser\sor\sin\sbreach\sof\sa\scopyright\sholder|Video\sis\snot\savailable)", webData, "exists")))
@@ -40,7 +40,7 @@ namespace OnlineVideos.Hoster
             byte[] temp = Convert.FromBase64String(setting);
             setting = Encoding.ASCII.GetString(temp);
 
-            webData = SiteUtilBase.GetWebData(setting, cc);
+            webData = SiteUtilBase.GetWebData(setting, cookies: cc);
             if (string.IsNullOrEmpty(webData)) return string.Empty;
 
             string dlLink = getRegExData(@"""res"":\[.*?\{""d"":(?:true|false),""\w+"":""\w+"",""u"":""(?<url>[^""]+)""[^\}]*\}\]", webData, "url");

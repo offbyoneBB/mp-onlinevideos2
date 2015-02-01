@@ -145,14 +145,14 @@ namespace OnlineVideos.Sites.Pondman {
 			return parentCategory.SubCategories.Count;
 		}
 
-		public override List<VideoInfo> getVideoList(Category category)
+		public override List<VideoInfo> GetVideos(Category category)
 		{
 			Section section = (Section)category.Other;
 			_sectionPages = new Stack<Section>();
 			return getVideoList(section);
 		}
 
-		public List<VideoInfo> getVideoChoices(VideoInfo video) {
+		public List<VideoInfo> GetVideoChoices(VideoInfo video) {
 			List<VideoInfo> clips = new List<VideoInfo>();
 
 			// make the movie request
@@ -191,12 +191,12 @@ namespace OnlineVideos.Sites.Pondman {
 		   return clips;
 		}
 
-		public override List<VideoInfo> getNextPageVideos() {
+		public override List<VideoInfo> GetNextPageVideos() {
 			Section nextSection = _sectionPages.Peek().Sections[0];
 			return getVideoList(nextSection);
 		}
 		
-		public override string getUrl(VideoInfo video) {
+		public override string GetVideoUrl(VideoInfo video) {
 			string videoUrl = string.Empty;
 
 			Video clip = video.Other as Video;
@@ -247,8 +247,8 @@ namespace OnlineVideos.Sites.Pondman {
 			return videoUrl;
 		}
 
-		public override List<VideoInfo> Search(string query) {
-			List<VideoInfo> videos = new List<VideoInfo>();
+		public override List<ISearchResultItem> Search(string query, string category = null) {
+			var videos = new List<ISearchResultItem>();
 			List<Movie> movies = API.Search(apiSession, query);
 			
 			foreach (Movie movie in movies) {

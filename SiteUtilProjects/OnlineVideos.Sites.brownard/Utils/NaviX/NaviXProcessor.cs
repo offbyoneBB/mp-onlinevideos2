@@ -60,7 +60,7 @@ namespace OnlineVideos.Sites.Utils.NaviX
 
             CookieContainer cc = new CookieContainer();
             cc.Add(new Uri(url), ccollection);
-            return OnlineVideos.Sites.SiteUtilBase.GetWebData(url, cc);
+            return OnlineVideos.Sites.SiteUtilBase.GetWebData(url, cookies: cc);
         }
 
         public bool Process()

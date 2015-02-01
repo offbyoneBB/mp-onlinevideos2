@@ -48,7 +48,7 @@ namespace OnlineVideos.Sites
             category.SubCategoriesDiscovered = true;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             string url = ((RssLink)category).Url;
             string data = GetWebData(url);
@@ -59,9 +59,9 @@ namespace OnlineVideos.Sites
             return Parse(url, data);
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
-            string s = base.getUrl(video);
+            string s = base.GetVideoUrl(video);
             return s.Replace("_definst_/", "_definst_/mp4:") + "/manifest.f4m";
         }
     }

@@ -78,7 +78,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
         
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             string url = string.Format(@"{0}?page-number=1&pagination-sort-by={1}&previous-sort={1}&pagination-per-page=20&prev-per-page=20",
                                        (category as RssLink).Url, category.Other as string);
@@ -180,12 +180,12 @@ namespace OnlineVideos.Sites
             get { return !string.IsNullOrEmpty(nextPageUrl); }
         }
         
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return getVideoListForSinglePage(currentCategory, nextPageUrl);
         }
         
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string result = string.Empty;
             video.PlaybackOptions = new Dictionary<string, string>();

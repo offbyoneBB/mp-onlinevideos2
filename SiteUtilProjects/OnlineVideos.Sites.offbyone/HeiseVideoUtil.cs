@@ -59,7 +59,7 @@ namespace OnlineVideos.Sites
 			return parentCategory.SubCategories.Count;
 		}
 
-		public override List<VideoInfo> getVideoList(Category category)
+		public override List<VideoInfo> GetVideos(Category category)
 		{
 			HasNextPage = false;
 			currentVideosTitle = null;
@@ -92,7 +92,7 @@ namespace OnlineVideos.Sites
 			return result;
 		}
 
-		public override List<VideoInfo> getNextPageVideos()
+		public override List<VideoInfo> GetNextPageVideos()
 		{
 			HasNextPage = false;
 			if (nextPageUrl.Contains("suche"))
@@ -129,7 +129,7 @@ namespace OnlineVideos.Sites
 			}
 		}
 
-		public override string getUrl(VideoInfo video)
+		public override string GetVideoUrl(VideoInfo video)
 		{
 			var match = Regex.Match(GetWebData(video.VideoUrl), @"json_url:\s*""(?<url>http://www.heise.de/videout/[^""]+)""");
 			if (match.Success)
@@ -144,7 +144,7 @@ namespace OnlineVideos.Sites
 
 		public override bool CanSearch { get { return true; } }
 
-		public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
 		{
 			currentVideosTitle = null;
 			var result = new List<ISearchResultItem>();
@@ -189,7 +189,7 @@ namespace OnlineVideos.Sites
 			return new ContextMenuExecutionResult() { ResultItems = result.ConvertAll<ISearchResultItem>(v => (ISearchResultItem)v) };
 		}
 
-		public override string getCurrentVideosTitle()
+		public override string GetCurrentVideosTitle()
 		{
 			return currentVideosTitle;
 		}

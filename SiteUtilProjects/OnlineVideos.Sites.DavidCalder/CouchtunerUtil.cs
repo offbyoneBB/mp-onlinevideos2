@@ -117,9 +117,9 @@ namespace OnlineVideos.Sites.DavidCalder
       return parentCategory.SubCategories.Count;
     }
 
-    public override List<VideoInfo> getVideoList(Category category)
+    public override List<VideoInfo> GetVideos(Category category)
     {
-      List<VideoInfo> VideoList = base.getVideoList(category);
+      List<VideoInfo> VideoList = base.GetVideos(category);
       if (VideoList.Count < 1)
       {
         RssLink cat = (RssLink)category;

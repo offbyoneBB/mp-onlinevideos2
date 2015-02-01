@@ -46,11 +46,11 @@ namespace OnlineVideos.Sites
             return Settings.Categories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             string postData = String.Format("{0}&{1}&view=pages&controller=&limitstart=&limit=",
                 category.ParentCategory.Other as String, category.Other as String);
-            string data = GetWebDataFromPost(baseUrl, postData);
+            string data = GetWebData(baseUrl, postData);
             Match m = myregEx_NextPage.Match(data);
             nextPageAvailable = m.Success;
             if (nextPageAvailable)
@@ -59,9 +59,9 @@ namespace OnlineVideos.Sites
             return Parse(baseUrl, data);
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
-            string data = GetWebDataFromPost(baseUrl, nextPageUrl);
+            string data = GetWebData(baseUrl, nextPageUrl);
             return Parse(baseUrl, data);
         }
     }

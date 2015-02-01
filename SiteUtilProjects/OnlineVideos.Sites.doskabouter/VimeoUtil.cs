@@ -110,7 +110,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             currentVideoListUrl = null;
             string url = ((RssLink)category).Url;
@@ -123,7 +123,7 @@ namespace OnlineVideos.Sites
                 return videoListFromVimeo(currentVideoListUrl + pageNr.ToString());
             }
             if (url.ToLowerInvariant().StartsWith(@"http://vimeo.com/categories/"))
-                return base.getVideoList(category);
+                return base.GetVideos(category);
             else
             {
                 string query = null;
@@ -176,10 +176,10 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             if (currentVideoListUrl == null)
-                return base.getNextPageVideos();
+                return base.GetNextPageVideos();
             else
             {
                 pageNr++;
@@ -187,18 +187,20 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<VideoInfo> Search(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             currentVideoListUrl = String.Format(
                 StandardAdvancedApiUrl + "?method=vimeo.videos.search&per_page={0}&query={1}&full_response=1&page=", pageSize, query);
             pageNr = 1;
-            return videoListFromVimeo(currentVideoListUrl + pageNr.ToString());
+            return 
+                videoListFromVimeo(currentVideoListUrl + pageNr.ToString())
+                .ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             video.PlaybackOptions = null;
-            string res = base.getUrl(video);
+            string res = base.GetVideoUrl(video);
             var vimeoHoster = OnlineVideos.Hoster.Base.HosterFactory.GetHoster("vimeo") as OnlineVideos.Hoster.Vimeo;
             if (vimeoHoster != null)
                 video.SubtitleText = vimeoHoster.subtitleText;

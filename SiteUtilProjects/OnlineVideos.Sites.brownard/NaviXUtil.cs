@@ -77,7 +77,7 @@ namespace OnlineVideos.Sites
             return holder.SubCategories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> vids = new List<VideoInfo>();
             NaviXMediaItem item = category.Other as NaviXMediaItem;
@@ -103,7 +103,7 @@ namespace OnlineVideos.Sites
                 {
                     foreach (RssToolkit.Rss.RssItem rssItem in doc.Channel.Items)
                     {
-                        VideoInfo vid = VideoInfo.FromRssItem(rssItem, true, new Predicate<string>(isPossibleVideo));
+                        VideoInfo vid = VideoInfo.FromRssItem(rssItem, true, new Predicate<string>(IsPossibleVideo));
                         if (vid != null)
                             vids.Add(vid);
                     }
@@ -112,7 +112,7 @@ namespace OnlineVideos.Sites
             return vids;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             NaviXMediaItem item = video.Other as NaviXMediaItem;
             if (item == null)
@@ -154,7 +154,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> DoSearch(string query, string category)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             searchableCats = null;
             List<ISearchResultItem> results = new List<ISearchResultItem>();
@@ -217,7 +217,7 @@ namespace OnlineVideos.Sites
             if (nxId != null || string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
                 return;
             string postData = string.Format("username={0}&password={1}", System.Web.HttpUtility.UrlEncode(Username), System.Web.HttpUtility.UrlEncode(Password));
-            nxId = GetWebDataFromPost("http://www.navixtreme.com/login/", postData);
+            nxId = GetWebData("http://www.navixtreme.com/login/", postData);
         }
 
         MPUrlSourceFilter.RtmpUrl getRTMPUrl(string naviXRTMPUrl)

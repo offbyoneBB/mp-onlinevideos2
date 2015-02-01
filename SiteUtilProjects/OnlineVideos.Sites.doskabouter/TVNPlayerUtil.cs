@@ -113,7 +113,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             videoPageNr = 0;
             return Parse(((RssLink)category).Url, null);
@@ -157,7 +157,7 @@ namespace OnlineVideos.Sites
 
         #endregion
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string webData = GetWebData(video.VideoUrl);
             XmlDocument doc = new XmlDocument();

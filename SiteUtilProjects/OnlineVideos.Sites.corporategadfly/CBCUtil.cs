@@ -118,7 +118,7 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             string url = string.Format(videoListUrl, feedPID, (string) category.Other);
             return getVideosForUrl(url);
@@ -148,7 +148,7 @@ namespace OnlineVideos.Sites
             return null;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string result = string.Empty;
 

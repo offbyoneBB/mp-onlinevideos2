@@ -22,12 +22,12 @@ namespace OnlineVideos.Sites
             if (!string.IsNullOrEmpty(searchResultsListRegEx)) regEx_searchResultsList = new Regex(searchResultsListRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
         }
 
-        public override List<VideoInfo> Search(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             nextPageAvailable = false;
-            string data = GetWebDataFromPost(searchUrl, string.Format(searchPostString, query), referer: "http://www.kino.de/showroom/", allowUnsafeHeader: allowUnsafeHeaders);
+            string data = GetWebData(searchUrl, string.Format(searchPostString, query), referer: "http://www.kino.de/showroom/", allowUnsafeHeader: allowUnsafeHeaders);
 
-            List<VideoInfo> results = new List<VideoInfo>();
+            var results = new List<ISearchResultItem>();
 
             if (regEx_searchResultsList != null)
             {

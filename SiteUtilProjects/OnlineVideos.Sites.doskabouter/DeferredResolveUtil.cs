@@ -42,10 +42,10 @@ namespace OnlineVideos.Sites
             sh = new SubtitleHandler(subtitleSource, subtitleLanguages);
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             sh.SetSubtitleText(video, GetTrackingInfo, true);
-            string tmp = base.getUrl(video);
+            string tmp = base.GetVideoUrl(video);
             return SortPlaybackOptions(video, baseUrl, tmp, limitUrlsPerHoster, showUnknownHosters);
         }
 

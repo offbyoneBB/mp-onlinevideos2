@@ -50,7 +50,7 @@ namespace OnlineVideos.Sites.georgius
         public override int DiscoverDynamicCategories()
         {
             int dynamicCategoriesCount = 0;
-            String baseWebData = SiteUtilBase.GetWebData(OckoTvUtil.baseUrl, null, null, null, true);
+            String baseWebData = SiteUtilBase.GetWebData(OckoTvUtil.baseUrl, forceUTF8: true);
 
             int index = baseWebData.IndexOf(OckoTvUtil.dynamicCategoryStart);
             if (index > 0)
@@ -173,13 +173,13 @@ namespace OnlineVideos.Sites.georgius
             return videoList;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             this.currentStartIndex = 0;
             return this.GetVideoList(category);
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return this.GetVideoList(this.currentCategory);
         }
@@ -196,7 +196,7 @@ namespace OnlineVideos.Sites.georgius
             }
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             return video.VideoUrl;
         }

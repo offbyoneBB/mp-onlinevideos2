@@ -14,7 +14,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Format string applied to the video url of an item that was found in the rss.")]
         string videoUrlFormatString = "http://www.msnbc.msn.com/default.cdnx/id/{0}/displaymode/1157/?t=.flv";
         
-		public override string getUrl(OnlineVideos.VideoInfo video)
+		public override string GetVideoUrl(OnlineVideos.VideoInfo video)
 		{
             if (video.VideoUrl.Contains("/vp/"))
             {
@@ -26,7 +26,7 @@ namespace OnlineVideos.Sites
             }
 		}
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> loVideoList = new List<VideoInfo>();
             foreach (RssItem rssItem in GetWebData<RssDocument>(((RssLink)category).Url).Channel.Items)

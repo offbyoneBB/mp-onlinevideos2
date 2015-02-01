@@ -70,9 +70,9 @@ namespace OnlineVideos.Sites.Pondman
             get { return true; }
         }
 
-        public override List<VideoInfo> Search(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
-            List<VideoInfo> videos = new List<VideoInfo>();
+            var videos = new List<ISearchResultItem>();
 
             // check if we have an IMDb in the search query
             string id = IMDbAPI.ParseTitleConst(query);
@@ -194,7 +194,7 @@ namespace OnlineVideos.Sites.Pondman
             parent.SubCategories.Add(cat);
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> videos = new List<VideoInfo>();
 
@@ -253,7 +253,7 @@ namespace OnlineVideos.Sites.Pondman
             return videos;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string videoUrl = string.Empty;
             VideoDetails clip = video.Other as VideoDetails;
@@ -302,7 +302,7 @@ namespace OnlineVideos.Sites.Pondman
 
         #region IChoice
 
-        public List<VideoInfo> getVideoChoices(VideoInfo video)
+        public List<VideoInfo> GetVideoChoices(VideoInfo video)
         {
             List<VideoInfo> clips = new List<VideoInfo>();
             

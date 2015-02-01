@@ -49,7 +49,7 @@ namespace OnlineVideos.Sites
             return videoList;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string webdata = GetWebData(video.VideoUrl);
             XmlDocument doc = new XmlDocument();

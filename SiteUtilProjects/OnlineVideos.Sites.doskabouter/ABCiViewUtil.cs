@@ -81,7 +81,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> res = new List<VideoInfo>();
             JArray items = category.Other as JArray;
@@ -106,7 +106,7 @@ namespace OnlineVideos.Sites
             return res;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             XmlDocument doc = new XmlDocument();
             string xmlData = GetWebData(@"http://iview.abc.net.au/auth/flash/?", userAgent: "FireFox");

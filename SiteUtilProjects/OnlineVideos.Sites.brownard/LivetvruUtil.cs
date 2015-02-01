@@ -75,7 +75,7 @@ namespace OnlineVideos.Sites
             return cats;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> vids = new List<VideoInfo>();
             string html = GetWebData((category as RssLink).Url);

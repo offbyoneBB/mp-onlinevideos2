@@ -99,7 +99,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
         
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             return getVideoListForSinglePage(category, (category as RssLink).Url);
         }
@@ -181,7 +181,7 @@ namespace OnlineVideos.Sites
             get { return !string.IsNullOrEmpty(nextPageUrl); }
         }
         
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return getVideoListForSinglePage(currentCategory, nextPageUrl);
         }
@@ -206,10 +206,10 @@ namespace OnlineVideos.Sites
             return result;
         }
         
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             if (LIVE_STREAMING.Equals(video.Other as string)) return video.VideoUrl;
-            return base.getUrl(video);
+            return base.GetVideoUrl(video);
         }
         
         public override string getBrightCoveVideoIdForViewerExperienceRequest(string videoUrl)

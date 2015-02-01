@@ -9,7 +9,7 @@ namespace OnlineVideos.Sites
 	public abstract class LatestVideosSiteUtilBase : SiteUtilBase
 	{
 		/// <summary>
-		/// This methid is called to get the latest videos of the site.<br/>
+		/// This method is called to get the latest videos of the site.<br/>
 		/// It should honor the user's setting for <see cref="LatestVideosCount"/>.
 		/// </summary>
 		/// <returns>A list of <see cref="VideoInfo"/> objects that are new on the site.</returns>

@@ -45,7 +45,7 @@ namespace OnlineVideos.Sites
             return res;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             string url = ((RssLink)category).Url;
             if (url.StartsWith(@"http://www.rtve.es/infantil", StringComparison.InvariantCultureIgnoreCase))
@@ -58,7 +58,7 @@ namespace OnlineVideos.Sites
             return Parse(url, null);
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             if ("livestream".Equals(video.Other))
             {

@@ -22,7 +22,7 @@ namespace OnlineVideos.Sites.bw_fotoart
 
             public static string getPlaybackUrl(string playerUrl, Movie2KFilmUtil Util)
             {
-                string data = GetWebData(playerUrl, Util.GetCookie(), forceUTF8: Util.forceUTF8Encoding, allowUnsafeHeader: Util.allowUnsafeHeaders, encoding: Util.encodingOverride);
+                string data = GetWebData(playerUrl, cookies: Util.GetCookie(), forceUTF8: Util.forceUTF8Encoding, allowUnsafeHeader: Util.allowUnsafeHeaders, encoding: Util.encodingOverride);
                 Match m = Regex.Match(data, Util.hosterUrlRegEx);
                 string url = m.Groups["url"].Value;
                 Uri uri = new Uri(url);
@@ -58,9 +58,9 @@ namespace OnlineVideos.Sites.bw_fotoart
         //    else return null;
         //}
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
-            string result = base.getUrl(video);
+            string result = base.GetVideoUrl(video);
             if (video.PlaybackOptions == null && !string.IsNullOrEmpty(result))
                 result = Movie2KFilmVideoInfo.getPlaybackUrl(result, this);
             return result;

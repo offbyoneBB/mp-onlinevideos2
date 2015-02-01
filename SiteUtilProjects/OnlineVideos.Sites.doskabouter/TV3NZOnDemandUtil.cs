@@ -19,9 +19,9 @@ namespace OnlineVideos.Sites
             return res;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
-            string res = base.getUrl(video);
+            string res = base.GetVideoUrl(video);
             XmlDocument doc = new XmlDocument();
             string[] urlParts = video.VideoUrl.Split('.');
 

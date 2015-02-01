@@ -33,7 +33,7 @@ namespace OnlineVideos.Sites
             return base.ParseSubCategories(parentCategory, data);
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string data = GetWebData(video.VideoUrl);
             JToken jt = JObject.Parse(data) as JToken;

@@ -1,14 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 using OnlineVideos.MediaPortal1.Player;
+using OnlineVideos.Sites;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace OnlineVideos.MediaPortal1
@@ -1530,7 +1531,7 @@ namespace OnlineVideos.MediaPortal1
         {
             Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
             {
-                return ((IChoice)SelectedSite).getVideoChoices(selectedVideo);
+                return ((IChoice)SelectedSite).GetVideoChoices(selectedVideo);
             },
             delegate(bool success, object result)
             {
@@ -1590,7 +1591,7 @@ namespace OnlineVideos.MediaPortal1
         {
             Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
             {
-                return SelectedSite.getVideoList(category);
+                return SelectedSite.GetVideos(category);
             },
             delegate(bool success, object result)
             {
@@ -1760,12 +1761,12 @@ namespace OnlineVideos.MediaPortal1
                         string category = moSupportedSearchCategoryList[GUI_btnSearchCategories.SelectedLabel];
                         Log.Instance.Info("Searching for {0} in category {1}", query, category);
                         lastSearchCategory = category;
-                        return SelectedSite.DoSearch(query, category);
+                        return SelectedSite.Search(query, category);
                     }
                     else
                     {
                         Log.Instance.Info("Searching for {0} in all categories ", query);
-                        return SelectedSite.DoSearch(query);
+                        return SelectedSite.Search(query);
                     }
                 },
                 delegate(bool success, object result)
@@ -1858,11 +1859,11 @@ namespace OnlineVideos.MediaPortal1
                     //filtering a search result
                     if (String.IsNullOrEmpty(lastSearchCategory))
                     {
-                        return ((IFilter)SelectedSite).filterSearchResultList(lastSearchQuery, miMaxResult, msOrderBy, msTimeFrame);
+                        return ((IFilter)SelectedSite).FilterSearchResults(lastSearchQuery, miMaxResult, msOrderBy, msTimeFrame);
                     }
                     else
                     {
-                        return ((IFilter)SelectedSite).filterSearchResultList(lastSearchQuery, lastSearchCategory, miMaxResult, msOrderBy, msTimeFrame);
+                        return ((IFilter)SelectedSite).FilterSearchResults(lastSearchQuery, lastSearchCategory, miMaxResult, msOrderBy, msTimeFrame);
                     }
                 }
                 else
@@ -1870,7 +1871,7 @@ namespace OnlineVideos.MediaPortal1
                     if (SelectedSite.HasFilterCategories) // just for setting the category
                         return SelectedSite.Search(string.Empty, moSupportedSearchCategoryList[GUI_btnSearchCategories.SelectedLabel]);
                     if (SelectedSite is IFilter)
-                        return ((IFilter)SelectedSite).filterVideoList(selectedCategory, miMaxResult, msOrderBy, msTimeFrame);
+                        return ((IFilter)SelectedSite).FilterVideos(selectedCategory, miMaxResult, msOrderBy, msTimeFrame);
                 }
                 return null;
             },
@@ -1885,7 +1886,7 @@ namespace OnlineVideos.MediaPortal1
         {
             Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
             {
-                return SelectedSite.getNextPageVideos();
+                return SelectedSite.GetNextPageVideos();
             },
             delegate(bool success, object result)
             {
@@ -2197,7 +2198,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                 {
-                    return SelectedSite.getPlaylistItemUrl(playItem.Video, currentPlaylist[0].ChosenPlaybackOption, currentPlaylist.IsPlayAll);
+                    return SelectedSite.GetPlaylistItemVideoUrl(playItem.Video, currentPlaylist[0].ChosenPlaybackOption, currentPlaylist.IsPlayAll);
                 },
                 delegate(bool success, object result)
                 {
@@ -2210,7 +2211,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                 {
-                    return SelectedSite.getMultipleVideoUrls(playItem.Video, currentPlaylist != null && currentPlaylist.Count > 1);
+                    return SelectedSite.GetMultipleVideoUrls(playItem.Video, currentPlaylist != null && currentPlaylist.Count > 1);
                 },
                 delegate(bool success, object result)
                 {
@@ -2253,7 +2254,7 @@ namespace OnlineVideos.MediaPortal1
                         string url_new = url;
                         if (url == loUrlList[0])
                         {
-                            url_new = SelectedSite.getPlaylistItemUrl(vi, string.Empty, currentPlaylist != null && currentPlaylist.IsPlayAll);
+                            url_new = SelectedSite.GetPlaylistItemVideoUrl(vi, string.Empty, currentPlaylist != null && currentPlaylist.IsPlayAll);
                         }
                         PlayListItem pli = new PlayListItem(string.Format("{0} - {1} / {2}", playItem.Video.Title, (playbackItems.Count + 1).ToString(), loUrlList.Count), url_new);
                         pli.Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream;
@@ -2579,7 +2580,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                 {
-                    return saveItems.CurrentItem.Util.getPlaylistItemUrl(saveItems.CurrentItem.VideoInfo, saveItems.ChosenPlaybackOption);
+                    return saveItems.CurrentItem.Util.GetPlaylistItemVideoUrl(saveItems.CurrentItem.VideoInfo, saveItems.ChosenPlaybackOption);
                 },
                 delegate(bool success, object result)
                 {
@@ -2591,7 +2592,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                 {
-                    return saveItems.CurrentItem.Util.getMultipleVideoUrls(saveItems.CurrentItem.VideoInfo);
+                    return saveItems.CurrentItem.Util.GetMultipleVideoUrls(saveItems.CurrentItem.VideoInfo);
                 },
                 delegate(bool success, object result)
                 {
@@ -2630,7 +2631,7 @@ namespace OnlineVideos.MediaPortal1
                     string url_new = url;
                     if (url == loUrlList[0])
                     {
-                        url_new = saveItems.CurrentItem.Util.getPlaylistItemUrl(vi, string.Empty);
+                        url_new = saveItems.CurrentItem.Util.GetPlaylistItemVideoUrl(vi, string.Empty);
                     }
                     DownloadInfo pli = DownloadInfo.Create(vi, saveItems.CurrentItem.Category, saveItems.CurrentItem.Util);
                     pli.Title = string.Format("{0} - {1} / {2}", vi.Title, (saveItems.DownloadItems.Count + 1).ToString(), loUrlList.Count);
@@ -3019,7 +3020,7 @@ namespace OnlineVideos.MediaPortal1
                         case VideosMode.Search: GUIPropertyManager.SetProperty("#OnlineVideos.HeaderLabel", Translation.Instance.SearchResults + " [" + lastSearchQuery + "]"); break;
                         default:
                             {
-                                string proposedLabel = SelectedSite.getCurrentVideosTitle();
+                                string proposedLabel = SelectedSite.GetCurrentVideosTitle();
                                 GUIPropertyManager.SetProperty("#OnlineVideos.HeaderLabel", proposedLabel != null ? proposedLabel : selectedCategory != null ? selectedCategory.RecursiveName() : ""); break;
                             }
                     }
@@ -3068,17 +3069,17 @@ namespace OnlineVideos.MediaPortal1
             GUI_btnOrderBy.Clear();
             GUI_btnTimeFrame.Clear();
 
-            moSupportedMaxResultList = ((IFilter)SelectedSite).getResultSteps();
+            moSupportedMaxResultList = ((IFilter)SelectedSite).GetResultSteps();
             foreach (int step in moSupportedMaxResultList)
             {
                 GUIControl.AddItemLabelControl(GetID, GUI_btnMaxResult.GetID, step + "");
             }
-            moSupportedOrderByList = ((IFilter)SelectedSite).getOrderbyList();
+            moSupportedOrderByList = ((IFilter)SelectedSite).GetOrderByOptions();
             foreach (String orderBy in moSupportedOrderByList.Keys)
             {
                 GUIControl.AddItemLabelControl(GetID, GUI_btnOrderBy.GetID, orderBy);
             }
-            moSupportedTimeFrameList = ((IFilter)SelectedSite).getTimeFrameList();
+            moSupportedTimeFrameList = ((IFilter)SelectedSite).GetTimeFrameOptions();
             foreach (String time in moSupportedTimeFrameList.Keys)
             {
                 GUIControl.AddItemLabelControl(GetID, GUI_btnTimeFrame.GetID, time);

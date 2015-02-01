@@ -203,7 +203,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             Log.Debug("Mitele: getting video list from category {0}", category.Name);
             List<VideoInfo> videoList = new List<VideoInfo>();
@@ -254,7 +254,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             Log.Debug("Mitele: getting video URL from video {0} ", video.Title);
             String data = GetWebData(video.VideoUrl);
@@ -300,28 +300,19 @@ namespace OnlineVideos.Sites
             headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.89 Safari/537.1");
             headers.Add("Origin", "http://static1.tele-cinco.net");
             headers.Add("Referer", "http://static1.tele-cinco.net/comun/swf/playerMitele.swf");
-            string data = GetWebData(tokenizerURL+"?hash=" + hash + "&id=" + url + "&startTime=0&endTime=0", null, headers, null, null, false, false, null, false);
+            string data = GetWebData(tokenizerURL+"?hash=" + hash + "&id=" + url + "&startTime=0&endTime=0", headers: headers, cache: false);
             return data.Substring(data.IndexOf("tokenizedUrl\":\"") + "tokenizedUrl\":\"".Length).Split('\"')[0].Replace(" ", "").Replace("\\/", "/");
         }
 
-        public static string GetWebDataFromPostMitele(string url, string postData, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null)
+        public static string GetWebDataFromPostMitele(string url, string postData)
         {
             NameValueCollection headers = new NameValueCollection();
             headers.Add("X-Requested-With", "XMLHttpRequest");
             headers.Add("Accept", "*/*"); // accept any content type
-            headers.Add("User-Agent", userAgent ?? OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
-            if (referer != null) headers.Add("Referer", referer);
-            return GetWebData(url, postData, headers, cc, proxy, forceUTF8, allowUnsafeHeader, encoding, false);
+            headers.Add("User-Agent", OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
+            return GetWebData(url, postData, headers: headers);
         }
-
-        public static string GetWebDataFromPostMiteleVideoURL(string url, string postData, NameValueCollection headers, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null)
-        {
-            headers.Add("Accept", "*/*"); // accept any content type
-            headers.Add("User-Agent", userAgent ?? OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
-            if (referer != null) headers.Add("Referer", referer);
-            return GetWebData(url, postData, headers, cc, proxy, forceUTF8, allowUnsafeHeader, encoding, false);
-        }
-
+        
         public static string base64Encode(string plainText)
         {
             var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);

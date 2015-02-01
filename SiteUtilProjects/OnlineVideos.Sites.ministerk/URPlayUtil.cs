@@ -147,7 +147,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             HasNextPage = false;
             currentVideoIndex = 0;
@@ -178,7 +178,7 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             currentVideoIndex++;
             List<VideoInfo> videos = new List<VideoInfo>();
@@ -245,7 +245,7 @@ namespace OnlineVideos.Sites
             return videoList;
         }
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             var data = GetWebData(video.VideoUrl);
             var urlSD = string.Empty;
@@ -406,7 +406,7 @@ namespace OnlineVideos.Sites
                     Url = choice.Other as string
                 };
                 List<ISearchResultItem> results = new List<ISearchResultItem>();
-                foreach (VideoInfo vi in getVideoList(cat))
+                foreach (VideoInfo vi in GetVideos(cat))
                     results.Add(vi);
                 result.ResultItems = results;
                 return result;
@@ -425,7 +425,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             RssLink cat = new RssLink()
             {
@@ -433,7 +433,7 @@ namespace OnlineVideos.Sites
                 Url = "/Produkter?product_type=programtv&q=" + HttpUtility.UrlEncode(query)
             };
             List<ISearchResultItem> results = new List<ISearchResultItem>();
-            foreach (VideoInfo vi in getVideoList(cat))
+            foreach (VideoInfo vi in GetVideos(cat))
                 results.Add(vi);
             return results;
         }
@@ -444,7 +444,7 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> GetLatestVideos()
         {
             RssLink latest = new RssLink() { Name = "Latest videos", Url = senasteUrl };
-            List<VideoInfo> videos = getVideoList(latest);
+            List<VideoInfo> videos = GetVideos(latest);
             return videos.Count >= LatestVideosCount ? videos.GetRange(0, (int)LatestVideosCount) : new List<VideoInfo>();
         }
 

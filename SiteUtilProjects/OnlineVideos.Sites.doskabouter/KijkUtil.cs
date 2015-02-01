@@ -79,14 +79,14 @@ namespace OnlineVideos.Sites
             return ParseVideos(url, htmlDoc.DocumentNode);
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             if (category.Other is HtmlNode)
                 return ParseVideos(((RssLink)category).Url, category.Other as HtmlNode);
-            return base.getVideoList(category);
+            return base.GetVideos(category);
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string[] parts = video.VideoUrl.Split('/');
             string url = @"http://embed.kijk.nl/?width=868&height=491&video=" + parts[parts.Length - 2];

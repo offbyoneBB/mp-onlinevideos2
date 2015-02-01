@@ -192,7 +192,7 @@ namespace OnlineVideos.Sites
             CookieCollection ccol = new CookieCollection();
             Cookie langcookie = new Cookie("GUEST_LANGUAGE_ID", Language, "/", "hbonordic.com");
             cc.Add(langcookie);
-            return GetWebData<T>(url, cc);
+            return GetWebData<T>(url, cookies: cc);
         }
 
         #endregion
@@ -285,7 +285,7 @@ namespace OnlineVideos.Sites
 
         #region Videos
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             if (category.Other is string && (category.Other as string) == "Forum")
                 throw new OnlineVideosException("Forum http://tinyurl.com/olv-hbonordic");
@@ -315,7 +315,7 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || !HelperUtils.IsValidEmail(username))
                 throw new OnlineVideosException("Please enter username and password");

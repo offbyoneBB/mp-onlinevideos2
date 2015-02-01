@@ -23,9 +23,9 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Request type")]
         protected RequestType requestType = RequestType.ViewerExperienceRequest;
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
-            string webdata = GetWebData(video.VideoUrl);
+            string webdata = GetWebData<string>(video.VideoUrl);
             return GetFileUrl(video, webdata);
         }
 

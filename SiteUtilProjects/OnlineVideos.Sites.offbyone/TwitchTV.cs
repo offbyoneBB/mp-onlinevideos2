@@ -64,12 +64,12 @@ namespace OnlineVideos.Sites
 			return Settings.Categories.Count - 1;
 		}
 
-		public override List<VideoInfo> getVideoList(Category category)
+		public override List<VideoInfo> GetVideos(Category category)
 		{
 			return VideosFromApiUrl(baseApiUrl + string.Format(streamsUrl, HttpUtility.UrlEncode(category.Name)));
 		}
 
-		public override List<VideoInfo> getNextPageVideos()
+		public override List<VideoInfo> GetNextPageVideos()
 		{
 			return VideosFromApiUrl(nextPageUrl);
 		}
@@ -79,12 +79,12 @@ namespace OnlineVideos.Sites
 			get { return true; }
 		}
 
-		public override List<ISearchResultItem> DoSearch(string query)
+		public override List<ISearchResultItem> Search(string query, string category = null)
 		{
 			return VideosFromApiUrl(baseApiUrl + string.Format(searchUrl, HttpUtility.UrlEncode(query))).ConvertAll<ISearchResultItem>(i => i as ISearchResultItem);
 		}
 
-		public override string getUrl(OnlineVideos.VideoInfo video)
+		public override string GetVideoUrl(OnlineVideos.VideoInfo video)
 		{
 			video.PlaybackOptions = new Dictionary<string, string>();
 

@@ -8,13 +8,13 @@ namespace OnlineVideos.Sites
 {
     public class ScrewattackUtil : GenericSiteUtil
     {
-		public override String getUrl(VideoInfo video)
+		public override String GetVideoUrl(VideoInfo video)
 		{
 			string url = getPlaylistUrl(video.VideoUrl);
 
 			if (string.IsNullOrEmpty(url))
 			{
-				string dataPage = GetWebData(video.VideoUrl, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
+				string dataPage = GetWebData(video.VideoUrl, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
 				var ytMatch = Regex.Match(dataPage, "<iframe\\s.*?src=\"http://www.youtube.com/embed/(?<url>[^\"?]+)");
 				if (ytMatch.Success)
 				{
@@ -40,10 +40,10 @@ namespace OnlineVideos.Sites
 			}
 			if (!string.IsNullOrEmpty(rssUrl))
 			{
-				string rss = GetWebData(rssUrl, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
+				string rss = GetWebData(rssUrl, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
 				foreach (RssToolkit.Rss.RssItem rssItem in RssToolkit.Rss.RssDocument.Load(rss).Channel.Items)
 				{
-					VideoInfo aVideo = VideoInfo.FromRssItem(rssItem, regEx_FileUrl != null, new Predicate<string>(isPossibleVideo));
+					VideoInfo aVideo = VideoInfo.FromRssItem(rssItem, regEx_FileUrl != null, new Predicate<string>(IsPossibleVideo));
 					if (!string.IsNullOrEmpty(aVideo.VideoUrl))
 					{
 						video.PlaybackOptions = aVideo.PlaybackOptions;

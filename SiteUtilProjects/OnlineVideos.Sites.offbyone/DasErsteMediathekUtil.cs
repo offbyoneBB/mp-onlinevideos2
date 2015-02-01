@@ -137,7 +137,7 @@ namespace OnlineVideos.Sites
 			return parentCategory.SubCategories.Count;
 		}
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
 			HasNextPage = false;
 
@@ -263,7 +263,7 @@ namespace OnlineVideos.Sites
 			return result;
 		}
 
-		public override List<VideoInfo> getNextPageVideos()
+		public override List<VideoInfo> GetNextPageVideos()
 		{
 			var myBaseUri = new Uri(nextPageUrl);
 			var doc = GetWebData<HtmlDocument>(nextPageUrl);
@@ -273,7 +273,7 @@ namespace OnlineVideos.Sites
 
 		public override bool CanSearch { get { return true; } }
 
-		public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
 		{
 			var searchUrl = string.Format("http://www.ardmediathek.de/tv/suche?searchText={0}", HttpUtility.UrlEncode(query));
 			var myBaseUri = new Uri(searchUrl);
@@ -282,7 +282,7 @@ namespace OnlineVideos.Sites
 			return GetVideosFromDiv(mainDiv, myBaseUri).ConvertAll(v => v as ISearchResultItem);
 		}
 
-		public override String getUrl(VideoInfo video)
+		public override String GetVideoUrl(VideoInfo video)
 		{
 			if (video.VideoUrl.StartsWith("http://daserste_live-lh.akamaihd.net"))
 				return video.VideoUrl;

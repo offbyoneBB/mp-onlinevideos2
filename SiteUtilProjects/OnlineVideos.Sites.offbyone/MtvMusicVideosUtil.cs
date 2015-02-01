@@ -45,19 +45,19 @@ namespace OnlineVideos.Sites
             return videoList;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             currentCategory = category as RssLink;
             currentStart = 1;
             return GetVideoForCurrentCategory();
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             System.Net.WebProxy proxyObj = null; // new System.Net.WebProxy("127.0.0.1", 8118);
             if (!string.IsNullOrEmpty(proxy)) proxyObj = new System.Net.WebProxy(proxy);
 
-            string playlist = GetWebData(string.Format(videoUrlFormatString, new System.Uri(video.VideoUrl).AbsolutePath.Substring(1)), null, null, proxyObj);
+            string playlist = GetWebData(string.Format(videoUrlFormatString, new System.Uri(video.VideoUrl).AbsolutePath.Substring(1)), proxy: proxyObj);
             if (playlist.Length > 0)
             {
                 if (playlist.IndexOf("error_country_block.swf") >= 0) throw new OnlineVideosException("Video blocked for your country.");
@@ -88,7 +88,7 @@ namespace OnlineVideos.Sites
             get { return currentCategory != null && currentCategory.EstimatedVideoCount > currentStart; }
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             currentStart += pageSize;
             return GetVideoForCurrentCategory();
@@ -100,11 +100,12 @@ namespace OnlineVideos.Sites
 
         public override bool CanSearch { get { return true; } }
 
-        public override List<VideoInfo> Search(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             //You must URL-escape all spaces, punctuation and quotes. The search term "buddy holly" would look like this %22buddy+holly%22 
             query = System.Web.HttpUtility.UrlEncode(query.Replace(" ", "+"));
-            return getVideoList(new RssLink() { Url = string.Format(searchUrl, query) });
+            return GetVideos(new RssLink() { Url = string.Format(searchUrl, query) })
+                .ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
         }
 
         #endregion

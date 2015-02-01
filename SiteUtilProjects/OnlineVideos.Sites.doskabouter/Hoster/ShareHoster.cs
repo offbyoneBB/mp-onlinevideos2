@@ -20,11 +20,11 @@ namespace OnlineVideos.Hoster
         {
             url = url.Replace("vid", "wait");
             CookieContainer cc = new CookieContainer();
-            string page = SiteUtilBase.GetWebData(url, cc);
+            string page = SiteUtilBase.GetWebData(url, cookies: cc);
             string file = url.Substring(url.LastIndexOf(@"/") + 1);
             string wait = Regex.Match(page, @"name=""wait""\svalue=""(?<wait>[^""]+)""").Groups["wait"].Value;
             string postdata = string.Format("continue=Fortfahren&open=show_wait&file={0}&wait={1}", file, wait);
-            page = SiteUtilBase.GetWebDataFromPost("http://www.sharehoster.com/vid/" + file, postdata, cc, url);
+            page = SiteUtilBase.GetWebData("http://www.sharehoster.com/vid/" + file, postdata, cc, url);
 
             Match n = Regex.Match(page, @"name=""stream""\svalue=""(?<url>[^""]+)""");
             if (n.Success)
@@ -34,7 +34,7 @@ namespace OnlineVideos.Hoster
             }
             else
             {
-                page = SiteUtilBase.GetWebData("http://www.sharehoster.com/flowplayer/config.php?movie=" + file, cc);
+                page = SiteUtilBase.GetWebData("http://www.sharehoster.com/flowplayer/config.php?movie=" + file, cookies: cc);
                 n = Regex.Match(page, @"'url':\s'(?<url>.*/video/[^']+)'");
                 if (n.Success)
                 {

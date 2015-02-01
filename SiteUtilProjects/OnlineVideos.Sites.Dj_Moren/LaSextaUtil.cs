@@ -103,7 +103,7 @@ namespace OnlineVideos.Sites
   
         */
 
-        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<String> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<String> result = new List<String>();
             String data = GetWebData(laSextaBaseUrl + video.VideoUrl);
@@ -129,7 +129,7 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             Log.Debug("lasexta: getting video list for {0}.", category.Name);
             List<VideoInfo> videoList = new List<VideoInfo>();

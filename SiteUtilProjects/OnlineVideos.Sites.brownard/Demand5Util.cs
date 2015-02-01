@@ -90,7 +90,7 @@ namespace OnlineVideos.Sites
             return cats.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             if (category.Other is List<VideoInfo>)
                 return (List<VideoInfo>)category.Other;
@@ -158,7 +158,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             List<ISearchResultItem> results = new List<ISearchResultItem>();
             string html = GetWebData("http://www.channel5.com/quick_search?q=" + query);
@@ -167,7 +167,7 @@ namespace OnlineVideos.Sites
             {
                 RssLink rss = new RssLink();
                 rss.Url = BASE_URL + m.Groups[1].Value;
-                List<VideoInfo> vids = getVideoList(rss);
+                List<VideoInfo> vids = GetVideos(rss);
                 if (vids.Count < 1)
                     continue;
                 rss.Thumb = BASE_URL + m.Groups[2].Value;
@@ -185,7 +185,7 @@ namespace OnlineVideos.Sites
             return s.Replace("&amp;", "&").Replace("&pound;", "£").Trim();
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string webdata = GetWebData(video.VideoUrl);
             //Match m = new Regex(@"playerID=(\d+).*?videoPlayer=ref:(C\d+)").Match(webdata);

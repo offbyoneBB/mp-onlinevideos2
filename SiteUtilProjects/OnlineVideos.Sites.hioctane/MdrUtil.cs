@@ -142,7 +142,7 @@ namespace OnlineVideos.Sites
             System.Threading.WaitHandle.WaitAll(threadWaitHandles);
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> videos = new List<VideoInfo>();
 
@@ -193,7 +193,7 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        public override String getUrl(VideoInfo video)
+        public override String GetVideoUrl(VideoInfo video)
         {
             // Get playbackoptins back from favorite video if they were saved in Other object
             if (!string.IsNullOrEmpty(video.SiteName) && video.PlaybackOptions == null && video.Other is string && (video.Other as string).StartsWith("PlaybackOptions://"))
@@ -204,7 +204,7 @@ namespace OnlineVideos.Sites
             {
                 if (v.Value.EndsWith(".asx"))
                 {
-                    var resolved = ParseASX(v.Value);
+                    var resolved = Utils.ParseASX(GetWebData(v.Value));
                     if (resolved != null && resolved.Count > 0) { video.PlaybackOptions[v.Key] = resolved[0]; break; }
                 }
             }

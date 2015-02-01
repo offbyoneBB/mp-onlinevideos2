@@ -15,6 +15,8 @@ using DShowNET.Helper;
 
 namespace OnlineVideos.MediaPortal1
 {
+    #pragma warning disable 1690
+
     /// <summary>
     /// Description of Configuration.
     /// </summary>
@@ -1023,4 +1025,7 @@ namespace OnlineVideos.MediaPortal1
             }
         }
     }
+
+    #pragma warning restore 1690
+
 }

@@ -24,7 +24,7 @@ namespace OnlineVideos.Sites
             return res;
         }
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<string> result = new List<string>();
 
@@ -64,7 +64,7 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public override string getPlaylistItemUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
+        public override string GetPlaylistItemVideoUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
         {
             if (String.IsNullOrEmpty(chosenPlaybackOption))
                 return clonedVideoInfo.VideoUrl;

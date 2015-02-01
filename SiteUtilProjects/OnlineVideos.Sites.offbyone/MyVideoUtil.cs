@@ -188,7 +188,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             nextPageUrl = null;
             HasNextPage = false;
@@ -199,7 +199,7 @@ namespace OnlineVideos.Sites
                 return GetVideosFromWebsite(((RssLink)category).Url);
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return GetVideosFromApiUrl(nextPageUrl);
         }
@@ -208,17 +208,13 @@ namespace OnlineVideos.Sites
 
         public override bool CanSearch { get { return true; } }
 
-        public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             currentVideoTitle = null;
-            return GetVideosFromApiUrl(GetApiUrl("myvideo.videos.list_by_tag", new NameValueCollection() { { "tag", query } })).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
-        }
-
-        public override List<ISearchResultItem> DoSearch(string query, string category)
-        {
-            currentVideoTitle = null;
-            if (string.IsNullOrEmpty(category)) return DoSearch(query);
-            else return GetVideosFromApiUrl(GetApiUrl("myvideo.videos.list_by_category_and_tag", new NameValueCollection() { { "tag", query }, { "cat", category } })).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+            if (string.IsNullOrEmpty(category)) 
+                return GetVideosFromApiUrl(GetApiUrl("myvideo.videos.list_by_tag", new NameValueCollection() { { "tag", query } })).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+            else 
+                return GetVideosFromApiUrl(GetApiUrl("myvideo.videos.list_by_category_and_tag", new NameValueCollection() { { "tag", query }, { "cat", category } })).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
         }
 
         public override Dictionary<string, string> GetSearchableCategories()
@@ -259,7 +255,7 @@ namespace OnlineVideos.Sites
             return null;
         }
 
-        public override string getCurrentVideosTitle()
+        public override string GetCurrentVideosTitle()
         {
             return currentVideoTitle;
         }
@@ -325,7 +321,7 @@ namespace OnlineVideos.Sites
             return loVideoList;
         }
 
-        public override String getUrl(VideoInfo video)
+        public override String GetVideoUrl(VideoInfo video)
         {
             // get the Id of the video from the VideoUrl
             string videoId = Regex.Match(video.VideoUrl, @"watch/(\d+)/").Groups[1].Value;

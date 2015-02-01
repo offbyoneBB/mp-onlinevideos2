@@ -97,7 +97,7 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> result = new List<VideoInfo>();
             JObject json = GetWebData<JObject>(string.Format(videoListUrlFormat, siteIdentifier, category.Other));
@@ -118,7 +118,7 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string result = string.Empty;
             video.PlaybackOptions = new Dictionary<string, string>();

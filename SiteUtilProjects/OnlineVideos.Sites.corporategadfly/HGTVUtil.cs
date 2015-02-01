@@ -126,7 +126,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> result = new List<VideoInfo>();
             string data = GetWebData((category as RssLink).Url);
@@ -166,7 +166,7 @@ namespace OnlineVideos.Sites
             return result;
         }
         
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string rtmp = @"rtmp://flash.scrippsnetworks.com:1935/ondemand?ovpfv=1.1";
             string playPath = video.VideoUrl.Replace(@"http://wms.scrippsnetworks.com", string.Empty).Replace(@".wmv", string.Empty);

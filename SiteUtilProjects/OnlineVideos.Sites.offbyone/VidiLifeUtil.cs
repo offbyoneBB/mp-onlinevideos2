@@ -14,7 +14,7 @@ namespace OnlineVideos.Sites
         Regex loPathRegex = new Regex(@"so\.addVariable\('xml',\s'([^']+)'");
         Regex loFlvRegex = new Regex(@"<flv8>([^<]+)</flv8>");
 
-        public override String getUrl(VideoInfo video)
+        public override String GetVideoUrl(VideoInfo video)
         {
             string lsUrl = "";
         	String lsHtml = GetWebData(video.VideoUrl);
@@ -33,7 +33,7 @@ namespace OnlineVideos.Sites
         	return lsUrl;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
 		{            
 			List<VideoInfo> loVideoList = new List<VideoInfo>();
             foreach (RssToolkit.Rss.RssItem rssItem in GetWebData<RssToolkit.Rss.RssDocument>(((RssLink)category).Url).Channel.Items)

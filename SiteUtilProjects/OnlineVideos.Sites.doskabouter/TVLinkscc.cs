@@ -122,7 +122,7 @@ namespace OnlineVideos.Sites
             return cat;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             if (category.Other is string) return GetTvSeasonVideos(category);
             else if (category.Other is List<VideoInfo>) return category.Other as List<VideoInfo>;
@@ -140,7 +140,7 @@ namespace OnlineVideos.Sites
                 default:
                     regEx_VideoList = regexDefaultVideoList; break;
             }
-            List<VideoInfo> result = base.getVideoList(category);
+            List<VideoInfo> result = base.GetVideos(category);
             if (replaceBadLinks && result != null && result.Count > 0)
             {
                 foreach (VideoInfo vid in result)
@@ -280,7 +280,7 @@ namespace OnlineVideos.Sites
             if (siteCookies == null)
             {
                 CookieContainer tempCookies = new CookieContainer();
-                GetWebDataFromPost("http://www.tvlinks.cc/checkin.php?action=login", string.Format("username={0}&password={1}&submit_button=Login", username, password), tempCookies);
+                GetWebData("http://www.tvlinks.cc/checkin.php?action=login", string.Format("username={0}&password={1}&submit_button=Login", username, password), tempCookies);
 
                 siteCookies = new CookieContainer();
 
@@ -291,7 +291,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             SetCookies();
 
@@ -350,12 +350,12 @@ namespace OnlineVideos.Sites
             else
                 code = Path.GetFileNameWithoutExtension(video.VideoUrl).Substring(4);
 
-            string part1 = GetWebData(@"http://www.tvlinks.cc/checkpts.php?code=" + code, siteCookies).Trim();
+            string part1 = GetWebData(@"http://www.tvlinks.cc/checkpts.php?code=" + code, cookies: siteCookies).Trim();
             if (part1.Length < 5) //try to re-login
             {
                 siteCookies = null;
                 SetCookies();
-                part1 = GetWebData(@"http://www.tvlinks.cc/checkpts.php?code=" + code, siteCookies).Trim();
+                part1 = GetWebData(@"http://www.tvlinks.cc/checkpts.php?code=" + code, cookies: siteCookies).Trim();
             }
 
             long ticks = DateTime.UtcNow.Ticks;
@@ -426,11 +426,11 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public override List<ISearchResultItem> DoSearch(string query)
+        List<ISearchResultItem> DoSearch(string query)
         {
             List<ISearchResultItem> result = new List<ISearchResultItem>();
 
-            string searchData = GetWebDataFromPost(searchUrl, string.Format(searchPostString, query), allowUnsafeHeader: allowUnsafeHeaders);
+            string searchData = GetWebData(searchUrl, string.Format(searchPostString, query), allowUnsafeHeader: allowUnsafeHeaders);
             if (!string.IsNullOrEmpty(searchData))
             {
                 RssLink catMovies = new RssLink();
@@ -473,22 +473,25 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public override List<ISearchResultItem> DoSearch(string query, string category)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             List<ISearchResultItem> result = DoSearch(query);
-            if (result != null && result.Count > 0)
+            if (!string.IsNullOrEmpty(category))
             {
-                foreach (Category cat in result)
+                if (result != null && result.Count > 0)
                 {
-                    if (cat.Name.Equals(category))
+                    foreach (Category cat in result)
                     {
-                        if (cat.Other is List<VideoInfo>) //movies
+                        if (cat.Name.Equals(category))
                         {
-                            return (cat.Other as List<VideoInfo>).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
-                        }
-                        else //tvshows
-                        {
-                            return (cat.SubCategories).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                            if (cat.Other is List<VideoInfo>) //movies
+                            {
+                                return (cat.Other as List<VideoInfo>).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                            }
+                            else //tvshows
+                            {
+                                return (cat.SubCategories).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                            }
                         }
                     }
                 }

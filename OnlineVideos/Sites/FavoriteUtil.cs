@@ -59,13 +59,13 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<String> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             SiteUtilBase util = OnlineVideoSettings.Instance.SiteUtilsList[video.SiteName];
-            return util.getMultipleVideoUrls(video, inPlaylist);
+            return util.GetMultipleVideoUrls(video, inPlaylist);
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             if (category is RssLink)
             {
@@ -160,9 +160,10 @@ namespace OnlineVideos.Sites
 
         public override bool CanSearch { get { return true; } }
 
-        public override List<VideoInfo> Search(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
-            return OrderVideos(OnlineVideoSettings.Instance.FavDB.getFavoriteVideos(null, query));
+            return OrderVideos(OnlineVideoSettings.Instance.FavDB.getFavoriteVideos(null, query))
+                .ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
         }
 
         #endregion
@@ -217,29 +218,29 @@ namespace OnlineVideos.Sites
 
 		string lastSort = "default";
 
-		public List<VideoInfo> filterVideoList(Category category, int maxResult, string orderBy, string timeFrame)
+		public List<VideoInfo> FilterVideos(Category category, int maxResult, string orderBy, string timeFrame)
 		{
 			lastSort = orderBy;
-			return getVideoList(category);
+			return GetVideos(category);
 		}
 
-		public List<VideoInfo> filterSearchResultList(string query, int maxResult, string orderBy, string timeFrame)
+		public List<VideoInfo> FilterSearchResults(string query, int maxResult, string orderBy, string timeFrame)
 		{
 			lastSort = orderBy;
-			return Search(query);
+            return OrderVideos(OnlineVideoSettings.Instance.FavDB.getFavoriteVideos(null, query));
 		}
 
-		public List<VideoInfo> filterSearchResultList(string query, string category, int maxResult, string orderBy, string timeFrame)
+		public List<VideoInfo> FilterSearchResults(string query, string category, int maxResult, string orderBy, string timeFrame)
 		{
 			return null;
 		}
 
-		public List<int> getResultSteps()
+		public List<int> GetResultSteps()
 		{
 			return new List<int>();
 		}
 
-		public Dictionary<string, string> getOrderbyList()
+		public Dictionary<string, string> GetOrderByOptions()
 		{
 			Dictionary<string, string> options = new Dictionary<string, string>();
 			options.Add(Translation.Instance.Default, "default");
@@ -249,7 +250,7 @@ namespace OnlineVideos.Sites
 			return options;
 		}
 
-		public Dictionary<string, string> getTimeFrameList()
+		public Dictionary<string, string> GetTimeFrameOptions()
 		{
 			return new Dictionary<string, string>();
 		}

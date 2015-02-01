@@ -53,7 +53,7 @@ namespace OnlineVideos.Sites
                 //User not logged in, but would like to be...
                 cc = new CookieContainer();
                 //log in, use this.cc to get the log in response cookies
-                GetWebDataFromPost(@"http://www.movhunter.net/login.php", string.Format(@"username={0}&pass={1}&remember=1&Login=Login", HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password)), cc);
+                GetWebData(@"http://www.movhunter.net/login.php", string.Format(@"username={0}&pass={1}&remember=1&Login=Login", HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password)), cc);
                 if (!isLoggedIn())
                 {
                     //Failed to log in, use a new cookie container next time
@@ -125,7 +125,7 @@ namespace OnlineVideos.Sites
             List<ContextMenuEntry> entries = new List<ContextMenuEntry>();
             if (selectedItem != null && enableSubtitles)
             {
-                HtmlAgilityPack.HtmlDocument doc = GetWebData<HtmlAgilityPack.HtmlDocument>(selectedItem.VideoUrl,GetCookie());
+                HtmlAgilityPack.HtmlDocument doc = GetWebData<HtmlAgilityPack.HtmlDocument>(selectedItem.VideoUrl, cookies: GetCookie());
                 IEnumerable<HtmlAgilityPack.HtmlNode> subs = doc.DocumentNode.Descendants("track").Where(t => t.GetAttributeValue("kind", "") == "captions");
                 if (subs != null && subs.Count() > 0)
                 {
@@ -153,7 +153,7 @@ namespace OnlineVideos.Sites
             if (selectedItem != null && enableSubtitles)
             {
                 ContextMenuExecutionResult result = new ContextMenuExecutionResult();
-                selectedItem.SubtitleText = GetWebData<string>(choice.Other as string, GetCookie());
+                selectedItem.SubtitleText = GetWebData<string>(choice.Other as string, cookies: GetCookie());
                 selectedItem.SubtitleText = selectedItem.SubtitleText.Replace("WEBVTT\r\n\r\n", "");
                 result.ExecutionResultMessage = selectedItem.Title + " - Subtitle: " + choice.DisplayText;
                 result.RefreshCurrentItems = false;

@@ -59,7 +59,7 @@ namespace OnlineVideos.Sites
                 string channel = scope["channel"].Value<string>();
                 string mixed = scope["mixed"].Value<uint>().ToString();
                 url = url.Replace("{channel}", channel).Replace("{mixed}", mixed);
-                videos = getVideoList(new RssLink() { Url = url });
+                videos = GetVideos(new RssLink() { Url = url });
             }
             catch { }
             return videos.Count >= LatestVideosCount ? videos.GetRange(0, (int)LatestVideosCount) : new List<VideoInfo>();
@@ -184,7 +184,7 @@ namespace OnlineVideos.Sites
         }
 
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> videos = new List<VideoInfo>();
             JObject json = GetWebData<JObject>((category as RssLink).Url);
@@ -249,7 +249,7 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
 
             JObject data = GetWebData<JObject>(video.VideoUrl);
@@ -298,7 +298,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             List<ISearchResultItem> results = new List<ISearchResultItem>();
             string searchUrl = SearchUrl.Replace("{term}", HttpUtility.UrlEncode(query));

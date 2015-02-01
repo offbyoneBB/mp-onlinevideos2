@@ -110,14 +110,14 @@ namespace OnlineVideos.Sites
                     url += "?sort=" + VideoSortId;
             }
 
-            T t = GetWebData<T>(url, cc);
+            T t = GetWebData<T>(url, cookies: cc);
             if (HaveCredentials())
             {
                 isLoggedIn = IsLoggedIn(t);
                 if (!isLoggedIn)
                 {
-                    GetWebDataFromPost(baseUrl + loginPostUrl, string.Format(loginPostDataFormatString, username, password), cc);
-                    t = GetWebData<T>(url, cc);
+                    GetWebData(baseUrl + loginPostUrl, string.Format(loginPostDataFormatString, username, password), cc);
+                    t = GetWebData<T>(url, cookies: cc);
                     isLoggedIn = IsLoggedIn(t);
                     if (!isLoggedIn)
                     {
@@ -198,18 +198,18 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             List<ISearchResultItem> results = new List<ISearchResultItem>();
-            RssLink category = new RssLink()
+            RssLink searchCategory = new RssLink()
             {
                 SubCategories = new List<Category>(),
                 Url = searchUrl + HttpUtility.UrlEncode(query)
             };
-            List<Category> categories = GetSubCategories(category);
-            category.SubCategories = categories;
-            category.SubCategoriesDiscovered = category.SubCategories.Count > 0;
-            category.SubCategories.ForEach(c => results.Add(c));
+            List<Category> categories = GetSubCategories(searchCategory);
+            searchCategory.SubCategories = categories;
+            searchCategory.SubCategoriesDiscovered = searchCategory.SubCategories.Count > 0;
+            searchCategory.SubCategories.ForEach(c => results.Add(c));
             return results;
         }
 
@@ -217,7 +217,7 @@ namespace OnlineVideos.Sites
 
         #region Videos
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> videos = new List<VideoInfo>();
             HtmlDocument footerDoc = MyGetWebData<HtmlDocument>(baseUrl + filmFooterApiUrl + (category as RssLink).Url);
@@ -283,7 +283,7 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             HtmlDocument data = MyGetWebData<HtmlDocument>(video.VideoUrl);
             HtmlNode doc = data.DocumentNode;
@@ -348,7 +348,7 @@ namespace OnlineVideos.Sites
                 List<Category> cats = GetSubCategories(latest);
                 foreach (Category cat in cats)
                 {
-                    temp = getVideoList(cat);
+                    temp = GetVideos(cat);
                     if (temp.Count == 1)
                     {
                         videos.Add(temp.First());

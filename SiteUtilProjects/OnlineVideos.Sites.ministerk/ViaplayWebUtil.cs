@@ -269,13 +269,13 @@ namespace OnlineVideos.Sites
                 data = GetWebData<JObject>(url);
                 return data;
             }
-            data = GetWebData<JObject>(url, cc);
+            data = GetWebData<JObject>(url, cookies: cc);
             if (data["user"] == null)
             {
-                data = GetWebData<JObject>(string.Format(LoginUrl, HttpUtility.UrlEncode(UserName), HttpUtility.UrlEncode(Password)), cc);
+                data = GetWebData<JObject>(string.Format(LoginUrl, HttpUtility.UrlEncode(UserName), HttpUtility.UrlEncode(Password)), cookies: cc);
                 if ((bool)data["success"])
                 {
-                    data = GetWebData<JObject>(url, cc);
+                    data = GetWebData<JObject>(url, cookies: cc);
                 }
                 else
                 {
@@ -294,13 +294,13 @@ namespace OnlineVideos.Sites
                 data = GetWebData(url);
                 return data;
             }
-            data = GetWebData(url, cc);
+            data = GetWebData(url, cookies: cc);
             if (data.Contains("Unauthorized"))
             {
-                JObject logindata = GetWebData<JObject>(string.Format(LoginUrl, HttpUtility.UrlEncode(UserName), HttpUtility.UrlEncode(Password)), cc);
+                JObject logindata = GetWebData<JObject>(string.Format(LoginUrl, HttpUtility.UrlEncode(UserName), HttpUtility.UrlEncode(Password)), cookies: cc);
                 if ((bool)logindata["success"])
                 {
-                    data = GetWebData(url, cc);
+                    data = GetWebData(url, cookies: cc);
                 }
                 else
                 {
@@ -666,13 +666,13 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             var data = MyGetWebData(nextPageVideosUrl);
             return getVideos(data);
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             if (category.Name == GetTranslation("Viaplay at your service", "Do you need help?"))
                 throw new OnlineVideosException("Forum http://tinyurl.com/olv-viaplay");
@@ -700,7 +700,7 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             if (!HaveCredentials())
                 throw new OnlineVideosException(GetTranslation("Log in", "Log in"));
@@ -719,7 +719,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<OnlineVideos.ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             RssLink cat = new RssLink()
             {
@@ -877,7 +877,7 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> GetLatestVideos()
         {
             RssLink latest = new RssLink() { Name = "Latest Videos", Url = ApiUrl + LatestUrl };
-            List<VideoInfo> videos = getVideoList(latest);
+            List<VideoInfo> videos = GetVideos(latest);
             return videos.Count >= LatestVideosCount ? videos.GetRange(0, (int)LatestVideosCount) : new List<VideoInfo>();
         }
 

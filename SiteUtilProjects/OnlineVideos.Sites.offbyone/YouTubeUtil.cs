@@ -169,7 +169,7 @@ namespace OnlineVideos.Sites
 			}*/
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             currentVideosTitle = null;  // use default title for videos retrieved via this method (which is the Category Name)
 			if ((((RssLink)category).Other as string) == "Login") Login();
@@ -179,7 +179,7 @@ namespace OnlineVideos.Sites
             return parseGData(query);
         }
 
-        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<String> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
 			if (request.Proxy == null)
 				video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(video.VideoUrl);
@@ -515,7 +515,7 @@ namespace OnlineVideos.Sites
             get { return hasNextPage; }
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             if (lastPerformedQuery.StartIndex == 0) lastPerformedQuery.StartIndex = 1;
             lastPerformedQuery.StartIndex += lastPerformedQuery.NumberToRetrieve;
@@ -535,18 +535,13 @@ namespace OnlineVideos.Sites
             return cachedSearchCategories;
         }
 
-        public override List<VideoInfo> Search(string queryStr)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
-            YouTubeQuery query = new YouTubeQuery(YouTubeQuery.DefaultVideoUri) { NumberToRetrieve = pageSize };
-            query.Query = queryStr;
-            return parseGData(query);            
-        }        
-        public override List<VideoInfo> Search(string queryStr, string category)
-        {
-            YouTubeQuery query = new YouTubeQuery(YouTubeQuery.DefaultVideoUri) { NumberToRetrieve = pageSize };
-            query.Categories.Add(new QueryCategory(category, QueryCategoryOperator.AND));
-            query.Query = queryStr;            
-            return parseGData(query);
+            YouTubeQuery ytQuery = new YouTubeQuery(YouTubeQuery.DefaultVideoUri) { NumberToRetrieve = pageSize };
+            if (!string.IsNullOrEmpty(category))
+                ytQuery.Categories.Add(new QueryCategory(category, QueryCategoryOperator.AND));
+            ytQuery.Query = query;
+            return parseGData(ytQuery).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
         }
 
         #endregion
@@ -554,7 +549,7 @@ namespace OnlineVideos.Sites
         #region YouTube Favorites, Related Videos Handling
 
         string currentVideosTitle = null;
-        public override string getCurrentVideosTitle()
+        public override string GetCurrentVideosTitle()
         {
             return currentVideosTitle;
         }
@@ -814,7 +809,7 @@ namespace OnlineVideos.Sites
 
         #region IFilter Members
 
-        public List<VideoInfo> filterVideoList(Category category, int maxResult, string orderBy, string timeFrame)
+        public List<VideoInfo> FilterVideos(Category category, int maxResult, string orderBy, string timeFrame)
         {
             lastPerformedQuery.StartIndex = 1;
             lastPerformedQuery.NumberToRetrieve = maxResult;
@@ -827,7 +822,7 @@ namespace OnlineVideos.Sites
             return parseGData(lastPerformedQuery);
         }
 
-        public List<VideoInfo> filterSearchResultList(string queryStr, int maxResult, string orderBy, string timeFrame)
+        public List<VideoInfo> FilterSearchResults(string queryStr, int maxResult, string orderBy, string timeFrame)
         {
             lastPerformedQuery.StartIndex = 1;
             lastPerformedQuery.NumberToRetrieve = maxResult;
@@ -836,7 +831,7 @@ namespace OnlineVideos.Sites
             return parseGData(lastPerformedQuery);
         }
 
-        public List<VideoInfo> filterSearchResultList(string queryStr, string category, int maxResult, string orderBy, string timeFrame)
+        public List<VideoInfo> FilterSearchResults(string queryStr, string category, int maxResult, string orderBy, string timeFrame)
         {
             lastPerformedQuery.StartIndex = 1;
             lastPerformedQuery.NumberToRetrieve = maxResult;
@@ -845,11 +840,11 @@ namespace OnlineVideos.Sites
             return parseGData(lastPerformedQuery);
         }
 
-        public List<int> getResultSteps() { return steps; }
+        public List<int> GetResultSteps() { return steps; }
 
-        public Dictionary<string, String> getOrderbyList() { return orderByList; }
+        public Dictionary<string, String> GetOrderByOptions() { return orderByList; }
 
-        public Dictionary<string, String> getTimeFrameList() { return timeFrameList; }
+        public Dictionary<string, String> GetTimeFrameOptions() { return timeFrameList; }
 
         #endregion
 

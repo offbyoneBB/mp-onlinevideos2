@@ -25,7 +25,7 @@ namespace OnlineVideos.Sites
       if (!string.IsNullOrEmpty(tv2regex)) regextv2 = new Regex(tv2regex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
     }
 
-    public override string getUrl(VideoInfo video)
+    public override string GetVideoUrl(VideoInfo video)
     {
       XmlDocument doc = new XmlDocument();
       string redirectUrl = GetWebData("http://common.tv2.dk/flashplayer/playlist.xml.php/alias-player_news/autoplay-1/clipid-" + video.Id + "/keys-NEWS,PLAYER.xml");
@@ -36,7 +36,7 @@ namespace OnlineVideos.Sites
     }
 
 
-    public override List<VideoInfo> getVideoList(Category category)
+    public override List<VideoInfo> GetVideos(Category category)
     {
       List<VideoInfo> res = new List<VideoInfo>();
       XmlDocument doc = new XmlDocument();

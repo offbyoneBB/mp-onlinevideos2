@@ -79,7 +79,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             if (category.Other is Regex)
                 regEx_VideoList = (Regex)category.Other;
@@ -89,17 +89,17 @@ namespace OnlineVideos.Sites
                 regEx_NextPage = null;
             else
                 regEx_NextPage = saveNextPage;
-            return base.getVideoList(category);
+            return base.GetVideos(category);
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             bool isLive = video.VideoUrl.StartsWith(@"http://live");
             if (!isLive)
             {
                 hashValue = hashValueShow;
                 requestUrl = requestUrlShow;
-                return base.getUrl(video);
+                return base.GetVideoUrl(video);
             }
             hashValue = hashValueLive;
             requestUrl = requestUrlLive;

@@ -17,7 +17,7 @@ namespace OnlineVideos.Hoster
 
         private string requestFileInformation(string url, CookieContainer cc)
         {
-            string webData = SiteUtilBase.GetWebData(url, cc);            
+            string webData = SiteUtilBase.GetWebData(url, cookies: cc);            
             if (!string.IsNullOrEmpty(webData))
             {
                 if (!string.IsNullOrEmpty(getRegExData(@"(?<exists>This\sfile\sdoesn\'t\sexist,\sor\shas\sbeen\sremoved\s?\.)", webData, "exists")))
@@ -55,7 +55,7 @@ namespace OnlineVideos.Hoster
 
                 //Send Postdata (simulates a button click)
                 string postData = @"op=" + op + "&usr_login=" + usrlogin + "&id=" + id + "&fname=" + fname + "&referer=" + referer + "&hash=" + hash + "&imhuman=" + imhuman;
-                string webData2 = GenericSiteUtil.GetWebDataFromPost(url, postData, cc, url, null, false, false, OnlineVideoSettings.Instance.UserAgent, null);
+                string webData2 = GenericSiteUtil.GetWebData(url, postData, cc, url, null, false, false, OnlineVideoSettings.Instance.UserAgent, null);
 
                 //Extract file url from HTML
                 Match n = Regex.Match(webData2, @"file: ""(?<url>[^""]*)");
