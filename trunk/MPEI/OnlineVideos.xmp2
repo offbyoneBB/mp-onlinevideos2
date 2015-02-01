@@ -2634,7 +2634,7 @@
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe.config</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{0e030923-323c-4964-9e9b-05806a4fac5c}-OnlineVideos.WebAutomation.BrowserHost.exe.config</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe.config</DestinationFilename>
@@ -3701,7 +3701,7 @@ public class Script
                     <Description>Global Id of the extension package - it will be downloaded when no file is set.</Description>
                   </SectionParam>
                   <SectionParam Name="Extension Version">
-                    <Value>2.1.4.5454</Value>
+                    <Value>2.1.7.5510</Value>
                     <ValueType>String</ValueType>
                     <Description>Minimum Version of the extension package - older versions will be updated (only used when downloading via Id).</Description>
                   </SectionParam>
@@ -6541,7 +6541,7 @@ included Titan skin files
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe.config</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{0e030923-323c-4964-9e9b-05806a4fac5c}-OnlineVideos.WebAutomation.BrowserHost.exe.config</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe.config</DestinationFilename>
