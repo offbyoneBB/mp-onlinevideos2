@@ -2579,6 +2579,20 @@
               <ZipFileName>Installer{CopyFile}\{b9e9976d-e565-44e8-a0b3-3c2942c2342d}-Viasat Norge.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Viasat Norge.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Amazon Prime DE.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{db140998-758d-490d-9ac1-b798d5496aa0}-Amazon Prime DE.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Amazon Prime DE.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Amazon Prime DE.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{5aa4b2d7-5a02-467b-9883-226b0356c12b}-Amazon Prime DE.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Amazon Prime DE.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -2630,7 +2644,7 @@
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>extension_settings.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-              <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.10.0.0\extension_settings.xml</DestinationFilename>
+              <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\2.0.0.0\extension_settings.xml</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
@@ -3871,8 +3885,8 @@ public class Script
     <ForumPage>http://forum.team-mediaportal.com/onlinevideos-244/</ForumPage>
     <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
     <Version>
-      <Major>1</Major>
-      <Minor>10</Minor>
+      <Major>2</Major>
+      <Minor>0</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
@@ -3884,7 +3898,7 @@ included Titan skin files
 </VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=10&amp;cf_id=65</OnlineLocation>
-    <ReleaseDate>2014-11-23T15:00:00</ReleaseDate>
+    <ReleaseDate>2015-02-01T15:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\[Name][Version].mpe1</Location>
     <Params>
@@ -6490,6 +6504,20 @@ included Titan skin files
         <ZipFileName>Installer{CopyFile}\{b9e9976d-e565-44e8-a0b3-3c2942c2342d}-Viasat Norge.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Viasat Norge.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Amazon Prime DE.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{db140998-758d-490d-9ac1-b798d5496aa0}-Amazon Prime DE.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Amazon Prime DE.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Amazon Prime DE.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{5aa4b2d7-5a02-467b-9883-226b0356c12b}-Amazon Prime DE.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Amazon Prime DE.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -6523,7 +6551,7 @@ included Titan skin files
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>extension_settings.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\1.10.0.0\extension_settings.xml</DestinationFilename>
+        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\2.0.0.0\extension_settings.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
