@@ -50,7 +50,7 @@ namespace OnlineVideos.Sites
             return Settings.Categories.Count;
         }
         
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             return getVideoListForSinglePage(category, (category as RssLink).Url);
         }
@@ -95,12 +95,12 @@ namespace OnlineVideos.Sites
             get { return !string.IsNullOrEmpty(nextPageUrl); }
         }
         
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return getVideoListForSinglePage(currentCategory, nextPageUrl);
         }
         
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string result = string.Empty;
             string data = GetWebData(string.Format(videoUrlFormat, video.VideoUrl));

@@ -63,7 +63,7 @@ namespace OnlineVideos.Sites.georgius
         public override int DiscoverDynamicCategories()
         {
             int dynamicCategoriesCount = 0;
-            String baseWebData = SiteUtilBase.GetWebData(MixerCzUtil.baseUrl, null, null, null, true);
+            String baseWebData = SiteUtilBase.GetWebData(MixerCzUtil.baseUrl, forceUTF8: true);
 
             int startIndex = baseWebData.IndexOf(MixerCzUtil.dynamicCategoryStart);
             if (startIndex >= 0)
@@ -104,7 +104,7 @@ namespace OnlineVideos.Sites.georgius
             if (!String.IsNullOrEmpty(pageUrl))
             {
                 this.nextPageUrl = String.Empty;
-                String baseWebData = MixerCzUtil.GetWebData(pageUrl, null, null, null, true);
+                String baseWebData = MixerCzUtil.GetWebData(pageUrl, forceUTF8: true);
 
                 int startIndex = baseWebData.IndexOf(MixerCzUtil.showEpisodesBlockStart);
                 if (startIndex >= 0)
@@ -213,13 +213,13 @@ namespace OnlineVideos.Sites.georgius
             return videoList;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             this.currentStartIndex = 0;
             return this.GetVideoList(category);
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return this.GetVideoList(this.currentCategory);
         }
@@ -236,9 +236,9 @@ namespace OnlineVideos.Sites.georgius
             }
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
-            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
+            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, forceUTF8: true);
 
             if (video.PlaybackOptions == null)
             {

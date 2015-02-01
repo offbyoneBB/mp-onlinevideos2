@@ -115,7 +115,7 @@ namespace OnlineVideos.Sites
 
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             if (((RssLink)category).Url.EndsWith("EMISSIONS_accueil.aspx"))
             {                
@@ -186,7 +186,7 @@ namespace OnlineVideos.Sites
             return null;
         }
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<string> listUrls = new List<string>();
             string sig = "";

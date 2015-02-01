@@ -19,9 +19,9 @@ namespace OnlineVideos.Hoster
         public override string getVideoUrls(string url)
         {
             CookieContainer cc = new CookieContainer();
-            string first = SiteUtilBase.GetWebData(url, cc);
+            string first = SiteUtilBase.GetWebData(url, cookies: cc);
             string code = Regex.Match(first, @"name=""code""\svalue=""(?<value>[^""]+)""").Groups["value"].Value;
-            string second = SiteUtilBase.GetWebDataFromPost(url, "code=" + code, cc, url);
+            string second = SiteUtilBase.GetWebData(url, "code=" + code, cc, url);
             Match n = Regex.Match(second, @"url:\s'(?<url>.*/get/[^']+)'");
             if (n.Success)
             {

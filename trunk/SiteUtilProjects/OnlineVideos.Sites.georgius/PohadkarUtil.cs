@@ -86,7 +86,7 @@ namespace OnlineVideos.Sites.georgius
         public override int DiscoverDynamicCategories()
         {
             int categoriesCount = 0;
-            String baseWebData = SiteUtilBase.GetWebData(PohadkarUtil.baseUrl, null, null, null, true);
+            String baseWebData = SiteUtilBase.GetWebData(PohadkarUtil.baseUrl, forceUTF8: true);
 
             int startIndex = baseWebData.IndexOf(PohadkarUtil.categoriesStart);
             if (startIndex >= 0)
@@ -163,7 +163,7 @@ namespace OnlineVideos.Sites.georgius
                 parentCategory.SubCategories = new List<Category>();
             }
 
-            String baseWebData = SiteUtilBase.GetWebData(url, null, null, null, true);
+            String baseWebData = SiteUtilBase.GetWebData(url, forceUTF8: true);
 
             while (true)
             {
@@ -226,11 +226,11 @@ namespace OnlineVideos.Sites.georgius
                 if ((this.currentCategory.Name == "Search") && (this.currentCategory.Url == pageUrl))
                 {
                     this.cookieContainer = new CookieContainer();
-                    baseWebData = SiteUtilBase.GetWebDataFromPost(pageUrl, String.Format(PohadkarUtil.searchRequest, HttpUtility.UrlEncode((String)this.currentCategory.Other)), this.cookieContainer, null, null, true);
+                    baseWebData = SiteUtilBase.GetWebData(pageUrl, String.Format(PohadkarUtil.searchRequest, HttpUtility.UrlEncode((String)this.currentCategory.Other)), this.cookieContainer, null, null, true);
                 }
                 else
                 {
-                    baseWebData = SiteUtilBase.GetWebData(pageUrl, (this.currentCategory.Name == "Search") ? this.cookieContainer : null, null, null, true);
+                    baseWebData = SiteUtilBase.GetWebData(pageUrl, cookies: (this.currentCategory.Name == "Search") ? this.cookieContainer : null, forceUTF8: true);
                 }
 
                 int index = baseWebData.IndexOf(PohadkarUtil.showEpisodesStart);
@@ -353,13 +353,13 @@ namespace OnlineVideos.Sites.georgius
             return videoList;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             this.currentStartIndex = 0;
             return this.GetVideoList(category);
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return this.GetVideoList(this.currentCategory);
         }
@@ -376,10 +376,10 @@ namespace OnlineVideos.Sites.georgius
             }
         }
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<String> urls = new List<string>();
-            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
+            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, forceUTF8: true);
             MatchCollection matches = Regex.Matches(baseWebData, PohadkarUtil.showVideoUrlsRegex);
             foreach (Match match in matches)
             {
@@ -454,7 +454,7 @@ namespace OnlineVideos.Sites.georgius
             return urls;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             return String.Empty;
         }
@@ -467,9 +467,9 @@ namespace OnlineVideos.Sites.georgius
             }
         }
 
-        public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
-            List<VideoInfo> videoList = this.getVideoList(new RssLink()
+            List<VideoInfo> videoList = this.GetVideoList(new RssLink()
             {
                 Name = "Search",
                 Other = query,

@@ -27,7 +27,7 @@ namespace OnlineVideos.Hoster
 
             string page = SiteUtilBase.GetWebData(@"http://www.ecostream.tv/xhr/video/vidurl",
                 String.Format("id={0}&tpm={1}{2}", dataid, footerhash, slotId),
-                headers, null, null, false, false, null, false);
+                headers: headers);
 
 
             Match m = Regex.Match(page, @"""url"":""(?<url>[^""]*)""");

@@ -174,7 +174,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
         
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             return getVideoListForSinglePage(category, (category as RssLink).Url);
         }
@@ -294,12 +294,12 @@ namespace OnlineVideos.Sites
             get { return !string.IsNullOrEmpty(nextPageUrl); }
         }
         
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return getVideoListForSinglePage(currentCategory, nextPageUrl);
         }
         
-        public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist)
+        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist)
         {
             List<string> result = new List<string>();
             // find videoId
@@ -328,7 +328,7 @@ namespace OnlineVideos.Sites
             return result;
         }
         
-        public override string getPlaylistItemUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist)
+        public override string GetPlaylistItemVideoUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist)
         {
             string result = string.Empty;
             string webData = GetWebData(clonedVideoInfo.VideoUrl);

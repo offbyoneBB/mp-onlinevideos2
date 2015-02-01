@@ -33,7 +33,7 @@ namespace OnlineVideos.Hoster
 
             //Send Postdata (simulates a button click)
             string postData = @"op=" + formOp + "&usr_login=" + formUsrlogin + "&id=" + formId + "&fname=" + formFname + "&referer=" + formReferer + "&method_free=" + formMethodFree;
-            string webData = GenericSiteUtil.GetWebDataFromPost(url, postData);
+            string webData = GenericSiteUtil.GetWebData(url, postData);
 
             //Grab content and decompress Dean Edwards compressor
             string packed = GetSubString(webData, @"swfobject.js'></script>", @"</script>");

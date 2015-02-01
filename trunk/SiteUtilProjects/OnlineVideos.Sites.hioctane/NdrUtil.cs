@@ -32,7 +32,7 @@ namespace OnlineVideos.Sites
 			return Settings.Categories.Count;
 		}
 
-		public override List<VideoInfo> getVideoList(Category category)
+		public override List<VideoInfo> GetVideos(Category category)
 		{
 			HasNextPage = false;
 			var result = new List<VideoInfo>();
@@ -71,12 +71,12 @@ namespace OnlineVideos.Sites
 			return result;
 		}
 
-		public override List<VideoInfo> getNextPageVideos()
+		public override List<VideoInfo> GetNextPageVideos()
 		{
-			return getVideoList(new RssLink() { Url = nextPageUrl });
+			return GetVideos(new RssLink() { Url = nextPageUrl });
 		}
 
-        public override String getUrl(VideoInfo video)
+        public override String GetVideoUrl(VideoInfo video)
         {
 			video.PlaybackOptions = new Dictionary<string, string>();
 			string data = GetWebData(video.VideoUrl);
@@ -105,9 +105,9 @@ namespace OnlineVideos.Sites
 
 		public override bool CanSearch { get { return true; } }
 
-		public override List<ISearchResultItem> DoSearch(string query)
+		public override List<ISearchResultItem> Search(string query, string category = null)
 		{
-			return getVideoList(new RssLink() { Url = string.Format(search_url, query) }).ConvertAll<ISearchResultItem>(v => (ISearchResultItem)v);
+			return GetVideos(new RssLink() { Url = string.Format(search_url, query) }).ConvertAll<ISearchResultItem>(v => (ISearchResultItem)v);
 		}
     }
 }

@@ -237,13 +237,13 @@ namespace OnlineVideos.Sites.georgius
             return videoList;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             this.currentStartIndex = 0;
             return this.GetVideoList(category);
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return this.GetVideoList(this.currentCategory);
         }
@@ -260,7 +260,7 @@ namespace OnlineVideos.Sites.georgius
             }
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl);
 
@@ -274,7 +274,7 @@ namespace OnlineVideos.Sites.georgius
 
             if (video.VideoUrl != TA3Util.baseLiveUrl)
             {
-                String playerOfflineWebData = SiteUtilBase.GetWebData(TA3Util.playerOfflineUrl, null, video.VideoUrl);
+                String playerOfflineWebData = SiteUtilBase.GetWebData(TA3Util.playerOfflineUrl, referer: video.VideoUrl);
 
                 int startIndex = baseWebData.IndexOf(TA3Util.videoIdStart);
                 if (startIndex >= 0)
@@ -318,7 +318,7 @@ namespace OnlineVideos.Sites.georgius
             }
             else
             {
-                String playerOnlineWebData = SiteUtilBase.GetWebData(TA3Util.playerOnlineUrl, null, video.VideoUrl);
+                String playerOnlineWebData = SiteUtilBase.GetWebData(TA3Util.playerOnlineUrl, referer: video.VideoUrl);
 
                 String videoId = String.Empty;
                 String videoLowId = String.Empty;

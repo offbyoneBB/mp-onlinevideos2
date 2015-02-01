@@ -76,13 +76,13 @@ namespace OnlineVideos.Sites
 
         #region GetUrl
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             if (video.Other == "livestream")
                 return getLiveUrls(video);
 
             WebProxy proxyObj = getProxy();
-            Match m = videoPidRegex.Match(GetWebData(video.VideoUrl, null, null, proxyObj));
+            Match m = videoPidRegex.Match(GetWebData(video.VideoUrl, proxy: proxyObj));
             if (!m.Success)
             {
                 Log.Warn("BBCiPlayer: Failed to parse vpid from '{0}'", video.VideoUrl);
@@ -90,7 +90,7 @@ namespace OnlineVideos.Sites
             }
 
             XmlDocument doc = new XmlDocument();
-            doc.LoadXml(GetWebData("http://www.bbc.co.uk/mediaselector/4/mtis/stream/" + m.Groups[1].Value, null, null, proxyObj)); //uk only
+            doc.LoadXml(GetWebData("http://www.bbc.co.uk/mediaselector/4/mtis/stream/" + m.Groups[1].Value, proxy: proxyObj)); //uk only
             XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");
 
@@ -187,7 +187,7 @@ namespace OnlineVideos.Sites
         {
             WebProxy proxyObj = getProxy();
             XmlDocument doc = new XmlDocument();
-            doc.LoadXml(GetWebData("http://www.bbc.co.uk/mediaselector/playlists/hds/pc/ak/" + video.VideoUrl, null, null, proxyObj));
+            doc.LoadXml(GetWebData("http://www.bbc.co.uk/mediaselector/playlists/hds/pc/ak/" + video.VideoUrl, proxy: proxyObj));
             SortedList<string, string> sortedPlaybackOptions = new SortedList<string, string>(new QualityComparer());
             foreach (XmlElement mediaElem in doc.GetElementsByTagName("media"))
             {
@@ -333,7 +333,7 @@ namespace OnlineVideos.Sites
 
         #region Videos
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             if (category is Group)
                 return getLiveVideoList((Group)category);
@@ -424,7 +424,7 @@ namespace OnlineVideos.Sites
 
         #region Search
 
-        public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             List<ISearchResultItem> results = new List<ISearchResultItem>();
             foreach (Category cat in discoverSubCategoriesLocal(null, string.Format(searchUrl, query)))

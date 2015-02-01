@@ -262,12 +262,12 @@ namespace OnlineVideos.Sites
 
 
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             if (category.Other is List<VideoInfo>) //tvshows
                 return (List<VideoInfo>)category.Other;
             regEx_VideoList = regex_MoviesVideoList;
-            return base.getVideoList(category);
+            return base.GetVideos(category);
         }
 
         public override string FormatHosterName(string name)
@@ -339,7 +339,7 @@ namespace OnlineVideos.Sites
             get { return true; }
         }
 
-        public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             List<ISearchResultItem> result = new List<ISearchResultItem>();
             RssLink cat = new RssLink()

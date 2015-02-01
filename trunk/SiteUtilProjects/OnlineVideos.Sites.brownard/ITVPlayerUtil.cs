@@ -118,7 +118,7 @@ namespace OnlineVideos.Sites
             return getShowsList(parentCategory);
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             Group group = category as Group;
             if (group != null)
@@ -133,7 +133,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             //Direct stream
             if (video.VideoUrl.StartsWith("http://") || video.VideoUrl.StartsWith("rtmp://") || video.VideoUrl.StartsWith("rtmpe://"))
@@ -159,7 +159,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             string html = GetWebData(string.Format("http://www.itv.com/itvplayer/search/term/{0}/catch-up", query));
             List<ISearchResultItem> cats = new List<ISearchResultItem>();

@@ -77,7 +77,7 @@ namespace OnlineVideos.Sites.georgius
             if (!String.IsNullOrEmpty(pageUrl))
             {
                 this.nextPageUrl = String.Empty;
-                String baseWebData = SiteUtilBase.GetWebData(pageUrl, null, null, null, true);
+                String baseWebData = SiteUtilBase.GetWebData(pageUrl, forceUTF8: true);
 
                 int index = baseWebData.IndexOf(ApetitTvUtil.showEpisodesStart);
                 if (index > 0)
@@ -189,13 +189,13 @@ namespace OnlineVideos.Sites.georgius
             return videoList;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             this.currentStartIndex = 0;
             return this.GetVideoList(category);
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return this.GetVideoList(this.currentCategory);
         }
@@ -212,9 +212,9 @@ namespace OnlineVideos.Sites.georgius
             }
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
-            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
+            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, forceUTF8: true);
 
             int startIndex = baseWebData.IndexOf(ApetitTvUtil.showVideoUrlBlockStart);
             if (startIndex >= 0)

@@ -38,7 +38,7 @@ namespace OnlineVideos.Sites
             return Settings.Categories.Count;
         }
         
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> result = new List<VideoInfo>();
             
@@ -68,7 +68,7 @@ namespace OnlineVideos.Sites
             return result;
         }
         
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string result = video.VideoUrl;
             
@@ -76,7 +76,7 @@ namespace OnlineVideos.Sites
             if (json != null)
             {
                 video.VideoUrl = string.Format(stacksUrlFormat, siteCode, (int) json["Id"], (int) json["ContentPackages"][0]["Id"]);
-                result = base.getUrl(video);
+                result = base.GetVideoUrl(video);
             }
             return result;
         }

@@ -108,7 +108,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> result = new List<VideoInfo>();
 
@@ -133,7 +133,7 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<string> result = new List<string>();
 
@@ -180,7 +180,7 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public override string getPlaylistItemUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
+        public override string GetPlaylistItemVideoUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
         {
             return CreateRTMPUrl(clonedVideoInfo.VideoUrl);
         }
@@ -192,7 +192,7 @@ namespace OnlineVideos.Sites
             string result = url;
 
             // must specify referer as 3rd argument (or we will get 403 Forbidden from cls.ctvdigital.net)
-            string webData = GetWebData(url, null, baseUrl);
+            string webData = GetWebData(url, referer: baseUrl);
 
             if (!string.IsNullOrEmpty(webData))
             {

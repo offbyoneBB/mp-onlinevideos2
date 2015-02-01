@@ -546,7 +546,7 @@ namespace OnlineVideos.Sites.georgius
             }
         }
 
-        public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             List<VideoInfo> videoList = this.getVideoList(new RssLink()
             {

@@ -196,7 +196,7 @@ namespace OnlineVideos.Sites
             return category;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             RssLink parentCategory = category as RssLink;
             List<VideoInfo> videoList = new List<VideoInfo>();
@@ -231,7 +231,7 @@ namespace OnlineVideos.Sites
             return videoList;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             if (REGISTRO.Equals(video.Other) || PREMIUM.Equals(video.Other) || PREESTRENO.Equals(video.Other))
             {
@@ -246,7 +246,7 @@ namespace OnlineVideos.Sites
                 String videoID = match.Groups["videoID"].Value;
                 String token = HttpUtility.UrlEncode(getToken(videoID, "QWtMLXs414Yo+c#_+Q#K@NN)"));
                 String auxURL = String.Format("https://servicios.atresplayer.com/api/urlVideo/{0}/{1}/{2}", videoID, "android_tablet", token);
-                String datos = GetWebData(auxURL,cc,null,null,false,false,"Dalvik/1.6.0 (Linux; U; Android 4.3; GT-I9300 Build/JSS15J)",null);
+                String datos = GetWebData(auxURL, cookies: cc, userAgent: "Dalvik/1.6.0 (Linux; U; Android 4.3; GT-I9300 Build/JSS15J)");
                 JObject datosJSON = JObject.Parse(datos);
                 // {"result": 0, "resultDes": "OK", "resultObject": {"es": "http://urldelvideo"}}
                 // {"result": 2,"resultDes": "El usuario no tiene permisos para ver el vídeo"}
@@ -299,8 +299,8 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                GetWebData(url, postData, null, cc, null, false, false, null, false);
-                String datosCookie = GetWebData("https://servicios.atresplayer.com/connected", cc);
+                GetWebData(url, postData, cookies: cc);
+                String datosCookie = GetWebData("https://servicios.atresplayer.com/connected", cookies: cc);
                 Log.Debug("Atresplayer: Datos obtenidos del login: {0}", datosCookie);
                 //{"iduser":0000000,"connected":true,"username":"xxxxxx","subscriber":false,"keywords":""} // login OK
                 //{"connected": false} // Login error

@@ -62,7 +62,7 @@ namespace OnlineVideos.Sites
 			}
 		}
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
 			if (category is RssLink)
 			{
@@ -165,12 +165,12 @@ namespace OnlineVideos.Sites
 			return videos;
 		}
 
-		public override List<VideoInfo> getNextPageVideos()
+		public override List<VideoInfo> GetNextPageVideos()
 		{
 			return GetVideosFromArchivePage(nextPageUrl);
 		}
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
 			string data = GetWebData(video.VideoUrl);
 			if (video.Description == "Прямой эфир") // live

@@ -66,7 +66,7 @@ namespace OnlineVideos.Sites
             return dynamicCategories;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> res = new List<VideoInfo>();
             string webData = GetWebData(((RssLink)category).Url);

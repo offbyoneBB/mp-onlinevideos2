@@ -97,11 +97,11 @@ namespace OnlineVideos.Sites
             if (p >= 0)
             {
                 string nm = url.Substring(p + 1);
-                webData = GetWebData(url.Substring(0, p), cc, forceUTF8: true);
+                webData = GetWebData(url.Substring(0, p), cookies: cc, forceUTF8: true);
                 webData = @"class=""listbig"">" + GetSubString(webData, @"class=""listbig""><a name=""" + nm + @"""", @"class=""listbig""");
             }
             else
-                webData = GetWebData(url, cc, forceUTF8: true);
+                webData = GetWebData(url, cookies: cc, forceUTF8: true);
 
             parentCategory.SubCategories = new List<Category>();
             Match m = null;
@@ -164,7 +164,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             return getOnePageVideoList(category, ((RssLink)category).Url);
         }
@@ -176,7 +176,7 @@ namespace OnlineVideos.Sites
             string webData;
             if (category.Other.Equals(Depth.BareList))
             {
-                webData = GetWebData(url, cc, forceUTF8: true);
+                webData = GetWebData(url, cookies: cc, forceUTF8: true);
                 webData = GetSubString(webData, @"class=""listbig""", @"class=""clear""");
                 string[] parts = url.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length >= 2)
@@ -253,7 +253,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return getOnePageVideoList(currCategory, nextVideoListPageUrl);
         }
@@ -266,7 +266,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             List<ISearchResultItem> cats = new List<ISearchResultItem>();
 
@@ -338,7 +338,7 @@ namespace OnlineVideos.Sites
         public override string ResolveVideoUrl(string url)
         {
 
-            string webData = GetWebData(url, cc, forceUTF8: true, referer: url, proxy: GetProxy());
+            string webData = GetWebData(url, cookies: cc, forceUTF8: true, referer: url, proxy: GetProxy());
             Match m = Regex.Match(webData, @"<a\sclass=""myButton""\shref=""(?<url>[^""]*)""[^>]*>Click\sHere\sto\sPlay");
             if (m.Success)
             {

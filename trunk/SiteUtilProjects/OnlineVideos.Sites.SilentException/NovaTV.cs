@@ -30,7 +30,7 @@ namespace OnlineVideos.Sites
             regEx_URLFile = new Regex(URLFile_regEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
         }
 
-        public override String getUrl(VideoInfo video)
+        public override String GetVideoUrl(VideoInfo video)
         {
             string data = GetWebData(video.VideoUrl);
             Match m = regEx_URL.Match(data);

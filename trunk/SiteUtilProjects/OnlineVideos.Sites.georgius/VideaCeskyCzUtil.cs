@@ -254,13 +254,13 @@ namespace OnlineVideos.Sites.georgius
             return videoList;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             this.currentStartIndex = 0;
             return this.GetVideoList(category);
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return this.GetVideoList(this.currentCategory);
         }
@@ -277,7 +277,7 @@ namespace OnlineVideos.Sites.georgius
             }
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl);
             String videoUrl = String.Empty;
@@ -348,7 +348,7 @@ namespace OnlineVideos.Sites.georgius
         //    }
         //}
 
-        //public override List<VideoInfo> Search(string query)
+        //public override List<ISearchResultItem> Search(string query, string category = null)
         //{
         //    return this.getVideoList(new RssLink()
         //    {

@@ -61,7 +61,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
         
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> result = new List<VideoInfo>();
             XmlDocument xml = GetWebData<XmlDocument>(((RssLink ) category).Url);

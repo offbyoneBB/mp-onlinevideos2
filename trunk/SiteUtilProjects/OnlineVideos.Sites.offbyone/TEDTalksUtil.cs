@@ -58,12 +58,12 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-		public override List<VideoInfo> getVideoList(Category category)
+		public override List<VideoInfo> GetVideos(Category category)
 		{
 			return getVideoList((category as RssLink).Url);
 		}
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return getVideoList(nextPageUrl);
         }
@@ -100,7 +100,7 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             video.PlaybackOptions = new Dictionary<string, string>();
             string data = GetWebData(video.VideoUrl);

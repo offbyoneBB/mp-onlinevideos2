@@ -15,7 +15,7 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             cc = new CookieContainer();
-            string data = GetWebData(baseUrl, cc);
+            string data = GetWebData(baseUrl, cookies: cc);
             Match m = Regex.Match(data, @"<input\stype=""hidden""\sname=""tweakers_token""\svalue=""(?<tweakerstoken>[^""]+)"">");
             if (m.Success)
             {
@@ -65,9 +65,9 @@ namespace OnlineVideos.Sites
             return cc;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
-            string res = base.getUrl(video);
+            string res = base.GetVideoUrl(video);
             if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 1)
                 return video.PlaybackOptions.Last().Value;
             return res;

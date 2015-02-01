@@ -46,7 +46,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             String webData = GetWebData(((RssLink)category).Url, forceUTF8: true);
             XmlDocument doc = new XmlDocument();
@@ -88,7 +88,7 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public override String getUrl(VideoInfo video)
+        public override String GetVideoUrl(VideoInfo video)
         {
             if (video.PlaybackOptions == null)
                 return String.Empty;

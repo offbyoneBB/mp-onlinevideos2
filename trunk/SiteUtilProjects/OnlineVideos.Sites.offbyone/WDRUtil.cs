@@ -59,7 +59,7 @@ namespace OnlineVideos.Sites
             return Settings.Categories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
 			if (category.Name == "Livestream")
 				return new List<VideoInfo>() { new VideoInfo() { Title = "Livestream", VideoUrl = ((RssLink)category).Url } };
@@ -70,7 +70,7 @@ namespace OnlineVideos.Sites
 			}
         }
 
-		public override List<VideoInfo> getNextPageVideos()
+		public override List<VideoInfo> GetNextPageVideos()
 		{
 			if (!string.IsNullOrEmpty(nextVideoPageUrl))
 			{
@@ -82,15 +82,15 @@ namespace OnlineVideos.Sites
 		
 		public override bool CanSearch { get { return true; } }
 
-		public override List<ISearchResultItem> DoSearch(string query)
+		public override List<ISearchResultItem> Search(string query, string category = null)
 		{
-			var searchResultData = GetWebDataFromPost(searchUrl, string.Format("q={0}", query));
+			string searchResultData = GetWebData(searchUrl, string.Format("q={0}", query));
 			var htmlDoc = new HtmlDocument();
 			htmlDoc.LoadHtml(searchResultData);
 			return getVideos(htmlDoc, new Uri(searchUrl)).ConvertAll(v => (ISearchResultItem)v);
 		}
 
-		public override string getUrl(VideoInfo video)
+		public override string GetVideoUrl(VideoInfo video)
 		{
 			string playlistUrl = video.VideoUrl;
 			if (video.Title != "Livestream")

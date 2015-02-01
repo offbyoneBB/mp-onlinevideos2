@@ -92,7 +92,7 @@ namespace OnlineVideos.Sites.georgius
             //    });
             //dynamicCategoriesCount++;
 
-            String baseWebData = SiteUtilBase.GetWebData(CeskaTelevizeUtil.dynamicCategoryBaseUrl, null, null, null, true).Replace("\r", "").Replace("\n", "");
+            String baseWebData = SiteUtilBase.GetWebData(CeskaTelevizeUtil.dynamicCategoryBaseUrl, forceUTF8: true).Replace("\r", "").Replace("\n", "");
 
             int index = baseWebData.IndexOf(CeskaTelevizeUtil.dynamicCategoryStart);
             if (index > 0)
@@ -303,13 +303,13 @@ namespace OnlineVideos.Sites.georgius
             return videoList;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             this.currentStartIndex = 0;
             return this.GetVideoList(category);
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return this.GetVideoList(this.currentCategory);
         }
@@ -334,7 +334,7 @@ namespace OnlineVideos.Sites.georgius
             return builder.ToString();
         }
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<String> resultUrls = new List<string>();
 
@@ -346,7 +346,7 @@ namespace OnlineVideos.Sites.georgius
             Boolean live = (this.currentCategory.Name == "Živě");
 
             System.Net.CookieContainer container = new System.Net.CookieContainer();
-            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, container, null, null, true);
+            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, cookies: container, forceUTF8: true);
 
             int start = baseWebData.IndexOf(CeskaTelevizeUtil.showEpisodePostStart);
             if (start >= 0)
@@ -473,7 +473,7 @@ namespace OnlineVideos.Sites.georgius
             return resultUrls;
         }
 
-        public override string getPlaylistItemUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
+        public override string GetPlaylistItemVideoUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
         {
             CeskaTelevizeVideoCollection videos = (CeskaTelevizeVideoCollection)clonedVideoInfo.Other;
             CeskaTelevizeVideo keyVideo = videos[clonedVideoInfo.VideoUrl];
@@ -507,7 +507,7 @@ namespace OnlineVideos.Sites.georgius
             int dynamicSubCategoriesCount = 0;
             RssLink category = (RssLink)parentCategory;
 
-            String baseWebData = SiteUtilBase.GetWebData(category.Url, null, null, null, true);
+            String baseWebData = SiteUtilBase.GetWebData(category.Url, forceUTF8: true);
 
             int startIndex = baseWebData.IndexOf(CeskaTelevizeUtil.showListStart);
             if (startIndex > 0)

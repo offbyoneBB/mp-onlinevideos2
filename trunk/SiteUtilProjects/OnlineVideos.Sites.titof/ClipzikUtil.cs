@@ -17,7 +17,7 @@ namespace OnlineVideos.Sites
     public class ClipzikUtil : GenericSiteUtil
     {
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {            
             string webData = GetWebData(video.VideoUrl);
             if (webData.Contains(@"youtube.com"))

@@ -78,7 +78,7 @@ namespace OnlineVideos.Sites
                 .Replace("#","\\#");
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             // GET /es/get/playlist/676435921001/ HTTP/1.1
             List<VideoInfo> videoList = new List<VideoInfo>();
@@ -228,7 +228,7 @@ namespace OnlineVideos.Sites
         //****************************************************** Brightcove util *********************************************************
         //********************************************************************************************************************************
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string webdata = GetWebData(video.VideoUrl);
             return GetFileUrl(video, webdata);

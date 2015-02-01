@@ -7,7 +7,6 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
 using OnlineVideos.MPUrlSourceFilter.UserSettings;
 
@@ -131,18 +130,19 @@ namespace OnlineVideos.Sites
         }
 
         /// <summary>
-        /// This is the only function a subclass has to implement. It's called when a user selects a category in the GUI. 
-        /// It should return a list of videos for that category, reset the paging indexes, remember this category, whatever is needed to hold state.
+        /// This is the only function a subclass has to implement. It's called when a user selects a category in the GUI.<br/>
+        /// It should return a list of videos for that category, reset the paging indexes, remember this category, whatever is needed to hold state,
+        /// because a call to <see cref="HasNextPage"/> and <see cref="GetNextPageVideos"/> will not give any parameter.
         /// </summary>
         /// <param name="category">The <see cref="Category"/> that was selected by the user.</param>
-        /// <returns>a list of <see cref="VideoInfo"/> object for display</returns>
-        public abstract List<VideoInfo> getVideoList(Category category);
+        /// <returns>a list of <see cref="VideoInfo"/> objects for display</returns>
+        public abstract List<VideoInfo> GetVideos(Category category);
 
         /// <summary>
         /// If the site's categories can be retrieved dynamically, then it should be done in the implementation of this method.
         /// The categories must be added to the <see cref="SiteSettings"/> retrieved from the <see cref="Settings"/> property of this class.
         /// Once the categories are added you should set <see cref="SiteSettings.DynamicCategoriesDiscovered"/> to true, 
-        /// so this method won't be called each time the user enters this site in the GUI (unless youi want that behavior).<br/>
+        /// so this method won't be called each time the user enters this site in the GUI (unless you want that behavior).<br/>
         /// default: sets <see cref="SiteSettings.DynamicCategoriesDiscovered"/> to true
         /// </summary>
         /// <returns>The number of dynamic categories added. 0 means none found / added</returns>
@@ -186,8 +186,7 @@ namespace OnlineVideos.Sites
 
         /// <summary>
         /// This will be called to find out if there is a next page for the videos that have just been returned 
-        /// by a call to <see cref="getVideoList"/>. If returns true, the menu entry for "next page" will be enabled, otherwise disabled.<br/>
-        /// Example: <see cref="MtvMusicVideosUtil"/><br/>
+        /// by a call to <see cref="GetVideos"/>. If returns true, the menu entry for "next page" will be enabled, otherwise disabled.<br/>
         /// default: always false
         /// </summary>
         public virtual bool HasNextPage { get; protected set; }
@@ -197,35 +196,46 @@ namespace OnlineVideos.Sites
         /// so the class implementation has to remember and set the current category and page itself.
         /// It will only be called if <see cref="HasNextPage"/> returned true on the last call 
         /// and after the user selected the menu entry for "next page".<br/>
-        /// Example: <see cref="MtvMusicVideosUtil"/><br/>
         /// default: empty list
         /// </summary>
-        /// <returns>a list of <see cref="VideoInfo"/> objects for the next page of the last queried category.</returns>
-        public virtual List<VideoInfo> getNextPageVideos()
+        /// <returns>a list of <see cref="VideoInfo"/> objects for the next page of the last queried category (or search).</returns>
+        public virtual List<VideoInfo> GetNextPageVideos()
         {
             return new List<VideoInfo>();
         }
 
         /// <summary>
-        /// This function will be called to get the urls for playback of a video.<br/>
-        /// By default: returns a list with the result from <see cref="getUrl"/>.
+        /// This function will be called when the user selects a video for playback. It should return the absolute url to the video file.<br/>
+        /// By default, the <see cref="VideoInfo.VideoUrl"/> fields value will be returned.
+        /// </summary>
+        /// <param name="video">The <see cref="VideoInfo"/> from the list of displayed videos that were returned by this instance previously.</param>
+        /// <returns>A valid url or filename.</returns>
+        public virtual String GetVideoUrl(VideoInfo video)
+        {
+            return video.VideoUrl;
+        }
+
+        /// <summary>
+        /// This function will be called to get the urls for playback of a video. 
+        /// Use this if your video is split into smaller parts for playback.<br/>
+        /// By default: returns a list with the result from <see cref="GetVideoUrl"/>.
         /// </summary>
         /// <param name="video">The <see cref="VideoInfo"/> object, for which to get a list of urls.</param>
         /// <returns></returns>
-        public virtual List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public virtual List<String> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<String> urls = new List<String>();
-            urls.Add(getUrl(video));
+            urls.Add(GetVideoUrl(video));
             return urls;
         }
 
         /// <summary>
         /// Allows the Util to resolve the url of a playlist item to playback options or a new url directly before playback.
         /// </summary>
-        /// <param name="clonedVideoInfo">A clone of the original <see cref="VideoInfo"/> object, given in <see cref="getMultipleVideoUrls"/>, with the VideoUrl set to one of the urls returned.</param>
+        /// <param name="clonedVideoInfo">A clone of the original <see cref="VideoInfo"/> object, given in <see cref="GetMultipleVideoUrls"/>, with the VideoUrl set to one of the urls returned.</param>
         /// <param name="chosenPlaybackOption">the key from the <see cref="VideoInfo.PlaybackOptions"/> of the first video chosen by the user</param>
-        /// <returns>the resolved url (by default just the clonedVideoInfo.VideoUrl that was given in <see cref="getMultipleVideoUrls"/></returns>
-        public virtual string getPlaylistItemUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
+        /// <returns>the resolved url (by default just the clonedVideoInfo.VideoUrl that was given in <see cref="GetMultipleVideoUrls"/></returns>
+        public virtual string GetPlaylistItemVideoUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
         {
             return clonedVideoInfo.VideoUrl;
         }
@@ -262,17 +272,6 @@ namespace OnlineVideos.Sites
         {
         }
 
-        /// <summary>
-        /// This function will be called when the user selects a video for playback. It should return the absolute url to the video file.<br/>
-        /// By default, the <see cref="VideoInfo.VideoUrl"/> fields value will be returned.
-        /// </summary>
-        /// <param name="video">The <see cref="VideoInfo"/> from the list of displayed videos that were returned by this instance previously.</param>
-        /// <returns>A valid url or filename.</returns>
-        public virtual String getUrl(VideoInfo video)
-        {
-            return video.VideoUrl;
-        }
-
         #region Search
         /// <summary>
         /// Returns true, if this site allows searching.<br/>
@@ -296,7 +295,7 @@ namespace OnlineVideos.Sites
         /// Will be called to get the list of categories (names only) that can be chosen to search. 
         /// The keys will be the names and the value will be given to the <see cref="Search"/> as parameter.<br/>
         /// default: returns empty list, so no category specific search can be done
-        /// This is also used if HasFilterCategories returns true
+        /// This is also used if <see cref="HasFilterCategories"/> returns true
         /// </summary>
         /// <returns></returns>
         public virtual Dictionary<string, string> GetSearchableCategories()
@@ -305,58 +304,23 @@ namespace OnlineVideos.Sites
         }
 
         /// <summary>
-        /// Should return a list of <see cref="VideoInfo"/> for the given query.
-        /// </summary>
-        /// <param name="query">The user entered query.</param>
-        /// <returns>the list of videos matching that search query.</returns>
-        [Obsolete]
-        public virtual List<VideoInfo> Search(string query)
-        {
-            return new List<VideoInfo>();
-        }
-
-        /// <summary>
-        /// Should return a list of <see cref="VideoInfo"/> or <see cref="Category"/> for the given query.<br/>
-        /// All items in the list must be of the same type!
-        /// </summary>
-        /// <param name="query">The user entered query.</param>
-        /// <returns>the list of videos or categories matching that search query.</returns>
-        public virtual List<ISearchResultItem> DoSearch(string query)
-        {
-            return Search(query).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
-        }
-
-        /// <summary>
-        /// Should return a list of <see cref="VideoInfo"/> for the given query limited to the given category.<br/>
-        /// default: calls the Search overload without a category parameter
+        /// Should return a list of <see cref="VideoInfo"/> or <see cref="Category"/> for the given query - limited to the given category if not null.<br/>
+        /// All items in the list must be of the same type!<br/>
+        /// default: returns empty list
         /// </summary>        
-        /// <param name="category">The category to search in.</param>
         /// <param name="query">The user entered query.</param>
-        /// <returns>the list of videos matching that search query.</returns>
-        [Obsolete]
-        public virtual List<VideoInfo> Search(string query, string category)
+        /// <param name="category">The category to search in, can be null to indicate a global search - not limited to a category.</param>
+        /// <returns>the list of videos or categories matching the search query.</returns>
+        public virtual List<ISearchResultItem> Search(string query, string category = null)
         {
-            return Search(query);
+            return new List<ISearchResultItem>();
         }
 
         /// <summary>
-        /// Should return a list of <see cref="VideoInfo"/> or <see cref="Category"/> for the given query limited to the given category.<br/>
-        /// All items in the list must be of the same type!
-        /// default: calls the Search overload without a category parameter
-        /// </summary>        
-        /// <param name="category">The category to search in.</param>
-        /// <param name="query">The user entered query.</param>
-        /// <returns>the list of videos or categories matching that search query.</returns>
-        public virtual List<ISearchResultItem> DoSearch(string query, string category)
-        {
-            return Search(query, category).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
-        }
-
-        /// <summary>
-        /// Should return the title of the current page, which will be put in #header.label at state=videos
+        /// Should return the title of the current page, which will be put in #header.label at state=videos when showing videos returned from a search
         /// </summary>
         /// <returns>the title of the current page</returns>
-        public virtual string getCurrentVideosTitle()
+        public virtual string GetCurrentVideosTitle()
         {
             return null;
         }
@@ -398,7 +362,7 @@ namespace OnlineVideos.Sites
         /// </summary>
         /// <param name="fsUrl">the string to check which should be a valid URI.</param>
         /// <returns>true if the url points to a video that can be played with directshow.</returns>
-        public virtual bool isPossibleVideo(string fsUrl)
+        public virtual bool IsPossibleVideo(string fsUrl)
         {
             if (string.IsNullOrEmpty(fsUrl)) return false; // empty string is not a video
             if (fsUrl.StartsWith("rtsp://")) return false; // rtsp protocol not supported yet
@@ -483,32 +447,23 @@ namespace OnlineVideos.Sites
         }
 
         /// <summary>
-        /// This method should be used whenever requesting data via http get. You can optionally provide some request settings.
-        /// It will automatically convert the retrieved data into the type you provided.
-        /// Retrieved data is added to a cache if HTTP Status was 200 and more than 500 bytes were retrieved. The cache timeout is user configurable (<see cref="OnlineVideoSettings.CacheTimeout"/>).
+        /// Generic version of <see cref="GetWebData"/> that will automatically convert the retrieved data into the type you provided.
         /// </summary>
-        /// <typeparam name="T">The type you want the returned data to be. Supported are <see cref="String"/>, <see cref="Newtonsoft.Json.Linq.JToken"/>, <see cref="Newtonsoft.Json.Linq.JObject"/>, <see cref="RssToolkit.Rss.RssDocument"/>, <see cref="XmlDocument"/>, <see cref="System.Xml.Linq.XDocument"/> and <see cref="HtmlAgilityPack.HtmlDocument"/>.</typeparam>
-        /// <param name="url">The url to requets data from.</param>
-        /// <param name="cc">A <see cref="CookieContainer"/> that will send cookies along with the request and afterwards contains all cookies of the response.</param>
-        /// <param name="referer">A referer that will be send with the request.</param>
-        /// <param name="proxy">If you want to use a proxy for the request, give a <see cref="IWebProxy"/>.</param>
-        /// <param name="forceUTF8">Some server are not returning a valid CharacterSet on the response, set to true to force reading the response content as UTF8.</param>
-        /// <param name="allowUnsafeHeader">Some server return headers that are treated as unsafe by .net. In order to retrieve that data set this to true.</param>
-        /// <param name="userAgent">You can provide a custom UserAgent for the request, otherwise the default one (<see cref="OnlineVideoSettings.UserAgent"/>) is used.</param>
-        /// <param name="encoding">Set an <see cref="Encoding"/> for reading the response data.</param>
+        /// <typeparam name="T">The type you want the returned data to be. Supported are:
+        /// <list type="bullet">
+        /// <item><description><see cref="String"/></description></item>
+        /// <item><description><see cref="Newtonsoft.Json.Linq.JToken"/></description></item>
+        /// <item><description><see cref="Newtonsoft.Json.Linq.JObject"/></description></item>
+        /// <item><description><see cref="RssToolkit.Rss.RssDocument"/></description></item>
+        /// <item><description><see cref="XmlDocument"/></description></item>
+        /// <item><description><see cref="System.Xml.Linq.XDocument"/></description></item>
+        /// <item><description><see cref="HtmlAgilityPack.HtmlDocument"/></description></item>
+        /// </list>
+        /// </typeparam>
         /// <returns>The data returned by a <see cref="HttpWebResponse"/> converted to the specified type.</returns>
-        public static T GetWebData<T>(string url, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null)
+        public static T GetWebData<T>(string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
         {
-            NameValueCollection headers = new NameValueCollection();
-            headers.Add("Accept", "*/*"); // accept any content type
-            headers.Add("User-Agent", userAgent ?? OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
-            if (referer != null) headers.Add("Referer", referer);
-            return GetWebData<T>(url, headers, cc, proxy, forceUTF8, allowUnsafeHeader, encoding, true);
-        }
-
-        public static T GetWebData<T>(string url, NameValueCollection headers, CookieContainer cc, IWebProxy proxy, bool forceUTF8, bool allowUnsafeHeader, Encoding encoding, bool cache)
-        {
-            string webData = GetWebData(url, null, headers, cc, proxy, forceUTF8, allowUnsafeHeader, encoding, cache);
+            string webData = GetWebData(url, postData, cookies, referer, proxy, forceUTF8, allowUnsafeHeader, userAgent, encoding, headers, cache);
             if (typeof(T) == typeof(string))
             {
                 return (T)(object)webData;
@@ -545,26 +500,36 @@ namespace OnlineVideos.Sites
             return default(T);
         }
 
-        public static string GetWebData(string url, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null)
+        /// <summary>
+        /// This method should be used whenever requesting data via http (GET or POST). 
+        /// Retrieved data is added to a cache if a GET request with HTTP Status 200 and more than 500 bytes was successful. 
+        /// The cache timeout is user configurable (<see cref="OnlineVideoSettings.CacheTimeout"/>).
+        /// You can provide some request settings with the optional parameters.
+        /// </summary>
+        /// <param name="url">The url to request data from - the only mandatory parameter.</param>
+        /// <param name="postData">Any data you want to POST with your request.</param>
+        /// <param name="cookies">A <see cref="CookieContainer"/> that will send cookies along with the request and afterwards contains all cookies of the response.</param>
+        /// <param name="referer">A referer that will be send with the request.</param>
+        /// <param name="proxy">If you want to use a proxy for the request, give a <see cref="IWebProxy"/>.</param>
+        /// <param name="forceUTF8">Some server are not returning a valid CharacterSet on the response, set to true to force reading the response content as UTF8.</param>
+        /// <param name="allowUnsafeHeader">Some server return headers that are treated as unsafe by .net. In order to retrieve that data set this to true.</param>
+        /// <param name="userAgent">You can provide a custom UserAgent for the request, otherwise the default one (<see cref="OnlineVideoSettings.UserAgent"/>) is used.</param>
+        /// <param name="encoding">Set an <see cref="Encoding"/> for reading the response data.</param>
+        /// <param name="headers">Allows to set your own custom headers for the request</param>
+        /// <param name="cache">Controls if the result should be cached - default true</param>
+        /// <returns>The data returned by a <see cref="HttpWebResponse"/>.</returns>
+        public static string GetWebData(string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
         {
-            NameValueCollection headers = new NameValueCollection();
-            headers.Add("Accept", "*/*"); // accept any content type
-            headers.Add("User-Agent", userAgent ?? OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
-            if (referer != null) headers.Add("Referer", referer);
-            return GetWebData(url, null, headers, cc, proxy, forceUTF8, allowUnsafeHeader, encoding, true);
-        }
-
-        public static string GetWebDataFromPost(string url, string postData, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null)
-        {
-            NameValueCollection headers = new NameValueCollection();
-            headers.Add("Accept", "*/*"); // accept any content type
-            headers.Add("User-Agent", userAgent ?? OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
-            if (referer != null) headers.Add("Referer", referer);
-            return GetWebData(url, postData, headers, cc, proxy, forceUTF8, allowUnsafeHeader, encoding, false);
-        }
-
-        public static string GetWebData(string url, string postData, NameValueCollection headers, CookieContainer cc, IWebProxy proxy, bool forceUTF8, bool allowUnsafeHeader, Encoding encoding, bool cache)
-        {
+            // do not use the cache when doing a POST
+            if (postData != null) cache = false;
+            // set a few headers if none were given
+            if (headers == null)
+            {
+                headers = new NameValueCollection();
+                headers.Add("Accept", "*/*"); // accept any content type
+                headers.Add("User-Agent", userAgent ?? OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
+            }
+            if (referer != null) headers.Set("Referer", referer);
             HttpWebResponse response = null;
             try
             {
@@ -574,7 +539,7 @@ namespace OnlineVideos.Sites
                     url,
                     headers != null ? string.Join("&", (from item in headers.AllKeys select string.Format("{0}={1}", item, headers[item])).ToArray()) : "",
                     proxy != null ? proxy.GetProxy(new Uri(url)).AbsoluteUri : "",
-                    cc != null ? cc.GetCookieHeader(new Uri(url)) : ""));
+                    cookies != null ? cookies.GetCookieHeader(new Uri(url)) : ""));
 
                 // try cache first
                 string cachedData = cache ? WebCache.Instance[requestCRC] : null;
@@ -586,7 +551,7 @@ namespace OnlineVideos.Sites
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
                 if (request == null) return "";
                 request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate; // turn on automatic decompression of both formats (adds header "AcceptEncoding: gzip,deflate" to the request)
-                if (cc != null) request.CookieContainer = cc; // set cookies if given
+                if (cookies != null) request.CookieContainer = cookies; // set cookies if given
                 if (proxy != null) request.Proxy = proxy; // send the request over a proxy if given
                 if (headers != null) // set user defined headers
                 {
@@ -658,33 +623,6 @@ namespace OnlineVideos.Sites
             }
         }
 
-        protected static List<String> ParseASX(string url)
-        {
-            string lsAsxData = GetWebData(url).ToLower();
-            MatchCollection videoUrls = Regex.Matches(lsAsxData, @"<ref\s+href\s*=\s*\""(?<url>[^\""]*)");
-            List<String> urlList = new List<String>();
-            foreach (Match videoUrl in videoUrls)
-            {
-                urlList.Add(videoUrl.Groups["url"].Value);
-            }
-            return urlList;
-        }
-
-        protected static string ParseASX(string url, out string startTime)
-        {
-            startTime = "";
-            string lsAsxData = GetWebData(url).ToLower();
-            XmlDocument asxDoc = new XmlDocument();
-            asxDoc.LoadXml(lsAsxData);
-            XmlElement entryElement = asxDoc.SelectSingleNode("//entry") as XmlElement;
-            if (entryElement == null) return "";
-            XmlElement refElement = entryElement.SelectSingleNode("ref") as XmlElement;
-            if (entryElement == null) return "";
-            XmlElement startElement = entryElement.SelectSingleNode("starttime") as XmlElement;
-            if (startElement != null) startTime = startElement.GetAttribute("value");
-            return refElement.GetAttribute("href");
-        }
-
         #endregion
 
         #region ICustomTypeDescriptor Members
@@ -748,15 +686,15 @@ namespace OnlineVideos.Sites
 
         #region ICustomTypeDescriptor Implementation with Fields as Properties
 
-        private PropertyDescriptorCollection _propCache;
-        private FilterCache _filterCache;
+        private PropertyDescriptorCollection cachedPropertyDescriptors;
+        private FilterCache cachedFilter;
 
         PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties(
             Attribute[] attributes)
         {
             bool filtering = (attributes != null && attributes.Length > 0);
-            PropertyDescriptorCollection props = _propCache;
-            FilterCache cache = _filterCache;
+            PropertyDescriptorCollection props = cachedPropertyDescriptors;
+            FilterCache cache = cachedFilter;
 
             // Use a cached version if possible
             if (filtering && cache != null && cache.IsValid(attributes))
@@ -787,9 +725,9 @@ namespace OnlineVideos.Sites
                 cache = new FilterCache();
                 cache.Attributes = attributes;
                 cache.FilteredProperties = props;
-                _filterCache = cache;
+                cachedFilter = cache;
             }
-            else _propCache = props;
+            else cachedPropertyDescriptors = props;
 
             return props;
         }

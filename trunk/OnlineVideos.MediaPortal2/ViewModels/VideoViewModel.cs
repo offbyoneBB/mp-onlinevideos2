@@ -239,7 +239,7 @@ namespace OnlineVideos.MediaPortal2
 			var ctxEntries = new ItemsList();
 			if (VideoInfo != null)
 			{
-				if (SiteUtilName != "DownloadedVideo" && (IsDetailsVideo || !(VideoInfo.HasDetails & site is IChoice)))
+                if (SiteUtilName != "DownloadedVideo" && (IsDetailsVideo || !(VideoInfo.HasDetails & site is Sites.IChoice)))
 				{
 					ctxEntries.Add(
 						new ListItem(Consts.KEY_NAME, string.Format("{0} ({1})", Translation.Instance.Download, Translation.Instance.Concurrent))
@@ -344,7 +344,7 @@ namespace OnlineVideos.MediaPortal2
 							BackgroundTask.Instance.Start<List<VideoInfo>>(
 								() =>
 								{
-									return site.getVideoList(Category);
+									return site.GetVideos(Category);
 								},
 								(success2, videos) =>
 								{
@@ -393,12 +393,12 @@ namespace OnlineVideos.MediaPortal2
 			{
 				if (!string.IsNullOrEmpty(saveItems.CurrentItem.Url))
 				{
-					var result = saveItems.CurrentItem.Util.getPlaylistItemUrl(saveItems.CurrentItem.VideoInfo, saveItems.ChosenPlaybackOption);
+					var result = saveItems.CurrentItem.Util.GetPlaylistItemVideoUrl(saveItems.CurrentItem.VideoInfo, saveItems.ChosenPlaybackOption);
 					SaveVideo_Step2(saveItems, new List<string>() { result }, enque);
 				}
 				else
 				{
-					var result = saveItems.CurrentItem.Util.getMultipleVideoUrls(saveItems.CurrentItem.VideoInfo);
+					var result = saveItems.CurrentItem.Util.GetMultipleVideoUrls(saveItems.CurrentItem.VideoInfo);
 					SaveVideo_Step2(saveItems, result, enque);
 				}
 			}
@@ -430,7 +430,7 @@ namespace OnlineVideos.MediaPortal2
 					string url_new = url;
 					if (url == urls[0])
 					{
-						url_new = saveItems.CurrentItem.Util.getPlaylistItemUrl(vi, string.Empty);
+						url_new = saveItems.CurrentItem.Util.GetPlaylistItemVideoUrl(vi, string.Empty);
 					}
 					DownloadInfo pli = DownloadInfo.Create(vi, saveItems.CurrentItem.Category, saveItems.CurrentItem.Util);
 					pli.Title = string.Format("{0} - {1} / {2}", vi.Title, (saveItems.DownloadItems.Count + 1).ToString(), urls.Count);

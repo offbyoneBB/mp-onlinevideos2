@@ -47,7 +47,7 @@ namespace OnlineVideos.Hoster
 
                 //Send Postdata (simulates a button click)
                 string postData = @"op=download2&usr_login=&id=" + id + "&fname=" + fname + "&referer=&method_free=Slow access";
-                string webData = GenericSiteUtil.GetWebDataFromPost(url, postData);
+                string webData = GenericSiteUtil.GetWebData(url, postData);
 
                 //Several Dean Edwards compressor in Html grab here the compressor between the "player_code divs"
                 string partial = GetSubString(webData, @"</a> </div>", @"<div class=""left_iframe"">");

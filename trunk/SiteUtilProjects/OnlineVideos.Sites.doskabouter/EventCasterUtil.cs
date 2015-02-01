@@ -13,7 +13,7 @@ namespace OnlineVideos.Sites
             video.Airdate = matchGroups["date"].Value + ' ' + matchGroups["time"].Value;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string webData = GetWebData(video.VideoUrl);
 

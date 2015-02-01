@@ -33,7 +33,7 @@ namespace OnlineVideos.Sites
             return Settings.Categories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             return VideosFromJson(api_base_url + string.Format(api_channel_videos_url, (category as RssLink).Url, 1));
         }
@@ -45,22 +45,22 @@ namespace OnlineVideos.Sites
             return Settings.Categories.ToDictionary(c => c.Name, c => ((RssLink)c).Url);
         }
 
-        public override List<VideoInfo> Search(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
-            return VideosFromJson(api_base_url + string.Format(api_video_search_url, HttpUtility.UrlEncode(query), 1));
+            if (string.IsNullOrEmpty(category))
+                return VideosFromJson(api_base_url + string.Format(api_video_search_url, HttpUtility.UrlEncode(query), 1))
+                    .ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+            else
+                return VideosFromJson(api_base_url + string.Format(api_channel_videos_search_url, category, HttpUtility.UrlEncode(query), 1))
+                    .ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
         }
 
-        public override List<VideoInfo> Search(string query, string category)
-        {
-            return VideosFromJson(api_base_url + string.Format(api_channel_videos_search_url, category, HttpUtility.UrlEncode(query), 1));
-        }
-
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return VideosFromJson(current_videos_url.Replace("&page=" + current_videos_page, "&page=" + (current_videos_page + 1).ToString()));
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             var json = JObject.Parse(Regex.Match(GetWebData(video.VideoUrl), "var info = (?<json>{.*),").Groups["json"].Value);
 

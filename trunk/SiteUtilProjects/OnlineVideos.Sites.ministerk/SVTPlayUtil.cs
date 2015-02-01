@@ -325,7 +325,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             HasNextPage = false;
             if (!string.IsNullOrEmpty(nextPageUrl))
@@ -337,7 +337,7 @@ namespace OnlineVideos.Sites
             return new List<VideoInfo>();
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             if (category.Other is List<VideoInfo>)
             {
@@ -351,7 +351,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string url = "";
             JToken videoToken = GetWebData<JObject>(video.VideoUrl + "?output=json")["video"];
@@ -404,7 +404,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             List<ISearchResultItem> results = new List<ISearchResultItem>();
             string[] subcats = { "search-categories", "search-titles", "" };

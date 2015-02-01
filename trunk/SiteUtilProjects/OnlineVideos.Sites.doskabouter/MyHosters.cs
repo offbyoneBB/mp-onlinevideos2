@@ -115,7 +115,7 @@ namespace OnlineVideos.Hoster
             c.Domain = new Uri(url).Host;
             cc.Add(c);
 
-            string webData = SiteUtilBase.GetWebData(url.Replace(@"/swf/", @"/video/"), cc);
+            string webData = SiteUtilBase.GetWebData(url.Replace(@"/swf/", @"/video/"), cookies: cc);
 
             Dictionary<string, string> res = new Dictionary<string, string>();
             Match matchFileUrl = Regex.Match(webData, @"""stream_(?<n0>[^_]*(?:_[^_]*)?)_url"":\s*""(?<m0>[^""]*)""");
@@ -160,7 +160,7 @@ namespace OnlineVideos.Hoster
             //http://stat.56.com/stat/flv.php?id=MzYxNzA2MzE&pct=1&user_id=&norand=1&gJsonId=1&gJson=VideoTimes&gJsonData=n&gJsonDoStr=oFlv.up_times(oJson.VideoTimes.data)
             string tmpUrl = @"http://stat.56.com/stat/flv.php?id=" + id + @"&pct=1&user_id=&norand=1&gJsonId=1&gJson=VideoTimes&gJsonData=n&gJsonDoStr=oFlv.up_times(oJson.VideoTimes.data)";
             CookieContainer cc = new CookieContainer();
-            string webData = SiteUtilBase.GetWebData(tmpUrl, cc);
+            string webData = SiteUtilBase.GetWebData(tmpUrl, cookies: cc);
             CookieCollection ccol = cc.GetCookies(new Uri("http://stat.56.com"));
             string id2 = null;
             foreach (Cookie cook in ccol)
@@ -203,7 +203,7 @@ namespace OnlineVideos.Hoster
                                       "&down_direct=1";
                     //op=download2&id=benm0xrsl2s2&rand=6kuq6s4slrihwlq55ar5b7hukpvomewfy6i645i&referer=http%3A%2F%2Fwatchseries.eu%2Fopen%2Fcale%2F5764571%2Fidepisod%2F167374.html&method_free=&method_premium=&down_direct=1
                     System.Threading.Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
-                    data = SiteUtilBase.GetWebDataFromPost(url, postdata);
+                    data = SiteUtilBase.GetWebData(url, postdata);
                 }
 
                 Match n = Regex.Match(data, @"{url:\s*'(?<url>[^']*)',\sautoPlay");
@@ -262,7 +262,7 @@ namespace OnlineVideos.Hoster
             }
             else
             {
-                string page = SiteUtilBase.GetWebData(url, cc);
+                string page = SiteUtilBase.GetWebData(url, cookies: cc);
 
                 if (!string.IsNullOrEmpty(page))
                 {
@@ -287,7 +287,7 @@ namespace OnlineVideos.Hoster
 
                         System.Threading.Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
 
-                        string page2 = SiteUtilBase.GetWebDataFromPost(url, postdata, cc, url);
+                        string page2 = SiteUtilBase.GetWebData(url, postdata, cc, url);
 
                         if (!string.IsNullOrEmpty(page2))
                         {
@@ -429,12 +429,12 @@ namespace OnlineVideos.Hoster
             int aflID = Convert.ToInt32(url.Split('&')[0].Split('=')[1]);
 
             CookieContainer cc = new CookieContainer();
-            string step1 = SiteUtilBase.GetWebData(url, cc);
+            string step1 = SiteUtilBase.GetWebData(url, cookies: cc);
             CookieCollection ccol = cc.GetCookies(new Uri("http://tmp.player.omroep.nl/"));
             CookieContainer newcc = new CookieContainer();
             foreach (Cookie c in ccol) newcc.Add(c);
 
-            step1 = SiteUtilBase.GetWebData("http://player.omroep.nl/js/initialization.js.php?aflID=" + aflID.ToString(), newcc);
+            step1 = SiteUtilBase.GetWebData("http://player.omroep.nl/js/initialization.js.php?aflID=" + aflID.ToString(), cookies: newcc);
             if (!String.IsNullOrEmpty(step1))
             {
                 int p = step1.IndexOf("securityCode = '");
@@ -442,7 +442,7 @@ namespace OnlineVideos.Hoster
                 {
                     step1 = step1.Remove(0, p + 16);
                     string sec = step1.Split('\'')[0];
-                    string step2 = SiteUtilBase.GetWebData("http://player.omroep.nl/xml/metaplayer.xml.php?aflID=" + aflID.ToString() + "&md5=" + sec, newcc);
+                    string step2 = SiteUtilBase.GetWebData("http://player.omroep.nl/xml/metaplayer.xml.php?aflID=" + aflID.ToString() + "&md5=" + sec, cookies: newcc);
                     if (!String.IsNullOrEmpty(step2))
                     {
                         XmlDocument tdoc = new XmlDocument();
@@ -525,7 +525,7 @@ namespace OnlineVideos.Hoster
             }
             else
             {
-                string page = SiteUtilBase.GetWebData(url, cc);
+                string page = SiteUtilBase.GetWebData(url, cookies: cc);
 
                 if (!string.IsNullOrEmpty(page))
                 {
@@ -550,7 +550,7 @@ namespace OnlineVideos.Hoster
 
                         //System.Threading.Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
 
-                        string page2 = SiteUtilBase.GetWebDataFromPost(url, postdata, cc, url);
+                        string page2 = SiteUtilBase.GetWebData(url, postdata, cc, url);
 
                         if (!string.IsNullOrEmpty(page2))
                         {
@@ -605,7 +605,7 @@ namespace OnlineVideos.Hoster
             postData = @"p%5Fid%5B1%5D=4&begun=1&video%5Furl=1&p%5Fid%5B0%5D=2&context=" +
                 postData + @"&devid=LoadupFlashPlayer&ticket=" + videoId;
 
-            webData = SiteUtilBase.GetWebDataFromPost(@"http://smotri.com/video/view/url/bot/", postData);
+            webData = SiteUtilBase.GetWebData(@"http://smotri.com/video/view/url/bot/", postData);
             //"{\"_is_loadup\":0,\"_vidURL\":\"http:\\/\\/file38.loadup.ru\\/4412949d467b8db09bd07eedc7127f57\\/4bd0b05a\\/9a\\/a1\\/c1ad0ea5c0e8268898d3449b9087.flv\",\"_imgURL\":\"http:\\/\\/frame2.loadup.ru\\/9a\\/a1\\/1191805.3.3.jpg\",\"botator_banner\":{\"4\":[{\"cnt_tot_max\":1120377,\"cnt_hour_max\":4500,\"clc_tot_max\":0,\"clc_hour_max\":0,\"cnt_uniq_day_max\":3,\"cnt_uniq_week_max\":0,\"cnt_uniq_month_max\":0,\"link_transitions\":\"http:\\/\\/smotri.com\\/botator\\/clickator\\/click\\/?sid=qm2fzb5ruwdcj1ig_12\",\"zero_pixel\":\"http:\\/\\/ad.adriver.ru\\/cgi-bin\\/rle.cgi?sid=1&bt=21&ad=226889&pid=440944&bid=817095&bn=817095&rnd=1702217828\",\"signature\":{\"set_sign\":\"top\",\"signature\":\"\",\"signature_color\":null},\"link\":\"http:\\/\\/pics.loadup.ru\\/content\\/smotri.com_400x300_reenc_2.flv\",\"link_show\":\"http:\\/\\/smotri.com\\/botator\\/logator\\/show\\/?sid=qm2fzb5ruwdcj1ig_12\",\"banner_type\":\"video_flv\",\"b_id\":12}]},\"trustKey\":\"79e566c96057ce2b6f6055a3fa34f744\",\"video_id\":\"v119180501e5\",\"_pass_protected\":0,\"begun_url_1\":\"http:\\/\\/flash.begun.ru\\/banner.jsp?pad_id=100582787&offset=0&limit=5&encoding=utf8&charset=utf8&keywords=\"}"
             return GetSubString(webData, @"_vidURL"":""", @"""").Replace(@"\/", "/");
         }
@@ -721,7 +721,7 @@ namespace OnlineVideos.Hoster
                 postData += m.Groups["m0"].Value + "=" + m.Groups["m1"].Value;
                 m = m.NextMatch();
             }
-            webData = SiteUtilBase.GetWebDataFromPost(url, postData);
+            webData = SiteUtilBase.GetWebData(url, postData);
             string res = GetSubString(webData, @"embed", @">");
             res = GetSubString(res, @"src=""", @"""");
             return res;
@@ -752,7 +752,7 @@ namespace OnlineVideos.Hoster
 
             Thread.Sleep(5000);
 
-            webData = SiteUtilBase.GetWebDataFromPost(url, postData);
+            webData = SiteUtilBase.GetWebData(url, postData);
             string packed = GetSubString(webData, @"return p}", @"</script>");
             packed = packed.Replace(@"\'", @"'");
             string unpacked = UnPack(packed);
@@ -895,7 +895,7 @@ namespace OnlineVideos.Hoster
             if (Convert.ToInt32(timeToWait) < 10)
                 Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
 
-            webData = SiteUtilBase.GetWebDataFromPost(url, postData);
+            webData = SiteUtilBase.GetWebData(url, postData);
             string packed = GetSubString(webData, @"return p}", @"</script>");
             packed = packed.Replace(@"\'", @"'");
             string unpacked = UnPack(packed);
@@ -933,7 +933,7 @@ namespace OnlineVideos.Hoster
         public override string getVideoUrls(string url)
         {
             CookieContainer cc = new CookieContainer();
-            string webData = SiteUtilBase.GetWebData(url, cc, @"http://www.wisevid.com/");
+            string webData = SiteUtilBase.GetWebData(url, cookies: cc, referer: @"http://www.wisevid.com/");
 
             CookieCollection ccol = cc.GetCookies(new Uri("http://www.wisevid.com/"));
             CookieContainer newcc = new CookieContainer();
@@ -942,7 +942,7 @@ namespace OnlineVideos.Hoster
             url = @"http://www.wisevid.com/play?v=" + GetSubString(webData,
                 @"play?v=", @"'");
             //string tmp2 = SiteUtilBase.GetWebDataFromPost(url, "a=1");
-            string tmp2 = SiteUtilBase.GetWebData(url, newcc);
+            string tmp2 = SiteUtilBase.GetWebData(url, cookies: newcc);
             url = GetSubString(tmp2, "getF('", "'");
             byte[] tmp = Convert.FromBase64String(url);
             return Encoding.ASCII.GetString(tmp);
@@ -959,7 +959,7 @@ namespace OnlineVideos.Hoster
         public override string getVideoUrls(string url)
         {
             CookieContainer cc = new CookieContainer();
-            string webData = SiteUtilBase.GetWebData(url, cc);
+            string webData = SiteUtilBase.GetWebData(url, cookies: cc);
             if (url.Contains("humancheck.php"))
             {
 
@@ -971,7 +971,7 @@ namespace OnlineVideos.Hoster
                     newcc.Add(c);
                 }
                 url = url.Replace("humancheck", "toshare");
-                webData = SiteUtilBase.GetWebDataFromPost(url, "submit=I+am+human+now+let+me+watch+this+video", newcc);
+                webData = SiteUtilBase.GetWebData(url, "submit=I+am+human+now+let+me+watch+this+video", newcc);
             }
             string file = GetSubString(webData, "'file','", "'");
             string streamer = GetSubString(webData, "'streamer','", "'");

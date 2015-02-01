@@ -225,7 +225,7 @@ namespace OnlineVideos.Sites
             return subCats;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> videos = new List<VideoInfo>();
 
@@ -258,9 +258,9 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
-            XmlDocument xml = GetWebData<XmlDocument>(video.VideoUrl, null, null, getProxy());
+            XmlDocument xml = GetWebData<XmlDocument>(video.VideoUrl, proxy: getProxy());
             if (RetrieveSubtitles)
             {
                 XmlNode subtitle = xml.SelectSingleNode("//subtitlesFileUri");
@@ -308,7 +308,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             string searchUrl = SEARCH_URL + urlEncode(query);
             return getShows(searchUrl, null).Select(c => (ISearchResultItem)c).ToList();

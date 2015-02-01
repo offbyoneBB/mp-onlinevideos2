@@ -14,11 +14,9 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
-            string data = GetWebDataFromPost(@"https://cloud.rovio.com/identity/2.0/web/access", @"clientId=ChannelWeb&persistentGuid=ChannelWeb08bea391e0169d6d9f5e2f7f805a91bc1f89c16f");
-            JToken jt = JObject.Parse(data) as JToken;
+            JToken jt = GetWebData<JToken>(@"https://cloud.rovio.com/identity/2.0/web/access", @"clientId=ChannelWeb&persistentGuid=ChannelWeb08bea391e0169d6d9f5e2f7f805a91bc1f89c16f");
             string accessToken = jt["accessToken"].Value<string>();
-            data = GetWebData(@"https://cloud.rovio.com/channel/1.2/content/videos?sw=1920&sh=1080&on=web&logoImgHeight=144&accessToken=" + accessToken);
-            JToken alldata = JObject.Parse(data) as JToken;
+            JToken alldata = GetWebData<JToken>(@"https://cloud.rovio.com/channel/1.2/content/videos?sw=1920&sh=1080&on=web&logoImgHeight=144&accessToken=" + accessToken);
             JArray categories = alldata["categories"] as JArray;
 
             contentList = new Dictionary<string, JToken>();
@@ -51,7 +49,7 @@ namespace OnlineVideos.Sites
             return res;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             JArray videos = category.Other as JArray;
             List<VideoInfo> res = new List<VideoInfo>();
@@ -80,7 +78,7 @@ namespace OnlineVideos.Sites
             return res;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             Match m = Regex.Match("exp=2575783636001 " + (string)video.Other, @"exp=(?<experienceId>[^\s]+)\s(?<contentId>[^$]+)$");
 

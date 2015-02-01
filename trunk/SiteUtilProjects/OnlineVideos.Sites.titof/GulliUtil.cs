@@ -27,7 +27,7 @@ namespace OnlineVideos.Sites
             return 1;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> listVideos = new List<VideoInfo>();
             string url = (category as RssLink).Url;
@@ -51,7 +51,7 @@ namespace OnlineVideos.Sites
             return listVideos;
         }
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {            
             string url = video.VideoUrl.Substring(video.VideoUrl.IndexOf("VOD"));
             List<string> listUrls = new List<string>();

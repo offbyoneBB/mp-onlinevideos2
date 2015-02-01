@@ -21,7 +21,7 @@ namespace OnlineVideos.Sites
             if (!string.IsNullOrEmpty(youtubeCheckRegEx)) regEx_youtubeCheckRegEx = new Regex(youtubeCheckRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);            
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string dataPage = GetWebData(video.VideoUrl);
             Match matchYouTube = regEx_youtubeCheckRegEx != null ? regEx_youtubeCheckRegEx.Match(dataPage) : Match.Empty;
@@ -32,7 +32,7 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                string result = base.getUrl(video);
+                string result = base.GetVideoUrl(video);
                 if (!string.IsNullOrEmpty(result))
                 {
                     result = result.Replace("\\", "");

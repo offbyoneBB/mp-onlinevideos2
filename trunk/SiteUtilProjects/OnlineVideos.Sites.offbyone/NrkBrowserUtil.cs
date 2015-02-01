@@ -162,7 +162,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             IList<Item> items = null;
             string id = ((RssLink)category).Url;
@@ -255,7 +255,7 @@ namespace OnlineVideos.Sites
             return VideosFromItems(items);
         }
 
-        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<String> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<string> urls = new List<string>();
             if (video.VideoUrl.StartsWith("mms://"))
@@ -296,26 +296,23 @@ namespace OnlineVideos.Sites
         int currentSearchResultsPage = 0;
         string currentSearchString = "";
 
-        public override List<VideoInfo> Search(string query)
-        {
-            currentSearchResultsPage = 0;
-            currentSearchString = query;
-            return Search();
-        }
-
-        public override List<VideoInfo> Search(string query, string category)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             if (category == NrkBrowserConstants.MENU_ITEM_ID_NRKBETA)
             {
                 NrkBetaXmlParser parser = new NrkBetaXmlParser();
                 parser.SearchFor(query);
-                return VideosFromItems(parser.getClips());
+                return VideosFromItems(parser.getClips()).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
             }
             else
-                return Search(query);
+            {
+                currentSearchResultsPage = 0;
+                currentSearchString = query;
+                return Search().ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+            }
         }
-
-        public override List<VideoInfo> getNextPageVideos()
+        
+        public override List<VideoInfo> GetNextPageVideos()
         {
             currentSearchResultsPage++;
             return Search();

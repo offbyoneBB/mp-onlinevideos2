@@ -108,7 +108,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> result = new List<VideoInfo>();
 
@@ -135,7 +135,7 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public override String getUrl(VideoInfo video)
+        public override String GetVideoUrl(VideoInfo video)
         {
             string rtmpUrl = @"rtmp://abcondemandfs.fplive.net:1935/abcondemand";
 

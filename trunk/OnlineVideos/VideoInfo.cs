@@ -13,7 +13,7 @@ namespace OnlineVideos
     public class VideoInfo : MarshalByRefObject, System.ComponentModel.INotifyPropertyChanged, ISearchResultItem
     {
         public string Title { get; set; }
-        /// <summary>Used as label for the clips retrieved by <see cref="IChoice.getVideoChoices"/></summary>
+        /// <summary>Used as label for the clips retrieved by <see cref="IChoice.GetVideoChoices"/></summary>
         public string Title2 { get; set; }
         public string Description { get; set; }
         public string VideoUrl { get; set; }

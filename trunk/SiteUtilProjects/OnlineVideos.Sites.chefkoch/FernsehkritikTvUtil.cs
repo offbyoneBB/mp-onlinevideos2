@@ -19,7 +19,7 @@ namespace OnlineVideos.Sites
     /// </summary>
     /// <param name="video">The <see cref="VideoInfo"/> object, for which to get a list of urls.</param>
     /// <returns></returns>
-    public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+    public override List<String> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
     {
       video.VideoUrl = video.VideoUrl + "Start/";
       Log.Info("FernsehkritikTvUtil: Get multiple urls: " + video.VideoUrl);

@@ -77,7 +77,7 @@ namespace OnlineVideos.Sites
             headers.Add("Accept", "*/*"); // accept any content type
             headers.Add("User-Agent", OnlineVideoSettings.Instance.UserAgent);
             headers.Add("X-Requested-With", "XMLHttpRequest");
-            return GetWebData(url, null, headers, GetCookie(), null, true, false, null, true);
+            return GetWebData(url, cookies: GetCookie(), forceUTF8: true, headers: headers);
         }
 
 
@@ -115,13 +115,13 @@ namespace OnlineVideos.Sites
         private int getType1Subcats(Category parentCat)
         {
             pageNr = 1;
-            string data = GetWebData((parentCat as RssLink).Url, GetCookie(), forceUTF8: true);
+            string data = GetWebData((parentCat as RssLink).Url, cookies: GetCookie(), forceUTF8: true);
             return ParseSubCategories(parentCat, data);
         }
 
         private int getSubcats(Category parentCat, UgType subType, string id, string format)
         {
-            HtmlDocument data = GetWebData<HtmlDocument>(((RssLink)parentCat).Url, cc: GetCookie(), forceUTF8: true);
+            HtmlDocument data = GetWebData<HtmlDocument>(((RssLink)parentCat).Url, cookies: GetCookie(), forceUTF8: true);
             var node = data.DocumentNode.Descendants("select").Where(sel => sel.GetAttributeValue("id", "") == id).FirstOrDefault();
             var options = node.Descendants("option").Where(option => option.GetAttributeValue("disabled", "") != "disabled");
             parentCat.SubCategories = new List<Category>();
@@ -140,7 +140,7 @@ namespace OnlineVideos.Sites
             return parentCat.SubCategories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             pageNr = 1;
             baseVideoListUrl = ((RssLink)category).Url;
@@ -150,7 +150,7 @@ namespace OnlineVideos.Sites
 
         private List<VideoInfo> lowGetVideoList(string url, UgType type)
         {
-            string data = GetWebData(url, cc: GetCookie(), forceUTF8: true);
+            string data = GetWebData(url, cookies: GetCookie(), forceUTF8: true);
 
             List<VideoInfo> res = base.Parse(url, data);
             foreach (VideoInfo video in res)
@@ -182,13 +182,13 @@ namespace OnlineVideos.Sites
             return res;
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return lowGetVideoList(nextPageUrl, currenttype);
         }
 
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string result = String.Empty;
 
@@ -249,12 +249,12 @@ namespace OnlineVideos.Sites
             return a.Value.CompareTo(b.Value);
         }
 
-        public override List<VideoInfo> Search(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             pageNr = 1;
             baseVideoListUrl = string.Format(searchUrl, query);
             currenttype = UgType.None;
-            return lowGetVideoList(baseVideoListUrl, currenttype);
+            return lowGetVideoList(baseVideoListUrl, currenttype).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
         }
 
         public override VideoInfo CreateVideoInfo()

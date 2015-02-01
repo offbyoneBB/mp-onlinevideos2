@@ -31,7 +31,7 @@ namespace OnlineVideos.Hoster
             if (extraValues != null)
                 values.AddRange(extraValues);
             if (values.Count > 0)
-                page = SiteUtilBase.GetWebDataFromPost(url, String.Join("&", values.ToArray()), forceUTF8: true);
+                page = SiteUtilBase.GetWebData(url, String.Join("&", values.ToArray()), forceUTF8: true);
             // Sometimes gorillavid returns "utf8" instead of "utf-8" as charset which crashes getwebdatafrompost, so force it to utf8
 
             return page;

@@ -33,14 +33,14 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("token")]
         protected string token;
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
 
             string url;
             if (!String.IsNullOrEmpty(rtmpurl))
                 url = rtmpurl;
             else
-                url = base.getUrl(video);
+                url = base.GetVideoUrl(video);
 
             if (url.Contains(@"\/"))
             {
@@ -83,7 +83,7 @@ namespace OnlineVideos.Sites
             return theUrl.ToString();
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> loVideoList = null;
             if (category is RssLink)

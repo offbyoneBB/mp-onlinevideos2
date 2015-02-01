@@ -173,7 +173,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             var type = MpExtendedStreamingService.WebMediaType.File;
             int providerId = 0;
@@ -225,7 +225,7 @@ namespace OnlineVideos.Sites
 			throw new OnlineVideosException("No authorization");
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             RssLink cat = category as RssLink;
             List<VideoInfo> returnList = new List<VideoInfo>();

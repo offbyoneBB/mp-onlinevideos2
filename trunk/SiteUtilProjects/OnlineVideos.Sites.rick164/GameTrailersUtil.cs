@@ -17,7 +17,7 @@ namespace OnlineVideos.Sites
             base.Initialize(siteSettings);
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string data = GetWebData(video.VideoUrl);
             string VideoUrl = "";
@@ -52,14 +52,14 @@ namespace OnlineVideos.Sites
             return null;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             string url = ((RssLink)category).Url;
             //Log.Debug("CATEGORY: " + category.Name + " | URL: " +url);
             return getVideoList(url);
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             //Log.Debug("NEXT PAGE URL: " + nextPageUrl);
             return getVideoList(nextPageUrl);
@@ -272,8 +272,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        [Obsolete]
-        public override  List<VideoInfo> Search(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             //
             //First we need to fetch the Promo ID in order to do a search, afterwards we can do the real search
@@ -303,7 +302,7 @@ namespace OnlineVideos.Sites
 
             searchUrl = "http://www.gametrailers.com/feeds/search/child/" + promotionID + "/?keywords=" + query + "&tabName=videos&platforms=&sortBy=most_recent";
 
-            return getVideoList(searchUrl);
+            return getVideoList(searchUrl).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
         }
     }
 }

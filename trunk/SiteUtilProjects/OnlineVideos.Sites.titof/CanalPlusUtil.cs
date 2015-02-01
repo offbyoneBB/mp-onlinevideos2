@@ -26,7 +26,7 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
-            string pageEmissions = GetWebData(urlFichierXMLListeProgrammes, null, null, null, true);
+            string pageEmissions = GetWebData(urlFichierXMLListeProgrammes, forceUTF8: true);
                         
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(pageEmissions);
@@ -67,9 +67,9 @@ namespace OnlineVideos.Sites
             
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
-            string pageEmissions = GetWebData(urlFichierXMLEmissions + category.Other.ToString(), null, null, null, true);
+            string pageEmissions = GetWebData(urlFichierXMLEmissions + category.Other.ToString(), forceUTF8: true);
 
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(pageEmissions);
@@ -102,7 +102,7 @@ namespace OnlineVideos.Sites
             return listVideos;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string pageVideo = GetWebData(urlFichierXMLFichiers + video.Other.ToString());
 

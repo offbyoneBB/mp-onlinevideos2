@@ -80,7 +80,7 @@ namespace OnlineVideos.Sites.georgius
         public override int DiscoverDynamicCategories()
         {
             int dynamicCategoriesCount = 0;
-            String baseWebData = SiteUtilBase.GetWebData(CsfdCzUtil.baseUrl, null, null, null, true);
+            String baseWebData = SiteUtilBase.GetWebData(CsfdCzUtil.baseUrl, forceUTF8: true);
 
             int startIndex = baseWebData.IndexOf(CsfdCzUtil.dynamicCategoryStart);
             if (startIndex >= 0)
@@ -136,7 +136,7 @@ namespace OnlineVideos.Sites.georgius
                 titles.Add(cat.Name, null);
             }
 
-            String baseWebData = SiteUtilBase.GetWebData(url, null, null, null, true);
+            String baseWebData = SiteUtilBase.GetWebData(url, forceUTF8: true);
 
             int startIndex = baseWebData.IndexOf(CsfdCzUtil.showsBlockStart);
             if (startIndex >= 0)
@@ -239,7 +239,7 @@ namespace OnlineVideos.Sites.georgius
             {
                 this.nextPageUrl = String.Empty;
                 List<String> navigationItems = new List<String>();
-                String baseWebData = CsfdCzUtil.GetWebData(pageUrl, null, null, null, true);
+                String baseWebData = CsfdCzUtil.GetWebData(pageUrl, forceUTF8: true);
 
                 int startIndex = baseWebData.IndexOf(CsfdCzUtil.navigationStart);
                 if (startIndex >= 0)
@@ -282,7 +282,7 @@ namespace OnlineVideos.Sites.georgius
                 while (i < navigationItems.Count)
                 {
                     var navItem = navigationItems[i];
-                    baseWebData = CsfdCzUtil.GetWebData(navItem, null, null, null, true);
+                    baseWebData = CsfdCzUtil.GetWebData(navItem, forceUTF8: true);
 
                     while (true)
                     {
@@ -367,13 +367,13 @@ namespace OnlineVideos.Sites.georgius
             return videoList;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             this.currentStartIndex = 0;
             return this.GetVideoList(category);
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return this.GetVideoList(this.currentCategory);
         }
@@ -390,7 +390,7 @@ namespace OnlineVideos.Sites.georgius
             }
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             if (video.PlaybackOptions == null)
             {

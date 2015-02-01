@@ -23,7 +23,7 @@ namespace OnlineVideos.Sites.bw_fotoart
 
             public static string getPlaybackUrl(string playerUrl, Movie2KSerienUtil Util)
             {
-                string data = GetWebData(playerUrl, Util.GetCookie(), forceUTF8: Util.forceUTF8Encoding, allowUnsafeHeader: Util.allowUnsafeHeaders, encoding: Util.encodingOverride);
+                string data = GetWebData(playerUrl, cookies: Util.GetCookie(), forceUTF8: Util.forceUTF8Encoding, allowUnsafeHeader: Util.allowUnsafeHeaders, encoding: Util.encodingOverride);
                 Match m = Regex.Match(data, Util.hosterUrlRegEx);
                 string url = m.Groups["url"].Value;
                 Uri uri = new Uri(url);
@@ -89,7 +89,7 @@ namespace OnlineVideos.Sites.bw_fotoart
             if (parentCategory is RssLink && regEx_dynamicSubSubCategories != null)
             {
                 if (data == null)
-                    data = GetWebData((parentCategory as RssLink).Url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
+                    data = GetWebData((parentCategory as RssLink).Url, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
                 if (!string.IsNullOrEmpty(data))
                 {
                     List<Category> dynamicSubCategories = new List<Category>(); // put all new discovered Categories in a separate list
@@ -144,15 +144,15 @@ namespace OnlineVideos.Sites.bw_fotoart
         //    else return null;
         //}
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
-            string result = base.getUrl(video);
+            string result = base.GetVideoUrl(video);
             if (video.PlaybackOptions == null && !string.IsNullOrEmpty(result)) 
                 result = Movie2KSerienVideoInfo.getPlaybackUrl(result, this);
             return result;
         }
 
-        public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             string html = GetWebData("http://www.movie2k.to/searchAutoCompleteNew.php?search=" + query);
             List<ISearchResultItem> results = new List<ISearchResultItem>();

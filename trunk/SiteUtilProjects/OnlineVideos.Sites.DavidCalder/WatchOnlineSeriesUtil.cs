@@ -11,9 +11,9 @@ namespace OnlineVideos.Sites.DavidCalder
     public class WatchOnlineSeriesUtil : DeferredResolveUtil
     {
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
-            List<VideoInfo> vidInfo = new List<VideoInfo>(base.getVideoList(category));
+            List<VideoInfo> vidInfo = new List<VideoInfo>(base.GetVideos(category));
 
             foreach (VideoInfo vid in vidInfo)
             {
@@ -38,9 +38,9 @@ namespace OnlineVideos.Sites.DavidCalder
         }
 
 
-        public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
-            List < ISearchResultItem > searchResults = new List<ISearchResultItem>(base.DoSearch(query.Replace(" ", "-")));
+            List < ISearchResultItem > searchResults = new List<ISearchResultItem>(base.Search(query.Replace(" ", "-")));
             
             return searchResults;
         }

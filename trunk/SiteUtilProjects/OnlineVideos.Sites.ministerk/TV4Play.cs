@@ -72,7 +72,7 @@ namespace OnlineVideos.Sites
         private bool isLoggedIn()
         {
             if (fakePremium) return fakePremium;
-            return GetWebData(loginPostUrl, cc).Trim() == "ok";
+            return GetWebData(loginPostUrl, cookies: cc).Trim() == "ok";
         }
 
         private void login()
@@ -91,13 +91,13 @@ namespace OnlineVideos.Sites
             isPremium = isLoggedIn();
             if (isPremium) 
                 return;
-            var loginpage = GetWebData(loginUrl, cc);
+            var loginpage = GetWebData(loginUrl, cookies: cc);
             var htmlDoc = new HtmlAgilityPack.HtmlDocument();
             htmlDoc.LoadHtml(loginpage);
             var input = htmlDoc.DocumentNode.SelectSingleNode("//input[@id = 'authenticity_token']");
             var authenticity_token = input.GetAttributeValue("value", "");
             string postData = string.Format("user_name={0}&password={1}&authenticity_token={2}&https=", System.Web.HttpUtility.UrlEncode(username), System.Web.HttpUtility.UrlEncode(password), System.Web.HttpUtility.UrlEncode(authenticity_token));
-            string loginresponse = GetWebDataFromPost(loginPostUrl, postData, cc);
+            string loginresponse = GetWebData(loginPostUrl, postData, cc);
             isPremium = isLoggedIn();
         }
 
@@ -204,14 +204,14 @@ namespace OnlineVideos.Sites
         }
 
         
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             currentPage = 1;
             currentVideoCategoryName = category.Name;
             return generateVideoList(category);
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return generateVideoList(new RssLink() { Url = currentVideoUrl, Name = currentVideoCategoryName });
         }
@@ -295,14 +295,14 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             //To be certain if the user is *really* logged in...
             login();
             
             string result = string.Empty;
             video.PlaybackOptions = new Dictionary<string, string>();
-            XmlDocument xDoc = GetWebData<XmlDocument>(video.VideoUrl, cc);
+            XmlDocument xDoc = GetWebData<XmlDocument>(video.VideoUrl, cookies: cc);
             var errorElements = xDoc.SelectNodes("//meta[@name = 'error']");
             if (errorElements != null && errorElements.Count > 0)
             {
@@ -358,7 +358,7 @@ namespace OnlineVideos.Sites
                     }
                     else if (retrieveSubtitles && mediaformat.StartsWith("smi"))
                     {
-                        video.SubtitleText = GetWebData(videoElem.GetElementsByTagName("url")[0].InnerText, cc, null, null, false, false, null, System.Text.Encoding.Default);
+                        video.SubtitleText = GetWebData(videoElem.GetElementsByTagName("url")[0].InnerText, cookies: cc, encoding: System.Text.Encoding.Default);
                     }
                 }
                 foreach (var item in urls.OrderBy(u => u.Key))

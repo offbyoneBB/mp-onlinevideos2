@@ -252,7 +252,7 @@ namespace OnlineVideos.Sites
         /// </summary>
         /// <param name="category">The parent category</param>
         /// <returns>List of video items</returns>
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             currentCategory = category;
             List<VideoInfo> videos = new List<VideoInfo>();
@@ -327,10 +327,10 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             (currentCategory as RssLink).Url = nextVideoPage;
-            return getVideoList(currentCategory);
+            return GetVideos(currentCategory);
         }
 
         /// <summary>
@@ -338,7 +338,7 @@ namespace OnlineVideos.Sites
         /// </summary>
         /// <param name="video">The video that is started</param>
         /// <returns>The actual playback url</returns>
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             Log.Info("Get url: " + video.VideoUrl);
 
@@ -569,7 +569,7 @@ namespace OnlineVideos.Sites
                 //String playData = GetWebData(String.Format("http://streamaccess.laola1.tv/hdflash/1/hdlaola1_{0}.xml?streamid={1}&partnerid=1&quality=hdlive&t=.smil", playkey1, playkey1));
 
                 System.Net.CookieContainer container = new System.Net.CookieContainer();
-                String playData = GetWebData(streamAccess, container);
+                String playData = GetWebData(streamAccess, cookies: container);
                 Match baseUrls = regEx_GetLiveHdBaseUrls.Match(playData);
                 Match sources = regEx_GetLiveHdSources.Match(playData);
 

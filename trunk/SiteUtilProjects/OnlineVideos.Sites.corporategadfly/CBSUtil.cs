@@ -147,7 +147,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
         
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             return getVideoListForSinglePage(category, (category as RssLink).Url);
         }
@@ -160,7 +160,7 @@ namespace OnlineVideos.Sites
 
             if (category.Other != null && CBSItemType.ClassicEpisodes.Equals((CBSItemType) category.Other))
             {
-                string webData = GetWebDataFromPost(url, string.Empty);
+                string webData = GetWebData(url, string.Empty);
                 if (!string.IsNullOrEmpty(webData))
                 {
                     JObject json = JObject.Parse(webData);
@@ -258,12 +258,12 @@ namespace OnlineVideos.Sites
             get { return !string.IsNullOrEmpty(nextPageUrl); }
         }
         
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return getVideoListForSinglePage(currentCategory, nextPageUrl);
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             Log.Debug(@"video: {0}", video.Title);
             string result = string.Empty;

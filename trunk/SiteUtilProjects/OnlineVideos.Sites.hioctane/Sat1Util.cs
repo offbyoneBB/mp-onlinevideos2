@@ -76,7 +76,7 @@ namespace OnlineVideos.Sites
             return cat;
         }
 
-		public override List<VideoInfo> getVideoList(Category category)
+		public override List<VideoInfo> GetVideos(Category category)
 		{
 			List<VideoInfo> videoList = new List<VideoInfo>();
 			string page = GetWebData(((RssLink)category).Url);
@@ -99,7 +99,7 @@ namespace OnlineVideos.Sites
 			return videoList;
 		}
  
-        public override String getUrl(VideoInfo video)
+        public override String GetVideoUrl(VideoInfo video)
         {
             string webData = GetWebData(video.VideoUrl);
             string clipId = Regex.Match(webData, @",""id"":""(?<Value>[^""]+)""").Groups["Value"].Value;

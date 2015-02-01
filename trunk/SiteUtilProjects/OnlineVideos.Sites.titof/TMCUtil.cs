@@ -38,7 +38,7 @@ namespace OnlineVideos.Sites
             return nbCat;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> videoList = new List<VideoInfo>();
             
@@ -59,14 +59,14 @@ namespace OnlineVideos.Sites
                 m = m.NextMatch();
             }
             
-            videoList.AddRange(base.getVideoList(category));
+            videoList.AddRange(base.GetVideos(category));
 
 
             return videoList;
             
         }
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             return TF1Util._getVideosUrl(video);
             

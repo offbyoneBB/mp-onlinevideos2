@@ -25,7 +25,7 @@ namespace OnlineVideos.Sites.bw_fotoart
             public static string getPlaybackUrl(string playerUrl, MyTainmentUtil Util)
             {
 
-                string data = GetWebData(playerUrl, Util.GetCookie(), forceUTF8: Util.forceUTF8Encoding, allowUnsafeHeader: Util.allowUnsafeHeaders, encoding: Util.encodingOverride);
+                string data = GetWebData(playerUrl, cookies: Util.GetCookie(), forceUTF8: Util.forceUTF8Encoding, allowUnsafeHeader: Util.allowUnsafeHeaders, encoding: Util.encodingOverride);
                 WebRequest request = WebRequest.Create(playerUrl);
                 WebResponse response = request.GetResponse();
                 string url = response.ResponseUri.ToString();
@@ -73,9 +73,9 @@ namespace OnlineVideos.Sites.bw_fotoart
             return new MyTainmentVideoInfo() { Util = this };
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
-            string result = base.getUrl(video);
+            string result = base.GetVideoUrl(video);
             if (video.PlaybackOptions == null && !string.IsNullOrEmpty(result))
                 result = MyTainmentVideoInfo.getPlaybackUrl(result, this);
             return result;
@@ -97,7 +97,7 @@ namespace OnlineVideos.Sites.bw_fotoart
             }
             else
             {
-                string data = GetWebData(baseUrl, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
+                string data = GetWebData(baseUrl, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
                 if (!string.IsNullOrEmpty(data))
                 {
                     return ParseCategories(data);
@@ -154,7 +154,7 @@ namespace OnlineVideos.Sites.bw_fotoart
             if (parentCategory is RssLink && regEx_dynamicSubCategories != null)
             {
                 if (data == null)
-                    data = GetWebData((parentCategory as RssLink).Url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
+                    data = GetWebData((parentCategory as RssLink).Url, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
                 if (!string.IsNullOrEmpty(data))
                 {
                     List<Category> dynamicSubCategories = new List<Category>(); // put all new discovered Categories in a separate list
@@ -204,7 +204,7 @@ namespace OnlineVideos.Sites.bw_fotoart
             if (parentCategory is RssLink && regEx_dynamicSubSubCategories != null)
             {
                 if (data == null)
-                    data = GetWebData((parentCategory as RssLink).Url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
+                    data = GetWebData((parentCategory as RssLink).Url, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
                 if (!string.IsNullOrEmpty(data))
                 {
                     List<Category> dynamicSubCategories = new List<Category>(); // put all new discovered Categories in a separate list

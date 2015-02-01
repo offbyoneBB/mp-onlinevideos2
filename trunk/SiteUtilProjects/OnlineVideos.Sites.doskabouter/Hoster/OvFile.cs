@@ -35,7 +35,7 @@ namespace OnlineVideos.Hoster
             }
             else
             {
-                string page = SiteUtilBase.GetWebData(url, cc);
+                string page = SiteUtilBase.GetWebData(url, cookies: cc);
 
                 if (!string.IsNullOrEmpty(page))
                 {
@@ -58,7 +58,7 @@ namespace OnlineVideos.Hoster
 
                         System.Threading.Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
 
-                        string page2 = SiteUtilBase.GetWebDataFromPost(url, postdata, cc, url);
+                        string page2 = SiteUtilBase.GetWebData(url, postdata, cc, url);
 
                         if (!string.IsNullOrEmpty(page2))
                         {

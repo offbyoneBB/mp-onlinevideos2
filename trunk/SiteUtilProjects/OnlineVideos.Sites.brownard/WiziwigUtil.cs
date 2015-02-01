@@ -54,7 +54,7 @@ namespace OnlineVideos.Sites
             return cats.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             Group group = category as Group;
             if (group != null)
@@ -93,13 +93,13 @@ namespace OnlineVideos.Sites
             return vids;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string url = video.VideoUrl;
             if (url.StartsWith("acestream://"))
                 return getAceStreamUrl(url.Substring(12));
             else if (url.StartsWith("sop://"))
-                return base.getUrl(video);
+                return base.GetVideoUrl(video);
             return null;
         }
 

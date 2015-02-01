@@ -142,7 +142,7 @@ namespace OnlineVideos.Sites
         }
 
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {            
             List<string> listUrls = new List<string>();
 

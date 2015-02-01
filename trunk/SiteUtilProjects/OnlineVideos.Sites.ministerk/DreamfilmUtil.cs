@@ -63,7 +63,7 @@ namespace OnlineVideos.Sites
 
                 BugFix_CookieDomain(cc);
                 // No caching... if url results in ddos protection page.
-                string data = GetWebData(url, postData, headers, cc, null, false, false, null, false);
+                string data = GetWebData(url, postData, cc, null, null, false, false, null, null, headers, false);
                 var htmlDoc = new HtmlAgilityPack.HtmlDocument();
                 htmlDoc.LoadHtml(data);
                 var form = htmlDoc.DocumentNode.SelectSingleNode("//form[@id = 'challenge-form']");
@@ -87,14 +87,14 @@ namespace OnlineVideos.Sites
 
                     var challengeUrl = string.Format(ddosUrl, action, jschlVc, answer);
                     BugFix_CookieDomain(cc);
-                    data = GetWebData(challengeUrl, postData, headers, cc, null, false, false, null, false);
+                    data = GetWebData(challengeUrl, postData, cc, null, null, false, false, null, null, headers, false);
                 }
                 return data;
             }
             else
             {
                 if (postData != null)
-                    return GetWebDataFromPost(url, postData);
+                    return GetWebData(url, postData);
                 return GetWebData(url);
             }
         }
@@ -349,7 +349,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             List<ISearchResultItem> results = new List<ISearchResultItem>();
             Category parentCategory = new RssLink()
@@ -373,7 +373,7 @@ namespace OnlineVideos.Sites
 
         #region Videos
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> videos = new List<VideoInfo>();
             string categoryUrl = (category as RssLink).Url;
@@ -479,7 +479,7 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             string bestUrl = "";
             video.PlaybackOptions = new Dictionary<string, string>();

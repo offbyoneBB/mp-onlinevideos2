@@ -77,7 +77,7 @@ namespace OnlineVideos.Sites.WebAutomation
         /// </summary>
         /// <param name="category"></param>
         /// <returns></returns>
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             var result = new List<VideoInfo>();
             BuildVideos(result, category);
@@ -133,7 +133,7 @@ namespace OnlineVideos.Sites.WebAutomation
         /// </summary>
         /// <param name="video"></param>
         /// <returns></returns>
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             return video.Other.ToString();
         }

@@ -22,7 +22,7 @@ namespace OnlineVideos.Sites
         public override int DiscoverSubCategories(Category parentCategory)
         {
             XmlDocument doc = new XmlDocument();
-            string xmlData = GetWebData(((RssLink)parentCategory).Url, null, null, null, true);
+            string xmlData = GetWebData(((RssLink)parentCategory).Url, forceUTF8: true);
             doc.LoadXml(xmlData);
             XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
             nsmgr.AddNamespace("a", "http://www.w3.org/2005/Atom");
@@ -42,10 +42,10 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             if (category is Group)
-                return base.getVideoList(category);
+                return base.GetVideos(category);
 
             string xmlData = GetWebData(((RssLink)category).Url, forceUTF8: true);
             List<VideoInfo> videoList = new List<VideoInfo>();
@@ -67,7 +67,7 @@ namespace OnlineVideos.Sites
             return videoList;
         }
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<string> result = new List<string>();
             if ("livestream".Equals(video.Other))

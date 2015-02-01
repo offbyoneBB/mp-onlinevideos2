@@ -95,7 +95,7 @@ namespace OnlineVideos.Sites
             return String.Empty;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string data = GetWebData(video.VideoUrl);
             string thisUrl = null;
@@ -264,7 +264,7 @@ namespace OnlineVideos.Sites
             return null;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             string data = GetWebData(((RssLink)category).Url);
             int p = data.IndexOf(@"<!-- /content -->");

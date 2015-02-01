@@ -67,14 +67,14 @@ namespace OnlineVideos.Sites
             return res;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             string url = ((RssLink)category).Url;
             string webData = GetWebData(url, userAgent: UserAgent);
             return Parse(url, webData);
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string webData = GetWebData(video.VideoUrl, userAgent: UserAgent);
             Match m = regEx_FileUrl.Match(webData);

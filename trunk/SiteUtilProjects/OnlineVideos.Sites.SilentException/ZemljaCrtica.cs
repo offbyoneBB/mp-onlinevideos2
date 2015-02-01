@@ -27,7 +27,7 @@ namespace OnlineVideos.Sites
         {
             int result = base.DiscoverDynamicCategories();
 
-            string data = GetWebData(baseUrl, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
+            string data = GetWebData(baseUrl, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
 
             if (!string.IsNullOrEmpty(data) && Settings.Categories != null)
             {
@@ -83,11 +83,11 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             // get web data
             string url = ((RssLink)category).Url;
-            string data = GetWebData(url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
+            string data = GetWebData(url, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders);
             List<VideoInfo> result = Parse(url, data);
 
             // set descriptions

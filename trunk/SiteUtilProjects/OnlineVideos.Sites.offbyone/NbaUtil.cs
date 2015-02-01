@@ -60,7 +60,7 @@ namespace OnlineVideos.Sites
             return Settings.Categories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             currentPage = 1; pagesInCategory = 1; sectionBaseUrl = ((RssLink)category).Url; // reset next/prev fields
             return getVideoList("http://searchapp.nba.com/nba-search/query.jsp?type=advvideo&start=1&npp=" + itemsPerPage + "&" + ((RssLink)category).Url + "&season=1213&sort=recent");
@@ -176,7 +176,7 @@ namespace OnlineVideos.Sites
             get { return currentPage < pagesInCategory; }
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             currentPage++;
             int start = ((currentPage - 1) * itemsPerPage) + 1;
@@ -191,12 +191,12 @@ namespace OnlineVideos.Sites
 
         public override bool CanSearch { get { return true; } }
 
-        public override List<VideoInfo> Search(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             query = System.Web.HttpUtility.UrlEncode(query);
             currentPage = 1; pagesInCategory = 1; sectionBaseUrl = "text="+query; // reset next/prev fields
             string url = string.Format(searchUrl, query, itemsPerPage);
-            return getVideoList(url);
+            return getVideoList(url).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
         }
 
         #endregion

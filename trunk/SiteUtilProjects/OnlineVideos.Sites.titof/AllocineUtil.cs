@@ -88,7 +88,7 @@ namespace OnlineVideos.Sites
             return base.DiscoverSubCategories(parentCategory);
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
            RegexOptions defaultRegexOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture;
 
@@ -106,23 +106,23 @@ namespace OnlineVideos.Sites
                {
                    videoListRegEx = @"<div\sclass=""movie_[^""]*"">\s*<a\shref='(?<VideoUrl>[^']*)'>\s*<img\ssrc='(?<ImageUrl>[^']*)'\s*alt=""[^""]*""\s*title=""[^""]*""\s/>\s*</a><a\shref='[^']*'>\s*<strong>(?<Title>[^<]*)</strong>(?<Description>[^<]*)</a><span>&nbsp;</span>\s*</div>";
                    regEx_VideoList = new Regex(videoListRegEx, defaultRegexOptions);
-                   videoList.AddRange(base.getVideoList(category));
+                   videoList.AddRange(base.GetVideos(category));
                    videoListRegEx = @"<div\sclass=""picturezone"">\s*<a\shref=""(?<VideoUrl>[^""]*)""\sid=""[^""]*"">\s*<img\ssrc='(?<ImageUrl>[^']*)'\s*alt=""[^""]*""\s*title=""[^""]*""\s/>\s*</a>\s*</div><!--/picturezone-->\s*<div\sclass=""titlebar"">\s*<a\sclass=""link""\shref=""[^""]*""\sid=""[^""]*"">\s*<span>[^<]*</span><strong>(?<Title>[^<]*)</strong>\s<br\s/>(?<Description>[^<]*)</a>";
                    regEx_VideoList = new Regex(videoListRegEx, defaultRegexOptions);
-                   videoList.AddRange(base.getVideoList(category));
+                   videoList.AddRange(base.GetVideos(category));
                    
                }
                if (category.Name.Equals("A ne pas manquer"))
                {
                    videoListRegEx = @"<div\sclass=""picturezone"">\s*<a\shref=""(?<VideoUrl>[^""]*)"">\s*<img\ssrc='(?<ImageUrl>[^']*)'\salt=""[^""]*""\s*title=""[^""]*""\s/>\s*</a>\s*</div>\s*<div\sclass=""contenzone"">\s*<div\sclass=""titlebar"">\s*<a.*?href=[^>]*>\s*<strong>(?<Title>[^<]*)</strong>(?<Description>[^<]*)";
                    regEx_VideoList = new Regex(videoListRegEx, defaultRegexOptions);
-                   videoList.AddRange(base.getVideoList(category));
+                   videoList.AddRange(base.GetVideos(category));
                }
 
                //videoListRegEx = @"<div\sclass=""picturezone"">\s*<a\shref=""(?<VideoUrl>[^""]*)"">\s*<img\ssrc='(?<ImageUrl>[^']*)'\salt=""[^""]*""\s*title=""[^""]*""\s/>\s*</a>\s*</div>\s*<div\sclass=""contenzone"">\s*<div\sclass=""titlebar"">\s*<a.*?href=[^>]*>\s*<strong>(?<Title>[^<]*)</strong>(?<Description>[^<]*)";
                videoListRegEx = @"<div\sclass=""picturezone"">\s*<a\shref=""(?<VideoUrl>[^""]*)"">\s*<img\ssrc='(?<ImageUrl>[^']*)'.*?<div\sclass=""contenzone"">\s*<div\sclass=""titlebar"">\s*<a.*?href=[^>]*>\s*<span\sclass='bold'>(?<Title>[^<]*)</span>(?<Description>[^<]*)";
                regEx_VideoList = new Regex(videoListRegEx, defaultRegexOptions);
-               videoList.AddRange(base.getVideoList(category));
+               videoList.AddRange(base.GetVideos(category));
                return videoList;
             } 
            else
@@ -131,10 +131,10 @@ namespace OnlineVideos.Sites
             }
             regEx_VideoList = new Regex(videoListRegEx, defaultRegexOptions);
 
-            return base.getVideoList(category);
+            return base.GetVideos(category);
         }
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<string> listUrls = new List<string>();
 

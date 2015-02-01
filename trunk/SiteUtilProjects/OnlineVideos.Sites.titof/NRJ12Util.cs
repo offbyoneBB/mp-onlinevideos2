@@ -17,7 +17,7 @@ namespace OnlineVideos.Sites
     public class NRJ12Util : GenericSiteUtil
     {
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             string resultUrl = "";
             string webData = GetWebData(video.VideoUrl);

@@ -17,12 +17,12 @@ namespace OnlineVideos.Sites
     public class Direct8Util : GenericSiteUtil
     {
 
-        public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<string> listUrls = new List<string>();
             string webData = GetWebData(video.VideoUrl);
             string url = Regex.Match(webData, @"<script\stype=""text/javascript""\ssrc=""http://direct8\.hexaglobe\.com/player(?<url>[^""]*)""></script>").Groups["url"].Value;
-            webData = GetWebData(@"http://direct8.hexaglobe.com/player" + url, null, video.VideoUrl);
+            webData = GetWebData(@"http://direct8.hexaglobe.com/player" + url, referer: video.VideoUrl);
             string baseUrl = Regex.Match(webData, @"baseUrl:.*?'(?<url>[^']*)'").Groups["url"].Value;
             Match m = Regex.Match(webData, @"url\s:\s'(?<url>[^']*)'");
             while (m.Success)

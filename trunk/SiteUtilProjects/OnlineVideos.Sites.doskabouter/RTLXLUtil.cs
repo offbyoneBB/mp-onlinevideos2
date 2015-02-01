@@ -444,7 +444,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             if (category.Other != null)
                 return (List<VideoInfo>)category.Other;
@@ -454,7 +454,7 @@ namespace OnlineVideos.Sites
                 return new List<VideoInfo>();
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             if (true.Equals(video.Other))
                 return video.VideoUrl;
@@ -462,7 +462,7 @@ namespace OnlineVideos.Sites
             string webData = GetWebData(url);
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(webData);
-            List<string> urls = ParseASX(url);
+            List<string> urls = Utils.ParseASX(GetWebData(url));
             string url2 = urls.Count > 1 ? urls[1] : urls[0];
             return url2;
         }

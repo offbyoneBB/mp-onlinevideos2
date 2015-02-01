@@ -23,7 +23,7 @@ namespace OnlineVideos.Sites.bw_fotoart
 
             public static string getPlaybackUrl(string playerUrl, iStreamUtil Util)
             {
-                string data = GetWebData(playerUrl, Util.GetCookie(), forceUTF8: Util.forceUTF8Encoding, allowUnsafeHeader: Util.allowUnsafeHeaders, encoding: Util.encodingOverride);
+                string data = GetWebData(playerUrl, cookies: Util.GetCookie(), forceUTF8: Util.forceUTF8Encoding, allowUnsafeHeader: Util.allowUnsafeHeaders, encoding: Util.encodingOverride);
                 Match n = Regex.Match(data, @"URL=(?<url>[^""]*)");
 
                 if (n.Groups[1].Value == "http://istream.ws" || n.Groups[1].Value == "")
@@ -33,7 +33,7 @@ namespace OnlineVideos.Sites.bw_fotoart
 
                     string encodeQuery = System.Uri.EscapeDataString(e);
                     string newplayerurl = "http://istream.ws" + myRequest.Address.LocalPath +"?m="+ encodeQuery;
-                    string data2 = GetWebData(newplayerurl, Util.GetCookie(), forceUTF8: Util.forceUTF8Encoding, allowUnsafeHeader: Util.allowUnsafeHeaders, encoding: Util.encodingOverride);
+                    string data2 = GetWebData(newplayerurl, cookies: Util.GetCookie(), forceUTF8: Util.forceUTF8Encoding, allowUnsafeHeader: Util.allowUnsafeHeaders, encoding: Util.encodingOverride);
 
                     Match m = Regex.Match(data2, @"URL=(?<url>[^""]*)");
                     playerUrl = m.Groups[1].Value;
@@ -68,9 +68,9 @@ namespace OnlineVideos.Sites.bw_fotoart
             return new iStreamVideoInfo() { Util = this };
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
-            string result = base.getUrl(video);
+            string result = base.GetVideoUrl(video);
             if (video.PlaybackOptions == null && !string.IsNullOrEmpty(result))
                 result = iStreamVideoInfo.getPlaybackUrl(result, this);
             return result;

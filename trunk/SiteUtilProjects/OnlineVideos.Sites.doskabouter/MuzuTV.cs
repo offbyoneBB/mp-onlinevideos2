@@ -150,7 +150,7 @@ namespace OnlineVideos.Sites
             get { return true; }
         }
 
-        public override List<ISearchResultItem> DoSearch(string query)
+        public override List<ISearchResultItem> Search(string query, string category = null)
         {
             pageNr = 0;
 
@@ -242,29 +242,29 @@ namespace OnlineVideos.Sites
             return res;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             pageNr = 0;
             return lowGetVideoList(((RssLink)category).Url, "views", "7",
                  MuzuType.PlayList.Equals(category.Other) || MuzuType.NewReleases.Equals(category.Other));
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return lowGetVideoList(nextPageUrl, "views", "7", fromHtml);
         }
 
-        public List<int> getResultSteps()
+        public List<int> GetResultSteps()
         {
             return steps;
         }
 
-        public Dictionary<string, string> getOrderbyList()
+        public Dictionary<string, string> GetOrderByOptions()
         {
             return orderByList;
         }
 
-        public Dictionary<string, string> getTimeFrameList()
+        public Dictionary<string, string> GetTimeFrameOptions()
         {
             return timeFrameList;
         }
@@ -280,14 +280,14 @@ namespace OnlineVideos.Sites
         }
 
         #region IFilter
-        public List<VideoInfo> filterVideoList(Category category, int maxResult, string orderBy, string timeFrame)
+        public List<VideoInfo> FilterVideos(Category category, int maxResult, string orderBy, string timeFrame)
         {
             pageSize = maxResult;
             pageNr = 0;
             return lowGetVideoList(((RssLink)category).Url, orderBy, timeFrame, false);
         }
 
-        public List<VideoInfo> filterSearchResultList(string query, int maxResult, string orderBy, string timeFrame)
+        public List<VideoInfo> FilterSearchResults(string query, int maxResult, string orderBy, string timeFrame)
         {
             pageNr = 0;
             pageSize = maxResult;
@@ -295,7 +295,7 @@ namespace OnlineVideos.Sites
             return lowGetVideoList(url, orderBy, timeFrame, false);
         }
 
-        public List<VideoInfo> filterSearchResultList(string query, string category, int maxResult, string orderBy, string timeFrame)
+        public List<VideoInfo> FilterSearchResults(string query, string category, int maxResult, string orderBy, string timeFrame)
         {
             pageSize = maxResult;
             string url = baseUrl + String.Format("api/search?mySearch={0}&g={1}&", HttpUtility.UrlEncode(query), category);

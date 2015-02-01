@@ -41,10 +41,10 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             if (true.Equals(category.Other))
-                return base.getVideoList(category);
+                return base.GetVideos(category);
             string webData = GetWebData(((RssLink)category).Url);
             JObject contentData = JObject.Parse(webData);
             if (contentData != null)
@@ -70,7 +70,7 @@ namespace OnlineVideos.Sites
             return null;
         }
 
-        public override String getUrl(VideoInfo video)
+        public override String GetVideoUrl(VideoInfo video)
         {
             string webData = GetWebData(video.VideoUrl);
             JObject content = JObject.Parse(webData);

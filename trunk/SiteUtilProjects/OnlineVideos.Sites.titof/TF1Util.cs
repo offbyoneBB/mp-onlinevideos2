@@ -199,7 +199,7 @@ namespace OnlineVideos.Sites
    
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             string baseVideos = "http://videos.tf1.fr";
             string url = (category as RssLink).Url;
@@ -274,15 +274,15 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             RssLink cat = new RssLink();
             indexPage++;
             cat.Url = listPages[indexPage -1];
-            return getVideoList(cat);
+            return GetVideos(cat);
         }
         
-        public override List<string> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {            
             return _getVideosUrl(video);
         }
@@ -373,7 +373,7 @@ namespace OnlineVideos.Sites
 
         private static string getFinalUrl(string token, string url, string timeToken, string id)
         {
-            string webData = GetWebData(url + "?domain=videos.tf1.fr&country=FR&getURL=1&version=LNX%2010,0,45,2&token=" + token + "/" + timeToken, null, null, null, false, false, "Mozilla/5.0 (Windows; U; Windows NT 6.1; de; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3");
+            string webData = GetWebData(url + "?domain=videos.tf1.fr&country=FR&getURL=1&version=LNX%2010,0,45,2&token=" + token + "/" + timeToken, userAgent: "Mozilla/5.0 (Windows; U; Windows NT 6.1; de; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3");
             if (webData.Contains("rtmpte://"))
             {
                 webData = webData.Replace(webData.Substring(0, webData.IndexOf("://")), "rtmpe");

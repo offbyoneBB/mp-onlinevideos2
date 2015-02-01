@@ -17,7 +17,7 @@ namespace OnlineVideos.Sites
         {
             if (Settings.Categories == null) Settings.Categories = new BindingList<Category>();
             cc = new CookieContainer();
-            string data = GetWebData(@"https://www.filmon.com/tv/live", userAgent: userAgent, cc: cc);
+            string data = GetWebData(@"https://www.filmon.com/tv/live", userAgent: userAgent, cookies: cc);
             string jsondata = @"{""result"":" + GetSubString(data, "var groups =", @"if(!$.isArray").Trim().TrimEnd(';') + "}";
             JToken jt = JObject.Parse(jsondata) as JToken;
             foreach (JToken jCat in jt["result"] as JArray)
@@ -45,12 +45,12 @@ namespace OnlineVideos.Sites
             return Settings.Categories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             return (List<VideoInfo>)category.Other;
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             CookieContainer newCc = new CookieContainer();
             foreach (Cookie c in cc.GetCookies(new Uri(@"https://www.filmon.com/")))
@@ -62,7 +62,7 @@ namespace OnlineVideos.Sites
             headers.Add("Accept", "*/*");
             headers.Add("User-Agent", userAgent);
             headers.Add("X-Requested-With", "XMLHttpRequest");
-            string webdata = GetWebData(video.VideoUrl, (string)video.Other, headers, newCc, null, false, false, null, false);
+            string webdata = GetWebData(video.VideoUrl, (string)video.Other, newCc, headers: headers);
 
             JToken jt = JObject.Parse(webdata) as JToken;
             JArray streams = jt.Value<JArray>("streams");
