@@ -117,15 +117,15 @@ namespace OnlineVideos.MediaPortal1
 
                     if (sourceFilter == null)
                     {
-                        sourceFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, OnlineVideos.MPUrlSourceFilter.Downloader.FilterName);
+                        sourceFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, OnlineVideos.MPUrlSourceFilter.Downloader.FilterName, new Guid(OnlineVideos.MPUrlSourceFilter.Downloader.FilterCLSID));
+                    }
 
-                        if (sourceFilter != null)
-                        {
-                            // check is filter is V2 version
+                    if (sourceFilter != null)
+                    {
+                        // check is filter is V2 version
 
-                            filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.IFilterState;
-                            filterStateEx = sourceFilter as OnlineVideos.MPUrlSourceFilter.IFilterStateEx;
-                        }
+                        filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.IFilterState;
+                        filterStateEx = sourceFilter as OnlineVideos.MPUrlSourceFilter.IFilterStateEx;
                     }
 
                     if (filterStateEx != null)
