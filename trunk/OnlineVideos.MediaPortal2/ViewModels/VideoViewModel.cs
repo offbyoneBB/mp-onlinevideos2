@@ -548,7 +548,7 @@ namespace OnlineVideos.MediaPortal2
 			if (!string.IsNullOrEmpty(video.SubtitleText) || (validUri && !subtitleUri.IsFile))
 			{
 				Log.Info("Downloading subtitles to " + destinationFileName);
-				string subs = string.IsNullOrEmpty(video.SubtitleText) ? Sites.SiteUtilBase.GetWebData(video.SubtitleUrl) : video.SubtitleText;
+				string subs = string.IsNullOrEmpty(video.SubtitleText) ? WebCache.Instance.GetWebData(video.SubtitleUrl) : video.SubtitleText;
 				if (!string.IsNullOrEmpty(subs))
 					File.WriteAllText(destinationFileName, subs, System.Text.Encoding.UTF8);
 			}

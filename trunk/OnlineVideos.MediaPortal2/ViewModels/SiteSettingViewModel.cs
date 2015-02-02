@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MediaPortal.Common;
+﻿using MediaPortal.Common;
 using MediaPortal.Common.Commands;
 using MediaPortal.Common.General;
+using MediaPortal.Common.Localization;
 using MediaPortal.UI.Presentation.DataObjects;
 using MediaPortal.UI.Presentation.Screens;
-using MediaPortal.UI.SkinEngine.Controls.Visuals;
-using MediaPortal.UI.SkinEngine.ScreenManagement;
 using MediaPortal.UiComponents.Media.General;
-using OnlineVideos.Sites;
-using MediaPortal.Common.Localization;
+using OnlineVideos.Reflection;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -100,10 +94,10 @@ namespace OnlineVideos.MediaPortal2
 			return result;
 		}
 
-        public SiteUtilBase.FieldPropertyDescriptorByRef PropertyDescriptor { get; protected set; }
+        public FieldPropertyDescriptorByRef PropertyDescriptor { get; protected set; }
 		public SiteViewModel Site { get; protected set; }
 
-		public SiteSettingViewModel(SiteViewModel site, SiteUtilBase.FieldPropertyDescriptorByRef propertyDescriptor)
+		public SiteSettingViewModel(SiteViewModel site, FieldPropertyDescriptorByRef propertyDescriptor)
 			: base(Consts.KEY_NAME, propertyDescriptor.DisplayName)
         {
 			Site = site;
