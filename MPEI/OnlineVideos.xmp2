@@ -2677,119 +2677,119 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</LocalFileName>
+              <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.apondman.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{758052e2-69a5-49c1-86a3-f0fb3a694440}-OnlineVideos.Sites.apondman.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.brownard.dll</LocalFileName>
+              <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.brownard.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{01ff36dd-4b5a-47d0-88c4-ed79b4ae9e47}-OnlineVideos.Sites.brownard.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.brownard.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.corporategadfly.dll</LocalFileName>
+              <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.corporategadfly.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{4c8dc52e-55c1-48cc-9a34-589f7be39c5c}-OnlineVideos.Sites.corporategadfly.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.corporategadfly.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.DavidCalder.dll</LocalFileName>
+              <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.DavidCalder.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{362fb48f-ff45-4116-8b41-5f48d4a9b8ac}-OnlineVideos.Sites.DavidCalder.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.DavidCalder.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.diebagger.dll</LocalFileName>
+              <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.diebagger.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{b9177163-1ed3-4b3c-a9be-81e77ce05b63}-OnlineVideos.Sites.diebagger.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.diebagger.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.Dj_Moren.dll</LocalFileName>
+              <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.Dj_Moren.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{8c926e79-57e7-4f0f-af7e-1dfd302e3bc3}-OnlineVideos.Sites.Dj_Moren.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.Dj_Moren.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</LocalFileName>
+              <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.doskabouter.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{e4293e6c-b50e-4a30-9018-f987218fc347}-OnlineVideos.Sites.doskabouter.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</LocalFileName>
+              <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.hioctane.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{b30b70c5-9965-4d6f-80d2-170d8054fb1d}-OnlineVideos.Sites.hioctane.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.ksya.dll</LocalFileName>
+              <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.ksya.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{b034a66e-646e-4495-bbfc-72523048df38}-OnlineVideos.Sites.ksya.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.ksya.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.ministerk.dll</LocalFileName>
+              <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.ministerk.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{f86c656f-e384-42cb-a1bd-0b05c8a810e5}-OnlineVideos.Sites.ministerk.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.ministerk.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.MrP.dll</LocalFileName>
+              <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.MrP.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{3e1ff5fd-9f1d-4227-b9ff-3235d4244146}-OnlineVideos.Sites.MrP.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.MrP.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</LocalFileName>
+              <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.offbyone.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{a3b4c5b1-e6d6-4562-a893-6b47e00f629a}-OnlineVideos.Sites.offbyone.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.pilehave.dll</LocalFileName>
+              <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.pilehave.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{f31bc3ab-b076-4064-9c0c-53f90a0b283d}-OnlineVideos.Sites.pilehave.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.pilehave.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.rick164.dll</LocalFileName>
+              <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.rick164.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{44c19a6b-28e0-4936-a000-edea70c11632}-OnlineVideos.Sites.rick164.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.rick164.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.SilentException.dll</LocalFileName>
+              <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.SilentException.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{88fba3b4-4209-4db5-9142-8329f8b13d25}-OnlineVideos.Sites.SilentException.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.SilentException.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.SK_CZ.dll</LocalFileName>
+              <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.SK_CZ.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{b42016e5-6331-4f95-985a-d79ae30e9b60}-OnlineVideos.Sites.SK_CZ.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.SK_CZ.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</LocalFileName>
+              <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.titof.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{1e050af9-a5ca-4683-afea-7c4648c2c0d3}-OnlineVideos.Sites.titof.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</DestinationFilename>
             </FileItem>
@@ -6628,119 +6628,119 @@ changed to use the new IPTV filter</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</LocalFileName>
+        <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.apondman.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{758052e2-69a5-49c1-86a3-f0fb3a694440}-OnlineVideos.Sites.apondman.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.apondman.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.brownard.dll</LocalFileName>
+        <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.brownard.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{01ff36dd-4b5a-47d0-88c4-ed79b4ae9e47}-OnlineVideos.Sites.brownard.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.brownard.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.corporategadfly.dll</LocalFileName>
+        <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.corporategadfly.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{4c8dc52e-55c1-48cc-9a34-589f7be39c5c}-OnlineVideos.Sites.corporategadfly.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.corporategadfly.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.DavidCalder.dll</LocalFileName>
+        <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.DavidCalder.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{362fb48f-ff45-4116-8b41-5f48d4a9b8ac}-OnlineVideos.Sites.DavidCalder.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.DavidCalder.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.diebagger.dll</LocalFileName>
+        <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.diebagger.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{b9177163-1ed3-4b3c-a9be-81e77ce05b63}-OnlineVideos.Sites.diebagger.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.diebagger.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.Dj_Moren.dll</LocalFileName>
+        <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.Dj_Moren.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{8c926e79-57e7-4f0f-af7e-1dfd302e3bc3}-OnlineVideos.Sites.Dj_Moren.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.Dj_Moren.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</LocalFileName>
+        <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.doskabouter.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{e4293e6c-b50e-4a30-9018-f987218fc347}-OnlineVideos.Sites.doskabouter.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.doskabouter.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</LocalFileName>
+        <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.hioctane.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{b30b70c5-9965-4d6f-80d2-170d8054fb1d}-OnlineVideos.Sites.hioctane.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.hioctane.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.ksya.dll</LocalFileName>
+        <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.ksya.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{b034a66e-646e-4495-bbfc-72523048df38}-OnlineVideos.Sites.ksya.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.ksya.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.ministerk.dll</LocalFileName>
+        <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.ministerk.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{f86c656f-e384-42cb-a1bd-0b05c8a810e5}-OnlineVideos.Sites.ministerk.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.ministerk.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.MrP.dll</LocalFileName>
+        <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.MrP.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{3e1ff5fd-9f1d-4227-b9ff-3235d4244146}-OnlineVideos.Sites.MrP.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.MrP.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</LocalFileName>
+        <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.offbyone.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{a3b4c5b1-e6d6-4562-a893-6b47e00f629a}-OnlineVideos.Sites.offbyone.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.offbyone.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.pilehave.dll</LocalFileName>
+        <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.pilehave.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{f31bc3ab-b076-4064-9c0c-53f90a0b283d}-OnlineVideos.Sites.pilehave.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.pilehave.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.rick164.dll</LocalFileName>
+        <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.rick164.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{44c19a6b-28e0-4936-a000-edea70c11632}-OnlineVideos.Sites.rick164.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.rick164.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.SilentException.dll</LocalFileName>
+        <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.SilentException.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{88fba3b4-4209-4db5-9142-8329f8b13d25}-OnlineVideos.Sites.SilentException.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.SilentException.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.SK_CZ.dll</LocalFileName>
+        <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.SK_CZ.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{b42016e5-6331-4f95-985a-d79ae30e9b60}-OnlineVideos.Sites.SK_CZ.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.SK_CZ.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</LocalFileName>
+        <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.titof.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{1e050af9-a5ca-4683-afea-7c4648c2c0d3}-OnlineVideos.Sites.titof.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</DestinationFilename>
       </FileItem>

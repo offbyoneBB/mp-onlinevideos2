@@ -9,7 +9,7 @@ namespace OnlineVideos.Sites
   public class DumpertUtil : GenericSiteUtil
   {
 
-    public override string getUrl(VideoInfo video)
+    public override string GetVideoUrl(VideoInfo video)
     {
         //string encodedHTML = getUrl(video);
         string resultUrl = getFormattedVideoUrl(video);

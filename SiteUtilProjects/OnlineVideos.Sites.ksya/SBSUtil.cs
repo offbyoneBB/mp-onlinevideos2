@@ -12,7 +12,7 @@ namespace OnlineVideos.Sites
             if (parentCategory is RssLink && regEx_dynamicSubCategories != null)
             {
                 if (data == null)
-                    data = GetWebData((parentCategory as RssLink).Url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
+                    data = GetWebData((parentCategory as RssLink).Url, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
                 if (!string.IsNullOrEmpty(data))
                 {
                     List<Category> dynamicSubCategories = new List<Category>(); // put all new discovered Categories in a separate list
@@ -57,7 +57,7 @@ namespace OnlineVideos.Sites
         protected override List<VideoInfo> Parse(string url, string data)
         {
             List<VideoInfo> videoList = new List<VideoInfo>();
-            if (string.IsNullOrEmpty(data)) data = GetWebData(url, GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
+            if (string.IsNullOrEmpty(data)) data = GetWebData(url, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
             if (data.Length > 0)
             {
                 if (regEx_VideoList != null)
@@ -86,7 +86,7 @@ namespace OnlineVideos.Sites
             return base.Parse(url, data);
         }
 
-        public override string getUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
             Log.Info("SBSUtil: video.VideoUrl: " + video.VideoUrl);
             string[] parts = video.VideoUrl.Split('=');
