@@ -51,7 +51,7 @@ namespace OnlineVideos.Sites
             return dynamicCategories.Count;
         }
 
-        public override List<VideoInfo> getVideoList(Category category)
+        public override List<VideoInfo> GetVideos(Category category)
         {
             string url = (category as RssLink).Url;
             string manUrl = getManifestFromUrl(url);
@@ -122,7 +122,7 @@ namespace OnlineVideos.Sites
             return videoList;
         }
 
-        public override List<VideoInfo> getNextPageVideos()
+        public override List<VideoInfo> GetNextPageVideos()
         {
             return Parse(nextPageUrl, null);
         }
@@ -157,7 +157,7 @@ namespace OnlineVideos.Sites
         }
 
 
-        public override List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override List<String> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<string> result = new List<string>();
 
@@ -224,7 +224,7 @@ namespace OnlineVideos.Sites
             return vidopts;
         }
 
-        public override string getPlaylistItemUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
+        public override string GetPlaylistItemVideoUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
         {
             if (String.IsNullOrEmpty(chosenPlaybackOption))
                 return clonedVideoInfo.VideoUrl;
