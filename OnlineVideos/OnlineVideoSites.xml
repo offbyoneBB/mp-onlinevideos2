@@ -1516,26 +1516,6 @@
         <item key="playlistUrlFormatString"><![CDATA[http://api.radio-canada.ca/validationMedia/v1/Validation.html?connectionType=wifi&idMedia={0}&output=json&appCode=toutv&deviceType=flashhd]]></item>
       </Configuration>
     </Site>
-    <Site name="Tube+" util="TubePlus" agecheck="false" enabled="true" lang="en" player="Internal">
-      <Description>A Revolutionary way to watch your videos</Description>
-      <Configuration>
-        <item key="genresRegEx"><![CDATA[{value:[^,]*,\stext:\s"(?<title>[^"]+)",\scss:"combo"}]]></item>
-        <item key="aZSubCategoriesRegEx"><![CDATA[<li\stitle="(?<description>[^m]*movies)"><a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a></li>]]></item>
-        <item key="seriesSubCategoriesRegEx"><![CDATA[<div\sclass="list_item[^"]*">\s*<div\sclass="left">\s*<a\starget="_blank"\stitle="[^"]*"\shref="(?<url>[^"]*)"><img\sborder="0"\salt="[^"]*"\ssrc="(?<thumb>[^"]*)"></a>\s*</div>\s*<div\sclass="right">\s*<div\sclass="frelease">(?<airdate>[^<]*)</div>\s*<a\sclass="plot"\starget="_blank"\sid="[^>]*>\s*<b>(?<title>[^<]*)</b>\s*(?:<b\sclass="sbtitle">[^<]*</b>)?\s*(?:(?<description>[^<]*)<[^>]*>\s*)?</a>\s*<div>]]></item>
-        <item key="seasonCategoriesRegEx"><![CDATA[<a\sid="(?<url>[^"]*)"\sclass="season"\shref='javascript:show_season\((?<airdates>.*?)\)'>(?<title>[^<]*)</a><span\sclass="parts"\sid="[^"]*">(?<urls>.*?)</span>]]></item>
-        <item key="baseUrl"><![CDATA[http://www.tubeplus.me/]]></item>
-        <item key="showVideoListRegEx"><![CDATA[name="[^"]*"\sid="(?<id>[^"]*)"\sclass="seasons"\shref="*(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a>]]></item>
-        <item key="moviesVideoListRegEx"><![CDATA[<div\sclass="list_item[^"]*">\s*<div\sclass="left">\s*<a\starget="_blank"\stitle="[^"]*"\shref="(?<VideoUrl>[^"]*)"><img\sborder="0"\salt="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"></a>\s*</div>\s*<div\sclass="right">\s*<div\sclass="frelease[^"]*">(?<Airdate>[^<]*)(?:<span>DVD</span>)?</div>\s*<a\sclass="plot"\starget="_blank"\sid="[^>]*>\s*<b>(?<Title>[^<]*)</b>\s*(?:<b\sclass="sbtitle"></b>)?\s*(?:(?<Description>[^<]*)<[^>]*>\s*)?</a>\s*<div>]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)">&gt;</a></li>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[(<li\sid="[^"]*"\sclass="online">\s*?(?:<[^>]*>)*\s*<div\sclass="(?<n2>[^"]+)">\s*<a\shref="javascript:show\(\s*'(?<m1>[^']*)',\s*'[^']*',\s*'(?<m0>[^']*)'\s*\)[^>]*">[^<]*</a>\s*<a[^>]*><img[^>]*></a>\s*<!--\s*a\sclass="none"\shref="[^"]*">[^<]*</a\s-->\s*</div>\s*<div\sclass="params">\s*<span>[^<]*</span>[^<]*<span>[^<]*</span>(?<n0>[^\s]*)\s*</div>\s*<div\sclass="report">\s*<a\stitle="Report\sproblem"[^>]*></a>\s*<a\stitle="said\swork"[^>]*></a>\s*<b>(?<n1>[^%]*)%\ssaid\swork)|(<li\sid="[^"]*"\sclass="online\sgoogle">\s*<a\sclass="(?<n2>[^"]+)"\shref="javascript:show\('[^']*','[^']*',\s'(?<n0>[^']*)'\);[^>]*>(?<m0>[^<]*)</a>\s*<div\sclass="report">\s*<a[^>]*></a>\s*<a[^>]*></a>\s*<b>(?<n1>[^%]*)%\ssaid\swork[^<]*</b>\s*</div>)]]></item>
-        <item key="fileUrlNameFormatString"><![CDATA[{2} {1}%{0}]]></item>
-        <item key="fileUrlFormatString"><![CDATA[http://{0}/{1}]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="TV Shows" thumb="" desc="">http://www.tubeplus.me/browse/tv-shows/Last/ALL/</Category>
-        <Category xsi:type="RssLink" name="Movies" thumb="" desc="">http://www.tubeplus.me/browse/movies/Last/ALL/</Category>
-      </Categories>
-    </Site>
     <Site name="Vimeo" util="Vimeo" agecheck="false" enabled="true" lang="en">
       <Description>Video sharing for you</Description>
     </Site>
