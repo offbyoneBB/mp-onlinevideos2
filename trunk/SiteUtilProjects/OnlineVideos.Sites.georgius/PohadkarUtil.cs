@@ -86,7 +86,7 @@ namespace OnlineVideos.Sites.georgius
         public override int DiscoverDynamicCategories()
         {
             int categoriesCount = 0;
-            String baseWebData = SiteUtilBase.GetWebData(PohadkarUtil.baseUrl, forceUTF8: true);
+            String baseWebData = GetWebData(PohadkarUtil.baseUrl, forceUTF8: true);
 
             int startIndex = baseWebData.IndexOf(PohadkarUtil.categoriesStart);
             if (startIndex >= 0)
@@ -163,7 +163,7 @@ namespace OnlineVideos.Sites.georgius
                 parentCategory.SubCategories = new List<Category>();
             }
 
-            String baseWebData = SiteUtilBase.GetWebData(url, forceUTF8: true);
+            String baseWebData = GetWebData(url, forceUTF8: true);
 
             while (true)
             {
@@ -226,11 +226,11 @@ namespace OnlineVideos.Sites.georgius
                 if ((this.currentCategory.Name == "Search") && (this.currentCategory.Url == pageUrl))
                 {
                     this.cookieContainer = new CookieContainer();
-                    baseWebData = SiteUtilBase.GetWebData(pageUrl, String.Format(PohadkarUtil.searchRequest, HttpUtility.UrlEncode((String)this.currentCategory.Other)), this.cookieContainer, null, null, true);
+                    baseWebData = GetWebData(pageUrl, String.Format(PohadkarUtil.searchRequest, HttpUtility.UrlEncode((String)this.currentCategory.Other)), this.cookieContainer, null, null, true);
                 }
                 else
                 {
-                    baseWebData = SiteUtilBase.GetWebData(pageUrl, cookies: (this.currentCategory.Name == "Search") ? this.cookieContainer : null, forceUTF8: true);
+                    baseWebData = GetWebData(pageUrl, cookies: (this.currentCategory.Name == "Search") ? this.cookieContainer : null, forceUTF8: true);
                 }
 
                 int index = baseWebData.IndexOf(PohadkarUtil.showEpisodesStart);
@@ -379,14 +379,14 @@ namespace OnlineVideos.Sites.georgius
         public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<String> urls = new List<string>();
-            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, forceUTF8: true);
+            String baseWebData = GetWebData(video.VideoUrl, forceUTF8: true);
             MatchCollection matches = Regex.Matches(baseWebData, PohadkarUtil.showVideoUrlsRegex);
             foreach (Match match in matches)
             {
                 String showVideoUrl = match.Groups["showVideoUrl"].Value;
                 if (showVideoUrl.Contains("stream.cz"))
                 {
-                    baseWebData = SiteUtilBase.GetWebData(showVideoUrl.Replace("object", "video"));
+                    baseWebData = GetWebData(showVideoUrl.Replace("object", "video"));
                     baseWebData = HttpUtility.HtmlDecode(baseWebData);
 
                     Match flashVarsStart = Regex.Match(baseWebData, PohadkarUtil.flashVarsStartRegex);
@@ -408,11 +408,11 @@ namespace OnlineVideos.Sites.georgius
                             String url = String.Empty;
                             if (!String.IsNullOrEmpty(cdnHq))
                             {
-                                url = SiteUtilBase.GetRedirectedUrl(String.Format(PohadkarUtil.videoUrlFormat, cdnHq));
+                                url = WebCache.Instance.GetRedirectedUrl(String.Format(PohadkarUtil.videoUrlFormat, cdnHq));
                             }
                             else
                             {
-                                url = SiteUtilBase.GetRedirectedUrl(String.Format(PohadkarUtil.videoUrlFormat, cdnLq));
+                                url = WebCache.Instance.GetRedirectedUrl(String.Format(PohadkarUtil.videoUrlFormat, cdnLq));
                             }
 
                             urls.Add(url);
@@ -421,7 +421,7 @@ namespace OnlineVideos.Sites.georgius
                 }
                 else
                 {
-                    Dictionary<String, String> playbackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(HttpUtility.UrlDecode(match.Groups["showVideoUrl"].Value.Replace("-nocookie", "")));
+                    Dictionary<String, String> playbackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").GetPlaybackOptions(HttpUtility.UrlDecode(match.Groups["showVideoUrl"].Value.Replace("-nocookie", "")));
                     if (playbackOptions != null)
                     {
                         int width = 0;

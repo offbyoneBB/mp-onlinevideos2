@@ -8,19 +8,17 @@ namespace OnlineVideos.Hoster
 {
     public class VideoWeed : MyHosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "Videoweed.es";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
-            string page = SiteUtilBase.GetWebData(url);
+            string page = WebCache.Instance.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
                 string link = FlashProvider(page);
-                if (!String.IsNullOrEmpty(link))
-                    videoType = VideoType.flv;
                 return link;
             }
             return String.Empty;

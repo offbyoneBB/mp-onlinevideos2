@@ -16,7 +16,7 @@ namespace OnlineVideos.Hoster
     /// </summary>
     public class SockShare : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "sockshare.com";
         }
@@ -24,10 +24,10 @@ namespace OnlineVideos.Hoster
 
         private string requestFileInformation(string url, CookieContainer cc)
         {
-            string webData = SiteUtilBase.GetWebData(url, cookies: cc);
+            string webData = WebCache.Instance.GetWebData(url, cookies: cc);
             if (!string.IsNullOrEmpty(webData))
             {
-                if (!string.IsNullOrEmpty(getRegExData(@"(?<exists>This\sfile\sdoesn\'t\sexist,\sor\shas\sbeen\sremoved\s?\.)", webData, "exists")))
+                if (!string.IsNullOrEmpty(GetRegExData(@"(?<exists>This\sfile\sdoesn\'t\sexist,\sor\shas\sbeen\sremoved\s?\.)", webData, "exists")))
                     webData = string.Empty;
             }
             return webData;
@@ -39,20 +39,20 @@ namespace OnlineVideos.Hoster
 
             string dlLink = string.Empty;
 
-            dlLink = getRegExData(@"<a href=""/gopro\.php"">Tired of ads and waiting\? Go Pro\!</a>[\t\n\rn ]+</div>[\t\n\rn ]+<a href=""(?<link>/.*?)""", data, "link");
+            dlLink = GetRegExData(@"<a href=""/gopro\.php"">Tired of ads and waiting\? Go Pro\!</a>[\t\n\rn ]+</div>[\t\n\rn ]+<a href=""(?<link>/.*?)""", data, "link");
 
             if (string.IsNullOrEmpty(dlLink))
             {
-                dlLink = getRegExData(@"""(?<link>/get_file\.php\?download=[A-Z0-9]+\&key=[a-z0-9]+)""", data, "link");
+                dlLink = GetRegExData(@"""(?<link>/get_file\.php\?download=[A-Z0-9]+\&key=[a-z0-9]+)""", data, "link");
             }
 
             if (string.IsNullOrEmpty(dlLink))
             {
-                dlLink = getRegExData(@"playlist: \'(?<link>/get_file\.php\?stream=[A-Za-z0-9=]+)\'", data, "link");
+                dlLink = GetRegExData(@"playlist: \'(?<link>/get_file\.php\?stream=[A-Za-z0-9=]+)\'", data, "link");
                 if (!string.IsNullOrEmpty(dlLink))
                 {
-                    string tempLink = new Uri(new Uri(string.Format("{0}{1}", "http://www.", getHosterUrl())), dlLink).AbsoluteUri;
-                    string webData = SiteUtilBase.GetWebData(tempLink, cookies: cc, referer: referer);
+                    string tempLink = new Uri(new Uri(string.Format("{0}{1}", "http://www.", GetHosterUrl())), dlLink).AbsoluteUri;
+                    string webData = WebCache.Instance.GetWebData(tempLink, cookies: cc, referer: referer);
                     if (!string.IsNullOrEmpty(webData))
                     {
                         XmlDocument doc = new XmlDocument();
@@ -66,7 +66,7 @@ namespace OnlineVideos.Hoster
 
                         if (string.IsNullOrEmpty(dlLink))
                         {
-                            dlLink = getRegExData(@"""(?<link>http://media-b\d+\.putlocker\.com/download/\d+/.*?)""", webData, "link");
+                            dlLink = GetRegExData(@"""(?<link>http://media-b\d+\.putlocker\.com/download/\d+/.*?)""", webData, "link");
                         }
                     }
                     else
@@ -79,10 +79,10 @@ namespace OnlineVideos.Hoster
             if (!String.IsNullOrEmpty(dlLink))
                 dlLink = HttpUtility.HtmlDecode(dlLink).Trim('\'');
             if (new System.Uri(dlLink).IsAbsoluteUri) return dlLink;
-            else return new Uri(new Uri(string.Format("{0}{1}", "http://www.", getHosterUrl())), dlLink).AbsoluteUri;
+            else return new Uri(new Uri(string.Format("{0}{1}", "http://www.", GetHosterUrl())), dlLink).AbsoluteUri;
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
             CookieContainer cc = new CookieContainer();
             string webData = requestFileInformation(url, cc);
@@ -96,7 +96,7 @@ namespace OnlineVideos.Hoster
                 HttpUtility.UrlEncode(m.Groups["hashName"].Value), HttpUtility.UrlEncode(m.Groups["hashValue"].Value),
                 HttpUtility.UrlEncode(m.Groups["confirmName"].Value), HttpUtility.UrlEncode(m.Groups["confirmValue"].Value));
 
-            string sWaitTime = getRegExData(@"var countdownNum = (?<waittime>\d+);", webData, "waittime");
+            string sWaitTime = GetRegExData(@"var countdownNum = (?<waittime>\d+);", webData, "waittime");
             int iWaitTime = 1;
             if (!string.IsNullOrEmpty(sWaitTime))
             {
@@ -106,7 +106,7 @@ namespace OnlineVideos.Hoster
 
             Thread.Sleep(iWaitTime * 1001);
 
-            string webDataLink = SiteUtilBase.GetWebData(url, postData, cc, url);
+            string webDataLink = WebCache.Instance.GetWebData(url, postData, cc, url);
 
             string dlLink = getDlLink(webDataLink, cc, url);
             if (string.IsNullOrEmpty(dlLink)) return string.Empty;

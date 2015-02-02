@@ -158,7 +158,7 @@ namespace OnlineVideos.Sites
         public virtual string ResolveVideoUrl(string url)
         {
             if (getRedirectedFileUrlForHoster)
-                url = GetRedirectedUrl(url);
+                url = WebCache.Instance.GetRedirectedUrl(url);
             return GetVideoUrl(url);
         }
 

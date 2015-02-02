@@ -13,7 +13,7 @@ namespace OnlineVideos.Hoster
 {
     public class Youtube : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "Youtube.com";
         }
@@ -33,7 +33,7 @@ namespace OnlineVideos.Hoster
 (yt\.?player\.?Config\s*=\s*\{.*?""args""\:\s*(?<json>\{[^\}]+\}))", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
         static Regex unicodeFinder = new Regex(@"\\[uU]([0-9A-F]{4})", RegexOptions.Compiled);
 
-		public override Dictionary<string, string> getPlaybackOptions(string url)
+		public override Dictionary<string, string> GetPlaybackOptions(string url)
 		{
 			IWebProxy proxy = null;
             Dictionary<string, string> PlaybackOptions = null;
@@ -60,7 +60,7 @@ namespace OnlineVideos.Hoster
             {
 				try
 				{
-					contents = Sites.SiteUtilBase.GetWebData(string.Format("http://youtube.com/get_video_info?video_id={0}&has_verified=1", videoId), proxy: proxy);
+                    contents = WebCache.Instance.GetWebData(string.Format("http://youtube.com/get_video_info?video_id={0}&has_verified=1", videoId), proxy: proxy);
 				}
 				catch
 				{
@@ -70,7 +70,7 @@ namespace OnlineVideos.Hoster
                 if (Items.Count == 0 || Items["status"] == "fail")
                 {
 					ItemsAPI = Items;
-					contents = Sites.SiteUtilBase.GetWebData(string.Format("http://www.youtube.com/watch?v={0}&has_verified=1", videoId), proxy: proxy);
+                    contents = WebCache.Instance.GetWebData(string.Format("http://www.youtube.com/watch?v={0}&has_verified=1", videoId), proxy: proxy);
                     Match m = swfJsonArgs.Match(contents);
                     if (m.Success)
                     {
@@ -181,10 +181,10 @@ namespace OnlineVideos.Hoster
             return PlaybackOptions;
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
             // return highest quality by default
-            var result = getPlaybackOptions(url);
+            var result = GetPlaybackOptions(url);
             if (result != null && result.Count > 0) return result.Last().Value;
             else return String.Empty;
         }
@@ -205,7 +205,7 @@ namespace OnlineVideos.Hoster
 				{
 					if (javascriptUrl.StartsWith("//"))
 						javascriptUrl = "http:" + javascriptUrl;
-					string jsContent = Sites.SiteUtilBase.GetWebData(javascriptUrl);
+					string jsContent = WebCache.Instance.GetWebData(javascriptUrl);
 					string signatureMethodName = Regex.Match(jsContent, "signature=([a-zA-Z]+)").Groups[1].Value;
 					string methods = Regex.Match(jsContent, "\\n(.*?function " + signatureMethodName + @".*?)function [a-zA-Z]+\(\)").Groups[1].Value;
 

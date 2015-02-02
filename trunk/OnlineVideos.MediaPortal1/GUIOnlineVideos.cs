@@ -2442,7 +2442,7 @@ namespace OnlineVideos.MediaPortal1
                     // download subtitle file before starting playback
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                     {
-                        string subs = string.IsNullOrEmpty(playItem.Video.SubtitleText) ? Sites.SiteUtilBase.GetWebData(playItem.Video.SubtitleUrl) : playItem.Video.SubtitleText;
+                        string subs = string.IsNullOrEmpty(playItem.Video.SubtitleText) ? WebCache.Instance.GetWebData(playItem.Video.SubtitleUrl) : playItem.Video.SubtitleText;
                         if (!string.IsNullOrEmpty(subs))
                         {
                             string subFile = Path.Combine(Path.GetTempPath(), "OnlineVideoSubtitles.txt");
@@ -2783,7 +2783,7 @@ namespace OnlineVideos.MediaPortal1
             if (!string.IsNullOrEmpty(video.SubtitleText) || (validUri && !subtitleUri.IsFile))
             {
                 Log.Instance.Info("Downloading subtitles to " + destinationFileName);
-                string subs = string.IsNullOrEmpty(video.SubtitleText) ? Sites.SiteUtilBase.GetWebData(video.SubtitleUrl) : video.SubtitleText;
+                string subs = string.IsNullOrEmpty(video.SubtitleText) ? WebCache.Instance.GetWebData(video.SubtitleUrl) : video.SubtitleText;
                 if (!string.IsNullOrEmpty(subs))
                     File.WriteAllText(destinationFileName, subs, System.Text.Encoding.UTF8);
             }

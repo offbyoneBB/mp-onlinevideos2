@@ -10,20 +10,19 @@ namespace OnlineVideos.Hoster
 {
     public class DataUp : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "Dataup.to";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
-            string page = SiteUtilBase.GetWebData(url);
+            string page = WebCache.Instance.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
                 Match n = Regex.Match(page, @"video/divx""\ssrc=""(?<url>[^""]+)""");
                 if (n.Success)
                 {
-                    videoType = VideoType.divx;
                     return n.Groups["url"].Value;
                 }
                 else
@@ -31,7 +30,6 @@ namespace OnlineVideos.Hoster
                     n = Regex.Match(page, @"addVariable\('file','(?<url>[^']+)'");
                     if (n.Success)
                     {
-                        videoType = VideoType.flv;
                         return n.Groups["url"].Value;
                     }
                 }

@@ -8,15 +8,15 @@ namespace OnlineVideos.Hoster
 {
     public class FlashX : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "flashx.tv";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
             //Get HTML from url
-            string page = SiteUtilBase.GetWebData(url);
+            string page = WebCache.Instance.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
                 //Extract url from HTML
@@ -24,16 +24,15 @@ namespace OnlineVideos.Hoster
                 if (n.Success)
                 {
                     //Extract url from HTML
-                    string webData = SiteUtilBase.GetWebData(n.Groups["url"].Value);
+                    string webData = WebCache.Instance.GetWebData(n.Groups["url"].Value);
                     Match m = Regex.Match(webData, @"config=(?<url>[^""]*)""");
-                    string webData2 = SiteUtilBase.GetWebData(m.Groups["url"].Value);
+                    string webData2 = WebCache.Instance.GetWebData(m.Groups["url"].Value);
 
                     //Grab link from xml page
                     string file = GetSubString(webData2, @"<file>", @"</file>");
 
                     if (!string.IsNullOrEmpty(file))
                     {
-                        videoType = VideoType.flv;
                         return file;	
                     }
                 }

@@ -92,7 +92,7 @@ namespace OnlineVideos.Sites.georgius
             //    });
             //dynamicCategoriesCount++;
 
-            String baseWebData = SiteUtilBase.GetWebData(CeskaTelevizeUtil.dynamicCategoryBaseUrl, forceUTF8: true).Replace("\r", "").Replace("\n", "");
+            String baseWebData = GetWebData(CeskaTelevizeUtil.dynamicCategoryBaseUrl, forceUTF8: true).Replace("\r", "").Replace("\n", "");
 
             int index = baseWebData.IndexOf(CeskaTelevizeUtil.dynamicCategoryStart);
             if (index > 0)
@@ -346,7 +346,7 @@ namespace OnlineVideos.Sites.georgius
             Boolean live = (this.currentCategory.Name == "Živě");
 
             System.Net.CookieContainer container = new System.Net.CookieContainer();
-            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, cookies: container, forceUTF8: true);
+            String baseWebData = GetWebData(video.VideoUrl, cookies: container, forceUTF8: true);
 
             int start = baseWebData.IndexOf(CeskaTelevizeUtil.showEpisodePostStart);
             if (start >= 0)
@@ -381,7 +381,7 @@ namespace OnlineVideos.Sites.georgius
                     int videoPart = 1;
 
                     XmlDocument videoData = new XmlDocument();
-                    videoData.LoadXml(SiteUtilBase.GetWebData(videoDataUrl));
+                    videoData.LoadXml(GetWebData(videoDataUrl));
 
                     XmlNodeList videoItems = videoData.SelectNodes("//PlaylistItem[@id]");
                     foreach (XmlNode videoItem in videoItems)
@@ -507,7 +507,7 @@ namespace OnlineVideos.Sites.georgius
             int dynamicSubCategoriesCount = 0;
             RssLink category = (RssLink)parentCategory;
 
-            String baseWebData = SiteUtilBase.GetWebData(category.Url, forceUTF8: true);
+            String baseWebData = GetWebData(category.Url, forceUTF8: true);
 
             int startIndex = baseWebData.IndexOf(CeskaTelevizeUtil.showListStart);
             if (startIndex > 0)

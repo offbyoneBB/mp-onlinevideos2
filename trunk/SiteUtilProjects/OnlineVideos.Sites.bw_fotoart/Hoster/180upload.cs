@@ -7,13 +7,13 @@ namespace OnlineVideos.Hoster
 {
     public class upload180 : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "180upload.com";
         }
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
-            string page = SiteUtilBase.GetWebData(url);
+            string page = WebCache.Instance.GetWebData(url);
 
             //Grab content and decompress Dean Edwards compressor
             string packed = GetSubString(page, @"swfobject.js'></script>", @"</script>");
@@ -25,7 +25,6 @@ namespace OnlineVideos.Hoster
 
             if (!String.IsNullOrEmpty(res))
             {
-                videoType = VideoType.divx;
                 return res;
             }
             return String.Empty;

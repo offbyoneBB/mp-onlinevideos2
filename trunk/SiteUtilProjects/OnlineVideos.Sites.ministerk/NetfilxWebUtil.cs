@@ -230,7 +230,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private void Login()
         {
             cc = new CookieContainer();
-            string url = GetRedirectedUrl(loginUrl).Replace("entrytrap", "Login");
+            string url = WebCache.Instance.GetRedirectedUrl(loginUrl).Replace("entrytrap", "Login");
             NameValueCollection headers = new NameValueCollection();
             headers.Add("Accept", "*/*"); // accept any content type
             headers.Add("User-Agent", OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified

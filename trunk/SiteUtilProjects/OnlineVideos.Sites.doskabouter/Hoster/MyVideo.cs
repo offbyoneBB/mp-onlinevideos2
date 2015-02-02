@@ -12,19 +12,18 @@ namespace OnlineVideos.Hoster
 {
     public class MyVideo : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "MyVideo.de";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
-            string newUrl = SiteUtilBase.GetRedirectedUrl(url);
+            string newUrl = WebCache.Instance.GetRedirectedUrl(url);
             newUrl = HttpUtility.UrlDecode(newUrl);
             Match n = Regex.Match(newUrl, @"V=(?<url>[^&]+)&");
             if (n.Success)
             {
-                videoType = VideoType.flv;
                 return n.Groups["url"].Value;
             }
             return String.Empty;

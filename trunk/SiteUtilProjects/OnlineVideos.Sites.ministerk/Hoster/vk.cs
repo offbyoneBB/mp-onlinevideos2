@@ -12,12 +12,12 @@ namespace OnlineVideos.Hoster
     public class vk : HosterBase
     {
     
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "vk.com";
         }
 
-        public override Dictionary<string, string> getPlaybackOptions(string url)
+        public override Dictionary<string, string> GetPlaybackOptions(string url)
         {
             Regex rgx;
             Match m;
@@ -31,19 +31,19 @@ namespace OnlineVideos.Hoster
                     url = HttpUtility.UrlDecode(url);
                 }
             }
-            string data = Sites.SiteUtilBase.GetWebData(HttpUtility.HtmlDecode(url)) ?? "";
+            string data = WebCache.Instance.GetWebData(HttpUtility.HtmlDecode(url)) ?? "";
             //location.href
             rgx = new Regex(@"location.href(?:[^""]*)""(?<url>[^""]*)");
             m = rgx.Match(data);
             if (m.Success)
             {
                 string url2 = m.Groups["url"].Value.Replace("'", string.Empty).Replace("+", string.Empty);
-                data = Sites.SiteUtilBase.GetWebData(HttpUtility.HtmlDecode(url2), referer: url) ?? "";
+                data = WebCache.Instance.GetWebData(HttpUtility.HtmlDecode(url2), referer: url) ?? "";
                 m = rgx.Match(data);
                 if (m.Success)
                 {
                     string url3 = m.Groups["url"].Value.Replace("'", string.Empty).Replace("+", string.Empty);
-                    data = Sites.SiteUtilBase.GetWebData(HttpUtility.HtmlDecode(url3), referer: url2) ?? "";
+                    data = WebCache.Instance.GetWebData(HttpUtility.HtmlDecode(url3), referer: url2) ?? "";
                 }
             }
             Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
@@ -81,9 +81,9 @@ namespace OnlineVideos.Hoster
             return playbackOptions;
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
-            Dictionary<string, string> urls = getPlaybackOptions(url);
+            Dictionary<string, string> urls = GetPlaybackOptions(url);
             if (urls.Count > 0)
                 return urls.First().Value;
             else

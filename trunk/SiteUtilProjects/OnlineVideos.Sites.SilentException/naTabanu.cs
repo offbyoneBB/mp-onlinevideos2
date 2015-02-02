@@ -243,9 +243,9 @@ namespace OnlineVideos.Sites
 
                     Uri uri = new Uri(resultUrl);
                     foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
-                        if (uri.Host.ToLower().Contains(hosterUtil.getHosterUrl().ToLower()))
+                        if (uri.Host.ToLower().Contains(hosterUtil.GetHosterUrl().ToLower()))
                         {
-                            Dictionary<string, string> options = hosterUtil.getPlaybackOptions(resultUrl);
+                            Dictionary<string, string> options = hosterUtil.GetPlaybackOptions(resultUrl);
                             if (options != null && options.Count > 0)
                             {
                                 string chosenoption = options.Last().Key;
@@ -291,9 +291,9 @@ namespace OnlineVideos.Sites
             //chosenPlaybackOption = "";
             clonedVideoInfo.PlaybackOptions = new Dictionary<string, string>();
             foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
-                if (uri.Host.ToLower().Contains(hosterUtil.getHosterUrl().ToLower()))
+                if (uri.Host.ToLower().Contains(hosterUtil.GetHosterUrl().ToLower()))
                 {
-                    Dictionary<string, string> options = hosterUtil.getPlaybackOptions(clonedVideoInfo.VideoUrl);
+                    Dictionary<string, string> options = hosterUtil.GetPlaybackOptions(clonedVideoInfo.VideoUrl);
                     if (options != null && options.Count > 0)
                     {
                         if (!string.IsNullOrEmpty(chosenPlaybackOption) && options.Keys.Contains(chosenPlaybackOption))

@@ -304,7 +304,7 @@ namespace OnlineVideos.Sites
             return data.Substring(data.IndexOf("tokenizedUrl\":\"") + "tokenizedUrl\":\"".Length).Split('\"')[0].Replace(" ", "").Replace("\\/", "/");
         }
 
-        public static string GetWebDataFromPostMitele(string url, string postData)
+        public string GetWebDataFromPostMitele(string url, string postData)
         {
             NameValueCollection headers = new NameValueCollection();
             headers.Add("X-Requested-With", "XMLHttpRequest");

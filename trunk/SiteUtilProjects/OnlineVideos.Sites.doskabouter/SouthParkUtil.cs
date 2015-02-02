@@ -80,7 +80,7 @@ namespace OnlineVideos.Sites
                     playerUrl = m.Groups["url"].Value;
                 else
                     playerUrl = video.VideoUrl;
-                playerUrl = GetRedirectedUrl(playerUrl);
+                playerUrl = WebCache.Instance.GetRedirectedUrl(playerUrl);
                 playerUrl = System.Web.HttpUtility.ParseQueryString(new Uri(playerUrl).Query)["uri"];
                 SouthParkCountry spc = SouthParkCountry.Unknown;
                 if (video.VideoUrl.Contains("southparkstudios.com"))

@@ -11,20 +11,19 @@ namespace OnlineVideos.Hoster
 {
     public class Archiv : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "Archiv.to";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
-            string page = SiteUtilBase.GetWebData(url);
+            string page = WebCache.Instance.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
                 Match n = Regex.Match(page, @"embed src=""(?<url>[^""]+)""");
                 if (n.Success)
                 {
-                    videoType = VideoType.flv;
                     return Regex.Match(HttpUtility.UrlDecode(n.Groups["url"].Value), @"file=(?<url>[^&]+)&").Groups["url"].Value;
                 }
                 else
@@ -32,7 +31,6 @@ namespace OnlineVideos.Hoster
                     n = Regex.Match(page, @"href=""(?<url>[^""]+)"">Download");
                     if (n.Success)
                     {
-                        videoType = VideoType.divx;
 						var resultUrl = new OnlineVideos.MPUrlSourceFilter.HttpUrl(n.Groups["url"].Value);
 						resultUrl.Referer = url;
 						return resultUrl.ToString();

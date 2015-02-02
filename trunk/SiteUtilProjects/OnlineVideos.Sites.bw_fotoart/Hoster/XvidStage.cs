@@ -7,14 +7,14 @@ namespace OnlineVideos.Hoster
 {
     public class XvidStage : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "xvidstage.com";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
-             string page = SiteUtilBase.GetWebData(url);
+             string page = WebCache.Instance.GetWebData(url);
 
              //Grab hidden value: op, usr_login, id, fname, referer, method_free
             // string formOp = GetSubString(page, @"name=""op"" value=""", @""">");
@@ -31,7 +31,7 @@ namespace OnlineVideos.Hoster
             ////Extract iframe url from HTML
             //Match n = Regex.Match(webData, @"<IFRAME SRC=""(?<url>[^""]*)""[^""]*>");
             ////Get HTML from iframe url
-            //string site = SiteUtilBase.GetWebData(n.Groups["url"].Value);
+            //string site = WebCache.Instance.GetWebData(n.Groups["url"].Value);
            
 
             //Grab content and decompress Dean Edwards compressor
@@ -43,7 +43,6 @@ namespace OnlineVideos.Hoster
 
             if (!String.IsNullOrEmpty(res))
             {
-                videoType = VideoType.divx;
                 return res;
             }
 			return String.Empty;

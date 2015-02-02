@@ -5,14 +5,14 @@ namespace OnlineVideos.Hoster
 {
 	public class LiveVideo : Hoster.Base.HosterBase
 	{
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "livevideo.com";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
-            string lsHtml = HttpUtility.UrlDecode(Sites.SiteUtilBase.GetRedirectedUrl(url));
+            string lsHtml = HttpUtility.UrlDecode(WebCache.Instance.GetRedirectedUrl(url));
             Match loMatch = Regex.Match(lsHtml, "video=([^\"]+)");
             if (loMatch.Success)
             {
@@ -20,7 +20,7 @@ namespace OnlineVideos.Hoster
                 string url_hash = System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile(lsUrl + "&f=flash" + "undefined" + "LVX*7x8yzwe", "MD5").ToLower();
                 lsUrl += "&f=flash" + "undefined" + "&h=" + url_hash;
 
-                string str = Sites.SiteUtilBase.GetWebData(lsUrl);
+                string str = WebCache.Instance.GetWebData(lsUrl);
                 Match loMatch2 = Regex.Match(str, @"video_id=([^&]+)");
                 if (loMatch2.Success)
                 {

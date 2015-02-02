@@ -11,21 +11,21 @@ namespace OnlineVideos.Hoster
 {
     public class Speedload : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "Speedload.to";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
-            string page = SiteUtilBase.GetWebData(url);
+            string page = WebCache.Instance.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
                 Match n = Regex.Match(page, @"src=""(?<url>[^""]+)""\smovietitle");
                 if (n.Success)
                 {
                     string referer = n.Groups["url"].Value;
-                    string link = SiteUtilBase.GetRedirectedUrl(referer,url);
+                    string link = WebCache.Instance.GetRedirectedUrl(referer, url);
                     if (referer.CompareTo(link) != 0)
                     {
 						var resultUrl = new OnlineVideos.MPUrlSourceFilter.HttpUrl(link);

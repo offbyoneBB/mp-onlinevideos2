@@ -601,10 +601,10 @@ namespace SiteParser
                 string webData;
                 string post = (string)GetProperty(generic, "fileUrlPostString");
                 if (String.IsNullOrEmpty(post))
-                    webData = SiteUtilBase.GetWebData(playListUrlResultTextBox.Text, forceUTF8: GetForceUTF8(),
+                    webData = WebCache.Instance.GetWebData(playListUrlResultTextBox.Text, forceUTF8: GetForceUTF8(),
                             cookies: GetCookieContainer());
                 else
-                    webData = SiteUtilBase.GetWebData(playListUrlResultTextBox.Text, post, forceUTF8: GetForceUTF8(),
+                    webData = WebCache.Instance.GetWebData(playListUrlResultTextBox.Text, post, forceUTF8: GetForceUTF8(),
                             cookies: GetCookieContainer());
 
                 Form2 f2 = new Form2();
@@ -638,7 +638,7 @@ namespace SiteParser
                         {
                             PlaybackOption po = new PlaybackOption(entry);
                             if ((bool)GetProperty(generic, "getRedirectedFileUrl"))
-                                po.Url = SiteUtilBase.GetRedirectedUrl(po.Url);
+                                po.Url = WebCache.Instance.GetRedirectedUrl(po.Url);
                             ResultUrlComboBox.Items.Add(po);
                         }
 

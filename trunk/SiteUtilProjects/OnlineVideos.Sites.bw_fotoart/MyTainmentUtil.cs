@@ -25,15 +25,15 @@ namespace OnlineVideos.Sites.bw_fotoart
             public static string getPlaybackUrl(string playerUrl, MyTainmentUtil Util)
             {
 
-                string data = GetWebData(playerUrl, cookies: Util.GetCookie(), forceUTF8: Util.forceUTF8Encoding, allowUnsafeHeader: Util.allowUnsafeHeaders, encoding: Util.encodingOverride);
+                string data = WebCache.Instance.GetWebData(playerUrl, cookies: Util.GetCookie(), forceUTF8: Util.forceUTF8Encoding, allowUnsafeHeader: Util.allowUnsafeHeaders, encoding: Util.encodingOverride);
                 WebRequest request = WebRequest.Create(playerUrl);
                 WebResponse response = request.GetResponse();
                 string url = response.ResponseUri.ToString();
                 Uri uri = new Uri(url);
                 foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
-                    if (uri.Host.ToLower().Contains(hosterUtil.getHosterUrl().ToLower()))
+                    if (uri.Host.ToLower().Contains(hosterUtil.GetHosterUrl().ToLower()))
                     {
-                        Dictionary<string, string> options = hosterUtil.getPlaybackOptions(url);
+                        Dictionary<string, string> options = hosterUtil.GetPlaybackOptions(url);
                         if (options != null && options.Count > 0)
                         {
                             url = options.Last().Value;

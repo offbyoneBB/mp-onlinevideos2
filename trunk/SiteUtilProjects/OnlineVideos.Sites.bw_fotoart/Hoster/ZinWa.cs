@@ -8,15 +8,15 @@ namespace OnlineVideos.Hoster
 {
     public class ZinWa : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "zinwa.com";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
             //Get HTML from url
-            string page = SiteUtilBase.GetWebData(url);
+            string page = WebCache.Instance.GetWebData(url);
 
             //Extract iframe url from HTML
             Match n = Regex.Match(page, @"<IFRAME SRC=""(?<url>[^""]*)""[^""]*>");
@@ -24,12 +24,11 @@ namespace OnlineVideos.Hoster
             if (!string.IsNullOrEmpty(page))
             {
                 //Get HTML from iframe url
-                string webData = SiteUtilBase.GetWebData(n.Groups["url"].Value);
+                string webData = WebCache.Instance.GetWebData(n.Groups["url"].Value);
                 string file = GetSubString(webData, @"file: """, @"""");
 
                 if (!string.IsNullOrEmpty(file))
                 {
-                    videoType = VideoType.flv;
                     return file;
                 }
                 return String.Empty;

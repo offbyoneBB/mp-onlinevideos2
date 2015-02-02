@@ -6,14 +6,14 @@ namespace OnlineVideos.Hoster
 {
     public class MovShare : MyHosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "Movshare.net";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
-            string page = SiteUtilBase.GetWebData(url);
+            string page = WebCache.Instance.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
                 return ParseData(page);
@@ -46,7 +46,7 @@ namespace OnlineVideos.Hoster
                         fileKey = m.Groups["newval"].Value;
                 }
                 fileKey = fileKey.Trim('"').Replace(".", "%2E").Replace("-", "%2D");
-                data = SiteUtilBase.GetWebData(
+                data = WebCache.Instance.GetWebData(
                     String.Format("http://www.movshare.net/api/player.api.php?pass=undefined&codes=undefined&user=undefined&file={0}&key={1}",
                     fileId, fileKey));
                 m = Regex.Match(data, @"url=(?<url>[^&]*)&");

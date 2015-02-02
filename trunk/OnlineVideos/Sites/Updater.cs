@@ -49,7 +49,7 @@ namespace OnlineVideos.Sites
 					if (DateTime.Now - lastOnlineVersionCheck > TimeSpan.FromHours(4)) // only check every 4 hours
 					{
 						lastOnlineVersionCheck = DateTime.Now;
-						XmlDocument xDoc = SiteUtilBase.GetWebData<XmlDocument>(UpdateXmlUrl, cache: false);
+						XmlDocument xDoc = WebCache.Instance.GetWebData<XmlDocument>(UpdateXmlUrl, cache: false);
 						List<Version> versions = new List<Version>();
 						var versionNode = xDoc.SelectNodes("//PackageClass/GeneralInfo/Version");
 						if (versionNode != null)

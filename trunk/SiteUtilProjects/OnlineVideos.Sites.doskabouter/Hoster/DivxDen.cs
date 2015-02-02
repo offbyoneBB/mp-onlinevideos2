@@ -10,28 +10,27 @@ namespace OnlineVideos.Hoster
 {
     public class DivxDen : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "DivxDen.com";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
             if (url.Contains("embed"))
             {
-                string page = SiteUtilBase.GetWebData(url);
+                string page = WebCache.Instance.GetWebData(url);
                 url = Regex.Match(page, @"<div><a\shref=""(?<url>[^""]+)""").Groups["url"].Value;
             }
 
             string[] urlParts = url.Split('/');
 
             string postData = @"op=download1&usr_login=&id=" + urlParts[3] + "&fname=" + urlParts[4] + "&referer=&method_free=Free+Stream";
-            string webData = GenericSiteUtil.GetWebData(url, postData);
+            string webData = WebCache.Instance.GetWebData(url, postData);
             string packed = GetSubString(webData, @"return p}", @"</script>");
             packed = packed.Replace(@"\'", @"'");
             string unpacked = UnPack(packed);
             string res = GetSubString(unpacked, @"'file','", @"'");
-            videoType = VideoType.divx;
             if (!String.IsNullOrEmpty(res))
                 return res;
             return GetSubString(unpacked, @"name=""src""value=""", @"""");

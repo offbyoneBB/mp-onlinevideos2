@@ -81,7 +81,7 @@ namespace OnlineVideos.Sites.georgius
             if (!String.IsNullOrEmpty(pageUrl))
             {
                 this.nextPageUrl = String.Empty;
-                String baseWebData = SiteUtilBase.GetWebData(pageUrl);
+                String baseWebData = GetWebData(pageUrl);
 
                 int startIndex = baseWebData.IndexOf(AutosalonUtil.showEpisodesStart);
                 if (startIndex >= 0)
@@ -221,7 +221,7 @@ namespace OnlineVideos.Sites.georgius
 
         public override string getUrl(VideoInfo video)
         {
-            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl);
+            String baseWebData = GetWebData(video.VideoUrl);
             String videoUrl = String.Empty;
 
             int startIndex = baseWebData.IndexOf(AutosalonUtil.showEpisodeVideoStart);

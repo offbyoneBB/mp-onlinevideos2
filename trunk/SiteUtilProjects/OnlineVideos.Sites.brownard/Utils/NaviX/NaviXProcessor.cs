@@ -60,7 +60,7 @@ namespace OnlineVideos.Sites.Utils.NaviX
 
             CookieContainer cc = new CookieContainer();
             cc.Add(new Uri(url), ccollection);
-            return OnlineVideos.Sites.SiteUtilBase.GetWebData(url, cookies: cc);
+            return WebCache.Instance.GetWebData(url, cookies: cc);
         }
 
         public bool Process()
@@ -126,7 +126,7 @@ namespace OnlineVideos.Sites.Utils.NaviX
                 if (!string.IsNullOrEmpty(procArgs))
                 {
                     logInfo("phase {0} learn", phase);
-                    processorText = OnlineVideos.Sites.SiteUtilBase.GetWebData(processorUrl + "?" + procArgs);
+                    processorText = WebCache.Instance.GetWebData(processorUrl + "?" + procArgs);
                     procArgs = "";
                 }
                 else //else set s_url to media url

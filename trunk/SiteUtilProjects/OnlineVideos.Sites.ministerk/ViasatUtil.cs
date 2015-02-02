@@ -67,7 +67,7 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
-            redirectedSwfUrl = GetRedirectedUrl(swfUrl); // rtmplib does not work with redirected urls to swf files - we find the actual url here
+            redirectedSwfUrl = WebCache.Instance.GetRedirectedUrl(swfUrl); // rtmplib does not work with redirected urls to swf files - we find the actual url here
             JObject config = GetWebData<JObject>(apiConfig);
             JToken formats = config["views"].First(v => v["name"].Value<string>() == "formats");
             string url = formats["_links"]["url"]["href"].Value<string>();

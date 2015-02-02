@@ -110,7 +110,7 @@ namespace OnlineVideos.Sites.georgius
             int dynamicCategoriesCount = 0;
             String pageUrl = CzTraileryUtil.baseUrl;
 
-            String baseWebData = SiteUtilBase.GetWebData(pageUrl, null, null, null, true);
+            String baseWebData = GetWebData(pageUrl, null, null, null, true);
             pageUrl = String.Empty;
 
             int startIndex = baseWebData.IndexOf(CzTraileryUtil.dynamicCategoryStart);
@@ -180,7 +180,7 @@ namespace OnlineVideos.Sites.georgius
             if (!String.IsNullOrEmpty(pageUrl))
             {
                 this.nextPageUrl = String.Empty;
-                String baseWebData = SiteUtilBase.GetWebData(pageUrl, null, null, null, true);
+                String baseWebData = GetWebData(pageUrl, null, null, null, true);
 
                 int index = baseWebData.IndexOf(CzTraileryUtil.showEpisodes1Start);
                 if (index > 0)
@@ -353,7 +353,7 @@ namespace OnlineVideos.Sites.georgius
 
         public override string getUrl(VideoInfo video)
         {
-            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
+            String baseWebData = GetWebData(video.VideoUrl, null, null, null, true);
 
             // select video url block
             int startIndex = baseWebData.IndexOf(CzTraileryUtil.videoBlockStart);
@@ -393,7 +393,7 @@ namespace OnlineVideos.Sites.georgius
 
                         if (videoConfigUrl.Contains(".xml"))
                         {
-                            String videoData = SiteUtilBase.GetWebData(videoConfigUrl, null, null, null, true);
+                            String videoData = GetWebData(videoConfigUrl, null, null, null, true);
 
                             startIndex = videoData.IndexOf(CzTraileryUtil.subtitlesUrlBlockStart);
                             if (startIndex >= 0)
@@ -477,7 +477,7 @@ namespace OnlineVideos.Sites.georgius
                         if (match.Success)
                         {
                             String videoId = match.Groups["videoId"].Value;
-                            String videoData = SiteUtilBase.GetWebData(String.Format(CzTraileryUtil.trailerAddictComConfigVideoUrl, videoId), null, null, null, true);
+                            String videoData = GetWebData(String.Format(CzTraileryUtil.trailerAddictComConfigVideoUrl, videoId), null, null, null, true);
 
                             startIndex = videoData.IndexOf(CzTraileryUtil.trailerAddictComFileUrlBlockStart);
                             if (startIndex >= 0)

@@ -11,14 +11,14 @@ namespace OnlineVideos.Hoster
 {
     public class Freeload : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "Freeload.to";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
-            string page = SiteUtilBase.GetWebData(url);
+            string page = WebCache.Instance.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
                 Match n = Regex.Match(page, @"type=""video/divx""\ssrc=""(?<url>[^""]+)""");

@@ -93,7 +93,7 @@ namespace OnlineVideos
 								HosterBase hb = (HosterBase)Activator.CreateInstance(type);
 								hb.Initialize();
 								hostersByName.Add(shortName, hb);
-								if (!hostersByDNS.ContainsKey(hb.getHosterUrl().ToLower())) hostersByDNS.Add(hb.getHosterUrl().ToLower(), hb);
+								if (!hostersByDNS.ContainsKey(hb.GetHosterUrl().ToLower())) hostersByDNS.Add(hb.GetHosterUrl().ToLower(), hb);
 							}
 							else
 							{

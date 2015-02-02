@@ -11,28 +11,28 @@ namespace OnlineVideos.Hoster
 {
     public class HDFree : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "my-entertainment.biz";
         }
 
         private string requestFileInformation(string url, CookieContainer cc)
         {
-            string webData = SiteUtilBase.GetWebData(url, cookies: cc);
+            string webData = WebCache.Instance.GetWebData(url, cookies: cc);
             if (!string.IsNullOrEmpty(webData))
             {
-                if (!string.IsNullOrEmpty(getRegExData(@"(?<exists>This\sfile\sdoesn\'t\sexist,\sor\shas\sbeen\sremoved\s?\.)", webData, "exists")))
+                if (!string.IsNullOrEmpty(GetRegExData(@"(?<exists>This\sfile\sdoesn\'t\sexist,\sor\shas\sbeen\sremoved\s?\.)", webData, "exists")))
                     webData = string.Empty;
             }
             return webData;
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
             //Get HTML from url
             CookieContainer cc = new CookieContainer();
             string webData1 = requestFileInformation("http://my-entertainment.biz/forum/content.php?r=3938", cc);
-            string page = SiteUtilBase.GetWebData(url, cookies: cc);
+            string page = WebCache.Instance.GetWebData(url, cookies: cc);
             if (!string.IsNullOrEmpty(page))
             {
                 //Extract file url from HTML
@@ -41,7 +41,6 @@ namespace OnlineVideos.Hoster
                 string str = decodedUrl.Remove(0, 5);
                  if (n.Success)
                 {
-                    videoType = VideoType.flv;
                     return str;
                 }
             }

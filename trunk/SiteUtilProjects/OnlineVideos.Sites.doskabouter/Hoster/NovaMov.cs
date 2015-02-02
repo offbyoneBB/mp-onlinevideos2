@@ -7,14 +7,14 @@ namespace OnlineVideos.Hoster
 {
     public class NovaMov : MyHosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "Novamov.com";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
-            string page = SiteUtilBase.GetWebData(url);
+            string page = WebCache.Instance.GetWebData(url);
             return ParseData(page);
         }
 
@@ -25,7 +25,6 @@ namespace OnlineVideos.Hoster
             string link = HttpUtility.UrlDecode(FlashProvider(step1));
             if (!String.IsNullOrEmpty(link))
             {
-                videoType = VideoType.flv;
                 return link;
             }
 

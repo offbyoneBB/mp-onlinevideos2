@@ -10,17 +10,13 @@ namespace OnlineVideos.Hoster
 {
     public class Tubeload : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "Tubeload.to";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
-            if (url.Contains("flv"))
-                videoType = VideoType.flv;
-            else
-                videoType = VideoType.divx;
             return DivxProvider(url);
         }
     }

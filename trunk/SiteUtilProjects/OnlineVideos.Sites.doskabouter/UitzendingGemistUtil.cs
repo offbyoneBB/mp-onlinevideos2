@@ -269,7 +269,7 @@ namespace OnlineVideos.Sites
         public override string GetPlaybackOptionUrl(string option)
         {
             string s = base.GetPlaybackOptionUrl(option);
-            string webData = SiteUtilBase.GetWebData(s);
+            string webData = WebCache.Instance.GetWebData(s);
             Match m = Regex.Match(webData, @"\((?<res>.*)\)");
             if (m.Success)
                 webData = m.Groups["res"].Value;

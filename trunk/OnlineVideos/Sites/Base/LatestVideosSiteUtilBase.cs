@@ -15,7 +15,7 @@ namespace OnlineVideos.Sites
 		/// <returns>A list of <see cref="VideoInfo"/> objects that are new on the site.</returns>
 		public abstract List<VideoInfo> GetLatestVideos();
 
-		[Category("OnlineVideosUserConfiguration"), Description("Number of videos from this Site used for the latest videos infos. 0 = disable for this site."), LocalizableDisplayName("Latest Videos")]
+        [Category(UserConfigurable.ONLINEVIDEOS_USERCONFIGURATION_CATEGORY), Description("Number of videos from this Site used for the latest videos infos. 0 = disable for this site."), LocalizableDisplayName("Latest Videos")]
 		protected uint latestVideosCount = 3;
 		public virtual uint LatestVideosCount { get { return latestVideosCount; } }
 	}

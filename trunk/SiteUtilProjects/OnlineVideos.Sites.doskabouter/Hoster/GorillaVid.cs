@@ -6,17 +6,17 @@ namespace OnlineVideos.Hoster
 {
     public class GorillaVid : MyHosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "GorillaVid.in";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
-            string page = SiteUtilBase.GetWebData(url);
+            string page = WebCache.Instance.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
-                string sWaitTime = getRegExData(@"Wait\s(?:<(.|\n)*?>)?(?<waittime>\d*?)(?:<(.|\n)*?>)?\sseconds", page, "waittime");
+                string sWaitTime = GetRegExData(@"Wait\s(?:<(.|\n)*?>)?(?<waittime>\d*?)(?:<(.|\n)*?>)?\sseconds", page, "waittime");
                 int iWaitTime = 5;
                 if (!string.IsNullOrEmpty(sWaitTime))
                 {
@@ -38,15 +38,15 @@ namespace OnlineVideos.Hoster
 
     public class GorillaVidCom : GorillaVid
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "GorillaVid.com";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
-            url = SiteUtilBase.GetRedirectedUrl(url);
-            return base.getVideoUrls(url);
+            url = WebCache.Instance.GetRedirectedUrl(url);
+            return base.GetVideoUrl(url);
         }
     }
 

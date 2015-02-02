@@ -15,7 +15,7 @@ namespace OnlineVideos.Sites.RoChess
 
 		public override Dictionary<string, string> GetPlaybackOptions(string playlistUrl)
 		{
-			string resolvedUrl = GetRedirectedUrl(playlistUrl);
+            string resolvedUrl = WebCache.Instance.GetRedirectedUrl(playlistUrl);
 			string page = HttpUtility.ParseQueryString(new Uri(resolvedUrl).Query)["CONFIG_URL"];
 			string config = GetWebData(page, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
 			playlistUrl = Regex.Match(config, configFileRegEx, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture).Groups["url"].Value;

@@ -10,12 +10,12 @@ namespace OnlineVideos.Hoster
 {
     public class MegaVideo : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "Megavideo.com";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
             XmlDocument doc = new XmlDocument();
             string id = string.Empty;
@@ -30,7 +30,7 @@ namespace OnlineVideos.Hoster
             if (id.StartsWith("?v=")) id = id.Substring(3, 8);
             if (id.StartsWith("?d="))
             {
-                string webData = SiteUtilBase.GetWebData(url);
+                string webData = WebCache.Instance.GetWebData(url);
                 string regEx = @"flashvars.v = ""(?<url>[^""]+)"";";
                 Match m = Regex.Match(webData, regEx);
                 if (m.Success)
@@ -40,14 +40,13 @@ namespace OnlineVideos.Hoster
             }
 
             string s = "http://www.megavideo.com/xml/videolink.php?v=" + id;
-            s = SiteUtilBase.GetWebData(s);
+            s = WebCache.Instance.GetWebData(s);
             if (!s.Contains("This video has been removed due to infringement"))
             {
                 doc.LoadXml(s);
                 XmlNode node = doc.SelectSingleNode("ROWS/ROW");
                 string server = node.Attributes["s"].Value;
                 string decrypted = Decrypt(node.Attributes["un"].Value, node.Attributes["k1"].Value, node.Attributes["k2"].Value);
-                videoType = VideoType.flv;
                 return String.Format("http://www{0}.megavideo.com/files/{1}/", server, decrypted);
             }
             else return String.Empty;

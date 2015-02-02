@@ -22,7 +22,7 @@ namespace OnlineVideos.Sites.DavidCalder
         CookieContainer cc = new CookieContainer();
         string newUrl = base.PlaybackOptions[url];
         string stripedurl = newUrl.Substring(newUrl.IndexOf("http://moviebe"));
-        string data = SiteUtilBase.GetWebData(stripedurl, cookies: cc, referer: newUrl);
+        string data = WebCache.Instance.GetWebData(stripedurl, cookies: cc, referer: newUrl);
 
         //<a href="http://hoster/ekqiej2ito9p"
         Match n = Regex.Match(data, @"<a\shref=""http://(?<m0>[^/]*)/(?<m1>[^/]*)[^""]*"">");
@@ -33,7 +33,7 @@ namespace OnlineVideos.Sites.DavidCalder
         Match n1 = Regex.Match(data, @"<iframe\ssrc="".(?<url>[^""]*)""");
 
         string videoUrl = "http://moviebe.com/wp-content/themes/videozoom" + n1.Groups["url"].Value;
-        string newData = SiteUtilBase.GetWebData(videoUrl, cookies: cc);
+        string newData = WebCache.Instance.GetWebData(videoUrl, cookies: cc);
         Match n2 = Regex.Match(newData, @"<iframe\ssrc=""(?<url>[^""]*)""");
         if (n2.Success)
           return GetVideoUrl(n2.Groups["url"].Value);

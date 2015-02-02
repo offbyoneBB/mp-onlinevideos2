@@ -96,7 +96,7 @@ namespace OnlineVideos.MediaPortal1
             siteList.SelectObject(bindingSourceSiteSettings.Current);
 
             /** fill "Hosters" tab **/
-            listBoxHosters.DataSource = Hoster.Base.HosterFactory.GetAllHosters().OrderBy(h => h.getHosterUrl()).ToList();
+            listBoxHosters.DataSource = Hoster.Base.HosterFactory.GetAllHosters().OrderBy(h => h.GetHosterUrl()).ToList();
 
             /** fill "Groups" Tab **/
             chkAutoGroupByLang.Checked = PluginConfiguration.Instance.autoGroupByLang;

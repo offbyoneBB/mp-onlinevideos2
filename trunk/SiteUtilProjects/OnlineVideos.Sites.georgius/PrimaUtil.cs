@@ -93,7 +93,7 @@ namespace OnlineVideos.Sites.georgius
         public override int DiscoverDynamicCategories()
         {
             int dynamicCategoriesCount = 0;
-            String baseWebData = SiteUtilBase.GetWebData(PrimaUtil.baseUrl, forceUTF8: true);
+            String baseWebData = GetWebData(PrimaUtil.baseUrl, forceUTF8: true);
 
             int index = baseWebData.IndexOf(PrimaUtil.dynamicCategoryStart);
             if (index > 0)
@@ -145,7 +145,7 @@ namespace OnlineVideos.Sites.georgius
             }
             RssLink category = (RssLink)parentCategory;
 
-            String baseWebData = SiteUtilBase.GetWebData(url, forceUTF8: true);
+            String baseWebData = GetWebData(url, forceUTF8: true);
 
             int startIndex = baseWebData.IndexOf(PrimaUtil.showListBlockStart);
             if (startIndex >= 0)
@@ -236,7 +236,7 @@ namespace OnlineVideos.Sites.georgius
             if (!String.IsNullOrEmpty(pageUrl))
             {
                 this.nextPageUrl = String.Empty;
-                String baseWebData = SiteUtilBase.GetWebData(pageUrl, forceUTF8: true);
+                String baseWebData = GetWebData(pageUrl, forceUTF8: true);
 
                 int startIndex = baseWebData.IndexOf(PrimaUtil.showEpisodesBlockStart);
                 if (startIndex >= 0)
@@ -367,8 +367,8 @@ namespace OnlineVideos.Sites.georgius
 
         public override string GetVideoUrl(VideoInfo video)
         {
-            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, forceUTF8: true);
-            String episodeJS = SiteUtilBase.GetWebData(PrimaUtil.episodeUrlJS, referer: video.VideoUrl, forceUTF8: true);
+            String baseWebData = GetWebData(video.VideoUrl, forceUTF8: true);
+            String episodeJS = GetWebData(PrimaUtil.episodeUrlJS, referer: video.VideoUrl, forceUTF8: true);
             baseWebData = HttpUtility.HtmlDecode(baseWebData);
 
             video.PlaybackOptions = new Dictionary<string, string>();
@@ -496,8 +496,8 @@ namespace OnlineVideos.Sites.georgius
                         if ((!String.IsNullOrEmpty(cdnLq)) && (!String.IsNullOrEmpty(cdnHq)))
                         {
                             // we got low and high quality
-                            String lowQualityUrl = SiteUtilBase.GetRedirectedUrl(String.Format(PrimaUtil.videoUrlFormat, cdnLq));
-                            String highQualityUrl = SiteUtilBase.GetRedirectedUrl(String.Format(PrimaUtil.videoUrlFormat, cdnHq));
+                            String lowQualityUrl = WebCache.Instance.GetRedirectedUrl(String.Format(PrimaUtil.videoUrlFormat, cdnLq));
+                            String highQualityUrl = WebCache.Instance.GetRedirectedUrl(String.Format(PrimaUtil.videoUrlFormat, cdnHq));
 
                             video.PlaybackOptions = new Dictionary<string, string>();
                             video.PlaybackOptions.Add("Low quality", lowQualityUrl);
@@ -505,11 +505,11 @@ namespace OnlineVideos.Sites.georgius
                         }
                         else if (!String.IsNullOrEmpty(cdnLq))
                         {
-                            video.VideoUrl = SiteUtilBase.GetRedirectedUrl(String.Format(PrimaUtil.videoUrlFormat, cdnLq));
+                            video.VideoUrl = WebCache.Instance.GetRedirectedUrl(String.Format(PrimaUtil.videoUrlFormat, cdnLq));
                         }
                         else if (!String.IsNullOrEmpty(cdnHq))
                         {
-                            video.VideoUrl = SiteUtilBase.GetRedirectedUrl(String.Format(PrimaUtil.videoUrlFormat, cdnHq));
+                            video.VideoUrl = WebCache.Instance.GetRedirectedUrl(String.Format(PrimaUtil.videoUrlFormat, cdnHq));
                         }
                     }
                 }

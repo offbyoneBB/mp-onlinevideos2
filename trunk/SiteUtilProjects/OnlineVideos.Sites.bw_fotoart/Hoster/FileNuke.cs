@@ -7,15 +7,15 @@ namespace OnlineVideos.Hoster
 {
     public class FileNuke : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "filenuke.com";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
             //Get HTML from url
-            string page = SiteUtilBase.GetWebData(url);
+            string page = WebCache.Instance.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
                 //Extract fname value from HTML form
@@ -25,7 +25,7 @@ namespace OnlineVideos.Hoster
 
                 //Send Postdata (simulates a button click)
                 string postData = @"op=download1&usr_login=&id=" + id + "&fname=" + fname + "&referer=&method_free=Kostenlos";
-                string webData = GenericSiteUtil.GetWebData(url, postData);
+                string webData = WebCache.Instance.GetWebData(url, postData);
 
                 //Several Dean Edwards compressor in Html grab here the compressor between the "player_code divs"
                 string partial = GetSubString(webData, @"<div id=""player_code"">", @"</div>");
@@ -41,7 +41,6 @@ namespace OnlineVideos.Hoster
 
                 if (!String.IsNullOrEmpty(res))
                 {
-                    videoType = VideoType.flv;
                     return res;
                 }
             }

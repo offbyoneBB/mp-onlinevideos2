@@ -81,9 +81,9 @@ namespace OnlineVideos.Sites
         {
             Uri uri = new Uri(url);
             foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
-                if (uri.Host.ToLower().Contains(hosterUtil.getHosterUrl().ToLower()))
+                if (uri.Host.ToLower().Contains(hosterUtil.GetHosterUrl().ToLower()))
                 {
-                    Dictionary<string, string> options = hosterUtil.getPlaybackOptions(url);
+                    Dictionary<string, string> options = hosterUtil.GetPlaybackOptions(url);
                     if (options != null && options.Count > 0)
                     {
                         if (options.Count > 1) video.PlaybackOptions = options;
@@ -229,7 +229,7 @@ namespace OnlineVideos.Sites
 
             if (thisUrl.IndexOf("springboardplatform.com") >= 0)
             {
-                string newUrl = GetRedirectedUrl(thisUrl);
+                string newUrl = WebCache.Instance.GetRedirectedUrl(thisUrl);
                 if (newUrl == thisUrl)
                 {
                     Match m = Regex.Match(GetWebData(thisUrl), @"property=""og:video""\s*content=""(?<url>[^""]*)""");
@@ -248,7 +248,7 @@ namespace OnlineVideos.Sites
             }
             if (thisUrl.IndexOf("bit.ly/") >= 0)
             {
-                string newUrl = GetRedirectedUrl(thisUrl);
+                string newUrl = WebCache.Instance.GetRedirectedUrl(thisUrl);
                 string webData = GetWebData(newUrl);
                 Match m = Regex.Match(webData, @"<meta\sproperty=""og:video""\scontent=""(?<url>[^""]*)""");
                 if (m.Success)

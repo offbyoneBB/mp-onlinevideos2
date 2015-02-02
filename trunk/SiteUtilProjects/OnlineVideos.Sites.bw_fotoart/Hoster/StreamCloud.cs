@@ -10,23 +10,23 @@ namespace OnlineVideos.Hoster
 {
     public class StreamCloud : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "streamcloud.eu";
         }
 
         private string requestFileInformation(string url, CookieContainer cc)
         {
-            string webData = SiteUtilBase.GetWebData(url, cookies: cc);            
+            string webData = WebCache.Instance.GetWebData(url, cookies: cc);            
             if (!string.IsNullOrEmpty(webData))
             {
-                if (!string.IsNullOrEmpty(getRegExData(@"(?<exists>This\sfile\sdoesn\'t\sexist,\sor\shas\sbeen\sremoved\s?\.)", webData, "exists")))
+                if (!string.IsNullOrEmpty(GetRegExData(@"(?<exists>This\sfile\sdoesn\'t\sexist,\sor\shas\sbeen\sremoved\s?\.)", webData, "exists")))
                     webData = string.Empty;
             }
             return webData;
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
             //Get HTML from url
             CookieContainer cc = new CookieContainer();
@@ -55,13 +55,12 @@ namespace OnlineVideos.Hoster
 
                 //Send Postdata (simulates a button click)
                 string postData = @"op=" + op + "&usr_login=" + usrlogin + "&id=" + id + "&fname=" + fname + "&referer=" + referer + "&hash=" + hash + "&imhuman=" + imhuman;
-                string webData2 = GenericSiteUtil.GetWebData(url, postData, cc, url, null, false, false, OnlineVideoSettings.Instance.UserAgent, null);
+                string webData2 = WebCache.Instance.GetWebData(url, postData, cc, url, null, false, false, OnlineVideoSettings.Instance.UserAgent, null);
 
                 //Extract file url from HTML
                 Match n = Regex.Match(webData2, @"file: ""(?<url>[^""]*)");
                 if (n.Success)
                 {
-                    videoType = VideoType.flv;
                     return n.Groups["url"].Value;
                 }
             }

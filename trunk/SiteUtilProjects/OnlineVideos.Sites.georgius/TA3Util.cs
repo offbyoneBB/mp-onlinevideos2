@@ -74,7 +74,7 @@ namespace OnlineVideos.Sites.georgius
         public override int DiscoverDynamicCategories()
         {
             int dynamicCategoriesCount = 0;
-            String baseWebData = SiteUtilBase.GetWebData(TA3Util.baseUrl);
+            String baseWebData = GetWebData(TA3Util.baseUrl);
 
             int startIndex = baseWebData.IndexOf(TA3Util.dynamicCategoryStart);
             if (startIndex > 0)
@@ -136,7 +136,7 @@ namespace OnlineVideos.Sites.georgius
                 }
                 else
                 {
-                    String baseWebData = SiteUtilBase.GetWebData(pageUrl);
+                    String baseWebData = GetWebData(pageUrl);
                     String shows = String.Empty;
 
                     int index = baseWebData.IndexOf(TA3Util.showsStart);
@@ -262,7 +262,7 @@ namespace OnlineVideos.Sites.georgius
 
         public override string GetVideoUrl(VideoInfo video)
         {
-            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl);
+            String baseWebData = GetWebData(video.VideoUrl);
 
             String showUrl = String.Empty;
             if (video.PlaybackOptions == null)
@@ -274,7 +274,7 @@ namespace OnlineVideos.Sites.georgius
 
             if (video.VideoUrl != TA3Util.baseLiveUrl)
             {
-                String playerOfflineWebData = SiteUtilBase.GetWebData(TA3Util.playerOfflineUrl, referer: video.VideoUrl);
+                String playerOfflineWebData = GetWebData(TA3Util.playerOfflineUrl, referer: video.VideoUrl);
 
                 int startIndex = baseWebData.IndexOf(TA3Util.videoIdStart);
                 if (startIndex >= 0)
@@ -318,7 +318,7 @@ namespace OnlineVideos.Sites.georgius
             }
             else
             {
-                String playerOnlineWebData = SiteUtilBase.GetWebData(TA3Util.playerOnlineUrl, referer: video.VideoUrl);
+                String playerOnlineWebData = GetWebData(TA3Util.playerOnlineUrl, referer: video.VideoUrl);
 
                 String videoId = String.Empty;
                 String videoLowId = String.Empty;

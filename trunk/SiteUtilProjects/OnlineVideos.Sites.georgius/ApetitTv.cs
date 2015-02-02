@@ -77,7 +77,7 @@ namespace OnlineVideos.Sites.georgius
             if (!String.IsNullOrEmpty(pageUrl))
             {
                 this.nextPageUrl = String.Empty;
-                String baseWebData = SiteUtilBase.GetWebData(pageUrl, forceUTF8: true);
+                String baseWebData = WebCache.Instance.GetWebData(pageUrl, forceUTF8: true);
 
                 int index = baseWebData.IndexOf(ApetitTvUtil.showEpisodesStart);
                 if (index > 0)
@@ -214,7 +214,7 @@ namespace OnlineVideos.Sites.georgius
 
         public override string GetVideoUrl(VideoInfo video)
         {
-            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, forceUTF8: true);
+            String baseWebData = WebCache.Instance.GetWebData(video.VideoUrl, forceUTF8: true);
 
             int startIndex = baseWebData.IndexOf(ApetitTvUtil.showVideoUrlBlockStart);
             if (startIndex >= 0)
