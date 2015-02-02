@@ -11,16 +11,16 @@ namespace OnlineVideos.Hoster
 {
     public class PutLocker : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "putlocker.com";
         }
 
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
-            url = SiteUtilBase.GetRedirectedUrl(url);
-            string webData = SiteUtilBase.GetWebData(url);
+            url = WebCache.Instance.GetRedirectedUrl(url);
+            string webData = WebCache.Instance.GetWebData(url);
             if (string.IsNullOrEmpty(webData)) return string.Empty;
 
             Match m = Regex.Match(webData, @"<input\stype=""hidden""\sname=""confirm""\svalue=""(?<postdata>[^""]*)""", defaultRegexOptions);
@@ -28,7 +28,7 @@ namespace OnlineVideos.Hoster
             if (!m.Success) return String.Empty;
 
             string postData = "confirm=" + HttpUtility.UrlEncode(m.Groups["postdata"].Value);
-            string webDataLink = SiteUtilBase.GetWebData(url, postData);
+            string webDataLink = WebCache.Instance.GetWebData(url, postData);
             m = Regex.Match(webDataLink, @"<div\sid='fd_dl_drpdwn'>\s*<a\shref=""(?<url>[^""]*)""\starget=""_blank""\sid='top_external_download'\stitle='Download\sThis\sFile'>", defaultRegexOptions);
             if (!m.Success) return String.Empty;
             return m.Groups["url"].Value;

@@ -18,7 +18,7 @@ namespace OnlineVideos.Sites
 				var ytMatch = Regex.Match(dataPage, "<iframe\\s.*?src=\"http://www.youtube.com/embed/(?<url>[^\"?]+)");
 				if (ytMatch.Success)
 				{
-					video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(ytMatch.Groups["url"].Value);
+					video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").GetPlaybackOptions(ytMatch.Groups["url"].Value);
 					if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
 					{
 						return video.PlaybackOptions.First().Value;
@@ -27,7 +27,7 @@ namespace OnlineVideos.Sites
 				return null;
 			}
 
-			string newUrl = GetRedirectedUrl(url);
+            string newUrl = WebCache.Instance.GetRedirectedUrl(url);
 			var queryItems = HttpUtility.ParseQueryString(new Uri(newUrl).Query);
 			string rssUrl = null;
 			if (!string.IsNullOrEmpty(queryItems.Get("config")))

@@ -7,7 +7,7 @@
     /// </summary>
     public class GinBig : ShareFiles4u
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "ginbig.com";
         }

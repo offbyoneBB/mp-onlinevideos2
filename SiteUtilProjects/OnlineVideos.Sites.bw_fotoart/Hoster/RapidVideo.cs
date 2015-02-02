@@ -8,22 +8,21 @@ namespace OnlineVideos.Hoster
 {
     public class RapidVideo : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "rapidvideo.com";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
             //Get HTML from url
-            string page = SiteUtilBase.GetWebData(url);
+            string page = WebCache.Instance.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
                 //Extract file url from HTML
                 Match n = Regex.Match(page, @"file=(?<url>[^&]*)");
                 if (n.Success)
                 {
-                    videoType = VideoType.divx;
                     return n.Groups["url"].Value;
                 }
             }

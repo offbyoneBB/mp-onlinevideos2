@@ -8,14 +8,14 @@ namespace OnlineVideos.Hoster
 {
     public class EcoStream : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "ecostream.tv";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
-            string webData = SiteUtilBase.GetWebData(url);
+            string webData = WebCache.Instance.GetWebData(url);
             string slotId = Regex.Match(webData, @"var\sadslotid='(?<value>[^']*)'").Groups["value"].Value;
             string footerhash = Regex.Match(webData, @"var\sfooterhash='(?<value>[^']*)'").Groups["value"].Value;
             string dataid = Regex.Match(webData, @"data-id=""(?<value>[^""]*)""").Groups["value"].Value;
@@ -25,7 +25,7 @@ namespace OnlineVideos.Hoster
             headers.Add("User-Agent", OnlineVideoSettings.Instance.UserAgent);
             headers.Add("X-Requested-With", "XMLHttpRequest");
 
-            string page = SiteUtilBase.GetWebData(@"http://www.ecostream.tv/xhr/video/vidurl",
+            string page = WebCache.Instance.GetWebData(@"http://www.ecostream.tv/xhr/video/vidurl",
                 String.Format("id={0}&tpm={1}{2}", dataid, footerhash, slotId),
                 headers: headers);
 
@@ -41,7 +41,7 @@ namespace OnlineVideos.Hoster
                     if (Uri.TryCreate(new Uri(url), newUrl, out uri))
                         newUrl = uri.ToString();
                 }
-                return SiteUtilBase.GetRedirectedUrl(newUrl);
+                return WebCache.Instance.GetRedirectedUrl(newUrl);
             }
             return String.Empty;
         }

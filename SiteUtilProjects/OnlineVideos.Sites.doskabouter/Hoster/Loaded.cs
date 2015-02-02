@@ -11,21 +11,20 @@ namespace OnlineVideos.Hoster
 {
     public class Loaded : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "Loaded.it";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
             CookieContainer cc = new CookieContainer();
-            string first = SiteUtilBase.GetWebData(url, cookies: cc);
+            string first = WebCache.Instance.GetWebData(url, cookies: cc);
             string code = Regex.Match(first, @"name=""code""\svalue=""(?<value>[^""]+)""").Groups["value"].Value;
-            string second = SiteUtilBase.GetWebData(url, "code=" + code, cc, url);
+            string second = WebCache.Instance.GetWebData(url, "code=" + code, cc, url);
             Match n = Regex.Match(second, @"url:\s'(?<url>.*/get/[^']+)'");
             if (n.Success)
             {
-                videoType = VideoType.flv;
                 return n.Groups["url"].Value;
             }
             else

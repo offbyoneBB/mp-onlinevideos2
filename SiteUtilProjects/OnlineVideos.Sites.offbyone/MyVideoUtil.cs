@@ -348,7 +348,7 @@ namespace OnlineVideos.Sites
                 string sevenLoadUrl = Regex.Match(data, @"<object\s+type='application/x-shockwave-flash'\s+data='(http://de.sevenload.com[^']+)'").Groups[1].Value;
                 if (!string.IsNullOrEmpty(sevenLoadUrl))
                 {
-                    sevenLoadUrl = GetRedirectedUrl(sevenLoadUrl);
+                    sevenLoadUrl = WebCache.Instance.GetRedirectedUrl(sevenLoadUrl);
                     if (!string.IsNullOrEmpty(sevenLoadUrl))
                     {
                         sevenLoadUrl = HttpUtility.UrlDecode(HttpUtility.ParseQueryString(new Uri(sevenLoadUrl).Query)["configPath"]);

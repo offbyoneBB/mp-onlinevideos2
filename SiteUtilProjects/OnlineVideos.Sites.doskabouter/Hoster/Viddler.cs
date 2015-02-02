@@ -11,12 +11,12 @@ namespace OnlineVideos.Hoster
 {
     public class Viddler : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "viddler.com";
         }
 
-        public override Dictionary<string, string> getPlaybackOptions(string url)
+        public override Dictionary<string, string> GetPlaybackOptions(string url)
         {
 
             Log.Info("!!" + url);
@@ -88,9 +88,9 @@ namespace OnlineVideos.Hoster
             };
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
-            var result = getPlaybackOptions(url);
+            var result = GetPlaybackOptions(url);
             if (result != null && result.Count > 0) return result.Last().Value;
             else return String.Empty;
         }

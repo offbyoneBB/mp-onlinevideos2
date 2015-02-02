@@ -8,15 +8,15 @@ namespace OnlineVideos.Hoster
 {
     public class HostingBulk : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "hostingbulk.com";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
             //Get HTML from url
-            string page = SiteUtilBase.GetWebData(url);
+            string page = WebCache.Instance.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
                 //Grab content and decompress Dean Edwards compressor
@@ -33,7 +33,6 @@ namespace OnlineVideos.Hoster
 
                 if (!String.IsNullOrEmpty(res))
                 {
-                    videoType = VideoType.flv;
                     return res;
                 }
             }

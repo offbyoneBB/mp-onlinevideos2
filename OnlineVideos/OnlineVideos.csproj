@@ -950,6 +950,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\VersionInfo.cs" />
+    <Compile Include="Reflection\FieldPropertyDescriptor.cs" />
+    <Compile Include="Reflection\FieldPropertyDescriptorByRef.cs" />
+    <Compile Include="Reflection\FilterCache.cs" />
+    <Compile Include="Reflection\UserConfigurable.cs" />
     <Compile Include="RssToolkit\Rss\Constants.cs" />
     <Compile Include="RssToolkit\Rss\DocumentType.cs" />
     <Compile Include="RssToolkit\Opml\OpmlBody.cs" />

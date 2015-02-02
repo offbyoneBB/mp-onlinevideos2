@@ -105,7 +105,7 @@ namespace OnlineVideos.Sites
             string clipId = Regex.Match(webData, @",""id"":""(?<Value>[^""]+)""").Groups["Value"].Value;
             if (!string.IsNullOrEmpty(clipId))
             {
-                string link = GetRedirectedUrl("http://www.prosieben.de/dynamic/h264/h264map/?ClipID=" + clipId);
+                string link = WebCache.Instance.GetRedirectedUrl("http://www.prosieben.de/dynamic/h264/h264map/?ClipID=" + clipId);
                 if (!string.IsNullOrEmpty(link))
                 {
                     return link;

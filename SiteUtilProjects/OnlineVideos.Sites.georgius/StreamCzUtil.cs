@@ -69,7 +69,7 @@ namespace OnlineVideos.Sites.georgius
 
             List<RssLink> unsortedCategories = new List<RssLink>();
 
-            String baseWebData = SiteUtilBase.GetWebData(pageUrl, null, null, null, true);
+            String baseWebData = GetWebData(pageUrl, null, null, null, true);
 
             int startIndex = baseWebData.IndexOf(StreamCzUtil.dynamicCategoryStart);
             if (startIndex > 0)
@@ -149,7 +149,7 @@ namespace OnlineVideos.Sites.georgius
             if (!String.IsNullOrEmpty(pageUrl))
             {
                 this.nextPageUrl = String.Empty;
-                String baseWebData = SiteUtilBase.GetWebData(pageUrl, null, null, null, true);
+                String baseWebData = GetWebData(pageUrl, null, null, null, true);
 
                 int startIndex = baseWebData.IndexOf(StreamCzUtil.showEpisodesStart);
                 if (startIndex > 0)
@@ -260,7 +260,7 @@ namespace OnlineVideos.Sites.georgius
 
         public override string getUrl(VideoInfo video)
         {
-            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
+            String baseWebData = GetWebData(video.VideoUrl, null, null, null, true);
             if (video.PlaybackOptions == null)
             {
                 video.PlaybackOptions = new Dictionary<string, string>();

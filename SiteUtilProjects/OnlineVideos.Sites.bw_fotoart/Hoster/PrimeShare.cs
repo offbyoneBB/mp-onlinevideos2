@@ -9,23 +9,23 @@ namespace OnlineVideos.Hoster
 {
     public class PrimeShare : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "primeshare.tv";
         }
 
         private string requestFileInformation(string url, CookieContainer cc)
         {
-            string webData = SiteUtilBase.GetWebData(url, cookies: cc);
+            string webData = WebCache.Instance.GetWebData(url, cookies: cc);
             if (!string.IsNullOrEmpty(webData))
             {
-                if (!string.IsNullOrEmpty(getRegExData(@"(?<exists>This\sfile\sdoesn\'t\sexist,\sor\shas\sbeen\sremoved\s?\.)", webData, "exists")))
+                if (!string.IsNullOrEmpty(GetRegExData(@"(?<exists>This\sfile\sdoesn\'t\sexist,\sor\shas\sbeen\sremoved\s?\.)", webData, "exists")))
                     webData = string.Empty;
             }
             return webData;
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
             CookieContainer cc = new CookieContainer();
             string webData = requestFileInformation(url, cc);
@@ -40,14 +40,13 @@ namespace OnlineVideos.Hoster
 
             //Send Postdata (simulates a button click)
              string postData = @"hash=" + hash;
-             string page = GenericSiteUtil.GetWebData(url, postData, cc);
+             string page = WebCache.Instance.GetWebData(url, postData, cc);
 
             //Grab file url from html
             Match n = Regex.Match(page, @"provider:\s'stream',\s*url:\s'(?<url>[^']*)'");
 
             if (n.Success)
             {
-                videoType = VideoType.flv;
                 return n.Groups["url"].Value;
             }
 			return String.Empty;

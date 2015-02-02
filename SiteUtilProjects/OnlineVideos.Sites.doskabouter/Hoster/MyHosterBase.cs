@@ -31,7 +31,7 @@ namespace OnlineVideos.Hoster
             if (extraValues != null)
                 values.AddRange(extraValues);
             if (values.Count > 0)
-                page = SiteUtilBase.GetWebData(url, String.Join("&", values.ToArray()), forceUTF8: true);
+                page = WebCache.Instance.GetWebData(url, String.Join("&", values.ToArray()), forceUTF8: true);
             // Sometimes gorillavid returns "utf8" instead of "utf-8" as charset which crashes getwebdatafrompost, so force it to utf8
 
             return page;
@@ -75,7 +75,7 @@ namespace OnlineVideos.Hoster
                 string fileKey = m.Groups["filekey"].Value.Replace(".", "%2E").Replace("-", "%2D");
                 string url2 = String.Format(@"{0}/api/player.api.php?key={1}&user=undefined&codes=1&pass=undefined&file={2}",
                     m.Groups["domain"].Value, fileKey, m.Groups["file"].Value);
-                page = SiteUtilBase.GetWebData(url2);
+                page = WebCache.Instance.GetWebData(url2);
                 m = Regex.Match(page, @"url=(?<url>[^&]*)&");
                 if (m.Success)
                     return m.Groups["url"].Value;

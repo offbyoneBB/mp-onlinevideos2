@@ -7,14 +7,14 @@ namespace OnlineVideos.Hoster
 {
     public class DivxStage : MyHosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "DivxStage.eu";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
-            string page = SiteUtilBase.GetWebData(url);
+            string page = WebCache.Instance.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
                 //Even newer:
@@ -26,7 +26,6 @@ namespace OnlineVideos.Hoster
                 string link = FlashProvider(page);
                 if (!String.IsNullOrEmpty(link))
                 {
-                    videoType = VideoType.flv;
                     return link;
                 }
 
@@ -34,7 +33,6 @@ namespace OnlineVideos.Hoster
                 link = DivxProvider(url, page);
                 if (!string.IsNullOrEmpty(link))
                 {
-                    videoType = VideoType.divx;
                     return link;
                 }
 
@@ -42,7 +40,6 @@ namespace OnlineVideos.Hoster
                 Match n = Regex.Match(page, @"src""\svalue=""(?<url>.*?)""");
                 if (n.Success)
                 {
-                    videoType = VideoType.unknown;
                     return n.Groups["url"].Value;
                 }
             }
@@ -53,7 +50,7 @@ namespace OnlineVideos.Hoster
 
     public class DivxStageNet : DivxStage
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "DivxStage.net";
         }
@@ -61,7 +58,7 @@ namespace OnlineVideos.Hoster
 
     public class DivxStageTo : DivxStage
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "DivxStage.to";
         }

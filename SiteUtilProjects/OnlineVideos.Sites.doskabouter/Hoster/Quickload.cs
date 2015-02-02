@@ -10,20 +10,19 @@ namespace OnlineVideos.Hoster
 {
     public class Quickload : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "Quickload.to";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
-            string page = SiteUtilBase.GetWebData(url);
+            string page = WebCache.Instance.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
                 Match n = Regex.Match(page, @"src=""(?<url>[^""]+)""\stype=""video/divx""");
                 if (n.Success)
                 {
-                    videoType = VideoType.divx;
                     return n.Groups["url"].Value;
                 }
             }

@@ -50,7 +50,7 @@ namespace OnlineVideos.Sites.georgius
         public override int DiscoverDynamicCategories()
         {
             int dynamicCategoriesCount = 0;
-            String baseWebData = SiteUtilBase.GetWebData(OckoTvUtil.baseUrl, forceUTF8: true);
+            String baseWebData = GetWebData(OckoTvUtil.baseUrl, forceUTF8: true);
 
             int index = baseWebData.IndexOf(OckoTvUtil.dynamicCategoryStart);
             if (index > 0)
@@ -95,7 +95,7 @@ namespace OnlineVideos.Sites.georgius
             if (!String.IsNullOrEmpty(pageUrl))
             {
                 this.nextPageUrl = String.Empty;
-                String baseWebData = SiteUtilBase.GetWebData(pageUrl);
+                String baseWebData = GetWebData(pageUrl);
                 XmlDocument document = new XmlDocument();
                 document.LoadXml(baseWebData);
 

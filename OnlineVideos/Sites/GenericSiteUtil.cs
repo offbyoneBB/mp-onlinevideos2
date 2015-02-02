@@ -437,7 +437,7 @@ namespace OnlineVideos.Sites
             }
 
             if (getRedirectedFileUrl)
-                resultUrl = GetRedirectedUrl(resultUrl);
+                resultUrl = WebCache.Instance.GetRedirectedUrl(resultUrl);
 
             if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
             {
@@ -485,9 +485,9 @@ namespace OnlineVideos.Sites
                 {
                     Uri uri = new Uri(resultUrl);
                     foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
-                        if (uri.Host.ToLower().Contains(hosterUtil.getHosterUrl().ToLower()))
+                        if (uri.Host.ToLower().Contains(hosterUtil.GetHosterUrl().ToLower()))
                         {
-                            Dictionary<string, string> options = hosterUtil.getPlaybackOptions(resultUrl);
+                            Dictionary<string, string> options = hosterUtil.GetPlaybackOptions(resultUrl);
                             if (hosterUtil is ISubtitle)
                                 video.SubtitleText = ((ISubtitle)hosterUtil).SubtitleText;
 
@@ -513,9 +513,9 @@ namespace OnlineVideos.Sites
                     {
                         Uri uri = new Uri(value);
                         foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
-                            if (uri.Host.ToLower().Contains(hosterUtil.getHosterUrl().ToLower()))
+                            if (uri.Host.ToLower().Contains(hosterUtil.GetHosterUrl().ToLower()))
                             {
-                                Dictionary<string, string> options = hosterUtil.getPlaybackOptions(value);
+                                Dictionary<string, string> options = hosterUtil.GetPlaybackOptions(value);
                                 if (hosterUtil is ISubtitle)
                                     video.SubtitleText = ((ISubtitle)hosterUtil).SubtitleText;
                                 if (options != null && options.Count > 0)
@@ -545,14 +545,14 @@ namespace OnlineVideos.Sites
             return resultUrl;
         }
 
-        protected static string parseHosterLinks(string link, VideoInfo video)
+        protected string parseHosterLinks(string link, VideoInfo video)
         {
             string webData = GetWebData<string>(link);
             Dictionary<string, string> options = new Dictionary<string, string>();
 
             foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
             {
-                string regEx = @"(""|')(?<url>[^(""|')]+" + hosterUtil.getHosterUrl().ToLower() + @"[^(""|')]+)(""|')";
+                string regEx = @"(""|')(?<url>[^(""|')]+" + hosterUtil.GetHosterUrl().ToLower() + @"[^(""|')]+)(""|')";
 
                 MatchCollection n = Regex.Matches(webData, regEx);
                 List<string> results = new List<string>();
@@ -575,16 +575,16 @@ namespace OnlineVideos.Sites
                             if (results.Count > 1)
                             {
                                 int i = 1;
-                                string playbackName = hosterUtil.getHosterUrl() + " - " + i + "/" + results.Count;
+                                string playbackName = hosterUtil.GetHosterUrl() + " - " + i + "/" + results.Count;
                                 while (options.ContainsKey(playbackName))
                                 {
                                     i++;
-                                    playbackName = hosterUtil.getHosterUrl() + " - " + i + "/" + results.Count;
+                                    playbackName = hosterUtil.GetHosterUrl() + " - " + i + "/" + results.Count;
                                 }
                                 options.Add(playbackName, decodedUrl);
                             }
                             else
-                                options.Add(hosterUtil.getHosterUrl(), decodedUrl);
+                                options.Add(hosterUtil.GetHosterUrl(), decodedUrl);
                         }
                     }
                 }
@@ -625,9 +625,9 @@ namespace OnlineVideos.Sites
         {
             Uri uri = new Uri(url);
             foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
-                if (uri.Host.ToLower().Contains(hosterUtil.getHosterUrl().ToLower()))
+                if (uri.Host.ToLower().Contains(hosterUtil.GetHosterUrl().ToLower()))
                 {
-                    string ret = hosterUtil.getVideoUrls(url);
+                    string ret = hosterUtil.GetVideoUrl(url);
                     if (!string.IsNullOrEmpty(ret))
                         return ret;
                     else

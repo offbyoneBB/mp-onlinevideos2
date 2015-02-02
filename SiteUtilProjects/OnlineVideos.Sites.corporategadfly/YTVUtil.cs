@@ -255,7 +255,7 @@ namespace OnlineVideos.Sites
             public override string GetPlaybackOptionUrl(string option)
             {
                 string url = PlaybackOptions[option];
-                XmlDocument xml = GetWebData<XmlDocument>(url);
+                XmlDocument xml = WebCache.Instance.GetWebData<XmlDocument>(url);
     
                 XmlNamespaceManager namespaceManager = new XmlNamespaceManager(xml.NameTable);
                 namespaceManager.AddNamespace("a", @"http://www.w3.org/2005/SMIL21/Language");

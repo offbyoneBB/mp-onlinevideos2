@@ -34,7 +34,7 @@ namespace OnlineVideos.Sites.Utils.NaviX
                 cc.Add(new Cookie("nxid", nxId, "/", "www.navixtreme.com"));
             }
 
-            string playlistText = OnlineVideos.Sites.SiteUtilBase.GetWebData(url, cookies: cc);
+            string playlistText = WebCache.Instance.GetWebData(url, cookies: cc);
             if (!string.IsNullOrEmpty(playlistText))
                 return new NaviXPlaylist(playlistText);
             return null;

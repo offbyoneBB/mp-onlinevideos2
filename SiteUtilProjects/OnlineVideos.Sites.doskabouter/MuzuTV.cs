@@ -273,7 +273,7 @@ namespace OnlineVideos.Sites
         {
             public override string GetPlaybackOptionUrl(string option)
             {
-                string webData = GetWebData(PlaybackOptions[option]);
+                string webData = WebCache.Instance.GetWebData(PlaybackOptions[option]);
                 JObject contentData = (JObject)JObject.Parse(webData);
                 return contentData.Value<string>("url");
             }

@@ -8,20 +8,20 @@ namespace OnlineVideos.Hoster
 {
     public class FlashStream : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "flashstream.in";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
             if (url.Contains("embed"))
             {
-                string page = SiteUtilBase.GetWebData(url);
+                string page = WebCache.Instance.GetWebData(url);
                 url = Regex.Match(page, @"<div><a\shref=""(?<url>[^""]+)""").Groups["url"].Value;
             }
             //Get HTML from url
-            string webdata = SiteUtilBase.GetWebData(url);
+            string webdata = WebCache.Instance.GetWebData(url);
 
             //Grab hidden value: op, usr_login, id, fname, referer, method_free
             string formOp = GetSubString(webdata, @"name=""op"" value=""", @""">");
@@ -33,7 +33,7 @@ namespace OnlineVideos.Hoster
 
             //Send Postdata (simulates a button click)
             string postData = @"op=" + formOp + "&usr_login=" + formUsrlogin + "&id=" + formId + "&fname=" + formFname + "&referer=" + formReferer + "&method_free=" + formMethodFree;
-            string webData = GenericSiteUtil.GetWebData(url, postData);
+            string webData = WebCache.Instance.GetWebData(url, postData);
 
             //Grab content and decompress Dean Edwards compressor
             string packed = GetSubString(webData, @"swfobject.js'></script>", @"</script>");
@@ -45,7 +45,6 @@ namespace OnlineVideos.Hoster
 
             if (!String.IsNullOrEmpty(res))
 			{
-                videoType = VideoType.flv;
 				return res;				
 			}
 			return String.Empty;

@@ -11,12 +11,12 @@ namespace OnlineVideos.Hoster
 {
     public class Duckload : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "Duckload.com";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
             if (url.Contains(".html"))
             {
@@ -24,9 +24,9 @@ namespace OnlineVideos.Hoster
 
             }
             CookieContainer cc = new CookieContainer();
-            string page = SiteUtilBase.GetWebData(url, cookies: cc);
+            string page = WebCache.Instance.GetWebData(url, cookies: cc);
             System.Threading.Thread.Sleep(10001);
-            page = SiteUtilBase.GetWebData(url, "secret=&next=true", cc, url);
+            page = WebCache.Instance.GetWebData(url, "secret=&next=true", cc, url);
 
             if (!string.IsNullOrEmpty(page))
             {
@@ -34,7 +34,6 @@ namespace OnlineVideos.Hoster
                 Match n = Regex.Match(page, @"src=""(?<url>[^""]+)""\stype=""video/divx""");
                 if (n.Success)
                 {
-                    videoType = VideoType.divx;
                     return n.Groups["url"].Value;
                 }
                 //Flv
@@ -43,8 +42,7 @@ namespace OnlineVideos.Hoster
                     Match o = Regex.Match(page, @"duckloadplayer.swf\?id=(?<id>[^&]+)&");
                     if (o.Success)
                     {
-                        videoType = VideoType.flv;
-                        page = SiteUtilBase.GetWebData("http://flash.duckload.com/video//video_api.php?showTopBar=undefined&cookie=undefined&id=" + o.Groups["id"].Value, cookies: cc);
+                        page = WebCache.Instance.GetWebData("http://flash.duckload.com/video//video_api.php?showTopBar=undefined&cookie=undefined&id=" + o.Groups["id"].Value, cookies: cc);
                         string ident = Regex.Match(page, @"""ident"":\s""(?<ident>[^""]+)"",").Groups["ident"].Value;
                         string link = Regex.Match(page, @"""link"":\s""(?<link>[^""]+)""").Groups["link"].Value.Replace("\\/", "/");
                         return String.Format("http://dl{0}.duckload.com/{1}", ident, link);

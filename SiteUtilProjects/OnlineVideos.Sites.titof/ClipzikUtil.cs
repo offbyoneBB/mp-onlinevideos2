@@ -23,7 +23,7 @@ namespace OnlineVideos.Sites
             if (webData.Contains(@"youtube.com"))
             {
                 string id = Regex.Match(webData, @"http://www\.youtube\.com/v/(?<url>[^&|""]*)").Groups["url"].Value;
-                return Hoster.Base.HosterFactory.GetHoster("Youtube").getVideoUrls(id);
+                return Hoster.Base.HosterFactory.GetHoster("Youtube").GetVideoUrl(id);
             }
             else
             {

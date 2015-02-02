@@ -27,7 +27,7 @@ namespace OnlineVideos.Sites
             Match matchYouTube = regEx_youtubeCheckRegEx != null ? regEx_youtubeCheckRegEx.Match(dataPage) : Match.Empty;
             if (matchYouTube.Success)
             {
-                video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(matchYouTube.Groups["yt"].Value);
+                video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").GetPlaybackOptions(matchYouTube.Groups["yt"].Value);
                 return (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0) ? "" : video.PlaybackOptions.First().Value;
             }
             else

@@ -8,16 +8,16 @@ namespace OnlineVideos.Hoster
 {
     public class UploadC : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "uploadc.com";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
             if (url.Contains("embed"))
             {
-                string webData = SiteUtilBase.GetWebData(url);
+                string webData = WebCache.Instance.GetWebData(url);
                 //Several Dean Edwards compressor in Html grab here the compressor between the "player_code divs"
                 string partial = GetSubString(webData, @"</a> </div>", @"<div class=""left_iframe"">");
                 //Grab content and decompress Dean Edwards compressor
@@ -30,7 +30,6 @@ namespace OnlineVideos.Hoster
 
                 if (!String.IsNullOrEmpty(res))
                 {
-                    videoType = VideoType.divx;
                     return res;
                 }
                 return String.Empty;
@@ -38,7 +37,7 @@ namespace OnlineVideos.Hoster
             else
             {
                 //Get HTML from url
-                string page = SiteUtilBase.GetWebData(url);
+                string page = WebCache.Instance.GetWebData(url);
 
                 //Extract fname value from HTML form
                 string fname = Regex.Match(page, @"fname""\svalue=""(?<value>[^""]*)").Groups["value"].Value;
@@ -47,7 +46,7 @@ namespace OnlineVideos.Hoster
 
                 //Send Postdata (simulates a button click)
                 string postData = @"op=download2&usr_login=&id=" + id + "&fname=" + fname + "&referer=&method_free=Slow access";
-                string webData = GenericSiteUtil.GetWebData(url, postData);
+                string webData = WebCache.Instance.GetWebData(url, postData);
 
                 //Several Dean Edwards compressor in Html grab here the compressor between the "player_code divs"
                 string partial = GetSubString(webData, @"</a> </div>", @"<div class=""left_iframe"">");
@@ -61,7 +60,6 @@ namespace OnlineVideos.Hoster
 
                 if (!String.IsNullOrEmpty(res))
                 {
-                    videoType = VideoType.divx;
                     return res;
                 }
             }

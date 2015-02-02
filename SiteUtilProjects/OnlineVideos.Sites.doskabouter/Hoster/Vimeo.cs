@@ -17,19 +17,19 @@ namespace OnlineVideos.Hoster
 
         public string subtitleText = null;
 
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "Vimeo";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
-            var result = getPlaybackOptions(url);
+            var result = GetPlaybackOptions(url);
             if (result != null && result.Count > 0) return result.First().Value;
             else return String.Empty;
         }
 
-        public override Dictionary<string, string> getPlaybackOptions(string url)
+        public override Dictionary<string, string> GetPlaybackOptions(string url)
         {
             subtitleText = null;
             Dictionary<string, string> result = new Dictionary<string, string>();
@@ -39,13 +39,13 @@ namespace OnlineVideos.Hoster
             if (u.Success)
                 url = @"http://www.vimeo.com/" + u.Groups["url"].Value;
 
-            string page = SiteUtilBase.GetWebData(url);
+            string page = WebCache.Instance.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
                 Match n = Regex.Match(page, @"data-config-url=""(?<url>[^""]*)""");
                 if (n.Success)
                 {
-                    page = SiteUtilBase.GetWebData(HttpUtility.HtmlDecode(n.Groups["url"].Value));
+                    page = WebCache.Instance.GetWebData(HttpUtility.HtmlDecode(n.Groups["url"].Value));
                     JToken jt = JObject.Parse(page) as JToken;
                     JToken video = jt["video"];
                     JToken request = jt["request"];
@@ -64,7 +64,7 @@ namespace OnlineVideos.Hoster
 
                     if (!String.IsNullOrEmpty(subtitleLanguages))
                     {
-                        string data = SiteUtilBase.GetWebData(getSubUrl(request["text_tracks"] as JArray, subtitleLanguages));
+                        string data = WebCache.Instance.GetWebData(getSubUrl(request["text_tracks"] as JArray, subtitleLanguages));
                         subtitleText = CleanupSubs(ConvertWebvttToSrt(data));
                     }
                 }

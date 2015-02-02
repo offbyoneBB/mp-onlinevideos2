@@ -159,7 +159,7 @@ namespace OnlineVideos.Sites.georgius
         public override int DiscoverDynamicCategories()
         {
             int categoriesCount = 0;
-            String baseWebData = SiteUtilBase.GetWebData(MarkizaUtil.baseUrl, null, null, null, true);
+            String baseWebData = GetWebData(MarkizaUtil.baseUrl, null, null, null, true);
 
             int startIndex = baseWebData.IndexOf(MarkizaUtil.categoriesStart);
             if (startIndex >= 0)
@@ -236,7 +236,7 @@ namespace OnlineVideos.Sites.georgius
                 parentCategory.SubCategories = new List<Category>();
             }
 
-            String baseWebData = SiteUtilBase.GetWebData(url, null, null, null, true);
+            String baseWebData = GetWebData(url, null, null, null, true);
 
             // find shows
             CategoryShowsRegex categoryShow = null;
@@ -364,7 +364,7 @@ namespace OnlineVideos.Sites.georgius
             if (!String.IsNullOrEmpty(pageUrl))
             {
                 this.nextPageUrl = String.Empty;
-                String baseWebData = SiteUtilBase.GetWebData(pageUrl, null, null, null, true);
+                String baseWebData = GetWebData(pageUrl, null, null, null, true);
 
                 int index = baseWebData.IndexOf(MarkizaUtil.showEpisodesStart);
                 if (index > 0)
@@ -500,7 +500,7 @@ namespace OnlineVideos.Sites.georgius
             List<String> videoUrls = new List<string>();
             System.Net.CookieContainer cookies = new System.Net.CookieContainer();
 
-            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, cookies, null, null, true);
+            String baseWebData = GetWebData(video.VideoUrl, cookies, null, null, true);
             int startIndex = baseWebData.IndexOf(MarkizaUtil.showVoyoParamsStart);
             if (startIndex >= 0)
             {
@@ -552,16 +552,16 @@ namespace OnlineVideos.Sites.georgius
                     }
 
                     String cookiesRequestUrl = String.Format("http://voyo.markiza.sk/bin/usrtrck-new.php?section_id={0}&article_id=&gallery_id=&media_id=&article_date=&r={1}&c=", section, new Random().NextDouble());
-                    SiteUtilBase.GetWebData(cookiesRequestUrl, cookies, null, null, true);
+                    GetWebData(cookiesRequestUrl, cookies, null, null, true);
 
                     cookiesRequestUrl = String.Format("http://voyo.markiza.sk/bin/eshop/ws/user.php?x=isLoggedIn&r={0}", new Random().NextDouble());
-                    SiteUtilBase.GetWebData(cookiesRequestUrl, cookies, null, null, true);
+                    GetWebData(cookiesRequestUrl, cookies, null, null, true);
 
                     cookiesRequestUrl = String.Format("http://voyo.markiza.sk/bin/eshop/ws/user.php?x=login&r={0}", new Random().NextDouble());
-                    SiteUtilBase.GetWebDataFromPost(cookiesRequestUrl, String.Format("u={0}&p={1}", this.login, this.password), cookies, null, null, true);
+                    GetWebDataFromPost(cookiesRequestUrl, String.Format("u={0}&p={1}", this.login, this.password), cookies, null, null, true);
                 
                     String showParamsUrl = String.Format(MarkizaUtil.showVoyoVideoUrlFormat, prod, unit, media, site, section, subsite, site, width, height, new Random().NextDouble());
-                    String showParamsData = SiteUtilBase.GetWebData(showParamsUrl, cookies, null, null, true);
+                    String showParamsData = GetWebData(showParamsUrl, cookies, null, null, true);
 
                     Newtonsoft.Json.Linq.JObject jObject = (Newtonsoft.Json.Linq.JObject)Newtonsoft.Json.JsonConvert.DeserializeObject(showParamsData);
                     String decodedPage = (String)((Newtonsoft.Json.Linq.JValue)((Newtonsoft.Json.Linq.JProperty)jObject.First).Value);

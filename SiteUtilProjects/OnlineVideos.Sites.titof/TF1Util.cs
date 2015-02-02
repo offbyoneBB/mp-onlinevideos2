@@ -291,7 +291,7 @@ namespace OnlineVideos.Sites
         {
             List<string> listUrls = new List<string>();
 
-            string webData = GetWebData(video.VideoUrl);
+            string webData = WebCache.Instance.GetWebData(video.VideoUrl);
             string id = string.Empty;
             
             // check to see if videoId is in following format
@@ -323,7 +323,7 @@ namespace OnlineVideos.Sites
             }
 
             //Récupération du json
-            webData = GetWebData("http://www.wat.tv/interface/contentv3/" + id);
+            webData = WebCache.Instance.GetWebData("http://www.wat.tv/interface/contentv3/" + id);
 
             JObject j = JObject.Parse(webData);
 
@@ -373,7 +373,7 @@ namespace OnlineVideos.Sites
 
         private static string getFinalUrl(string token, string url, string timeToken, string id)
         {
-            string webData = GetWebData(url + "?domain=videos.tf1.fr&country=FR&getURL=1&version=LNX%2010,0,45,2&token=" + token + "/" + timeToken, userAgent: "Mozilla/5.0 (Windows; U; Windows NT 6.1; de; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3");
+            string webData = WebCache.Instance.GetWebData(url + "?domain=videos.tf1.fr&country=FR&getURL=1&version=LNX%2010,0,45,2&token=" + token + "/" + timeToken, userAgent: "Mozilla/5.0 (Windows; U; Windows NT 6.1; de; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3");
             if (webData.Contains("rtmpte://"))
             {
                 webData = webData.Replace(webData.Substring(0, webData.IndexOf("://")), "rtmpe");

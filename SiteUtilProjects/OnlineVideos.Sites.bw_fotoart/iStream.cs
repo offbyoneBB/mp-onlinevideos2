@@ -23,7 +23,7 @@ namespace OnlineVideos.Sites.bw_fotoart
 
             public static string getPlaybackUrl(string playerUrl, iStreamUtil Util)
             {
-                string data = GetWebData(playerUrl, cookies: Util.GetCookie(), forceUTF8: Util.forceUTF8Encoding, allowUnsafeHeader: Util.allowUnsafeHeaders, encoding: Util.encodingOverride);
+                string data = WebCache.Instance.GetWebData(playerUrl, cookies: Util.GetCookie(), forceUTF8: Util.forceUTF8Encoding, allowUnsafeHeader: Util.allowUnsafeHeaders, encoding: Util.encodingOverride);
                 Match n = Regex.Match(data, @"URL=(?<url>[^""]*)");
 
                 if (n.Groups[1].Value == "http://istream.ws" || n.Groups[1].Value == "")
@@ -33,7 +33,7 @@ namespace OnlineVideos.Sites.bw_fotoart
 
                     string encodeQuery = System.Uri.EscapeDataString(e);
                     string newplayerurl = "http://istream.ws" + myRequest.Address.LocalPath +"?m="+ encodeQuery;
-                    string data2 = GetWebData(newplayerurl, cookies: Util.GetCookie(), forceUTF8: Util.forceUTF8Encoding, allowUnsafeHeader: Util.allowUnsafeHeaders, encoding: Util.encodingOverride);
+                    string data2 = WebCache.Instance.GetWebData(newplayerurl, cookies: Util.GetCookie(), forceUTF8: Util.forceUTF8Encoding, allowUnsafeHeader: Util.allowUnsafeHeaders, encoding: Util.encodingOverride);
 
                     Match m = Regex.Match(data2, @"URL=(?<url>[^""]*)");
                     playerUrl = m.Groups[1].Value;
@@ -46,9 +46,9 @@ namespace OnlineVideos.Sites.bw_fotoart
                 string url = response.ResponseUri.ToString();
                 Uri uri = new Uri(url);
                 foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
-                    if (uri.Host.ToLower().Contains(hosterUtil.getHosterUrl().ToLower()))
+                    if (uri.Host.ToLower().Contains(hosterUtil.GetHosterUrl().ToLower()))
                     {
-                        Dictionary<string, string> options = hosterUtil.getPlaybackOptions(url);
+                        Dictionary<string, string> options = hosterUtil.GetPlaybackOptions(url);
                         if (options != null && options.Count > 0)
                         {
                             url = options.Last().Value;

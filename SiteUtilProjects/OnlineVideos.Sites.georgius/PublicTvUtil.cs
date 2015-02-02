@@ -63,7 +63,7 @@ namespace OnlineVideos.Sites.SK_CZ
         public override int DiscoverDynamicCategories()
         {
             int dynamicCategoriesCount = 0;
-            String baseWebData = SiteUtilBase.GetWebData(PublicTvUtil.archiveUrl, null, null, null, true);
+            String baseWebData = GetWebData(PublicTvUtil.archiveUrl, null, null, null, true);
 
             int index = baseWebData.IndexOf(PublicTvUtil.dynamicCategoryStart);
             if (index > 0)
@@ -119,7 +119,7 @@ namespace OnlineVideos.Sites.SK_CZ
 
             if (!String.IsNullOrEmpty(pageUrl))
             {
-                String baseWebData = SiteUtilBase.GetWebData(pageUrl, null, null, null, true);
+                String baseWebData = GetWebData(pageUrl, null, null, null, true);
 
                 Match match = Regex.Match(baseWebData, PublicTvUtil.showEpisodesStart);
                 if (match.Success)
@@ -277,7 +277,7 @@ namespace OnlineVideos.Sites.SK_CZ
 
         public override string getUrl(VideoInfo video)
         {
-            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
+            String baseWebData = GetWebData(video.VideoUrl, null, null, null, true);
             Match match = Regex.Match(baseWebData, PublicTvUtil.showEpisodeVideoUrl);
 
             if (match.Success)

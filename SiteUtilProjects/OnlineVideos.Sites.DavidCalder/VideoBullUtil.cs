@@ -35,7 +35,7 @@ namespace OnlineVideos.Sites.DavidCalder
     public override List<VideoInfo> GetVideos(Category category)
     {
       RssLink link = category as RssLink;
-      string page = SiteUtilBase.GetWebData(link.Url);
+      string page = GetWebData(link.Url);
       Match n = Regex.Match(page, @"<a\shref=""http://videobull\.to/tv-shows/"">TV\sShows</a>&nbsp;&gt;\s<a\shref=""(?<url>[^""]*)"">");
       if (n.Success)
       {
@@ -56,7 +56,7 @@ namespace OnlineVideos.Sites.DavidCalder
         CookieContainer cc = new CookieContainer();
         string newUrl = base.PlaybackOptions[url];
         string stripedurl = newUrl.Substring(newUrl.IndexOf("http://videobull"));
-        string data = SiteUtilBase.GetWebData(stripedurl, cookies: cc, referer: newUrl);
+        string data = WebCache.Instance.GetWebData(stripedurl, cookies: cc, referer: newUrl);
 
         //<a href="http://hoster/ekqiej2ito9p"
         Match n = Regex.Match(data, @"<a\shref=""(?<url>[^""]*)""[^>]*>");

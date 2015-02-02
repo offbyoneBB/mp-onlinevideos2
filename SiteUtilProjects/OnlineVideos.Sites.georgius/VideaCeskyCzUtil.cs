@@ -70,7 +70,7 @@ namespace OnlineVideos.Sites.georgius
         public override int DiscoverDynamicCategories()
         {
             int dynamicCategoriesCount = 0;
-            String baseWebData = SiteUtilBase.GetWebData(VideaCeskyCzUtil.baseUrl);
+            String baseWebData = GetWebData(VideaCeskyCzUtil.baseUrl);
 
             int index = baseWebData.IndexOf(VideaCeskyCzUtil.dynamicCategoryStart);
             if (index > 0)
@@ -134,7 +134,7 @@ namespace OnlineVideos.Sites.georgius
             if (!String.IsNullOrEmpty(pageUrl))
             {
                 this.nextPageUrl = String.Empty;
-                String baseWebData = SiteUtilBase.GetWebData(pageUrl);
+                String baseWebData = GetWebData(pageUrl);
 
                 int index = baseWebData.IndexOf(VideaCeskyCzUtil.showEpisodesStart);
                 if (index > 0)
@@ -279,7 +279,7 @@ namespace OnlineVideos.Sites.georgius
 
         public override string GetVideoUrl(VideoInfo video)
         {
-            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl);
+            String baseWebData = GetWebData(video.VideoUrl);
             String videoUrl = String.Empty;
             String captionsUrl = String.Empty;
 
@@ -300,7 +300,7 @@ namespace OnlineVideos.Sites.georgius
                     videoUrl = match.Groups["videoUrl"].Value;
                 }
 
-                Dictionary<String, String> playbackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(HttpUtility.UrlDecode(videoUrl));
+                Dictionary<String, String> playbackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").GetPlaybackOptions(HttpUtility.UrlDecode(videoUrl));
                 if (playbackOptions != null)
                 {
                     int width = 0;

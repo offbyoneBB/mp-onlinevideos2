@@ -19,7 +19,7 @@ namespace OnlineVideos.Sites.Utils
                 return false;
 
             //Retrieve .dat page for channel
-            string guide = SiteUtilBase.GetWebData(string.Format("http://xmltv.radiotimes.com/xmltv/{0}.dat", radioTimesId));
+            string guide = WebCache.Instance.GetWebData(string.Format("http://xmltv.radiotimes.com/xmltv/{0}.dat", radioTimesId));
             if (string.IsNullOrEmpty(guide))
                 return false;
 

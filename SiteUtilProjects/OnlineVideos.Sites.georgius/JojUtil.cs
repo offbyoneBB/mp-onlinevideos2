@@ -69,7 +69,7 @@ namespace OnlineVideos.Sites.georgius
         public override int DiscoverDynamicCategories()
         {
             int dynamicCategoriesCount = 0;
-            String baseWebData = SiteUtilBase.GetWebData(JojUtil.baseUrl, null, null, null, true);
+            String baseWebData = GetWebData(JojUtil.baseUrl, null, null, null, true);
             List<RssLink> categories = new List<RssLink>();
 
             int index = baseWebData.IndexOf(JojUtil.dynamicCategoryStart);
@@ -143,7 +143,7 @@ namespace OnlineVideos.Sites.georgius
             if (!String.IsNullOrEmpty(pageUrl))
             {
                 this.nextPageUrl = String.Empty;
-                String baseWebData = SiteUtilBase.GetWebData(pageUrl, null, null, null, true);
+                String baseWebData = GetWebData(pageUrl, null, null, null, true);
 
                 int startIndex = baseWebData.IndexOf(JojUtil.showEpisodesStart);
                 if (startIndex >= 0)
@@ -274,7 +274,7 @@ namespace OnlineVideos.Sites.georgius
 
         public override string getUrl(VideoInfo video)
         {
-            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
+            String baseWebData = GetWebData(video.VideoUrl, null, null, null, true);
 
             Match videoId = Regex.Match(baseWebData, JojUtil.videoIdRegex);
 
@@ -286,7 +286,7 @@ namespace OnlineVideos.Sites.georgius
                 servicesUrl = Utils.FormatAbsoluteUrl(servicesUrl, video.VideoUrl);
 
                 XmlDocument videoData = new XmlDocument();
-                videoData.LoadXml(SiteUtilBase.GetWebData(servicesUrl));
+                videoData.LoadXml(GetWebData(servicesUrl));
 
                 XmlNodeList files = videoData.SelectNodes("//file[@type=\"rtmp-archiv\"]");
                 foreach (XmlNode file in files)

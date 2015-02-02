@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
@@ -14,33 +12,34 @@ namespace OnlineVideos.Sites
 {
     /// <summary>
     /// The abstract base class for all sites. 
-    /// It might be hosted in a seperate AppDomain than the main application, so it can be unloaded at runtime.
+    /// Instances might be hosted in a seperate AppDomain than the main application, so it can be unloaded at runtime.
     /// </summary>
-    public abstract class SiteUtilBase : MarshalByRefObject, ICustomTypeDescriptor
+    public abstract class SiteUtilBase : UserConfigurable
     {
-        #region MarshalByRefObject overrides
-        public override object InitializeLifetimeService()
+        #region UserConfigurable implementation
+
+        internal override string GetConfigurationKey(string fieldName)
         {
-            // In order to have the lease across appdomains live forever, we return null.
-            return null;
+            return string.Format("{0}.{1}", Utils.GetSaveFilename(Settings.Name).Replace(' ', '_'), fieldName);
         }
+
         #endregion
 
         #region User Configurable Settings
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Skip single Category", TranslationFieldName = "SkipSingleCategory"), Description("Enables skipping over category lists that only contain a single category.")]
+        [Category(ONLINEVIDEOS_USERCONFIGURATION_CATEGORY), LocalizableDisplayName("Skip single Category", TranslationFieldName = "SkipSingleCategory"), Description("Enables skipping over category lists that only contain a single category.")]
         protected bool allowDiveDownOrUpIfSingle = true;
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("HTTP settings"), Description("Settings for HTTP protocol used by site.")]
+        [Category(ONLINEVIDEOS_USERCONFIGURATION_CATEGORY), LocalizableDisplayName("HTTP settings"), Description("Settings for HTTP protocol used by site.")]
         protected HttpUrlSettings httpSettings = new HttpUrlSettings();
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("RTMP settings"), Description("Settings for RTMP protocol used by site.")]
+        [Category(ONLINEVIDEOS_USERCONFIGURATION_CATEGORY), LocalizableDisplayName("RTMP settings"), Description("Settings for RTMP protocol used by site.")]
         protected RtmpUrlSettings rtmpSettings = new RtmpUrlSettings();
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("RTSP settings"), Description("Settings for RTSP protocol used by site.")]
+        [Category(ONLINEVIDEOS_USERCONFIGURATION_CATEGORY), LocalizableDisplayName("RTSP settings"), Description("Settings for RTSP protocol used by site.")]
         protected RtspUrlSettings rtspSettings = new RtspUrlSettings();
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("UDP/RTP settings"), Description("Settings for UDP or RTP protocol used by site.")]
+        [Category(ONLINEVIDEOS_USERCONFIGURATION_CATEGORY), LocalizableDisplayName("UDP/RTP settings"), Description("Settings for UDP or RTP protocol used by site.")]
         protected UdpRtpUrlSettings udpRtpSettings = new UdpRtpUrlSettings();
 
         public virtual HttpUrlSettings HttpSettings { get { return this.httpSettings; } }
@@ -95,36 +94,8 @@ namespace OnlineVideos.Sites
                             Log.Warn("{0} - could not set Configuration Value: {1}. Error: {2}", siteSettings.Name, field.Name, ex.Message);
                         }
                     }
-                    else if (((CategoryAttribute)attrs[0]).Category == "OnlineVideosUserConfiguration"
-                             && OnlineVideoSettings.Instance.UserStore != null)
-                    {
-                        string value = OnlineVideoSettings.Instance.UserStore.GetValue(string.Format("{0}.{1}", Utils.GetSaveFilename(siteSettings.Name).Replace(' ', '_'), field.Name));
-                        if (value != null)
-                        {
-                            try
-                            {
-                                if (field.FieldType.IsEnum)
-                                {
-                                    field.SetValue(this, Enum.Parse(field.FieldType, value));
-                                }
-                                else
-                                {
-                                    try
-                                    {
-                                        field.SetValue(this, Convert.ChangeType(value, field.FieldType));
-                                    }
-                                    catch
-                                    {
-                                        field.SetValue(this, Activator.CreateInstance(field.FieldType, value));
-                                    }
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Log.Warn("{0} - could not set User Configuration Value: {1}. Error: {2}", siteSettings.Name, field.Name, ex.Message);
-                            }
-                        }
-                    }
+                    else 
+                        SetUserConfigurationValue(field, attrs[0] as CategoryAttribute); 
                 }
             }
         }
@@ -400,51 +371,12 @@ namespace OnlineVideos.Sites
             return null;
         }
 
-        # region static helper functions
-
-        public static string GetRedirectedUrl(string url, string referer = null)
+        public override string ToString()
         {
-            HttpWebResponse httpWebresponse = null;
-            try
-            {
-                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-                if (request == null) return url;
-                request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
-                request.AllowAutoRedirect = true;
-                request.Timeout = 15000;
-                if (!string.IsNullOrEmpty(referer)) request.Referer = referer;
-                // invoke getting the Response async and abort as soon as data is coming in 
-                // (according to docs - this is after headers are completely received)
-                var result = request.BeginGetResponse((ar) => request.Abort(), null);
-                // wait for the completion (or abortion) of the async response
-                while (!result.IsCompleted) System.Threading.Thread.Sleep(10);
-                httpWebresponse = request.EndGetResponse(result) as HttpWebResponse;
-                if (httpWebresponse == null) return url;
-                if (request.RequestUri.Equals(httpWebresponse.ResponseUri))
-                    return url;
-                else
-                    return httpWebresponse.ResponseUri.OriginalString;
-            }
-            catch (Exception ex)
-            {
-                Log.Warn(ex.ToString());
-            }
-            finally
-            {
-                if (httpWebresponse != null)
-                {
-                    try
-                    {
-                        httpWebresponse.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Warn(ex.ToString());
-                    }
-                }
-            }
-            return url;
+            return Settings == null ? base.ToString() : Settings.Name;
         }
+
+        # region helper functions
 
         /// <summary>
         /// Generic version of <see cref="GetWebData"/> that will automatically convert the retrieved data into the type you provided.
@@ -461,43 +393,9 @@ namespace OnlineVideos.Sites
         /// </list>
         /// </typeparam>
         /// <returns>The data returned by a <see cref="HttpWebResponse"/> converted to the specified type.</returns>
-        public static T GetWebData<T>(string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
+        public T GetWebData<T>(string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
         {
-            string webData = GetWebData(url, postData, cookies, referer, proxy, forceUTF8, allowUnsafeHeader, userAgent, encoding, headers, cache);
-            if (typeof(T) == typeof(string))
-            {
-                return (T)(object)webData;
-            }
-            else if (typeof(T) == typeof(Newtonsoft.Json.Linq.JToken))
-            {
-                return (T)(object)Newtonsoft.Json.Linq.JToken.Parse(webData);
-            }
-            else if (typeof(T) == typeof(Newtonsoft.Json.Linq.JObject))
-            {
-                return (T)(object)Newtonsoft.Json.Linq.JObject.Parse(webData);
-            }
-            else if (typeof(T) == typeof(RssToolkit.Rss.RssDocument))
-            {
-                return (T)(object)RssToolkit.Rss.RssDocument.Load(webData);
-            }
-            else if (typeof(T) == typeof(XmlDocument))
-            {
-                XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(webData);
-                return (T)(object)xmlDoc;
-            }
-            else if (typeof(T) == typeof(System.Xml.Linq.XDocument))
-            {
-                return (T)(object)System.Xml.Linq.XDocument.Parse(webData);
-            }
-            else if (typeof(T) == typeof(HtmlAgilityPack.HtmlDocument))
-            {
-                HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument();
-                htmlDoc.LoadHtml(webData);
-                return (T)(object)htmlDoc;
-            }
-
-            return default(T);
+            return WebCache.Instance.GetWebData<T>(url, postData, cookies, referer, proxy, forceUTF8, allowUnsafeHeader, userAgent, encoding, headers, cache);
         }
 
         /// <summary>
@@ -518,374 +416,11 @@ namespace OnlineVideos.Sites
         /// <param name="headers">Allows to set your own custom headers for the request</param>
         /// <param name="cache">Controls if the result should be cached - default true</param>
         /// <returns>The data returned by a <see cref="HttpWebResponse"/>.</returns>
-        public static string GetWebData(string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
+        public string GetWebData(string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
         {
-            // do not use the cache when doing a POST
-            if (postData != null) cache = false;
-            // set a few headers if none were given
-            if (headers == null)
-            {
-                headers = new NameValueCollection();
-                headers.Add("Accept", "*/*"); // accept any content type
-                headers.Add("User-Agent", userAgent ?? OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
-            }
-            if (referer != null) headers.Set("Referer", referer);
-            HttpWebResponse response = null;
-            try
-            {
-                // build a CRC of the url and all headers + proxy + cookies for caching
-                string requestCRC = Utils.EncryptLine(
-                    string.Format("{0}{1}{2}{3}",
-                    url,
-                    headers != null ? string.Join("&", (from item in headers.AllKeys select string.Format("{0}={1}", item, headers[item])).ToArray()) : "",
-                    proxy != null ? proxy.GetProxy(new Uri(url)).AbsoluteUri : "",
-                    cookies != null ? cookies.GetCookieHeader(new Uri(url)) : ""));
-
-                // try cache first
-                string cachedData = cache ? WebCache.Instance[requestCRC] : null;
-                Log.Debug("GetWebData-{2}{1}: '{0}'", url, cachedData != null ? " (cached)" : "", postData != null ? "POST" : "GET");
-                if (cachedData != null) return cachedData;
-
-                // build the request
-                if (allowUnsafeHeader) Utils.SetAllowUnsafeHeaderParsing(true);
-                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-                if (request == null) return "";
-                request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate; // turn on automatic decompression of both formats (adds header "AcceptEncoding: gzip,deflate" to the request)
-                if (cookies != null) request.CookieContainer = cookies; // set cookies if given
-                if (proxy != null) request.Proxy = proxy; // send the request over a proxy if given
-                if (headers != null) // set user defined headers
-                {
-                    foreach (var headerName in headers.AllKeys)
-                    {
-                        switch (headerName.ToLowerInvariant())
-                        {
-                            case "accept":
-                                request.Accept = headers[headerName];
-                                break;
-                            case "user-agent":
-                                request.UserAgent = headers[headerName];
-                                break;
-                            case "referer":
-                                request.Referer = headers[headerName];
-                                break;
-                            default:
-                                request.Headers.Set(headerName, headers[headerName]);
-                                break;
-                        }
-                    }
-                }
-                if (postData != null)
-                {
-                    byte[] data = encoding != null ? encoding.GetBytes(postData) : Encoding.UTF8.GetBytes(postData);
-                    request.Method = "POST";
-                    request.ContentType = "application/x-www-form-urlencoded";
-                    request.ContentLength = data.Length;
-                    request.ProtocolVersion = HttpVersion.Version10;
-                    Stream requestStream = request.GetRequestStream();
-                    requestStream.Write(data, 0, data.Length);
-                    requestStream.Close();
-                }
-
-                // request the data
-                try
-                {
-                    response = (HttpWebResponse)request.GetResponse();
-                }
-                catch (WebException webEx)
-                {
-                    Log.Debug(webEx.Message);
-                    response = (HttpWebResponse)webEx.Response; // if the server returns a 404 or similar .net will throw a WebException that has the response
-                }
-                Stream responseStream = response.GetResponseStream();
-
-                // UTF8 is the default encoding as fallback
-                Encoding responseEncoding = Encoding.UTF8;
-                // try to get the response encoding if one was specified and neither forceUTF8 nor encoding were set as parameters
-                if (!forceUTF8 && encoding == null && response.CharacterSet != null && !String.IsNullOrEmpty(response.CharacterSet.Trim())) responseEncoding = Encoding.GetEncoding(response.CharacterSet.Trim(new char[] { ' ', '"' }));
-                // the caller did specify a forced encoding
-                if (encoding != null) responseEncoding = encoding;
-                // the caller wants to force UTF8
-                if (forceUTF8) responseEncoding = Encoding.UTF8;
-
-                using (StreamReader reader = new StreamReader(responseStream, responseEncoding, true))
-                {
-                    string str = reader.ReadToEnd().Trim();
-                    // add to cache if HTTP Status was 200 and we got more than 500 bytes (might just be an errorpage otherwise)
-                    if (cache && response.StatusCode == HttpStatusCode.OK && str.Length > 500) WebCache.Instance[requestCRC] = str;
-                    return str;
-                }
-            }
-            finally
-            {
-                if (response != null) ((IDisposable)response).Dispose();
-                // disable unsafe header parsing if it was enabled
-                if (allowUnsafeHeader) Utils.SetAllowUnsafeHeaderParsing(false);
-            }
-        }
-
-        #endregion
-
-        #region ICustomTypeDescriptor Members
-
-        object ICustomTypeDescriptor.GetPropertyOwner(PropertyDescriptor pd)
-        {
-            return this;
-        }
-
-        AttributeCollection ICustomTypeDescriptor.GetAttributes()
-        {
-            return TypeDescriptor.GetAttributes(this, true);
-        }
-
-        string ICustomTypeDescriptor.GetClassName()
-        {
-            return TypeDescriptor.GetClassName(this, true);
-        }
-
-        string ICustomTypeDescriptor.GetComponentName()
-        {
-            return TypeDescriptor.GetComponentName(this, true);
-        }
-
-        TypeConverter ICustomTypeDescriptor.GetConverter()
-        {
-            return TypeDescriptor.GetConverter(this, true);
-        }
-
-        EventDescriptor ICustomTypeDescriptor.GetDefaultEvent()
-        {
-            return TypeDescriptor.GetDefaultEvent(this, true);
-        }
-
-        PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty()
-        {
-            return TypeDescriptor.GetDefaultProperty(this, true);
-        }
-
-        object ICustomTypeDescriptor.GetEditor(Type editorBaseType)
-        {
-            return TypeDescriptor.GetEditor(this, editorBaseType, true);
-        }
-
-        EventDescriptorCollection ICustomTypeDescriptor.GetEvents(Attribute[] attributes)
-        {
-            return TypeDescriptor.GetEvents(this, attributes, true);
-        }
-
-        EventDescriptorCollection ICustomTypeDescriptor.GetEvents()
-        {
-            return TypeDescriptor.GetEvents(this, true);
-        }
-
-        PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties()
-        {
-            return ((ICustomTypeDescriptor)this).GetProperties(null);
-        }
-
-        #endregion
-
-        #region ICustomTypeDescriptor Implementation with Fields as Properties
-
-        private PropertyDescriptorCollection cachedPropertyDescriptors;
-        private FilterCache cachedFilter;
-
-        PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties(
-            Attribute[] attributes)
-        {
-            bool filtering = (attributes != null && attributes.Length > 0);
-            PropertyDescriptorCollection props = cachedPropertyDescriptors;
-            FilterCache cache = cachedFilter;
-
-            // Use a cached version if possible
-            if (filtering && cache != null && cache.IsValid(attributes))
-                return cache.FilteredProperties;
-            else if (!filtering && props != null)
-                return props;
-
-            // Create the property collection and filter
-            props = new PropertyDescriptorCollection(null);
-            foreach (PropertyDescriptor prop in
-                TypeDescriptor.GetProperties(
-                this, attributes, true))
-            {
-                props.Add(prop);
-            }
-            foreach (FieldInfo field in this.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
-            {
-                FieldPropertyDescriptor fieldDesc = new FieldPropertyDescriptor(field);
-                if (!filtering || fieldDesc.Attributes.Contains(attributes))
-                {
-                    props.Add(fieldDesc);
-                }
-            }
-
-            // Store the computed properties
-            if (filtering)
-            {
-                cache = new FilterCache();
-                cache.Attributes = attributes;
-                cache.FilteredProperties = props;
-                cachedFilter = cache;
-            }
-            else cachedPropertyDescriptors = props;
-
-            return props;
-        }
-
-        public List<FieldPropertyDescriptorByRef> GetUserConfigurationProperties()
-        {
-            List<FieldPropertyDescriptorByRef> result = new List<FieldPropertyDescriptorByRef>();
-            CategoryAttribute attr = new CategoryAttribute("OnlineVideosUserConfiguration");
-            var props = ((ICustomTypeDescriptor)this).GetProperties(new Attribute[] { attr });
-            foreach (PropertyDescriptor prop in props) if (prop.Attributes.Contains(attr) && prop is FieldPropertyDescriptor) result.Add(new FieldPropertyDescriptorByRef() { FieldPropertyDescriptor = prop as FieldPropertyDescriptor });
-            return result;
-        }
-
-        public string GetConfigValueAsString(FieldPropertyDescriptorByRef config)
-        {
-            object result = config.FieldPropertyDescriptor.GetValue(this);
-            return result == null ? string.Empty : result.ToString();
-        }
-
-        public void SetConfigValueFromString(FieldPropertyDescriptorByRef config, string value)
-        {
-            object valueConverted = null;
-            if (config.FieldPropertyDescriptor.PropertyType.IsEnum) valueConverted = Enum.Parse(config.FieldPropertyDescriptor.PropertyType, value);
-            else valueConverted = Convert.ChangeType(value, config.FieldPropertyDescriptor.PropertyType);
-            config.FieldPropertyDescriptor.SetValue(this, valueConverted);
-        }
-
-        public class FieldPropertyDescriptorByRef : MarshalByRefObject
-        {
-            internal FieldPropertyDescriptor FieldPropertyDescriptor { get; set; }
-
-            public string DisplayName
-            {
-                get
-                {
-                    var attr = FieldPropertyDescriptor.Attributes[typeof(LocalizableDisplayNameAttribute)];
-                    if (attr != null && ((LocalizableDisplayNameAttribute)attr).LocalizedDisplayName != null) return ((LocalizableDisplayNameAttribute)attr).LocalizedDisplayName;
-                    else return FieldPropertyDescriptor.DisplayName;
-                }
-            }
-
-            public string Description
-            {
-                get
-                {
-
-                    var descAttr = FieldPropertyDescriptor.Attributes[typeof(DescriptionAttribute)];
-                    return descAttr != null ? ((DescriptionAttribute)descAttr).Description : string.Empty;
-                }
-            }
-
-            public bool IsPassword
-            {
-                get
-                {
-                    return FieldPropertyDescriptor.Attributes.Contains(new System.ComponentModel.PasswordPropertyTextAttribute(true));
-                }
-            }
-
-            public bool IsBool { get { return FieldPropertyDescriptor.PropertyType.Equals(typeof(bool)); } }
-
-            public bool IsEnum { get { return FieldPropertyDescriptor.PropertyType.IsEnum; } }
-
-            public string[] GetEnumValues()
-            {
-                return Enum.GetNames(FieldPropertyDescriptor.PropertyType);
-            }
-        }
-
-        public class FieldPropertyDescriptor : PropertyDescriptor
-        {
-            private FieldInfo _field;
-
-            public FieldPropertyDescriptor(FieldInfo field)
-                : base(field.Name,
-                    (Attribute[])field.GetCustomAttributes(typeof(Attribute), true))
-            {
-                _field = field;
-            }
-
-            public override bool Equals(object obj)
-            {
-                FieldPropertyDescriptor other = obj as FieldPropertyDescriptor;
-                return other != null && other._field.Equals(_field);
-            }
-
-            public override int GetHashCode() { return _field.GetHashCode(); }
-
-            public override string DisplayName
-            {
-                get
-                {
-                    var attr = _field.GetCustomAttributes(typeof(LocalizableDisplayNameAttribute), false);
-                    if (attr.Length > 0)
-                        return ((LocalizableDisplayNameAttribute)attr[0]).LocalizedDisplayName;
-                    else
-                        return base.DisplayName;
-                }
-            }
-
-            public override bool IsReadOnly { get { return false; } }
-
-            public override void ResetValue(object component) { }
-
-            public override bool CanResetValue(object component) { return false; }
-
-            public override bool ShouldSerializeValue(object component)
-            {
-                return true;
-            }
-
-            public override Type ComponentType
-            {
-                get { return _field.DeclaringType; }
-            }
-
-            public override Type PropertyType { get { return _field.FieldType; } }
-
-            public override object GetValue(object component)
-            {
-                return _field.GetValue(component);
-            }
-
-            public override void SetValue(object component, object value)
-            {
-                _field.SetValue(component, value);
-                OnValueChanged(component, EventArgs.Empty);
-
-                // if this field is a user config, set value also in MediaPortal config file
-                object[] attrs = _field.GetCustomAttributes(typeof(CategoryAttribute), false);
-                if (attrs.Length > 0 && ((CategoryAttribute)attrs[0]).Category == "OnlineVideosUserConfiguration")
-                {
-                    string siteName = (component as Sites.SiteUtilBase).Settings.Name;
-                    OnlineVideoSettings.Instance.UserStore.SetValue(string.Format("{0}.{1}", Utils.GetSaveFilename(siteName).Replace(' ', '_'), _field.Name), value.ToString());
-                }
-            }
-        }
-
-        private class FilterCache
-        {
-            public Attribute[] Attributes;
-            public PropertyDescriptorCollection FilteredProperties;
-            public bool IsValid(Attribute[] other)
-            {
-                if (other == null || Attributes == null) return false;
-
-                if (Attributes.Length != other.Length) return false;
-
-                for (int i = 0; i < other.Length; i++)
-                {
-                    if (!Attributes[i].Match(other[i])) return false;
-                }
-
-                return true;
-            }
+            return WebCache.Instance.GetWebData(url, postData, cookies, referer, proxy, forceUTF8, allowUnsafeHeader, userAgent, encoding, headers, cache);
         }
 
         #endregion
     }
-
 }

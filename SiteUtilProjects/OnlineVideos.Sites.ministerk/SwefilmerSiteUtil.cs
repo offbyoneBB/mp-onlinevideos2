@@ -233,7 +233,7 @@ namespace OnlineVideos.Sites
             if (!string.IsNullOrEmpty(videoUrl))
             {
 
-                video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("vk").getPlaybackOptions(videoUrl);
+                video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("vk").GetPlaybackOptions(videoUrl);
 
                 if (video.PlaybackOptions.Count > 0)
                     bestUrl = video.PlaybackOptions.First().Value;

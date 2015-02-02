@@ -86,7 +86,7 @@ namespace OnlineVideos.Sites.georgius
         public override int DiscoverDynamicCategories()
         {
             int dynamicCategoriesCount = 0;
-            String baseWebData = SiteUtilBase.GetWebData(SlovenskaTeleviziaUtil.showsBaseUrl, null, null, null, true);
+            String baseWebData = GetWebData(SlovenskaTeleviziaUtil.showsBaseUrl, null, null, null, true);
 
             while (true)
             {
@@ -150,7 +150,7 @@ namespace OnlineVideos.Sites.georgius
             if (!String.IsNullOrEmpty(pageUrl))
             {
                 this.nextPageUrl = String.Empty;
-                String baseWebData = SiteUtilBase.GetWebData(pageUrl, null, null, null, true);
+                String baseWebData = GetWebData(pageUrl, null, null, null, true);
 
                 int start = baseWebData.IndexOf(SlovenskaTeleviziaUtil.showEpisodesStart);
                 if (start > 0)
@@ -258,8 +258,8 @@ namespace OnlineVideos.Sites.georgius
 
         public override string getUrl(VideoInfo video)
         {
-            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
-            String playerJs = SiteUtilBase.GetWebData(SlovenskaTeleviziaUtil.playerJsUrl, null, video.VideoUrl, null, true);
+            String baseWebData = GetWebData(video.VideoUrl, null, null, null, true);
+            String playerJs = GetWebData(SlovenskaTeleviziaUtil.playerJsUrl, null, video.VideoUrl, null, true);
 
             video.PlaybackOptions = new Dictionary<string, string>();
 
@@ -310,7 +310,7 @@ namespace OnlineVideos.Sites.georgius
             //Match match = Regex.Match(baseWebData, SlovenskaTeleviziaUtil.flashVarsRegex);
             //if (match.Success)
             //{
-            //    baseWebData = SiteUtilBase.GetWebData(match.Groups["playListFile"].Value.Replace("%26", "&"), null, null, null, true).Replace("xmlns=\"http://xspf.org/ns/0/\"", "");
+            //    baseWebData = GetWebData(match.Groups["playListFile"].Value.Replace("%26", "&"), null, null, null, true).Replace("xmlns=\"http://xspf.org/ns/0/\"", "");
             //    XmlDocument movieData = new XmlDocument();
             //    movieData.LoadXml(baseWebData);
 

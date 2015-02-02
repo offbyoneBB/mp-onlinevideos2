@@ -99,7 +99,7 @@ namespace OnlineVideos.Sites
         {
             var result = new List<ISearchResultItem>();
             string url = language == Language.DE ? "http://www.arte.tv/guide/de/suchergebnisse?keyword={0}" : "http://www.arte.tv/guide/fr/resultats-de-recherche?keyword={0}";
-            var doc = SiteUtilBase.GetWebData<HtmlDocument>(String.Format(url, HttpUtility.UrlEncode("kreta")));
+            var doc = GetWebData<HtmlDocument>(String.Format(url, HttpUtility.UrlEncode("kreta")));
             var list = doc.DocumentNode.Descendants("div").Where(div => !String.IsNullOrEmpty(div.GetAttributeValue("arte_vp_url", "")));
             foreach (var div in list)
             {

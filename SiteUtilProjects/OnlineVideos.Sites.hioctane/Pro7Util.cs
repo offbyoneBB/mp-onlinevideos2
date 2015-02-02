@@ -87,7 +87,7 @@ namespace OnlineVideos.Sites
                 string clipId = json["categoryList"][0]["clipList"][0].Value<string>("id");
                 if (!string.IsNullOrEmpty(clipId))
                 {
-                    string link = GetRedirectedUrl("http://www.prosieben.de/dynamic/h264/h264map/?ClipID=" + clipId);
+                    string link = WebCache.Instance.GetRedirectedUrl("http://www.prosieben.de/dynamic/h264/h264map/?ClipID=" + clipId);
                     if (!string.IsNullOrEmpty(link))
                     {
                         if (!link.Contains("not_available"))

@@ -104,7 +104,7 @@ namespace OnlineVideos.Sites.georgius
         public override int DiscoverDynamicCategories()
         {
             int dynamicCategoriesCount = 0;
-            String baseWebData = SiteUtilBase.GetWebData(DomaUtil.baseUrl);
+            String baseWebData = GetWebData(DomaUtil.baseUrl);
 
             int startIndex = baseWebData.IndexOf(DomaUtil.dynamicCategoryStart);
             if (startIndex > 0)
@@ -182,7 +182,7 @@ namespace OnlineVideos.Sites.georgius
                 if (!pageUrl.Contains("voyo"))
                 {
                     #region Old Doma archive
-                    String baseWebData = SiteUtilBase.GetWebData(pageUrl);
+                    String baseWebData = GetWebData(pageUrl);
 
                     int index = baseWebData.IndexOf(DomaUtil.showEpisodesStart);
                     if (index > 0)
@@ -261,7 +261,7 @@ namespace OnlineVideos.Sites.georgius
                 {
                     #region VOYO archive
 
-                    String baseWebData = SiteUtilBase.GetWebData(pageUrl, null, null, null, true);
+                    String baseWebData = GetWebData(pageUrl, null, null, null, true);
 
                     int index = baseWebData.IndexOf(DomaUtil.showVoyoEpisodesStart);
                     if (index > 0)
@@ -403,7 +403,7 @@ namespace OnlineVideos.Sites.georgius
                 #region Old Doma archive
                 String showEpisodesId = video.VideoUrl.Substring(video.VideoUrl.LastIndexOf("/") + 1);
                 String configUrl = String.Format(DomaUtil.showEpisodePlaylistUrlFormat, showEpisodesId);
-                String baseWebData = SiteUtilBase.GetWebData(configUrl);
+                String baseWebData = GetWebData(configUrl);
 
                 int start = baseWebData.IndexOf(DomaUtil.showEpisodePlaylistStart);
                 if (start > 0)
@@ -426,7 +426,7 @@ namespace OnlineVideos.Sites.georgius
             {
                 #region VOYO
 
-                String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
+                String baseWebData = GetWebData(video.VideoUrl, null, null, null, true);
                 int startIndex = baseWebData.IndexOf(DomaUtil.showVoyoParamsStart);
                 if (startIndex >= 0)
                 {
@@ -478,7 +478,7 @@ namespace OnlineVideos.Sites.georgius
                         }
 
                         String showParamsUrl = String.Format(DomaUtil.showVoyoVideoUrlFormat, prod, unit, media, site, section, subsite, site, width, height, new Random().NextDouble());
-                        String showParamsData = SiteUtilBase.GetWebData(showParamsUrl, null, null, null, true);
+                        String showParamsData = GetWebData(showParamsUrl, null, null, null, true);
 
                         Newtonsoft.Json.Linq.JObject jObject = (Newtonsoft.Json.Linq.JObject)Newtonsoft.Json.JsonConvert.DeserializeObject(showParamsData);
                         String decodedPage = (String)((Newtonsoft.Json.Linq.JValue)((Newtonsoft.Json.Linq.JProperty)jObject.First).Value);

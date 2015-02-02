@@ -182,9 +182,9 @@ namespace OnlineVideos.Sites
         public override List<String> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
 			if (request.Proxy == null)
-				video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(video.VideoUrl);
+				video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").GetPlaybackOptions(video.VideoUrl);
 			else
-				video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").getPlaybackOptions(video.VideoUrl/*, request.Proxy*/);
+				video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").GetPlaybackOptions(video.VideoUrl/*, request.Proxy*/);
 
             if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
             {

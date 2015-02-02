@@ -71,7 +71,7 @@ namespace OnlineVideos.Sites.georgius
         public override int DiscoverDynamicCategories()
         {
             int dynamicCategoriesCount = 0;
-            String baseWebData = SiteUtilBase.GetWebData(BarrandovTvUtil.baseUrl, null, null, null, true);
+            String baseWebData = GetWebData(BarrandovTvUtil.baseUrl, null, null, null, true);
 
             int startIndex = baseWebData.IndexOf(BarrandovTvUtil.dynamicCategoryStart);
             if (startIndex >= 0)
@@ -140,7 +140,7 @@ namespace OnlineVideos.Sites.georgius
             if (!String.IsNullOrEmpty(pageUrl))
             {
                 this.nextPageUrl = String.Empty;
-                String baseWebData = SiteUtilBase.GetWebData(pageUrl, null, null, null, true);
+                String baseWebData = GetWebData(pageUrl, null, null, null, true);
 
                 int startIndex = baseWebData.IndexOf(BarrandovTvUtil.showEpisodesStart);
                 if (startIndex >= 0)
@@ -276,7 +276,7 @@ namespace OnlineVideos.Sites.georgius
 
         public override string getUrl(VideoInfo video)
         {
-            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl);
+            String baseWebData = GetWebData(video.VideoUrl);
 
             if (video.PlaybackOptions == null)
             {

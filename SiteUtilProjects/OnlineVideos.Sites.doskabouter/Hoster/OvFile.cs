@@ -12,30 +12,29 @@ namespace OnlineVideos.Hoster
 {
     public class OvFile : HosterBase
     {
-        public override string getHosterUrl()
+        public override string GetHosterUrl()
         {
             return "ovfile.com";
         }
 
-        public override string getVideoUrls(string url)
+        public override string GetVideoUrl(string url)
         {
             CookieContainer cc = new CookieContainer();
             if (url.Contains("embed"))
             {
-                string page = SiteUtilBase.GetWebData(url);
+                string page = WebCache.Instance.GetWebData(url);
                 if (!string.IsNullOrEmpty(page))
                 {
                     Match n = Regex.Match(page, @"'file=(?<url>[^']+)'");
                     if (n.Success)
                     {
-                        videoType = VideoType.flv;
                         return n.Groups["url"].Value;
                     }
                 }
             }
             else
             {
-                string page = SiteUtilBase.GetWebData(url, cookies: cc);
+                string page = WebCache.Instance.GetWebData(url, cookies: cc);
 
                 if (!string.IsNullOrEmpty(page))
                 {
@@ -58,7 +57,7 @@ namespace OnlineVideos.Hoster
 
                         System.Threading.Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
 
-                        string page2 = SiteUtilBase.GetWebData(url, postdata, cc, url);
+                        string page2 = WebCache.Instance.GetWebData(url, postdata, cc, url);
 
                         if (!string.IsNullOrEmpty(page2))
                         {
@@ -75,7 +74,6 @@ namespace OnlineVideos.Hoster
                             {
                                 packed = packed.Replace(@"\'", @"'");
                                 string unpacked = UnPack(packed);
-                                videoType = VideoType.unknown;
                                 string res = GetSubString(unpacked, @"'file','", @"'");
                                 if (!String.IsNullOrEmpty(res))
                                     resUrl = res;

@@ -70,7 +70,7 @@ namespace OnlineVideos.Sites.georgius
             int dynamicCategoriesCount = 0;
             String pageUrl = NovaUtil.baseUrl;
 
-            String baseWebData = SiteUtilBase.GetWebData(pageUrl, null, null, null, true);
+            String baseWebData = GetWebData(pageUrl, null, null, null, true);
             pageUrl = String.Empty;
 
             int startIndex = baseWebData.IndexOf(NovaUtil.dynamicCategoryStart);
@@ -151,7 +151,7 @@ namespace OnlineVideos.Sites.georgius
             int dynamicCategoriesCount = 0;
             String pageUrl = category.Url;
 
-            String baseWebData = SiteUtilBase.GetWebData(pageUrl, null, null, null, true);
+            String baseWebData = GetWebData(pageUrl, null, null, null, true);
             pageUrl = String.Empty;
 
             this.Settings.Categories.RemoveAt(this.Settings.Categories.Count - 1);
@@ -237,7 +237,7 @@ namespace OnlineVideos.Sites.georgius
             if (!String.IsNullOrEmpty(pageUrl))
             {
                 this.nextPageUrl = String.Empty;
-                String baseWebData = SiteUtilBase.GetWebData(pageUrl, null, null, null, true);
+                String baseWebData = GetWebData(pageUrl, null, null, null, true);
 
                 int index = baseWebData.IndexOf(NovaUtil.showEpisodesStart);
                 if (index > 0)
@@ -358,7 +358,7 @@ namespace OnlineVideos.Sites.georgius
 
         public override string getUrl(VideoInfo video)
         {
-            String baseWebData = SiteUtilBase.GetWebData(video.VideoUrl, null, null, null, true);
+            String baseWebData = GetWebData(video.VideoUrl, null, null, null, true);
             Match mediaIdMatch = Regex.Match(baseWebData, NovaUtil.mediaIdRegex);
 
             if (mediaIdMatch.Success)
@@ -377,7 +377,7 @@ namespace OnlineVideos.Sites.georgius
                 }
 
                 String videoPlaylistUrl = String.Format("http://master-ng.nacevi.cz/cdn.server/PlayerLink.ashx?t={1}&c=nova-vod|{0}&h=0&d=1&s={2}&tm=nova", mediaId, time, encodedHash);
-                String videoPlaylistWebData = SiteUtilBase.GetWebData(videoPlaylistUrl);
+                String videoPlaylistWebData = GetWebData(videoPlaylistUrl);
 
                 XmlDocument videoPlaylist = new XmlDocument();
                 videoPlaylist.LoadXml(videoPlaylistWebData);

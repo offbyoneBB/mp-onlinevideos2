@@ -12,7 +12,7 @@ namespace OnlineVideos.MediaPortal1
     {
         public static Sites.SiteUtilBase ShowDialog(Sites.SiteUtilBase selectedSite)
         {
-			List<OnlineVideos.Sites.SiteUtilBase.FieldPropertyDescriptorByRef> actualProps = selectedSite.GetUserConfigurationProperties();
+			List<OnlineVideos.Reflection.FieldPropertyDescriptorByRef> actualProps = selectedSite.GetUserConfigurationProperties();
             if (actualProps.Count > 0)
             {
                 bool changes = false;
@@ -51,7 +51,7 @@ namespace OnlineVideos.MediaPortal1
                     if (dlgSiteOptions.SelectedId == -1) break;
                     else
                     {
-						OnlineVideos.Sites.SiteUtilBase.FieldPropertyDescriptorByRef prop = actualProps.First(a => a.DisplayName == dlgSiteOptions.SelectedLabelText);
+						OnlineVideos.Reflection.FieldPropertyDescriptorByRef prop = actualProps.First(a => a.DisplayName == dlgSiteOptions.SelectedLabelText);
                         if (prop.IsBool)
                         {
                             GUIDialogMenu dlgTrueFalse = (GUIDialogMenu)GUIWindowManager.GetWindow(windowId);
