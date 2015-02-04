@@ -847,51 +847,6 @@
     <Site name="URPlay" util="URPlay" agecheck="false" enabled="true" lang="sv">
       <Description>UR Play är Sveriges mest kunskapsspäckade Playtjänst med program om allt från historia till matematik och språk.</Description>
     </Site>
-    <Site name="Dreamfilm" util="Dreamfilm" agecheck="false" enabled="true" lang="sv">
-      <Description>Watch movies and TV series, all with swedish subtitles</Description>
-      <Categories>
-        <Category xsi:type="RssLink" name="Filmer">http://dreamfilm.se/movies/</Category>
-        <Category xsi:type="RssLink" name="Filmer HD-720p">http://dreamfilm.se/hd/720p/</Category>
-        <Category xsi:type="RssLink" name="TV-Serier">
-          <SubCategories>
-            <Category xsi:type="RssLink" name="Bläddra">http://dreamfilm.se/series/</Category>
-            <Category xsi:type="RssLink" name="Lista A-Ö">http://dreamfilm.se/series/list/</Category>
-          </SubCategories>
-        </Category>
-        <Category xsi:type="RssLink" name="Topplista">
-          <SubCategories>
-            <Category xsi:type="RssLink" name="Filmer">http://dreamfilm.se/top/filmer/</Category>
-            <Category xsi:type="RssLink" name="TV-Serier">http://dreamfilm.se/top/serier/</Category>
-          </SubCategories>
-        </Category>
-      </Categories>
-    </Site>
-    <Site name="Swefilmer" util="SwefilmerSite" agecheck="false" enabled="true" lang="sv">
-      <Description>Titta på filmer på nätet med svenska undertexter.</Description>
-    </Site>
-    <Site name="TFPlay" util="TFPlay" agecheck="false" enabled="true" lang="sv">
-      <Description>Tankafetast streaming-sida med filmer och TV-serier</Description>
-      <Categories>
-        <Category xsi:type="RssLink" name="Home">http://tfplay.org/</Category>
-        <Category xsi:type="RssLink" name="HD-Movies">http://tfplay.org/media/movies/</Category>
-        <Category xsi:type="RssLink" name="TV-Series">http://tfplay.org/media/tv-series/</Category>
-        <Category xsi:type="RssLink" name="Just for Kids">http://tfplay.org/media/kids/</Category>
-        <Category xsi:type="RssLink" name="Genres">http://tfplay.org</Category>
-      </Categories>
-    </Site>
-    <Site name="Sweflix" util="Sweflix" agecheck="false" enabled="true" lang="sv">
-      <Configuration>
-        <item key="baseUrl"><![CDATA[https://sweflix.net/]]></item>
-        <item key="filmFooterApiUrl"><![CDATA[film_api.php?target=footer&fid=]]></item>
-        <item key="filmBodyApiUrl"><![CDATA[film_api.php?target=body&fid=]]></item>
-        <item key="latestUrl"><![CDATA[index.php?genre=&act=genre]]></item>
-        <item key="searchUrl"><![CDATA[index.php?act=query&query=]]></item>
-        <item key="loginPostUrl"><![CDATA[login.php]]></item>
-        <item key="loginPostDataFormatString"><![CDATA[username={0}&password={1}&ref=]]></item>
-        <item key="loginRefererUrl"><![CDATA[logga-in/]]></item>
-      </Configuration>
-      <Description>Streaming av Film och TV. Svenska undertexter.</Description>
-    </Site>
     <Site name="Viaplay.se" util="ViaplayWeb" agecheck="false" enabled="true" lang="sv" player="Browser">
       <Description>TV, Film online och Sport på nätet - Viaplay.se</Description>
     </Site>
