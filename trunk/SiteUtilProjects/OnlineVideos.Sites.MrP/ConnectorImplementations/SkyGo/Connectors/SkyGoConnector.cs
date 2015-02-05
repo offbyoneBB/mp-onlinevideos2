@@ -245,7 +245,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             
             _isPlayOrPausing = true;
 
-            if (_playPauseHeight <= 0) _playPauseHeight = Browser.FindForm().Bottom - 80;
+            if (_playPauseHeight <= 0 || _playPausePos <= 0) _playPauseHeight = Browser.FindForm().Bottom - 80;
             
             Cursor.Position = new System.Drawing.Point(10,10);
 
@@ -322,20 +322,30 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         /// <param name="data"></param>
         private void DisableAppStorage(object data)
         {
-            Thread.Sleep(20000);
+            var endDate = DateTime.Now.AddSeconds(15);
+
+            while (DateTime.Now < endDate)
+            {
+                Application.DoEvents();
+                System.Threading.Thread.Sleep(200);
+            }
+            
             WebBrowserHelper.ToogleSilverlightAppStorage(false);
         }
 
         private void SetFocusToDummy()
         {
-            if (Browser.Document.GetElementById("dummyFocusControl") == null)
+/*            if (Browser.Document.GetElementById("dummyFocusControl") == null)
             {
                 //InvokeScript("$('#player_object').attr('height','99%');");
                 var newCtl = "$('<input  type=\"text\" id=\"dummyFocusControl\" style=\"width: 1px; height: 1%;opacity:0;color: transparent;\"/>')";
                 InvokeScript("$('#silverlightControlHost').append(" + newCtl + ");");
             }
 
-            InvokeScript("$('#dummyFocusControl').focus()");
+            // Set focus to our dummy control every few seconds using javascript
+            InvokeScript("function setFocus() {$('#dummyFocusControl').focus();setTimeout('setFocus()', 3000);}");
+            InvokeScript("setFocus();");
+            */
         }
     }
 }

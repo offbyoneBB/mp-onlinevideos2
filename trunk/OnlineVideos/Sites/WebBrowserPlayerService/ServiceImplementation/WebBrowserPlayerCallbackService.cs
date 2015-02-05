@@ -12,7 +12,9 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
     /// <summary>
     /// The callback service implementation - track subscribers and send the callback to these
     /// </summary>
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, UseSynchronizationContext = false), 
+    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, 
+                        InstanceContextMode = InstanceContextMode.PerSession,
+                        UseSynchronizationContext = false), 
         CallbackBehavior(UseSynchronizationContext = false)]
     public class WebBrowserPlayerCallbackService : IWebBrowserPlayerCallbackService
     {

@@ -12,7 +12,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers
     /// </summary>
     public class DebugLogger : ILog
     {
-        private static bool _debugMode = false; // Allow for the form to be resized/lose focus in debug mode
+        private static bool _writeDebugLog = false; // Allow for debug logging to be independant of debug mode
         private static string _debugLogPath;
         private static bool _debugEntryWritten = false;
 
@@ -21,10 +21,9 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers
         /// </summary>
         public DebugLogger()
         {
-            var configValue = ConfigurationManager.AppSettings["DebugMode"];
+            var configValue = ConfigurationManager.AppSettings["WriteDebugLog"];
             if (!string.IsNullOrEmpty(configValue) && configValue.ToUpper() == "TRUE")
-                _debugMode = true;
-
+                _writeDebugLog = true;
             configValue = ConfigurationManager.AppSettings["DebugLogPath"];
             if (!string.IsNullOrEmpty(configValue)) _debugLogPath = configValue;
         }
@@ -35,7 +34,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers
         /// <param name="message"></param>
         public static void WriteDebugLog(string message)
         {
-            if (_debugMode)
+            if (_writeDebugLog)
             {
                 if (!string.IsNullOrEmpty(_debugLogPath) && Directory.Exists(Path.GetDirectoryName(_debugLogPath)))
                 {
