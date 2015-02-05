@@ -12,7 +12,9 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
     /// <summary>
     /// Player service implementation - these are messages from the client (OV) to the server (BrowserHost)
     /// </summary>
-    [ServiceBehavior(UseSynchronizationContext = false)]
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, 
+                    ConcurrencyMode = ConcurrencyMode.Multiple, 
+                    UseSynchronizationContext = false)]
     public class WebBrowserPlayerService :  IWebBrowserPlayerService
     {
         /// <summary>

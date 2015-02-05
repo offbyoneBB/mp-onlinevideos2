@@ -11,10 +11,9 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
     /// <summary>
     /// Class to handle the callbacks from the browser host
     /// </summary>
-    [CallbackBehavior(UseSynchronizationContext = false)] 
+    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, UseSynchronizationContext = false)] 
     public class WebBrowserPlayerCallback : IWebBrowserPlayerCallback
     {
-
         /// <summary>
         /// Event triggered when the browser host lets us know that its closing
         /// </summary>
