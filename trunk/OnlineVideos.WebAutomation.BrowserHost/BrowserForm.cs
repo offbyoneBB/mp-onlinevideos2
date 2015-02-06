@@ -39,7 +39,8 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         private const int WM_APPCOMMAND = 0x0319;
         private const int WM_LBUTTONDOWN = 0x0201;
         private const int WM_RBUTTONDOWN = 0x0204;
-        
+        private const int FAPPCOMMAND_MASK = 0xF000;
+
         // These constants are used in some of the remotes, but we'll ignore them in the browser host (for now)
         //private const int WM_POWERBROADCAST = 0x0218; 
         //private const int WM_TIMER = 0x0113;
@@ -222,7 +223,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             } 
             OnNewAction(action);
         }
-
+        
         /// <summary>
         /// Used to pass messages to remotes. Pre-filter to only messages we're likely to be interested in
         /// </summary>
@@ -235,7 +236,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                         msg.Msg == WM_RBUTTONDOWN || msg.Msg == WM_SYSKEYDOWN)
                 {
 
-                    DebugLogger.WriteDebugLog(string.Format("WndProc message to be processed {0}", msg.Msg));
+                    DebugLogger.WriteDebugLog(string.Format("WndProc message to be processed {0}, appCommand {1}, LParam {2}, WParam {3}", msg.Msg, GET_APPCOMMAND_LPARAM(msg.LParam), msg.LParam, msg.WParam));
                     if (WebBrowserPlayerCallbackService.SendWndProc(msg))
                         return;
                 }
@@ -384,6 +385,26 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             }
         }
 
+        /// <summary>
+        /// Taken from MediaPortal Core to help translate a wndproc message to AppCommand
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        private static int HIWORD(int val)
+        {
+            return ((val >> 16) & 0xffff);
+        }
+
+        /// <summary>
+        /// Taken from MediaPortal Core to help translate a wndproc message to AppCommand
+        /// The value returned here will be a MediaPortal.AppCommands value (MediaPortal-1/mediaportal/RemotePlugins/AppCommands.cs) 
+        /// </summary>
+        /// <param name="lParam"></param>
+        /// <returns></returns>
+        private static int GET_APPCOMMAND_LPARAM(IntPtr lParam)
+        {
+            return ((short)HIWORD(lParam.ToInt32()) & ~FAPPCOMMAND_MASK);
+        } 
 
     }
 }
