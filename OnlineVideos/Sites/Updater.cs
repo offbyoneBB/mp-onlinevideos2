@@ -325,7 +325,8 @@ namespace OnlineVideos.Sites
 				bool newData = false;
 				OnlineVideosService ws = new OnlineVideosService() { Timeout = 30000, EnableDecompression = true };
 				try 
-				{ 
+				{
+                    Log.Info("Updater loading Sites Overview from Webservice");
 					onlineSites = ws.GetSitesOverview(); 
 					newData = true;
 				}

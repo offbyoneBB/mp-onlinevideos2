@@ -60,6 +60,8 @@ namespace OnlineVideos.MediaPortal1
 		{
 			base.OnPageLoad();
 
+            Log.Instance.Info("OnPageLoad of Site Updater with PreviousWindowId '{0}'", PreviousWindowId);
+
 			defaultLabelBtnSort = GUIPropertyManager.Parse(GUI_btnSort.Label);
 			defaultLabelBtnFilterState = GUIPropertyManager.Parse(GUI_btnFilterState.Label);
 			defaultLabelBtnFilterCreator = GUIPropertyManager.Parse(GUI_btnFilterCreator.Label);
@@ -122,12 +124,7 @@ namespace OnlineVideos.MediaPortal1
 			return base.OnMessage(message);
 		}
 
-		void RefreshDisplayedOnlineSites()
-		{
-			RefreshDisplayedOnlineSites(-1);
-		}
-
-        void RefreshDisplayedOnlineSites(int indexToSelect)
+        void RefreshDisplayedOnlineSites(int indexToSelect = -1)
         {
             Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
             {
