@@ -5,7 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Net;
 using System.IO;
 
-namespace OnlineVideos
+namespace OnlineVideos.Downloading
 {
     public static class ImageDownloader
     {

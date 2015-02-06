@@ -31,25 +31,31 @@ namespace OnlineVideos
 
         internal void LoadAllSiteUtilDlls(string path)
         {
-			var assemblies = new Dictionary<Assembly, DateTime>();
-            try
+            var assemblies = new Dictionary<Assembly, DateTime>();
+            assemblies.Add(Assembly.GetExecutingAssembly(), Utils.RetrieveLinkerTimestamp(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath));
+            if (Directory.Exists(path))
             {
-				assemblies.Add(Assembly.GetExecutingAssembly(), Utils.RetrieveLinkerTimestamp(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath));
-                if (Directory.Exists(path))
+                foreach (string dll in Directory.GetFiles(path, "OnlineVideos.Sites.*.dll"))
                 {
-                    string[] dllFilesToCheck = Directory.GetFiles(path, "OnlineVideos.Sites.*.dll");
-                    foreach (string aDll in dllFilesToCheck)
+                    try
                     {
-						assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(aDll)), Utils.RetrieveLinkerTimestamp(aDll));
+                        assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(dll)), Utils.RetrieveLinkerTimestamp(dll));
+                    }
+                    catch (Exception dllLoadException)
+                    {
+                        Log.Warn("Error loading {0}: {1}", dll, dllLoadException.Message);
                     }
                 }
-				// search all assemblies for exported SiteUtilBase and HosterBase implementing non abstract classes
-                foreach (var assembly in assemblies)
+            }
+            // search all assemblies for exported SiteUtilBase and HosterBase implementing non abstract classes
+            foreach (var assembly in assemblies)
+            {
+                try
                 {
-                    Log.Info("Looking for SiteUtils and Hosters in {0} (Version: {1}, Compiled: {2})", 
-						assembly.Key.GetName().Name, 
-						assembly.Key.GetName().Version.ToString(), 
-						assembly.Value.ToString("yyyy-MM-dd HH:mm:ss"));
+                    Log.Info("Looking for SiteUtils and Hosters in {0} (Version: {1}, Compiled: {2})",
+                        assembly.Key.GetName().Name,
+                        assembly.Key.GetName().Version.ToString(),
+                        assembly.Value.ToString("yyyy-MM-dd HH:mm:ss"));
 
                     Type[] typeArray = assembly.Key.GetExportedTypes();
                     foreach (Type type in typeArray)
@@ -59,72 +65,72 @@ namespace OnlineVideos
                             string shortName = type.Name;
                             if (shortName.EndsWith("Util")) shortName = shortName.Substring(0, shortName.Length - 4);
 
-							Type alreadyAddedType = null;
-							if (!utils.TryGetValue(shortName, out alreadyAddedType))
+                            Type alreadyAddedType = null;
+                            if (!utils.TryGetValue(shortName, out alreadyAddedType))
                             {
-								utils.Add(shortName, type);
+                                utils.Add(shortName, type);
                             }
                             else
                             {
-								// use the type from the assembly with the latest CompileTime
-								if (assemblies[alreadyAddedType.Assembly] < assembly.Value)
-								{
-									utils[shortName] = type;
-									Log.Warn(string.Format("Duplicate SiteUtil '{0}'. Using the one from '{1}', because DLL has newer compile time than '{2}'.",
-										shortName,
-										type.Assembly.GetName().Name.Replace("OnlineVideos.Sites.", ""),
-										alreadyAddedType.Assembly.GetName().Name.Replace("OnlineVideos.Sites.", "")));
-								}
-								else
-								{
-									Log.Warn(string.Format("Duplicate SiteUtil '{0}'. Using the one from '{1}', because DLL has newer compile time than '{2}'.",
-										shortName,
-										alreadyAddedType.Assembly.GetName().Name.Replace("OnlineVideos.Sites.", ""),
-										type.Assembly.GetName().Name.Replace("OnlineVideos.Sites.", "")));
-								}
+                                // use the type from the assembly with the latest CompileTime
+                                if (assemblies[alreadyAddedType.Assembly] < assembly.Value)
+                                {
+                                    utils[shortName] = type;
+                                    Log.Warn(string.Format("Duplicate SiteUtil '{0}'. Using the one from '{1}', because DLL has newer compile time than '{2}'.",
+                                        shortName,
+                                        type.Assembly.GetName().Name.Replace("OnlineVideos.Sites.", ""),
+                                        alreadyAddedType.Assembly.GetName().Name.Replace("OnlineVideos.Sites.", "")));
+                                }
+                                else
+                                {
+                                    Log.Warn(string.Format("Duplicate SiteUtil '{0}'. Using the one from '{1}', because DLL has newer compile time than '{2}'.",
+                                        shortName,
+                                        alreadyAddedType.Assembly.GetName().Name.Replace("OnlineVideos.Sites.", ""),
+                                        type.Assembly.GetName().Name.Replace("OnlineVideos.Sites.", "")));
+                                }
                             }
                         }
                         else if (type.BaseType != null && type.IsSubclassOf(typeof(HosterBase)) && !type.IsAbstract)
                         {
-							string shortName = type.Name.ToLower();
-							HosterBase alreadyAddedHoster = null;
-							if (!hostersByName.TryGetValue(shortName, out alreadyAddedHoster))
-							{
-								HosterBase hb = (HosterBase)Activator.CreateInstance(type);
-								hb.Initialize();
-								hostersByName.Add(shortName, hb);
-								if (!hostersByDNS.ContainsKey(hb.GetHosterUrl().ToLower())) hostersByDNS.Add(hb.GetHosterUrl().ToLower(), hb);
-							}
-							else
-							{
-								// use the type from the assembly with the latest CompileTime
-								if (assemblies[alreadyAddedHoster.GetType().Assembly] < assembly.Value)
-								{
-									HosterBase hb = (HosterBase)Activator.CreateInstance(type);
-									hb.Initialize();
-									hostersByName[shortName] = hb;
-									Log.Warn(string.Format("Duplicate Hoster '{0}'. Using the one from '{1}', because DLL has newer compile time than '{2}'.",
-										shortName,
-										type.Assembly.GetName().Name.Replace("OnlineVideos.Sites.", ""),
-										alreadyAddedHoster.GetType().Assembly.GetName().Name.Replace("OnlineVideos.Sites.", "")));
-								}
-								else
-								{
-									Log.Warn(string.Format("Duplicate Hoster '{0}'. Using the one from '{1}', because DLL has newer compile time than '{2}'.",
-										shortName,
-										alreadyAddedHoster.GetType().Assembly.GetName().Name.Replace("OnlineVideos.Sites.", ""),
-										type.Assembly.GetName().Name.Replace("OnlineVideos.Sites.", "")));
-								}
-							}
+                            string shortName = type.Name.ToLower();
+                            HosterBase alreadyAddedHoster = null;
+                            if (!hostersByName.TryGetValue(shortName, out alreadyAddedHoster))
+                            {
+                                HosterBase hb = (HosterBase)Activator.CreateInstance(type);
+                                hb.Initialize();
+                                hostersByName.Add(shortName, hb);
+                                if (!hostersByDNS.ContainsKey(hb.GetHosterUrl().ToLower())) hostersByDNS.Add(hb.GetHosterUrl().ToLower(), hb);
+                            }
+                            else
+                            {
+                                // use the type from the assembly with the latest CompileTime
+                                if (assemblies[alreadyAddedHoster.GetType().Assembly] < assembly.Value)
+                                {
+                                    HosterBase hb = (HosterBase)Activator.CreateInstance(type);
+                                    hb.Initialize();
+                                    hostersByName[shortName] = hb;
+                                    Log.Warn(string.Format("Duplicate Hoster '{0}'. Using the one from '{1}', because DLL has newer compile time than '{2}'.",
+                                        shortName,
+                                        type.Assembly.GetName().Name.Replace("OnlineVideos.Sites.", ""),
+                                        alreadyAddedHoster.GetType().Assembly.GetName().Name.Replace("OnlineVideos.Sites.", "")));
+                                }
+                                else
+                                {
+                                    Log.Warn(string.Format("Duplicate Hoster '{0}'. Using the one from '{1}', because DLL has newer compile time than '{2}'.",
+                                        shortName,
+                                        alreadyAddedHoster.GetType().Assembly.GetName().Name.Replace("OnlineVideos.Sites.", ""),
+                                        type.Assembly.GetName().Name.Replace("OnlineVideos.Sites.", "")));
+                                }
+                            }
                         }
                     }
                 }
+                catch (Exception ex)
+                {
+                    Log.Warn("Error loading SiteUtils and Hosters: {0} ", ex.Message);
+                }
             }
-            catch (Exception ex)
-            {
-                Log.Error(ex.ToString());
-            }
-			Log.Info("Found {0} SiteUtils and {1} Hosters in {2} assemblies", utils.Count, hostersByName.Count, assemblies.Count);
+            Log.Info("Found {0} SiteUtils and {1} Hosters in {2} assemblies", utils.Count, hostersByName.Count, assemblies.Count);
         }
 
         public bool UtilExists(string shortName)

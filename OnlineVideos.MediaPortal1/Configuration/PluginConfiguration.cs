@@ -192,7 +192,7 @@ namespace OnlineVideos.MediaPortal1
                 Log.Instance.Error(ex);
             }
             
-            ovsconf.ThumbsResizeOptions = new OnlineVideos.ImageDownloader.ResizeOptions()
+            ovsconf.ThumbsResizeOptions = new OnlineVideos.Downloading.ImageDownloader.ResizeOptions()
             {
                 MaxSize = (int)Thumbs.ThumbLargeResolution,
                 Compositing = Thumbs.Compositing,

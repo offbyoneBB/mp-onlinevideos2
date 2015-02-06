@@ -4,16 +4,8 @@ using System.Text;
 using System.IO;
 using System.Net;
 
-namespace OnlineVideos
+namespace OnlineVideos.Downloading
 {
-    public interface IDownloader
-    {
-        bool Cancelled { get; }
-        void CancelAsync();
-		void Abort();
-        Exception Download(DownloadInfo downloadInfo);
-    }
-
 	public class HTTPDownloader : MarshalByRefObject, IDownloader
     {
 		System.Threading.Thread downloadThread;

@@ -11,6 +11,7 @@ using MediaPortal.UI.Presentation.Models;
 using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.UI.Presentation.Workflow;
 using MediaPortal.UiComponents.Media.General;
+using OnlineVideos.Downloading;
 
 namespace OnlineVideos.MediaPortal2
 {
