@@ -221,7 +221,7 @@ namespace OnlineVideos.Sites
 									if (Utils.RetrieveLinkerTimestamp(location) > anOnlineDll.LastUpdated)
 									{
 										download = false; // local dll is most likely self-compiled - do not download server dll
-										Log.Debug("Local '{0}.dll' was compiled later that online version - skipping download", anOnlineDll.Name);
+										Log.Info("Local '{0}.dll' was compiled later that online version - skipping download", anOnlineDll.Name);
 									}
 								}
 							}
@@ -353,7 +353,7 @@ namespace OnlineVideos.Sites
 		{
 			try
 			{
-				Log.Debug("Downloading '{0}.dll'", dllName);
+				Log.Info("Downloading '{0}.dll'", dllName);
 				OnlineVideosService ws = new OnlineVideosService() { Timeout = 30000, EnableDecompression = true };
 				byte[] onlineDllData = ws.GetDll(dllName);
 				if (onlineDllData != null && onlineDllData.Length > 0) File.WriteAllBytes(localPath, onlineDllData);
@@ -368,6 +368,8 @@ namespace OnlineVideos.Sites
 
 		static void CopyDlls(string sourceDir, string targetDir)
 		{
+            Log.Info("Copy SiteUtil DLLs from {0} to {1}", sourceDir, targetDir);
+
 			// todo : maybe "mkdir" if target dir does not exist?
 			ProcessStartInfo psi = new ProcessStartInfo();
 			psi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.System);
