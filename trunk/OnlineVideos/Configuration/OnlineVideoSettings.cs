@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using OnlineVideos.Sites;
+using OnlineVideos.Downloading;
 
 namespace OnlineVideos
 {

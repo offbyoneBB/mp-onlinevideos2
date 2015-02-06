@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace OnlineVideos
+namespace OnlineVideos.Downloading
 {
     public class MMSDownloader : MarshalByRefObject, IDownloader
     {

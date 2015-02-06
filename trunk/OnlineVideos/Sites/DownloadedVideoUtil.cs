@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Net;
 using System.Xml.Linq;
+using OnlineVideos.Downloading;
 
 namespace OnlineVideos.Sites
 {

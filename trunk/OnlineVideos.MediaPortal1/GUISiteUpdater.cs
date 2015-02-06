@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Diagnostics;
-using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
-using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
+using OnlineVideos.Downloading;
 using Action = MediaPortal.GUI.Library.Action;
-using System.Reflection;
 
 namespace OnlineVideos.MediaPortal1
 {
