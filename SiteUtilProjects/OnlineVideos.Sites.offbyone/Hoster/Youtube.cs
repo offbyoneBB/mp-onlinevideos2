@@ -217,7 +217,7 @@ namespace OnlineVideos.Hoster
 				}
 				catch (Exception ex)
 				{
-					Log.Info("YouTube signature decryption by executing the Javascript failed: {0}", ex);
+					Log.Info("YouTube signature decryption by executing the Javascript failed: {0}", ex.Message);
 				}
 			}
 
