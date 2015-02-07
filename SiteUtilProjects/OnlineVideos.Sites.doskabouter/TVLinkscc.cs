@@ -426,9 +426,9 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        List<ISearchResultItem> DoSearch(string query)
+        List<SearchResultItem> DoSearch(string query)
         {
-            List<ISearchResultItem> result = new List<ISearchResultItem>();
+            List<SearchResultItem> result = new List<SearchResultItem>();
 
             string searchData = GetWebData(searchUrl, string.Format(searchPostString, query), allowUnsafeHeader: allowUnsafeHeaders);
             if (!string.IsNullOrEmpty(searchData))
@@ -473,9 +473,9 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
-            List<ISearchResultItem> result = DoSearch(query);
+            List<SearchResultItem> result = DoSearch(query);
             if (!string.IsNullOrEmpty(category))
             {
                 if (result != null && result.Count > 0)
@@ -486,17 +486,17 @@ namespace OnlineVideos.Sites
                         {
                             if (cat.Other is List<VideoInfo>) //movies
                             {
-                                return (cat.Other as List<VideoInfo>).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                                return (cat.Other as List<VideoInfo>).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
                             }
                             else //tvshows
                             {
-                                return (cat.SubCategories).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                                return (cat.SubCategories).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
                             }
                         }
                     }
                 }
             }
-            return new List<ISearchResultItem>();
+            return new List<SearchResultItem>();
         }
     }
 }

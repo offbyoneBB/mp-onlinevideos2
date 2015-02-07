@@ -70,9 +70,9 @@ namespace OnlineVideos.Sites.Pondman
             get { return true; }
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
-            var videos = new List<ISearchResultItem>();
+            var videos = new List<SearchResultItem>();
 
             // check if we have an IMDb in the search query
             string id = IMDbAPI.ParseTitleConst(query);

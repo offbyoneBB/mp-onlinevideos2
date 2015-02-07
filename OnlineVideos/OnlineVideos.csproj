@@ -995,7 +995,7 @@
     <Compile Include="Sites\Interfaces\ITrackingInfo.cs" />
     <Compile Include="Sites\Interfaces\IUserStore.cs" />
     <Compile Include="Sites\Interfaces\IVideoDetails.cs" />
-    <Compile Include="Sites\Interfaces\ISearchResultItem.cs" />
+    <Compile Include="SearchResultItem.cs" />
     <Compile Include="Sites\DownloadedVideoUtil.cs" />
     <Compile Include="Sites\FavoriteUtil.cs" />
     <Compile Include="Sites\GenericSiteUtil.cs" />

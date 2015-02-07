@@ -272,11 +272,11 @@ namespace OnlineVideos.Sites
 
         public override bool CanSearch { get { return true; } }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             var teaserlist = Agent.DetailsSuche(ConfigurationHelper.GetSucheServiceUrl(), query, 50, 0);
             return GetVideos(Agent.GetMCETeasers(teaserlist, TeaserListChoiceType.Search))
-                .ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                .ConvertAll<SearchResultItem>(v => v as SearchResultItem);
         }
 
         #endregion

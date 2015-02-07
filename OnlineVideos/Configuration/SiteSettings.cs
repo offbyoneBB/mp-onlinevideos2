@@ -142,7 +142,7 @@ namespace OnlineVideos
     [Serializable]
     [XmlInclude(typeof(RssLink))]
     [XmlInclude(typeof(Group))]
-	public class Category : MarshalByRefObject, IComparable<Category>, INotifyPropertyChanged, ISearchResultItem
+	public class Category : SearchResultItem, IComparable<Category> 
     {
         protected string _Name;
         protected string _Thumb;
@@ -151,16 +151,9 @@ namespace OnlineVideos
         [XmlAttribute("name")]
         public string Name { get { return _Name; } set { if (_Name != value) { _Name = value; NotifyPropertyChanged("Name"); } } }
 
-        /// <summary>This property is set by the <see cref="ImageDownloader"/> to the file after downloading from <see cref="Thumb"/>.</summary>
-        public string ThumbnailImage { get; set; }
-
         [DataMember(Name = "thumb", Order = 1, EmitDefaultValue = false)]
         [XmlAttribute("thumb")]
         public string Thumb { get { return _Thumb; } set { _Thumb = value; NotifyPropertyChanged("Thumb"); } }
-
-        [DataMember(Name = "desc", Order = 2, EmitDefaultValue = false)]
-        [XmlAttribute("desc")]
-        public string Description { get; set; }
 
         [XmlIgnore]
         public virtual bool HasSubCategories { get; set; }
@@ -233,9 +226,6 @@ namespace OnlineVideos
         [XmlIgnore]
         public Category ParentCategory { get; set; }
 
-        [XmlIgnore]
-        public object Other { get; set; }
-
         public override string ToString() { return Name; }
 
         public string RecursiveName(string divider = " / ")
@@ -258,23 +248,6 @@ namespace OnlineVideos
         }
 
         #endregion
-
-        #region INotifyPropertyChanged Member
-		[field: NonSerialized]
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        public void NotifyPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null) PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
-
-		#region MarshalByRefObject overrides
-		public override object InitializeLifetimeService()
-		{
-			// In order to have the lease across appdomains live forever, we return null.
-			return null;
-		}
-		#endregion
     }
 
     [DataContract]

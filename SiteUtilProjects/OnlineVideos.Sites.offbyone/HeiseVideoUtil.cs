@@ -97,7 +97,7 @@ namespace OnlineVideos.Sites
 			HasNextPage = false;
 			if (nextPageUrl.Contains("suche"))
 			{
-				var result = new List<ISearchResultItem>();
+				var result = new List<SearchResultItem>();
 				GetSearchResultVideos(ref result, nextPageUrl);
 				return result.ConvertAll<VideoInfo>(v => (VideoInfo)v).ToList();
 			}
@@ -144,10 +144,10 @@ namespace OnlineVideos.Sites
 
 		public override bool CanSearch { get { return true; } }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
 		{
 			currentVideosTitle = null;
-			var result = new List<ISearchResultItem>();
+			var result = new List<SearchResultItem>();
 			GetSearchResultVideos(ref result, string.Format(search_url, query));
 			return result;
 		}
@@ -186,7 +186,7 @@ namespace OnlineVideos.Sites
 				nextPageUrl = "http://www.heise.de" + nextPageA.GetAttributeValue("href", "");
 			}
 
-			return new ContextMenuExecutionResult() { ResultItems = result.ConvertAll<ISearchResultItem>(v => (ISearchResultItem)v) };
+			return new ContextMenuExecutionResult() { ResultItems = result.ConvertAll<SearchResultItem>(v => (SearchResultItem)v) };
 		}
 
 		public override string GetCurrentVideosTitle()
@@ -194,7 +194,7 @@ namespace OnlineVideos.Sites
 			return currentVideosTitle;
 		}
 
-		void GetSearchResultVideos(ref List<ISearchResultItem> result, string url)
+		void GetSearchResultVideos(ref List<SearchResultItem> result, string url)
 		{
 			HasNextPage = false;
 

@@ -339,9 +339,9 @@ namespace OnlineVideos.Sites
             get { return true; }
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
-            List<ISearchResultItem> result = new List<ISearchResultItem>();
+            List<SearchResultItem> result = new List<SearchResultItem>();
             RssLink cat = new RssLink()
             {
                 Name = "Movies",

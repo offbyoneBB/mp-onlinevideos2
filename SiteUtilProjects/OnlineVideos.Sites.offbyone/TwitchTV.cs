@@ -79,9 +79,9 @@ namespace OnlineVideos.Sites
 			get { return true; }
 		}
 
-		public override List<ISearchResultItem> Search(string query, string category = null)
+		public override List<SearchResultItem> Search(string query, string category = null)
 		{
-			return VideosFromApiUrl(baseApiUrl + string.Format(searchUrl, HttpUtility.UrlEncode(query))).ConvertAll<ISearchResultItem>(i => i as ISearchResultItem);
+			return VideosFromApiUrl(baseApiUrl + string.Format(searchUrl, HttpUtility.UrlEncode(query))).ConvertAll<SearchResultItem>(i => i as SearchResultItem);
 		}
 
 		public override string GetVideoUrl(OnlineVideos.VideoInfo video)

@@ -549,11 +549,11 @@ namespace OnlineVideos.Sites
     #region Search
     public override bool CanSearch { get { return true; } }
 
-    public override List<ISearchResultItem> Search(string query, string category = null)
+    public override List<SearchResultItem> Search(string query, string category = null)
     {
       Category search = new Category();
       search.Other = "search," + query;
-      return GetVideos(search).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+      return GetVideos(search).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
     }
 
     #endregion

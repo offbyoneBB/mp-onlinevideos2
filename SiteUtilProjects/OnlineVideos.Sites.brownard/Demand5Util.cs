@@ -158,9 +158,9 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
-            List<ISearchResultItem> results = new List<ISearchResultItem>();
+            List<SearchResultItem> results = new List<SearchResultItem>();
             string html = GetWebData("http://www.channel5.com/quick_search?q=" + query);
             Regex reg = new Regex(@"""path"":""([^""]*)"",""thumbnail_url"":""([^""]*)"",""title"":""([^""]*)""");
             foreach (Match m in reg.Matches(html))

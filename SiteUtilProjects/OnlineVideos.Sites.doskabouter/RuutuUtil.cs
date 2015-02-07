@@ -102,11 +102,11 @@ namespace OnlineVideos.Sites
             return myParse2(node2);
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             lastid = null;
             query = HttpUtility.UrlEncode(query);
-            return Parse(string.Format(searchUrl, query), null).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+            return Parse(string.Format(searchUrl, query), null).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
         }
 
         private void AddLapsetSubs(HtmlNode node, Category parentCategory)

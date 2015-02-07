@@ -266,9 +266,9 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
-            List<ISearchResultItem> cats = new List<ISearchResultItem>();
+            List<SearchResultItem> cats = new List<SearchResultItem>();
 
             Regex r = new Regex(@"<tr><td\svalign=""top"">\s*<a\stitle=""[^""]*""\shref=""(?<url>[^""]*)"">\s*(?:<img\ssrc=""(?<thumb>[^""]*)"">\s*)?</a>\s*</td>\s*<td\svalign=""top"">\s*<a[^>]*><b>(?<title>[^<]*)</b></a>\s*<br>\s*<b>Description:</b>(?<description>[^<]*)</td>", defaultRegexOptions);
 

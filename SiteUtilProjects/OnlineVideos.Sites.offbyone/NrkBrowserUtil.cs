@@ -296,19 +296,19 @@ namespace OnlineVideos.Sites
         int currentSearchResultsPage = 0;
         string currentSearchString = "";
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             if (category == NrkBrowserConstants.MENU_ITEM_ID_NRKBETA)
             {
                 NrkBetaXmlParser parser = new NrkBetaXmlParser();
                 parser.SearchFor(query);
-                return VideosFromItems(parser.getClips()).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                return VideosFromItems(parser.getClips()).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
             }
             else
             {
                 currentSearchResultsPage = 0;
                 currentSearchString = query;
-                return Search().ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                return Search().ConvertAll<SearchResultItem>(v => v as SearchResultItem);
             }
         }
         

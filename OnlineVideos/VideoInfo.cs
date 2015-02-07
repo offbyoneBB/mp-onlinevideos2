@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using OnlineVideos.Sites;
 using RssToolkit.Rss;
+using OnlineVideos.Sites;
 
 namespace OnlineVideos
 {
     public enum VideoKind { Other, TvSeries, Movie, MovieTrailer, GameTrailer, MusicVideo, News }
 
-    public class VideoInfo : MarshalByRefObject, System.ComponentModel.INotifyPropertyChanged, ISearchResultItem
+    public class VideoInfo : SearchResultItem
     {
         public string Title { get; set; }
         /// <summary>Used as label for the clips retrieved by <see cref="IChoice.GetVideoChoices"/></summary>
         public string Title2 { get; set; }
-        public string Description { get; set; }
         public string VideoUrl { get; set; }
         public string ImageUrl { get; set; }
         public string SubtitleUrl { get; set; }
@@ -25,22 +24,7 @@ namespace OnlineVideos
         public string Length { get; set; }
         public string Airdate { get; set; }
         public string StartTime { get; set; }
-		object _Other;
-        /// <summary>If you have additional data that you need to identify your Video object you can store it here. In order to make it work with Favorites, mark custom classes as [Serializable] and make them public.</summary>
-		public object Other 
-		{ 
-			get { return _Other; } 
-			set 
-			{
-				if (_Other != value)
-				{
-					_Other = value;
-					// propagate a change in the Other object (if it supports PropertyChanged)
-					System.ComponentModel.INotifyPropertyChanged notifier = _Other as System.ComponentModel.INotifyPropertyChanged;
-					if (notifier != null) notifier.PropertyChanged += (s, e) => NotifyPropertyChanged("Other");
-				}
-			}
-		}
+
 		public string GetOtherAsString() 
         {
             if (Other == null) return "";
@@ -62,6 +46,7 @@ namespace OnlineVideos
             }
             return Other.ToString();
         }
+
         public void SetOtherFromString(string other)
         {
             if (!string.IsNullOrEmpty(other))
@@ -94,14 +79,12 @@ namespace OnlineVideos
 
         /// <summary>This property is only used by the <see cref="FavoriteUtil"/> to store the Name of the Site where this Video came from.</summary>
         public string SiteName { get; set; }
+        
         /// <summary>This property is only used by the <see cref="FavoriteUtil"/> to store the Id of Video, so it can be deleted from the DB.</summary>
         public int Id { get; set; }
 
         /// <summary>If the SiteUtil for this VideoInfo implements <see cref="IChoice"/> setting this to true will show the details view (default), false will play the video</summary>
         public bool HasDetails { get; set; }
-
-        /// <summary>This property is set by the <see cref="ImageDownloader"/> to the file after downloading from <see cref="ImageUrl"/>.</summary>
-        public string ThumbnailImage { get; set; }
 
         public VideoInfo()
         {
@@ -348,13 +331,7 @@ namespace OnlineVideos
             }
             return "";
         }
-
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        public void NotifyPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null) PropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-
+        
         public VideoInfo CloneForPlayList(string videoUrl, bool withPlaybackOptions)
         {
             VideoInfo newVideoInfo = MemberwiseClone(false) as VideoInfo;
@@ -369,13 +346,5 @@ namespace OnlineVideos
             newVideoInfo.VideoUrl = videoUrl;
             return newVideoInfo;
         }
-
-		#region MarshalByRefObject overrides
-		public override object InitializeLifetimeService()
-		{
-			// In order to have the lease across appdomains live forever, we return null.
-			return null;
-		}
-		#endregion
     }
 }

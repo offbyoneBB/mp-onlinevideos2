@@ -73,6 +73,6 @@ namespace OnlineVideos.Sites
         /// <summary>
         /// If you execution results in a list of videos or categories, set them to this property and they will be displayed in the GUI.
         /// </summary>
-        public List<ISearchResultItem> ResultItems { get; set; }
+        public List<SearchResultItem> ResultItems { get; set; }
     }
 }

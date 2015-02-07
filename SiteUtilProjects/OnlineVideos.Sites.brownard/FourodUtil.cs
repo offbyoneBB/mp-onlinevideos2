@@ -308,10 +308,10 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             string searchUrl = SEARCH_URL + urlEncode(query);
-            return getShows(searchUrl, null).Select(c => (ISearchResultItem)c).ToList();
+            return getShows(searchUrl, null).Select(c => (SearchResultItem)c).ToList();
         }
 
         #endregion

@@ -282,9 +282,9 @@ namespace OnlineVideos.Sites
         /// <param name="query">The user entered query.</param>
         /// <param name="category">The category to search in, can be null to indicate a global search - not limited to a category.</param>
         /// <returns>the list of videos or categories matching the search query.</returns>
-        public virtual List<ISearchResultItem> Search(string query, string category = null)
+        public virtual List<SearchResultItem> Search(string query, string category = null)
         {
-            return new List<ISearchResultItem>();
+            return new List<SearchResultItem>();
         }
 
         /// <summary>

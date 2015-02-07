@@ -273,13 +273,13 @@ namespace OnlineVideos.Sites
 
 		public override bool CanSearch { get { return true; } }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
 		{
 			var searchUrl = string.Format("http://www.ardmediathek.de/tv/suche?searchText={0}", HttpUtility.UrlEncode(query));
 			var myBaseUri = new Uri(searchUrl);
 			var doc = GetWebData<HtmlDocument>(searchUrl);
 			var mainDiv = doc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("modList")).ParentNode;
-			return GetVideosFromDiv(mainDiv, myBaseUri).ConvertAll(v => v as ISearchResultItem);
+			return GetVideosFromDiv(mainDiv, myBaseUri).ConvertAll(v => v as SearchResultItem);
 		}
 
 		public override String GetVideoUrl(VideoInfo video)

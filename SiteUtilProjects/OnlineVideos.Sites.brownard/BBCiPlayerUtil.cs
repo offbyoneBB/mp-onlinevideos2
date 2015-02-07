@@ -424,9 +424,9 @@ namespace OnlineVideos.Sites
 
         #region Search
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
-            List<ISearchResultItem> results = new List<ISearchResultItem>();
+            List<SearchResultItem> results = new List<SearchResultItem>();
             foreach (Category cat in discoverSubCategoriesLocal(null, string.Format(searchUrl, query)))
                 results.Add(cat);
             return results;

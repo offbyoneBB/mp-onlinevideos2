@@ -154,10 +154,10 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             searchableCats = null;
-            List<ISearchResultItem> results = new List<ISearchResultItem>();
+            List<SearchResultItem> results = new List<SearchResultItem>();
             foreach (Category cat in getCats(category + query).SubCategories)
                 results.Add(cat);
             return results;

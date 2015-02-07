@@ -159,10 +159,10 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             string html = GetWebData(string.Format("http://www.itv.com/itvplayer/search/term/{0}/catch-up", query));
-            List<ISearchResultItem> cats = new List<ISearchResultItem>();
+            List<SearchResultItem> cats = new List<SearchResultItem>();
             foreach (Match match in searchRegex.Matches(html))
             {
                 RssLink cat = new RssLink();

@@ -110,10 +110,10 @@ namespace OnlineVideos.Sites.DavidCalder
       return videos;
     }
 
-    public override List<ISearchResultItem> Search(string query, string category = null)
+    public override List<SearchResultItem> Search(string query, string category = null)
     {
       searchUrl = string.Format("http://www.movie25.so/search.php?key={0}&submit=", query.Replace(" ", "+"));
-      List<ISearchResultItem> videos = base.Search(searchUrl, category);
+      List<SearchResultItem> videos = base.Search(searchUrl, category);
       TMDB.BackgroundWorker worker = new TMDB.BackgroundWorker();
       worker.start(videos.ConvertAll<VideoInfo>(v => v as VideoInfo));
       return videos;

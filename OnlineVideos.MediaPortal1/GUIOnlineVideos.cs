@@ -1772,7 +1772,7 @@ namespace OnlineVideos.MediaPortal1
                 },
                 delegate(bool success, object result)
                 {
-                    List<ISearchResultItem> resultList = (result as List<ISearchResultItem>);
+                    List<SearchResultItem> resultList = (result as List<SearchResultItem>);
                     // set videos to the facade -> if none were found and an empty facade is currently shown, go to previous menu
                     if ((!success || resultList == null || resultList.Count == 0) && GUI_facadeView.Count == 0)
                     {
@@ -1788,7 +1788,7 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-        private void SetSearchResultItemsToFacade(List<ISearchResultItem> resultList, VideosMode mode = VideosMode.Search, string categoryName = "")
+        private void SetSearchResultItemsToFacade(List<SearchResultItem> resultList, VideosMode mode = VideosMode.Search, string categoryName = "")
         {
             if (resultList != null && resultList.Count > 0)
             {

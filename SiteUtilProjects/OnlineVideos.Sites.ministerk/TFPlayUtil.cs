@@ -214,9 +214,9 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
-            List<ISearchResultItem> results = new List<ISearchResultItem>();
+            List<SearchResultItem> results = new List<SearchResultItem>();
             foreach (Category c in GenerateSubCategories(new RssLink() { Name = "Search", Url = "http://tfplay.org/search/?q=" + HttpUtility.UrlDecode(query) }))
                 results.Add(c);
             return results;

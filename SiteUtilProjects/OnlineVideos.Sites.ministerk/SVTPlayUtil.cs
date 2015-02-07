@@ -404,9 +404,9 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
-            List<ISearchResultItem> results = new List<ISearchResultItem>();
+            List<SearchResultItem> results = new List<SearchResultItem>();
             string[] subcats = { "search-categories", "search-titles", "" };
             HtmlNode htmlNode = GetWebData<HtmlDocument>(baseUrl + "sok?q=" + HttpUtility.UrlEncode(query)).DocumentNode;
             foreach (HtmlNode section in htmlNode.Descendants("section").Where(n => n.GetAttributeValue("class", "").Contains("play_js-hovered-list")))

@@ -191,12 +191,12 @@ namespace OnlineVideos.Sites
 
         public override bool CanSearch { get { return true; } }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             query = System.Web.HttpUtility.UrlEncode(query);
             currentPage = 1; pagesInCategory = 1; sectionBaseUrl = "text="+query; // reset next/prev fields
             string url = string.Format(searchUrl, query, itemsPerPage);
-            return getVideoList(url).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+            return getVideoList(url).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
         }
 
         #endregion

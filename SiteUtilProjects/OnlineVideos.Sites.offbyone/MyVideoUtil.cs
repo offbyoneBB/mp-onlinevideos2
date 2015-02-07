@@ -208,13 +208,13 @@ namespace OnlineVideos.Sites
 
         public override bool CanSearch { get { return true; } }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             currentVideoTitle = null;
             if (string.IsNullOrEmpty(category)) 
-                return GetVideosFromApiUrl(GetApiUrl("myvideo.videos.list_by_tag", new NameValueCollection() { { "tag", query } })).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                return GetVideosFromApiUrl(GetApiUrl("myvideo.videos.list_by_tag", new NameValueCollection() { { "tag", query } })).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
             else 
-                return GetVideosFromApiUrl(GetApiUrl("myvideo.videos.list_by_category_and_tag", new NameValueCollection() { { "tag", query }, { "cat", category } })).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                return GetVideosFromApiUrl(GetApiUrl("myvideo.videos.list_by_category_and_tag", new NameValueCollection() { { "tag", query }, { "cat", category } })).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
         }
 
         public override Dictionary<string, string> GetSearchableCategories()
@@ -250,7 +250,7 @@ namespace OnlineVideos.Sites
                 return new ContextMenuExecutionResult() 
                     { ResultItems = 
                         GetVideosFromApiUrl(GetApiUrl("myvideo.videos.list_by_user", new NameValueCollection() { { "user", choice.Other as string } }))
-                            .ConvertAll<ISearchResultItem>(v => v as ISearchResultItem) };
+                            .ConvertAll<SearchResultItem>(v => v as SearchResultItem) };
             }
             return null;
         }

@@ -45,9 +45,9 @@ namespace OnlineVideos.Sites
 
 		public override bool CanSearch { get { return true; } }
 
-		public override List<ISearchResultItem> Search(string query, string category = null)
+		public override List<SearchResultItem> Search(string query, string category = null)
 		{
-			return getVideos(string.Format(searchUrl, HttpUtility.UrlEncode(query)), true, true).ConvertAll<ISearchResultItem>(i => i as ISearchResultItem);
+			return getVideos(string.Format(searchUrl, HttpUtility.UrlEncode(query)), true, true).ConvertAll<SearchResultItem>(i => i as SearchResultItem);
 		}
 
 		public override List<VideoInfo> GetVideos(Category category)

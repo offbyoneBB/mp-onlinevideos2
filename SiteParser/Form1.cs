@@ -508,7 +508,7 @@ namespace SiteParser
 
             GuiToUtil(generic);
 
-            List<ISearchResultItem> videos = generic.Search(SearchQueryTextBox.Text);
+            List<SearchResultItem> videos = generic.Search(SearchQueryTextBox.Text);
 
             TreeNode node = new TreeNode(string.Format("Search for '{0}' ({1})", SearchQueryTextBox.Text, videos.Count));
             node.Tag = string.Format(searchUrlTextBox.Text, SearchQueryTextBox.Text);
