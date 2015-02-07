@@ -52,7 +52,7 @@ namespace OnlineVideos
 " + siteXml + @"
 </Sites>
 </OnlineVideoSites>";
-			return OnlineVideosAppDomain.PluginLoader.CreateSiteSettingsFromXml(siteXml);
+			return CrossDomain.OnlineVideosAppDomain.PluginLoader.CreateSiteSettingsFromXml(siteXml);
         }
 
 		private static void CallOnDeserializedRecursive(IList<Category> cats, System.Runtime.Serialization.StreamingContext ctx)
@@ -291,7 +291,7 @@ namespace OnlineVideos
 
             // 2. get a "clean" site by creating it with empty SiteSettings
             siteSettings.Configuration = new StringHash();
-            Sites.SiteUtilBase cleanSiteUtil = SiteUtilFactory.CreateFromShortName(siteSettings.UtilName, siteSettings);
+            Sites.SiteUtilBase cleanSiteUtil = Sites.SiteUtilFactory.CreateFromShortName(siteSettings.UtilName, siteSettings);
 
             // 3. compare and collect different settings
             foreach (FieldInfo field in fieldInfos)

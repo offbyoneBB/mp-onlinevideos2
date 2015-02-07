@@ -13,7 +13,7 @@ namespace OnlineVideos
     /// All public strings of this class should be used for localized display.
     /// The will be loaded with the translated version of their content at startup.
     /// </summary>
-	public class Translation : CrossDomanSingletonBase<Translation>
+	public class Translation : CrossDomain.CrossDomainSingleton<Translation>
     {
 		private Translation() {}
 

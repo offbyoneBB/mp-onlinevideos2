@@ -9,7 +9,7 @@ using OnlineVideos.Helpers;
 using OnlineVideos.Properties;
 using System.Drawing;
 
-namespace OnlineVideos.Sites.Base
+namespace OnlineVideos.Sites
 {
     /// <summary>
     /// Base class for any browser util

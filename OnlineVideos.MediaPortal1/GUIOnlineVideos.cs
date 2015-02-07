@@ -250,7 +250,7 @@ namespace OnlineVideos.MediaPortal1
 
         public override bool Init()
         {
-            OnlineVideosAppDomain.UseSeperateDomain = true;
+            CrossDomain.OnlineVideosAppDomain.UseSeperateDomain = true;
 
             bool result = Load(GUIGraphicsContext.Skin + @"\myonlinevideos.xml");
 
@@ -1806,7 +1806,7 @@ namespace OnlineVideos.MediaPortal1
                 }
                 else
                 {
-                    Category searchCategory = OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(Category).Assembly.FullName, typeof(Category).FullName) as Category;
+                    Category searchCategory = CrossDomain.OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(Category).Assembly.FullName, typeof(Category).FullName) as Category;
                     searchCategory.Name = categoryName;
                     searchCategory.HasSubCategories = true;
                     searchCategory.SubCategoriesDiscovered = true;

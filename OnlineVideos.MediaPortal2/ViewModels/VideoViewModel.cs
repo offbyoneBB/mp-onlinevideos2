@@ -12,6 +12,7 @@ using MediaPortal.UI.Presentation.Workflow;
 using MediaPortal.UiComponents.Media.General;
 using MediaPortal.UI.Presentation.Players;
 using OnlineVideos.Downloading;
+using OnlineVideos.CrossDomain;
 
 namespace OnlineVideos.MediaPortal2
 {

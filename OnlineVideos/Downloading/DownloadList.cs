@@ -15,7 +15,7 @@ namespace OnlineVideos.Downloading
 
         public static DownloadList Create(DownloadInfo currentItem)
         {
-            DownloadList di = (DownloadList)OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(DownloadList).Assembly.FullName, typeof(DownloadList).FullName, false, System.Reflection.BindingFlags.CreateInstance | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, null, null, null);
+            DownloadList di = (DownloadList)CrossDomain.OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(DownloadList).Assembly.FullName, typeof(DownloadList).FullName, false, System.Reflection.BindingFlags.CreateInstance | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, null, null, null);
             di.CurrentItem = currentItem;
             return di;
         }

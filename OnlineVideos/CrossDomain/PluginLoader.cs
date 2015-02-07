@@ -7,7 +7,7 @@ using System.Reflection;
 using OnlineVideos.Hoster.Base;
 using OnlineVideos.Sites;
 
-namespace OnlineVideos
+namespace OnlineVideos.CrossDomain
 {
     internal class PluginLoader : MarshalByRefObject
     {

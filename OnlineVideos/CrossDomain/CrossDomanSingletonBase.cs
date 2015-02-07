@@ -1,8 +1,12 @@
 ﻿using System;
 
-namespace OnlineVideos
+namespace OnlineVideos.CrossDomain
 {
-	public class CrossDomanSingletonBase<T> : MarshalByRefObject where T : class
+    /// <summary>
+    /// Generic base class for single instance objects that will be accessed from the OnlineVideos AppDomain and the application's AppDomain.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+	public class CrossDomainSingleton<T> : MarshalByRefObject where T : class
 	{
 		protected static T _Instance = null;
 		public static T Instance

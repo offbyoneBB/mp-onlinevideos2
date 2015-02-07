@@ -128,7 +128,7 @@ namespace OnlineVideos.MediaPortal1
 
                 if (changes)
                 {
-					var newUtilInstance = SiteUtilFactory.CloneFreshSiteFromExisting(selectedSite);
+                    var newUtilInstance = Sites.SiteUtilFactory.CloneFreshSiteFromExisting(selectedSite);
 					OnlineVideoSettings.Instance.SiteUtilsList[newUtilInstance.Settings.Name] = newUtilInstance;
 					return newUtilInstance;
                 }

@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using OnlineVideos.Sites.Entities;
-using OnlineVideos.Sites.Base;
+using OnlineVideos.Sites;
 using System.Xml;
 using System.Threading;
 using OnlineVideos.Helpers;

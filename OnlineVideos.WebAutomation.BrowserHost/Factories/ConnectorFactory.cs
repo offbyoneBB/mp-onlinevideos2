@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using OnlineVideos.Sites.Base;
+using OnlineVideos.Sites;
 using System.IO;
 using System.Reflection;
 using OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation;

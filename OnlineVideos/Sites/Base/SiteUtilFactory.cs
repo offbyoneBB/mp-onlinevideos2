@@ -1,6 +1,6 @@
-using OnlineVideos.Sites;
+using OnlineVideos.CrossDomain;
 
-namespace OnlineVideos
+namespace OnlineVideos.Sites
 {
 	public static class SiteUtilFactory
 	{

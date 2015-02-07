@@ -1,4 +1,4 @@
-﻿using OnlineVideos.Sites.Base;
+﻿using OnlineVideos.Sites;
 using OnlineVideos.Sites.WebAutomation.Properties;
 using System;
 using System.Collections.Generic;

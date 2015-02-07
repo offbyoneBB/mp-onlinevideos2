@@ -82,7 +82,7 @@ namespace OnlineVideos.MediaPortal1
 
             /** fill "Sites" tab **/
             // make sure refelction has run to discover all utils and hosters
-            SiteUtilFactory.UtilExists("");
+            Sites.SiteUtilFactory.UtilExists("");
             // load site icons into the ImageList for use with the listviews
             foreach (string imagefile in Directory.GetFiles(Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, "Icons"), "*.png"))
             {
@@ -532,7 +532,7 @@ namespace OnlineVideos.MediaPortal1
                 bool success = false;
                 try
                 {
-                    string dll = SiteUtilFactory.RequiredDll(site.UtilName);
+                    string dll = Sites.SiteUtilFactory.RequiredDll(site.UtilName);
                     OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
                     string msg = "";
                     if (!string.IsNullOrEmpty(dll))
@@ -714,7 +714,7 @@ namespace OnlineVideos.MediaPortal1
                 string image = Path.Combine(Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, "Icons"), site.Name + ".png");
                 if (File.Exists(image)) iconSite.ImageLocation = image;
                 else iconSite.Image = null;
-                propertyGridUserConfig.SelectedObject = SiteUtilFactory.CreateFromShortName(site.UtilName, site);
+                propertyGridUserConfig.SelectedObject = Sites.SiteUtilFactory.CreateFromShortName(site.UtilName, site);
                 lblSelectedSite.Text = site.Name;
                 btnEditSite.Enabled = true;
                 btnReportSite.Enabled = true;

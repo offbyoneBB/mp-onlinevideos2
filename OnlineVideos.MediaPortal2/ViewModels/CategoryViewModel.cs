@@ -6,6 +6,7 @@ using MediaPortal.Common.General;
 using MediaPortal.UI.Presentation.DataObjects;
 using MediaPortal.UI.SkinEngine.ScreenManagement;
 using MediaPortal.UiComponents.Media.General;
+using OnlineVideos.CrossDomain;
 
 namespace OnlineVideos.MediaPortal2
 {

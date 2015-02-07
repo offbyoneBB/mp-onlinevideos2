@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using OnlineVideos.CrossDomain;
 
 namespace OnlineVideos.Downloading
 {
-    public class DownloadManager : CrossDomanSingletonBase<DownloadManager>
+    public class DownloadManager : CrossDomainSingleton<DownloadManager>
     {
         object locker = new object();
 
