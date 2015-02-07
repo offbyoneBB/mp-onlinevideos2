@@ -300,7 +300,7 @@ namespace OnlineVideos.Sites.georgius
                     videoUrl = match.Groups["videoUrl"].Value;
                 }
 
-                Dictionary<String, String> playbackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").GetPlaybackOptions(HttpUtility.UrlDecode(videoUrl));
+                Dictionary<String, String> playbackOptions = Hoster.HosterFactory.GetHoster("Youtube").GetPlaybackOptions(HttpUtility.UrlDecode(videoUrl));
                 if (playbackOptions != null)
                 {
                     int width = 0;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using OnlineVideos.Hoster.Base;
+using OnlineVideos.Hoster;
 using OnlineVideos.Sites;
 using System.Text.RegularExpressions;
 using System.Web;

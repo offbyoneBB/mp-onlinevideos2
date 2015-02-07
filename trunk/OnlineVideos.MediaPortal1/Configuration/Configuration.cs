@@ -96,7 +96,7 @@ namespace OnlineVideos.MediaPortal1
             siteList.SelectObject(bindingSourceSiteSettings.Current);
 
             /** fill "Hosters" tab **/
-            listBoxHosters.DataSource = Hoster.Base.HosterFactory.GetAllHosters().OrderBy(h => h.GetHosterUrl()).ToList();
+            listBoxHosters.DataSource = Hoster.HosterFactory.GetAllHosters().OrderBy(h => h.GetHosterUrl()).ToList();
 
             /** fill "Groups" Tab **/
             chkAutoGroupByLang.Checked = PluginConfiguration.Instance.autoGroupByLang;
@@ -1006,7 +1006,7 @@ namespace OnlineVideos.MediaPortal1
 
         private void listBoxHosters_SelectedValueChanged(object sender, EventArgs e)
         {
-            Hoster.Base.HosterBase hoster = (sender as ListBox).SelectedItem as Hoster.Base.HosterBase;
+            Hoster.HosterBase hoster = (sender as ListBox).SelectedItem as Hoster.HosterBase;
             sourceLabel.Text = hoster.GetType().Module.ToString();
             propertyGridHoster.SelectedObject = hoster;
         }

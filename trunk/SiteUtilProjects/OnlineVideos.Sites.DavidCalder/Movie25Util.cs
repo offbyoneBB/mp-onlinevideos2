@@ -67,7 +67,7 @@ namespace OnlineVideos.Sites.DavidCalder
     public override Dictionary<string, string> GetPlaybackOptions(string playlistUrl)
     {
       if (playlistUrl.StartsWith("https://www.youtube.com/watch?v="))
-        return Hoster.Base.HosterFactory.GetHoster("Youtube").GetPlaybackOptions(playlistUrl);
+        return Hoster.HosterFactory.GetHoster("Youtube").GetPlaybackOptions(playlistUrl);
       else return base.GetPlaybackOptions(playlistUrl);
     }
 

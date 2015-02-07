@@ -7,7 +7,7 @@ using System.Linq;
 using System.IO;
 using System.Web;
 using OnlineVideos.AMF;
-using OnlineVideos.Hoster.Base;
+using OnlineVideos.Hoster;
 using OnlineVideos.Sites.Brownard;
 
 namespace OnlineVideos.Sites

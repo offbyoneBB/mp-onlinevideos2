@@ -1,5 +1,5 @@
 ﻿using System;
-using OnlineVideos.Hoster.Base;
+using OnlineVideos.Hoster;
 using OnlineVideos.Sites;
 using System.Web;
 

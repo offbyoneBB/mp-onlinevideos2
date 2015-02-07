@@ -7,7 +7,7 @@ using System.Web;
 using System.Xml;
 using System.Linq;
 using RssToolkit.Rss;
-using OnlineVideos.Hoster.Base;
+using OnlineVideos.Hoster;
 
 namespace OnlineVideos.Sites
 {

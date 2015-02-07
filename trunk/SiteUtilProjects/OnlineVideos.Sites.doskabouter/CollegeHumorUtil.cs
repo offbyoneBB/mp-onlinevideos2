@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Newtonsoft.Json.Linq;
-using OnlineVideos.Hoster.Base;
+using OnlineVideos.Hoster;
 
 namespace OnlineVideos.Sites
 {

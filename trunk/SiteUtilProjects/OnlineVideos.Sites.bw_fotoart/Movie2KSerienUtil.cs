@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 
-using OnlineVideos.Hoster.Base;
+using OnlineVideos.Hoster;
 
 
 namespace OnlineVideos.Sites.bw_fotoart

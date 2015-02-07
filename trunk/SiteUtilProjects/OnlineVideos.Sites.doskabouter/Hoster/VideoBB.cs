@@ -4,7 +4,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using OnlineVideos.Hoster.Base;
+using OnlineVideos.Hoster;
 using System.Xml;
 using System.Web;
 using OnlineVideos.Sites;

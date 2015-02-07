@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OnlineVideos.Hoster.Base;
+using OnlineVideos.Hoster;
 using System.Text;
 using OnlineVideos.AMF;
 using Org.BouncyCastle.Crypto.Engines;
