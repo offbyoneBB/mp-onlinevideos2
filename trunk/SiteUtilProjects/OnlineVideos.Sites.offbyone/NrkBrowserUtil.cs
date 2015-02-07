@@ -339,7 +339,7 @@ namespace OnlineVideos.Sites
                     if (item is Clip)
                     {
                         Clip clip = item as Clip;
-                        VideoInfo vi = new VideoInfo() { Title = clip.Title, Description = clip.Description, ImageUrl = clip.Bilde, Length = clip.Duration, VideoUrl = clip.ID, Other = clip };
+                        VideoInfo vi = new VideoInfo() { Title = clip.Title, Description = clip.Description, Thumb = clip.Bilde, Length = clip.Duration, VideoUrl = clip.ID, Other = clip };
                         result.Add(vi);
 
                         if (((Clip)item).Type == Clip.KlippType.KLIPP)
@@ -352,7 +352,7 @@ namespace OnlineVideos.Sites
                                 { 
                                     Title = string.Format("{0} ({1}/{2} - {3})", clip.Title, (i+1).ToString(), chapters.Count.ToString(), chapter_clip.Title), 
                                     Description = chapter_clip.Description, 
-                                    ImageUrl = chapter_clip.Bilde, 
+                                    Thumb = chapter_clip.Bilde, 
                                     Length = chapter_clip.Duration, 
                                     VideoUrl = chapter_clip.ID, 
                                     Other = chapter_clip, 
@@ -364,7 +364,7 @@ namespace OnlineVideos.Sites
                     else if (item is Stream)
                     {
                         Stream stream = item as Stream;
-                        VideoInfo vi = new VideoInfo() { Title = stream.Title, VideoUrl = stream.ID, ImageUrl = stream.Bilde, Description = stream.Description };
+                        VideoInfo vi = new VideoInfo() { Title = stream.Title, VideoUrl = stream.ID, Thumb = stream.Bilde, Description = stream.Description };
                         result.Add(vi);
                     }
                 }

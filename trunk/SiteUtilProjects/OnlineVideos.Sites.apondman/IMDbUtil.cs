@@ -35,7 +35,7 @@ namespace OnlineVideos.Sites.Pondman
             VideoInfo video = new VideoInfo();
             video.Other = title;
             video.Title = title.Title;
-            video.ImageUrl = getResizedImage(title.Image);
+            video.Thumb = getResizedImage(title.Image);
             video.Description = title.Principals.Select(p => p.Name).ToList().ToCommaSeperatedString();
             video.VideoUrl = title.ID;
 
@@ -84,7 +84,7 @@ namespace OnlineVideos.Sites.Pondman
                 video.Other = title;
                 video.Title = title.Title;
                 video.Description = title.Plot;
-                video.ImageUrl = getResizedImage(title.Image);
+                video.Thumb = getResizedImage(title.Image);
                 video.VideoUrl = title.ID;
 
                 videos.Add(video);
@@ -312,7 +312,7 @@ namespace OnlineVideos.Sites.Pondman
             video.Title = title.Title;
             video.Description = title.Plot;
             if (!string.IsNullOrEmpty(title.Image))
-                video.ImageUrl = getResizedImage(title.Image);
+                video.Thumb = getResizedImage(title.Image);
             
             List<VideoReference> videos = title.GetVideos();
 
@@ -329,7 +329,7 @@ namespace OnlineVideos.Sites.Pondman
                     vid.Title2 = clip.Title;
 					vid.Description = clip.Description;
                     
-                    vid.ImageUrl = clip.Image;
+                    vid.Thumb = clip.Image;
                     vid.VideoUrl = clip.ID;
                     vid.Length = clip.Duration.ToString();
                     clips.Add(vid);

@@ -158,7 +158,7 @@ namespace OnlineVideos.Sites
                         Title = avDoc.SelectSingleNode("title").InnerText,
                         Airdate = avDoc.SelectSingleNode("webTime").InnerText,
                         Description = avDoc.SelectSingleNode("teaserText").InnerText,
-                        ImageUrl = avDoc.SelectSingleNode("teaserimages/teaserimage/url") != null ? avDoc.SelectSingleNode("teaserimages/teaserimage/url").InnerText : null,
+                        Thumb = avDoc.SelectSingleNode("teaserimages/teaserimage/url") != null ? avDoc.SelectSingleNode("teaserimages/teaserimage/url").InnerText : null,
                         Length = avDoc.SelectSingleNode("duration").InnerText,
                         PlaybackOptions = new Dictionary<string,string>()
                     };

@@ -72,7 +72,7 @@ namespace OnlineVideos.Sites
                 {
                     VideoInfo info = new VideoInfo();
                     info.Title = m.Groups["title"].Value;
-                    info.ImageUrl = m.Groups["thumb"].Value;
+                    info.Thumb = m.Groups["thumb"].Value;
                     info.Description = m.Groups["description"].Value;
                     info.VideoUrl = m.Groups["clipId"].Value;
 

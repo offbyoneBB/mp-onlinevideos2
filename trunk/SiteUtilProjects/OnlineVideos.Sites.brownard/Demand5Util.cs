@@ -115,7 +115,7 @@ namespace OnlineVideos.Sites
             {
                 VideoInfo vid = new VideoInfo();
                 vid.VideoUrl = BASE_URL + m.Groups[1].Value;
-                vid.ImageUrl = m.Groups[2].Value;
+                vid.Thumb = m.Groups[2].Value;
                 vid.Title = cleanString(m.Groups[4].Value);
                 vid.Airdate = cleanString(m.Groups[5].Value);
                 vids.Add(vid);
@@ -133,7 +133,7 @@ namespace OnlineVideos.Sites
             foreach (Match m in reg.Matches(html))
             {
                 VideoInfo vid = new VideoInfo();
-                vid.ImageUrl = m.Groups[1].Value;
+                vid.Thumb = m.Groups[1].Value;
                 vid.Airdate = m.Groups[3].Value;
                 vid.VideoUrl = BASE_URL + m.Groups[5].Value;
                 vid.Title = cleanString(m.Groups[6].Value);

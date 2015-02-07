@@ -150,7 +150,7 @@ namespace OnlineVideos.Sites
 				foreach (var li in UL.Elements("li"))
 				{
 					VideoInfo video = new VideoInfo();
-					video.ImageUrl = new Uri(baseUri, li.Element("img").GetAttributeValue("src", "")).AbsoluteUri;
+					video.Thumb = new Uri(baseUri, li.Element("img").GetAttributeValue("src", "")).AbsoluteUri;
 					var a = li.Element("a");
 					video.VideoUrl = new Uri(baseUri, a.GetAttributeValue("href", "")).AbsoluteUri;
 					video.Title = HttpUtility.HtmlDecode(a.Element("strong").InnerText.Trim());

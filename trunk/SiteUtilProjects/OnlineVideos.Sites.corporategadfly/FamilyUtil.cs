@@ -105,7 +105,7 @@ namespace OnlineVideos.Sites
                         result.Add(new VideoInfo() {
                                        VideoUrl = video.Value<string>("filename"),
                                        Length = TimeSpan.FromSeconds(video.Value<int>("length")).ToString(),
-                                       ImageUrl = string.Format(@"{0}{1}{2}", baseUrlPrefix, video.Value<string>("imagePath"), video.Value<string>("image")),
+                                       Thumb = string.Format(@"{0}{1}{2}", baseUrlPrefix, video.Value<string>("imagePath"), video.Value<string>("image")),
                                        Title = video.Value<string>("title"),
                                        Description = video.Value<string>("description")
                                    });

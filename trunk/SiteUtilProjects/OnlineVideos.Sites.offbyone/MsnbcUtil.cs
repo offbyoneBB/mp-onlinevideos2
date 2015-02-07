@@ -36,7 +36,7 @@ namespace OnlineVideos.Sites
                     VideoInfo video = new VideoInfo();
                     video.Description = rssItem.Description;
                     if (rssItem.MediaContents.Count > 0 && rssItem.MediaContents[0].Url != null && rssItem.MediaContents[0].Url.ToLower().EndsWith(".jpg"))
-                        video.ImageUrl = rssItem.MediaContents[0].Url;
+                        video.Thumb = rssItem.MediaContents[0].Url;
                     video.Title = rssItem.Title.Replace("Video: ", "");
                     video.Airdate = rssItem.PubDateParsed.ToString("g", OnlineVideoSettings.Instance.Locale);
                     video.VideoUrl = rssItem.Guid.Text;

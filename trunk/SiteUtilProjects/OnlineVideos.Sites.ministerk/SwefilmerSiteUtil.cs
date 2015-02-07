@@ -136,7 +136,7 @@ namespace OnlineVideos.Sites
                     }
                 }
 
-                videos.Add(new VideoInfo() { Title = title, ImageUrl = img.GetAttributeValue("src", ""), VideoUrl = a.GetAttributeValue("href", ""), Other = ti });
+                videos.Add(new VideoInfo() { Title = title, Thumb = img.GetAttributeValue("src", ""), VideoUrl = a.GetAttributeValue("href", ""), Other = ti });
             }
             var fastphp = doc.DocumentNode.SelectSingleNode("//div[@class = 'fastphp']");
             HtmlNode next = null;

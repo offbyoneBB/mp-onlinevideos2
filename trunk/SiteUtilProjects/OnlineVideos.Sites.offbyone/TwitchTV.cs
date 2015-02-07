@@ -135,7 +135,7 @@ namespace OnlineVideos.Sites
 			return new VideoInfo()
 			{
 				Title = (stream["channel"].Value<string>("status") ?? stream["channel"].Value<string>("display_name")).Replace('\n', ' ' ),
-                ImageUrl = stream["preview"].Value<string>("large"),
+                Thumb = stream["preview"].Value<string>("large"),
 				Description = string.Format("{0} Viewers on {1}", stream.Value<string>("viewers"), stream["channel"].Value<string>("name")),
 				Airdate = stream["channel"].Value<DateTime>("created_at").ToString("g", OnlineVideoSettings.Instance.Locale),
 				VideoUrl = stream["channel"].Value<string>("name")

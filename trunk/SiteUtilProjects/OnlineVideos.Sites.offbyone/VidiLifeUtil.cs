@@ -40,7 +40,7 @@ namespace OnlineVideos.Sites
             {
                 VideoInfo video = new VideoInfo();
 				video.Description = rssItem.Description;
-				video.ImageUrl = rssItem.MediaThumbnails[0].Url;
+				video.Thumb = rssItem.MediaThumbnails[0].Url;
 				video.Title = rssItem.Title;				
 				video.VideoUrl = rssItem.Link;
 				loVideoList.Add(video);

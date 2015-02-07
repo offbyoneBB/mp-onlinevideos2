@@ -29,14 +29,14 @@ namespace OnlineVideos.Sites
                             {
                                 //for own3d:
                                 videoInfo.VideoUrl = string.Format(@"http://www.own3d.tv/livecfg/{0}?autoPlay=true", m.Groups["VideoUrl"].Value);
-                                videoInfo.ImageUrl = string.Format(@"http://img.live.own3d.tv/live/live_tn_{1}_.jpg?t={0}",
+                                videoInfo.Thumb = string.Format(@"http://img.live.own3d.tv/live/live_tn_{1}_.jpg?t={0}",
                                     m.Groups["ImageUrl"].Value, m.Groups["VideoUrl"].Value);
                                 break;
                             }
                         case "justin":
                             {
                                 //for justin/twitch:
-                                videoInfo.ImageUrl = string.Format(@"http://static-cdn.justin.tv/previews/live_user_{0}-320x240.jpg", m.Groups["VideoUrl"].Value);
+                                videoInfo.Thumb = string.Format(@"http://static-cdn.justin.tv/previews/live_user_{0}-320x240.jpg", m.Groups["VideoUrl"].Value);
                                 videoInfo.VideoUrl = string.Format(@"http://usher.justin.tv/find/{0}.xml?type=any", m.Groups["VideoUrl"].Value);
                                 break;
                             }

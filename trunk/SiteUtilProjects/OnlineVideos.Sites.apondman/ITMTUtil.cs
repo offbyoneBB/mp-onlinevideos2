@@ -43,7 +43,7 @@ namespace OnlineVideos.Sites.Pondman {
 			VideoInfo video = new VideoInfo();
 			video.Other = movie;
 			video.Title = movie.Title;
-			video.ImageUrl = movie.Poster != null ? movie.Poster.Large : string.Empty;
+			video.Thumb = movie.Poster != null ? movie.Poster.Large : string.Empty;
 			
 			// extra
 			string actors = movie.Actors.ToCommaSeperatedString();
@@ -170,7 +170,7 @@ namespace OnlineVideos.Sites.Pondman {
 				// complete movie metadata
 				video.Description = movie.Plot;
 				video.Length = movie.ReleaseDate != DateTime.MinValue ? movie.ReleaseDate.ToShortDateString() : "Coming Soon";
-				video.ImageUrl = movie.Poster != null ? movie.Poster.Large : string.Empty;
+				video.Thumb = movie.Poster != null ? movie.Poster.Large : string.Empty;
 				video.VideoUrl = movie.Uri;
 			}
 			// get initial video list
@@ -182,7 +182,7 @@ namespace OnlineVideos.Sites.Pondman {
 				vid.Description = movie.Plot;
 				//vid.Length = clip.Duration.ToString();
 				vid.Length = clip.Published != DateTime.MinValue ? clip.Published.ToShortDateString() : "N/A";
-				vid.ImageUrl = !string.IsNullOrEmpty(clip.ThumbUrl) ? clip.ThumbUrl : (movie.Poster != null ? movie.Poster.Uri : string.Empty);
+				vid.Thumb = !string.IsNullOrEmpty(clip.ThumbUrl) ? clip.ThumbUrl : (movie.Poster != null ? movie.Poster.Uri : string.Empty);
 				//vid.ThumbnailImage = video.ThumbnailImage;
 				vid.VideoUrl = clip.Uri;
 				clips.Add(vid);

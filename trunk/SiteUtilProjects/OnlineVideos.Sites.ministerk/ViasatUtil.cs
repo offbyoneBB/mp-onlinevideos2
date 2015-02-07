@@ -208,7 +208,7 @@ namespace OnlineVideos.Sites
                 if (v["description"] != null)
                     desc += "\r\n" + v["description"].Value<string>();
                 video.Description = desc;
-                video.ImageUrl = v["_links"]["image"]["href"].Value<string>().Replace("{size}", "230x150");
+                video.Thumb = v["_links"]["image"]["href"].Value<string>().Replace("{size}", "230x150");
                 if (v["duration"] != null && !string.IsNullOrEmpty(v["duration"].ToString()) && v["duration"].Value<int>() > 0)
                 {
                     TimeSpan t = TimeSpan.FromSeconds(v["duration"].Value<int>());

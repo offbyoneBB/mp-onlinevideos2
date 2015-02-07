@@ -103,7 +103,7 @@ namespace OnlineVideos.Sites
                     videoInfo.Title = preTitle + ep.Value<string>("title");
                     videoInfo.Title2 = ep.Value<string>("number");
                     videoInfo.VideoUrl = String.Format("http://www.cc.com/feeds/mrss?uri=mgid:arc:episode:comedycentral.com:{0}", ep.Value<string>("id"));
-                    videoInfo.ImageUrl = String.Format("{0}?quality=0.85&width=560&height=315&crop=true", ep["images"][0].Value<string>("url"));
+                    videoInfo.Thumb = String.Format("{0}?quality=0.85&width=560&height=315&crop=true", ep["images"][0].Value<string>("url"));
                     videoInfo.Length = ep.Value<string>("duration");
                     videoInfo.Airdate = String.Format("{0}, {1} {2}", airdate.ToString("dddd"), airdate.ToShortDateString(), airdate.ToShortTimeString());
                     videoInfo.Description = "Views: " + ep.Value<string>("views") + "\n" + ep.Value<string>("description");

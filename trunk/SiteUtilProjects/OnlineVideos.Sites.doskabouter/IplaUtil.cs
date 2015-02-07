@@ -60,7 +60,7 @@ namespace OnlineVideos.Sites
                 video.Title = vidNode.Attributes["title"].Value;
                 video.Airdate = epoch.AddSeconds(float.Parse(vidNode.Attributes["timestamp"].Value)).ToString();
                 video.Length = VideoInfo.GetDuration(vidNode.Attributes["dur"].Value);
-                video.ImageUrl = getThumb(vidNode);
+                video.Thumb = getThumb(vidNode);
 
                 video.PlaybackOptions = new Dictionary<string, string>();
                 foreach (XmlNode urlNode in vidNode.SelectNodes("srcreq[@drmtype=\"0\" and @format!=\"2\"]"))

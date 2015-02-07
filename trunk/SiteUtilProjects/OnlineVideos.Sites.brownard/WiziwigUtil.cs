@@ -61,7 +61,7 @@ namespace OnlineVideos.Sites
                 return group.Channels.Select(c => new VideoInfo()
                 {
                     Title = c.StreamName,
-                    ImageUrl = c.Thumb,
+                    Thumb = c.Thumb,
                     VideoUrl = c.Url
                 }).ToList();
 
@@ -82,7 +82,7 @@ namespace OnlineVideos.Sites
                     if (!isUrlSupported(url))
                         continue;
                     VideoInfo vid = new VideoInfo();
-                    vid.ImageUrl = imageurl;
+                    vid.Thumb = imageurl;
                     vid.VideoUrl = url;
                     vid.Title = channel + " - " + vidmatch.Groups["bitrate"].Value;
                     vid.Description = category.Description + "\n" + string.Format("Rating: {0}/100", vidmatch.Groups["rating"]);

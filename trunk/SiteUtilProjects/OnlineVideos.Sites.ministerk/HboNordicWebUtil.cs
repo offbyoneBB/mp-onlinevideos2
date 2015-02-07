@@ -272,7 +272,7 @@ namespace OnlineVideos.Sites
                 (parentCategory.SubCategories.First(c => c.Name == SeasonCategoryNamePrefix + " " + episode["season"].Value<string>()).Other as List<VideoInfo>).Add(new VideoInfo()
                 {
                     Title = string.Format("{0}. {1}", episode["episode_number"].Value<string>(), episode["title"].Value<string>()),
-                    ImageUrl = episode["thumb"].Value<string>(),
+                    Thumb = episode["thumb"].Value<string>(),
                     Description = episode["info"].Value<string>(),
                     VideoUrl = episode["url"].Value<string>()
                 });
@@ -300,7 +300,7 @@ namespace OnlineVideos.Sites
                         videos.Add(new VideoInfo()
                         {
                             Title = movie["title"].Value<string>(),
-                            ImageUrl = movie["thumb"].Value<string>(),
+                            Thumb = movie["thumb"].Value<string>(),
                             Description = movie["description"].Value<string>(),
                             VideoUrl = movie["uri"].Value<string>()
                         });

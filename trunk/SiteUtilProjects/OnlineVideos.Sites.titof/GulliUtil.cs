@@ -42,7 +42,7 @@ namespace OnlineVideos.Sites
                 VideoInfo video = new VideoInfo();
                 video.VideoUrl = m.Groups["url"].Value;
                 video.Title = m.Groups["title"].Value;
-                video.ImageUrl = m.Groups["thumb"].Value;
+                video.Thumb = m.Groups["thumb"].Value;
                 video.Description = m.Groups["description"].Value.Trim() + "\n" + m.Groups["description2"].Value.Trim();
                 listVideos.Add(video);
                 m = m.NextMatch();

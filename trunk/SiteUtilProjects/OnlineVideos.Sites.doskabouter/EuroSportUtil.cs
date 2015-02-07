@@ -119,7 +119,7 @@ namespace OnlineVideos.Sites
             {
                 VideoInfo video = new VideoInfo();
                 video.Title = node.SelectSingleNode("titlecatchup").InnerText;
-                video.ImageUrl = node.SelectSingleNode("thumbnail/url").InnerText;
+                video.Thumb = node.SelectSingleNode("thumbnail/url").InnerText;
                 video.Length = Utils.PlainTextFromHtml(node.SelectSingleNode("durationInSeconds").InnerText);
                 video.Airdate = Utils.PlainTextFromHtml(node.SelectSingleNode("startdate/date").InnerText);
                 video.VideoUrl = baseUrl + node.SelectSingleNode("url").InnerText.TrimStart('/');
@@ -164,7 +164,7 @@ namespace OnlineVideos.Sites
                         video.Title = name;
                 }
 
-                video.ImageUrl = String.Format(@"http://layout.eurosportplayer.{0}/i", tld) + jVideo["vignetteurl"].Value<string>();
+                video.Thumb = String.Format(@"http://layout.eurosportplayer.{0}/i", tld) + jVideo["vignetteurl"].Value<string>();
                 video.Description = jVideo["channellivesublabel"].Value<string>();
                 video.Other = jLiveStreams;
                 videos.Add(video);

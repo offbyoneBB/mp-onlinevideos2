@@ -52,7 +52,7 @@ namespace OnlineVideos.Sites
                 VideoInfo videoInfo = CreateVideoInfo();
                 videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
                 videoInfo.VideoUrl = ((RssLink)category).Url + m.Groups["VideoUrl"].Value;
-                videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
+                videoInfo.Thumb = m.Groups["ImageUrl"].Value;
                 videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value);
                 videoInfo.Description = m.Groups["Description"].Value;
                 videoList.Add(videoInfo);

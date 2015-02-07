@@ -85,7 +85,7 @@ namespace OnlineVideos.Sites
             video.Length = itemDiv.Descendants("div").Where(d => d.GetAttributeValue("class", "").Contains("badge-holder")).FirstOrDefault().Element("div").NextSibling.InnerText.Trim().Trim('"').Trim();
             video.Airdate = itemDiv.Descendants("p").FirstOrDefault().ChildNodes.LastOrDefault().InnerText.Trim();
             video.Title = itemDiv.Descendants("h3").FirstOrDefault().InnerText.Trim();
-            video.ImageUrl = itemDiv.Element("img").GetAttributeValue("src", "");
+            video.Thumb = itemDiv.Element("img").GetAttributeValue("src", "");
             video.Description = itemDiv.GetAttributeValue("data-description", "");
 
             return video;

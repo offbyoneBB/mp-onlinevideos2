@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Net;
 using System.IO;
+using System.Net;
+using System.Threading;
 
 namespace OnlineVideos.Downloading
 {
@@ -34,94 +35,70 @@ namespace OnlineVideos.Downloading
         public static bool StopDownload { get; set; }
 
 		/// <summary>
-		/// Downloads thumbs in background and sets the path of the downloaded files on the items.
+        /// Downloads images from the <see cref="SearchResultItem.Thumb"/> in a background thread 
+        /// and sets the path of the downloaded image to the <see cref="SearchResultItem.ThumbnailImage"/>.
 		/// </summary>
-		/// <typeparam name="T">supported are <see cref="Category"/> and <see cref="VideoInfo"/></typeparam>
-		/// <param name="itemsWithThumbs"></param>
-        public static void GetImages<T>(IList<T> itemsWithThumbs) where T : SearchResultItem
+        /// <typeparam name="T">must be a <see cref="SearchResultItem"/></typeparam>
+        /// <param name="items">list of <see cref="SearchResultItem"/>s to download images for</param>
+        public static void GetImages<T>(IList<T> items) where T : SearchResultItem
         {
             StopDownload = false;
             // split the downloads in 5+ groups and do multithreaded downloading
-            int groupSize = (int)Math.Max(1, Math.Floor((double)itemsWithThumbs.Count / 5));
-            int groups = (int)Math.Ceiling((double)itemsWithThumbs.Count / groupSize);
+            int groupSize = (int)Math.Max(1, Math.Floor((double)items.Count / 5));
+            int groups = (int)Math.Ceiling((double)items.Count / groupSize);
             for (int i = 0; i < groups; i++)
             {
-                List<T> a = new List<T>();
-                for (int j = groupSize * i; j < groupSize * i + (groupSize * (i + 1) > itemsWithThumbs.Count ? itemsWithThumbs.Count - groupSize * i : groupSize); j++)
+                List<T> group = new List<T>();
+                for (int j = groupSize * i; j < groupSize * i + (groupSize * (i + 1) > items.Count ? items.Count - groupSize * i : groupSize); j++)
                 {
-                    a.Add(itemsWithThumbs[j]);
+                    group.Add(items[j]);
                 }
 
-                new System.Threading.Thread(delegate(object o)
-                {
-					DownloadImages<T>((List<T>)o);
-                })
+                new Thread(o => DownloadImages<T>((List<T>)o))
                 {
                     IsBackground = true,
                     Name = "OVThumbs" + i.ToString()
-                }.Start(a);
+                }.Start(group);
             }
         }
 
 		/// <summary>
-		/// Downloads thumbs in the same thread and sets the path of the downloaded files on the items.
+        /// Downloads images from the <see cref="SearchResultItem.Thumb"/> in the current thread
+        /// and sets the path of the downloaded image to the <see cref="SearchResultItem.ThumbnailImage"/>.
 		/// </summary>
-		/// <typeparam name="T">supported are <see cref="Category"/> and <see cref="VideoInfo"/></typeparam>
-		/// <param name="myItems"></param>
-        public static void DownloadImages<T>(List<T> myItems) where T : SearchResultItem
+        /// <typeparam name="T">must be a <see cref="SearchResultItem"/></typeparam>
+        /// <param name="items">list of <see cref="SearchResultItem"/>s to download images for</param>
+        public static void DownloadImages<T>(List<T> items) where T : SearchResultItem
 		{
-			foreach (T item in myItems)
+			foreach (T item in items)
 			{
 				if (StopDownload) break;
+                
+                if (string.IsNullOrEmpty(item.Thumb)) continue;
 
-                string[] urls = null;
-                float? forcedAspect = null;
-
-                if (item is Category || item is VideoInfo)
-                {
-                    string thumb = item is Category ? (item as Category).Thumb : (item as VideoInfo).ImageUrl;
-                    if (item is VideoInfo) forcedAspect = (item as VideoInfo).ImageForcedAspectRatio;
-                    if (string.IsNullOrEmpty(thumb)) continue;
-                    urls = thumb.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
-                }
-                else if (item.Other is OnlineVideos.OnlineVideosWebservice.Site)
-                {
-                    string siteName = (item.Other as OnlineVideos.OnlineVideosWebservice.Site).Name;
-                    string localSiteImage = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Icons\" + siteName + ".png");
-					string onlineSiteImage = "http://onlinevideos.nocrosshair.de/Icons/" + siteName + ".png";
-                    urls = new string[] { localSiteImage, onlineSiteImage };
-                }
-                if (urls == null) continue;
-				foreach (string aFinalUrl in urls)
+				foreach (string url in item.Thumb.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries))
 				{
 					string imageLocation = string.Empty;
 
 					Uri temp;
-					if (Uri.TryCreate(aFinalUrl, UriKind.Absolute, out temp))
+					if (Uri.TryCreate(url, UriKind.Absolute, out temp))
 					{
 						if (temp.IsFile)
 						{
-							if (System.IO.File.Exists(aFinalUrl)) imageLocation = aFinalUrl;
+							if (File.Exists(url)) imageLocation = url;
 						}
 						else
 						{
-                            string thumbFile = (item is Category || item is VideoInfo) ? Utils.GetThumbFile(aFinalUrl) : urls[0];
-							if (System.IO.File.Exists(thumbFile)) imageLocation = thumbFile;
-							else if (DownloadAndCheckImage(aFinalUrl, thumbFile, forcedAspect)) imageLocation = thumbFile;
+                            string thumbFile = string.IsNullOrEmpty(item.ThumbnailImage) ? Utils.GetThumbFile(url) : item.ThumbnailImage;
+							if (File.Exists(thumbFile)) imageLocation = thumbFile;
+                            else if (DownloadAndCheckImage(url, thumbFile, item.ImageForcedAspectRatio)) imageLocation = thumbFile;
 						}
 					}
 
+                    // stop with the first valid image
 					if (imageLocation != string.Empty)
 					{
                         item.ThumbnailImage = imageLocation;
-						if (item is Category)
-						{
-							(item as Category).NotifyPropertyChanged("ThumbnailImage");
-						}
-                        else if (item is VideoInfo)
-						{	
-							(item as VideoInfo).NotifyPropertyChanged("ThumbnailImage");
-						}
 						break;
 					}
 				}

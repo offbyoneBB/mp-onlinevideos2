@@ -214,7 +214,7 @@ namespace OnlineVideos.Sites
                         var img = a.Descendants("img");
                         if (img != null && img.First() != null)
                         {
-                            video.ImageUrl = img.First().GetAttributeValue("src", "");
+                            video.Thumb = img.First().GetAttributeValue("src", "");
                             video.Title = img.First().GetAttributeValue("alt", "");
                         }
                         var dd = a.Descendants("dd");

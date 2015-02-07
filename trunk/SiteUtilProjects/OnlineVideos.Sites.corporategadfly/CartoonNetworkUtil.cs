@@ -106,7 +106,7 @@ namespace OnlineVideos.Sites
                         
                         VideoInfo video = new VideoInfo() {
                             Title = videoDTO.GetStringProperty("displayName"),
-                            ImageUrl = videoDTO.GetStringProperty("thumbnailURL"),
+                            Thumb = videoDTO.GetStringProperty("thumbnailURL"),
                             Description = videoDTO.GetStringProperty("longDescription"),
                             Length = TimeSpan.FromSeconds(videoDTO.GetDoubleProperty("length")/1000).ToString(),
                             VideoUrl = new RtmpUrl(rtmpUrl) {

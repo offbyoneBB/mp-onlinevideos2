@@ -67,7 +67,7 @@ namespace OnlineVideos.Sites
                         video.Description = descr.Value<string>();
                     JToken thumb = vid["thumbnailUrl"];
                     if (thumb != null)
-                        video.ImageUrl = thumb.Value<string>();
+                        video.Thumb = thumb.Value<string>();
                     video.Length = TimeSpan.FromSeconds(vid["length"].Value<int>() / 1000).ToString();
                     video.Airdate = epoch.AddSeconds(vid["publishedDate"].Value<double>() / 1000).ToString();
                     video.VideoUrl = baseUrl + "channels/" + category.Name + "/" + id;

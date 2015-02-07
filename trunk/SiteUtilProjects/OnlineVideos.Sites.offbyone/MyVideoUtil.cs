@@ -277,8 +277,8 @@ namespace OnlineVideos.Sites
                 videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
                 if (!Uri.IsWellFormedUriString(videoInfo.VideoUrl, System.UriKind.Absolute)) videoInfo.VideoUrl = new Uri(new Uri(url), videoInfo.VideoUrl).AbsoluteUri;
                 // get, format and if needed absolutify the thumb url
-                videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
-                if (!string.IsNullOrEmpty(videoInfo.ImageUrl) && !Uri.IsWellFormedUriString(videoInfo.ImageUrl, System.UriKind.Absolute)) videoInfo.ImageUrl = new Uri(new Uri(url), videoInfo.ImageUrl).AbsoluteUri;
+                videoInfo.Thumb = m.Groups["ImageUrl"].Value;
+                if (!string.IsNullOrEmpty(videoInfo.Thumb) && !Uri.IsWellFormedUriString(videoInfo.Thumb, System.UriKind.Absolute)) videoInfo.Thumb = new Uri(new Uri(url), videoInfo.Thumb).AbsoluteUri;
 				videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value);                
                 videoInfo.Description = m.Groups["Description"].Value;
 				videoList.Add(videoInfo);
@@ -312,7 +312,7 @@ namespace OnlineVideos.Sites
                     Title = video.Value.Value<string>("movie_title"),
                     Description = "von: " + video.Value.Value<string>("movie_owner"),
                     Other = video.Value.Value<string>("movie_owner_id"),
-                    ImageUrl = video.Value.Value<string>("movie_thumbnail"),
+                    Thumb = video.Value.Value<string>("movie_thumbnail"),
                     Length = video.Value.Value<string>("movie_length"),
                     Airdate = Utils.UNIXTimeToDateTime(double.Parse(video.Value.Value<string>("movie_added"))).ToString("g", OnlineVideoSettings.Instance.Locale),
                     VideoUrl = "http://www.myvideo.de/watch/" + video.Value.Value<string>("movie_id") + "/"

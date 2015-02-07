@@ -95,7 +95,7 @@ namespace OnlineVideos.Sites
                 }
 
                 video.Description = n.SelectSingleNode("INFOS").SelectSingleNode("DESCRIPTION").InnerText;
-                video.ImageUrl = n.SelectSingleNode("MEDIA").SelectSingleNode("IMAGES").SelectSingleNode("GRAND").InnerText;
+                video.Thumb = n.SelectSingleNode("MEDIA").SelectSingleNode("IMAGES").SelectSingleNode("GRAND").InnerText;
                 video.Other = n.SelectSingleNode("ID").InnerText;
                 listVideos.Add(video);
             }

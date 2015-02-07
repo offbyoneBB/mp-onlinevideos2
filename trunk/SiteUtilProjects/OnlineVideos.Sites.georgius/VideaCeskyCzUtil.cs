@@ -190,7 +190,7 @@ namespace OnlineVideos.Sites.georgius
                                 VideoInfo videoInfo = new VideoInfo()
                                 {
                                     Description = showEpisodeDescription,
-                                    ImageUrl = showEpisodeThumb,
+                                    Thumb = showEpisodeThumb,
                                     Title = showEpisodeTitle,
                                     VideoUrl = Utils.FormatAbsoluteUrl(showEpisodeUrl, VideaCeskyCzUtil.baseUrl)
                                 };

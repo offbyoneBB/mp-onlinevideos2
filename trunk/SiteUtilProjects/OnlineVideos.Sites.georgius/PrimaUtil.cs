@@ -279,7 +279,7 @@ namespace OnlineVideos.Sites.georgius
                                     {
                                         VideoInfo videoInfo = new VideoInfo()
                                         {
-                                            ImageUrl = showEpisodeThumbUrl,
+                                            Thumb = showEpisodeThumbUrl,
                                             Title = showEpisodeTitle,
                                             VideoUrl = showEpisodeUrl
                                         };

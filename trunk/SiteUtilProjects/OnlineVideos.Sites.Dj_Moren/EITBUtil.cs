@@ -96,7 +96,7 @@ namespace OnlineVideos.Sites
                 TimeSpan ts = TimeSpan.FromMilliseconds(double.Parse(episodio.SelectToken("length").ToString()));
                 TimeSpan tsAux = TimeSpan.FromMilliseconds(ts.Milliseconds);
                 video.Length = ts.Subtract(tsAux).ToString();
-                video.ImageUrl = (String)episodio.SelectToken("thumbnailURL");
+                video.Thumb = (String)episodio.SelectToken("thumbnailURL");
                 video.VideoUrl = baseUrl + "#/video/" + episodio.SelectToken("id").ToString();
                 videoList.Add(video);
             }

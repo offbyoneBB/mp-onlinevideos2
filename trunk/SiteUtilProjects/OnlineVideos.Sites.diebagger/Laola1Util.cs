@@ -272,7 +272,7 @@ namespace OnlineVideos.Sites
                     VideoInfo video = new VideoInfo();
                     video.Title = categoryTitle;
                     video.VideoUrl = categoryUrl;
-                    video.ImageUrl = categoryImage;
+                    video.Thumb = categoryImage;
                     video.Airdate = categoryDate;
                     video.Other = LaolaCategoryTypes.Archive;
                     
@@ -306,7 +306,7 @@ namespace OnlineVideos.Sites
                     VideoInfo video = new VideoInfo();
                     video.Title = categoryTitle;
                     video.VideoUrl = categoryUrl;
-                    video.ImageUrl = categoryImage;
+                    video.Thumb = categoryImage;
                     video.Airdate = categoryDate;
                     video.Other = LaolaCategoryTypes.Live;
 

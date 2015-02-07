@@ -121,7 +121,7 @@ namespace OnlineVideos.Sites
                 {
                     VideoInfo info = new VideoInfo();
                     info.Title = m.Groups["title"].Value;
-                    info.ImageUrl = m.Groups["thumb"].Value;
+                    info.Thumb = m.Groups["thumb"].Value;
                     info.Description = m.Groups["description"].Value;
                     // this episode ID will be used later on, so store it in the .Other property
                     info.Other = m.Groups["episode"].Value;

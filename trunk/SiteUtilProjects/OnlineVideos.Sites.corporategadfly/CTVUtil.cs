@@ -97,7 +97,7 @@ namespace OnlineVideos.Sites
                             // convert seconds to timespan
                             Length = new DateTime(TimeSpan.FromSeconds((double) video["ContentPackages"][0]["Duration"]).Ticks).ToString("HH:mm:ss"),
                             Airdate = (string) video["BroadcastDate"],
-                            ImageUrl = (string) video["Images"][0]["Url"]
+                            Thumb = (string) video["Images"][0]["Url"]
                         });
                 }
             }

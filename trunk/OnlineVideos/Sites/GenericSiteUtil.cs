@@ -304,7 +304,7 @@ namespace OnlineVideos.Sites
                         video.VideoUrl = channel.Url;
                     }
                     video.Other = "livestream";
-                    video.ImageUrl = channel.Thumb;
+                    video.Thumb = channel.Thumb;
                     loVideoList.Add(video);
                 }
             }
@@ -657,7 +657,7 @@ namespace OnlineVideos.Sites
                         videoInfo.VideoUrl = FormatDecodeAbsolutifyUrl(url, m.Groups["VideoUrl"].Value, videoListRegExFormatString, videoListUrlDecoding);
                         // get, format and if needed absolutify the thumb url
                         if (!String.IsNullOrEmpty(m.Groups["ImageUrl"].Value))
-                            videoInfo.ImageUrl = FormatDecodeAbsolutifyUrl(url, m.Groups["ImageUrl"].Value, videoThumbFormatString, UrlDecoding.None);
+                            videoInfo.Thumb = FormatDecodeAbsolutifyUrl(url, m.Groups["ImageUrl"].Value, videoThumbFormatString, UrlDecoding.None);
                         videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value);
                         videoInfo.Airdate = Utils.PlainTextFromHtml(m.Groups["Airdate"].Value);
                         videoInfo.Description = m.Groups["Description"].Value;
@@ -682,8 +682,8 @@ namespace OnlineVideos.Sites
 
                             videoInfo.VideoUrl = videoItems[i].SelectSingleNode(videoUrlXml).InnerText;
                             if (!string.IsNullOrEmpty(videoListRegExFormatString)) videoInfo.VideoUrl = string.Format(videoListRegExFormatString, videoInfo.VideoUrl);
-                            if (!string.IsNullOrEmpty(videoThumbXml)) videoInfo.ImageUrl = videoItems[i].SelectSingleNode(videoThumbXml).InnerText;
-                            if (!string.IsNullOrEmpty(videoThumbFormatString)) videoInfo.ImageUrl = string.Format(videoThumbFormatString, videoInfo.ImageUrl);
+                            if (!string.IsNullOrEmpty(videoThumbXml)) videoInfo.Thumb = videoItems[i].SelectSingleNode(videoThumbXml).InnerText;
+                            if (!string.IsNullOrEmpty(videoThumbFormatString)) videoInfo.Thumb = string.Format(videoThumbFormatString, videoInfo.Thumb);
                             if (!string.IsNullOrEmpty(videoDurationXml)) videoInfo.Length = Utils.PlainTextFromHtml(videoItems[i].SelectSingleNode(videoDurationXml).InnerText);
                             if (!string.IsNullOrEmpty(videoAirDateXml)) videoInfo.Airdate = Utils.PlainTextFromHtml(videoItems[i].SelectSingleNode(videoAirDateXml).InnerText);
                             if (!string.IsNullOrEmpty(videoDescriptionXml)) videoInfo.Description = videoItems[i].SelectSingleNode(videoDescriptionXml).InnerText;

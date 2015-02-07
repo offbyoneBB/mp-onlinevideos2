@@ -83,7 +83,7 @@ namespace OnlineVideos.Sites
                 {
 					Title = string.Format("{0} ({1})", HttpUtility.HtmlDecode(match.Groups["title"].Value).Trim(), HttpUtility.HtmlDecode(match.Groups["speaker"].Value).Trim()),
 					VideoUrl = new Uri(new Uri(topicsUrl), match.Groups["url"].Value).AbsoluteUri,
-                    ImageUrl = match.Groups["thumb"].Value,
+                    Thumb = match.Groups["thumb"].Value,
                     Length = match.Groups["length"].Value.Trim(),
                     Airdate = Utils.PlainTextFromHtml(match.Groups["aired"].Value).Trim()
                 });

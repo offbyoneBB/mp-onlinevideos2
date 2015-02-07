@@ -76,7 +76,7 @@ namespace OnlineVideos.Sites
                                    VideoUrl = video.Value<string>("id"),
                                    Airdate = video.Value<string>("broadcast_date"),
                                    Length = video.Value<string>("length"),
-                                   ImageUrl = video.Value<JArray>("images")[0].Value<string>("url")
+                                   Thumb = video.Value<JArray>("images")[0].Value<string>("url")
                                });
                 }
             }

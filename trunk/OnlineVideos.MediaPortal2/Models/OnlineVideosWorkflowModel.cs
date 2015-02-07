@@ -295,7 +295,7 @@ namespace OnlineVideos.MediaPortal2
         public void StartSearch()
         {
 			if (BackgroundTask.Instance.IsExecuting) return;
-			BackgroundTask.Instance.Start<List<ISearchResultItem>>(
+			BackgroundTask.Instance.Start<List<SearchResultItem>>(
 				() =>
 				{
                     return SelectedSite.Site.Search(SearchString);
@@ -358,7 +358,7 @@ namespace OnlineVideos.MediaPortal2
             workflowManager.NavigatePushAsync(Guids.WorkflowStateDetails, new NavigationContextConfig() { NavigationContextDisplayLabel = SelectedVideo.Title });
         }
 
-		internal void ShowSearchResults(List<ISearchResultItem> result, string title)
+		internal void ShowSearchResults(List<SearchResultItem> result, string title)
 		{
 			// pop all states up to the site state from the current navigation stack
 			IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();

@@ -225,7 +225,7 @@ namespace OnlineVideos.Sites
 
                     XmlNode thumb = node.SelectSingleNode("thumbnails/image[@type='6']");
                     if (thumb != null)
-                        video.ImageUrl = thumb.SelectSingleNode("url").InnerText;
+                        video.Thumb = thumb.SelectSingleNode("url").InnerText;
                     video.Other = "PlaybackOptions://\n" + Utils.DictionaryToString(playbackOptions);
                     res.Add(video);
                 }

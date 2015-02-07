@@ -98,7 +98,7 @@ namespace OnlineVideos.Sites
           {
             VideoInfo video = new VideoInfo();
             video.Title = (string)channel["Title"];
-            video.ImageUrl = (string)channel["PrimaryImageUri"];
+            video.Thumb = (string)channel["PrimaryImageUri"];
             video.Other = "drlive";
             Log.Debug("DR NU Title: " + video.Title);
             JArray streamingservers = (JArray)channel["StreamingServers"];
@@ -250,7 +250,7 @@ namespace OnlineVideos.Sites
               video.Description = itemDescription;
               video.VideoUrl = link;
               video.Length = fduration;
-              video.ImageUrl = img;
+              video.Thumb = img;
               video.Other = "drnu";
               video.Airdate = airDate.ToString("dd. MMM. yyyy kl. HH:mm");
               res.Add(video);
@@ -328,7 +328,7 @@ namespace OnlineVideos.Sites
           Match m = regEx_bonanzaVideolist.Match(data);
           while (m.Success)
           {
-            VideoInfo videoInfo = new VideoInfo() { Title = m.Groups["title"].Value, Length = m.Groups["length"].Value, ImageUrl = m.Groups["thumb"].Value };
+            VideoInfo videoInfo = new VideoInfo() { Title = m.Groups["title"].Value, Length = m.Groups["length"].Value, Thumb = m.Groups["thumb"].Value };
 
             var info = JObject.Parse(HttpUtility.HtmlDecode(m.Groups["url"].Value));
             if (info != null)

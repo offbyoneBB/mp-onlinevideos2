@@ -195,7 +195,7 @@ namespace OnlineVideos.Sites
                                 new VideoInfo() {
                                     Title = title.InnerText,
                                     VideoUrl = string.Format(@"{0}{1}", baseUrl, anchor.GetAttributeValue(@"href", string.Empty)),
-                                    ImageUrl = anchor.Element("img").GetAttributeValue(@"src", string.Empty),
+                                    Thumb = anchor.Element("img").GetAttributeValue(@"src", string.Empty),
                                     Airdate = info.SelectSingleNode(@"./div[@class = 'video-content-air-date']").InnerText,
                                     Description =
                                         string.Format(@"{0}: {1}",
@@ -245,7 +245,7 @@ namespace OnlineVideos.Sites
                                        Airdate = (string) item["airdate"],
                                        Length = (string) item["duration"],
                                        VideoUrl = string.Format(@"{0}{1}", baseUrl, item["url"]),
-                                       ImageUrl = (string) item["thumb"]["large"]
+                                       Thumb = (string) item["thumb"]["large"]
                                    });
                     }
                 }

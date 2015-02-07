@@ -380,9 +380,9 @@ namespace OnlineVideos.Sites
 
                     if ((n = episodeImageRegex.Match(episodeHtml)).Success)
                     {
-                        video.ImageUrl = n.Groups[1].Value;
+                        video.Thumb = n.Groups[1].Value;
                         if (!string.IsNullOrEmpty(thumbReplaceRegExPattern))
-                            video.ImageUrl = Regex.Replace(video.ImageUrl, thumbReplaceRegExPattern, thumbReplaceString);
+                            video.Thumb = Regex.Replace(video.Thumb, thumbReplaceRegExPattern, thumbReplaceString);
                     }
                     videos.Add(video);
                 }
@@ -408,7 +408,7 @@ namespace OnlineVideos.Sites
                 else video.VideoUrl = channel.Url.Remove(argIndex);
 
                 video.Other = "livestream";
-                video.ImageUrl = channel.Thumb;
+                video.Thumb = channel.Thumb;
                 if (retrieveTVGuide && argIndex > -1)
                 {
                     Utils.TVGuideGrabber tvGuide = new Utils.TVGuideGrabber();

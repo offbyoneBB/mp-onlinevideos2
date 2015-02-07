@@ -137,7 +137,7 @@ namespace OnlineVideos.Sites
                     {
                         result.Add(new VideoInfo() {
                                        VideoUrl = anchor.Attributes["href"].Value,
-                                       ImageUrl = anchor.SelectSingleNode("./img").Attributes["src"].Value,
+                                       Thumb = anchor.SelectSingleNode("./img").Attributes["src"].Value,
                                        Length = lengthNode.SelectSingleNode(".//span[@class='field-length-value']").InnerText,
                                        Airdate = releaseNode.SelectSingleNode(".//span[@class='date-display-single']/span[@class='date-display-single']").InnerText,
                                        Title = titleNode.InnerText,

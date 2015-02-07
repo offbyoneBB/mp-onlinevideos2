@@ -24,7 +24,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
             var result = new VideoInfo();
             result.Description = GetDescription(document);
             result.Title = GetTitle(document);
-            result.ImageUrl = GetImageUrl(document);
+            result.Thumb = GetImageUrl(document);
             result.Length = "";
             result.Other = videoId;
             return result;

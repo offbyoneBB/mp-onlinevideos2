@@ -92,7 +92,7 @@ namespace OnlineVideos.Sites
 
                     VideoInfo video = new VideoInfo()
                     {
-                        ImageUrl = (string)episode["posterUrl"],
+                        Thumb = (string)episode["posterUrl"],
                         Title = string.Format("{0}: {1}", (string)episode["episodeText"], (string)episode["title"]),
                         Description = (string)episode["description"],
                         Airdate = airtime,

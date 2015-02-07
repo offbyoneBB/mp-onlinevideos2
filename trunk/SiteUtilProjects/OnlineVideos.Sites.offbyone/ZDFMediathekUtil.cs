@@ -213,7 +213,7 @@ namespace OnlineVideos.Sites
                 {
                     VideoInfo item = new VideoInfo();
                     item.Title = teaser.Title;
-                    item.ImageUrl = teaser.Image173x120;
+                    item.Thumb = teaser.Image173x120;
                     item.Description = teaser.Details;
                     item.Length = teaser.VideoLength != TimeSpan.Zero ? teaser.VideoLength.ToString() : teaser.Length;
                     item.Airdate = teaser.AirtimeDateTime.ToString("g", OnlineVideoSettings.Instance.Locale);

@@ -100,7 +100,7 @@ namespace OnlineVideos.Sites
                     result.Add(new VideoInfo() {
                                    VideoUrl =urlMatch.Success ? urlMatch.Groups["id"].Value : string.Empty,
                                    Title = titleAnchor.InnerText,
-                                   ImageUrl = item.SelectSingleNode(@".//div[@class = 'videoListThumb']//img").GetAttributeValue(@"src", string.Empty),
+                                   Thumb = item.SelectSingleNode(@".//div[@class = 'videoListThumb']//img").GetAttributeValue(@"src", string.Empty),
                                    Description = item.SelectSingleNode(@".//div[@class = 'vidListDescription']").InnerText
                                });
                 }

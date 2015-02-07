@@ -46,7 +46,7 @@ namespace OnlineVideos.Sites
             {
                 VideoInfo video = new VideoInfo();
                 video.Title = jVideo["title"].Value<string>();
-                video.ImageUrl = jVideo["imageUrl"].Value<string>();
+                video.Thumb = jVideo["imageUrl"].Value<string>();
                 video.Description = jVideo["description"].Value<string>();
                 //video.Airdate = DateTime.Parse(jVideo["publishDate"].Value<string>()).ToString(); not sure what format it is
                 video.Length = jVideo["duration"].Value<string>();

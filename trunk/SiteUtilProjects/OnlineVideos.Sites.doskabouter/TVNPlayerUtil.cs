@@ -144,7 +144,7 @@ namespace OnlineVideos.Sites
                 {
                     Title = title,
                     Description = getXmlValue(node, "lead"),
-                    ImageUrl = GetIcon(node),
+                    Thumb = GetIcon(node),
                     VideoUrl = contentHost + startUrl + urlQuery,
                     Airdate = getXmlValue(node, "start_date")
                 };

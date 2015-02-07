@@ -98,7 +98,7 @@ namespace OnlineVideos.Sites.DavidCalder
         {
           VideoInfo clip = new VideoInfo();
           clip.Description = videoDetail.TMDbDetails.overview;
-          clip.ImageUrl = videoDetail.TMDbDetails.PosterPathFullUrl();
+          clip.Thumb = videoDetail.TMDbDetails.PosterPathFullUrl();
           clip.Title = string.Format("{0}  –  {1}", video.Title, trailer.name);
           clip.Airdate = videoDetail.TMDbDetails.ReleaseDateAsString();
           clip.Title2 = trailer.name;

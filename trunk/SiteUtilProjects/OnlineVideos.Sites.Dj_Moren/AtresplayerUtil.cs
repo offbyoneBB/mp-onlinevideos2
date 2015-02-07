@@ -223,7 +223,7 @@ namespace OnlineVideos.Sites
                 VideoInfo video = new VideoInfo();
                 video.Title = (String)capitulo.SelectToken("title") + (tipo.Equals("") ? "" : " - " + tipo);
                 video.VideoUrl = (String)capitulo.SelectToken("hrefHtml");
-                video.ImageUrl = baseUrl + (String)capitulo.SelectToken("srcImage");
+                video.Thumb = baseUrl + (String)capitulo.SelectToken("srcImage");
                 video.Description = tipo;
                 video.Other = tipo;
                 videoList.Add(video);

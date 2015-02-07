@@ -76,7 +76,7 @@ namespace OnlineVideos.Sites
 						Title = item.Value<string>("titel"),
 						Description = item.Value<string>("anrisstext"),
 						Airdate = item.Value<string>("datum"),
-						ImageUrl = "http://www.heise.de" + item["anrissbild"].Value<string>("src"),
+						Thumb = "http://www.heise.de" + item["anrissbild"].Value<string>("src"),
 						VideoUrl = "http://www.heise.de" + item.Value<string>("url")
 					});
 				}
@@ -210,7 +210,7 @@ namespace OnlineVideos.Sites
 					{
 						Title = li.Element("h5").Element("a").InnerText,
 						VideoUrl = li.Element("h5").Element("a").GetAttributeValue("href", ""),
-						ImageUrl = "http://www.heise.de" + li.Descendants("img").First().GetAttributeValue("src", ""),
+						Thumb = "http://www.heise.de" + li.Descendants("img").First().GetAttributeValue("src", ""),
 						Description = li.Descendants("p").First().InnerText.Trim(),
 						Airdate = li.Descendants("span").First(s => s.GetAttributeValue("class", "") == "date").InnerText.Replace("&ndash;", "").Trim()
 					});
@@ -249,7 +249,7 @@ namespace OnlineVideos.Sites
 					{
 						Title = a.InnerText,
 						VideoUrl = "http://www.heise.de" + a.GetAttributeValue("href", ""),
-						ImageUrl = "http://www.heise.de" + li.Descendants("img").First().GetAttributeValue("src", ""),
+						Thumb = "http://www.heise.de" + li.Descendants("img").First().GetAttributeValue("src", ""),
 						Description = li.Descendants("p").First().FirstChild.InnerText.Trim(),
 						Other = tags
 					});

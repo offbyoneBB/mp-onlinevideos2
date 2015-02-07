@@ -109,7 +109,7 @@ namespace OnlineVideos.Sites
                     result.Add(new VideoInfo() {
                                    Title = video.Value<string>("clpName"),
                                    Description = video.Value<string>("desc"),
-                                   ImageUrl = string.Format(imageUrlFormat, video["img"]["vignette"]),
+                                   Thumb = string.Format(imageUrlFormat, video["img"]["vignette"]),
                                    Length = video.Value<string>("duration"),
                                    Other = property.Name
                                });

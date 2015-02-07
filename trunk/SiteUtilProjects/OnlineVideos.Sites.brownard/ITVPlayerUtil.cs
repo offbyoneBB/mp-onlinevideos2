@@ -212,7 +212,7 @@ namespace OnlineVideos.Sites
                 string thumb = match.Groups[2].Value;
                 if (!string.IsNullOrEmpty(thumbReplaceRegExPattern))
                     thumb = Regex.Replace(thumb, thumbReplaceRegExPattern, thumbReplaceString);
-                vid.ImageUrl = thumb;
+                vid.Thumb = thumb;
                 vid.Title = cleanString(match.Groups[3].Value);
                 vid.Airdate = match.Groups[4].Value;
                 vid.Description = cleanString(match.Groups[10].Value);
@@ -230,7 +230,7 @@ namespace OnlineVideos.Sites
                     vid.Title = cleanString(match.Groups[1].Value);
                     vid.Airdate = match.Groups[3].Value;
                     vid.Length = match.Groups[5].Value;
-                    vid.ImageUrl = match.Groups[7].Value;
+                    vid.Thumb = match.Groups[7].Value;
                     vid.Description = cleanString(match.Groups[9].Value);
                     vid.VideoUrl = (category as RssLink).Url;
                     vids.Add(vid);
@@ -269,7 +269,7 @@ namespace OnlineVideos.Sites
             {
                 VideoInfo vid = new VideoInfo();
                 vid.VideoUrl = match.Groups[1].Value;
-                vid.ImageUrl = match.Groups[2].Value;
+                vid.Thumb = match.Groups[2].Value;
                 vid.Length = match.Groups[6].Value.Trim();
 
                 if (cleanString(match.Groups[3].Value) == category.Name && !string.IsNullOrEmpty(match.Groups[4].Value))
@@ -296,7 +296,7 @@ namespace OnlineVideos.Sites
             {
                 VideoInfo vid = new VideoInfo();
                 vid.Title = chan.StreamName;
-                vid.ImageUrl = chan.Thumb;
+                vid.Thumb = chan.Thumb;
                 vid.VideoUrl = chan.Url;
                 int argIndex = chan.Url.IndexOf('?');
                 if (argIndex >= 0)

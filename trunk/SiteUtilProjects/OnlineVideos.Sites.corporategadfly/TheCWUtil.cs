@@ -85,7 +85,7 @@ namespace OnlineVideos.Sites
                     HtmlNode airdate = season.SelectSingleNode(@"./span[@class = 'd4']");
                     result.Add(new VideoInfo() {
                                    VideoUrl = string.Format(@"{0}{1}", baseUrl, anchor.GetAttributeValue(@"href", string.Empty)),
-                                   ImageUrl = img.GetAttributeValue(@"src", string.Empty),
+                                   Thumb = img.GetAttributeValue(@"src", string.Empty),
                                    Title = title.InnerText,
                                    Description = string.Format(@"{0}: {1}", season.SelectSingleNode(@"text()").InnerText, description.InnerText),
                                    Airdate = airdate != null ? airdate.InnerText.Replace(@"Original Air Date: ", string.Empty) : string.Empty

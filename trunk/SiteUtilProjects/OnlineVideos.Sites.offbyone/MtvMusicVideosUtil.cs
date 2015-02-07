@@ -33,7 +33,7 @@ namespace OnlineVideos.Sites
                 video.Title = rssItem.Description.Substring(0, rssItem.Description.LastIndexOf('|') - 1).Replace('|', '-');
                 if (rssItem.MediaThumbnails.Count > 0)
                 {
-                    video.ImageUrl = rssItem.MediaThumbnails[Math.Min(rssItem.MediaThumbnails.Count, rssItem.MediaThumbnails.Count / 2)].Url;
+                    video.Thumb = rssItem.MediaThumbnails[Math.Min(rssItem.MediaThumbnails.Count, rssItem.MediaThumbnails.Count / 2)].Url;
                 }                
                 if (rssItem.MediaContents.Count > 0)
                 {

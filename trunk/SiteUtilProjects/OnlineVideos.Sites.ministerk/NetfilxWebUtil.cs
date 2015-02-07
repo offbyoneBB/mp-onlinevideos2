@@ -921,7 +921,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                         {
                             Title = d.Title,
                             VideoUrl = string.Format(playerUrl, d.Id) + "&trkid=" + d.TrackId,
-                            ImageUrl = d.Cover,
+                            Thumb = d.Cover,
                             Description = d.Description,
                             Other = new SerializableDictionary<string, string>() { { "TrackId", d.TrackId }, { "VideoId", d.Id } }
                         });
@@ -929,7 +929,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 }
                 return videos;
             }
-            return new List<VideoInfo>() { new VideoInfo() { Description = category.Description, VideoUrl = string.Format(playerUrl, (category as RssLink).Url), Title = category.Name, ImageUrl = category.Thumb } };
+            return new List<VideoInfo>() { new VideoInfo() { Description = category.Description, VideoUrl = string.Format(playerUrl, (category as RssLink).Url), Title = category.Name, Thumb = category.Thumb } };
         }
 
         #endregion

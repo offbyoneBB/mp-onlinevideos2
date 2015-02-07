@@ -174,7 +174,7 @@ namespace OnlineVideos.Sites
                         long epochSeconds = entry.Value<long>("pubDate") / 1000;
                         // convert epoch (seconds since unix time) to a date string
                         video.Airdate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(epochSeconds).ToShortDateString();
-                        video.ImageUrl = entry.Value<string>("plmedia$defaultThumbnailUrl");
+                        video.Thumb = entry.Value<string>("plmedia$defaultThumbnailUrl");
                         result.Add(video);
                         
                         video.PlaybackOptions = new Dictionary<string, string>();

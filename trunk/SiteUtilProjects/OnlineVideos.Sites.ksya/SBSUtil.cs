@@ -71,7 +71,7 @@ namespace OnlineVideos.Sites
                         videoInfo.VideoUrl = FormatDecodeAbsolutifyUrl(url, m.Groups["VideoUrl"].Value, videoListRegExFormatString, videoListUrlDecoding);
                         // get, format and if needed absolutify the thumb url
                         if (!String.IsNullOrEmpty(m.Groups["ImageUrl"].Value))
-                            videoInfo.ImageUrl = FormatDecodeAbsolutifyUrl(url, Regex.Unescape(m.Groups["ImageUrl"].Value), videoThumbFormatString, UrlDecoding.None);
+                            videoInfo.Thumb = FormatDecodeAbsolutifyUrl(url, Regex.Unescape(m.Groups["ImageUrl"].Value), videoThumbFormatString, UrlDecoding.None);
                         videoInfo.Length = OnlineVideos.Utils.PlainTextFromHtml(m.Groups["Duration"].Value);
                         videoInfo.Airdate = OnlineVideos.Utils.PlainTextFromHtml(m.Groups["Airdate"].Value);
                         videoInfo.Description = m.Groups["Description"].Value;

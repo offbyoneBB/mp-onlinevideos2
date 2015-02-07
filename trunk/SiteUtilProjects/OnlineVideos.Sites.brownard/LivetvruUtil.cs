@@ -87,7 +87,7 @@ namespace OnlineVideos.Sites
 
                 vid.Title = string.Format("{0}{1} - {2}%{3}", category.Name, bitrate, m.Groups["rating"].Value, info);
                 vid.Description = category.Description;
-                vid.ImageUrl = category.Thumb;
+                vid.Thumb = category.Thumb;
                 vid.VideoUrl = m.Groups["url"].Value;
                 vids.Add(vid);
             }

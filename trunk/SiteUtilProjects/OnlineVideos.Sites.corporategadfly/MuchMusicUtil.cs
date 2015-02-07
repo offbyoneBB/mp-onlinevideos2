@@ -269,7 +269,7 @@ namespace OnlineVideos.Sites
                                        VideoUrl = videoUrl,
                                        Title = title,
                                        Description = description,
-                                       ImageUrl = imageUrl
+                                       Thumb = imageUrl
                                    });
                     }
                 }

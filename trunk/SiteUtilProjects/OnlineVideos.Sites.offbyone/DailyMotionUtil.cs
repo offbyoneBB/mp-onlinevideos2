@@ -107,7 +107,7 @@ namespace OnlineVideos.Sites
                     Description = jVideo.Value<string>("description"),
                     Airdate = Utils.UNIXTimeToDateTime(jVideo.Value<double>("created_time")).ToString("g", OnlineVideoSettings.Instance.Locale),
                     Length = jVideo.Value<string>("duration"),
-                    ImageUrl = jVideo.Value<string>("thumbnail_240_url"),
+                    Thumb = jVideo.Value<string>("thumbnail_240_url"),
                     VideoUrl = jVideo.Value<string>("embed_url")
                 });
             }
