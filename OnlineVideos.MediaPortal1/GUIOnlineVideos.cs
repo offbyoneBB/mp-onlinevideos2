@@ -366,7 +366,7 @@ namespace OnlineVideos.MediaPortal1
                         {
                             if (dlgCat.SelectedLabelText == Translation.Instance.AddToFavourites)
                             {
-                                bool result = OnlineVideoSettings.Instance.FavDB.addFavoriteCategory(aCategory, SelectedSite.Settings.Name);
+                                bool result = OnlineVideoSettings.Instance.FavDB.AddFavoriteCategory(aCategory, SelectedSite.Settings.Name);
                                 if (result)
                                 {
                                     cachedFavoritedCategoriesOfSelectedSite = default(KeyValuePair<string, List<string>>);
@@ -376,7 +376,7 @@ namespace OnlineVideos.MediaPortal1
                             }
                             else if (dlgCat.SelectedLabelText == Translation.Instance.RemoveFromFavorites)
                             {
-                                bool result = OnlineVideoSettings.Instance.FavDB.removeFavoriteCategory(SelectedSite.Settings.Name, aCategory.RecursiveName("|"));
+                                bool result = OnlineVideoSettings.Instance.FavDB.RemoveFavoriteCategory(SelectedSite.Settings.Name, aCategory.RecursiveName("|"));
                                 if (result)
                                 {
                                     cachedFavoritedCategoriesOfSelectedSite = default(KeyValuePair<string, List<string>>);
@@ -503,7 +503,7 @@ namespace OnlineVideos.MediaPortal1
                                                 {
                                                     Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                                                     Video = aVideo,
-                                                    Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[selectedVideo.SiteName] : selectedSite,
+                                                    Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(selectedVideo as FavoriteVideoInfo).SiteName] : selectedSite,
                                                     ForcedPlayer = forcedPlayer
                                                 }, true);
                                     }
@@ -524,7 +524,7 @@ namespace OnlineVideos.MediaPortal1
                                   break;
                                 case "AddToFav":
                                     string suggestedTitle = SelectedSite.GetFileNameForDownload(aVideo, selectedCategory, null);
-                                    bool successAddingToFavs = OnlineVideoSettings.Instance.FavDB.addFavoriteVideo(aVideo, suggestedTitle, SelectedSite.Settings.Name);
+                                    bool successAddingToFavs = OnlineVideoSettings.Instance.FavDB.AddFavoriteVideo(aVideo, suggestedTitle, SelectedSite.Settings.Name);
                                     GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                                     if (dlg != null)
                                     {
@@ -982,7 +982,7 @@ namespace OnlineVideos.MediaPortal1
                                             {
                                                 Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                                                 Video = selectedVideo,
-                                                Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[selectedVideo.SiteName] : selectedSite
+                                                Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(selectedVideo as FavoriteVideoInfo).SiteName] : selectedSite
                                             }, true);
                                 }
                             }
@@ -1010,7 +1010,7 @@ namespace OnlineVideos.MediaPortal1
                         {
                             Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                             Video = selectedVideo,
-                            Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[selectedVideo.SiteName] : selectedSite
+                            Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(selectedVideo as FavoriteVideoInfo).SiteName] : selectedSite
                         }, true, true);
                     }
                 }
@@ -1038,7 +1038,7 @@ namespace OnlineVideos.MediaPortal1
                     {
                         Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                         Video = (GUI_infoList.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo,
-                        Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[selectedVideo.SiteName] : selectedSite
+                        Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(selectedVideo as FavoriteVideoInfo).SiteName] : selectedSite
                     }, true, actionType != Action.ActionType.ACTION_SELECT_ITEM);
                 }
             }
@@ -1428,7 +1428,7 @@ namespace OnlineVideos.MediaPortal1
                 string siteName = SelectedSite.Settings.Name;
                 if (!string.IsNullOrEmpty(siteName) && cachedFavoritedCategoriesOfSelectedSite.Key != siteName)
                 {
-                    cachedFavoritedCategoriesOfSelectedSite = new KeyValuePair<string, List<string>>(siteName, OnlineVideoSettings.Instance.FavDB.getFavoriteCategoriesNames(siteName));
+                    cachedFavoritedCategoriesOfSelectedSite = new KeyValuePair<string, List<string>>(siteName, OnlineVideoSettings.Instance.FavDB.GetFavoriteCategoriesNames(siteName));
                 }
                 return cachedFavoritedCategoriesOfSelectedSite.Value;
             }
@@ -2524,7 +2524,7 @@ namespace OnlineVideos.MediaPortal1
                 {
                     Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                     Video = video,
-                    Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[video.SiteName] : SelectedSite
+                    Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(video as FavoriteVideoInfo).SiteName] : SelectedSite
                 });
             }
             if (currentPlaylist.Count > 0)

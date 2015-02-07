@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using RssToolkit.Rss;
 using OnlineVideos.Sites;
@@ -21,66 +19,10 @@ namespace OnlineVideos
         public string Length { get; set; }
         public string Airdate { get; set; }
         public string StartTime { get; set; }
-
-		public string GetOtherAsString() 
-        {
-            if (Other == null) return "";
-            else if (Other is string) return (string)Other;
-            else if (Other.GetType().IsSerializable) 
-            {
-                try
-                {
-                    string serialized = null;
-                    StringBuilder sb = new StringBuilder();
-                    new System.Xml.Serialization.XmlSerializer(Other.GetType()).Serialize(new System.IO.StringWriter(sb), Other);
-                    serialized = string.Format("Serialized://{0}|{1}", Regex.Replace(Other.GetType().AssemblyQualifiedName, @",\sVersion=[^,]+", ""), sb.ToString());
-                    return serialized;
-                }
-                catch (Exception ex)
-                {
-                    Log.Warn("Error serializing Other object for Favorites: {0}", ex.Message);
-                }
-            }
-            return Other.ToString();
-        }
-
-        public void SetOtherFromString(string other)
-        {
-            if (!string.IsNullOrEmpty(other))
-            {
-                if (other.StartsWith("Serialized://"))
-                {
-                    try
-                    {
-                        int index1 = "Serialized://".Length;
-                        int index2 = other.IndexOf("|", index1, StringComparison.InvariantCulture);
-                        string type = other.Substring(index1, index2 - index1);
-                        string data = other.Substring(index2 + 1);
-                        Type resolvedType = Type.GetType(type);
-                        if (resolvedType != null)
-                        {
-                            Other = new System.Xml.Serialization.XmlSerializer(resolvedType).Deserialize(new System.IO.StringReader(data));
-                            return;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Warn("Error deserializing Other object from Favorites: {0}", ex.Message);
-                    }
-                }    
-            }
-            Other = other;
-        }
         
 		public Dictionary<string, string> PlaybackOptions;
 
-        /// <summary>This property is only used by the <see cref="FavoriteUtil"/> to store the Name of the Site where this Video came from.</summary>
-        public string SiteName { get; set; }
-        
-        /// <summary>This property is only used by the <see cref="FavoriteUtil"/> to store the Id of Video, so it can be deleted from the DB.</summary>
-        public int Id { get; set; }
-
-        /// <summary>If the SiteUtil for this VideoInfo implements <see cref="IChoice"/> setting this to true will show the details view (default), false will play the video</summary>
+        /// <summary>If the SiteUtil for this VideoInfo implements <see cref="Sites.IChoice"/> setting this to true will show the details view (default), false will play the video</summary>
         public bool HasDetails { get; set; }
 
         public VideoInfo()
@@ -92,7 +34,6 @@ namespace OnlineVideos
             Thumb = string.Empty;
             Length = string.Empty;
             StartTime = string.Empty;
-            SiteName = string.Empty;
             HasDetails = true;
         }
 

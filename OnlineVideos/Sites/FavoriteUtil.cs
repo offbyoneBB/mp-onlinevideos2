@@ -61,7 +61,7 @@ namespace OnlineVideos.Sites
 
         public override List<String> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
-            SiteUtilBase util = OnlineVideoSettings.Instance.SiteUtilsList[video.SiteName];
+            SiteUtilBase util = OnlineVideoSettings.Instance.SiteUtilsList[(video as FavoriteVideoInfo).SiteName];
             return util.GetMultipleVideoUrls(video, inPlaylist);
         }
 
@@ -69,7 +69,7 @@ namespace OnlineVideos.Sites
         {
             if (category is RssLink)
             {
-                return OrderVideos(OnlineVideoSettings.Instance.FavDB.getFavoriteVideos(((RssLink)category).Url, null));
+                return OrderVideos(OnlineVideoSettings.Instance.FavDB.GetFavoriteVideos(((RssLink)category).Url, null));
             }
             return null;
         }
@@ -81,7 +81,7 @@ namespace OnlineVideos.Sites
         {
             Settings.Categories.Clear();
 
-            List<KeyValuePair<string, uint>> lsSiteIds = OnlineVideoSettings.Instance.FavDB.getSiteIDs();
+            List<KeyValuePair<string, uint>> lsSiteIds = OnlineVideoSettings.Instance.FavDB.GetSiteIds();
 
             if (lsSiteIds == null || lsSiteIds.Count == 0) return 0;
 
@@ -124,7 +124,7 @@ namespace OnlineVideos.Sites
                         Settings.Categories.Add(cat);
 
                         // create subcategories if any
-                        List<Category> favCats = OnlineVideoSettings.Instance.FavDB.getFavoriteCategories(aSite.Name);
+                        List<Category> favCats = OnlineVideoSettings.Instance.FavDB.GetFavoriteCategories(aSite.Name);
                         if (favCats.Count > 0)
                         {
                             cat.HasSubCategories = true;
@@ -162,7 +162,7 @@ namespace OnlineVideos.Sites
 
         public override List<SearchResultItem> Search(string query, string category = null)
         {
-            return OrderVideos(OnlineVideoSettings.Instance.FavDB.getFavoriteVideos(null, query))
+            return OrderVideos(OnlineVideoSettings.Instance.FavDB.GetFavoriteVideos(null, query))
                 .ConvertAll<SearchResultItem>(v => v as SearchResultItem);
         }
 
@@ -190,7 +190,7 @@ namespace OnlineVideos.Sites
             ContextMenuExecutionResult result = new ContextMenuExecutionResult();
             if (choice.DisplayText == Translation.Instance.DeleteAll)
             {
-                result.RefreshCurrentItems = OnlineVideoSettings.Instance.FavDB.removeAllFavoriteVideos(((RssLink)selectedCategory).Url);
+                result.RefreshCurrentItems = OnlineVideoSettings.Instance.FavDB.RemoveAllFavoriteVideos(((RssLink)selectedCategory).Url);
                 // we have to manually refresh the categories
                 if (result.RefreshCurrentItems && selectedCategory.ParentCategory != null) DiscoverDynamicCategories();
             }
@@ -198,13 +198,13 @@ namespace OnlineVideos.Sites
             {
                 if (selectedCategory is FavoriteCategory)
                 {
-                    result.RefreshCurrentItems = OnlineVideoSettings.Instance.FavDB.removeFavoriteCategory(((FavoriteCategory)selectedCategory).Other as Category);
+                    result.RefreshCurrentItems = OnlineVideoSettings.Instance.FavDB.RemoveFavoriteCategory(((FavoriteCategory)selectedCategory).Other as Category);
                     if (result.RefreshCurrentItems) selectedCategory.ParentCategory.SubCategories.Remove(selectedCategory);
                     return result;
                 }
                 else
                 {
-                    result.RefreshCurrentItems = OnlineVideoSettings.Instance.FavDB.removeFavoriteVideo(selectedItem);
+                    result.RefreshCurrentItems = OnlineVideoSettings.Instance.FavDB.RemoveFavoriteVideo(selectedItem as FavoriteVideoInfo);
                 }
                 // we have to manually refresh the categories
                 if (result.RefreshCurrentItems && selectedCategory.ParentCategory != null) DiscoverDynamicCategories();
@@ -227,7 +227,7 @@ namespace OnlineVideos.Sites
 		public List<VideoInfo> FilterSearchResults(string query, int maxResult, string orderBy, string timeFrame)
 		{
 			lastSort = orderBy;
-            return OrderVideos(OnlineVideoSettings.Instance.FavDB.getFavoriteVideos(null, query));
+            return OrderVideos(OnlineVideoSettings.Instance.FavDB.GetFavoriteVideos(null, query));
 		}
 
 		public List<VideoInfo> FilterSearchResults(string query, string category, int maxResult, string orderBy, string timeFrame)

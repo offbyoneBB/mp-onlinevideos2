@@ -28,7 +28,7 @@ namespace OnlineVideos.Sites
     public override string GetVideoUrl(VideoInfo video)
     {
       XmlDocument doc = new XmlDocument();
-      string redirectUrl = GetWebData("http://common.tv2.dk/flashplayer/playlist.xml.php/alias-player_news/autoplay-1/clipid-" + video.Id + "/keys-NEWS,PLAYER.xml");
+      string redirectUrl = GetWebData("http://common.tv2.dk/flashplayer/playlist.xml.php/alias-player_news/autoplay-1/clipid-" + video.Other.ToString() + "/keys-NEWS,PLAYER.xml");
       doc.LoadXml(redirectUrl);
       XmlNodeList elemList = doc.GetElementsByTagName("source");
         string attrVal = elemList[0].Attributes["video"].Value;
@@ -47,7 +47,7 @@ namespace OnlineVideos.Sites
         foreach (var item in contentData)
         {
           VideoInfo video = new VideoInfo();
-          video.Id = item.Value<int>("id");
+          video.Other = item.Value<int>("id");
           video.Title = item.Value<string>("title");
           video.Description = item.Value<string>("description");
           video.Thumb = item.Value<string>("img");
