@@ -196,7 +196,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
             if (suspend) //suspend and hide MediaPortal
             {
-                InputDevices.Stop(); //stop input devices so they don't interfere when the browser player starts listening
+                //InputDevices.Stop(); //stop input devices so they don't interfere when the browser player starts listening
                 GUIWindowManager.OnNewAction += GUIWindowManager_OnNewAction;
 
                 // hide mediaportal and suspend rendering 
@@ -210,7 +210,7 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 GUIWindowManager.OnNewAction -= GUIWindowManager_OnNewAction;
                 
-                InputDevices.Init();
+                //InputDevices.Init();
 
                 // Resume Mediaportal rendering
                 GUIGraphicsContext.BlankScreen = false;
