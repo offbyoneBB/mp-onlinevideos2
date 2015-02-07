@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
-using OnlineVideos.Sites;
+using OnlineVideos.CrossDomain;
 using OnlineVideos.Downloading;
+using OnlineVideos.Sites;
 
 namespace OnlineVideos
 {
@@ -12,7 +13,7 @@ namespace OnlineVideos
     /// Singleton class holding all Settings that are used througout the OnlineVideos system.
     /// Make sure all fields are initialized before using any OnlineVideos functionality.
     /// </summary>
-	public class OnlineVideoSettings : CrossDomanSingletonBase<OnlineVideoSettings>
+	public class OnlineVideoSettings : CrossDomainSingleton<OnlineVideoSettings>
     {
 		protected bool SiteUtilsWereBuilt = false;
 

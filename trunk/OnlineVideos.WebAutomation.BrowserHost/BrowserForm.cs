@@ -12,7 +12,7 @@ using OnlineVideos.Sites.WebAutomation.BrowserHost.Factories;
 using System.IO;
 using System.Diagnostics;
 using System.Configuration;
-using OnlineVideos.Sites.Base;
+using OnlineVideos.Sites;
 using System.ServiceModel;
 using System.Threading;
 using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;

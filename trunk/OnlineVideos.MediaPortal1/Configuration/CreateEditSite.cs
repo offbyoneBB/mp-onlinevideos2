@@ -15,7 +15,7 @@ namespace OnlineVideos.MediaPortal1
             propertyGridSiteSettings.BrowsableAttributes = new AttributeCollection(new CategoryAttribute("OnlineVideosConfiguration"));
 
             // utils combobox
-            foreach (string site in SiteUtilFactory.GetAllNames()) cbSiteUtil.Items.Add(site);
+            foreach (string site in Sites.SiteUtilFactory.GetAllNames()) cbSiteUtil.Items.Add(site);
             
             // language identifiers combobox
             List<string> cultureNames = new List<string>();
@@ -146,7 +146,7 @@ namespace OnlineVideos.MediaPortal1
                 site.UtilName = (string)cbSiteUtil.SelectedItem;
                 try
                 {
-                    propertyGridSiteSettings.SelectedObject = SiteUtilFactory.CreateFromShortName(site.UtilName, site);
+                    propertyGridSiteSettings.SelectedObject = Sites.SiteUtilFactory.CreateFromShortName(site.UtilName, site);
                 }
                 catch
                 {

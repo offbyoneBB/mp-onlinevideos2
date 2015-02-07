@@ -141,7 +141,7 @@ namespace OnlineVideos.MediaPortal1
 
             for (int iRow = 0; iRow < loResultSet.Rows.Count; iRow++)
             {
-				VideoInfo video = OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(VideoInfo).Assembly.FullName, typeof(VideoInfo).FullName) as VideoInfo;
+				VideoInfo video = CrossDomain.OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(VideoInfo).Assembly.FullName, typeof(VideoInfo).FullName) as VideoInfo;
                 video.Description = DatabaseUtility.Get(loResultSet, iRow, "VDO_DESC");
                 video.ImageUrl = DatabaseUtility.Get(loResultSet, iRow, "VDO_IMG_URL");
                 video.Length = DatabaseUtility.Get(loResultSet, iRow, "VDO_LENGTH");
