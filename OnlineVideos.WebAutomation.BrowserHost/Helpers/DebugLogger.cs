@@ -12,9 +12,9 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers
     /// </summary>
     public class DebugLogger : ILog
     {
-        private static bool _writeDebugLog = false; // Allow for debug logging to be independant of debug mode
-        private static string _debugLogPath;
-        private static bool _debugEntryWritten = false;
+        private bool _writeDebugLog = false; // Allow for debug logging to be independant of debug mode
+        private string _debugLogPath;
+        private bool _debugEntryWritten = false;
 
         /// <summary>
         /// Ctor - load values from the config file
@@ -32,13 +32,13 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers
         /// Write a debug message if enabled in the app config
         /// </summary>
         /// <param name="message"></param>
-        public static void WriteDebugLog(string message)
+        private void WriteDebugLog(string message, string level)
         {
             if (_writeDebugLog)
             {
                 if (!string.IsNullOrEmpty(_debugLogPath) && Directory.Exists(Path.GetDirectoryName(_debugLogPath)))
                 {
-                    var msg = DateTime.Now.ToString("dd MMM yyyy HH:mm:ss") + " " + message + "\r\n";
+                    var msg = string.Format("[{0}] [Log    ] [BrowserHost] [{1,-5}] - {2}\r\n", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss,fff"), level, message);
                     // Create a new file for first line to be written
                     if (!_debugEntryWritten)
                         File.WriteAllText(_debugLogPath, msg);
@@ -51,22 +51,23 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers
 
         public void Debug(string format, params object[] arg)
         {
-            WriteDebugLog("Debug: " + string.Format(format, arg));
+            WriteDebugLog(string.Format(format, arg), "DEBUG");
         }
         public void Error(Exception ex)
         {
-            WriteDebugLog("Error: " + ex.Message + " " + ex.StackTrace);
+            WriteDebugLog(ex.Message + "\r\n" + ex.StackTrace, "ERROR");
         }
         public void Error(string format, params object[] arg)
         {
-            WriteDebugLog("Error: " + string.Format(format, arg));
+            WriteDebugLog(string.Format(format, arg), "ERROR");
         }
         public void Info(string format, params object[] arg)
         {
-            WriteDebugLog("Info: " + string.Format(format, arg));
+            WriteDebugLog(string.Format(format, arg), "INFO");
         }
         public void Warn(string format, params object[] arg)
         {
+            WriteDebugLog(string.Format(format, arg), "WARN");
         }
     }
 }

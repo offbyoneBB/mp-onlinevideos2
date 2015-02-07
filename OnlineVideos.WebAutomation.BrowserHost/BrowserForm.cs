@@ -67,7 +67,8 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         private ServiceHost _callbackService;
 
         private DateTime _lastActionTime;
-        
+        private ILog _logger = new DebugLogger();
+
         /// <summary>
         /// Store/retrieve the current screen the web player is showing on - this is stored in the user config
         /// </summary>
@@ -97,7 +98,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         {
             try
             {
-                DebugLogger.WriteDebugLog("Loading browser form");
+                _logger.Info("Loading browser form");
                 InitializeComponent();
                 _connectorType = connectorType;
                 _videoInfo = videoInfo;
@@ -111,7 +112,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             }
             catch (Exception ex)
             {
-                DebugLogger.WriteDebugLog(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
+                _logger.Error(ex);
             }
         }
         
@@ -125,54 +126,54 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             try
             {
 
-                DebugLogger.WriteDebugLog("Setting current screen");
+                _logger.Info("Setting current screen");
                 SetScreenState();
                 SetCurrentScreen();
 
                 ForceClose = false;
                 this.Activate();
                 this.Focus();
-                DebugLogger.WriteDebugLog("Initialising services");
+                _logger.Info("Initialising services");
                 _callbackService = new WebBrowserPlayerCallbackServiceHost();
                 _service = new WebBrowserPlayerServiceHost();
 
                 WebBrowserPlayerService.ServiceImplementation.WebBrowserPlayerService.OnNewActionReceived += OnNewActionFromClient;
-                DebugLogger.WriteDebugLog(string.Format("Browser Host started with connector type: {0}, video info: {1}, Username: {2}", _connectorType, _videoInfo, _userName));
+                _logger.Info(string.Format("Browser Host started with connector type: {0}, video info: {1}, Username: {2}", _connectorType, _videoInfo, _userName));
                 WebBrowserPlayerCallbackService.LogInfo(string.Format("Browser Host started with connector type: {0}, video info: {1}", _connectorType, _videoInfo));
 
-                DebugLogger.WriteDebugLog("Loading Connector");
-                _connector = BrowserInstanceConnectorFactory.GetConnector(_connectorType, new DebugLogger(), webBrowser);
+                _logger.Info("Loading Connector");
+                _connector = BrowserInstanceConnectorFactory.GetConnector(_connectorType, _logger, webBrowser);
 
                 if (_connector == null)
                 {
-                    DebugLogger.WriteDebugLog(string.Format("Unable to load connector type {0}, not found in any site utils", _connectorType));
+                    _logger.Error(string.Format("Unable to load connector type {0}, not found in any site utils", _connectorType));
                     throw new ApplicationException(string.Format("Unable to load connector type {0}, not found in any site utils", _connectorType));
                 }
 
                 _connector.DebugMode = _debugMode;
-                DebugLogger.WriteDebugLog("Performing Log in");
+                _logger.Info("Performing Log in");
                 _connector.PerformLogin(_userName, _password);
 
                 var result = _connector.WaitForComplete(ForceQuitting, OnlineVideoSettings.Instance.UtilTimeout);
 
                 if (result)
                 {
-                    DebugLogger.WriteDebugLog("Playing Video");
+                    _logger.Info("Playing Video");
                     _connector.PlayVideo(_videoInfo);
                     result = _connector.WaitForComplete(ForceQuitting, OnlineVideoSettings.Instance.UtilTimeout);
-                    DebugLogger.WriteDebugLog("Playing WaitforComplete " + result.ToString());
+                    _logger.Info("Playing WaitforComplete " + result.ToString());
                     if (!result)
                         ForceQuit();
                 }
                 else
                 {
-                    DebugLogger.WriteDebugLog("Log in failed");
+                    _logger.Error("Log in failed");
                     ForceQuit();
                 }                
             }
             catch (Exception ex)
             {
-                DebugLogger.WriteDebugLog(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
+                _logger.Error(ex);
                 Console.Error.WriteLine(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
                 Console.Error.Flush();
                 WebBrowserPlayerCallbackService.LogError(ex);
@@ -236,14 +237,14 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                         msg.Msg == WM_RBUTTONDOWN || msg.Msg == WM_SYSKEYDOWN)
                 {
 
-                    DebugLogger.WriteDebugLog(string.Format("WndProc message to be processed {0}, appCommand {1}, LParam {2}, WParam {3}", msg.Msg, GET_APPCOMMAND_LPARAM(msg.LParam), msg.LParam, msg.WParam));
+                    _logger.Info(string.Format("WndProc message to be processed {0}, appCommand {1}, LParam {2}, WParam {3}", msg.Msg, GET_APPCOMMAND_LPARAM(msg.LParam), msg.LParam, msg.WParam));
                     if (WebBrowserPlayerCallbackService.SendWndProc(msg))
                         return;
                 }
             }
             catch  (Exception ex)
             {
-                DebugLogger.WriteDebugLog(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
+                _logger.Error(ex);
                 Console.Error.WriteLine(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
                 Console.Error.Flush();
                 WebBrowserPlayerCallbackService.LogError(ex);
@@ -261,7 +262,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             _lastKeyPressed = keyPressed;
             _lastKeyPressedTime = DateTime.Now;
 
-            DebugLogger.WriteDebugLog(string.Format("HandleKeyPress to be processed {0}", keyPressed));
+            _logger.Info(string.Format("HandleKeyPress to be processed {0}", keyPressed));
 
             // Always force close when escape is pressed
             if (keyPressed == (int)Keys.Escape)
@@ -286,7 +287,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 return;
             
             _lastActionTime = DateTime.Now;
-            DebugLogger.WriteDebugLog(string.Format("OnNewAction received {0}", action));
+            _logger.Info(string.Format("OnNewAction received {0}", action));
             switch (action)
             {
                 case "ACTION_PLAY":
@@ -336,7 +337,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             }
             catch (Exception ex)
             {
-                DebugLogger.WriteDebugLog(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
+                _logger.Error(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
             }
             finally
             {

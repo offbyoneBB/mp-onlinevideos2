@@ -38,7 +38,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             }
             catch (Exception ex)
             {
-                DebugLogger.WriteDebugLog(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
+                new DebugLogger().Error(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
                 Console.Error.WriteLine(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
                 Console.Error.Flush();
             }

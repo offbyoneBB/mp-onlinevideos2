@@ -34,7 +34,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.Factories
             if (!Directory.Exists(path))
                 path = Directory.GetCurrentDirectory();
 
-            DebugLogger.WriteDebugLog(string.Format("Looking in {0} for connector dlls", path));
+            logger.Info(string.Format("Looking in {0} for connector dlls", path));
 
             if (Directory.Exists(path))
             {
@@ -43,7 +43,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.Factories
                 if (dllFilesToCheck.Length == 0)
                 {
                     path = Directory.GetCurrentDirectory();
-                    DebugLogger.WriteDebugLog(string.Format("Looking in {0} for connector dlls", path));
+                    logger.Info(string.Format("Looking in {0} for connector dlls", path));
                 }
 
                 dllFilesToCheck = Directory.GetFiles(path, "OnlineVideos.Sites.*.dll");
