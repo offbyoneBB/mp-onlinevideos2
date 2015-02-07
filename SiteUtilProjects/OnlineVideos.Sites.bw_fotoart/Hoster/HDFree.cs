@@ -3,7 +3,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
 
-using OnlineVideos.Hoster.Base;
+using OnlineVideos.Hoster;
 using OnlineVideos.Sites;
 
 

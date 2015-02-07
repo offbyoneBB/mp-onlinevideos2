@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using OnlineVideos.Hoster.Base;
+using OnlineVideos.Hoster;
 
 namespace OnlineVideos.Sites.Brownard
 {

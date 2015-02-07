@@ -60,7 +60,7 @@ namespace OnlineVideos.Sites
             if (youTubeOption.Value != null)
             {
                 string youtubeId = youTubeOption.Value.Substring(youTubeOption.Value.ToLower().IndexOf("youtube:") + 8);
-                return Hoster.Base.HosterFactory.GetHoster("youtube").GetPlaybackOptions(youtubeId);
+                return Hoster.HosterFactory.GetHoster("youtube").GetPlaybackOptions(youtubeId);
             }
             return playbackOptions.ToDictionary(po => ReadableQuality(po.Key), p => p.Value);
         }

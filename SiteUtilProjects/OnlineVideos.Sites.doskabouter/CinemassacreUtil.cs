@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Web;
-using OnlineVideos.Hoster.Base;
+using OnlineVideos.Hoster;
 
 namespace OnlineVideos.Sites
 {

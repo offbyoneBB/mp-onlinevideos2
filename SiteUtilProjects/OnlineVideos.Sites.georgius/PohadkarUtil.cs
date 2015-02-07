@@ -421,7 +421,7 @@ namespace OnlineVideos.Sites.georgius
                 }
                 else
                 {
-                    Dictionary<String, String> playbackOptions = Hoster.Base.HosterFactory.GetHoster("Youtube").GetPlaybackOptions(HttpUtility.UrlDecode(match.Groups["showVideoUrl"].Value.Replace("-nocookie", "")));
+                    Dictionary<String, String> playbackOptions = Hoster.HosterFactory.GetHoster("Youtube").GetPlaybackOptions(HttpUtility.UrlDecode(match.Groups["showVideoUrl"].Value.Replace("-nocookie", "")));
                     if (playbackOptions != null)
                     {
                         int width = 0;

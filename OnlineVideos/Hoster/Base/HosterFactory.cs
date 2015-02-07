@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using OnlineVideos.CrossDomain;
 
-namespace OnlineVideos.Hoster.Base
+namespace OnlineVideos.Hoster
 {
     public static class HosterFactory
     {

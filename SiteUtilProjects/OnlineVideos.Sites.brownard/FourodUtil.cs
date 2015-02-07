@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
-using OnlineVideos.Hoster.Base;
+using OnlineVideos.Hoster;
 using OnlineVideos.Sites.Brownard;
 using Newtonsoft.Json.Linq;
 using HtmlAgilityPack;

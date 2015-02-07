@@ -3,7 +3,7 @@ using System.Web;
 
 namespace OnlineVideos.Hoster
 {
-	public class LiveVideo : Hoster.Base.HosterBase
+	public class LiveVideo : Hoster.HosterBase
 	{
         public override string GetHosterUrl()
         {

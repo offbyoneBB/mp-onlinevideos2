@@ -201,7 +201,7 @@ namespace OnlineVideos.Sites
         {
             video.PlaybackOptions = null;
             string res = base.GetVideoUrl(video);
-            var vimeoHoster = OnlineVideos.Hoster.Base.HosterFactory.GetHoster("vimeo") as OnlineVideos.Hoster.Vimeo;
+            var vimeoHoster = OnlineVideos.Hoster.HosterFactory.GetHoster("vimeo") as OnlineVideos.Hoster.Vimeo;
             if (vimeoHoster != null)
                 video.SubtitleText = vimeoHoster.subtitleText;
 

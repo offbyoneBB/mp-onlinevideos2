@@ -493,7 +493,7 @@ namespace OnlineVideos.Sites
             }
             if (!string.IsNullOrEmpty(iframeUrl))
             {
-                video.PlaybackOptions = Hoster.Base.HosterFactory.GetHoster("vk").GetPlaybackOptions(iframeUrl);
+                video.PlaybackOptions = Hoster.HosterFactory.GetHoster("vk").GetPlaybackOptions(iframeUrl);
                 if (video.PlaybackOptions.Count > 0)
                     bestUrl = video.PlaybackOptions.First().Value;
             }

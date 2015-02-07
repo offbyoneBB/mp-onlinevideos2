@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace OnlineVideos.Hoster.Base
+namespace OnlineVideos.Hoster
 {
 	/// <summary>
 	/// The abstract base class for all hosters. 

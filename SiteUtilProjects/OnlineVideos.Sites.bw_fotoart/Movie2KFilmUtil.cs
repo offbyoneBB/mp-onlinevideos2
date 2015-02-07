@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-using OnlineVideos.Hoster.Base;
+using OnlineVideos.Hoster;
 
 
 namespace OnlineVideos.Sites.bw_fotoart
