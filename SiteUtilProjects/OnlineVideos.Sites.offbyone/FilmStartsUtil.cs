@@ -95,9 +95,9 @@ namespace OnlineVideos.Sites
                     videoInfo.VideoUrl = ApplyUrlDecoding(videoInfo.VideoUrl, videoListUrlDecoding);
                     if (!Uri.IsWellFormedUriString(videoInfo.VideoUrl, System.UriKind.Absolute)) videoInfo.VideoUrl = new Uri(new Uri(baseUrl), videoInfo.VideoUrl).AbsoluteUri;
                     // get, format and if needed absolutify the thumb url
-                    videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
-                    if (!string.IsNullOrEmpty(videoThumbFormatString)) videoInfo.ImageUrl = string.Format(videoThumbFormatString, videoInfo.ImageUrl);
-                    if (!string.IsNullOrEmpty(videoInfo.ImageUrl) && !Uri.IsWellFormedUriString(videoInfo.ImageUrl, System.UriKind.Absolute)) videoInfo.ImageUrl = new Uri(new Uri(baseUrl), videoInfo.ImageUrl).AbsoluteUri;
+                    videoInfo.Thumb = m.Groups["ImageUrl"].Value;
+                    if (!string.IsNullOrEmpty(videoThumbFormatString)) videoInfo.Thumb = string.Format(videoThumbFormatString, videoInfo.Thumb);
+                    if (!string.IsNullOrEmpty(videoInfo.Thumb) && !Uri.IsWellFormedUriString(videoInfo.Thumb, System.UriKind.Absolute)) videoInfo.Thumb = new Uri(new Uri(baseUrl), videoInfo.Thumb).AbsoluteUri;
                     videoInfo.Description = m.Groups["Description"].Value;
                     result.Add(videoInfo);
                     m = m.NextMatch();

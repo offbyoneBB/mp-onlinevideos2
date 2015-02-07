@@ -312,7 +312,7 @@ namespace OnlineVideos.Sites
 
                         video.Title = video.Title.Replace("&#160;", " ");
 
-                        video.ImageUrl = m.Groups["img"].Value;
+                        video.Thumb = m.Groups["img"].Value;
                         video.VideoUrl = (category as RssLink).Url;
                         video.Other = CategoryType.Live;
 
@@ -328,7 +328,7 @@ namespace OnlineVideos.Sites
                         video.Title = m.Groups["title"].Value;
                         video.Title = video.Title.Replace("&#160;", " ");
 
-                        video.ImageUrl = m.Groups["img"].Value;
+                        video.Thumb = m.Groups["img"].Value;
                         video.VideoUrl = ORF_BASE + m.Groups["url"].Value;
                         video.Other = CategoryType.Live;
 
@@ -344,7 +344,7 @@ namespace OnlineVideos.Sites
                     video.Title = video.Title.Replace("&#160;", " ");
 
                     video.Title2 = m2.Groups["showtitle"].Value;
-                    video.ImageUrl = m2.Groups["img"].Value;
+                    video.Thumb = m2.Groups["img"].Value;
                     video.VideoUrl = ORF_BASE + m2.Groups["url"].Value;
                     video.Other = CategoryType.Live;
 
@@ -361,7 +361,7 @@ namespace OnlineVideos.Sites
                     video.Title = "Demnächst: " + m3.Groups["title"].Value + " (" + date + ")";
                     video.Airdate = date;
                     video.Description = m3.Groups["title"].Value;
-                    video.ImageUrl = m3.Groups["img"].Value;
+                    video.Thumb = m3.Groups["img"].Value;
                     //video.VideoUrl = ORF_BASE + m2.Groups["url"].Value;
                     video.Other = CategoryType.Live;
 
@@ -404,7 +404,7 @@ namespace OnlineVideos.Sites
                     video.Title = video.Title.Replace("&amp;", "&");
                     video.VideoUrl = (category as RssLink).Url;
                     video.Other = CategoryType.VOD;
-                    video.ImageUrl = thumb;
+                    video.Thumb = thumb;
                     videos.Add(video);
                 }
 
@@ -431,7 +431,7 @@ namespace OnlineVideos.Sites
                                 video.VideoUrl = ORF_BASE + video.VideoUrl;
                                 video.Airdate = day;
                                 video.Other = CategoryType.VOD;
-                                video.ImageUrl = thumb;
+                                video.Thumb = thumb;
                                 videos.Add(video);
 
                                 n = n.NextMatch();
@@ -451,7 +451,7 @@ namespace OnlineVideos.Sites
                                     video.Airdate = day;
                                     video.VideoUrl = o.Groups["url"].Value;
                                     video.VideoUrl = ORF_BASE + video.VideoUrl;
-                                    video.ImageUrl = thumb;
+                                    video.Thumb = thumb;
                                     video.Other = CategoryType.VOD;
 
                                     //only add episode from the same show (e.g. ZiB 9, ZiB 13, ...)

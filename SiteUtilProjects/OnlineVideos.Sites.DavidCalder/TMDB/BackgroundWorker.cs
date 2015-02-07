@@ -29,7 +29,7 @@ namespace OnlineVideos.Sites.DavidCalder.TMDB
                               if (!string.IsNullOrEmpty(newInfo.TMDbDetails.overview))
                                 video.Description = newInfo.TMDbDetails.overview;
                               if (!string.IsNullOrEmpty(newInfo.TMDbDetails.PosterPathFullUrl()))
-                                video.ImageUrl = newInfo.TMDbDetails.PosterPathFullUrl();
+                                video.Thumb = newInfo.TMDbDetails.PosterPathFullUrl();
                               if (newInfo.TMDbDetails.id != null)
                                 video.Id = Convert.ToInt32(newInfo.TMDbDetails.id);
                               video.Title2 = "Full Movie";

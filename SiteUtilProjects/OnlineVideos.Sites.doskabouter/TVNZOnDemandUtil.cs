@@ -114,7 +114,7 @@ namespace OnlineVideos.Sites
                                 episode.Attributes["href"].Value);
                         }
                     }
-                    video.ImageUrl = episode.Attributes["src"].Value;
+                    video.Thumb = episode.Attributes["src"].Value;
                     string[] epinfo = episode.Attributes["episode"].Value.Split('|');
                     if (epinfo.Length == 1)
                         video.Length = epinfo[0].Trim();

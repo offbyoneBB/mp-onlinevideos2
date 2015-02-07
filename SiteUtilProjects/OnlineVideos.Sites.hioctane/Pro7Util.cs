@@ -53,7 +53,7 @@ namespace OnlineVideos.Sites
                     video.VideoUrl = entry.Element(defaultNs + "link").Attribute("href").Value;
                     video.Airdate = DateTime.ParseExact(entry.Element(defaultNs + "published").Value.Substring(0, 19), "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture).ToString("g", OnlineVideoSettings.Instance.Locale);
                     video.Description = string.Format("{0}\n{1}", entry.Element(defaultNs + "summary").Value, entry.Element(defaultNs + "content").Value);
-                    if (entry.Element(psdNs + "imagemedium") != null) video.ImageUrl = entry.Element(psdNs + "imagemedium").Value;
+                    if (entry.Element(psdNs + "imagemedium") != null) video.Thumb = entry.Element(psdNs + "imagemedium").Value;
 
                     videoList.Add(video);
                 }

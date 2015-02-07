@@ -224,7 +224,7 @@ namespace OnlineVideos.Sites
             HtmlNode movieAnchor = footerDoc.DocumentNode.Descendants("a").FirstOrDefault(a => a.InnerText.ToLower().Contains("spela film"));
             if (movieAnchor != null)
             {
-                VideoInfo video = new VideoInfo() { Title = category.Name, Description = category.Description, ImageUrl = category.Thumb, VideoUrl = baseUrl + movieAnchor.GetAttributeValue("href", "") };
+                VideoInfo video = new VideoInfo() { Title = category.Name, Description = category.Description, Thumb = category.Thumb, VideoUrl = baseUrl + movieAnchor.GetAttributeValue("href", "") };
                 TrackingInfo ti = new TrackingInfo() { VideoKind = VideoKind.Movie, Title = category.Name.Replace("1080P", "").Replace("1080p", "") };
                 Regex rgx = new Regex(@"Releasedatum:\s(\d{4})");
                 Match m = rgx.Match(video.Description);
@@ -245,7 +245,7 @@ namespace OnlineVideos.Sites
                 {
                     VideoInfo video = new VideoInfo();
                     video.Title = category.Name;
-                    video.ImageUrl = category.Thumb;
+                    video.Thumb = category.Thumb;
                     HtmlNode descP = row.Descendants("p").FirstOrDefault();
                     string desc = "";
                     if (descP != null)

@@ -124,7 +124,7 @@ namespace OnlineVideos.Sites.georgius
 
                                 VideoInfo videoInfo = new VideoInfo()
                                 {
-                                    ImageUrl = Utils.FormatAbsoluteUrl(showEpisodeThumb, ApetitTvUtil.baseUrl),
+                                    Thumb = Utils.FormatAbsoluteUrl(showEpisodeThumb, ApetitTvUtil.baseUrl),
                                     Title = showEpisodeTitle,
                                     VideoUrl = Utils.FormatAbsoluteUrl(showEpisodeUrl, ApetitTvUtil.baseUrl)
                                 };

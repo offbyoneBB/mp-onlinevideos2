@@ -57,7 +57,7 @@ namespace OnlineVideos.Sites
                 VideoInfo video = new VideoInfo();
                 video.Title = node.SelectSingleNode("a:title", nsmgr).InnerText;
                 video.VideoUrl = node.SelectSingleNode("a:id", nsmgr).InnerText;
-                video.ImageUrl = node.SelectSingleNode("m:thumbnail", nsmgr).Attributes["url"].InnerText;
+                video.Thumb = node.SelectSingleNode("m:thumbnail", nsmgr).Attributes["url"].InnerText;
                 video.Length = node.SelectSingleNode("r:duration", nsmgr).Attributes["formatted"].Value;
                 DateTime airdate = DateTime.Parse(node.SelectSingleNode("a:published", nsmgr).InnerText);
                 video.Airdate = airdate.ToString("g", OnlineVideoSettings.Instance.Locale);

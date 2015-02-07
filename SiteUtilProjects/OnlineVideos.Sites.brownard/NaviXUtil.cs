@@ -88,7 +88,7 @@ namespace OnlineVideos.Sites
                 VideoInfo vid = new VideoInfo();
                 vid.Title = category.Name;
                 vid.Description = category.Description;
-                vid.ImageUrl = category.Thumb;
+                vid.Thumb = category.Thumb;
                 vid.Airdate = item.Date;
                 vid.Other = item;
                 vids.Add(vid);

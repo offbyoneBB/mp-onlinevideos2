@@ -1541,10 +1541,10 @@ namespace OnlineVideos.MediaPortal1
                     CurrentState = State.details;
 
                     // make the Thumb of the VideoInfo available to the details view
-                    if (string.IsNullOrEmpty(selectedVideo.ImageUrl))
+                    if (string.IsNullOrEmpty(selectedVideo.Thumb))
                         GUIPropertyManager.SetProperty("#OnlineVideos.Details.Poster", string.Empty);
                     else
-                        GUIPropertyManager.SetProperty("#OnlineVideos.Details.Poster", selectedVideo.ImageUrl);
+                        GUIPropertyManager.SetProperty("#OnlineVideos.Details.Poster", selectedVideo.Thumb);
 
                     SetVideosToInfoList(result as List<VideoInfo>);
                 }
@@ -1573,7 +1573,7 @@ namespace OnlineVideos.MediaPortal1
                     loListItem.ItemId = GUI_infoList.Count;
                     loListItem.OnItemSelected += OnItemSelected;
                     GUI_infoList.Add(loListItem);
-                    if (!string.IsNullOrEmpty(loVideoInfo.ImageUrl)) imageHash[loVideoInfo.ImageUrl] = true;
+                    if (!string.IsNullOrEmpty(loVideoInfo.Thumb)) imageHash[loVideoInfo.Thumb] = true;
                 }
             }
             if (imageHash.Count > 0) ImageDownloader.GetImages<VideoInfo>(currentTrailerList);
@@ -1954,7 +1954,7 @@ namespace OnlineVideos.MediaPortal1
                 currentFacadeItems.Add(listItem);
 
                 if (listItem.Item == selectedVideo) GUI_facadeView.SelectedListItemIndex = GUI_facadeView.Count - 1;
-                if (!string.IsNullOrEmpty(videoInfo.ImageUrl)) imageHash[videoInfo.ImageUrl] = true;
+                if (!string.IsNullOrEmpty(videoInfo.Thumb)) imageHash[videoInfo.Thumb] = true;
             }
             // fall back to list view if there are no items with thumbs or more than one item and all have the same thumb
             suggestedView = null;
@@ -2720,7 +2720,7 @@ namespace OnlineVideos.MediaPortal1
             }
 
             saveItems.CurrentItem.LocalFile = Utils.GetNextFileName(saveItems.CurrentItem.LocalFile);
-            saveItems.CurrentItem.ThumbFile = string.IsNullOrEmpty(saveItems.CurrentItem.VideoInfo.ThumbnailImage) ? saveItems.CurrentItem.VideoInfo.ImageUrl : saveItems.CurrentItem.VideoInfo.ThumbnailImage;
+            saveItems.CurrentItem.ThumbFile = string.IsNullOrEmpty(saveItems.CurrentItem.VideoInfo.ThumbnailImage) ? saveItems.CurrentItem.VideoInfo.Thumb : saveItems.CurrentItem.VideoInfo.ThumbnailImage;
 
             // make sure the target dir exists
             if (!(Directory.Exists(Path.GetDirectoryName(saveItems.CurrentItem.LocalFile))))

@@ -119,7 +119,7 @@ namespace OnlineVideos.Sites.georgius
                     VideoInfo videoInfo = new VideoInfo()
                     {
                         Title = "Live",
-                        ImageUrl = "http://ocko.tv/public/templates/default/img/drop-logo.png",
+                        Thumb = "http://ocko.tv/public/templates/default/img/drop-logo.png",
                         VideoUrl = resultUrl
                     };
                     pageVideos.Add(videoInfo);

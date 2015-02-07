@@ -131,7 +131,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
 
                     video.Description = channel.SelectNodes("*[name()='programme']").GetLiveTvDescription(out titleAdditional);
 
-                    video.ImageUrl = channelItem.ChannelImageUrl;
+                    video.Thumb = channelItem.ChannelImageUrl;
                     video.Title = channelItem.ChannelName + " (" + titleAdditional + ")";
                     video.Other = "LTV~" + channelItem.ChannelVideoId;
 

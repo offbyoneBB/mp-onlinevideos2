@@ -84,7 +84,7 @@ namespace OnlineVideos.Sites
                 vi.VideoUrl += vi.VideoUrl.EndsWith(".nba") ? "_nba_576x324.flv" : ".flv";
                 vi.Title = jo.Value<string>("title");
                 vi.Description = jo["metadata"]["media"].Value<string>("excerpt");
-                vi.ImageUrl = jo["metadata"]["media"]["thumbnail"].Value<string>("url");
+                vi.Thumb = jo["metadata"]["media"]["thumbnail"].Value<string>("url");
                 vi.Length = jo["metadata"]["video"].Value<string>("length");
                 vi.Airdate = OnlineVideos.Utils.UNIXTimeToDateTime(jo.Value<long>("mediaDateUts")).ToString("g", OnlineVideoSettings.Instance.Locale);
 

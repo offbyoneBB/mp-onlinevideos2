@@ -252,7 +252,7 @@ namespace OnlineVideos.Sites
                 video.Title = m.Groups["title"].Value;
                 video.Length = m.Groups["duree"].Value;
                 video.Description = m.Groups["description"].Value;
-                video.ImageUrl = m.Groups["thumb"].Value;
+                video.Thumb = m.Groups["thumb"].Value;
 
                 listVideos.Add(video);
                 m = m.NextMatch();

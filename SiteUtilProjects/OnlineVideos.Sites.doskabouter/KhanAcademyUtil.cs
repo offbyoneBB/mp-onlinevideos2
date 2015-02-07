@@ -81,7 +81,7 @@ namespace OnlineVideos.Sites
 
                 video.Length = VideoInfo.GetDuration(j.Value<string>("duration"));
                 JToken dlurls = j["download_urls"];
-                video.ImageUrl = dlurls.Value<string>("png");
+                video.Thumb = dlurls.Value<string>("png");
                 video.VideoUrl = @"http://www.youtube.com/watch?v=" + j.Value<string>("youtube_id");
                 res.Add(video);
             }

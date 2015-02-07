@@ -163,7 +163,7 @@ namespace OnlineVideos.Sites
                         {
                             Title = getInnertext(node.SelectSingleNode(".//h3[@itemprop='name']/text()")),
                             VideoUrl = FixUrl(baseUrl, getAttribute(node.SelectSingleNode(".//a[@itemprop='url']"), "href")),
-                            ImageUrl = FixUrl(baseUrl, getAttribute(node.SelectSingleNode(".//img[@itemprop='thumbnailUrl']"), "data-src")),
+                            Thumb = FixUrl(baseUrl, getAttribute(node.SelectSingleNode(".//img[@itemprop='thumbnailUrl']"), "data-src")),
                             Description = getInnertext(node.SelectSingleNode(".//p[@itemprop='description']")),
                             Airdate = getInnertext(node.SelectSingleNode(".//div[@itemprop='datePublished']")),
                             Length = getInnertext(node.SelectSingleNode("(.//span[@itemprop='timeRequired'])[last()]")),

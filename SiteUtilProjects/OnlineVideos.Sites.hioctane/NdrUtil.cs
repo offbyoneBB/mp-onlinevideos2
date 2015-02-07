@@ -52,7 +52,7 @@ namespace OnlineVideos.Sites
 						Title = item.Descendants("h4").First().InnerText,
 						Description = item.Descendants("p").First().FirstChild.InnerText,
 						VideoUrl = videoUrl,
-						ImageUrl = baseUrl + item.Descendants("img").First().GetAttributeValue("src", ""),
+						Thumb = baseUrl + item.Descendants("img").First().GetAttributeValue("src", ""),
 						Length = length != null ? length.InnerText : "",
 						Airdate = HttpUtility.HtmlDecode(item.Descendants("div").First(d => d.GetAttributeValue("class", "") == "subline").InnerText)
 					};

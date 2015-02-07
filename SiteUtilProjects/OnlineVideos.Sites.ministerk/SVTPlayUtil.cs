@@ -277,11 +277,11 @@ namespace OnlineVideos.Sites
             {
                 img = a.Descendants("img").FirstOrDefault(i => !string.IsNullOrEmpty(i.GetAttributeValue("src", "")));
                 if (img != null)
-                    video.ImageUrl = img.GetAttributeValue("src", "");
+                    video.Thumb = img.GetAttributeValue("src", "");
             }
             else
             {
-                video.ImageUrl = img.GetAttributeValue("data-imagename", "");
+                video.Thumb = img.GetAttributeValue("data-imagename", "");
             }
             video.CleanDescriptionAndTitle();
             return video;
@@ -298,7 +298,7 @@ namespace OnlineVideos.Sites
                 if (!string.IsNullOrEmpty(video.VideoUrl))
                 {
                     video.Title = HttpUtility.HtmlDecode((article.Descendants("a").Select(a => a.GetAttributeValue("title", "")).FirstOrDefault() ?? "").Trim().Replace('\n', ' '));
-                    video.ImageUrl = article.Descendants("img").Select(i => i.GetAttributeValue("src", "")).FirstOrDefault();
+                    video.Thumb = article.Descendants("img").Select(i => i.GetAttributeValue("src", "")).FirstOrDefault();
                     video.Airdate = article.Descendants("time").Select(t => t.GetAttributeValue("datetime", "")).FirstOrDefault();
                     if (!string.IsNullOrEmpty(video.Airdate)) video.Airdate = DateTime.Parse(video.Airdate).ToString("d", OnlineVideoSettings.Instance.Locale);
                     videoList.Add(video);

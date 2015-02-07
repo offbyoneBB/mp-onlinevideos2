@@ -220,13 +220,13 @@ namespace OnlineVideos.Sites
                 video.Length = '|' + Translation.Instance.Airdate + ": " + airdate;
             }
 
-            video.ImageUrl = getNodeText(node, "thumbnail_uri");
-            if (String.IsNullOrEmpty(video.ImageUrl))
-                video.ImageUrl = String.Format(@"http://data.rtl.nl/system/img/71v0o4xqq2yihq1tc3gc23c2w/{0}",
+            video.Thumb = getNodeText(node, "thumbnail_uri");
+            if (String.IsNullOrEmpty(video.Thumb))
+                video.Thumb = String.Format(@"http://data.rtl.nl/system/img/71v0o4xqq2yihq1tc3gc23c2w/{0}",
                     getNodeText(node, "thumbnail_id"));
-            if (!String.IsNullOrEmpty(video.ImageUrl) &&
-                !Uri.IsWellFormedUriString(video.ImageUrl, System.UriKind.Absolute))
-                video.ImageUrl = new Uri(new Uri(@"http://data.rtl.nl/"), video.ImageUrl).AbsoluteUri;
+            if (!String.IsNullOrEmpty(video.Thumb) &&
+                !Uri.IsWellFormedUriString(video.Thumb, System.UriKind.Absolute))
+                video.Thumb = new Uri(new Uri(@"http://data.rtl.nl/"), video.Thumb).AbsoluteUri;
             return video;
         }
 
@@ -338,9 +338,9 @@ namespace OnlineVideos.Sites
                 if (!Uri.IsWellFormedUriString(videoInfo.VideoUrl, System.UriKind.Absolute))
                     videoInfo.VideoUrl = @"http://iptv.rtl.nl/nettv/" + videoInfo.VideoUrl;
 
-                videoInfo.ImageUrl = item.SelectSingleNode("thumbnail").InnerText;
-                if (!Uri.IsWellFormedUriString(videoInfo.ImageUrl, System.UriKind.Absolute))
-                    videoInfo.ImageUrl = @"http://iptv.rtl.nl/nettv/" + videoInfo.ImageUrl;
+                videoInfo.Thumb = item.SelectSingleNode("thumbnail").InnerText;
+                if (!Uri.IsWellFormedUriString(videoInfo.Thumb, System.UriKind.Absolute))
+                    videoInfo.Thumb = @"http://iptv.rtl.nl/nettv/" + videoInfo.Thumb;
                 videoInfo.Length = '|' + Translation.Instance.Airdate + ": " + aired.ToString();
                 videoInfo.Description = item.SelectSingleNode("samenvattinglang").InnerText;
 

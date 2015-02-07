@@ -153,7 +153,7 @@ namespace OnlineVideos.Sites.georgius
                                         {
                                             Title = episodeTitle,
                                             VideoUrl = episodeUrl,
-                                            ImageUrl = episodeThumbUrl,
+                                            Thumb = episodeThumbUrl,
                                             Other = episodeDataClipId
                                         };
 

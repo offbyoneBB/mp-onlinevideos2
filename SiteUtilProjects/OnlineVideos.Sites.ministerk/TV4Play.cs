@@ -251,7 +251,7 @@ namespace OnlineVideos.Sites
                     {
                         if (((string)result["poster_image"]) != null)
                         {
-                            video.ImageUrl = ((string)result["poster_image"]).StartsWith("/") ?
+                            video.Thumb = ((string)result["poster_image"]).StartsWith("/") ?
                                 string.Format(filmerImageUrl, webApiBaseUrl, (string)result["poster_image"]) :
                                 (string)result["poster_image"];
                         }
@@ -259,7 +259,7 @@ namespace OnlineVideos.Sites
                     }
                     else
                     {
-                        video.ImageUrl = string.Format(programImageUrl, "", HttpUtility.UrlEncode((string)result["image"]));
+                        video.Thumb = string.Format(programImageUrl, "", HttpUtility.UrlEncode((string)result["image"]));
                         video.Description = (string)result["description"];
                     }
                     videos.Add(video);

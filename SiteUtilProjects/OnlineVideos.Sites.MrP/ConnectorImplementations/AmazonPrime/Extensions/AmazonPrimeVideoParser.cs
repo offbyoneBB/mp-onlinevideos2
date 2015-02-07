@@ -56,7 +56,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
                                                             infoNode.GetNodeByClass("dv-meta-info").NavigatePath(new[] { 1 }).GetInnerText().Replace("\n", string.Empty).Trim();
 
                     var imageUrlNode = detailNode.NavigatePath(new[] { 3, 1, 0, 0, 1 });
-                    video.ImageUrl = imageUrlNode == null ? string.Empty : imageUrlNode.Attributes["src"].Value;
+                    video.Thumb = imageUrlNode == null ? string.Empty : imageUrlNode.Attributes["src"].Value;
                     video.Length = infoNode.NavigatePath(new[] { 2, 3 }).GetInnerText().Replace("\n", string.Empty).Trim();
                     video.Other = doc.GetElementbyId("ASIN").Attributes["value"].Value;
                     results.Add(video);
@@ -84,7 +84,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
                                              "Released: " + item.GetNodeByClass("release-date").GetInnerText().Replace("\n", string.Empty).Trim();
 
                         var imageUrlNode = doc.GetElementbyId("dv-dp-left-content").GetNodeByClass("dp-meta-icon-container");
-                        video.ImageUrl = imageUrlNode == null ? string.Empty : imageUrlNode.FindAllChildElements()[1].Attributes["src"].Value;
+                        video.Thumb = imageUrlNode == null ? string.Empty : imageUrlNode.FindAllChildElements()[1].Attributes["src"].Value;
                         video.Length = item.GetNodeByClass("runtime").GetInnerText().Replace("\n", string.Empty).Trim();
                         var videoUrl = usesAltLayout ? titleNode.GetAttribute("href") : item.GetAttribute("href");
                         videoUrl = videoUrl.Substring(videoUrl.IndexOf("/product/") + 9);

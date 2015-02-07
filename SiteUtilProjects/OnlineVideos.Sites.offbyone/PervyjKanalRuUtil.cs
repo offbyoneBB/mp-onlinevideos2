@@ -142,7 +142,7 @@ namespace OnlineVideos.Sites
 			{
 				VideoInfo video = new VideoInfo();
 				var img = li.Descendants("img").FirstOrDefault();
-				if (img != null) video.ImageUrl = img.GetAttributeValue("src", "");
+				if (img != null) video.Thumb = img.GetAttributeValue("src", "");
 				video.Airdate = li.SelectSingleNode("div[@class = 'date']").InnerText;
 				video.Title = HttpUtility.HtmlDecode(li.SelectSingleNode("div[@class = 'txt']").InnerText);
 				video.VideoUrl =  HttpUtility.HtmlDecode(li.Descendants("a").FirstOrDefault().GetAttributeValue("href", ""));

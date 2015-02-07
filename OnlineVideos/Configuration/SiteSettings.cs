@@ -145,15 +145,10 @@ namespace OnlineVideos
 	public class Category : SearchResultItem, IComparable<Category> 
     {
         protected string _Name;
-        protected string _Thumb;
 
         [DataMember(Name = "name", Order = 0)]
         [XmlAttribute("name")]
         public string Name { get { return _Name; } set { if (_Name != value) { _Name = value; NotifyPropertyChanged("Name"); } } }
-
-        [DataMember(Name = "thumb", Order = 1, EmitDefaultValue = false)]
-        [XmlAttribute("thumb")]
-        public string Thumb { get { return _Thumb; } set { _Thumb = value; NotifyPropertyChanged("Thumb"); } }
 
         [XmlIgnore]
         public virtual bool HasSubCategories { get; set; }

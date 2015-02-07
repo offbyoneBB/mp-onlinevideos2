@@ -418,7 +418,7 @@ namespace OnlineVideos.Sites
                         video.Other = ti;
                         video.VideoUrl = movieFrame.GetAttributeValue("src", "");
                         video.Title = string.Format("{0} [{1}]", category.Name, tabName);
-                        video.ImageUrl = category.Thumb;
+                        video.Thumb = category.Thumb;
                         video.Description = category.Description;
                         videos.Add(video);
                     }
@@ -455,7 +455,7 @@ namespace OnlineVideos.Sites
                                 video = new VideoInfo();
                                 video.VideoUrl = seasonEpisodeNode.GetAttributeValue("rel", "");
                                 video.Title = (category.Name + "." + seasonName + seasonEpisodeNode.InnerText.Replace("Avsnitt ", "E")).Replace("\r", string.Empty).Trim();
-                                video.ImageUrl = category.Thumb;
+                                video.Thumb = category.Thumb;
                                 video.Description = category.Description;
 
                                 ITrackingInfo ti = new TrackingInfo() { VideoKind = VideoKind.TvSeries, Title = title, Year = year };

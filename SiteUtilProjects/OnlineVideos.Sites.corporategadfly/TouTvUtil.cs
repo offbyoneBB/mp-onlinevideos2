@@ -68,7 +68,7 @@ namespace OnlineVideos.Sites
                             metaInfo.Add(url, new VideoInfo() {
                                              Title = (string) lineupItem["Title"],
                                              VideoUrl = string.Format(@"{0}{1}", baseUrlPrefix, url),
-                                             ImageUrl = (string) lineupItem["ImageUrl"],
+                                             Thumb = (string) lineupItem["ImageUrl"],
                                              Description = (string) lineupItem["Details"]["Description"],
                                              Airdate = (string) lineupItem["Details"]["AirDate"],
                                              Length = (string) TimeSpan.FromSeconds((int) lineupItem["Details"]["Length"]).ToString()
@@ -108,7 +108,7 @@ namespace OnlineVideos.Sites
                                 ParentCategory = parentCategory,
                                 Name = HttpUtility.HtmlDecode(anchor.InnerText),
                                 Url = string.Format(@"{0}{1}", baseUrlPrefix, href),
-                                Thumb = metaInfo[href].ImageUrl,
+                                Thumb = metaInfo[href].Thumb,
                                 HasSubCategories = true
                             });
                     }
@@ -208,7 +208,7 @@ namespace OnlineVideos.Sites
                                                 Title = (string) episode["title"],
                                                 Description = (string) episode["details"]["description"],
                                                 VideoUrl = string.Format(@"{0}{1}", baseUrlPrefix, (string) episode["url"]),
-                                                ImageUrl = (string) episode["imageUrl"],
+                                                Thumb = (string) episode["imageUrl"],
                                                 Airdate = (string) episode["details"]["airDate"],
                                                 Length = TimeSpan.FromSeconds((int) episode["details"]["length"]).ToString()
                                             });

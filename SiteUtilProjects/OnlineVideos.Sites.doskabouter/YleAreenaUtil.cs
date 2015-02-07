@@ -81,7 +81,7 @@ namespace OnlineVideos.Sites
                     Description = jvid.Value<string>("desc"),
                     Length = jvid.Value<string>("durationSec"),
                     Airdate = jvid.Value<string>("published"),
-                    ImageUrl = images.Value<string>("XL"),
+                    Thumb = images.Value<string>("XL"),
                     VideoUrl = String.Format(@"http://areena.yle.fi/tv/{0}.json", jvid.Value<string>("id"))
                 };
                 result.Add(video);

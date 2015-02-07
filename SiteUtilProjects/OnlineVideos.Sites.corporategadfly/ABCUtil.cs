@@ -123,10 +123,10 @@ namespace OnlineVideos.Sites
                 {
                     VideoInfo info = new VideoInfo();
                     info.Title = m.Groups["title"].Value;
-                    info.ImageUrl = m.Groups["image"].Value;
+                    info.Thumb = m.Groups["image"].Value;
                     info.Description = m.Groups["description"].Value;
                     info.Other = m.Groups["link"].Value;
-                    info.VideoUrl = info.ImageUrl;
+                    info.VideoUrl = info.Thumb;
 
                     result.Add(info);
                 }

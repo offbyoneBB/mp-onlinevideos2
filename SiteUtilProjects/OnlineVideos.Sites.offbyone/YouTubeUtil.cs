@@ -459,7 +459,7 @@ namespace OnlineVideos.Sites
                         int height = int.Parse(thumbnail.Height);
                         if (height > maxHeight)
                         {
-                            video.ImageUrl = thumbnail.Url;
+                            video.Thumb = thumbnail.Url;
                             maxHeight = height;
                         }
                     }

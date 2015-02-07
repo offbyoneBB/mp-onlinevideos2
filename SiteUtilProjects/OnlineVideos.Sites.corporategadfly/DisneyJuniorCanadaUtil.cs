@@ -85,7 +85,7 @@ namespace OnlineVideos.Sites
                         result.Add(new VideoInfo() {
                                        Title = anchor.GetAttributeValue(@"title", string.Empty),
                                        VideoUrl = string.Format(@"{0}{1}", baseUrl, anchor.GetAttributeValue(@"href", string.Empty)),
-                                       ImageUrl = string.Format(@"{0}{1}", baseUrl, img.GetAttributeValue(@"src", string.Empty))
+                                       Thumb = string.Format(@"{0}{1}", baseUrl, img.GetAttributeValue(@"src", string.Empty))
                                    });
                     }
                 }

@@ -59,7 +59,7 @@ namespace OnlineVideos.Sites
                                 VideoUrl = string.Format(contentUrlFormat, siteCode, (int) item["Id"]),
                                 Title = (string) item["Name"],
                                 Description = (string) item["Desc"],
-                                ImageUrl = (string) item["Images"][0]["Url"],
+                                Thumb = (string) item["Images"][0]["Url"],
                             });
                     }
                 }

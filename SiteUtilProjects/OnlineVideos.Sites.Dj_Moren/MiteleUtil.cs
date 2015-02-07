@@ -220,7 +220,7 @@ namespace OnlineVideos.Sites
                 video.Title = episodio.SelectToken("post_title") + " - " + episodio.SelectToken("post_subtitle");
                 video.Description = (String)episodio.SelectToken("post_content");
                 video.Airdate = (String)episodio.SelectToken("post_date");
-                video.ImageUrl = (String)episodio.SelectToken("image");
+                video.Thumb = (String)episodio.SelectToken("image");
                 video.VideoUrl = miteleBaseUrl + (String)episodio.SelectToken("url");
                 videoList.Add(video);
             }

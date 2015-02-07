@@ -125,7 +125,7 @@ namespace OnlineVideos.Sites
                                 dictionary.Add(key,
                                                new VideoInfo() {
                                                    VideoUrl = videoUrl,
-                                                   ImageUrl = document.Value<string>("img"),
+                                                   Thumb = document.Value<string>("img"),
                                                    Length = document.Value<string>("duration"),
                                                    Airdate = document.Value<string>("airDate"),
                                                    Title = document.Value<string>("title"),
@@ -157,7 +157,7 @@ namespace OnlineVideos.Sites
                         result.Add(new VideoInfo() {
                                        VideoUrl = anchor.GetAttributeValue("href", ""),
                                        Title = HttpUtility.HtmlDecode(anchor.InnerText),
-                                       ImageUrl = div.SelectSingleNode(".//div[@class='wrapper']//img").GetAttributeValue("original", ""),
+                                       Thumb = div.SelectSingleNode(".//div[@class='wrapper']//img").GetAttributeValue("original", ""),
                                        Description = HttpUtility.HtmlDecode(div.SelectSingleNode(".//p[@class='description']").InnerText),
                                        Length = airDateDurationMatch.Groups["duration"].Value,
                                        Airdate = airDateDurationMatch.Groups["airDate"].Value

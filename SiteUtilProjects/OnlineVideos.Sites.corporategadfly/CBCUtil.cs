@@ -94,7 +94,7 @@ namespace OnlineVideos.Sites
                         }
                         JArray assets = item["assets"] as JArray;
                         if (assets != null && assets.First != null)
-                            video.ImageUrl = assets.First.Value<string>("URL");
+                            video.Thumb = assets.First.Value<string>("URL");
 
                         if (videoDictionary.ContainsKey(contentID))
                         {

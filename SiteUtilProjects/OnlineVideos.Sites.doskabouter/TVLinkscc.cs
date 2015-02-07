@@ -223,7 +223,7 @@ namespace OnlineVideos.Sites
                     video.Title = string.Format("{0}x{1:00} {2}", iSeason, iEpisode, parts[3]);
                     video.VideoUrl = new Uri(new Uri(baseUrl), parts[0]).AbsoluteUri;
 
-                    video.ImageUrl = category.ParentCategory.Thumb;
+                    video.Thumb = category.ParentCategory.Thumb;
                     video.Description = category.ParentCategory.Description;
                     //video.Airdate = //
 
@@ -305,13 +305,13 @@ namespace OnlineVideos.Sites
                     if (!string.IsNullOrEmpty(sData))
                     {
                         Match m;
-                        if (string.IsNullOrEmpty(video.ImageUrl))
+                        if (string.IsNullOrEmpty(video.Thumb))
                         {
                             m = regexTvShowDataThumb.Match(sData);
                             if (m.Success)
                             {
-                                video.ImageUrl = m.Groups["Thumb"].Value;
-                                video.ThumbnailImage = video.ImageUrl; //so it shows in OSD
+                                video.Thumb = m.Groups["Thumb"].Value;
+                                video.ThumbnailImage = video.Thumb; //so it shows in OSD
                             }
                         }
                         if (string.IsNullOrEmpty(video.Description))

@@ -70,7 +70,7 @@ namespace OnlineVideos.MediaPortal1
 			DatabaseUtility.RemoveInvalidChars(ref siteName);
             string title = string.IsNullOrEmpty(titleFromUtil) ? "" : DatabaseUtility.RemoveInvalidChars(titleFromUtil);
             string desc = string.IsNullOrEmpty(foVideo.Description) ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.Description);
-            string thumb = string.IsNullOrEmpty(foVideo.ImageUrl) ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.ImageUrl);
+            string thumb = string.IsNullOrEmpty(foVideo.Thumb) ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.Thumb);
             string url = string.IsNullOrEmpty(foVideo.VideoUrl) ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.VideoUrl);
             string length = string.IsNullOrEmpty(foVideo.Length) ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.Length);
             string airdate = string.IsNullOrEmpty(foVideo.Airdate) ? "" : DatabaseUtility.RemoveInvalidChars(foVideo.Airdate);
@@ -143,7 +143,7 @@ namespace OnlineVideos.MediaPortal1
             {
 				VideoInfo video = CrossDomain.OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(VideoInfo).Assembly.FullName, typeof(VideoInfo).FullName) as VideoInfo;
                 video.Description = DatabaseUtility.Get(loResultSet, iRow, "VDO_DESC");
-                video.ImageUrl = DatabaseUtility.Get(loResultSet, iRow, "VDO_IMG_URL");
+                video.Thumb = DatabaseUtility.Get(loResultSet, iRow, "VDO_IMG_URL");
                 video.Length = DatabaseUtility.Get(loResultSet, iRow, "VDO_LENGTH");
                 video.Airdate = DatabaseUtility.Get(loResultSet, iRow, "VDO_TAGS");
                 video.Title = DatabaseUtility.Get(loResultSet, iRow, "VDO_NM");

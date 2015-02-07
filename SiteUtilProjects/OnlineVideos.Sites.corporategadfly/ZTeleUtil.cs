@@ -96,7 +96,7 @@ namespace OnlineVideos.Sites
                         result.Add(new VideoInfo() {
                                        VideoUrl = string.Format(@"{0}{1}", baseUrlPrefix, anchor.GetAttributeValue(@"href", string.Empty)),
                                        Title = HttpUtility.HtmlDecode(paragraph.InnerText),
-                                       ImageUrl = string.Format(@"{0}{1}", baseUrlPrefix, img.GetAttributeValue(@"src", string.Empty))
+                                       Thumb = string.Format(@"{0}{1}", baseUrlPrefix, img.GetAttributeValue(@"src", string.Empty))
                                    });
                     }
                 }

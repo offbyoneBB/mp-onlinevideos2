@@ -137,7 +137,7 @@ namespace OnlineVideos.Sites
                     listVideos.Add(new VideoInfo() {
                                       Title = title.InnerText,
                                       VideoUrl = string.Format(@"{0}{1}", baseVideos, title.GetAttributeValue(@"href", string.Empty)),
-                                      ImageUrl = img.GetAttributeValue(@"src", string.Empty),
+                                      Thumb = img.GetAttributeValue(@"src", string.Empty),
                                       Length = duration.InnerText,
                                       Airdate = airdate.GetAttributeValue(@"title", string.Empty)
                                    });

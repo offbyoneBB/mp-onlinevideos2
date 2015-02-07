@@ -265,7 +265,7 @@ namespace SiteParser
             categoryInfoListView.Items.Clear();
             categoryInfoListView.Items.Add("Title").SubItems.Add(video.Title);
             categoryInfoListView.Items.Add("VideoUrl").SubItems.Add(video.VideoUrl);
-            categoryInfoListView.Items.Add("ImageUrl").SubItems.Add(video.ImageUrl);
+            categoryInfoListView.Items.Add("Thumb").SubItems.Add(video.Thumb);
             categoryInfoListView.Items.Add("Descr").SubItems.Add(video.Description);
             categoryInfoListView.Items.Add("AirDate").SubItems.Add(video.Airdate);
             categoryInfoListView.Items.Add("Length").SubItems.Add(video.Length);

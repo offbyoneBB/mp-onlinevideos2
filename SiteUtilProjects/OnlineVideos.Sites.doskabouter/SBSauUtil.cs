@@ -101,7 +101,7 @@ namespace OnlineVideos.Sites
 
                 JArray thumbs = vid.Value<JArray>("media$thumbnails");
                 if (thumbs != null)
-                    video.ImageUrl = thumbs[0].Value<string>("plfile$downloadUrl");
+                    video.Thumb = thumbs[0].Value<string>("plfile$downloadUrl");
                 result.Add(video);
             }
             int startIndex = contentData.Value<Int32>("startIndex");

@@ -16,11 +16,8 @@ namespace OnlineVideos
         /// <summary>Used as label for the clips retrieved by <see cref="IChoice.GetVideoChoices"/></summary>
         public string Title2 { get; set; }
         public string VideoUrl { get; set; }
-        public string ImageUrl { get; set; }
         public string SubtitleUrl { get; set; }
         public string SubtitleText { get; set; }
-        /// <summary>optional property is used by the <see cref="ImageDownloader"/> to resize the thumbnail after downloading from <see cref="ImageUrl"/> to a given aspect ratio (width/height).</summary>
-        public float? ImageForcedAspectRatio { get; set; }
         public string Length { get; set; }
         public string Airdate { get; set; }
         public string StartTime { get; set; }
@@ -92,7 +89,7 @@ namespace OnlineVideos
             Title2 = string.Empty;
             Description = string.Empty;
             VideoUrl = string.Empty;
-            ImageUrl = string.Empty;
+            Thumb = string.Empty;
             Length = string.Empty;
             StartTime = string.Empty;
             SiteName = string.Empty;
@@ -107,7 +104,7 @@ namespace OnlineVideos
 
         public override string ToString()
         {
-			return string.Format("Title:{0}\r\nDesc:{1}\r\nVidUrl:{2}\r\nImgUrl:{3}\r\nLength:{4}\r\nAirdate:{5}", Title, Description, VideoUrl, ImageUrl, Length, Airdate);
+			return string.Format("Title:{0}\r\nDesc:{1}\r\nVidUrl:{2}\r\nImgUrl:{3}\r\nLength:{4}\r\nAirdate:{5}", Title, Description, VideoUrl, Thumb, Length, Airdate);
         }
 
         /// <summary>
@@ -192,23 +189,23 @@ namespace OnlineVideos
             // Try to find a thumbnail
             if (!string.IsNullOrEmpty(rssItem.GT_Image))
             {
-                video.ImageUrl = rssItem.GT_Image;
+                video.Thumb = rssItem.GT_Image;
             }
             else if (rssItem.MediaThumbnails.Count > 0)
             {
-                video.ImageUrl = rssItem.MediaThumbnails[0].Url;
+                video.Thumb = rssItem.MediaThumbnails[0].Url;
             }
             else if (rssItem.MediaContents.Count > 0 && rssItem.MediaContents[0].MediaThumbnails.Count > 0)
             {
-                video.ImageUrl = rssItem.MediaContents[0].MediaThumbnails[0].Url;
+                video.Thumb = rssItem.MediaContents[0].MediaThumbnails[0].Url;
             }
             else if (rssItem.MediaGroups.Count > 0 && rssItem.MediaGroups[0].MediaThumbnails.Count > 0)
             {
-                video.ImageUrl = rssItem.MediaGroups[0].MediaThumbnails[0].Url;
+                video.Thumb = rssItem.MediaGroups[0].MediaThumbnails[0].Url;
             }
             else if (rssItem.Enclosure != null && rssItem.Enclosure.Type != null && rssItem.Enclosure.Type.ToLower().StartsWith("image"))
             {
-                video.ImageUrl = rssItem.Enclosure.Url;
+                video.Thumb = rssItem.Enclosure.Url;
             }
 
 			if (!string.IsNullOrEmpty(rssItem.Blip_Runtime)) video.Length = GetDuration(rssItem.Blip_Runtime);

@@ -32,7 +32,7 @@ namespace OnlineVideos.Sites
                 foreach (JToken channel in channels)
                 {
                     VideoInfo video = new VideoInfo();
-                    video.ImageUrl = channel.Value<string>("logo");
+                    video.Thumb = channel.Value<string>("logo");
                     video.Description = channel.Value<string>("description");
                     video.Title = channel.Value<string>("title");
                     video.VideoUrl = @"https://www.filmon.com/ajax/getChannelInfo";

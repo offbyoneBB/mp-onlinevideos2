@@ -99,7 +99,7 @@ namespace OnlineVideos.Sites
 
                     video.Length = VideoInfo.GetDuration(vid.Value<String>("j"));
                     video.Airdate = vid.Value<String>("f");
-                    video.ImageUrl = vid.Value<String>("s");
+                    video.Thumb = vid.Value<String>("s");
                     res.Add(video);
 
                 }

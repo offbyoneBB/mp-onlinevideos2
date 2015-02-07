@@ -241,7 +241,7 @@ namespace OnlineVideos.Sites
                     {
                         VideoInfo info = new VideoInfo();
                         info.VideoUrl = m.Id;
-						if (m.Artwork.Any(a => a.Type == MpExtendedService.WebFileType.Cover)) info.ImageUrl = String.Format("http://{0}:{1}/MPExtended/StreamingService/stream/GetArtworkResized?id={2}&provider={3}&artworktype=4&offset=0&mediatype=0&maxWidth=160&maxHeight=160", mServer, mPort, m.Id, m.PID);
+						if (m.Artwork.Any(a => a.Type == MpExtendedService.WebFileType.Cover)) info.Thumb = String.Format("http://{0}:{1}/MPExtended/StreamingService/stream/GetArtworkResized?id={2}&provider={3}&artworktype=4&offset=0&mediatype=0&maxWidth=160&maxHeight=160", mServer, mPort, m.Id, m.PID);
                         info.Other = m;
                         info.Title = m.Title;
 						info.Length = new DateTime(TimeSpan.FromMinutes(m.Runtime).Ticks).ToString("HH:mm:ss");
@@ -265,7 +265,7 @@ namespace OnlineVideos.Sites
                     {
                         VideoInfo info = new VideoInfo();
                         info.VideoUrl = e.Id;
-						if (e.Artwork.Any(a => a.Type == MpExtendedService.WebFileType.Banner)) info.ImageUrl = String.Format("http://{0}:{1}/MPExtended/StreamingService/stream/GetArtworkResized?id={2}&provider={3}&artworktype=2&offset=0&mediatype=3&maxWidth=160&maxHeight=160", mServer, mPort, e.Id, e.PID);
+						if (e.Artwork.Any(a => a.Type == MpExtendedService.WebFileType.Banner)) info.Thumb = String.Format("http://{0}:{1}/MPExtended/StreamingService/stream/GetArtworkResized?id={2}&provider={3}&artworktype=2&offset=0&mediatype=3&maxWidth=160&maxHeight=160", mServer, mPort, e.Id, e.PID);
 						if (e.RatingSpecified && e.Rating > 0.0f) info.Description = string.Format("Rating: {0}", e.Rating);
                         info.Other = e;
                         info.Title = string.Format("s{0:D2}e{1:D2} - {2}", e.SeasonNumber, e.EpisodeNumber, e.Title);
@@ -295,7 +295,7 @@ namespace OnlineVideos.Sites
 							info.Description = c.CurrentProgram.Description;
 							info.Length = (c.CurrentProgram.DurationInMinutes * 60).ToString();
 						}
-						info.ImageUrl = String.Format("http://{0}:{1}/MPExtended/StreamingService/stream/GetArtworkResized?id={2}&artworktype={3}&offset=0&mediatype={4}&maxWidth=160&maxHeight=160", mServer, mPort, c.Id, (int)MpExtendedStreamingService.WebFileType.Logo, (int)MpExtendedStreamingService.WebMediaType.TV);
+						info.Thumb = String.Format("http://{0}:{1}/MPExtended/StreamingService/stream/GetArtworkResized?id={2}&artworktype={3}&offset=0&mediatype={4}&maxWidth=160&maxHeight=160", mServer, mPort, c.Id, (int)MpExtendedStreamingService.WebFileType.Logo, (int)MpExtendedStreamingService.WebMediaType.TV);
                         returnList.Add(info);
                     }
                 }

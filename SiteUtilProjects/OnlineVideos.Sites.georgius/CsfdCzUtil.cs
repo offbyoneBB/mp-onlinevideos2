@@ -313,7 +313,7 @@ namespace OnlineVideos.Sites.georgius
                                             videoThumbUrl = match.Groups["videoThumbUrl"].Value;
                                         }
 
-                                        pageVideos.Add(new VideoInfo() { Title = title, Other = episodeData, VideoUrl = CsfdCzUtil.baseUrl, ImageUrl = videoThumbUrl });
+                                        pageVideos.Add(new VideoInfo() { Title = title, Other = episodeData, VideoUrl = CsfdCzUtil.baseUrl, Thumb = videoThumbUrl });
                                     }
                                 }
                             }

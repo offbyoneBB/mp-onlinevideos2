@@ -486,7 +486,7 @@ namespace OnlineVideos.MediaPortal2
 			}
 
 			saveItems.CurrentItem.LocalFile = Utils.GetNextFileName(saveItems.CurrentItem.LocalFile);
-			saveItems.CurrentItem.ThumbFile = string.IsNullOrEmpty(saveItems.CurrentItem.VideoInfo.ThumbnailImage) ? saveItems.CurrentItem.VideoInfo.ImageUrl : saveItems.CurrentItem.VideoInfo.ThumbnailImage;
+			saveItems.CurrentItem.ThumbFile = string.IsNullOrEmpty(saveItems.CurrentItem.VideoInfo.ThumbnailImage) ? saveItems.CurrentItem.VideoInfo.Thumb : saveItems.CurrentItem.VideoInfo.ThumbnailImage;
 
 			// make sure the target dir exists
 			if (!(Directory.Exists(Path.GetDirectoryName(saveItems.CurrentItem.LocalFile))))

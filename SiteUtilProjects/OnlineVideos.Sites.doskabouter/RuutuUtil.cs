@@ -178,7 +178,7 @@ namespace OnlineVideos.Sites
                     video.VideoUrl = FormatDecodeAbsolutifyUrl(baseUrl, aNode.Attributes["href"].Value, videoListRegExFormatString, videoListUrlDecoding);
                     var imgNode = vid.SelectSingleNode(@".//img[@src]");
                     if (imgNode != null && !String.IsNullOrEmpty(imgNode.Attributes["src"].Value))
-                        video.ImageUrl = FormatDecodeAbsolutifyUrl(baseUrl, imgNode.Attributes["src"].Value, videoThumbFormatString, UrlDecoding.None);
+                        video.Thumb = FormatDecodeAbsolutifyUrl(baseUrl, imgNode.Attributes["src"].Value, videoThumbFormatString, UrlDecoding.None);
                     //video.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value);
                     var airDateNode = vid.SelectSingleNode(@".//div[contains(@class,'field-name-field-starttime')]/span");
                     if (airDateNode != null)

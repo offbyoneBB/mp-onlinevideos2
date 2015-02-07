@@ -152,7 +152,7 @@ namespace OnlineVideos.Sites
                             HtmlNode description = item.SelectSingleNode(@"./following-sibling::div//p[contains(@class, 'show-description')]");
                             result.Add(new VideoInfo() {
                                            Title = anchor.InnerText,
-                                           ImageUrl = img.GetAttributeValue(@"src", string.Empty),
+                                           Thumb = img.GetAttributeValue(@"src", string.Empty),
                                            VideoUrl = string.Format(@"{0}{1}", baseUrl, anchor.GetAttributeValue(@"href", string.Empty)),
                                            Length = duration.InnerText.Replace("(", string.Empty).Replace(")", string.Empty),
                                            Description = description.InnerText

@@ -50,7 +50,7 @@ namespace OnlineVideos.Sites
           video.Id = item.Value<int>("id");
           video.Title = item.Value<string>("title");
           video.Description = item.Value<string>("description");
-          video.ImageUrl = item.Value<string>("img");
+          video.Thumb = item.Value<string>("img");
           string air = item.Value<string>("time");
           res.Add(video);
         }

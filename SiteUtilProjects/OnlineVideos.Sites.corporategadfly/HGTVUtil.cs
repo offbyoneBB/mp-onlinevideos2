@@ -154,7 +154,7 @@ namespace OnlineVideos.Sites
                             XmlNode duration = video.SelectSingleNode(@"./length", namespaceManager);
                             result.Add(new VideoInfo() {
                                            VideoUrl = videoUrl.InnerText,
-                                           ImageUrl = thumbnail.InnerText.Replace(@"_92x69", @"_480x360"),
+                                           Thumb = thumbnail.InnerText.Replace(@"_92x69", @"_480x360"),
                                            Title = HttpUtility.HtmlDecode(title.InnerText),
                                            Description = HttpUtility.HtmlDecode(description.InnerText),
                                            Length = duration.InnerText

@@ -235,7 +235,7 @@ namespace OnlineVideos.Sites
                 VideoInfo video = new VideoInfo()
                 {
                     VideoUrl = m.Groups[1].Value,
-                    ImageUrl = m.Groups[2].Value
+                    Thumb = m.Groups[2].Value
                 };
 
                 string episodeTitle = cleanString(m.Groups[3].Value);

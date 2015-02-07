@@ -126,7 +126,7 @@ namespace OnlineVideos.Sites
 		private static void FillVideoInfoFromLI(HtmlNode li, VideoInfo video, bool appendTitle)
 		{
 			var img = li.Descendants("img").FirstOrDefault();
-			if (img != null) video.ImageUrl = "http://mediathek.rbb-online.de" + img.GetAttributeValue("src", "");
+			if (img != null) video.Thumb = "http://mediathek.rbb-online.de" + img.GetAttributeValue("src", "");
 
 			var h3 = li.Descendants("h3").LastOrDefault();
 			if (h3 != null)

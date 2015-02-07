@@ -262,7 +262,7 @@ namespace OnlineVideos.Sites
                 video.Title = videoNode.SelectSingleNode("title").InnerText;
                 video.Description = videoNode.SelectSingleNode("description").InnerText;
                 video.VideoUrl = videoNode.SelectSingleNode("urls/url").InnerText;
-                video.ImageUrl = getThumbUrl(videoNode.SelectNodes("thumbnails/thumbnail"));
+                video.Thumb = getThumbUrl(videoNode.SelectNodes("thumbnails/thumbnail"));
 
                 video.Length = TimeSpan.FromSeconds(Int32.Parse(videoNode.SelectSingleNode("duration").InnerText)).ToString();
                 string Airdate = videoNode.SelectSingleNode("upload_date").InnerText;

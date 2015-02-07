@@ -70,7 +70,7 @@ namespace OnlineVideos.Sites
             {
                 result.Add(new VideoInfo() {
                                VideoUrl = node.SelectSingleNode("./node_bc_id").InnerText,
-                               ImageUrl = node.SelectSingleNode("./node_thumbnail").InnerText,
+                               Thumb = node.SelectSingleNode("./node_thumbnail").InnerText,
                                Title = node.SelectSingleNode("./node_title").InnerText,
                                Description = node.SelectSingleNode("./node_short_description").InnerText
                            });

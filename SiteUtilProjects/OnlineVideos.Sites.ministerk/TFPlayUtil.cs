@@ -109,7 +109,7 @@ namespace OnlineVideos.Sites
                             SubtitleUrl = track.GetAttributeValue("src", ""),
                             Other = ti,
                             Description = category.Description,
-                            ImageUrl = category.Thumb,
+                            Thumb = category.Thumb,
                             VideoUrl = url
                         });
                     }
@@ -121,7 +121,7 @@ namespace OnlineVideos.Sites
                         Title = category.Name,
                         Other = ti,
                         Description = category.Description,
-                        ImageUrl = category.Thumb,
+                        Thumb = category.Thumb,
                         VideoUrl = url
                     });
                 }
@@ -154,7 +154,7 @@ namespace OnlineVideos.Sites
                             Title = category.Name + " " + s + "x" + e,
                             Other = ti,
                             Description = category.Description,
-                            ImageUrl = category.Thumb,
+                            Thumb = category.Thumb,
                             VideoUrl = a.GetAttributeValue("href", "")
                         });
                     }

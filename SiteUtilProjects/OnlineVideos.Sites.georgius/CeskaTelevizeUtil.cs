@@ -171,7 +171,7 @@ namespace OnlineVideos.Sites.georgius
 
                                 VideoInfo videoInfo = new VideoInfo()
                                 {
-                                    ImageUrl = showThumbUrl,
+                                    Thumb = showThumbUrl,
                                     Title = showTitle,
                                     VideoUrl = showUrl
                                 };
@@ -245,7 +245,7 @@ namespace OnlineVideos.Sites.georgius
 
                                         VideoInfo videoInfo = new VideoInfo()
                                         {
-                                            ImageUrl = showThumbUrl,
+                                            Thumb = showThumbUrl,
                                             Title = showTitle,
                                             VideoUrl = showUrl,
                                             Description = showDescription

@@ -250,7 +250,7 @@ namespace OnlineVideos.Sites
                                 Title = title,
                                 VideoUrl = String.Format(videoContentUrl, item.Value<string>("PID")),
                                 Description = item.Value<string>("description"),
-                                ImageUrl = item.Value<string>("thumbnailURL"),
+                                Thumb = item.Value<string>("thumbnailURL"),
                                 Length = TimeSpan.FromSeconds(item.Value<int>("length") / 1000).ToString(),
                                 // convert epoch (seconds since unix time) to a date string
                                 Airdate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(epochSeconds).ToShortDateString()

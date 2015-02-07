@@ -626,7 +626,7 @@ namespace OnlineVideos.Sites
             return new VideoInfo()
             {
                 Title = title,
-                ImageUrl = (string)product["type"] == "movie" ? (string)content["images"]["boxart"]["url"] : (string)content["images"]["landscape"]["url"],
+                Thumb = (string)product["type"] == "movie" ? (string)content["images"]["boxart"]["url"] : (string)content["images"]["landscape"]["url"],
                 Description = (string)content["synopsis"],
                 VideoUrl = (string)product["_links"]["viaplay:page"]["href"],
                 Airdate = airTime,

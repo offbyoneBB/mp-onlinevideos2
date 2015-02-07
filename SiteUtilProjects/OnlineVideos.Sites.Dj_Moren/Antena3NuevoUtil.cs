@@ -136,7 +136,7 @@ namespace OnlineVideos.Sites
             {
                 VideoInfo video = new VideoInfo();
                 video.Title = videoMatch.Groups["title"].Value.Replace("Vídeos de ", "");
-                video.ImageUrl = antena3BaseUrl + videoMatch.Groups["img"].Value;
+                video.Thumb = antena3BaseUrl + videoMatch.Groups["img"].Value;
                 video.VideoUrl = videoMatch.Groups["url"].Value;
                 videoList.Add(video);
                 videoMatch = videoMatch.NextMatch();

@@ -153,7 +153,7 @@ namespace OnlineVideos.Sites
                                 }
                                 else
                                 {
-                                    videoInfo.ImageUrl = m.Groups["ImageUrl"].Value;
+                                    videoInfo.Thumb = m.Groups["ImageUrl"].Value;
                                     videoInfo.Airdate = m.Groups["Airdate"].Value;
                                     videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value).Replace("M", "M ").Replace("S", "S").Replace("PT0H", "").Replace("PT1H", "1H ").Replace("PT", "").Replace("T", "").Trim();
 
@@ -165,7 +165,7 @@ namespace OnlineVideos.Sites
                                     Log.Debug("Description: " + videoInfo.Description);
                                     Log.Debug("title: " + videoInfo.Title);
                                     Log.Debug("Video URL: " + videoInfo.VideoUrl);
-                                    Log.Debug("Image: " + videoInfo.ImageUrl);
+                                    Log.Debug("Image: " + videoInfo.Thumb);
 
                                     videoCount++;
                                     videoList.Add(videoInfo);

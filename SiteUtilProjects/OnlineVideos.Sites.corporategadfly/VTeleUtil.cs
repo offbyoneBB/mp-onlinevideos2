@@ -119,7 +119,7 @@ namespace OnlineVideos.Sites
                     result.Add(new VideoInfo() {
                                    Title = @"En direct actuellement",
                                    Description = name,
-                                   ImageUrl = image,
+                                   Thumb = image,
                                    Other = LIVE_STREAMING,
                                    VideoUrl = new MPUrlSourceFilter.RtmpUrl(@"rtmp://cp101680.live.edgefcs.net/live/livev_1@50832") {
                                        SwfUrl = @"http://admin.brightcove.com/viewer/us20121128.1314/federatedVideoUI/BrightcovePlayer.swf",
@@ -134,7 +134,7 @@ namespace OnlineVideos.Sites
                     result.Add(new VideoInfo() {
                                    Title = @"Rien en direct en ce moment.",
                                    Description = string.Format(@"{0} à {1}", json.Value<string>("nomEmiSuiv"), json.Value<string>("dateSuiv")),
-                                   ImageUrl = image,
+                                   Thumb = image,
                                    VideoUrl = string.Empty
                                });
                 }
@@ -156,7 +156,7 @@ namespace OnlineVideos.Sites
                     result.Add(new VideoInfo() {
                                    Title = HttpUtility.HtmlDecode(anchor.InnerText),
                                    VideoUrl = anchor.GetAttributeValue(@"href", string.Empty),
-                                   ImageUrl = img.GetAttributeValue(@"src", string.Empty),
+                                   Thumb = img.GetAttributeValue(@"src", string.Empty),
                                    Airdate = airdate.InnerText.Replace(@"Ajouté le", string.Empty).Split('\\')[2].Trim()
                                });
                 }

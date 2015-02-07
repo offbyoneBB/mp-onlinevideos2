@@ -118,7 +118,7 @@ namespace OnlineVideos.Sites
 						}
                         VideoInfo loVideoInfo = new VideoInfo();
                         loVideoInfo.VideoUrl = file.FullName;
-                        loVideoInfo.ImageUrl = file.FullName.Substring(0, file.FullName.LastIndexOf(".")) + ".jpg";
+                        loVideoInfo.Thumb = file.FullName.Substring(0, file.FullName.LastIndexOf(".")) + ".jpg";
 						loVideoInfo.Title = string.IsNullOrEmpty(title_xml) ? file.Name : title_xml;
 						loVideoInfo.Length = string.Format("{0} MB", (file.Length / 1024 / 1024).ToString("N0"));
                         loVideoInfo.Airdate = string.IsNullOrEmpty(airdate_xml) ? file.LastWriteTime.ToString("g", OnlineVideoSettings.Instance.Locale) : airdate_xml;
@@ -158,7 +158,7 @@ namespace OnlineVideos.Sites
                     {
                         VideoInfo loVideoInfo = new VideoInfo();
                         loVideoInfo.Title = string.IsNullOrEmpty(di.Title) ? di.VideoInfo.Title : di.Title;
-                        loVideoInfo.ImageUrl = string.IsNullOrEmpty(di.ThumbFile) ? (string.IsNullOrEmpty(di.VideoInfo.ThumbnailImage) ? di.VideoInfo.ImageUrl : di.VideoInfo.ThumbnailImage) : di.ThumbFile;
+                        loVideoInfo.Thumb = string.IsNullOrEmpty(di.ThumbFile) ? (string.IsNullOrEmpty(di.VideoInfo.ThumbnailImage) ? di.VideoInfo.Thumb : di.VideoInfo.ThumbnailImage) : di.ThumbFile;
                         loVideoInfo.Airdate = di.Start.ToString("HH:mm:ss");
                         loVideoInfo.Length = di.ProgressInfo;
                         loVideoInfo.Description = string.Format("{0}\n{1}", di.Url, di.LocalFile);
