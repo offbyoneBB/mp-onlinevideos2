@@ -47,7 +47,7 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-        public List<KeyValuePair<string,uint>> getSiteIDs()
+        public List<KeyValuePair<string,uint>> GetSiteIds()
         {
             string lsSQL = @"select distinct VDO_SITE_ID, max(NumVideos) as NumVideos from
                             (
@@ -65,7 +65,7 @@ namespace OnlineVideos.MediaPortal1
             return siteIdList;
         }
 
-        public bool addFavoriteVideo(VideoInfo foVideo, string titleFromUtil, string siteName)
+        public bool AddFavoriteVideo(VideoInfo foVideo, string titleFromUtil, string siteName)
         {
 			DatabaseUtility.RemoveInvalidChars(ref siteName);
             string title = string.IsNullOrEmpty(titleFromUtil) ? "" : DatabaseUtility.RemoveInvalidChars(titleFromUtil);
@@ -103,14 +103,14 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-        public bool removeFavoriteVideo(VideoInfo foVideo)
+        public bool RemoveFavoriteVideo(FavoriteVideoInfo foVideo)
         {
             String lsSQL = string.Format("delete from FAVORITE_VIDEOS where VDO_ID='{0}' ", foVideo.Id);
             m_db.Execute(lsSQL);
             return m_db.ChangedRows() > 0;
         }
 
-        public bool removeAllFavoriteVideos(string siteName)
+        public bool RemoveAllFavoriteVideos(string siteName)
         {
 			DatabaseUtility.RemoveInvalidChars(ref siteName);
             string sql = "delete from FAVORITE_VIDEOS";
@@ -119,7 +119,7 @@ namespace OnlineVideos.MediaPortal1
             return m_db.ChangedRows() > 0;
         }
 
-        public List<VideoInfo> getFavoriteVideos(string siteName, string fsQuery)
+        public List<VideoInfo> GetFavoriteVideos(string siteName, string fsQuery)
         {
             string lsSQL = "select * from favorite_videos";
             if (!string.IsNullOrEmpty(siteName))
@@ -141,7 +141,7 @@ namespace OnlineVideos.MediaPortal1
 
             for (int iRow = 0; iRow < loResultSet.Rows.Count; iRow++)
             {
-				VideoInfo video = CrossDomain.OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(VideoInfo).Assembly.FullName, typeof(VideoInfo).FullName) as VideoInfo;
+                var video = CrossDomain.OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(FavoriteVideoInfo).Assembly.FullName, typeof(FavoriteVideoInfo).FullName) as FavoriteVideoInfo;
                 video.Description = DatabaseUtility.Get(loResultSet, iRow, "VDO_DESC");
                 video.Thumb = DatabaseUtility.Get(loResultSet, iRow, "VDO_IMG_URL");
                 video.Length = DatabaseUtility.Get(loResultSet, iRow, "VDO_LENGTH");
@@ -165,7 +165,7 @@ namespace OnlineVideos.MediaPortal1
             return loFavoriteList;
         }
 
-        public bool addFavoriteCategory(Category cat, string siteName)
+        public bool AddFavoriteCategory(Category cat, string siteName)
         {
 			DatabaseUtility.RemoveInvalidChars(ref siteName);
             string categoryHierarchyName = EscapeString(cat.RecursiveName("|"));
@@ -197,7 +197,7 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-        public List<Category> getFavoriteCategories(string siteName)
+        public List<Category> GetFavoriteCategories(string siteName)
         {
 			DatabaseUtility.RemoveInvalidChars(ref siteName);
             List<Category> results = new List<Category>();
@@ -216,7 +216,7 @@ namespace OnlineVideos.MediaPortal1
             return results;
         }
 
-        public List<string> getFavoriteCategoriesNames(string siteName)
+        public List<string> GetFavoriteCategoriesNames(string siteName)
         {
 			DatabaseUtility.RemoveInvalidChars(ref siteName);
             List<string> results = new List<string>();
@@ -228,14 +228,14 @@ namespace OnlineVideos.MediaPortal1
             return results;
         }
 
-        public bool removeFavoriteCategory(Category cat)
+        public bool RemoveFavoriteCategory(Category cat)
         {
             String lsSQL = string.Format("delete from Favorite_Categories where CAT_ID = '{0}'", (cat as RssLink).Url);
             m_db.Execute(lsSQL);
             return m_db.ChangedRows() > 0;
         }
 
-        public bool removeFavoriteCategory(string siteName, string recursiveCategoryName)
+        public bool RemoveFavoriteCategory(string siteName, string recursiveCategoryName)
         {
 			DatabaseUtility.RemoveInvalidChars(ref siteName);
             String lsSQL = string.Format("delete from Favorite_Categories where CAT_Hierarchy='{0}' AND CAT_SITE_ID='{1}'", recursiveCategoryName, siteName);

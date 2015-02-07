@@ -196,7 +196,7 @@ namespace OnlineVideos.Sites
         public override String GetVideoUrl(VideoInfo video)
         {
             // Get playbackoptins back from favorite video if they were saved in Other object
-            if (!string.IsNullOrEmpty(video.SiteName) && video.PlaybackOptions == null && video.Other is string && (video.Other as string).StartsWith("PlaybackOptions://"))
+            if (video.PlaybackOptions == null && video.Other is string && (video.Other as string).StartsWith("PlaybackOptions://"))
                 video.PlaybackOptions = Utils.DictionaryFromString((video.Other as string).Substring("PlaybackOptions://".Length));
 
             // resolve any asx to WMV
