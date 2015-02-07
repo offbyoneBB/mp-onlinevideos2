@@ -105,9 +105,9 @@ namespace OnlineVideos.Sites
 
 		public override bool CanSearch { get { return true; } }
 
-		public override List<ISearchResultItem> Search(string query, string category = null)
+		public override List<SearchResultItem> Search(string query, string category = null)
 		{
-			return GetVideos(new RssLink() { Url = string.Format(search_url, query) }).ConvertAll<ISearchResultItem>(v => (ISearchResultItem)v);
+			return GetVideos(new RssLink() { Url = string.Format(search_url, query) }).ConvertAll<SearchResultItem>(v => (SearchResultItem)v);
 		}
     }
 }

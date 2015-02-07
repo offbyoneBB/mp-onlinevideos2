@@ -134,10 +134,10 @@ namespace OnlineVideos.Sites
             return String.Empty;
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             string data = GetNicoWebData(String.Format(searchUrl, query));
-            return Parse(baseUrl, data).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+            return Parse(baseUrl, data).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
         }
 
         private string GetNicoWebData(string url)

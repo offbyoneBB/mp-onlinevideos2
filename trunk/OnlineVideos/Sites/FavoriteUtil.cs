@@ -160,10 +160,10 @@ namespace OnlineVideos.Sites
 
         public override bool CanSearch { get { return true; } }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             return OrderVideos(OnlineVideoSettings.Instance.FavDB.getFavoriteVideos(null, query))
-                .ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                .ConvertAll<SearchResultItem>(v => v as SearchResultItem);
         }
 
         #endregion

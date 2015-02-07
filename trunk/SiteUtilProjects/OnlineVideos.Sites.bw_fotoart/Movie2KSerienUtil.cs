@@ -152,10 +152,10 @@ namespace OnlineVideos.Sites.bw_fotoart
             return result;
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             string html = GetWebData("http://www.movie2k.to/searchAutoCompleteNew.php?search=" + query);
-            List<ISearchResultItem> results = new List<ISearchResultItem>();
+            List<SearchResultItem> results = new List<SearchResultItem>();
 
 
             return results;

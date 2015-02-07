@@ -45,14 +45,14 @@ namespace OnlineVideos.Sites
             return Settings.Categories.ToDictionary(c => c.Name, c => ((RssLink)c).Url);
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             if (string.IsNullOrEmpty(category))
                 return VideosFromJson(api_base_url + string.Format(api_video_search_url, HttpUtility.UrlEncode(query), 1))
-                    .ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                    .ConvertAll<SearchResultItem>(v => v as SearchResultItem);
             else
                 return VideosFromJson(api_base_url + string.Format(api_channel_videos_search_url, category, HttpUtility.UrlEncode(query), 1))
-                    .ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                    .ConvertAll<SearchResultItem>(v => v as SearchResultItem);
         }
 
         public override List<VideoInfo> GetNextPageVideos()

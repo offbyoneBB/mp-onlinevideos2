@@ -95,9 +95,9 @@ namespace OnlineVideos.Sites
 
         public override bool CanSearch { get { return true; } }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
-            var result = new List<ISearchResultItem>();
+            var result = new List<SearchResultItem>();
             string url = language == Language.DE ? "http://www.arte.tv/guide/de/suchergebnisse?keyword={0}" : "http://www.arte.tv/guide/fr/resultats-de-recherche?keyword={0}";
             var doc = GetWebData<HtmlDocument>(String.Format(url, HttpUtility.UrlEncode("kreta")));
             var list = doc.DocumentNode.Descendants("div").Where(div => !String.IsNullOrEmpty(div.GetAttributeValue("arte_vp_url", "")));

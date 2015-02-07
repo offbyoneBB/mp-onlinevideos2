@@ -247,8 +247,8 @@ namespace OnlineVideos.Sites.Pondman {
 			return videoUrl;
 		}
 
-		public override List<ISearchResultItem> Search(string query, string category = null) {
-			var videos = new List<ISearchResultItem>();
+		public override List<SearchResultItem> Search(string query, string category = null) {
+			var videos = new List<SearchResultItem>();
 			List<Movie> movies = API.Search(apiSession, query);
 			
 			foreach (Movie movie in movies) {

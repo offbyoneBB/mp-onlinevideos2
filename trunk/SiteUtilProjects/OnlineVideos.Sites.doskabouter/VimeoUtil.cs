@@ -187,14 +187,14 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             currentVideoListUrl = String.Format(
                 StandardAdvancedApiUrl + "?method=vimeo.videos.search&per_page={0}&query={1}&full_response=1&page=", pageSize, query);
             pageNr = 1;
             return 
                 videoListFromVimeo(currentVideoListUrl + pageNr.ToString())
-                .ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                .ConvertAll<SearchResultItem>(v => v as SearchResultItem);
         }
 
         public override string GetVideoUrl(VideoInfo video)

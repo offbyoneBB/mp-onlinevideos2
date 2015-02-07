@@ -38,7 +38,7 @@ namespace OnlineVideos.Downloading
 		/// </summary>
 		/// <typeparam name="T">supported are <see cref="Category"/> and <see cref="VideoInfo"/></typeparam>
 		/// <param name="itemsWithThumbs"></param>
-        public static void GetImages<T>(IList<T> itemsWithThumbs) where T : ISearchResultItem
+        public static void GetImages<T>(IList<T> itemsWithThumbs) where T : SearchResultItem
         {
             StopDownload = false;
             // split the downloads in 5+ groups and do multithreaded downloading
@@ -68,7 +68,7 @@ namespace OnlineVideos.Downloading
 		/// </summary>
 		/// <typeparam name="T">supported are <see cref="Category"/> and <see cref="VideoInfo"/></typeparam>
 		/// <param name="myItems"></param>
-        public static void DownloadImages<T>(List<T> myItems) where T : ISearchResultItem
+        public static void DownloadImages<T>(List<T> myItems) where T : SearchResultItem
 		{
 			foreach (T item in myItems)
 			{

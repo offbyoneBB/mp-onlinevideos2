@@ -535,13 +535,13 @@ namespace OnlineVideos.Sites
             return cachedSearchCategories;
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             YouTubeQuery ytQuery = new YouTubeQuery(YouTubeQuery.DefaultVideoUri) { NumberToRetrieve = pageSize };
             if (!string.IsNullOrEmpty(category))
                 ytQuery.Categories.Add(new QueryCategory(category, QueryCategoryOperator.AND));
             ytQuery.Query = query;
-            return parseGData(ytQuery).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+            return parseGData(ytQuery).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
         }
 
         #endregion
@@ -632,14 +632,14 @@ namespace OnlineVideos.Sites
                 else if (choice.DisplayText == Translation.Instance.RelatedVideos)
                 {
                     YouTubeQuery query = new YouTubeQuery() { Uri = new Uri((selectedItem.Other as MyYouTubeEntry).YouTubeEntry.RelatedVideosUri.Content), NumberToRetrieve = pageSize };
-                    result.ResultItems = parseGData(query).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                    result.ResultItems = parseGData(query).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
                     currentVideosTitle = Translation.Instance.RelatedVideos + " [" + selectedItem.Title + "]";
                 }
                 else if (choice.DisplayText.StartsWith(Translation.Instance.UploadsBy))
                 {
                     string username = selectedItem == null ? selectedCategory.Name : (selectedItem.Other as MyYouTubeEntry).YouTubeEntry.Uploader.Value;
                     YouTubeQuery query = new YouTubeQuery(YouTubeQuery.CreateUserUri(username)) { NumberToRetrieve = pageSize };
-                    result.ResultItems = parseGData(query).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                    result.ResultItems = parseGData(query).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
                     currentVideosTitle = Translation.Instance.UploadsBy + " [" + username + "]";
                 }
                 else if (choice.DisplayText.StartsWith(Translation.Instance.Playlists))
@@ -649,7 +649,7 @@ namespace OnlineVideos.Sites
                     YouTubeFeed feed = service.Query(query);
                     Category parentCategory = new Category() { SubCategories = new List<Category>() };
                     GetPlaylistEntriesAsCategories(parentCategory, feed);
-                    result.ResultItems = parentCategory.SubCategories.ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                    result.ResultItems = parentCategory.SubCategories.ConvertAll<SearchResultItem>(v => v as SearchResultItem);
                 }
                 else if (choice.DisplayText == Translation.Instance.AddComment)
                 {

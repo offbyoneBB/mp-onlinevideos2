@@ -272,7 +272,7 @@ namespace OnlineVideos.Sites
             return parentCategory.SubCategories.Count;
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             //
             //First we need to fetch the Promo ID in order to do a search, afterwards we can do the real search
@@ -302,7 +302,7 @@ namespace OnlineVideos.Sites
 
             searchUrl = "http://www.gametrailers.com/feeds/search/child/" + promotionID + "/?keywords=" + query + "&tabName=videos&platforms=&sortBy=most_recent";
 
-            return getVideoList(searchUrl).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+            return getVideoList(searchUrl).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
         }
     }
 }

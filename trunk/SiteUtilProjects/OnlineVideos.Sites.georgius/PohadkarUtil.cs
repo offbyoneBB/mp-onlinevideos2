@@ -467,7 +467,7 @@ namespace OnlineVideos.Sites.georgius
             }
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             List<VideoInfo> videoList = this.GetVideoList(new RssLink()
             {
@@ -476,7 +476,7 @@ namespace OnlineVideos.Sites.georgius
                 Url = String.Format(PohadkarUtil.searchQueryUrl, query)
             });
 
-            List<ISearchResultItem> result = new List<ISearchResultItem>(videoList.Count);
+            List<SearchResultItem> result = new List<SearchResultItem>(videoList.Count);
             foreach (var video in videoList)
             {
                 result.Add(video);

@@ -719,7 +719,7 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             RssLink cat = new RssLink()
             {
@@ -728,7 +728,7 @@ namespace OnlineVideos.Sites
                 Other = _search,
                 SubCategories = new List<Category>()
             };
-            List<ISearchResultItem> results = new List<ISearchResultItem>();
+            List<SearchResultItem> results = new List<SearchResultItem>();
             DiscoverSubCategories(cat);
             foreach (Category c in cat.SubCategories)
                 results.Add(c);
@@ -832,7 +832,7 @@ namespace OnlineVideos.Sites
             //People search
             if (choice.DisplayText != null && choice.DisplayText is string && (string)choice.DisplayText == GetTranslation("Cast", "Cast"))
             {
-                List<ISearchResultItem> results = new List<ISearchResultItem>();
+                List<SearchResultItem> results = new List<SearchResultItem>();
                 foreach (string actor in (selectedItem.Other as SerializableDictionary<string, string>)["actors"].Split(';'))
                 {
                     results.Add(new RssLink()
@@ -850,7 +850,7 @@ namespace OnlineVideos.Sites
             }
             if (choice.DisplayText != null && choice.DisplayText is string && (string)choice.DisplayText == GetTranslation("Director", "Director"))
             {
-                List<ISearchResultItem> results = new List<ISearchResultItem>();
+                List<SearchResultItem> results = new List<SearchResultItem>();
                 foreach (string director in (selectedItem.Other as SerializableDictionary<string, string>)["directors"].Split(';'))
                 {
                     results.Add(new RssLink()

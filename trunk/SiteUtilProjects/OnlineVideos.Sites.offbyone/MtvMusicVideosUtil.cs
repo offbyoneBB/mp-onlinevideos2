@@ -100,12 +100,12 @@ namespace OnlineVideos.Sites
 
         public override bool CanSearch { get { return true; } }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             //You must URL-escape all spaces, punctuation and quotes. The search term "buddy holly" would look like this %22buddy+holly%22 
             query = System.Web.HttpUtility.UrlEncode(query.Replace(" ", "+"));
             return GetVideos(new RssLink() { Url = string.Format(searchUrl, query) })
-                .ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                .ConvertAll<SearchResultItem>(v => v as SearchResultItem);
         }
 
         #endregion

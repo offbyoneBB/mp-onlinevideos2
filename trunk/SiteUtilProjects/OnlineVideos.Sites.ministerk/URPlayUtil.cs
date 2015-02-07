@@ -405,7 +405,7 @@ namespace OnlineVideos.Sites
                     Name = choice.DisplayText,
                     Url = choice.Other as string
                 };
-                List<ISearchResultItem> results = new List<ISearchResultItem>();
+                List<SearchResultItem> results = new List<SearchResultItem>();
                 foreach (VideoInfo vi in GetVideos(cat))
                     results.Add(vi);
                 result.ResultItems = results;
@@ -425,14 +425,14 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             RssLink cat = new RssLink()
             {
                 Name = "Sök",
                 Url = "/Produkter?product_type=programtv&q=" + HttpUtility.UrlEncode(query)
             };
-            List<ISearchResultItem> results = new List<ISearchResultItem>();
+            List<SearchResultItem> results = new List<SearchResultItem>();
             foreach (VideoInfo vi in GetVideos(cat))
                 results.Add(vi);
             return results;

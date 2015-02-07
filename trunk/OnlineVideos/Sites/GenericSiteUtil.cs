@@ -804,7 +804,7 @@ namespace OnlineVideos.Sites
 
         public override bool CanSearch { get { return !string.IsNullOrEmpty(searchUrl); } }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             // if an override Encoding was specified, we need to UrlEncode the search string with that encoding
             if (encodingOverride != null) query = HttpUtility.UrlEncode(encodingOverride.GetBytes(query));
@@ -812,12 +812,12 @@ namespace OnlineVideos.Sites
             if (string.IsNullOrEmpty(searchPostString))
             {
                 return Parse(string.Format(searchUrl, query), null)
-                    .ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                    .ConvertAll<SearchResultItem>(v => v as SearchResultItem);
             }
             else
             {
                 return Parse(searchUrl, GetWebData<string>(searchUrl, string.Format(searchPostString, query), cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride))
-                    .ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                    .ConvertAll<SearchResultItem>(v => v as SearchResultItem);
             }
         }
 

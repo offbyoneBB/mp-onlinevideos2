@@ -82,12 +82,12 @@ namespace OnlineVideos.Sites
 		
 		public override bool CanSearch { get { return true; } }
 
-		public override List<ISearchResultItem> Search(string query, string category = null)
+		public override List<SearchResultItem> Search(string query, string category = null)
 		{
 			string searchResultData = GetWebData(searchUrl, string.Format("q={0}", query));
 			var htmlDoc = new HtmlDocument();
 			htmlDoc.LoadHtml(searchResultData);
-			return getVideos(htmlDoc, new Uri(searchUrl)).ConvertAll(v => (ISearchResultItem)v);
+			return getVideos(htmlDoc, new Uri(searchUrl)).ConvertAll(v => (SearchResultItem)v);
 		}
 
 		public override string GetVideoUrl(VideoInfo video)

@@ -38,9 +38,9 @@ namespace OnlineVideos.Sites.DavidCalder
         }
 
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
-            List < ISearchResultItem > searchResults = new List<ISearchResultItem>(base.Search(query.Replace(" ", "-")));
+            List < SearchResultItem > searchResults = new List<SearchResultItem>(base.Search(query.Replace(" ", "-")));
             
             return searchResults;
         }

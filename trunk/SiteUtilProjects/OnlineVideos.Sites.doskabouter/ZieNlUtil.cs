@@ -105,11 +105,11 @@ namespace OnlineVideos.Sites
             return ParseData(webData);
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             string webData = GetWebData(searchUrl, string.Format(searchPostString, query));
             string jsonData = jsonRegex.Match(webData).Groups["content"].Value;
-            return ParseData(jsonData).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+            return ParseData(jsonData).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
         }
 
         private static string MyGetWebData(string url)

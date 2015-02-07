@@ -944,9 +944,9 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
-            List<ISearchResultItem> results = new List<ISearchResultItem>();
+            List<SearchResultItem> results = new List<SearchResultItem>();
             string data = MyGetWebData(string.Format(searchUrl, apiRoot, HttpUtility.UrlEncode(query), MaxSearchResults));
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
             JToken galery = json["galleryVideos"];

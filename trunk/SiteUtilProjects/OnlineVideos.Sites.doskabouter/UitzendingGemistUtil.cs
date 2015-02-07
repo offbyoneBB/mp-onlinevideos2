@@ -249,12 +249,12 @@ namespace OnlineVideos.Sites
             return a.Value.CompareTo(b.Value);
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             pageNr = 1;
             baseVideoListUrl = string.Format(searchUrl, query);
             currenttype = UgType.None;
-            return lowGetVideoList(baseVideoListUrl, currenttype).ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+            return lowGetVideoList(baseVideoListUrl, currenttype).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
         }
 
         public override VideoInfo CreateVideoInfo()

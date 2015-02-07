@@ -262,11 +262,11 @@ namespace OnlineVideos.Sites
 
         public override bool CanSearch { get { return true; } }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
             query = FixQuery(query);
             return getVideoList(OnlineVideoSettings.Instance.DownloadDir, query, true)
-                .ConvertAll<ISearchResultItem>(v => v as ISearchResultItem);
+                .ConvertAll<SearchResultItem>(v => v as SearchResultItem);
         }
 
         #endregion

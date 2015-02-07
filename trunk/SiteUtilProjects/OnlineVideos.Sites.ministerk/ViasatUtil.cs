@@ -298,9 +298,9 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public override List<ISearchResultItem> Search(string query, string category = null)
+        public override List<SearchResultItem> Search(string query, string category = null)
         {
-            List<ISearchResultItem> results = new List<ISearchResultItem>();
+            List<SearchResultItem> results = new List<SearchResultItem>();
             string searchUrl = SearchUrl.Replace("{term}", HttpUtility.UrlEncode(query));
             JObject json = GetWebData<JObject>(searchUrl);
             if (json["_embedded"] != null && json["_embedded"]["formats"] != null && json["_embedded"]["formats"].Count() > 0)
