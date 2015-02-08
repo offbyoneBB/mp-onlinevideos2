@@ -192,7 +192,7 @@ namespace OnlineVideos.Sites
             currentVideoListUrl = String.Format(
                 StandardAdvancedApiUrl + "?method=vimeo.videos.search&per_page={0}&query={1}&full_response=1&page=", pageSize, query);
             pageNr = 1;
-            return 
+            return
                 videoListFromVimeo(currentVideoListUrl + pageNr.ToString())
                 .ConvertAll<SearchResultItem>(v => v as SearchResultItem);
         }
@@ -201,10 +201,6 @@ namespace OnlineVideos.Sites
         {
             video.PlaybackOptions = null;
             string res = base.GetVideoUrl(video);
-            var vimeoHoster = OnlineVideos.Hoster.HosterFactory.GetHoster("vimeo") as OnlineVideos.Hoster.Vimeo;
-            if (vimeoHoster != null)
-                video.SubtitleText = vimeoHoster.subtitleText;
-
             if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
                 return video.PlaybackOptions.First().Value;
             else
