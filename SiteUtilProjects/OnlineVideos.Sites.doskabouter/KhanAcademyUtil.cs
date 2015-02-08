@@ -79,7 +79,7 @@ namespace OnlineVideos.Sites
                 DateTime airDate = DateTime.Parse(j.Value<string>("date_added"), CultureInfo.InvariantCulture);
                 video.Airdate = airDate.ToString();
 
-                video.Length = VideoInfo.GetDuration(j.Value<string>("duration"));
+                video.Length = Utils.FormatDuration(j.Value<string>("duration"));
                 JToken dlurls = j["download_urls"];
                 video.Thumb = dlurls.Value<string>("png");
                 video.VideoUrl = @"http://www.youtube.com/watch?v=" + j.Value<string>("youtube_id");

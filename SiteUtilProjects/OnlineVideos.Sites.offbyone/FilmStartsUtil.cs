@@ -29,7 +29,7 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        public override string getPlaylistUrl(string resultUrl)
+        public override string GetPlaylistUrl(string resultUrl)
         {
             // 3.a extra step to get a playlist file if needed
             if (regEx_PlaylistUrl != null)

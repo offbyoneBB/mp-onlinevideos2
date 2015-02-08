@@ -2088,7 +2088,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 SetGuiProperties_ExtendedVideoInfo(ovItem != null ? ovItem.Item as VideoInfo : null, false);
                 GUIPropertyManager.SetProperty("#OnlineVideos.desc", ovItem != null ? ovItem.Description : string.Empty);
-                GUIPropertyManager.SetProperty("#OnlineVideos.length", ovItem != null && ovItem.Item is VideoInfo ? VideoInfo.GetDuration((ovItem.Item as VideoInfo).Length) : string.Empty);
+                GUIPropertyManager.SetProperty("#OnlineVideos.length", ovItem != null && ovItem.Item is VideoInfo ? Utils.FormatDuration((ovItem.Item as VideoInfo).Length) : string.Empty);
                 GUIPropertyManager.SetProperty("#OnlineVideos.aired", ovItem != null && ovItem.Item is VideoInfo ? (ovItem.Item as VideoInfo).Airdate : string.Empty);
             }
         }
@@ -2489,7 +2489,7 @@ namespace OnlineVideos.MediaPortal1
                 if (!string.IsNullOrEmpty(playItem.Video.StartTime))
                 {
                     Log.Instance.Info("Found starttime: {0}", playItem.Video.StartTime);
-                    double seconds = playItem.Video.GetSecondsFromStartTime();
+                    double seconds = Utils.SecondsFromTimeString(playItem.Video.StartTime);
                     if (seconds > 0.0d)
                     {
                         Log.Instance.Info("SeekingAbsolute: {0}", seconds);
@@ -3286,7 +3286,7 @@ namespace OnlineVideos.MediaPortal1
                     if (!string.IsNullOrEmpty(video.Description)) GUIPropertyManager.SetProperty("#Play.Current.Plot", video.Description);
                     if (!string.IsNullOrEmpty(video.ThumbnailImage)) GUIPropertyManager.SetProperty("#Play.Current.Thumb", video.ThumbnailImage);
                     if (!string.IsNullOrEmpty(video.Airdate)) GUIPropertyManager.SetProperty("#Play.Current.Year", video.Airdate);
-                    else if (!string.IsNullOrEmpty(video.Length)) GUIPropertyManager.SetProperty("#Play.Current.Year", VideoInfo.GetDuration(video.Length));
+                    else if (!string.IsNullOrEmpty(video.Length)) GUIPropertyManager.SetProperty("#Play.Current.Year", Utils.FormatDuration(video.Length));
 
                     if (site != null)
                     {
@@ -3325,14 +3325,18 @@ namespace OnlineVideos.MediaPortal1
 
             if (videoInfo != null)
             {
-                Dictionary<string, string> custom = videoInfo.GetExtendedProperties();
-                if (custom != null)
+                var details = videoInfo.Other as IVideoDetails;
+                if (details != null)
                 {
-                    foreach (string property in custom.Keys)
+                    var custom = details.GetExtendedProperties();
+                    if (custom != null)
                     {
-                        string label = prefix + property;
-                        string value = custom[property];
-                        SetExtendedGuiProperty(label, value);
+                        foreach (string property in custom.Keys)
+                        {
+                            string label = prefix + property;
+                            string value = custom[property];
+                            SetExtendedGuiProperty(label, value);
+                        }
                     }
                 }
             }

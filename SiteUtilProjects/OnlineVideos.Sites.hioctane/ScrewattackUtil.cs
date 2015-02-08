@@ -10,7 +10,7 @@ namespace OnlineVideos.Sites
     {
 		public override String GetVideoUrl(VideoInfo video)
 		{
-			string url = getPlaylistUrl(video.VideoUrl);
+			string url = GetPlaylistUrl(video.VideoUrl);
 
 			if (string.IsNullOrEmpty(url))
 			{

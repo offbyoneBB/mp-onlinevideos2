@@ -566,7 +566,7 @@ namespace SiteParser
 
             VideoInfo video = GetTreeViewSelectedNode() as VideoInfo;
             if (video != null)
-                videoUrlResultTextBox.Text = generic.getFormattedVideoUrl(video);
+                videoUrlResultTextBox.Text = generic.GetFormattedVideoUrl(video);
             else
                 MessageBox.Show("no valid video selected");
         }
@@ -588,7 +588,7 @@ namespace SiteParser
             if (String.IsNullOrEmpty(videoUrlResultTextBox.Text))
                 MessageBox.Show("VideoUrlResult is empty");
             else
-                playListUrlResultTextBox.Text = generic.getPlaylistUrl(videoUrlResultTextBox.Text);
+                playListUrlResultTextBox.Text = generic.GetPlaylistUrl(videoUrlResultTextBox.Text);
         }
 
         private void CreateFileUrlRegexButton_Click(object sender, EventArgs e)

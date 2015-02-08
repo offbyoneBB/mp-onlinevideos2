@@ -12,8 +12,8 @@ namespace OnlineVideos.Sites
     public override string GetVideoUrl(VideoInfo video)
     {
         //string encodedHTML = getUrl(video);
-        string resultUrl = getFormattedVideoUrl(video);
-        string playListUrl = getPlaylistUrl(resultUrl);
+        string resultUrl = GetFormattedVideoUrl(video);
+        string playListUrl = GetPlaylistUrl(resultUrl);
         if (String.IsNullOrEmpty(playListUrl))
             return String.Empty; // if no match, return empty url -> error
 
