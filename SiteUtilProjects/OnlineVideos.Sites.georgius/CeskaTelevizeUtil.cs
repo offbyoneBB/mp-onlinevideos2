@@ -567,12 +567,12 @@ namespace OnlineVideos.Sites.georgius
             return dynamicSubCategoriesCount;
         }
 
-        public new static string GetWebData(string url, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null)
+        public static string GetWebData(string url, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null)
         {
             HttpWebResponse response = null;
             try
             {
-                string requestCRC = OnlineVideos.Utils.EncryptLine(string.Format("{0}{1}{2}{3}{4}", url, referer, userAgent, proxy != null ? proxy.GetProxy(new Uri(url)).AbsoluteUri : "", cc != null ? cc.GetCookieHeader(new Uri(url)) : ""));
+                string requestCRC = Helpers.EncryptionUtils.CalculateCRC32(string.Format("{0}{1}{2}{3}{4}", url, referer, userAgent, proxy != null ? proxy.GetProxy(new Uri(url)).AbsoluteUri : "", cc != null ? cc.GetCookieHeader(new Uri(url)) : ""));
 
                 // try cache first
                 string cachedData = WebCache.Instance[requestCRC];
@@ -580,7 +580,7 @@ namespace OnlineVideos.Sites.georgius
                 if (cachedData != null) return cachedData;
 
                 // request the data
-                if (allowUnsafeHeader) OnlineVideos.Utils.SetAllowUnsafeHeaderParsing(true);
+                if (allowUnsafeHeader) Helpers.DotNetFrameworkHelper.SetAllowUnsafeHeaderParsing(true);
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
                 if (request == null) return "";
                 if (!String.IsNullOrEmpty(userAgent))
@@ -635,18 +635,18 @@ namespace OnlineVideos.Sites.georgius
             {
                 if (response != null) ((IDisposable)response).Dispose();
                 // disable unsafe header parsing if it was enabled
-                if (allowUnsafeHeader) OnlineVideos.Utils.SetAllowUnsafeHeaderParsing(false);
+                if (allowUnsafeHeader) Helpers.DotNetFrameworkHelper.SetAllowUnsafeHeaderParsing(false);
             }
         }
 
-        public new static string GetWebDataFromPost(string url, string postData, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null)
+        public static string GetWebDataFromPost(string url, string postData, CookieContainer cc = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null)
         {
             try
             {
                 Log.Debug("GetWebDataFromPost: '{0}'", url);
 
                 // request the data
-                if (allowUnsafeHeader) OnlineVideos.Utils.SetAllowUnsafeHeaderParsing(true);
+                if (allowUnsafeHeader) Helpers.DotNetFrameworkHelper.SetAllowUnsafeHeaderParsing(true);
                 byte[] data = encoding != null ? encoding.GetBytes(postData) : Encoding.UTF8.GetBytes(postData);
 
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
@@ -700,7 +700,7 @@ namespace OnlineVideos.Sites.georgius
             finally
             {
                 // disable unsafe header parsing if it was enabled
-                if (allowUnsafeHeader) OnlineVideos.Utils.SetAllowUnsafeHeaderParsing(false);
+                if (allowUnsafeHeader) Helpers.DotNetFrameworkHelper.SetAllowUnsafeHeaderParsing(false);
             }
         }
 

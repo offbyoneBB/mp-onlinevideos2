@@ -362,9 +362,9 @@ namespace OnlineVideos.MediaPortal1
             SerializableSettings s = new SerializableSettings() { Sites = new BindingList<SiteSettings>() };
             s.Sites.Add(siteSettings);
             System.IO.MemoryStream ms = new System.IO.MemoryStream();
-            Utils.SiteSettingsToXml(s, ms);
+            s.Serialize(ms);
             ms.Position = 0;
-            SiteSettings copiedSiteSettings = Utils.SiteSettingsFromXml(new StreamReader(ms))[0];
+            SiteSettings copiedSiteSettings = SerializableSettings.Deserialize(new StreamReader(ms))[0];
 
             CreateEditSite frm = new CreateEditSite();
             frm.Text = "Edit " + siteSettings.Name;
@@ -372,7 +372,7 @@ namespace OnlineVideos.MediaPortal1
             if (frm.ShowDialog() == DialogResult.OK)
             {
                 // make sure the configuration is clean and for the cosen util
-                Utils.AddConfigurationValues(frm.SiteUtil, copiedSiteSettings);
+                copiedSiteSettings.AddConfigurationValues(frm.SiteUtil);
                 // replace original settings object with the new one
                 int index = bindingSourceSiteSettings.IndexOf(siteSettings);
                 bindingSourceSiteSettings.RemoveCurrent();
@@ -456,7 +456,7 @@ namespace OnlineVideos.MediaPortal1
                 ImExportXml dialog = new ImExportXml();
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    IList<SiteSettings> sitesFromDlg = Utils.SiteSettingsFromXml(dialog.txtXml.Text);
+                    IList<SiteSettings> sitesFromDlg = SerializableSettings.Deserialize(dialog.txtXml.Text);
                     if (sitesFromDlg != null)
                     {
                         foreach (SiteSettings site in sitesFromDlg)
@@ -510,7 +510,7 @@ namespace OnlineVideos.MediaPortal1
                 SerializableSettings s = new SerializableSettings() { Sites = new BindingList<SiteSettings>() };
                 s.Sites.Add(site);
                 System.IO.MemoryStream ms = new System.IO.MemoryStream();
-                Utils.SiteSettingsToXml(s, ms);
+                s.Serialize(ms);
                 ms.Position = 0;
                 System.Xml.XmlDocument siteDoc = new System.Xml.XmlDocument();
                 siteDoc.Load(ms);
@@ -639,7 +639,7 @@ namespace OnlineVideos.MediaPortal1
                     {
                         OnlineVideosWebservice.Site onlineSite = (OnlineVideosWebservice.Site)dgvr.DataBoundItem;
                         string siteXml = ws.GetSiteXml(onlineSite.Name);
-                        IList<SiteSettings> sitesFromServer = Utils.SiteSettingsFromXml(siteXml);
+                        IList<SiteSettings> sitesFromServer = SerializableSettings.Deserialize(siteXml);
                         if (sitesFromServer != null)
                         {
                             foreach (SiteSettings site in sitesFromServer)

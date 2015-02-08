@@ -126,7 +126,7 @@ namespace OnlineVideos.Sites
                 // Replace <p> with \n
                 result = Regex.Replace(result, @"< *p */*>", "\n", RegexOptions.IgnoreCase & RegexOptions.Multiline);
                 // Clean other
-                result = Utils.PlainTextFromHtml(result);
+                result = Helpers.StringUtils.PlainTextFromHtml(result);
             }
             return result;
         }

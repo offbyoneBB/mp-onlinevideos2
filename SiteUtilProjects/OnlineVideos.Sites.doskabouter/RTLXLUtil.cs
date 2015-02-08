@@ -462,7 +462,7 @@ namespace OnlineVideos.Sites
             string webData = GetWebData(url);
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(webData);
-            List<string> urls = Utils.ParseASX(GetWebData(url));
+            List<string> urls = Helpers.AsxUtils.ParseASX(GetWebData(url));
             string url2 = urls.Count > 1 ? urls[1] : urls[0];
             return url2;
         }

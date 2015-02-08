@@ -324,7 +324,7 @@ namespace OnlineVideos.Sites
         public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
         {
             //Extension always .mp4
-            return OnlineVideos.Utils.GetSaveFilename(video.Title) + ".mp4";
+            return Helpers.FileUtils.GetSaveFilename(video.Title) + ".mp4";
         }
 
         public override ITrackingInfo GetTrackingInfo(VideoInfo video)

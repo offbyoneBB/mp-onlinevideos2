@@ -25,7 +25,7 @@ namespace OnlineVideos.Sites
             {
                 RssLink cat = new RssLink();
                 cat.Url = m.Groups["url"].Value;
-                cat.Name = Utils.PlainTextFromHtml(m.Groups["title"].Value);
+                cat.Name = Helpers.StringUtils.PlainTextFromHtml(m.Groups["title"].Value);
                 cat.HasSubCategories = true;
                 Settings.Categories.Add(cat);
                 m = m.NextMatch();
@@ -53,7 +53,7 @@ namespace OnlineVideos.Sites
             {
                 RssLink date = new RssLink();
                 date.Url = m.Groups["url"].Value;
-                date.Name = Utils.PlainTextFromHtml(HttpUtility.HtmlDecode(m.Groups["title"].Value));
+                date.Name = Helpers.StringUtils.PlainTextFromHtml(HttpUtility.HtmlDecode(m.Groups["title"].Value));
                 date.Thumb = m.Groups["thumb"].Value;
                 date.ParentCategory = parentCategory;
                 listDates.Add(date);
@@ -81,7 +81,7 @@ namespace OnlineVideos.Sites
                 {
                     RssLink cat = new RssLink();
                     cat.Url = m2.Groups["url"].Value;
-                    cat.Name = Utils.PlainTextFromHtml(HttpUtility.HtmlDecode(m2.Groups["title"].Value));
+                    cat.Name = Helpers.StringUtils.PlainTextFromHtml(HttpUtility.HtmlDecode(m2.Groups["title"].Value));
                     cat.Thumb = m2.Groups["thumb"].Value;
                     cat.ParentCategory = parentCategory;
                     listDates.Add(cat);

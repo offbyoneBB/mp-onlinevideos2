@@ -307,7 +307,7 @@ namespace SiteParser
                     {
                         string val = m.Groups[field].Value;
                         if (cleanupValues)
-                            val = Utils.PlainTextFromHtml(val);
+                            val = OnlineVideos.Helpers.StringUtils.PlainTextFromHtml(val);
                         node.Nodes.Add(field + " " + val);
                         node.Expand();
                     }

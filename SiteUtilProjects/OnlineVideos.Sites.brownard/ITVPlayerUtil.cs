@@ -376,7 +376,7 @@ namespace OnlineVideos.Sites
             if (RetrieveSubtitles)
             {
                 node = videoEntry.SelectSingleNode("./ClosedCaptioningURIs");
-                if (node != null && OnlineVideos.Utils.IsValidUri(node.InnerText))
+                if (node != null && Helpers.UriUtils.IsValidUri(node.InnerText))
                     video.SubtitleText = OnlineVideos.Sites.Utils.SubtitleReader.TimedText2SRT(GetWebData(node.InnerText));
             }
 

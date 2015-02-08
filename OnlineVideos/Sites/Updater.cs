@@ -218,7 +218,7 @@ namespace OnlineVideos.Sites
 								else
 								{
 									// MD5 is different - check compile time of local dll vs. LastUpdated of remote dll
-									if (Utils.RetrieveLinkerTimestamp(location) > anOnlineDll.LastUpdated)
+                                    if (Helpers.FileUtils.RetrieveLinkerTimestamp(location) > anOnlineDll.LastUpdated)
 									{
 										download = false; // local dll is most likely self-compiled - do not download server dll
 										Log.Info("Local '{0}.dll' was compiled later that online version - skipping download", anOnlineDll.Name);
@@ -268,7 +268,7 @@ namespace OnlineVideos.Sites
 				string siteXml = ws.GetSiteXml(siteName);
 				if (siteXml.Length > 0)
 				{
-					IList<SiteSettings> sitesFromWeb = Utils.SiteSettingsFromXml(siteXml);
+                    IList<SiteSettings> sitesFromWeb = SerializableSettings.Deserialize(siteXml);
 					if (sitesFromWeb != null && sitesFromWeb.Count > 0)
 					{
 						// Download images

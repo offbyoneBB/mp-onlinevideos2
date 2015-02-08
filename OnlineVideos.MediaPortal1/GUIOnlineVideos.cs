@@ -9,6 +9,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 using OnlineVideos.Downloading;
+using OnlineVideos.Helpers;
 using OnlineVideos.MediaPortal1.Player;
 using OnlineVideos.Sites;
 using Action = MediaPortal.GUI.Library.Action;
@@ -2088,7 +2089,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 SetGuiProperties_ExtendedVideoInfo(ovItem != null ? ovItem.Item as VideoInfo : null, false);
                 GUIPropertyManager.SetProperty("#OnlineVideos.desc", ovItem != null ? ovItem.Description : string.Empty);
-                GUIPropertyManager.SetProperty("#OnlineVideos.length", ovItem != null && ovItem.Item is VideoInfo ? Utils.FormatDuration((ovItem.Item as VideoInfo).Length) : string.Empty);
+                GUIPropertyManager.SetProperty("#OnlineVideos.length", ovItem != null && ovItem.Item is VideoInfo ? Helpers.TimeUtils.TimeFromSeconds((ovItem.Item as VideoInfo).Length) : string.Empty);
                 GUIPropertyManager.SetProperty("#OnlineVideos.aired", ovItem != null && ovItem.Item is VideoInfo ? (ovItem.Item as VideoInfo).Airdate : string.Empty);
             }
         }
@@ -2227,7 +2228,7 @@ namespace OnlineVideos.MediaPortal1
         {
 
             if (playItem.Util.Settings.Player != PlayerType.Browser)
-                Utils.RemoveInvalidUrls(loUrlList);
+                Helpers.UriUtils.RemoveInvalidUrls(loUrlList);
 
             // if no valid urls were returned show error msg
             if (loUrlList == null || loUrlList.Count == 0)
@@ -2324,7 +2325,7 @@ namespace OnlineVideos.MediaPortal1
 
             // check for valid url and cut off additional parameter
             if ((String.IsNullOrEmpty(lsUrl) ||
-                !Utils.IsValidUri((lsUrl.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? lsUrl.Substring(0, lsUrl.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : lsUrl))
+                !Helpers.UriUtils.IsValidUri((lsUrl.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? lsUrl.Substring(0, lsUrl.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : lsUrl))
                 &&
                 factory.PreparedPlayerType != PlayerType.Browser)
             {
@@ -2489,7 +2490,7 @@ namespace OnlineVideos.MediaPortal1
                 if (!string.IsNullOrEmpty(playItem.Video.StartTime))
                 {
                     Log.Instance.Info("Found starttime: {0}", playItem.Video.StartTime);
-                    double seconds = Utils.SecondsFromTimeString(playItem.Video.StartTime);
+                    double seconds = Helpers.TimeUtils.SecondsFromTime(playItem.Video.StartTime);
                     if (seconds > 0.0d)
                     {
                         Log.Instance.Info("SeekingAbsolute: {0}", seconds);
@@ -2605,7 +2606,7 @@ namespace OnlineVideos.MediaPortal1
 
         private void SaveVideo_Step2(DownloadList saveItems, List<String> loUrlList, bool? enque)
         {
-			Utils.RemoveInvalidUrls(loUrlList);
+            Helpers.UriUtils.RemoveInvalidUrls(loUrlList);
 
             // if no valid urls were returned show error msg
             if (loUrlList == null || loUrlList.Count == 0)
@@ -2680,7 +2681,7 @@ namespace OnlineVideos.MediaPortal1
         {
             // check for valid url and cut off additional parameter
             if (String.IsNullOrEmpty(url) ||
-                !Utils.IsValidUri((url.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? url.Substring(0, url.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : url))
+                !Helpers.UriUtils.IsValidUri((url.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? url.Substring(0, url.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : url))
             {
                 GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
                 if (dlg != null)
@@ -2719,7 +2720,7 @@ namespace OnlineVideos.MediaPortal1
                     Path.GetExtension(saveItems.CurrentItem.LocalFile));
             }
 
-            saveItems.CurrentItem.LocalFile = Utils.GetNextFileName(saveItems.CurrentItem.LocalFile);
+            saveItems.CurrentItem.LocalFile = Helpers.FileUtils.GetNextFileName(saveItems.CurrentItem.LocalFile);
             saveItems.CurrentItem.ThumbFile = string.IsNullOrEmpty(saveItems.CurrentItem.VideoInfo.ThumbnailImage) ? saveItems.CurrentItem.VideoInfo.Thumb : saveItems.CurrentItem.VideoInfo.ThumbnailImage;
 
             // make sure the target dir exists
@@ -2839,7 +2840,7 @@ namespace OnlineVideos.MediaPortal1
                     // if the image given was an url -> check if thumb exists otherwise download
                     if (saveItems.CurrentItem.ThumbFile.ToLower().StartsWith("http"))
                     {
-                        string thumbFile = Utils.GetThumbFile(saveItems.CurrentItem.ThumbFile);
+                        string thumbFile = Helpers.FileUtils.GetThumbFile(saveItems.CurrentItem.ThumbFile);
                         if (File.Exists(thumbFile)) saveItems.CurrentItem.ThumbFile = thumbFile;
                         else if (ImageDownloader.DownloadAndCheckImage(saveItems.CurrentItem.ThumbFile, thumbFile)) saveItems.CurrentItem.ThumbFile = thumbFile;
                     }
@@ -3286,7 +3287,7 @@ namespace OnlineVideos.MediaPortal1
                     if (!string.IsNullOrEmpty(video.Description)) GUIPropertyManager.SetProperty("#Play.Current.Plot", video.Description);
                     if (!string.IsNullOrEmpty(video.ThumbnailImage)) GUIPropertyManager.SetProperty("#Play.Current.Thumb", video.ThumbnailImage);
                     if (!string.IsNullOrEmpty(video.Airdate)) GUIPropertyManager.SetProperty("#Play.Current.Year", video.Airdate);
-                    else if (!string.IsNullOrEmpty(video.Length)) GUIPropertyManager.SetProperty("#Play.Current.Year", Utils.FormatDuration(video.Length));
+                    else if (!string.IsNullOrEmpty(video.Length)) GUIPropertyManager.SetProperty("#Play.Current.Year", Helpers.TimeUtils.TimeFromSeconds(video.Length));
 
                     if (site != null)
                     {

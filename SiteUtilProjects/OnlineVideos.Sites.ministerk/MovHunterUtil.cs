@@ -117,7 +117,7 @@ namespace OnlineVideos.Sites
 
         public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
         {
-            return OnlineVideos.Utils.GetSaveFilename(video.Title) + ".mp4";
+            return Helpers.FileUtils.GetSaveFilename(video.Title) + ".mp4";
         }
 
         public override List<ContextMenuEntry> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)

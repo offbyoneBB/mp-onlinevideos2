@@ -152,7 +152,7 @@ namespace OnlineVideos
             }
             using (sitesStream)
             {
-                SiteSettingsList = (BindingList<SiteSettings>)Utils.SiteSettingsFromXml(new StreamReader(sitesStream));
+                SiteSettingsList = (BindingList<SiteSettings>)SerializableSettings.Deserialize(new StreamReader(sitesStream));
             }
 			Log.Info("Loaded {0} sites from {1}", SiteSettingsList.Count, SitesFileName);
         }
@@ -231,7 +231,7 @@ namespace OnlineVideos
             {
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    Utils.SiteSettingsToXml(new SerializableSettings() { Sites = SiteSettingsList }, ms);
+                    new SerializableSettings() { Sites = SiteSettingsList }.Serialize(ms);
                     if (ms.Length > 0)
                     {
                         ms.Position = 0;

@@ -229,6 +229,7 @@
     <Compile Include="Downloading\DownloadList.cs" />
     <Compile Include="Downloading\DownloadManager.cs" />
     <Compile Include="Downloading\IDownloader.cs" />
+    <Compile Include="Helpers\AsxUtils.cs" />
     <Compile Include="Helpers\CursorHelper.cs" />
     <Compile Include="3rdParty\DotNetZip\ComHelper.cs" />
     <Compile Include="3rdParty\DotNetZip\Crc32.cs" />
@@ -278,6 +279,13 @@
     <Compile Include="Downloading\HTTPDownloader.cs" />
     <Compile Include="Downloading\ImageDownloader.cs" />
     <Compile Include="Downloading\MMSDownloader.cs" />
+    <Compile Include="Helpers\CollectionUtils.cs" />
+    <Compile Include="Helpers\DotNetFrameworkHelper.cs" />
+    <Compile Include="Helpers\EncryptionUtils.cs" />
+    <Compile Include="Helpers\FileUtils.cs" />
+    <Compile Include="Helpers\StringUtils.cs" />
+    <Compile Include="Helpers\TimeUtils.cs" />
+    <Compile Include="Helpers\UriUtils.cs" />
     <Compile Include="Hoster\Base\HosterBase.cs" />
     <Compile Include="Hoster\Base\HosterFactory.cs" />
     <Compile Include="Hoster\Base\ISubtitle.cs" />
@@ -1013,9 +1021,8 @@
     <Compile Include="Sites\WebBrowserPlayerService\ServiceImplementation\WebBrowserPlayerCallbackService.cs" />
     <Compile Include="Sites\WebBrowserPlayerService\ServiceImplementation\WebBrowserPlayerServiceHost.cs" />
     <Compile Include="Sites\WebBrowserPlayerService\ServiceImplementation\WebBrowserPlayerCallback.cs" />
-    <Compile Include="SubtitleUtils.cs" />
+    <Compile Include="Helpers\SubtitleUtils.cs" />
     <Compile Include="Translation.cs" />
-    <Compile Include="Utils.cs" />
     <Compile Include="VideoInfo.cs" />
     <Compile Include="Web References\OnlineVideosWebservice\Reference.cs">
       <AutoGen>True</AutoGen>

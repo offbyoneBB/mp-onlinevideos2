@@ -328,7 +328,7 @@ namespace OnlineVideos.Sites
                 if (String.IsNullOrEmpty(extension) || !OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(extension))
                     name += ".flv";
 				name = pre + name;
-                return Utils.GetSaveFilename(name);
+                return Helpers.FileUtils.GetSaveFilename(name);
             }
         }
 

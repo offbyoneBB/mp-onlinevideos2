@@ -739,12 +739,12 @@ namespace OnlineVideos.Sites
             if (type == LaolaCategoryTypes.Archive)
             {
                 String title = video.Title + ".flv";
-                return Utils.GetSaveFilename(title);
+                return Helpers.FileUtils.GetSaveFilename(title);
             }
             else if (type == LaolaCategoryTypes.Live)
             {
                 String title = "LIVE - " + video.Title + ".flv";
-                return Utils.GetSaveFilename(title);
+                return Helpers.FileUtils.GetSaveFilename(title);
             }
 
             return null;

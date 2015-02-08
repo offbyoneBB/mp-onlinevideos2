@@ -67,7 +67,7 @@ namespace OnlineVideos.Sites
             if (!Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute)) cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
             cat.Thumb = m.Groups["thumb"].Value;
             if (!String.IsNullOrEmpty(cat.Thumb) && !Uri.IsWellFormedUriString(cat.Thumb, System.UriKind.Absolute)) cat.Thumb = new Uri(new Uri(baseUrl), cat.Thumb).AbsoluteUri;
-            cat.Description = Utils.PlainTextFromHtml(m.Groups["description"].Value).Replace('\n', ' ');
+            cat.Description = Helpers.StringUtils.PlainTextFromHtml(m.Groups["description"].Value).Replace('\n', ' ');
             if (m.Groups["title"].Success && !string.IsNullOrEmpty(m.Groups["title"].Value))
                 cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value);
             else
@@ -84,15 +84,15 @@ namespace OnlineVideos.Sites
 			while (m.Success)
 			{
 				VideoInfo videoInfo = new VideoInfo();
-                videoInfo.Title = Utils.PlainTextFromHtml(m.Groups["Title"].Value).Replace("\r", " ").Replace('\n', ' ').Trim();
+                videoInfo.Title = Helpers.StringUtils.PlainTextFromHtml(m.Groups["Title"].Value).Replace("\r", " ").Replace('\n', ' ').Trim();
 				// get, format and if needed absolutify the video url
 				videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
 				if (!Uri.IsWellFormedUriString(videoInfo.VideoUrl, System.UriKind.Absolute)) videoInfo.VideoUrl = new Uri(new Uri(baseUrl), videoInfo.VideoUrl).AbsoluteUri;
 				// get, format and if needed absolutify the thumb url
 				videoInfo.Thumb = m.Groups["ImageUrl"].Value;
 				if (!string.IsNullOrEmpty(videoInfo.Thumb) && !Uri.IsWellFormedUriString(videoInfo.Thumb, System.UriKind.Absolute)) videoInfo.Thumb = new Uri(new Uri(baseUrl), videoInfo.Thumb).AbsoluteUri;
-                videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value).Replace("\r", " ").Replace('\n', ' ').Trim();
-				videoInfo.Airdate = Utils.PlainTextFromHtml(m.Groups["Airdate"].Value);
+                videoInfo.Length = Helpers.StringUtils.PlainTextFromHtml(m.Groups["Duration"].Value).Replace("\r", " ").Replace('\n', ' ').Trim();
+                videoInfo.Airdate = Helpers.StringUtils.PlainTextFromHtml(m.Groups["Airdate"].Value);
 				videoList.Add(videoInfo);
 				m = m.NextMatch();
 			}

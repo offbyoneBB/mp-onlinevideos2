@@ -32,14 +32,14 @@ namespace OnlineVideos.CrossDomain
         internal void LoadAllSiteUtilDlls(string path)
         {
             var assemblies = new Dictionary<Assembly, DateTime>();
-            assemblies.Add(Assembly.GetExecutingAssembly(), Utils.RetrieveLinkerTimestamp(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath));
+            assemblies.Add(Assembly.GetExecutingAssembly(), Helpers.FileUtils.RetrieveLinkerTimestamp(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath));
             if (Directory.Exists(path))
             {
                 foreach (string dll in Directory.GetFiles(path, "OnlineVideos.Sites.*.dll"))
                 {
                     try
                     {
-                        assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(dll)), Utils.RetrieveLinkerTimestamp(dll));
+                        assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(dll)), Helpers.FileUtils.RetrieveLinkerTimestamp(dll));
                     }
                     catch (Exception dllLoadException)
                     {
@@ -170,15 +170,15 @@ namespace OnlineVideos.CrossDomain
             SerializableSettings s = new SerializableSettings() { Sites = new BindingList<SiteSettings>() };
             s.Sites.Add(site.Settings);
             System.IO.MemoryStream ms = new System.IO.MemoryStream();
-            Utils.SiteSettingsToXml(s, ms);
+            s.Serialize(ms);
             ms.Position = 0;
-            SiteSettings originalSettings = Utils.SiteSettingsFromXml(new StreamReader(ms))[0];
+            SiteSettings originalSettings = SerializableSettings.Deserialize(new StreamReader(ms))[0];
             return CreateUtilFromShortName(site.Settings.UtilName, originalSettings);
         }
 
         public IList<SiteSettings> CreateSiteSettingsFromXml(string siteXml)
         {
-            return Utils.SiteSettingsFromXml(new System.IO.StringReader(siteXml));
+            return SerializableSettings.Deserialize(new System.IO.StringReader(siteXml));
         }
 
         public string GetRequiredDllForUtil(string name)

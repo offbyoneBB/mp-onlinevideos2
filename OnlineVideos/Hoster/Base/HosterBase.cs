@@ -16,7 +16,7 @@ namespace OnlineVideos.Hoster
 
         internal override string GetConfigurationKey(string fieldName)
         {
-            return string.Format("{0}|{1}", Utils.GetSaveFilename(GetHosterUrl()), fieldName);
+            return string.Format("{0}|{1}", Helpers.FileUtils.GetSaveFilename(GetHosterUrl()), fieldName);
         }
 
         #endregion
@@ -61,7 +61,12 @@ namespace OnlineVideos.Hoster
 
         public abstract string GetHosterUrl();
 
-        public static RegexOptions defaultRegexOptions = RegexOptions.Singleline | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace;
+        public override string ToString()
+        {
+            return GetHosterUrl();
+        }
+
+        protected static RegexOptions defaultRegexOptions = RegexOptions.Singleline | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace;
 
         protected static string FlashProvider(string url, string webData = null)
         {
@@ -72,11 +77,11 @@ namespace OnlineVideos.Hoster
             if (!string.IsNullOrEmpty(page))
             {
                 Match n = Regex.Match(page, @"addVariable\(""file"",""(?<url>[^""]+)""\);");
-                if (n.Success && Utils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
+                if (n.Success && Helpers.UriUtils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
                 n = Regex.Match(page, @"flashvars.file=""(?<url>[^""]+)"";");
-                if (n.Success && Utils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
+                if (n.Success && Helpers.UriUtils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
                 n = Regex.Match(page, @"flashvars.{0,50}file\s*?(?:=|:)\s*?(?:\'|"")?(?<url>[^\'""]+)(?:\'|"")?", defaultRegexOptions);
-                if (n.Success && Utils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
+                if (n.Success && Helpers.UriUtils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
             }
             return String.Empty;
         }
@@ -97,7 +102,7 @@ namespace OnlineVideos.Hoster
             return String.Empty;
         }
 
-        private static string GetVal(string num, string[] pars)
+        protected static string GetVal(string num, string[] pars)
         {
             int n = 0;
             for (int i = 0; i < num.Length; i++)
@@ -115,7 +120,7 @@ namespace OnlineVideos.Hoster
             return pars[n];
         }
 
-        public static string UnPack(string packed)
+        protected static string UnPack(string packed)
         {
             string res;
             int p = packed.IndexOf('|');
@@ -169,18 +174,13 @@ namespace OnlineVideos.Hoster
             return s.Substring(p, q - p);
         }
 
-        protected string GetRegExData(string regex, string data, string group)
+        protected static string GetRegExData(string regex, string data, string group)
         {
             string result = string.Empty;
             Match m = Regex.Match(data, regex);
             if (m.Success)
                 result = m.Groups[group].Value;
             return result == null ? string.Empty : result;
-        }
-
-        public override string ToString()
-        {
-            return GetHosterUrl();
         }
     }
 }

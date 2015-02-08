@@ -279,7 +279,7 @@ namespace OnlineVideos.Sites
                 // get, format and if needed absolutify the thumb url
                 videoInfo.Thumb = m.Groups["ImageUrl"].Value;
                 if (!string.IsNullOrEmpty(videoInfo.Thumb) && !Uri.IsWellFormedUriString(videoInfo.Thumb, System.UriKind.Absolute)) videoInfo.Thumb = new Uri(new Uri(url), videoInfo.Thumb).AbsoluteUri;
-				videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value);                
+                videoInfo.Length = Helpers.StringUtils.PlainTextFromHtml(m.Groups["Duration"].Value);                
                 videoInfo.Description = m.Groups["Description"].Value;
 				videoList.Add(videoInfo);
                 m = m.NextMatch();
@@ -314,7 +314,7 @@ namespace OnlineVideos.Sites
                     Other = video.Value.Value<string>("movie_owner_id"),
                     Thumb = video.Value.Value<string>("movie_thumbnail"),
                     Length = video.Value.Value<string>("movie_length"),
-                    Airdate = Utils.UNIXTimeToDateTime(double.Parse(video.Value.Value<string>("movie_added"))).ToString("g", OnlineVideoSettings.Instance.Locale),
+                    Airdate = Helpers.TimeUtils.UNIXTimeToDateTime(double.Parse(video.Value.Value<string>("movie_added"))).ToString("g", OnlineVideoSettings.Instance.Locale),
                     VideoUrl = "http://www.myvideo.de/watch/" + video.Value.Value<string>("movie_id") + "/"
                 });
             }
@@ -376,8 +376,8 @@ namespace OnlineVideos.Sites
                 string enc_data = GetWebData(url + "?" + parameters.ToString(), referer: video.VideoUrl).Split('=')[1];
                 var enc_data_b = ArrayFromHexstring(enc_data);
                 var p1 = ASCIIEncoding.ASCII.GetString(Convert.FromBase64String(ASCIIEncoding.ASCII.GetString(Convert.FromBase64String("WXpnME1EZGhNRGhpTTJNM01XVmhOREU0WldNNVpHTTJOakptTW1FMU5tVTBNR05pWkRaa05XRXhNVFJoWVRVd1ptSXhaVEV3TnpsbA0KTVRkbU1tSTRNdz09"))));
-                var p2 = Utils.GetMD5Hash(videoId.ToString());
-                var sk = ASCIIEncoding.ASCII.GetBytes(Utils.GetMD5Hash(p1 + p2));
+                var p2 = Helpers.EncryptionUtils.GetMD5Hash(videoId.ToString());
+                var sk = ASCIIEncoding.ASCII.GetBytes(Helpers.EncryptionUtils.GetMD5Hash(p1 + p2));
                 byte[] dec_data = new byte[enc_data_b.Length];
                 var rc4 = new Org.BouncyCastle.Crypto.Engines.RC4Engine();
                 rc4.Init(false, new Org.BouncyCastle.Crypto.Parameters.KeyParameter(sk));

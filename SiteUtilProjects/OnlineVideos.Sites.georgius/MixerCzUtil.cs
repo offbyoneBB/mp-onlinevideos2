@@ -143,7 +143,7 @@ namespace OnlineVideos.Sites.georgius
                                     match = Regex.Match(episodeData, MixerCzUtil.showEpisodeUrlAndTitleRegex);
                                     if (match.Success)
                                     {
-                                        episodeTitle = OnlineVideos.Utils.PlainTextFromHtml(match.Groups["showTitle"].Value);
+                                        episodeTitle = Helpers.StringUtils.PlainTextFromHtml(match.Groups["showTitle"].Value);
                                         episodeUrl = Utils.FormatAbsoluteUrl(match.Groups["showUrl"].Value, pageUrl);
                                     }
 

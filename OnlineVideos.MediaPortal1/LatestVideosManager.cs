@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using OnlineVideos.Downloading;
+using OnlineVideos.Helpers;
 
 namespace OnlineVideos.MediaPortal1
 {

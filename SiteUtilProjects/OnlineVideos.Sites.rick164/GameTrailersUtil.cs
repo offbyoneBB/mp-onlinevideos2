@@ -155,7 +155,7 @@ namespace OnlineVideos.Sites
                                 {
                                     videoInfo.Thumb = m.Groups["ImageUrl"].Value;
                                     videoInfo.Airdate = m.Groups["Airdate"].Value;
-                                    videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value).Replace("M", "M ").Replace("S", "S").Replace("PT0H", "").Replace("PT1H", "1H ").Replace("PT", "").Replace("T", "").Trim();
+                                    videoInfo.Length = Helpers.StringUtils.PlainTextFromHtml(m.Groups["Duration"].Value).Replace("M", "M ").Replace("S", "S").Replace("PT0H", "").Replace("PT1H", "1H ").Replace("PT", "").Replace("T", "").Trim();
 
                                     Log.Debug("Desc: " + m.Groups["Description"].Value);
                                     //Encoding by GT is reported as UTF-8 but it's not in most cases, temporary fix added for "'" character

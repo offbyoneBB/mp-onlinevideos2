@@ -28,9 +28,9 @@ namespace OnlineVideos.Hoster
 
                 //file:\s*'(?<Title>[^"]*)',
                 Match n = Regex.Match(page, @"file:\s*'(?<url>[^']*)'");
-                if (n.Success && Utils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
+                if (n.Success && Helpers.UriUtils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
                 n = Regex.Match(page, @"file:\s*""(?<url>[^""]*)""");
-                if (n.Success && Utils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
+                if (n.Success && Helpers.UriUtils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
             }
             return String.Empty;
         }

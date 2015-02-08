@@ -146,7 +146,7 @@ namespace OnlineVideos.Sites
                                                             {"Published", "published"},
                                                             {"View Count", "viewCount"},
                                                             {"Rating", "rating"}};
-            foreach (string name in Enum.GetNames(typeof(YouTubeQuery.UploadTime))) timeFrameList.Add(Utils.ToFriendlyCase(name), name);
+            foreach (string name in Enum.GetNames(typeof(YouTubeQuery.UploadTime))) timeFrameList.Add(Helpers.StringUtils.ToFriendlyCase(name), name);
             if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
 				request = new YouTubeRequest(new YouTubeRequestSettings("OnlineVideos", DEVELOPER_KEY));
 			else

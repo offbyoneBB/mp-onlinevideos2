@@ -278,7 +278,7 @@ namespace OnlineVideos.Sites
                 return video.Title;
             else // called for downloading
             {
-                string saveName = Utils.GetSaveFilename(video.Title);
+                string saveName = Helpers.FileUtils.GetSaveFilename(video.Title);
                 if (url.Contains("gametrailers.com"))
                     return saveName + ".mp4";
                 return saveName + ".flv";

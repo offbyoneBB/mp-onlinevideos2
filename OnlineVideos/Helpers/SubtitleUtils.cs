@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Xml;
 
-namespace OnlineVideos
+namespace OnlineVideos.Helpers
 {
     public static class SubtitleUtils
     {
