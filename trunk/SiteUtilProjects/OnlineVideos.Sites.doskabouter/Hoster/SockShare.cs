@@ -27,7 +27,7 @@ namespace OnlineVideos.Hoster
             string webData = WebCache.Instance.GetWebData(url, cookies: cc);
             if (!string.IsNullOrEmpty(webData))
             {
-                if (!string.IsNullOrEmpty(GetRegExData(@"(?<exists>This\sfile\sdoesn\'t\sexist,\sor\shas\sbeen\sremoved\s?\.)", webData, "exists")))
+                if (!string.IsNullOrEmpty(Helpers.StringUtils.GetRegExData(@"(?<exists>This\sfile\sdoesn\'t\sexist,\sor\shas\sbeen\sremoved\s?\.)", webData, "exists")))
                     webData = string.Empty;
             }
             return webData;
@@ -39,16 +39,16 @@ namespace OnlineVideos.Hoster
 
             string dlLink = string.Empty;
 
-            dlLink = GetRegExData(@"<a href=""/gopro\.php"">Tired of ads and waiting\? Go Pro\!</a>[\t\n\rn ]+</div>[\t\n\rn ]+<a href=""(?<link>/.*?)""", data, "link");
+            dlLink = Helpers.StringUtils.GetRegExData(@"<a href=""/gopro\.php"">Tired of ads and waiting\? Go Pro\!</a>[\t\n\rn ]+</div>[\t\n\rn ]+<a href=""(?<link>/.*?)""", data, "link");
 
             if (string.IsNullOrEmpty(dlLink))
             {
-                dlLink = GetRegExData(@"""(?<link>/get_file\.php\?download=[A-Z0-9]+\&key=[a-z0-9]+)""", data, "link");
+                dlLink = Helpers.StringUtils.GetRegExData(@"""(?<link>/get_file\.php\?download=[A-Z0-9]+\&key=[a-z0-9]+)""", data, "link");
             }
 
             if (string.IsNullOrEmpty(dlLink))
             {
-                dlLink = GetRegExData(@"playlist: \'(?<link>/get_file\.php\?stream=[A-Za-z0-9=]+)\'", data, "link");
+                dlLink = Helpers.StringUtils.GetRegExData(@"playlist: \'(?<link>/get_file\.php\?stream=[A-Za-z0-9=]+)\'", data, "link");
                 if (!string.IsNullOrEmpty(dlLink))
                 {
                     string tempLink = new Uri(new Uri(string.Format("{0}{1}", "http://www.", GetHosterUrl())), dlLink).AbsoluteUri;
@@ -66,7 +66,7 @@ namespace OnlineVideos.Hoster
 
                         if (string.IsNullOrEmpty(dlLink))
                         {
-                            dlLink = GetRegExData(@"""(?<link>http://media-b\d+\.putlocker\.com/download/\d+/.*?)""", webData, "link");
+                            dlLink = Helpers.StringUtils.GetRegExData(@"""(?<link>http://media-b\d+\.putlocker\.com/download/\d+/.*?)""", webData, "link");
                         }
                     }
                     else
@@ -88,7 +88,7 @@ namespace OnlineVideos.Hoster
             string webData = requestFileInformation(url, cc);
             if (string.IsNullOrEmpty(webData)) return string.Empty;
 
-            Match m = Regex.Match(webData, @"<input\stype=""hidden""\svalue=""(?<hashValue>[a-z0-9]+)""\sname=""(?<hashName>[^""]+)"">\s*<input\sname=""(?<confirmName>[^""]+)""\stype=""submit""\svalue=""(?<confirmValue>[^""]+)""[^>]*>\s*</form>", defaultRegexOptions);
+            Match m = Regex.Match(webData, @"<input\stype=""hidden""\svalue=""(?<hashValue>[a-z0-9]+)""\sname=""(?<hashName>[^""]+)"">\s*<input\sname=""(?<confirmName>[^""]+)""\stype=""submit""\svalue=""(?<confirmValue>[^""]+)""[^>]*>\s*</form>", MyHosterBase.DefaultRegexOptions);
 
             if (!m.Success) return String.Empty;
 
@@ -96,7 +96,7 @@ namespace OnlineVideos.Hoster
                 HttpUtility.UrlEncode(m.Groups["hashName"].Value), HttpUtility.UrlEncode(m.Groups["hashValue"].Value),
                 HttpUtility.UrlEncode(m.Groups["confirmName"].Value), HttpUtility.UrlEncode(m.Groups["confirmValue"].Value));
 
-            string sWaitTime = GetRegExData(@"var countdownNum = (?<waittime>\d+);", webData, "waittime");
+            string sWaitTime = Helpers.StringUtils.GetRegExData(@"var countdownNum = (?<waittime>\d+);", webData, "waittime");
             int iWaitTime = 1;
             if (!string.IsNullOrEmpty(sWaitTime))
             {

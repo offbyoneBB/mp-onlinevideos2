@@ -80,7 +80,19 @@ namespace OnlineVideos.Hoster
                 if (m.Success)
                     return m.Groups["url"].Value;
             }
-            return HosterBase.FlashProvider(page);
+            else
+            {
+                if (!string.IsNullOrEmpty(page))
+                {
+                    Match n = Regex.Match(page, @"addVariable\(""file"",""(?<url>[^""]+)""\);");
+                    if (n.Success && Helpers.UriUtils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
+                    n = Regex.Match(page, @"flashvars.file=""(?<url>[^""]+)"";");
+                    if (n.Success && Helpers.UriUtils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
+                    n = Regex.Match(page, @"flashvars.{0,50}file\s*?(?:=|:)\s*?(?:\'|"")?(?<url>[^\'""]+)(?:\'|"")?", DefaultRegexOptions);
+                    if (n.Success && Helpers.UriUtils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
+                }
+            }
+            return String.Empty;
         }
 
         private int FromBase36(char c)
@@ -171,6 +183,22 @@ namespace OnlineVideos.Hoster
             return p;
         }
 
+        internal static RegexOptions DefaultRegexOptions = RegexOptions.Singleline | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace;
 
+        internal static string DivxProvider(string url, string webData = null)
+        {
+            string page = webData;
+            if (webData == null)
+                page = WebCache.Instance.GetWebData<string>(url);
+
+            if (!string.IsNullOrEmpty(page))
+            {
+                Match n = Regex.Match(page, @"var\surl\s=\s'(?<url>[^']+)';");
+                if (n.Success) return n.Groups["url"].Value;
+                n = Regex.Match(page, @"video/divx""\ssrc=""(?<url>[^""]+)""");
+                if (n.Success) return n.Groups["url"].Value;
+            }
+            return String.Empty;
+        }
     }
 }

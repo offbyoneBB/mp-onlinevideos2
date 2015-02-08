@@ -19,8 +19,8 @@ namespace OnlineVideos.Hoster
 
 
             //Grab hidden value file & filekey
-            string fileValue = GetSubString(page, @"flashvars.file=""", @""";");
-            string filekeyValue = GetSubString(page, @"flashvars.filekey=""", @""";");
+            string fileValue = Helpers.StringUtils.GetSubString(page, @"flashvars.file=""", @""";");
+            string filekeyValue = Helpers.StringUtils.GetSubString(page, @"flashvars.filekey=""", @""";");
 
             //create url
             string url2 = "http://www.nowvideo.eu/api/player.api.php?key=" + filekeyValue + "&pass=undefined&file=" + fileValue + "&user=undefined&codes=1";
@@ -29,7 +29,7 @@ namespace OnlineVideos.Hoster
             string weData = WebCache.Instance.GetWebData(url2);
 
             //Grab url from html
-            string res = GetSubString(weData, @"url=", @"&");
+            string res = Helpers.StringUtils.GetSubString(weData, @"url=", @"&");
 
             if (!String.IsNullOrEmpty(res))
             {

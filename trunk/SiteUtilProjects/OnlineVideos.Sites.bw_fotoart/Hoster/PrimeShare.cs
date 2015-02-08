@@ -19,7 +19,7 @@ namespace OnlineVideos.Hoster
             string webData = WebCache.Instance.GetWebData(url, cookies: cc);
             if (!string.IsNullOrEmpty(webData))
             {
-                if (!string.IsNullOrEmpty(GetRegExData(@"(?<exists>This\sfile\sdoesn\'t\sexist,\sor\shas\sbeen\sremoved\s?\.)", webData, "exists")))
+                if (!string.IsNullOrEmpty(Helpers.StringUtils.GetRegExData(@"(?<exists>This\sfile\sdoesn\'t\sexist,\sor\shas\sbeen\sremoved\s?\.)", webData, "exists")))
                     webData = string.Empty;
             }
             return webData;
@@ -33,7 +33,7 @@ namespace OnlineVideos.Hoster
             
 
              //Grab hidden value: op, usr_login, id, fname, referer, method_free
-            string hash = GetSubString(webData, @"name=""hash"" value=""", @"""");
+            string hash = Helpers.StringUtils.GetSubString(webData, @"name=""hash"" value=""", @"""");
 
             //Wait for 10 seconds
              System.Threading.Thread.Sleep(11000);

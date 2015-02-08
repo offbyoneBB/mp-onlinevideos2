@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
-using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Hoster
 {
@@ -64,123 +62,6 @@ namespace OnlineVideos.Hoster
         public override string ToString()
         {
             return GetHosterUrl();
-        }
-
-        protected static RegexOptions defaultRegexOptions = RegexOptions.Singleline | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace;
-
-        protected static string FlashProvider(string url, string webData = null)
-        {
-            string page = webData;
-            if (webData == null)
-                page = WebCache.Instance.GetWebData<string>(url);
-
-            if (!string.IsNullOrEmpty(page))
-            {
-                Match n = Regex.Match(page, @"addVariable\(""file"",""(?<url>[^""]+)""\);");
-                if (n.Success && Helpers.UriUtils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
-                n = Regex.Match(page, @"flashvars.file=""(?<url>[^""]+)"";");
-                if (n.Success && Helpers.UriUtils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
-                n = Regex.Match(page, @"flashvars.{0,50}file\s*?(?:=|:)\s*?(?:\'|"")?(?<url>[^\'""]+)(?:\'|"")?", defaultRegexOptions);
-                if (n.Success && Helpers.UriUtils.IsValidUri(n.Groups["url"].Value)) return n.Groups["url"].Value;
-            }
-            return String.Empty;
-        }
-
-        protected static string DivxProvider(string url, string webData = null)
-        {
-            string page = webData;
-            if (webData == null)
-                page = WebCache.Instance.GetWebData<string>(url);
-
-            if (!string.IsNullOrEmpty(page))
-            {
-                Match n = Regex.Match(page, @"var\surl\s=\s'(?<url>[^']+)';");
-                if (n.Success) return n.Groups["url"].Value;
-                n = Regex.Match(page, @"video/divx""\ssrc=""(?<url>[^""]+)""");
-                if (n.Success) return n.Groups["url"].Value;
-            }
-            return String.Empty;
-        }
-
-        protected static string GetVal(string num, string[] pars)
-        {
-            int n = 0;
-            for (int i = 0; i < num.Length; i++)
-            {
-                n = n * 36;
-                char c = num[i];
-                if (Char.IsDigit(c))
-                    n += ((int)c) - 0x30;
-                else
-                    n += ((int)c) - 0x61 + 10;
-            }
-            if (n < 0 || n >= pars.Length)
-                return n.ToString();
-
-            return pars[n];
-        }
-
-        protected static string UnPack(string packed)
-        {
-            string res;
-            int p = packed.IndexOf('|');
-            if (p < 0) return null;
-            p = packed.LastIndexOf('\'', p);
-
-            string pattern = packed.Substring(0, p - 1);
-
-            string[] pars = packed.Substring(p).TrimStart('\'').Split('|');
-            for (int i = 0; i < pars.Length; i++)
-                if (String.IsNullOrEmpty(pars[i]))
-                    if (i < 10)
-                        pars[i] = i.ToString();
-                    else
-                        if (i < 36)
-                            pars[i] = ((char)(i + 0x61 - 10)).ToString();
-                        else
-                            pars[i] = (i - 26).ToString();
-            res = String.Empty;
-            string num = "";
-            for (int i = 0; i < pattern.Length; i++)
-            {
-                char c = pattern[i];
-                if (Char.IsDigit(c) || Char.IsLower(c))
-                    num += c;
-                else
-                {
-                    if (num.Length > 0)
-                    {
-                        res += GetVal(num, pars);
-                        num = "";
-                    }
-                    res += c;
-                }
-            }
-            if (num.Length > 0)
-                res += GetVal(num, pars);
-
-            return res;
-        }
-
-        protected static string GetSubString(string s, string start, string until)
-        {
-            if (string.IsNullOrEmpty(s)) return string.Empty;
-            int p = s.IndexOf(start);
-            if (p == -1) return String.Empty;
-            p += start.Length;
-            if (until == null) return s.Substring(p);
-            int q = s.IndexOf(until, p);
-            if (q == -1) return s.Substring(p);
-            return s.Substring(p, q - p);
-        }
-
-        protected static string GetRegExData(string regex, string data, string group)
-        {
-            string result = string.Empty;
-            Match m = Regex.Match(data, regex);
-            if (m.Success)
-                result = m.Groups[group].Value;
-            return result == null ? string.Empty : result;
         }
     }
 }

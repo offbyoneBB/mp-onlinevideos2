@@ -23,7 +23,7 @@ namespace OnlineVideos.Hoster
             string webData = WebCache.Instance.GetWebData(url, cookies: cc);
             if (!string.IsNullOrEmpty(webData))
             {
-                if (!string.IsNullOrEmpty(GetRegExData(@"(?<exists>This\video\swas\seither\sdeleted\sby\sthe\suser\sor\sin\sbreach\sof\sa\scopyright\sholder|Video\sis\snot\savailable)", webData, "exists")))
+                if (!string.IsNullOrEmpty(Helpers.StringUtils.GetRegExData(@"(?<exists>This\video\swas\seither\sdeleted\sby\sthe\suser\sor\sin\sbreach\sof\sa\scopyright\sholder|Video\sis\snot\savailable)", webData, "exists")))
                     webData = string.Empty;
             }
             return webData;
@@ -35,7 +35,7 @@ namespace OnlineVideos.Hoster
             string webData = requestFileInformation(url, cc);
             if (string.IsNullOrEmpty(webData)) return string.Empty;
 
-            string setting = GetRegExData(@"<param value=""setting=(?<setting>[^""]+)""", webData, "setting");
+            string setting = Helpers.StringUtils.GetRegExData(@"<param value=""setting=(?<setting>[^""]+)""", webData, "setting");
             if (string.IsNullOrEmpty(setting)) return string.Empty;
             byte[] temp = Convert.FromBase64String(setting);
             setting = Encoding.ASCII.GetString(temp);
@@ -43,7 +43,7 @@ namespace OnlineVideos.Hoster
             webData = WebCache.Instance.GetWebData(setting, cookies: cc);
             if (string.IsNullOrEmpty(webData)) return string.Empty;
 
-            string dlLink = GetRegExData(@"""res"":\[.*?\{""d"":(?:true|false),""\w+"":""\w+"",""u"":""(?<url>[^""]+)""[^\}]*\}\]", webData, "url");
+            string dlLink = Helpers.StringUtils.GetRegExData(@"""res"":\[.*?\{""d"":(?:true|false),""\w+"":""\w+"",""u"":""(?<url>[^""]+)""[^\}]*\}\]", webData, "url");
             if (string.IsNullOrEmpty(dlLink)) return string.Empty;
             temp = Convert.FromBase64String(dlLink);
             dlLink = Encoding.ASCII.GetString(temp);

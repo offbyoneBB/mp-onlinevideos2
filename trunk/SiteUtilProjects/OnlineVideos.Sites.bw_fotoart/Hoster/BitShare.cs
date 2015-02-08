@@ -18,7 +18,7 @@ namespace OnlineVideos.Hoster
             string webData = WebCache.Instance.GetWebData(url, cookies: cc);
             if (!string.IsNullOrEmpty(webData))
             {
-                if (!string.IsNullOrEmpty(GetRegExData(@"(?<exists>This\sfile\sdoesn\'t\sexist,\sor\shas\sbeen\sremoved\s?\.)", webData, "exists")))
+                if (!string.IsNullOrEmpty(Helpers.StringUtils.GetRegExData(@"(?<exists>This\sfile\sdoesn\'t\sexist,\sor\shas\sbeen\sremoved\s?\.)", webData, "exists")))
                     webData = string.Empty;
             }
             return webData;
@@ -31,9 +31,9 @@ namespace OnlineVideos.Hoster
             if (string.IsNullOrEmpty(webData)) return string.Empty;
             
             //Grab ajaxid
-            string ajaxdl = GetSubString(webData, @"var ajaxdl = """, @""""); 
+            string ajaxdl = Helpers.StringUtils.GetSubString(webData, @"var ajaxdl = """, @""""); 
             //Grab Post url
-            string posturl = GetSubString(webData, @"url: """, @""""); 
+            string posturl = Helpers.StringUtils.GetSubString(webData, @"url: """, @""""); 
 
             //Send Postdata (simulates a button click)
              string postData = @"request=generateID&ajaxid="+ajaxdl;

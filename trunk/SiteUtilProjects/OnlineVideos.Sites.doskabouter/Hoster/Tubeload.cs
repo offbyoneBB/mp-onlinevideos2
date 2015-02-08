@@ -17,7 +17,7 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
-            return DivxProvider(url);
+            return MyHosterBase.DivxProvider(url);
         }
     }
 }

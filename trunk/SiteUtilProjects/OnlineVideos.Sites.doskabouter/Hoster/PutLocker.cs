@@ -23,13 +23,13 @@ namespace OnlineVideos.Hoster
             string webData = WebCache.Instance.GetWebData(url);
             if (string.IsNullOrEmpty(webData)) return string.Empty;
 
-            Match m = Regex.Match(webData, @"<input\stype=""hidden""\sname=""confirm""\svalue=""(?<postdata>[^""]*)""", defaultRegexOptions);
+            Match m = Regex.Match(webData, @"<input\stype=""hidden""\sname=""confirm""\svalue=""(?<postdata>[^""]*)""", MyHosterBase.DefaultRegexOptions);
 
             if (!m.Success) return String.Empty;
 
             string postData = "confirm=" + HttpUtility.UrlEncode(m.Groups["postdata"].Value);
             string webDataLink = WebCache.Instance.GetWebData(url, postData);
-            m = Regex.Match(webDataLink, @"<div\sid='fd_dl_drpdwn'>\s*<a\shref=""(?<url>[^""]*)""\starget=""_blank""\sid='top_external_download'\stitle='Download\sThis\sFile'>", defaultRegexOptions);
+            m = Regex.Match(webDataLink, @"<div\sid='fd_dl_drpdwn'>\s*<a\shref=""(?<url>[^""]*)""\starget=""_blank""\sid='top_external_download'\stitle='Download\sThis\sFile'>", MyHosterBase.DefaultRegexOptions);
             if (!m.Success) return String.Empty;
             return m.Groups["url"].Value;
         }
