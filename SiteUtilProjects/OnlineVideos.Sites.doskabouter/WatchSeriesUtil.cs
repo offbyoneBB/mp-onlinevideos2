@@ -98,7 +98,7 @@ namespace OnlineVideos.Sites
             {
                 string nm = url.Substring(p + 1);
                 webData = GetWebData(url.Substring(0, p), cookies: cc, forceUTF8: true);
-                webData = @"class=""listbig"">" + GetSubString(webData, @"class=""listbig""><a name=""" + nm + @"""", @"class=""listbig""");
+                webData = @"class=""listbig"">" + Helpers.StringUtils.GetSubString(webData, @"class=""listbig""><a name=""" + nm + @"""", @"class=""listbig""");
             }
             else
                 webData = GetWebData(url, cookies: cc, forceUTF8: true);
@@ -108,21 +108,21 @@ namespace OnlineVideos.Sites
             switch ((Depth)parentCategory.Other)
             {
                 case Depth.MainMenu:
-                    webData = GetSubString(webData, @"class=""pagination""", @"class=""listbig""");
+                    webData = Helpers.StringUtils.GetSubString(webData, @"class=""pagination""", @"class=""listbig""");
                     m = regEx_dynamicCategories.Match(webData);
                     break;
                 case Depth.Alfabet:
-                    webData = GetSubString(webData, @"class=""listbig""", @"class=""clear""");
+                    webData = Helpers.StringUtils.GetSubString(webData, @"class=""listbig""", @"class=""clear""");
                     m = regEx_dynamicSubCategories.Match(webData);
                     break;
                 case Depth.Series:
-                    webData = GetSubString(webData, @"class=""lists"">", @"class=""clear""");
+                    webData = Helpers.StringUtils.GetSubString(webData, @"class=""lists"">", @"class=""clear""");
                     string[] tmp = { @"class=""lists"">" };
                     string[] seasons = webData.Split(tmp, StringSplitOptions.RemoveEmptyEntries);
                     foreach (string s in seasons)
                     {
                         RssLink cat = new RssLink();
-                        cat.Name = HttpUtility.HtmlDecode(GetSubString(s, ">", "<")).Trim();
+                        cat.Name = HttpUtility.HtmlDecode(Helpers.StringUtils.GetSubString(s, ">", "<")).Trim();
                         cat.Url = s;
                         cat.SubCategoriesDiscovered = true;
                         cat.HasSubCategories = false;
@@ -177,7 +177,7 @@ namespace OnlineVideos.Sites
             if (category.Other.Equals(Depth.BareList))
             {
                 webData = GetWebData(url, cookies: cc, forceUTF8: true);
-                webData = GetSubString(webData, @"class=""listbig""", @"class=""clear""");
+                webData = Helpers.StringUtils.GetSubString(webData, @"class=""listbig""", @"class=""clear""");
                 string[] parts = url.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length >= 2)
                 {
@@ -353,17 +353,6 @@ namespace OnlineVideos.Sites
             if (url.StartsWith(baseUrl))
                 return String.Empty;
             return GetVideoUrl(url);
-        }
-
-        private static string GetSubString(string s, string start, string until)
-        {
-            int p = s.IndexOf(start);
-            if (p == -1) return String.Empty;
-            p += start.Length;
-            if (until == null) return s.Substring(p);
-            int q = s.IndexOf(until, p);
-            if (q == -1) return s.Substring(p);
-            return s.Substring(p, q - p);
         }
 
     }

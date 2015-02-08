@@ -18,7 +18,7 @@ namespace OnlineVideos.Sites
             if (Settings.Categories == null) Settings.Categories = new BindingList<Category>();
             cc = new CookieContainer();
             string data = GetWebData(@"https://www.filmon.com/tv/live", userAgent: userAgent, cookies: cc);
-            string jsondata = @"{""result"":" + GetSubString(data, "var groups =", @"if(!$.isArray").Trim().TrimEnd(';') + "}";
+            string jsondata = @"{""result"":" + Helpers.StringUtils.GetSubString(data, "var groups =", @"if(!$.isArray").Trim().TrimEnd(';') + "}";
             JToken jt = JObject.Parse(jsondata) as JToken;
             foreach (JToken jCat in jt["result"] as JArray)
             {
@@ -82,19 +82,6 @@ namespace OnlineVideos.Sites
 
             return video.PlaybackOptions.First().Value;
         }
-
-        private static string GetSubString(string s, string start, string until)
-        {
-            if (string.IsNullOrEmpty(s)) return string.Empty;
-            int p = s.IndexOf(start);
-            if (p == -1) return String.Empty;
-            p += start.Length;
-            if (until == null) return s.Substring(p);
-            int q = s.IndexOf(until, p);
-            if (q == -1) return s.Substring(p);
-            return s.Substring(p, q - p);
-        }
-
 
     }
 }
