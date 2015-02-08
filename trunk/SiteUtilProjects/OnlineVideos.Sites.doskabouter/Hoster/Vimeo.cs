@@ -13,10 +13,6 @@ namespace OnlineVideos.Hoster
         [Category("OnlineVideosUserConfiguration"), Description("Select subtitle language preferences (; separated and ISO 3166-2?), for example: en;de")]
         protected string subtitleLanguages = "";
 
-        [Category("OnlineVideosUserConfiguration"), Description("Select list subtitle language preferences (; separated and ISO 3166-2?), for example: en;de")]
-        [TypeConverter(typeof(LanguagesConverter))]
-        protected string[] testt = new string[0];
-
         private string subtitleText = null;
 
         public override string GetHosterUrl()
@@ -94,34 +90,6 @@ namespace OnlineVideos.Hoster
                 return subtitleText;
             }
         }
-    }
-
-    public class LanguagesConverter : StringConverter
-    {
-        #region Methods
-
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
-        {
-            return (sourceType == typeof(string));
-        }
-
-        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
-        {
-            return (destinationType == typeof(string));
-        }
-
-        public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
-        {
-            return ((string)value).Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-        }
-
-        public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
-        {
-            string[] langs = (string[])value;
-            return String.Join(";", langs);
-        }
-
-        #endregion
     }
 
 }
