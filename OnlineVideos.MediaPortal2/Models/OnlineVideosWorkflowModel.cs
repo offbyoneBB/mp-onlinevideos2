@@ -44,7 +44,7 @@ namespace OnlineVideos.MediaPortal2
 			// The default connection limit is 2 in .Net on most platforms! This means downloading two files will block all other WebRequests.
 			System.Net.ServicePointManager.DefaultConnectionLimit = 100;
 			// The default .Net implementation for URI parsing removes trailing dots, which is not correct
-			Utils.FixUriTrailingDots();
+			Helpers.DotNetFrameworkHelper.FixUriTrailingDots();
 
 			// load the xml that holds all configured sites
 			OnlineVideoSettings.Instance.LoadSites();
@@ -246,7 +246,7 @@ namespace OnlineVideos.MediaPortal2
 						{
 							if (success)
 							{
-								Utils.RemoveInvalidUrls(urls);
+								Helpers.UriUtils.RemoveInvalidUrls(urls);
 								// if no valid urls were returned show error msg
 								if (urls == null || urls.Count == 0)
 								{
@@ -276,7 +276,7 @@ namespace OnlineVideos.MediaPortal2
                 {
 					if (success)
 					{
-						Utils.RemoveInvalidUrls(urls);
+						Helpers.UriUtils.RemoveInvalidUrls(urls);
 						// if no valid urls were returned show error msg
 						if (urls == null || urls.Count == 0)
 						{
