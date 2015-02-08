@@ -5,8 +5,6 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-using OnlineVideos.Hoster;
-using OnlineVideos.Sites;
 using System.Net;
 using System.Web;
 using System.Threading;

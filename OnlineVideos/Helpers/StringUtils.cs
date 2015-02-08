@@ -14,7 +14,7 @@ namespace OnlineVideos.Helpers
 
         public static string ReplaceEscapedUnicodeCharacter(string input)
         {
-            return Regex.Replace(input, @"(?:\\|%)[uU]([0-9A-Fa-f]{4})", 
+            return Regex.Replace(input, @"(?:\\|%)[uU]([0-9A-Fa-f]{4})",
                 match => ((char)Int32.Parse(match.Value.Substring(2), NumberStyles.HexNumber)).ToString());
         }
 
@@ -156,5 +156,32 @@ namespace OnlineVideos.Helpers
 
             return res;
         }
+
+        private static string ToBase36(int i)
+        {
+            string chars = "0123456789abcdefghijklmnopqrstuvwxyz";
+            string res = "";
+            do
+            {
+                res += chars[i % 36];
+                i = i / 36;
+            } while (i > 0);
+            return res;
+        }
+
+        private static string ToBase(int c, int a)
+        {
+            string res = (c < a ? "" : ToBase(c / a, a)) + ((c % a) > 35 ? ((char)(c % a + 29)).ToString() : ToBase36(c % a));
+            return res;
+        }
+
+        public static string Unpack(string p, int a, int c, string[] k, int e, string d)
+        {
+            for (int i = c - 1; i >= 0; i--)
+                if (i < k.Length && !String.IsNullOrEmpty(k[i]))
+                    p = Regex.Replace(p, @"\b" + ToBase(i, a) + @"\b", k[i]);
+            return p;
+        }
+
     }
 }

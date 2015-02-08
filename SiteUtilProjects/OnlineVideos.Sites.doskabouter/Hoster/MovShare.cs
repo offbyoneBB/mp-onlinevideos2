@@ -1,5 +1,4 @@
 ﻿using System;
-using OnlineVideos.Sites;
 using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Hoster
@@ -29,7 +28,7 @@ namespace OnlineVideos.Hoster
             Match m = Regex.Match(step1, @"\}\('(?<p>.+?)[^\\]',(?<a>[^,]*),(?<c>[^,]*),[^']*'(?<k>\|[^']*)'.split\('\|'\),(?<e>[^,]*),(?<d>[^\)]*)\)");
             if (m.Success)
             {
-                data = Unpack(m.Groups["p"].Value, Int32.Parse(m.Groups["a"].Value), Int32.Parse(m.Groups["c"].Value), m.Groups["k"].Value.Split('|'),
+                data = Helpers.StringUtils.Unpack(m.Groups["p"].Value, Int32.Parse(m.Groups["a"].Value), Int32.Parse(m.Groups["c"].Value), m.Groups["k"].Value.Split('|'),
                     Int32.Parse(m.Groups["e"].Value), m.Groups["d"].Value);
             }
 

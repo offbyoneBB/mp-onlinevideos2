@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
-using OnlineVideos.Hoster;
-using OnlineVideos.Sites;
 
 namespace OnlineVideos.Hoster
 {
@@ -155,32 +153,6 @@ namespace OnlineVideos.Hoster
                 if (v2 >= arr2.Length) v2 = 0;
             }
             return res;
-        }
-
-        private string ToBase36(int i)
-        {
-            string chars = "0123456789abcdefghijklmnopqrstuvwxyz";
-            string res = "";
-            do
-            {
-                res += chars[i % 36];
-                i = i / 36;
-            } while (i > 0);
-            return res;
-        }
-
-        private string ToBase(int c, int a)
-        {
-            string res = (c < a ? "" : ToBase(c / a, a)) + ((c % a) > 35 ? ((char)(c % a + 29)).ToString() : ToBase36(c % a));
-            return res;
-        }
-
-        protected string Unpack(string p, int a, int c, string[] k, int e, string d)
-        {
-            for (int i = c - 1; i >= 0; i--)
-                if (i < k.Length && !String.IsNullOrEmpty(k[i]))
-                    p = Regex.Replace(p, @"\b" + ToBase(i, a) + @"\b", k[i]);
-            return p;
         }
 
         internal static RegexOptions DefaultRegexOptions = RegexOptions.Singleline | RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace;
