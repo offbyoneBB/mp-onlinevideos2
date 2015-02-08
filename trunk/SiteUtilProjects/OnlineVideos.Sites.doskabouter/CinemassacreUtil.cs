@@ -54,7 +54,7 @@ namespace OnlineVideos.Sites
 
             string[] subs = data.Split(new[] { @"class=""menu-item menu-item-type-custom menu-item-object-custom menu-item" }, StringSplitOptions.RemoveEmptyEntries);
 
-            data = GetSubString(data, @"<div id=""navArea"" class=""menu-main-menu-container"">", @"</div");
+            data = Helpers.StringUtils.GetSubString(data, @"<div id=""navArea"" class=""menu-main-menu-container"">", @"</div");
             data = @"<?xml version=""1.0"" encoding=""iso-8859-1""?>" + data;
 
             XmlDocument doc = new XmlDocument();
@@ -99,7 +99,7 @@ namespace OnlineVideos.Sites
         {
             string data = GetWebData(video.VideoUrl);
             string thisUrl = null;
-            string data2 = GetSubString(data, @"""text/javascript"" src=""", @"""");
+            string data2 = Helpers.StringUtils.GetSubString(data, @"""text/javascript"" src=""", @"""");
             if (!String.IsNullOrEmpty(data2))
             {
                 data2 = GetWebData(data2);
@@ -117,7 +117,7 @@ namespace OnlineVideos.Sites
             }
             if (!String.IsNullOrEmpty(thisUrl))
                 return thisUrl;
-            data2 = GetSubString(data, @"<div id=""video-content""", @"<div\sid=""video-details""");
+            data2 = Helpers.StringUtils.GetSubString(data, @"<div id=""video-content""", @"<div\sid=""video-details""");
             if (String.IsNullOrEmpty(data2))
                 data2 = data;
             Match matchFileUrl = Regex.Match(data2, @"<iframe\s(?:width=""[^""]*""\sheight=""[^""]*""\s)?src=""(?<m0>[^""]*)""|<param\sname=""(movie|src)""\svalue=""(?<m0>[^""]*)""|embed\s(?:type=""[^""]*""\swidth=""[^""]*""\sheight=""[^""]*""\s)?src=""(?<m0>[^""]*)""|<a\shref=""(?<m0>(?:http://www.youtube.com/watch|http://www.spike.com/video-clips|http://www.gametrailers.com/(?:video|game))[^""]*)""\starget=""_blank"">|<iframe\sid=""[^""]*""\ssrc=""(?<m0>[^""]*)""", defaultRegexOptions);
@@ -217,7 +217,7 @@ namespace OnlineVideos.Sites
                 string id = thisUrl.Substring(p + 1);
                 if (id == "efp")
                 {
-                    id = GetSubString(data, "flvbaseclip=", @"""");
+                    id = Helpers.StringUtils.GetSubString(data, "flvbaseclip=", @"""");
                 }
                 string url = String.Format(@"http://www.spike.com/ui/xml/mediaplayer/mediagen.groovy?videoId={0}", id);
                 string data3 = GetWebData(url);
@@ -283,17 +283,6 @@ namespace OnlineVideos.Sites
                     return saveName + ".mp4";
                 return saveName + ".flv";
             }
-        }
-
-
-        private static string GetSubString(string s, string start, string until)
-        {
-            int p = s.IndexOf(start);
-            if (p == -1) return String.Empty;
-            p += start.Length;
-            int q = s.IndexOf(until, p);
-            if (q == -1) return s.Substring(p);
-            return s.Substring(p, q - p);
         }
 
     }

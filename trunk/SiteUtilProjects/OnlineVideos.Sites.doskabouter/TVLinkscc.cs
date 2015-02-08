@@ -249,17 +249,6 @@ namespace OnlineVideos.Sites
             else return base.GetTrackingInfo(video);
         }
 
-        private static string GetSubString(string s, string start, string until)
-        {
-            int p = s.IndexOf(start);
-            if (p == -1) return String.Empty;
-            p += start.Length;
-            if (until == null) return s.Substring(p);
-            int q = s.IndexOf(until, p);
-            if (q == -1) return s.Substring(p);
-            return s.Substring(p, q - p);
-        }
-
         private void SetCookies()
         {
             if (siteCookies != null)
@@ -345,7 +334,7 @@ namespace OnlineVideos.Sites
                 }
 
                 string webData = GetWebData(video.VideoUrl + "/play.htm");
-                code = GetSubString(webData, "code=", "|");
+                code = Helpers.StringUtils.GetSubString(webData, "code=", "|");
             }
             else
                 code = Path.GetFileNameWithoutExtension(video.VideoUrl).Substring(4);

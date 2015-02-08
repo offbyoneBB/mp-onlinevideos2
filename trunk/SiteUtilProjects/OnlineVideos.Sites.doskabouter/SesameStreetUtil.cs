@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Xml;
 using System.IO;
 using System.Web;
 using System.Net;
@@ -36,7 +33,7 @@ namespace OnlineVideos.Sites
 
             List<Category> categories = new List<Category>();
             string webData = GetWebData(url);
-            webData = GetSubString(webData, "main-section", "footer");
+            webData = Helpers.StringUtils.GetSubString(webData, "main-section", "footer");
             int splitInd = webData.IndexOf("orange");
             int nWithImage = 0;
 
@@ -134,14 +131,5 @@ namespace OnlineVideos.Sites
             return url;
         }
 
-        private string GetSubString(string s, string start, string until)
-        {
-            int p = s.IndexOf(start);
-            if (p == -1) return String.Empty;
-            p += start.Length;
-            int q = s.IndexOf(until, p);
-            if (q == -1) return s.Substring(p);
-            return s.Substring(p, q - p);
-        }
     }
 }
