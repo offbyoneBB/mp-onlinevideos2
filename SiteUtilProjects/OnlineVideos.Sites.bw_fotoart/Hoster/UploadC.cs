@@ -19,14 +19,14 @@ namespace OnlineVideos.Hoster
             {
                 string webData = WebCache.Instance.GetWebData(url);
                 //Several Dean Edwards compressor in Html grab here the compressor between the "player_code divs"
-                string partial = GetSubString(webData, @"</a> </div>", @"<div class=""left_iframe"">");
+                string partial = Helpers.StringUtils.GetSubString(webData, @"</a> </div>", @"<div class=""left_iframe"">");
                 //Grab content and decompress Dean Edwards compressor
-                string packed = GetSubString(partial, @"return p}", @"</script>");
+                string packed = Helpers.StringUtils.GetSubString(partial, @"return p}", @"</script>");
                 packed = packed.Replace(@"\'", @"'");
-                string unpacked = UnPack(packed);
+                string unpacked = Helpers.StringUtils.UnPack(packed);
 
                 //Grab file url from decompresst content
-                string res = GetSubString(unpacked, @"src""value=""", @"""");
+                string res = Helpers.StringUtils.GetSubString(unpacked, @"src""value=""", @"""");
 
                 if (!String.IsNullOrEmpty(res))
                 {
@@ -49,14 +49,14 @@ namespace OnlineVideos.Hoster
                 string webData = WebCache.Instance.GetWebData(url, postData);
 
                 //Several Dean Edwards compressor in Html grab here the compressor between the "player_code divs"
-                string partial = GetSubString(webData, @"</a> </div>", @"<div class=""left_iframe"">");
+                string partial = Helpers.StringUtils.GetSubString(webData, @"</a> </div>", @"<div class=""left_iframe"">");
                 //Grab content and decompress Dean Edwards compressor
-                string packed = GetSubString(partial, @"return p}", @"</script>");
+                string packed = Helpers.StringUtils.GetSubString(partial, @"return p}", @"</script>");
                 packed = packed.Replace(@"\'", @"'");
-                string unpacked = UnPack(packed);
+                string unpacked = Helpers.StringUtils.UnPack(packed);
 
                 //Grab file url from decompresst content
-                string res = GetSubString(unpacked, @"src""value=""", @"""");
+                string res = Helpers.StringUtils.GetSubString(unpacked, @"src""value=""", @"""");
 
                 if (!String.IsNullOrEmpty(res))
                 {

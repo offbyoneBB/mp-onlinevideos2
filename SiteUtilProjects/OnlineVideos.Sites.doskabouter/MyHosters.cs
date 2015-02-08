@@ -91,9 +91,9 @@ namespace OnlineVideos.Hoster
         public override string GetVideoUrl(string url)
         {
             string webData = WebCache.Instance.GetWebData(url);
-            string tmp = GetSubString(webData, @"<iframe src=""", @"""");
+            string tmp = Helpers.StringUtils.GetSubString(webData, @"<iframe src=""", @"""");
             webData = WebCache.Instance.GetWebData(tmp);
-            tmp = GetSubString(webData, @"<param name=""src"" value=""", @"""");
+            tmp = Helpers.StringUtils.GetSubString(webData, @"<param name=""src"" value=""", @"""");
             return WebCache.Instance.GetRedirectedUrl(tmp);
         }
     }
@@ -132,9 +132,9 @@ namespace OnlineVideos.Hoster
         public override string GetVideoUrl(string url)
         {
             string webData = WebCache.Instance.GetWebData(url);
-            string resUrl = GetSubString(webData, @"""video"", """, @"""");
+            string resUrl = Helpers.StringUtils.GetSubString(webData, @"""video"", """, @"""");
             if (String.IsNullOrEmpty(resUrl))
-                resUrl = GetSubString(webData, @"""stream_url"":""", @"""");
+                resUrl = Helpers.StringUtils.GetSubString(webData, @"""stream_url"":""", @"""");
             if (String.IsNullOrEmpty(resUrl) && !url.Contains("embed"))
             {
                 string newUrl = url.Replace(@".com/", @".com/embed/");
@@ -156,7 +156,7 @@ namespace OnlineVideos.Hoster
         public override string GetVideoUrl(string url)
         {
             //Url=http://www.56.com/u90/v_MzYxNzA2MzE.html
-            string id = GetSubString(url, "/v_", ".html");
+            string id = Helpers.StringUtils.GetSubString(url, "/v_", ".html");
             //http://stat.56.com/stat/flv.php?id=MzYxNzA2MzE&pct=1&user_id=&norand=1&gJsonId=1&gJson=VideoTimes&gJsonData=n&gJsonDoStr=oFlv.up_times(oJson.VideoTimes.data)
             string tmpUrl = @"http://stat.56.com/stat/flv.php?id=" + id + @"&pct=1&user_id=&norand=1&gJsonId=1&gJson=VideoTimes&gJsonData=n&gJsonDoStr=oFlv.up_times(oJson.VideoTimes.data)";
             CookieContainer cc = new CookieContainer();
@@ -167,7 +167,7 @@ namespace OnlineVideos.Hoster
                 id2 = cook.Value.TrimEnd('-');
             //http://vxml.56.com/json/36170631/?src=site
             webData = WebCache.Instance.GetWebData(@"http://vxml.56.com/json/" + id2 + "/?src=site");
-            string fileUrl = GetSubString(webData, @"{""url"":""", @"""");
+            string fileUrl = Helpers.StringUtils.GetSubString(webData, @"{""url"":""", @"""");
             return WebCache.Instance.GetRedirectedUrl(fileUrl);
         }
     }
@@ -302,15 +302,15 @@ namespace OnlineVideos.Hoster
                             if (!String.IsNullOrEmpty(packed))
                             {
                                 packed = packed.Replace(@"\'", @"'");
-                                string unpacked = UnPack(packed);
-                                string res = GetSubString(unpacked, @"'file','", @"'");
+                                string unpacked = Helpers.StringUtils.UnPack(packed);
+                                string res = Helpers.StringUtils.GetSubString(unpacked, @"'file','", @"'");
                                 if (!String.IsNullOrEmpty(res))
                                     resUrl = res;
                                 else
-                                    resUrl = GetSubString(unpacked, @"name=""src""value=""", @"""");
+                                    resUrl = Helpers.StringUtils.GetSubString(unpacked, @"name=""src""value=""", @"""");
                             }
                             else
-                                resUrl = GetSubString(page2, @"addVariable('file','", @"'");
+                                resUrl = Helpers.StringUtils.GetSubString(page2, @"addVariable('file','", @"'");
                             resUrl = resUrl.Replace("[", "%5b").Replace("]", "%5d");
                             return resUrl;
                         }
@@ -331,13 +331,13 @@ namespace OnlineVideos.Hoster
         public override string GetVideoUrl(string url)
         {
             if (url.Contains("googleplayer.swf"))
-                url = string.Format("http://video.google.de/videoplay?docid={0}", GetSubString(url, @"docid=", @"&"));
+                url = string.Format("http://video.google.de/videoplay?docid={0}", Helpers.StringUtils.GetSubString(url, @"docid=", @"&"));
 
             string webData = WebCache.Instance.GetWebData(url);
-            string result = HttpUtility.UrlDecode(GetSubString(webData, @"videoUrl\x3d", @"\x26"));
+            string result = HttpUtility.UrlDecode(Helpers.StringUtils.GetSubString(webData, @"videoUrl\x3d", @"\x26"));
             if (!String.IsNullOrEmpty(result))
                 return result;
-            return HttpUtility.UrlDecode(GetSubString(webData, @"videoUrl=", @"&amp;"));
+            return HttpUtility.UrlDecode(Helpers.StringUtils.GetSubString(webData, @"videoUrl=", @"&amp;"));
         }
     }
 
@@ -358,9 +358,9 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
-            string videoId = GetSubString(url, "videoid=", "&");
+            string videoId = Helpers.StringUtils.GetSubString(url, "videoid=", "&");
             string webData = WebCache.Instance.GetWebData(@"http://mediaservices.myspace.com/services/rss.ashx?videoID=" + videoId);
-            string fileUrl = GetSubString(webData, @"RTMPE url=""", @"""");
+            string fileUrl = Helpers.StringUtils.GetSubString(webData, @"RTMPE url=""", @"""");
 
             //return string.Format("http://127.0.0.1:{0}/stream.flv?rtmpurl={1}&swfhash=a51d59f968ffb279f0a3c0bf398f2118b2cc811f04d86c940fd211193dee2013&swfsize=770329",
             return fileUrl.Replace("rtmp:", "rtmpe:");
@@ -475,7 +475,7 @@ namespace OnlineVideos.Hoster
         public override string GetVideoUrl(string url)
         {
             string webData = WebCache.Instance.GetWebData(url);
-            url = GetSubString(webData, @"flv=", @"&");
+            url = Helpers.StringUtils.GetSubString(webData, @"flv=", @"&");
             return @"http://www.playmyvid.com/files/videos/" + url;
         }
     }
@@ -563,15 +563,15 @@ namespace OnlineVideos.Hoster
                             if (!String.IsNullOrEmpty(packed))
                             {
                                 packed = packed.Replace(@"\'", @"'");
-                                string unpacked = UnPack(packed);
-                                string res = GetSubString(unpacked, @"'file','", @"'");
+                                string unpacked = Helpers.StringUtils.UnPack(packed);
+                                string res = Helpers.StringUtils.GetSubString(unpacked, @"'file','", @"'");
                                 if (!String.IsNullOrEmpty(res))
                                     resUrl = res;
                                 else
-                                    resUrl = GetSubString(unpacked, @"name=""src""value=""", @"""");
+                                    resUrl = Helpers.StringUtils.GetSubString(unpacked, @"name=""src""value=""", @"""");
                             }
                             else
-                                resUrl = GetSubString(page2, @"addVariable('file','", @"'");
+                                resUrl = Helpers.StringUtils.GetSubString(page2, @"addVariable('file','", @"'");
                             resUrl = resUrl.Replace("[", "%5b").Replace("]", "%5d");
                             return resUrl;
                         }
@@ -591,11 +591,11 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
-            string videoId = GetSubString(url, "?id=", null);
+            string videoId = Helpers.StringUtils.GetSubString(url, "?id=", null);
 
             string webData = WebCache.Instance.GetWebData(url);
-            string postData = GetSubString(webData, @"so.addVariable('context',", @""");");
-            postData = GetSubString(postData, @"""", null);
+            string postData = Helpers.StringUtils.GetSubString(webData, @"so.addVariable('context',", @""");");
+            postData = Helpers.StringUtils.GetSubString(postData, @"""", null);
             postData = postData.Replace("_", "%5F");
             postData = postData.Replace(".", "%2E");
             postData = @"p%5Fid%5B1%5D=4&begun=1&video%5Furl=1&p%5Fid%5B0%5D=2&context=" +
@@ -603,7 +603,7 @@ namespace OnlineVideos.Hoster
 
             webData = WebCache.Instance.GetWebData(@"http://smotri.com/video/view/url/bot/", postData);
             //"{\"_is_loadup\":0,\"_vidURL\":\"http:\\/\\/file38.loadup.ru\\/4412949d467b8db09bd07eedc7127f57\\/4bd0b05a\\/9a\\/a1\\/c1ad0ea5c0e8268898d3449b9087.flv\",\"_imgURL\":\"http:\\/\\/frame2.loadup.ru\\/9a\\/a1\\/1191805.3.3.jpg\",\"botator_banner\":{\"4\":[{\"cnt_tot_max\":1120377,\"cnt_hour_max\":4500,\"clc_tot_max\":0,\"clc_hour_max\":0,\"cnt_uniq_day_max\":3,\"cnt_uniq_week_max\":0,\"cnt_uniq_month_max\":0,\"link_transitions\":\"http:\\/\\/smotri.com\\/botator\\/clickator\\/click\\/?sid=qm2fzb5ruwdcj1ig_12\",\"zero_pixel\":\"http:\\/\\/ad.adriver.ru\\/cgi-bin\\/rle.cgi?sid=1&bt=21&ad=226889&pid=440944&bid=817095&bn=817095&rnd=1702217828\",\"signature\":{\"set_sign\":\"top\",\"signature\":\"\",\"signature_color\":null},\"link\":\"http:\\/\\/pics.loadup.ru\\/content\\/smotri.com_400x300_reenc_2.flv\",\"link_show\":\"http:\\/\\/smotri.com\\/botator\\/logator\\/show\\/?sid=qm2fzb5ruwdcj1ig_12\",\"banner_type\":\"video_flv\",\"b_id\":12}]},\"trustKey\":\"79e566c96057ce2b6f6055a3fa34f744\",\"video_id\":\"v119180501e5\",\"_pass_protected\":0,\"begun_url_1\":\"http:\\/\\/flash.begun.ru\\/banner.jsp?pad_id=100582787&offset=0&limit=5&encoding=utf8&charset=utf8&keywords=\"}"
-            return GetSubString(webData, @"_vidURL"":""", @"""").Replace(@"\/", "/");
+            return Helpers.StringUtils.GetSubString(webData, @"_vidURL"":""", @"""").Replace(@"\/", "/");
         }
     }
 
@@ -617,8 +617,8 @@ namespace OnlineVideos.Hoster
         public override string GetVideoUrl(string url)
         {
             string webData = WebCache.Instance.GetWebData(url);
-            url = GetSubString(webData, @"url[", @"';");
-            return GetSubString(url, @"'", @"'");
+            url = Helpers.StringUtils.GetSubString(webData, @"url[", @"';");
+            return Helpers.StringUtils.GetSubString(url, @"'", @"'");
         }
     }
 
@@ -657,10 +657,10 @@ namespace OnlineVideos.Hoster
             string webData = WebCache.Instance.GetWebData(url);
 
             webData = GetFromPost(url, webData, false, new[] { "method_free=Free+Download" }, new[] { "op=login" });
-            webData = GetSubString(webData, @"id=""player_code""", "</html>");
-            string packed = GetSubString(webData, @"return p}", @"</script>");
+            webData = Helpers.StringUtils.GetSubString(webData, @"id=""player_code""", "</html>");
+            string packed = Helpers.StringUtils.GetSubString(webData, @"return p}", @"</script>");
             packed = packed.Replace(@"\'", @"'");
-            string unpacked = UnPack(packed);
+            string unpacked = Helpers.StringUtils.UnPack(packed);
 
             Match m = Regex.Match(unpacked, @"file:\s*""(?<url>[^""]*)""");
             if (m.Success)
@@ -679,7 +679,7 @@ namespace OnlineVideos.Hoster
         public override string GetVideoUrl(string url)
         {
             string webData = WebCache.Instance.GetWebData(url);
-            string iid = GetSubString(webData, @"var iid = ", "\n");
+            string iid = Helpers.StringUtils.GetSubString(webData, @"var iid = ", "\n");
             //url = @"http://v2.tudou.com/v?it=" + iid;
             url = @"http://v2.tudou.com/v?vn=02&ui=0&refurl=" + HttpUtility.UrlEncode(url) + @"&it=" + iid + @"&pw=&noCache=13678&st=1%2C2&si=sp";
             //http://v2.tudou.com/v?vn=02&ui=0&refurl=http%3A%2F%2Fwww%2Etudou%2Ecom%2Fprograms%2Fview%2FXQ1dE6XJWnU&it=20391047&pw=&noCache=13678&st=1%2C2&si=sp
@@ -708,7 +708,7 @@ namespace OnlineVideos.Hoster
         {
             string postData = String.Empty;
             string webData = WebCache.Instance.GetWebData(url);
-            string post = GetSubString(webData, @"<form>", @"</form>");
+            string post = Helpers.StringUtils.GetSubString(webData, @"<form>", @"</form>");
             Match m = Regex.Match(webData, @"<input\stype=""[^""]*""\sname=""(?<m0>[^""]*)""\svalue=""(?<m1>[^""]*)");
             while (m.Success)
             {
@@ -718,8 +718,8 @@ namespace OnlineVideos.Hoster
                 m = m.NextMatch();
             }
             webData = WebCache.Instance.GetWebData(url, postData);
-            string res = GetSubString(webData, @"embed", @">");
-            res = GetSubString(res, @"src=""", @"""");
+            string res = Helpers.StringUtils.GetSubString(webData, @"embed", @">");
+            res = Helpers.StringUtils.GetSubString(res, @"src=""", @"""");
             return res;
         }
     }
@@ -749,10 +749,10 @@ namespace OnlineVideos.Hoster
             Thread.Sleep(5000);
 
             webData = WebCache.Instance.GetWebData(url, postData);
-            string packed = GetSubString(webData, @"return p}", @"</script>");
+            string packed = Helpers.StringUtils.GetSubString(webData, @"return p}", @"</script>");
             packed = packed.Replace(@"\'", @"'");
-            string unpacked = UnPack(packed);
-            return GetSubString(unpacked, @"'file','", @"'");
+            string unpacked = Helpers.StringUtils.UnPack(packed);
+            return Helpers.StringUtils.GetSubString(unpacked, @"'file','", @"'");
         }
     }
 
@@ -766,9 +766,9 @@ namespace OnlineVideos.Hoster
         public override string GetVideoUrl(string url)
         {
             string webData = WebCache.Instance.GetWebData(url);
-            string tmp = GetSubString(webData, @"$(""#playeriframe"").attr({src : """, @"""");
+            string tmp = Helpers.StringUtils.GetSubString(webData, @"$(""#playeriframe"").attr({src : """, @"""");
             webData = WebCache.Instance.GetWebData(@"http://veehd.com" + tmp);
-            return HttpUtility.UrlDecode(GetSubString(webData, @"""url"":""", @""""));
+            return HttpUtility.UrlDecode(Helpers.StringUtils.GetSubString(webData, @"""url"":""", @""""));
         }
     }
 
@@ -792,11 +792,11 @@ namespace OnlineVideos.Hoster
             };
 
             string webData = WebCache.Instance.GetWebData(url);
-            string sub = GetSubString(webData, "id='flvplayer'", null);
-            string packed = GetSubString(sub, @"return p}", @"</script>");
+            string sub = Helpers.StringUtils.GetSubString(webData, "id='flvplayer'", null);
+            string packed = Helpers.StringUtils.GetSubString(sub, @"return p}", @"</script>");
             packed = packed.Replace(@"\'", @"'");
-            string unpacked = UnPack(packed);
-            string res = GetSubString(unpacked, @"{file:""", @"""");
+            string unpacked = Helpers.StringUtils.UnPack(packed);
+            string res = Helpers.StringUtils.GetSubString(unpacked, @"{file:""", @"""");
             if (res.StartsWith(@"http://"))
                 return res;
 
@@ -892,9 +892,9 @@ namespace OnlineVideos.Hoster
                 Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
 
             webData = WebCache.Instance.GetWebData(url, postData);
-            string packed = GetSubString(webData, @"return p}", @"</script>");
+            string packed = Helpers.StringUtils.GetSubString(webData, @"return p}", @"</script>");
             packed = packed.Replace(@"\'", @"'");
-            string unpacked = UnPack(packed);
+            string unpacked = Helpers.StringUtils.UnPack(packed);
             m = Regex.Match(unpacked, @"{label:""(?<n0>[^""]*)"",file:""(?<m0>[^""]*)""}");
             while (m.Success)
             {
@@ -915,7 +915,7 @@ namespace OnlineVideos.Hoster
         public override string GetVideoUrl(string url)
         {
             string s = WebCache.Instance.GetWebData(url);
-            return GetSubString(s, @"Referral: ", " ");
+            return Helpers.StringUtils.GetSubString(s, @"Referral: ", " ");
         }
     }
 
@@ -935,11 +935,11 @@ namespace OnlineVideos.Hoster
             CookieContainer newcc = new CookieContainer();
             foreach (Cookie c in ccol) newcc.Add(c);
             // (with age confirm)
-            url = @"http://www.wisevid.com/play?v=" + GetSubString(webData,
+            url = @"http://www.wisevid.com/play?v=" + Helpers.StringUtils.GetSubString(webData,
                 @"play?v=", @"'");
             //string tmp2 = SiteUtilBase.GetWebDataFromPost(url, "a=1");
             string tmp2 = WebCache.Instance.GetWebData(url, cookies: newcc);
-            url = GetSubString(tmp2, "getF('", "'");
+            url = Helpers.StringUtils.GetSubString(tmp2, "getF('", "'");
             byte[] tmp = Convert.FromBase64String(url);
             return Encoding.ASCII.GetString(tmp);
         }
@@ -969,8 +969,8 @@ namespace OnlineVideos.Hoster
                 url = url.Replace("humancheck", "toshare");
                 webData = WebCache.Instance.GetWebData(url, "submit=I+am+human+now+let+me+watch+this+video", newcc);
             }
-            string file = GetSubString(webData, "'file','", "'");
-            string streamer = GetSubString(webData, "'streamer','", "'");
+            string file = Helpers.StringUtils.GetSubString(webData, "'file','", "'");
+            string streamer = Helpers.StringUtils.GetSubString(webData, "'streamer','", "'");
             // not tested, couldn't find a video hosted by xtshare
             RtmpUrl rtmpUrl = new RtmpUrl(streamer + file)
             {

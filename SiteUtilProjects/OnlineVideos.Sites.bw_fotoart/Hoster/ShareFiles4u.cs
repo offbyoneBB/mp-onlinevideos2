@@ -28,14 +28,14 @@ namespace OnlineVideos.Hoster
             string webData = WebCache.Instance.GetWebData(url, postData);
 
             //Several Dean Edwards compressor in Html grab here the compressor between the "player_code divs"
-            string partial = GetSubString(webData, @"<div id=""player_code"">", @"</div>");
+            string partial = Helpers.StringUtils.GetSubString(webData, @"<div id=""player_code"">", @"</div>");
             //Grab content and decompress Dean Edwards compressor
-            string packed = GetSubString(partial, @"return p}", @"</script>");
+            string packed = Helpers.StringUtils.GetSubString(partial, @"return p}", @"</script>");
             packed = packed.Replace(@"\'", @"'");
-            string unpacked = UnPack(packed);
+            string unpacked = Helpers.StringUtils.UnPack(packed);
 
             //Grab file url from decompresst content
-            string res = GetSubString(unpacked, @"file','", @"'");
+            string res = Helpers.StringUtils.GetSubString(unpacked, @"file','", @"'");
 
             if (!String.IsNullOrEmpty(res))
             {

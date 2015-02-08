@@ -16,12 +16,12 @@ namespace OnlineVideos.Hoster
             string page = WebCache.Instance.GetWebData(url);
 
             //Grab content and decompress Dean Edwards compressor
-            string packed = GetSubString(page, @"swfobject.js'></script>", @"</script>");
+            string packed = Helpers.StringUtils.GetSubString(page, @"swfobject.js'></script>", @"</script>");
             packed = packed.Replace(@"\'", @"'");
-            string unpacked = UnPack(packed);
+            string unpacked = Helpers.StringUtils.UnPack(packed);
 
             //Grab file url from decompresst content
-            string res = GetSubString(unpacked, @"'file','", @"'");
+            string res = Helpers.StringUtils.GetSubString(unpacked, @"'file','", @"'");
 
             if (!String.IsNullOrEmpty(res))
             {

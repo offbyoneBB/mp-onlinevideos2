@@ -20,7 +20,7 @@ namespace OnlineVideos.Hoster
             string webData = WebCache.Instance.GetWebData(url, cookies: cc);            
             if (!string.IsNullOrEmpty(webData))
             {
-                if (!string.IsNullOrEmpty(GetRegExData(@"(?<exists>This\sfile\sdoesn\'t\sexist,\sor\shas\sbeen\sremoved\s?\.)", webData, "exists")))
+                if (!string.IsNullOrEmpty(Helpers.StringUtils.GetRegExData(@"(?<exists>This\sfile\sdoesn\'t\sexist,\sor\shas\sbeen\sremoved\s?\.)", webData, "exists")))
                     webData = string.Empty;
             }
             return webData;

@@ -20,14 +20,14 @@ namespace OnlineVideos.Hoster
             if (!string.IsNullOrEmpty(page))
             {
                 //Grab content and decompress Dean Edwards compressor
-                string partial = GetSubString(page, @"<script type='text/javascript'>", @"</script>");
+                string partial = Helpers.StringUtils.GetSubString(page, @"<script type='text/javascript'>", @"</script>");
                 //Decompress Dean Edwards compressor
-                string packed = GetSubString(partial, @"return p}", @"</script>");
+                string packed = Helpers.StringUtils.GetSubString(partial, @"return p}", @"</script>");
                 packed = packed.Replace(@"\'", @"'");
-                string unpacked = UnPack(packed);
+                string unpacked = Helpers.StringUtils.UnPack(packed);
 
                 //Grab file url from decompresst content
-                string res = GetSubString(unpacked, @"file','", @"'");                
+                string res = Helpers.StringUtils.GetSubString(unpacked, @"file','", @"'");                
                 //Extract file url from HTML
                 Match n = Regex.Match(page, @"{url:\s'(?<url>[^']*)'");
 

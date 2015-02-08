@@ -75,5 +75,86 @@ namespace OnlineVideos.Helpers
             }
             return result;
         }
+
+        public static string GetSubString(string s, string start, string until)
+        {
+            if (string.IsNullOrEmpty(s)) return string.Empty;
+            int p = s.IndexOf(start);
+            if (p == -1) return String.Empty;
+            p += start.Length;
+            if (until == null) return s.Substring(p);
+            int q = s.IndexOf(until, p);
+            if (q == -1) return s.Substring(p);
+            return s.Substring(p, q - p);
+        }
+
+        public static string GetRegExData(string regex, string data, string group)
+        {
+            string result = string.Empty;
+            Match m = Regex.Match(data, regex);
+            if (m.Success)
+                result = m.Groups[group].Value;
+            return result == null ? string.Empty : result;
+        }
+
+        private static string GetVal(string num, string[] pars)
+        {
+            int n = 0;
+            for (int i = 0; i < num.Length; i++)
+            {
+                n = n * 36;
+                char c = num[i];
+                if (Char.IsDigit(c))
+                    n += ((int)c) - 0x30;
+                else
+                    n += ((int)c) - 0x61 + 10;
+            }
+            if (n < 0 || n >= pars.Length)
+                return n.ToString();
+
+            return pars[n];
+        }
+
+        public static string UnPack(string packed)
+        {
+            string res;
+            int p = packed.IndexOf('|');
+            if (p < 0) return null;
+            p = packed.LastIndexOf('\'', p);
+
+            string pattern = packed.Substring(0, p - 1);
+
+            string[] pars = packed.Substring(p).TrimStart('\'').Split('|');
+            for (int i = 0; i < pars.Length; i++)
+                if (String.IsNullOrEmpty(pars[i]))
+                    if (i < 10)
+                        pars[i] = i.ToString();
+                    else
+                        if (i < 36)
+                            pars[i] = ((char)(i + 0x61 - 10)).ToString();
+                        else
+                            pars[i] = (i - 26).ToString();
+            res = String.Empty;
+            string num = "";
+            for (int i = 0; i < pattern.Length; i++)
+            {
+                char c = pattern[i];
+                if (Char.IsDigit(c) || Char.IsLower(c))
+                    num += c;
+                else
+                {
+                    if (num.Length > 0)
+                    {
+                        res += GetVal(num, pars);
+                        num = "";
+                    }
+                    res += c;
+                }
+            }
+            if (num.Length > 0)
+                res += GetVal(num, pars);
+
+            return res;
+        }
     }
 }

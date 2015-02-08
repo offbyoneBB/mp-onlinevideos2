@@ -62,19 +62,19 @@ namespace OnlineVideos.Hoster
 
                         if (!string.IsNullOrEmpty(page2))
                         {
-                            string packed = GetSubString(page2, @"return p}", @"</script>");
+                            string packed = Helpers.StringUtils.GetSubString(page2, @"return p}", @"</script>");
                             if (!String.IsNullOrEmpty(packed))
                             {
                                 packed = packed.Replace(@"\'", @"'");
-                                string unpacked = UnPack(packed);
-                                string res = GetSubString(unpacked, @"'file','", @"'");
+                                string unpacked = Helpers.StringUtils.UnPack(packed);
+                                string res = Helpers.StringUtils.GetSubString(unpacked, @"'file','", @"'");
                                 if (!String.IsNullOrEmpty(res))
                                     return res;
-                                return GetSubString(unpacked, @"name=""src""value=""", @"""");
+                                return Helpers.StringUtils.GetSubString(unpacked, @"name=""src""value=""", @"""");
                             }
                             else
                             {
-                                string res = GetSubString(page2, @"addVariable('file','", @"'");
+                                string res = Helpers.StringUtils.GetSubString(page2, @"addVariable('file','", @"'");
                                 if (String.IsNullOrEmpty(res))
                                 {
                                     Match m = Regex.Match(page2, @"<!--\sDIRECT\sLINK\sDL-->\s*<span\sstyle=""[^""]*"">\s*<a\shref=""[^""]*"">(?<url>[^<]*)</a>\s*</span>");

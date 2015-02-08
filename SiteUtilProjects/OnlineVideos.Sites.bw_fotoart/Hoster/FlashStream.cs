@@ -24,24 +24,24 @@ namespace OnlineVideos.Hoster
             string webdata = WebCache.Instance.GetWebData(url);
 
             //Grab hidden value: op, usr_login, id, fname, referer, method_free
-            string formOp = GetSubString(webdata, @"name=""op"" value=""", @""">");
-            string formUsrlogin = GetSubString(webdata, @"name=""usr_login"" value=""", @""">");
-            string formId = GetSubString(webdata, @"name=""id"" value=""", @""">");
-            string formFname = GetSubString(webdata, @"name=""fname"" value=""", @""">");
-            string formReferer = GetSubString(webdata, @"name=""referer"" value=""", @""">");
-            string formMethodFree = GetSubString(webdata, @"name=""method_free"" value=""", @""">");
+            string formOp = Helpers.StringUtils.GetSubString(webdata, @"name=""op"" value=""", @""">");
+            string formUsrlogin = Helpers.StringUtils.GetSubString(webdata, @"name=""usr_login"" value=""", @""">");
+            string formId = Helpers.StringUtils.GetSubString(webdata, @"name=""id"" value=""", @""">");
+            string formFname = Helpers.StringUtils.GetSubString(webdata, @"name=""fname"" value=""", @""">");
+            string formReferer = Helpers.StringUtils.GetSubString(webdata, @"name=""referer"" value=""", @""">");
+            string formMethodFree = Helpers.StringUtils.GetSubString(webdata, @"name=""method_free"" value=""", @""">");
 
             //Send Postdata (simulates a button click)
             string postData = @"op=" + formOp + "&usr_login=" + formUsrlogin + "&id=" + formId + "&fname=" + formFname + "&referer=" + formReferer + "&method_free=" + formMethodFree;
             string webData = WebCache.Instance.GetWebData(url, postData);
 
             //Grab content and decompress Dean Edwards compressor
-            string packed = GetSubString(webData, @"swfobject.js'></script>", @"</script>");
+            string packed = Helpers.StringUtils.GetSubString(webData, @"swfobject.js'></script>", @"</script>");
             packed = packed.Replace(@"\'", @"'");
-            string unpacked = UnPack(packed);
+            string unpacked = Helpers.StringUtils.UnPack(packed);
 
             //Grab file url from decompresst content
-            string res = GetSubString(unpacked, @"file','", @"'");
+            string res = Helpers.StringUtils.GetSubString(unpacked, @"file','", @"'");
 
             if (!String.IsNullOrEmpty(res))
 			{

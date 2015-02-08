@@ -27,13 +27,13 @@ namespace OnlineVideos.Hoster
 
             string postData = @"op=download1&usr_login=&id=" + urlParts[3] + "&fname=" + urlParts[4] + "&referer=&method_free=Free+Stream";
             string webData = WebCache.Instance.GetWebData(url, postData);
-            string packed = GetSubString(webData, @"return p}", @"</script>");
+            string packed = Helpers.StringUtils.GetSubString(webData, @"return p}", @"</script>");
             packed = packed.Replace(@"\'", @"'");
-            string unpacked = UnPack(packed);
-            string res = GetSubString(unpacked, @"'file','", @"'");
+            string unpacked = Helpers.StringUtils.UnPack(packed);
+            string res = Helpers.StringUtils.GetSubString(unpacked, @"'file','", @"'");
             if (!String.IsNullOrEmpty(res))
                 return res;
-            return GetSubString(unpacked, @"name=""src""value=""", @"""");
+            return Helpers.StringUtils.GetSubString(unpacked, @"name=""src""value=""", @"""");
         }
 
 

@@ -29,7 +29,7 @@ namespace OnlineVideos.Hoster
                     string webData2 = WebCache.Instance.GetWebData(m.Groups["url"].Value);
 
                     //Grab link from xml page
-                    string file = GetSubString(webData2, @"<file>", @"</file>");
+                    string file = Helpers.StringUtils.GetSubString(webData2, @"<file>", @"</file>");
 
                     if (!string.IsNullOrEmpty(file))
                     {

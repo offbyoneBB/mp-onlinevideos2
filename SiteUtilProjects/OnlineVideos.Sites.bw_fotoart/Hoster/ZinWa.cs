@@ -25,7 +25,7 @@ namespace OnlineVideos.Hoster
             {
                 //Get HTML from iframe url
                 string webData = WebCache.Instance.GetWebData(n.Groups["url"].Value);
-                string file = GetSubString(webData, @"file: """, @"""");
+                string file = Helpers.StringUtils.GetSubString(webData, @"file: """, @"""");
 
                 if (!string.IsNullOrEmpty(file))
                 {
