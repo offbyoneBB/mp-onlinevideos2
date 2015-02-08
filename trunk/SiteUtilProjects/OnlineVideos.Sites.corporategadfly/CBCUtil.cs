@@ -84,7 +84,7 @@ namespace OnlineVideos.Sites
                         video.Title = item.Value<string>("title");
 
                         long len = item.Value<long>("length");
-                        video.Length = OnlineVideos.Utils.FormatDuration((len / 1000).ToString());
+                        video.Length = Helpers.TimeUtils.TimeFromSeconds((len / 1000).ToString());
 
                         long air = item.Value<long>("airdate");
                         string Airdate = new DateTime((air * 10000) + 621355968000000000, DateTimeKind.Utc).ToString();

@@ -94,8 +94,8 @@ namespace OnlineVideos.Sites
 				{
 					titles.Add(string.Format(OnlineVideoSettings.Instance.Locale, "Сейчас: {0} ({1:t}-{2:t}) - Онлайн: {3}",
 						currentShow["issue"]["0"]["title"]["value"].Value<string>(),
-						Utils.UNIXTimeToDateTime(currentShow["issue"]["begin"].Value<uint>("value")),
-						Utils.UNIXTimeToDateTime(currentShow["issue"]["end"].Value<uint>("value")),
+                        Helpers.TimeUtils.UNIXTimeToDateTime(currentShow["issue"]["begin"].Value<uint>("value")),
+                        Helpers.TimeUtils.UNIXTimeToDateTime(currentShow["issue"]["end"].Value<uint>("value")),
 						currentShow["issue"]["online"].Value<string>("value") == "no" ? "нет" : "да"));
 				}
 				var nextShow = schedule.FirstOrDefault(i => i["issue"]["begin"].Value<uint>("value") >= current_timestamp);
@@ -103,8 +103,8 @@ namespace OnlineVideos.Sites
 				{
 					titles.Add(string.Format(OnlineVideoSettings.Instance.Locale, "Далее: {0} ({1:t}-{2:t}) - Онлайн: {3}",
 						nextShow["issue"]["0"]["title"]["value"].Value<string>(),
-						Utils.UNIXTimeToDateTime(nextShow["issue"]["begin"].Value<uint>("value")),
-						Utils.UNIXTimeToDateTime(nextShow["issue"]["end"].Value<uint>("value")),
+                        Helpers.TimeUtils.UNIXTimeToDateTime(nextShow["issue"]["begin"].Value<uint>("value")),
+                        Helpers.TimeUtils.UNIXTimeToDateTime(nextShow["issue"]["end"].Value<uint>("value")),
 						nextShow["issue"]["online"].Value<string>("value") == "no" ? "нет" : "да"));
 				}
 			}

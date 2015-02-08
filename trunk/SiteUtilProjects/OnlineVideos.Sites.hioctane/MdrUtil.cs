@@ -113,7 +113,7 @@ namespace OnlineVideos.Sites
             {
                 RssLink video = new RssLink()
                 {
-                    Name = string.Format("{0} ({1})", HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim()), Utils.PlainTextFromHtml(m.Groups["airdate"].Value).Replace("\n", " ")),
+                    Name = string.Format("{0} ({1})", HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim()), Helpers.StringUtils.PlainTextFromHtml(m.Groups["airdate"].Value).Replace("\n", " ")),
                     Thumb = new Uri(new Uri(baseUrl), m.Groups["img"].Value).AbsoluteUri,
                     Url = new Uri(new Uri(baseUrl), m.Groups["dataurl"].Value).AbsoluteUri,
                     ParentCategory = parentCategory
@@ -183,7 +183,7 @@ namespace OnlineVideos.Sites
 						video.VideoUrl = video.PlaybackOptions.First().Value;
 						// set serialized version of PlaybackOptions to Other so it can be deserialized from a favorite
 						if (video.PlaybackOptions.Count > 1)
-							video.Other = "PlaybackOptions://\n" + Utils.DictionaryToString(video.PlaybackOptions);
+                            video.Other = "PlaybackOptions://\n" + Helpers.CollectionUtils.DictionaryToString(video.PlaybackOptions);
 
 						videos.Add(video);
 					}
@@ -197,14 +197,14 @@ namespace OnlineVideos.Sites
         {
             // Get playbackoptins back from favorite video if they were saved in Other object
             if (video.PlaybackOptions == null && video.Other is string && (video.Other as string).StartsWith("PlaybackOptions://"))
-                video.PlaybackOptions = Utils.DictionaryFromString((video.Other as string).Substring("PlaybackOptions://".Length));
+                video.PlaybackOptions = Helpers.CollectionUtils.DictionaryFromString((video.Other as string).Substring("PlaybackOptions://".Length));
 
             // resolve any asx to WMV
             foreach (var v in video.PlaybackOptions)
             {
                 if (v.Value.EndsWith(".asx"))
                 {
-                    var resolved = Utils.ParseASX(GetWebData(v.Value));
+                    var resolved = Helpers.AsxUtils.ParseASX(GetWebData(v.Value));
                     if (resolved != null && resolved.Count > 0) { video.PlaybackOptions[v.Key] = resolved[0]; break; }
                 }
             }

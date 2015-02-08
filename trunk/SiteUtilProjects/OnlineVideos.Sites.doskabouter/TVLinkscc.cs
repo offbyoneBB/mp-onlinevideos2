@@ -364,11 +364,11 @@ namespace OnlineVideos.Sites
             string token = part1.Substring(part1.LastIndexOf('/') + 1);
 
             string hash = "kekute**$%2009";
-            hash = Utils.GetMD5Hash(hash);
-            string s1 = Utils.GetMD5Hash(hash.Substring(0, 16));
-            string s2 = Utils.GetMD5Hash(hash.Substring(16, 16));
-            string s3 = Utils.GetMD5Hash(token);
-            string key = Utils.GetMD5Hash(time + s1 + s3 + s2).Substring(5, 27);
+            hash = Helpers.EncryptionUtils.GetMD5Hash(hash);
+            string s1 = Helpers.EncryptionUtils.GetMD5Hash(hash.Substring(0, 16));
+            string s2 = Helpers.EncryptionUtils.GetMD5Hash(hash.Substring(16, 16));
+            string s3 = Helpers.EncryptionUtils.GetMD5Hash(token);
+            string key = Helpers.EncryptionUtils.GetMD5Hash(time + s1 + s3 + s2).Substring(5, 27);
 
             return String.Format("{0}?start=0&key={1}&time={2}", part1, key, time);
         }

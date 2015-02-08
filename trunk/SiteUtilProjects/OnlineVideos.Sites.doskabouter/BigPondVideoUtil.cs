@@ -69,7 +69,7 @@ namespace OnlineVideos.Sites
                         if (PlaybackOptions.Count > 1)
                         {
                             res.Add(video);
-                            video.Other = "PlaybackOptions://\n" + Utils.DictionaryToString(PlaybackOptions);
+                            video.Other = "PlaybackOptions://\n" + Helpers.CollectionUtils.DictionaryToString(PlaybackOptions);
                         }
                 }
             }

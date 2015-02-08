@@ -85,7 +85,7 @@ namespace OnlineVideos.Sites
 					VideoUrl = new Uri(new Uri(topicsUrl), match.Groups["url"].Value).AbsoluteUri,
                     Thumb = match.Groups["thumb"].Value,
                     Length = match.Groups["length"].Value.Trim(),
-                    Airdate = Utils.PlainTextFromHtml(match.Groups["aired"].Value).Trim()
+                    Airdate = Helpers.StringUtils.PlainTextFromHtml(match.Groups["aired"].Value).Trim()
                 });
                 match = match.NextMatch();
             }

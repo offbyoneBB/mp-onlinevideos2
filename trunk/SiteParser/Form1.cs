@@ -676,7 +676,7 @@ namespace SiteParser
         private void checkValid_Click(object sender, EventArgs e)
         {
             MessageBox.Show(@"""" + (ResultUrlComboBox.SelectedItem as PlaybackOption).Url + @""" is " +
-                (!Utils.IsValidUri((ResultUrlComboBox.SelectedItem as PlaybackOption).Url) ? "NOT " : String.Empty) +
+                (!OnlineVideos.Helpers.UriUtils.IsValidUri((ResultUrlComboBox.SelectedItem as PlaybackOption).Url) ? "NOT " : String.Empty) +
                 "valid");
         }
 
@@ -740,7 +740,7 @@ namespace SiteParser
             generic.Settings.Categories.Clear();
             foreach (Category cat in staticList)
                 generic.Settings.Categories.Add(cat);
-            Utils.AddConfigurationValues(generic, generic.Settings);
+            generic.Settings.AddConfigurationValues(generic);
 
             XmlSerializer serializer = new XmlSerializer(typeof(SiteSettings));
             XmlDocument doc = new XmlDocument();

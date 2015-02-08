@@ -120,8 +120,8 @@ namespace OnlineVideos.Sites
                 VideoInfo video = new VideoInfo();
                 video.Title = node.SelectSingleNode("titlecatchup").InnerText;
                 video.Thumb = node.SelectSingleNode("thumbnail/url").InnerText;
-                video.Length = Utils.PlainTextFromHtml(node.SelectSingleNode("durationInSeconds").InnerText);
-                video.Airdate = Utils.PlainTextFromHtml(node.SelectSingleNode("startdate/date").InnerText);
+                video.Length = Helpers.StringUtils.PlainTextFromHtml(node.SelectSingleNode("durationInSeconds").InnerText);
+                video.Airdate = Helpers.StringUtils.PlainTextFromHtml(node.SelectSingleNode("startdate/date").InnerText);
                 video.VideoUrl = baseUrl + node.SelectSingleNode("url").InnerText.TrimStart('/');
                 video.Other = category.Other;
                 result.Add(video);

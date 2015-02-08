@@ -176,9 +176,9 @@ namespace OnlineVideos.Sites
                     {
 						if (vid.facets != null && vid.facets.Any(s => s == "restriction_useragent"))
 							continue;
-						string myUrl = vid.url.EndsWith(".asx") ? Utils.ParseASX(GetWebData(vid.url))[0] : vid.url;
+                        string myUrl = vid.url.EndsWith(".asx") ? Helpers.AsxUtils.ParseASX(GetWebData(vid.url))[0] : vid.url;
 						string extensions = myUrl.Substring(myUrl.LastIndexOf('.'));
-						myUrl = vid.url.EndsWith(".f4m") ? vid.url + "?g=" + Utils.GetRandomLetters(12) + "&hdcore=3.0.3" : vid.url;
+                        myUrl = vid.url.EndsWith(".f4m") ? vid.url + "?g=" + Helpers.StringUtils.GetRandomLetters(12) + "&hdcore=3.0.3" : vid.url;
 						uint bitrate = vid.bruttoBitrateSpecified ? vid.bruttoBitrate : vid.audioBitrate + vid.videoBitrate;
 						if (!sortedPlaybackOptions.ContainsKey(bitrate))
 							sortedPlaybackOptions[bitrate] = new List<KeyValuePair<string, string>>();

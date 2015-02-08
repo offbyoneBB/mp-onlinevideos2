@@ -409,7 +409,7 @@ namespace OnlineVideos.Sites
 
             // deserialize PlaybackOptions if they were saved in Other object (happens if they are already discovered when building the list of videos)
             if (video.Other is string && (video.Other as string).StartsWith("PlaybackOptions://"))
-                video.PlaybackOptions = Utils.DictionaryFromString((video.Other as string).Substring("PlaybackOptions://".Length));
+                video.PlaybackOptions = Helpers.CollectionUtils.DictionaryFromString((video.Other as string).Substring("PlaybackOptions://".Length));
 
             string resultUrl = GetFormattedVideoUrl(video);
 
@@ -449,7 +449,7 @@ namespace OnlineVideos.Sites
                     if (video.PlaybackOptions[key].EndsWith(".asx"))
                     {
                         string mmsUrl = null;
-                        try { mmsUrl = Utils.ParseASX(GetWebData<string>(video.PlaybackOptions[key]))[0]; }
+                        try { mmsUrl = Helpers.AsxUtils.ParseASX(GetWebData<string>(video.PlaybackOptions[key]))[0]; }
                         catch { }
                         if (!string.IsNullOrEmpty(mmsUrl) && !video.PlaybackOptions.ContainsValue(mmsUrl))
                         {
@@ -469,7 +469,7 @@ namespace OnlineVideos.Sites
 
             if (resultUrl.EndsWith(".asx") && (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0))
             {
-                string mmsUrl = Utils.ParseASX(GetWebData<string>(resultUrl))[0];
+                string mmsUrl = Helpers.AsxUtils.ParseASX(GetWebData<string>(resultUrl))[0];
                 Uri uri = new Uri(mmsUrl);
                 if (uri.Scheme == "mms")
                 {
@@ -658,8 +658,8 @@ namespace OnlineVideos.Sites
                         // get, format and if needed absolutify the thumb url
                         if (!String.IsNullOrEmpty(m.Groups["ImageUrl"].Value))
                             videoInfo.Thumb = FormatDecodeAbsolutifyUrl(url, m.Groups["ImageUrl"].Value, videoThumbFormatString, UrlDecoding.None);
-                        videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value);
-                        videoInfo.Airdate = Utils.PlainTextFromHtml(m.Groups["Airdate"].Value);
+                        videoInfo.Length = Helpers.StringUtils.PlainTextFromHtml(m.Groups["Duration"].Value);
+                        videoInfo.Airdate = Helpers.StringUtils.PlainTextFromHtml(m.Groups["Airdate"].Value);
                         videoInfo.Description = m.Groups["Description"].Value;
                         ExtraVideoMatch(videoInfo, m.Groups);
                         videoList.Add(videoInfo);
@@ -684,8 +684,8 @@ namespace OnlineVideos.Sites
                             if (!string.IsNullOrEmpty(videoListRegExFormatString)) videoInfo.VideoUrl = string.Format(videoListRegExFormatString, videoInfo.VideoUrl);
                             if (!string.IsNullOrEmpty(videoThumbXml)) videoInfo.Thumb = videoItems[i].SelectSingleNode(videoThumbXml).InnerText;
                             if (!string.IsNullOrEmpty(videoThumbFormatString)) videoInfo.Thumb = string.Format(videoThumbFormatString, videoInfo.Thumb);
-                            if (!string.IsNullOrEmpty(videoDurationXml)) videoInfo.Length = Utils.PlainTextFromHtml(videoItems[i].SelectSingleNode(videoDurationXml).InnerText);
-                            if (!string.IsNullOrEmpty(videoAirDateXml)) videoInfo.Airdate = Utils.PlainTextFromHtml(videoItems[i].SelectSingleNode(videoAirDateXml).InnerText);
+                            if (!string.IsNullOrEmpty(videoDurationXml)) videoInfo.Length = Helpers.StringUtils.PlainTextFromHtml(videoItems[i].SelectSingleNode(videoDurationXml).InnerText);
+                            if (!string.IsNullOrEmpty(videoAirDateXml)) videoInfo.Airdate = Helpers.StringUtils.PlainTextFromHtml(videoItems[i].SelectSingleNode(videoAirDateXml).InnerText);
                             if (!string.IsNullOrEmpty(videoDescriptionXml)) videoInfo.Description = videoItems[i].SelectSingleNode(videoDescriptionXml).InnerText;
                             videoList.Add(videoInfo);
                         }
@@ -701,7 +701,7 @@ namespace OnlineVideos.Sites
                         {
                             if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 1)
                             {
-                                video.Other = "PlaybackOptions://\n" + Utils.DictionaryToString(video.PlaybackOptions);
+                                video.Other = "PlaybackOptions://\n" + Helpers.CollectionUtils.DictionaryToString(video.PlaybackOptions);
                             }
                             videoList.Add(video);
                         }

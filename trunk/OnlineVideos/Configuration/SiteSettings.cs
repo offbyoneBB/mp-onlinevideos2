@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Reflection;
 using System.Runtime.Serialization;
+using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace OnlineVideos
@@ -24,6 +28,69 @@ namespace OnlineVideos
         [DataMember]   
         [XmlArray("Sites"), XmlArrayItem("Site")]
         public BindingList<SiteSettings> Sites { get; set; }
+
+        public void Serialize(Stream stream)
+        {
+            var ctx = new StreamingContext();
+            foreach (var site in Sites)
+            {
+                site.OnSerializingMethod(ctx);
+                CallOnSerializingRecursive(site.Categories, ctx);
+            }
+            var ser = new XmlSerializer(typeof(SerializableSettings));
+            ser.Serialize(XmlWriter.Create(stream, new XmlWriterSettings() { Encoding = Encoding.UTF8, Indent = true }), this);
+        }
+
+        public static IList<SiteSettings> Deserialize(string siteXml)
+        {
+            siteXml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<OnlineVideoSites xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+<Sites>
+" + siteXml + @"
+</Sites>
+</OnlineVideoSites>";
+            return CrossDomain.OnlineVideosAppDomain.PluginLoader.CreateSiteSettingsFromXml(siteXml);
+        }
+
+        public static IList<SiteSettings> Deserialize(TextReader reader)
+        {
+            var ser = new XmlSerializer(typeof(SerializableSettings));
+            SerializableSettings s = ser.Deserialize(reader) as SerializableSettings;
+            if (s != null)
+            {
+                var ctx = new System.Runtime.Serialization.StreamingContext();
+                foreach (var site in s.Sites) CallOnDeserializedRecursive(site.Categories, ctx);
+                return s.Sites;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private static void CallOnDeserializedRecursive(IList<Category> cats, System.Runtime.Serialization.StreamingContext ctx)
+        {
+            if (cats != null)
+            {
+                foreach (var cat in cats)
+                {
+                    cat.OnDeserializedMethod(ctx);
+                    CallOnDeserializedRecursive(cat.SubCategories, ctx);
+                }
+            }
+        }
+
+        private static void CallOnSerializingRecursive(IList<Category> cats, System.Runtime.Serialization.StreamingContext ctx)
+        {
+            if (cats != null)
+            {
+                foreach (var cat in cats)
+                {
+                    cat.OnSerializingMethod(ctx);
+                    CallOnSerializingRecursive(cat.SubCategories, ctx);
+                }
+            }
+        }
     }
 
     [DataContract(Name="Site")]
@@ -123,6 +190,42 @@ namespace OnlineVideos
         {
             cat.IsDeserialized = true;
             Categories.Add(cat);
+        }
+
+        /// <summary>
+        /// Find and set all configuration fields that do not have their default value
+        /// </summary>
+        /// <param name="siteUtil"></param>
+        public void AddConfigurationValues(Sites.SiteUtilBase siteUtil)
+        {
+            // 1. build a list of all the Fields that are used for OnlineVideosConfiguration
+            List<FieldInfo> fieldInfos = new List<FieldInfo>();
+            foreach (FieldInfo field in siteUtil.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+            {
+                object[] attrs = field.GetCustomAttributes(typeof(System.ComponentModel.CategoryAttribute), false);
+                if (attrs.Length > 0 && ((System.ComponentModel.CategoryAttribute)attrs[0]).Category == "OnlineVideosConfiguration")
+                {
+                    fieldInfos.Add(field);
+                }
+            }
+
+            // 2. get a "clean" site by creating it with empty SiteSettings
+            Configuration = new StringHash();
+            Sites.SiteUtilBase cleanSiteUtil = Sites.SiteUtilFactory.CreateFromShortName(UtilName, this);
+
+            // 3. compare and collect different settings
+            foreach (FieldInfo field in fieldInfos)
+            {
+                object defaultValue = field.GetValue(cleanSiteUtil);
+                object newValue = field.GetValue(siteUtil);
+                if (defaultValue != newValue)
+                {
+                    // seems that if default value = false, and newvalue = false defaultvalue != newvalue returns true
+                    // so added extra check
+                    if (defaultValue == null || !defaultValue.Equals(newValue))
+                        Configuration.Add(field.Name, newValue.ToString());
+                }
+            }
         }
         
         public override string ToString() { return Name; }

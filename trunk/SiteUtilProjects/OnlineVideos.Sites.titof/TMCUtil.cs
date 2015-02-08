@@ -53,7 +53,7 @@ namespace OnlineVideos.Sites
                 videoInfo.Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value);
                 videoInfo.VideoUrl = ((RssLink)category).Url + m.Groups["VideoUrl"].Value;
                 videoInfo.Thumb = m.Groups["ImageUrl"].Value;
-                videoInfo.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value);
+                videoInfo.Length = Helpers.StringUtils.PlainTextFromHtml(m.Groups["Duration"].Value);
                 videoInfo.Description = m.Groups["Description"].Value;
                 videoList.Add(videoInfo);
                 m = m.NextMatch();

@@ -392,7 +392,7 @@ namespace OnlineVideos.Hoster
             string[] secparts = Encoding.ASCII.GetString(tmp).Split('|');
 
             string prehash = aflID.ToString() + '|' + secparts[1];
-            string hash = Utils.GetMD5Hash(prehash).ToUpperInvariant();
+            string hash = Helpers.EncryptionUtils.GetMD5Hash(prehash).ToUpperInvariant();
             string url2 = String.Format(@"http://pi.omroep.nl/info/stream/aflevering/{0}/{1}", aflID, hash);
             doc.Load(url2);
 

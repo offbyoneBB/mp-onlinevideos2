@@ -176,7 +176,7 @@ namespace OnlineVideos.Sites.georgius
                                 if (match.Success)
                                 {
                                     showUrl = Utils.FormatAbsoluteUrl("videa", Utils.FormatAbsoluteUrl(match.Groups["showUrl"].Value.Replace("\\/", "/").Replace("\\\"", ""), url));
-                                    showTitle = OnlineVideos.Utils.PlainTextFromHtml(Utils.DecodeEncodedNonAsciiCharacters(match.Groups["showTitle"].Value));
+                                    showTitle = Helpers.StringUtils.PlainTextFromHtml(Utils.DecodeEncodedNonAsciiCharacters(match.Groups["showTitle"].Value));
                                 }
 
                                 if (!String.IsNullOrEmpty(showUrl))

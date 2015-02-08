@@ -131,7 +131,7 @@ namespace OnlineVideos
             try
             {
                 // build a CRC of the url and all headers + proxy + cookies for caching
-                string requestCRC = Utils.EncryptLine(
+                string requestCRC = Helpers.EncryptionUtils.CalculateCRC32(
                     string.Format("{0}{1}{2}{3}",
                     url,
                     headers != null ? string.Join("&", (from item in headers.AllKeys select string.Format("{0}={1}", item, headers[item])).ToArray()) : "",
@@ -144,7 +144,7 @@ namespace OnlineVideos
                 if (cachedData != null) return cachedData;
 
                 // build the request
-                if (allowUnsafeHeader) Utils.SetAllowUnsafeHeaderParsing(true);
+                if (allowUnsafeHeader) Helpers.DotNetFrameworkHelper.SetAllowUnsafeHeaderParsing(true);
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
                 if (request == null) return "";
                 request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate; // turn on automatic decompression of both formats (adds header "AcceptEncoding: gzip,deflate" to the request)
@@ -216,7 +216,7 @@ namespace OnlineVideos
             {
                 if (response != null) ((IDisposable)response).Dispose();
                 // disable unsafe header parsing if it was enabled
-                if (allowUnsafeHeader) Utils.SetAllowUnsafeHeaderParsing(false);
+                if (allowUnsafeHeader) Helpers.DotNetFrameworkHelper.SetAllowUnsafeHeaderParsing(false);
             }
         }
 

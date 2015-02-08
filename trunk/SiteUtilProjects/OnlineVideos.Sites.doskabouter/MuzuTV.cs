@@ -192,7 +192,7 @@ namespace OnlineVideos.Sites
                     Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
                     playbackOptions.Add("lq", video.VideoUrl + "&qv=480");
                     playbackOptions.Add("hq", video.VideoUrl + "&qv=720");
-                    video.Other = "PlaybackOptions://\n" + Utils.DictionaryToString(playbackOptions);
+                    video.Other = "PlaybackOptions://\n" + Helpers.CollectionUtils.DictionaryToString(playbackOptions);
                 }
                 if (nextPageUrl.EndsWith("?vo=0") || nextPageUrl.Equals(oldnextUrl))
                 {
@@ -226,7 +226,7 @@ namespace OnlineVideos.Sites
                     XmlNode thumb = node.SelectSingleNode("thumbnails/image[@type='6']");
                     if (thumb != null)
                         video.Thumb = thumb.SelectSingleNode("url").InnerText;
-                    video.Other = "PlaybackOptions://\n" + Utils.DictionaryToString(playbackOptions);
+                    video.Other = "PlaybackOptions://\n" + Helpers.CollectionUtils.DictionaryToString(playbackOptions);
                     res.Add(video);
                 }
                 if (res.Count == pageSize)

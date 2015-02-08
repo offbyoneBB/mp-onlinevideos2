@@ -182,7 +182,7 @@ namespace OnlineVideos.Sites
                     //video.Length = Utils.PlainTextFromHtml(m.Groups["Duration"].Value);
                     var airDateNode = vid.SelectSingleNode(@".//div[contains(@class,'field-name-field-starttime')]/span");
                     if (airDateNode != null)
-                        video.Airdate = Utils.PlainTextFromHtml(airDateNode.InnerText);
+                        video.Airdate = Helpers.StringUtils.PlainTextFromHtml(airDateNode.InnerText);
                     var descrNode = vid.SelectSingleNode(@".//div[contains(@class,'field-name-field-webdescription')]/p");
                     if (descrNode != null)
                         video.Description = descrNode.InnerText;

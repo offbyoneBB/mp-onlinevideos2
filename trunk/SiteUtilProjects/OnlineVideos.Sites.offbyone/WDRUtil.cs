@@ -125,9 +125,9 @@ namespace OnlineVideos.Sites
 				var f4mUri = HttpUtility.HtmlDecode(HttpUtility.UrlDecode(value)).Substring("dslSrc=".Length);
 				f4mUri = f4mUri.Substring(0, f4mUri.IndexOf("&"));
 				if (f4mUri.EndsWith("smil"))
-					return GetStreamUrlFromSmil(f4mUri) + "&g=" + Utils.GetRandomLetters(12) + "&hdcore=3.3.0";
+                    return GetStreamUrlFromSmil(f4mUri) + "&g=" + Helpers.StringUtils.GetRandomLetters(12) + "&hdcore=3.3.0";
 				else
-					return f4mUri + "?g=" + Utils.GetRandomLetters(12) + "&hdcore=3.3.0";
+                    return f4mUri + "?g=" + Helpers.StringUtils.GetRandomLetters(12) + "&hdcore=3.3.0";
 			}
 			return "";
 		}

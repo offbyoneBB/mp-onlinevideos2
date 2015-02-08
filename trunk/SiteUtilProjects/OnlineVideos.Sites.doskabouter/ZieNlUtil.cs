@@ -126,7 +126,7 @@ namespace OnlineVideos.Sites
                 headers.Add("User-Agent", OnlineVideoSettings.Instance.UserAgent);
 
                 // build a CRC of the url and all headers + proxy + cookies for caching
-                string requestCRC = Utils.EncryptLine(
+                string requestCRC = Helpers.EncryptionUtils.CalculateCRC32(
                     string.Format("{0}{1}{2}{3}",
                     url,
                     string.Join("&", (

@@ -165,7 +165,7 @@ namespace OnlineVideos.Sites
 				result.Add(new VideoInfo()
 				{
 					Title = "Das Erste",
-					VideoUrl = "http://daserste_live-lh.akamaihd.net/z/daserste_de@91204/manifest.f4m?hdcore=2.11.4&g=" + Utils.GetRandomLetters(12)
+                    VideoUrl = "http://daserste_live-lh.akamaihd.net/z/daserste_de@91204/manifest.f4m?hdcore=2.11.4&g=" + Helpers.StringUtils.GetRandomLetters(12)
 				});
 			}
 			else if (myBaseUri.AbsoluteUri.Contains("sendungVerpasst"))
@@ -306,7 +306,7 @@ namespace OnlineVideos.Sites
 								if (Uri.IsWellFormedUriString(url, UriKind.Absolute))
 								{
 									if (url.EndsWith("f4m"))
-										url += "?g=" + Utils.GetRandomLetters(12) + "&hdcore=3.3.0";
+                                        url += "?g=" + Helpers.StringUtils.GetRandomLetters(12) + "&hdcore=3.3.0";
 									video.PlaybackOptions[quali] = url;
 								}
 							}

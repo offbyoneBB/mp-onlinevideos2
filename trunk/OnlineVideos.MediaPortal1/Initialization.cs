@@ -43,7 +43,7 @@ namespace OnlineVideos.MediaPortal1
 				System.Net.ServicePointManager.DefaultConnectionLimit = 100;
 
 				// The default .Net implementation for URI parsing removes trailing dots, which is not correct
-				Utils.FixUriTrailingDots();
+                Helpers.DotNetFrameworkHelper.FixUriTrailingDots();
 
 				// set a GUI Property to the configured menu entry of the plugin so skins can use it
 				GUIPropertyManager.SetProperty("#OnlineVideos.HomeScreenName", PluginConfiguration.Instance.BasicHomeScreenName);

@@ -97,7 +97,7 @@ namespace OnlineVideos.Sites
                     else
                         video.SubtitleUrl = String.Format(@"http://www.abc.net.au/iview/captions/{0}.xml", Path.GetFileNameWithoutExtension(video.VideoUrl));
 
-                    video.Length = Utils.FormatDuration(vid.Value<String>("j"));
+                    video.Length = Helpers.TimeUtils.TimeFromSeconds(vid.Value<String>("j"));
                     video.Airdate = vid.Value<String>("f");
                     video.Thumb = vid.Value<String>("s");
                     res.Add(video);

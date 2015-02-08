@@ -20,7 +20,7 @@ namespace OnlineVideos.Sites
 
         internal override string GetConfigurationKey(string fieldName)
         {
-            return string.Format("{0}.{1}", Utils.GetSaveFilename(Settings.Name).Replace(' ', '_'), fieldName);
+            return string.Format("{0}.{1}", Helpers.FileUtils.GetSaveFilename(Settings.Name).Replace(' ', '_'), fieldName);
         }
 
         #endregion
@@ -322,7 +322,7 @@ namespace OnlineVideos.Sites
                 {
                     extension = ".flv";
                 }
-                string safeName = Utils.GetSaveFilename(video.Title);
+                string safeName = Helpers.FileUtils.GetSaveFilename(video.Title);
                 return safeName + extension;
             }
         }
@@ -393,13 +393,13 @@ namespace OnlineVideos.Sites
         /// </list>
         /// </typeparam>
         /// <returns>The data returned by a <see cref="HttpWebResponse"/> converted to the specified type.</returns>
-        public T GetWebData<T>(string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
+        protected virtual T GetWebData<T>(string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
         {
             return WebCache.Instance.GetWebData<T>(url, postData, cookies, referer, proxy, forceUTF8, allowUnsafeHeader, userAgent, encoding, headers, cache);
         }
 
         /// <summary>
-        /// This method should be used whenever requesting data via http (GET or POST). 
+        /// This method should be used whenever requesting data via http (GET or POST) in your SiteUtil.
         /// Retrieved data is added to a cache if a GET request with HTTP Status 200 and more than 500 bytes was successful. 
         /// The cache timeout is user configurable (<see cref="OnlineVideoSettings.CacheTimeout"/>).
         /// You can provide some request settings with the optional parameters.
@@ -416,7 +416,7 @@ namespace OnlineVideos.Sites
         /// <param name="headers">Allows to set your own custom headers for the request</param>
         /// <param name="cache">Controls if the result should be cached - default true</param>
         /// <returns>The data returned by a <see cref="HttpWebResponse"/>.</returns>
-        public string GetWebData(string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
+        protected virtual string GetWebData(string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
         {
             return WebCache.Instance.GetWebData(url, postData, cookies, referer, proxy, forceUTF8, allowUnsafeHeader, userAgent, encoding, headers, cache);
         }

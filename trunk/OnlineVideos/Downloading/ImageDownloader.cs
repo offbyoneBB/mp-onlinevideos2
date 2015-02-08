@@ -89,7 +89,7 @@ namespace OnlineVideos.Downloading
 						}
 						else
 						{
-                            string thumbFile = string.IsNullOrEmpty(item.ThumbnailImage) ? Utils.GetThumbFile(url) : item.ThumbnailImage;
+                            string thumbFile = string.IsNullOrEmpty(item.ThumbnailImage) ? Helpers.FileUtils.GetThumbFile(url) : item.ThumbnailImage;
 							if (File.Exists(thumbFile)) imageLocation = thumbFile;
                             else if (DownloadAndCheckImage(url, thumbFile, item.ImageForcedAspectRatio)) imageLocation = thumbFile;
 						}
