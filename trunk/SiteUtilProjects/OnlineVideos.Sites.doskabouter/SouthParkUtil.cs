@@ -112,7 +112,11 @@ namespace OnlineVideos.Sites
                     {
                         if (item.Title.ToLowerInvariant().Contains("intro") || item.Title.ToLowerInvariant().Contains("vorspann")) continue;
                         if (video.PlaybackOptions == null)
-                            video.PlaybackOptions = getPlaybackOptions(item.MediaGroups[0].MediaContents[0].Url, spc);
+                        {
+                            var tmp = getPlaybackOptions(item.MediaGroups[0].MediaContents[0].Url, spc);
+                            video.PlaybackOptions = tmp.Item1;
+                            video.SubtitleText = tmp.Item2;
+                        }
                         result.Add(item.MediaGroups[0].MediaContents[0].Url);
                     }
                 }
@@ -121,7 +125,7 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-        Dictionary<string, string> getPlaybackOptions(string videoUrl, SouthParkCountry spc)
+        Tuple<Dictionary<string, string>, string> getPlaybackOptions(string videoUrl, SouthParkCountry spc)
         {
             Dictionary<string, string> res = new Dictionary<string, string>();
 
@@ -164,7 +168,15 @@ namespace OnlineVideos.Sites
                 }
 
             }
-            return res;
+            string subtitleText = null;
+            XmlNode sub = doc.SelectSingleNode("//transcript/typographic[@format='vtt' and @src]");
+            if (sub != null)
+            {
+                string url = sub.Attributes["src"].Value;
+                if (!String.IsNullOrEmpty(url))
+                    subtitleText = Regex.Replace(GetWebData(url), @"(WEBVTT\s+)", ""); // Removes 'WEBVTT' word
+            }
+            return new Tuple<Dictionary<string, string>, string>(res, subtitleText);
         }
 
         public override string GetPlaylistItemVideoUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
@@ -172,7 +184,9 @@ namespace OnlineVideos.Sites
             if (String.IsNullOrEmpty(chosenPlaybackOption))
                 return clonedVideoInfo.VideoUrl;
 
-            Dictionary<string, string> options = getPlaybackOptions(clonedVideoInfo.VideoUrl, (clonedVideoInfo.Other as VideoInfoOtherHelper).SPCountry);
+            var result = getPlaybackOptions(clonedVideoInfo.VideoUrl, (clonedVideoInfo.Other as VideoInfoOtherHelper).SPCountry);
+            Dictionary<string, string> options = result.Item1;
+            clonedVideoInfo.SubtitleText = result.Item2;
             if (options.ContainsKey(chosenPlaybackOption))
             {
                 return options[chosenPlaybackOption];

@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Web;
-using OnlineVideos.Hoster;
-using OnlineVideos.Sites;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Hoster
 {
-    public class Vimeo : HosterBase
+    public class Vimeo : HosterBase, ISubtitle
     {
         [Category("OnlineVideosUserConfiguration"), Description("Select subtitle language preferences (; separated and ISO 3166-2?), for example: en;de")]
         protected string subtitleLanguages = "";
 
-        public string subtitleText = null;
+        [Category("OnlineVideosUserConfiguration"), Description("Select list subtitle language preferences (; separated and ISO 3166-2?), for example: en;de")]
+        [TypeConverter(typeof(LanguagesConverter))]
+        protected string[] testt = new string[0];
+
+        private string subtitleText = null;
 
         public override string GetHosterUrl()
         {
@@ -65,39 +67,12 @@ namespace OnlineVideos.Hoster
                     if (!String.IsNullOrEmpty(subtitleLanguages))
                     {
                         string data = WebCache.Instance.GetWebData(getSubUrl(request["text_tracks"] as JArray, subtitleLanguages));
-                        subtitleText = CleanupSubs(ConvertWebvttToSrt(data));
+                        subtitleText = Helpers.SubtitleUtils.Webvtt2SRT(data);
                     }
                 }
             }
             return result;
         }
-
-        private String ConvertWebvttToSrt(String webvttContent)
-        {
-            String srtResult = webvttContent;
-            Int32 srtPartLineNumber = 0;
-            srtResult = Regex.Replace(srtResult, @"(WEBVTT\s+)(\d{2}:)", "$2"); // Removes 'WEBVTT' word
-            srtResult = Regex.Replace(srtResult, @"(\d{2}:\d{2}:\d{2})\.(\d{3}\s+)-->(\s+\d{2}:\d{2}:\d{2})\.(\d{3}\s*)", match =>
-            {
-                srtPartLineNumber++;
-                return srtPartLineNumber.ToString() + Environment.NewLine +
-                Regex.Replace(match.Value, @"(\d{2}:\d{2}:\d{2})\.(\d{3}\s+)-->(\s+\d{2}:\d{2}:\d{2})\.(\d{3}\s*)", "$1,$2-->$3,$4");
-                // Writes '00:00:19.620' instead of '00:00:19,620'
-            }); // Writes Srt section numbers for each section
-            return srtResult;
-        }
-
-        private string CleanupSubs(string input)
-        {
-            string result = input;
-            if (!string.IsNullOrEmpty(result))
-            {
-                result = Regex.Replace(result, @"< *br */*>", "\r\n", RegexOptions.IgnoreCase & RegexOptions.Multiline);
-                result = Regex.Replace(result, @"<[^>]*>", "", RegexOptions.Multiline);
-            }
-            return result;
-        }
-
 
         private string getSubUrl(JArray textTracks, string languages)
         {
@@ -111,5 +86,43 @@ namespace OnlineVideos.Hoster
             }
             return null;
         }
+
+        string ISubtitle.SubtitleText
+        {
+            get
+            {
+                return subtitleText;
+            }
+        }
     }
+
+    public class LanguagesConverter : StringConverter
+    {
+        #region Methods
+
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        {
+            return (sourceType == typeof(string));
+        }
+
+        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+        {
+            return (destinationType == typeof(string));
+        }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+        {
+            return ((string)value).Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+        }
+
+        public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+        {
+            string[] langs = (string[])value;
+            return String.Join(";", langs);
+        }
+
+        #endregion
+    }
+
 }
+
