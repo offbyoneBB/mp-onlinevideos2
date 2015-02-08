@@ -192,7 +192,7 @@ namespace OnlineVideos.MediaPortal2
 
 		public void Play(List<string> urls)
 		{
-			Utils.RemoveInvalidUrls(urls);
+            Helpers.UriUtils.RemoveInvalidUrls(urls);
 			if (urls != null && urls.Count > 0)
 			{
 				// if there is already an OnlineVideo playing stop it first, 2 streams at the same time might saturate the connection or not be allowed by the server
@@ -413,7 +413,7 @@ namespace OnlineVideos.MediaPortal2
 		
 		static void SaveVideo_Step2(DownloadList saveItems, List<String> urls, bool? enque)
 		{
-			Utils.RemoveInvalidUrls(urls);
+            Helpers.UriUtils.RemoveInvalidUrls(urls);
 
 			// if no valid urls were returned show error msg
 			if (urls == null || urls.Count == 0)
@@ -454,7 +454,7 @@ namespace OnlineVideos.MediaPortal2
 		{
 			// check for valid url and cut off additional parameter
 			if (String.IsNullOrEmpty(url) ||
-				!Utils.IsValidUri((url.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? url.Substring(0, url.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : url))
+                !Helpers.UriUtils.IsValidUri((url.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? url.Substring(0, url.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : url))
 			{
 				ServiceRegistration.Get<IDialogManager>().ShowDialog("[OnlineVideos.Error]", "[OnlineVideos.UnableToDownloadVideo]", DialogType.OkDialog, false, DialogButtonType.Ok);
 				return;
@@ -485,7 +485,7 @@ namespace OnlineVideos.MediaPortal2
 					Path.GetExtension(saveItems.CurrentItem.LocalFile));
 			}
 
-			saveItems.CurrentItem.LocalFile = Utils.GetNextFileName(saveItems.CurrentItem.LocalFile);
+			saveItems.CurrentItem.LocalFile = Helpers.FileUtils.GetNextFileName(saveItems.CurrentItem.LocalFile);
 			saveItems.CurrentItem.ThumbFile = string.IsNullOrEmpty(saveItems.CurrentItem.VideoInfo.ThumbnailImage) ? saveItems.CurrentItem.VideoInfo.Thumb : saveItems.CurrentItem.VideoInfo.ThumbnailImage;
 
 			// make sure the target dir exists
@@ -602,7 +602,7 @@ namespace OnlineVideos.MediaPortal2
 					// if the image given was an url -> check if thumb exists otherwise download
 					if (saveItems.CurrentItem.ThumbFile.ToLower().StartsWith("http"))
 					{
-						string thumbFile = Utils.GetThumbFile(saveItems.CurrentItem.ThumbFile);
+                        string thumbFile = Helpers.FileUtils.GetThumbFile(saveItems.CurrentItem.ThumbFile);
 						if (File.Exists(thumbFile)) saveItems.CurrentItem.ThumbFile = thumbFile;
 						else if (ImageDownloader.DownloadAndCheckImage(saveItems.CurrentItem.ThumbFile, thumbFile)) saveItems.CurrentItem.ThumbFile = thumbFile;
 					}
