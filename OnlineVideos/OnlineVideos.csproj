@@ -283,6 +283,7 @@
     <Compile Include="Helpers\DotNetFrameworkHelper.cs" />
     <Compile Include="Helpers\EncryptionUtils.cs" />
     <Compile Include="Helpers\FileUtils.cs" />
+    <Compile Include="Helpers\RssUtils.cs" />
     <Compile Include="Helpers\StringUtils.cs" />
     <Compile Include="Helpers\TimeUtils.cs" />
     <Compile Include="Helpers\UriUtils.cs" />
@@ -462,7 +463,7 @@
     <Compile Include="3rdParty\Jurassic\Library\String\StringConstructor.cs" />
     <Compile Include="3rdParty\Jurassic\Library\String\StringInstance.cs" />
     <Compile Include="LocalizableDisplayNameAttribute.cs" />
-    <Compile Include="Log.cs" />
+    <Compile Include="ILog.cs" />
     <Compile Include="MPUrlSourceFilter\AfhsManifestUrl.cs" />
     <Compile Include="MPUrlSourceFilter\UserSettings\ExpandableUserSettingObjectConverter.cs" />
     <Compile Include="MPUrlSourceFilter\Downloader.cs" />
@@ -987,7 +988,7 @@
     <Compile Include="3rdParty\RssToolkit\Rss\RssTextInput.cs" />
     <Compile Include="3rdParty\RssToolkit\Rss\RssXmlHelper.cs" />
     <Compile Include="3rdParty\RssToolkit\Rss\RssXmlSchemaValidator.cs" />
-    <Compile Include="SerializableDictionary.cs" />
+    <Compile Include="Helpers\SerializableDictionary.cs" />
     <Compile Include="Sites\AMF.cs" />
     <Compile Include="Sites\Base\ContextMenu.cs" />
     <Compile Include="Sites\Entities\AsyncWaitResult.cs" />
@@ -997,12 +998,12 @@
     <Compile Include="Sites\Base\BrowserUtilConnector.cs" />
     <Compile Include="Sites\Interfaces\IBrowserSiteUtil.cs" />
     <Compile Include="Sites\Interfaces\IChoice.cs" />
-    <Compile Include="Sites\Interfaces\IFavoritesDatabase.cs" />
+    <Compile Include="IFavoritesDatabase.cs" />
     <Compile Include="Sites\Interfaces\IFilter.cs" />
     <Compile Include="Sites\Base\LatestVideosSiteUtilBase.cs" />
-    <Compile Include="Sites\Interfaces\ITrackingInfo.cs" />
-    <Compile Include="Sites\Interfaces\IUserStore.cs" />
-    <Compile Include="Sites\Interfaces\IVideoDetails.cs" />
+    <Compile Include="ITrackingInfo.cs" />
+    <Compile Include="IUserStore.cs" />
+    <Compile Include="IVideoDetails.cs" />
     <Compile Include="SearchResultItem.cs" />
     <Compile Include="Sites\DownloadedVideoUtil.cs" />
     <Compile Include="Sites\FavoriteUtil.cs" />

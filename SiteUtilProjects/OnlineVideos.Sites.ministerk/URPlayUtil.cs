@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using System.Xml;
 using HtmlAgilityPack;
+using OnlineVideos.Helpers;
 
 namespace OnlineVideos.Sites
 {

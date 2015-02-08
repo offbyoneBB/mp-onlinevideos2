@@ -103,7 +103,7 @@ namespace OnlineVideos.Sites
                 {
                     foreach (RssToolkit.Rss.RssItem rssItem in doc.Channel.Items)
                     {
-                        VideoInfo vid = VideoInfo.FromRssItem(rssItem, true, new Predicate<string>(IsPossibleVideo));
+                        VideoInfo vid = Helpers.RssUtils.VideoInfoFromRssItem(rssItem, true, new Predicate<string>(IsPossibleVideo));
                         if (vid != null)
                             vids.Add(vid);
                     }

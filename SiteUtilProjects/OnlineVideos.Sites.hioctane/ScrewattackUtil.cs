@@ -43,7 +43,7 @@ namespace OnlineVideos.Sites
 				string rss = GetWebData(rssUrl, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
 				foreach (RssToolkit.Rss.RssItem rssItem in RssToolkit.Rss.RssDocument.Load(rss).Channel.Items)
 				{
-					VideoInfo aVideo = VideoInfo.FromRssItem(rssItem, regEx_FileUrl != null, new Predicate<string>(IsPossibleVideo));
+                    VideoInfo aVideo = Helpers.RssUtils.VideoInfoFromRssItem(rssItem, regEx_FileUrl != null, new Predicate<string>(IsPossibleVideo));
 					if (!string.IsNullOrEmpty(aVideo.VideoUrl))
 					{
 						video.PlaybackOptions = aVideo.PlaybackOptions;
