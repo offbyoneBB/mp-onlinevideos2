@@ -48,7 +48,7 @@ namespace OnlineVideos.Helpers
                 Regex.Replace(match.Value, @"(\d{2}:\d{2}:\d{2})\.(\d{3}\s+)-->(\s+\d{2}:\d{2}:\d{2})\.(\d{3}\s*)", "$1,$2-->$3,$4");
                 // Writes '00:00:19.620' instead of '00:00:19,620'
             }); // Writes Srt section numbers for each section
-            return Regex.Replace(srtResult, @"< *br */*>", "\r\n", RegexOptions.IgnoreCase & RegexOptions.Multiline);
+            return Regex.Replace(srtResult, @"< *br */*>", "\r\n", RegexOptions.IgnoreCase | RegexOptions.Multiline);
         }
 
         public static string SAMI2SRT(string SAMITxt)

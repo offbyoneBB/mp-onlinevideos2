@@ -122,9 +122,9 @@ namespace OnlineVideos.Sites
             if (!string.IsNullOrEmpty(result))
             {
                 // Remove <br/>
-                result = Regex.Replace(result, @"< *br */*>", "", RegexOptions.IgnoreCase & RegexOptions.Multiline);
+                result = Regex.Replace(result, @"< *br */*>", "", RegexOptions.IgnoreCase | RegexOptions.Multiline);
                 // Replace <p> with \n
-                result = Regex.Replace(result, @"< *p */*>", "\n", RegexOptions.IgnoreCase & RegexOptions.Multiline);
+                result = Regex.Replace(result, @"< *p */*>", "\n", RegexOptions.IgnoreCase | RegexOptions.Multiline);
                 // Clean other
                 result = Helpers.StringUtils.PlainTextFromHtml(result);
             }
