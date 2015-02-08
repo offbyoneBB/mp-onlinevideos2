@@ -96,130 +96,130 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BouncyCastle\asn1\Asn1Encodable.cs" />
-    <Compile Include="BouncyCastle\asn1\Asn1EncodableVector.cs" />
-    <Compile Include="BouncyCastle\asn1\Asn1Exception.cs" />
-    <Compile Include="BouncyCastle\asn1\Asn1InputStream.cs" />
-    <Compile Include="BouncyCastle\asn1\Asn1Null.cs" />
-    <Compile Include="BouncyCastle\asn1\Asn1Object.cs" />
-    <Compile Include="BouncyCastle\asn1\Asn1OctetString.cs" />
-    <Compile Include="BouncyCastle\asn1\ASN1OctetStringParser.cs" />
-    <Compile Include="BouncyCastle\asn1\Asn1OutputStream.cs" />
-    <Compile Include="BouncyCastle\asn1\Asn1ParsingException.cs" />
-    <Compile Include="BouncyCastle\asn1\Asn1Sequence.cs" />
-    <Compile Include="BouncyCastle\asn1\ASN1SequenceParser.cs" />
-    <Compile Include="BouncyCastle\asn1\Asn1Set.cs" />
-    <Compile Include="BouncyCastle\asn1\ASN1SetParser.cs" />
-    <Compile Include="BouncyCastle\asn1\ASN1StreamParser.cs" />
-    <Compile Include="BouncyCastle\asn1\Asn1TaggedObject.cs" />
-    <Compile Include="BouncyCastle\asn1\ASN1TaggedObjectParser.cs" />
-    <Compile Include="BouncyCastle\asn1\Asn1Tags.cs" />
-    <Compile Include="BouncyCastle\asn1\BerApplicationSpecific.cs" />
-    <Compile Include="BouncyCastle\asn1\BerApplicationSpecificParser.cs" />
-    <Compile Include="BouncyCastle\asn1\BerOctetString.cs" />
-    <Compile Include="BouncyCastle\asn1\BEROctetStringParser.cs" />
-    <Compile Include="BouncyCastle\asn1\BerOutputStream.cs" />
-    <Compile Include="BouncyCastle\asn1\BerSequence.cs" />
-    <Compile Include="BouncyCastle\asn1\BERSequenceParser.cs" />
-    <Compile Include="BouncyCastle\asn1\BerSet.cs" />
-    <Compile Include="BouncyCastle\asn1\BERSetParser.cs" />
-    <Compile Include="BouncyCastle\asn1\BerTaggedObject.cs" />
-    <Compile Include="BouncyCastle\asn1\BERTaggedObjectParser.cs" />
-    <Compile Include="BouncyCastle\asn1\ConstructedOctetStream.cs" />
-    <Compile Include="BouncyCastle\asn1\DefiniteLengthInputStream.cs" />
-    <Compile Include="BouncyCastle\asn1\DerApplicationSpecific.cs" />
-    <Compile Include="BouncyCastle\asn1\DerBitString.cs" />
-    <Compile Include="BouncyCastle\asn1\DerBMPString.cs" />
-    <Compile Include="BouncyCastle\asn1\DerBoolean.cs" />
-    <Compile Include="BouncyCastle\asn1\DerEnumerated.cs" />
-    <Compile Include="BouncyCastle\asn1\DERExternal.cs" />
-    <Compile Include="BouncyCastle\asn1\DERExternalParser.cs" />
-    <Compile Include="BouncyCastle\asn1\DerGeneralizedTime.cs" />
-    <Compile Include="BouncyCastle\asn1\DerGeneralString.cs" />
-    <Compile Include="BouncyCastle\asn1\DerIA5String.cs" />
-    <Compile Include="BouncyCastle\asn1\DerInteger.cs" />
-    <Compile Include="BouncyCastle\asn1\DerNull.cs" />
-    <Compile Include="BouncyCastle\asn1\DerNumericString.cs" />
-    <Compile Include="BouncyCastle\asn1\DerObjectIdentifier.cs" />
-    <Compile Include="BouncyCastle\asn1\DerOctetString.cs" />
-    <Compile Include="BouncyCastle\asn1\DEROctetStringParser.cs" />
-    <Compile Include="BouncyCastle\asn1\DerOutputStream.cs" />
-    <Compile Include="BouncyCastle\asn1\DerPrintableString.cs" />
-    <Compile Include="BouncyCastle\asn1\DerSequence.cs" />
-    <Compile Include="BouncyCastle\asn1\DERSequenceParser.cs" />
-    <Compile Include="BouncyCastle\asn1\DerSet.cs" />
-    <Compile Include="BouncyCastle\asn1\DERSetParser.cs" />
-    <Compile Include="BouncyCastle\asn1\DerStringBase.cs" />
-    <Compile Include="BouncyCastle\asn1\DerT61String.cs" />
-    <Compile Include="BouncyCastle\asn1\DerTaggedObject.cs" />
-    <Compile Include="BouncyCastle\asn1\DerUniversalString.cs" />
-    <Compile Include="BouncyCastle\asn1\DerUnknownTag.cs" />
-    <Compile Include="BouncyCastle\asn1\DerUTCTime.cs" />
-    <Compile Include="BouncyCastle\asn1\DerUTF8String.cs" />
-    <Compile Include="BouncyCastle\asn1\DerVisibleString.cs" />
-    <Compile Include="BouncyCastle\asn1\IAsn1ApplicationSpecificParser.cs" />
-    <Compile Include="BouncyCastle\asn1\IAsn1Choice.cs" />
-    <Compile Include="BouncyCastle\asn1\IAsn1Convertible.cs" />
-    <Compile Include="BouncyCastle\asn1\IAsn1String.cs" />
-    <Compile Include="BouncyCastle\asn1\IndefiniteLengthInputStream.cs" />
-    <Compile Include="BouncyCastle\asn1\LimitedInputStream.cs" />
-    <Compile Include="BouncyCastle\asn1\OidTokenizer.cs" />
-    <Compile Include="BouncyCastle\asn1\pkcs\PKCSObjectIdentifiers.cs" />
-    <Compile Include="BouncyCastle\asn1\util\FilterStream.cs" />
-    <Compile Include="BouncyCastle\crypto\agreement\DHAgreement.cs" />
-    <Compile Include="BouncyCastle\crypto\agreement\DHBasicAgreement.cs" />
-    <Compile Include="BouncyCastle\crypto\AsymmetricCipherKeyPair.cs" />
-    <Compile Include="BouncyCastle\crypto\AsymmetricKeyParameter.cs" />
-    <Compile Include="BouncyCastle\crypto\CryptoException.cs" />
-    <Compile Include="BouncyCastle\crypto\DataLengthException.cs" />
-    <Compile Include="BouncyCastle\crypto\digests\GeneralDigest.cs" />
-    <Compile Include="BouncyCastle\crypto\digests\Sha1Digest.cs" />
-    <Compile Include="BouncyCastle\crypto\digests\Sha256Digest.cs" />
-    <Compile Include="BouncyCastle\crypto\engines\BlowfishEngine.cs" />
-    <Compile Include="BouncyCastle\crypto\engines\RC4Engine.cs" />
-    <Compile Include="BouncyCastle\crypto\generators\DHBasicKeyPairGenerator.cs" />
-    <Compile Include="BouncyCastle\crypto\generators\DHKeyGeneratorHelper.cs" />
-    <Compile Include="BouncyCastle\crypto\generators\DHKeyPairGenerator.cs" />
-    <Compile Include="BouncyCastle\crypto\IAsymmetricCipherKeyPairGenerator.cs" />
-    <Compile Include="BouncyCastle\crypto\IBasicAgreement.cs" />
-    <Compile Include="BouncyCastle\crypto\IBlockCipher.cs" />
-    <Compile Include="BouncyCastle\crypto\ICipherParameters.cs" />
-    <Compile Include="BouncyCastle\crypto\IDigest.cs" />
-    <Compile Include="BouncyCastle\crypto\IStreamCipher.cs" />
-    <Compile Include="BouncyCastle\crypto\KeyGenerationParameters.cs" />
-    <Compile Include="BouncyCastle\crypto\parameters\DHKeyGenerationParameters.cs" />
-    <Compile Include="BouncyCastle\crypto\parameters\DHKeyParameters.cs" />
-    <Compile Include="BouncyCastle\crypto\parameters\DHParameters.cs" />
-    <Compile Include="BouncyCastle\crypto\parameters\DHPrivateKeyParameters.cs" />
-    <Compile Include="BouncyCastle\crypto\parameters\DHPublicKeyParameters.cs" />
-    <Compile Include="BouncyCastle\crypto\parameters\DHValidationParameters.cs" />
-    <Compile Include="BouncyCastle\crypto\parameters\KeyParameter.cs" />
-    <Compile Include="BouncyCastle\crypto\parameters\ParametersWithRandom.cs" />
-    <Compile Include="BouncyCastle\crypto\prng\DigestRandomGenerator.cs" />
-    <Compile Include="BouncyCastle\crypto\prng\IRandomGenerator.cs" />
-    <Compile Include="BouncyCastle\crypto\prng\ReversedWindowGenerator.cs" />
-    <Compile Include="BouncyCastle\crypto\prng\ThreadedSeedGenerator.cs" />
-    <Compile Include="BouncyCastle\crypto\util\Pack.cs" />
-    <Compile Include="BouncyCastle\math\BigInteger.cs" />
-    <Compile Include="BouncyCastle\security\SecureRandom.cs" />
-    <Compile Include="BouncyCastle\util\Arrays.cs" />
-    <Compile Include="BouncyCastle\util\BigIntegers.cs" />
-    <Compile Include="BouncyCastle\util\collections\CollectionUtilities.cs" />
-    <Compile Include="BouncyCastle\util\collections\ISet.cs" />
-    <Compile Include="BouncyCastle\util\collections\UnmodifiableDictionary.cs" />
-    <Compile Include="BouncyCastle\util\collections\UnmodifiableDictionaryProxy.cs" />
-    <Compile Include="BouncyCastle\util\collections\UnmodifiableList.cs" />
-    <Compile Include="BouncyCastle\util\collections\UnmodifiableListProxy.cs" />
-    <Compile Include="BouncyCastle\util\collections\UnmodifiableSet.cs" />
-    <Compile Include="BouncyCastle\util\collections\UnmodifiableSetProxy.cs" />
-    <Compile Include="BouncyCastle\util\encoders\Hex.cs" />
-    <Compile Include="BouncyCastle\util\encoders\HexEncoder.cs" />
-    <Compile Include="BouncyCastle\util\encoders\IEncoder.cs" />
-    <Compile Include="BouncyCastle\util\io\BaseInputStream.cs" />
-    <Compile Include="BouncyCastle\util\io\StreamOverflowException.cs" />
-    <Compile Include="BouncyCastle\util\io\Streams.cs" />
-    <Compile Include="BouncyCastle\util\Platform.cs" />
-    <Compile Include="BouncyCastle\util\Strings.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\Asn1Encodable.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\Asn1EncodableVector.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\Asn1Exception.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\Asn1InputStream.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\Asn1Null.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\Asn1Object.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\Asn1OctetString.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\ASN1OctetStringParser.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\Asn1OutputStream.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\Asn1ParsingException.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\Asn1Sequence.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\ASN1SequenceParser.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\Asn1Set.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\ASN1SetParser.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\ASN1StreamParser.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\Asn1TaggedObject.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\ASN1TaggedObjectParser.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\Asn1Tags.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\BerApplicationSpecific.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\BerApplicationSpecificParser.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\BerOctetString.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\BEROctetStringParser.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\BerOutputStream.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\BerSequence.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\BERSequenceParser.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\BerSet.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\BERSetParser.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\BerTaggedObject.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\BERTaggedObjectParser.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\ConstructedOctetStream.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DefiniteLengthInputStream.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerApplicationSpecific.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerBitString.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerBMPString.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerBoolean.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerEnumerated.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DERExternal.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DERExternalParser.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerGeneralizedTime.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerGeneralString.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerIA5String.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerInteger.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerNull.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerNumericString.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerObjectIdentifier.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerOctetString.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DEROctetStringParser.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerOutputStream.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerPrintableString.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerSequence.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DERSequenceParser.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerSet.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DERSetParser.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerStringBase.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerT61String.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerTaggedObject.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerUniversalString.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerUnknownTag.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerUTCTime.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerUTF8String.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\DerVisibleString.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\IAsn1ApplicationSpecificParser.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\IAsn1Choice.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\IAsn1Convertible.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\IAsn1String.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\IndefiniteLengthInputStream.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\LimitedInputStream.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\OidTokenizer.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\pkcs\PKCSObjectIdentifiers.cs" />
+    <Compile Include="3rdParty\BouncyCastle\asn1\util\FilterStream.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\agreement\DHAgreement.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\agreement\DHBasicAgreement.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\AsymmetricCipherKeyPair.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\AsymmetricKeyParameter.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\CryptoException.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\DataLengthException.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\digests\GeneralDigest.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\digests\Sha1Digest.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\digests\Sha256Digest.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\engines\BlowfishEngine.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\engines\RC4Engine.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\generators\DHBasicKeyPairGenerator.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\generators\DHKeyGeneratorHelper.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\generators\DHKeyPairGenerator.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\IAsymmetricCipherKeyPairGenerator.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\IBasicAgreement.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\IBlockCipher.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\ICipherParameters.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\IDigest.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\IStreamCipher.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\KeyGenerationParameters.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\parameters\DHKeyGenerationParameters.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\parameters\DHKeyParameters.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\parameters\DHParameters.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\parameters\DHPrivateKeyParameters.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\parameters\DHPublicKeyParameters.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\parameters\DHValidationParameters.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\parameters\KeyParameter.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\parameters\ParametersWithRandom.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\prng\DigestRandomGenerator.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\prng\IRandomGenerator.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\prng\ReversedWindowGenerator.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\prng\ThreadedSeedGenerator.cs" />
+    <Compile Include="3rdParty\BouncyCastle\crypto\util\Pack.cs" />
+    <Compile Include="3rdParty\BouncyCastle\math\BigInteger.cs" />
+    <Compile Include="3rdParty\BouncyCastle\security\SecureRandom.cs" />
+    <Compile Include="3rdParty\BouncyCastle\util\Arrays.cs" />
+    <Compile Include="3rdParty\BouncyCastle\util\BigIntegers.cs" />
+    <Compile Include="3rdParty\BouncyCastle\util\collections\CollectionUtilities.cs" />
+    <Compile Include="3rdParty\BouncyCastle\util\collections\ISet.cs" />
+    <Compile Include="3rdParty\BouncyCastle\util\collections\UnmodifiableDictionary.cs" />
+    <Compile Include="3rdParty\BouncyCastle\util\collections\UnmodifiableDictionaryProxy.cs" />
+    <Compile Include="3rdParty\BouncyCastle\util\collections\UnmodifiableList.cs" />
+    <Compile Include="3rdParty\BouncyCastle\util\collections\UnmodifiableListProxy.cs" />
+    <Compile Include="3rdParty\BouncyCastle\util\collections\UnmodifiableSet.cs" />
+    <Compile Include="3rdParty\BouncyCastle\util\collections\UnmodifiableSetProxy.cs" />
+    <Compile Include="3rdParty\BouncyCastle\util\encoders\Hex.cs" />
+    <Compile Include="3rdParty\BouncyCastle\util\encoders\HexEncoder.cs" />
+    <Compile Include="3rdParty\BouncyCastle\util\encoders\IEncoder.cs" />
+    <Compile Include="3rdParty\BouncyCastle\util\io\BaseInputStream.cs" />
+    <Compile Include="3rdParty\BouncyCastle\util\io\StreamOverflowException.cs" />
+    <Compile Include="3rdParty\BouncyCastle\util\io\Streams.cs" />
+    <Compile Include="3rdParty\BouncyCastle\util\Platform.cs" />
+    <Compile Include="3rdParty\BouncyCastle\util\Strings.cs" />
     <Compile Include="Configuration\OnlineVideoSettings.cs" />
     <Compile Include="Configuration\SiteSettings.cs" />
     <Compile Include="CrossDomain\OnlineVideosAppDomain.cs" />
@@ -230,50 +230,50 @@
     <Compile Include="Downloading\DownloadManager.cs" />
     <Compile Include="Downloading\IDownloader.cs" />
     <Compile Include="Helpers\CursorHelper.cs" />
-    <Compile Include="DotNetZip\ComHelper.cs" />
-    <Compile Include="DotNetZip\Crc32.cs" />
-    <Compile Include="DotNetZip\Deflate.cs" />
-    <Compile Include="DotNetZip\DeflateStream.cs" />
-    <Compile Include="DotNetZip\EncryptionAlgorithm.cs" />
-    <Compile Include="DotNetZip\Events.cs" />
-    <Compile Include="DotNetZip\Exceptions.cs" />
-    <Compile Include="DotNetZip\ExtractExistingFileAction.cs" />
-    <Compile Include="DotNetZip\FileSelector.cs" />
-    <Compile Include="DotNetZip\GZipStream.cs" />
-    <Compile Include="DotNetZip\Inflate.cs" />
-    <Compile Include="DotNetZip\InfTree.cs" />
-    <Compile Include="DotNetZip\OffsetStream.cs" />
-    <Compile Include="DotNetZip\ParallelDeflateOutputStream.cs" />
-    <Compile Include="DotNetZip\Shared.cs" />
-    <Compile Include="DotNetZip\Tree.cs" />
-    <Compile Include="DotNetZip\WinZipAes.cs" />
-    <Compile Include="DotNetZip\ZipConstants.cs" />
-    <Compile Include="DotNetZip\ZipCrypto.cs" />
-    <Compile Include="DotNetZip\ZipDirEntry.cs" />
-    <Compile Include="DotNetZip\ZipEntry.cs" />
-    <Compile Include="DotNetZip\ZipEntry.Extract.cs" />
-    <Compile Include="DotNetZip\ZipEntry.Read.cs" />
-    <Compile Include="DotNetZip\ZipEntry.Write.cs" />
-    <Compile Include="DotNetZip\ZipEntrySource.cs" />
-    <Compile Include="DotNetZip\ZipErrorAction.cs" />
-    <Compile Include="DotNetZip\ZipFile.AddUpdate.cs" />
-    <Compile Include="DotNetZip\ZipFile.Check.cs" />
-    <Compile Include="DotNetZip\ZipFile.cs" />
-    <Compile Include="DotNetZip\ZipFile.Events.cs" />
-    <Compile Include="DotNetZip\ZipFile.Extract.cs" />
-    <Compile Include="DotNetZip\ZipFile.Read.cs" />
-    <Compile Include="DotNetZip\ZipFile.Save.cs" />
-    <Compile Include="DotNetZip\ZipFile.SaveSelfExtractor.cs" />
-    <Compile Include="DotNetZip\ZipFile.Selector.cs" />
-    <Compile Include="DotNetZip\ZipFile.x-IEnumerable.cs" />
-    <Compile Include="DotNetZip\ZipInputStream.cs" />
-    <Compile Include="DotNetZip\ZipOutputStream.cs" />
-    <Compile Include="DotNetZip\ZipSegmentedStream.cs" />
-    <Compile Include="DotNetZip\Zlib.cs" />
-    <Compile Include="DotNetZip\ZlibBaseStream.cs" />
-    <Compile Include="DotNetZip\ZlibCodec.cs" />
-    <Compile Include="DotNetZip\ZlibConstants.cs" />
-    <Compile Include="DotNetZip\ZlibStream.cs" />
+    <Compile Include="3rdParty\DotNetZip\ComHelper.cs" />
+    <Compile Include="3rdParty\DotNetZip\Crc32.cs" />
+    <Compile Include="3rdParty\DotNetZip\Deflate.cs" />
+    <Compile Include="3rdParty\DotNetZip\DeflateStream.cs" />
+    <Compile Include="3rdParty\DotNetZip\EncryptionAlgorithm.cs" />
+    <Compile Include="3rdParty\DotNetZip\Events.cs" />
+    <Compile Include="3rdParty\DotNetZip\Exceptions.cs" />
+    <Compile Include="3rdParty\DotNetZip\ExtractExistingFileAction.cs" />
+    <Compile Include="3rdParty\DotNetZip\FileSelector.cs" />
+    <Compile Include="3rdParty\DotNetZip\GZipStream.cs" />
+    <Compile Include="3rdParty\DotNetZip\Inflate.cs" />
+    <Compile Include="3rdParty\DotNetZip\InfTree.cs" />
+    <Compile Include="3rdParty\DotNetZip\OffsetStream.cs" />
+    <Compile Include="3rdParty\DotNetZip\ParallelDeflateOutputStream.cs" />
+    <Compile Include="3rdParty\DotNetZip\Shared.cs" />
+    <Compile Include="3rdParty\DotNetZip\Tree.cs" />
+    <Compile Include="3rdParty\DotNetZip\WinZipAes.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipConstants.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipCrypto.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipDirEntry.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipEntry.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipEntry.Extract.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipEntry.Read.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipEntry.Write.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipEntrySource.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipErrorAction.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipFile.AddUpdate.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipFile.Check.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipFile.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipFile.Events.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipFile.Extract.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipFile.Read.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipFile.Save.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipFile.SaveSelfExtractor.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipFile.Selector.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipFile.x-IEnumerable.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipInputStream.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipOutputStream.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZipSegmentedStream.cs" />
+    <Compile Include="3rdParty\DotNetZip\Zlib.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZlibBaseStream.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZlibCodec.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZlibConstants.cs" />
+    <Compile Include="3rdParty\DotNetZip\ZlibStream.cs" />
     <Compile Include="Downloading\DownloadInfo.cs" />
     <Compile Include="Downloading\HTTPDownloader.cs" />
     <Compile Include="Downloading\ImageDownloader.cs" />
@@ -281,178 +281,178 @@
     <Compile Include="Hoster\Base\HosterBase.cs" />
     <Compile Include="Hoster\Base\HosterFactory.cs" />
     <Compile Include="Hoster\Base\ISubtitle.cs" />
-    <Compile Include="HtmlAgilityPack\crc32.cs" />
-    <Compile Include="HtmlAgilityPack\EncodingFoundException.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlAttribute.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlAttributeCollection.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlCmdLine.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlCommentNode.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlConsoleListener.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlDocument.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlElementFlag.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlEntity.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlNameTable.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlNode.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlNodeCollection.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlNodeNavigator.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlNodeType.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlParseError.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlParseErrorCode.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlTextNode.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlWeb.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlWebException.cs" />
-    <Compile Include="HtmlAgilityPack\IOLibrary.cs" />
-    <Compile Include="HtmlAgilityPack\MixedCodeDocument.cs" />
-    <Compile Include="HtmlAgilityPack\MixedCodeDocumentCodeFragment.cs" />
-    <Compile Include="HtmlAgilityPack\MixedCodeDocumentFragment.cs" />
-    <Compile Include="HtmlAgilityPack\MixedCodeDocumentFragmentList.cs" />
-    <Compile Include="HtmlAgilityPack\MixedCodeDocumentFragmentType.cs" />
-    <Compile Include="HtmlAgilityPack\MixedCodeDocumentTextFragment.cs" />
-    <Compile Include="HtmlAgilityPack\NameValuePair.cs" />
-    <Compile Include="HtmlAgilityPack\NameValuePairList.cs" />
-    <Compile Include="Jurassic\Compiler\Binders\Binder.cs" />
-    <Compile Include="Jurassic\Compiler\Binders\BinderMethod.cs" />
-    <Compile Include="Jurassic\Compiler\Binders\BinderUtilities.cs" />
-    <Compile Include="Jurassic\Compiler\Binders\ClrBinder.cs" />
-    <Compile Include="Jurassic\Compiler\Binders\FieldBinders.cs" />
-    <Compile Include="Jurassic\Compiler\Binders\JSBinder.cs" />
-    <Compile Include="Jurassic\Compiler\Binders\JSBinderMethod.cs" />
-    <Compile Include="Jurassic\Compiler\Binders\MethodBinder.cs" />
-    <Compile Include="Jurassic\Compiler\Debugging\COMHelpers.cs" />
-    <Compile Include="Jurassic\Compiler\Debugging\SourceCodePosition.cs" />
-    <Compile Include="Jurassic\Compiler\Debugging\SourceCodeSpan.cs" />
-    <Compile Include="Jurassic\Compiler\Emit\EmitConversion.cs" />
-    <Compile Include="Jurassic\Compiler\Emit\EmitHelpers.cs" />
-    <Compile Include="Jurassic\Compiler\Emit\ILGenerator\DynamicILGenerator.cs" />
-    <Compile Include="Jurassic\Compiler\Emit\ILGenerator\ILGenerator.cs" />
-    <Compile Include="Jurassic\Compiler\Emit\ILGenerator\ILLabel.cs" />
-    <Compile Include="Jurassic\Compiler\Emit\ILGenerator\ILLocalVariable.cs" />
-    <Compile Include="Jurassic\Compiler\Emit\ILGenerator\LoggingILGenerator.cs" />
-    <Compile Include="Jurassic\Compiler\Emit\ILGenerator\ReflectionEmitILGenerator.cs" />
-    <Compile Include="Jurassic\Compiler\Emit\LongJumpException.cs" />
-    <Compile Include="Jurassic\Compiler\Emit\MethodOptimizationHints.cs" />
-    <Compile Include="Jurassic\Compiler\Emit\OptimizationInfo.cs" />
-    <Compile Include="Jurassic\Compiler\Emit\PrimitiveType.cs" />
-    <Compile Include="Jurassic\Compiler\Emit\PrimitiveTypeUtilities.cs" />
-    <Compile Include="Jurassic\Compiler\Expressions\AssignmentExpression.cs" />
-    <Compile Include="Jurassic\Compiler\Expressions\BinaryExpression.cs" />
-    <Compile Include="Jurassic\Compiler\Expressions\Expression.cs" />
-    <Compile Include="Jurassic\Compiler\Expressions\FunctionCallExpression.cs" />
-    <Compile Include="Jurassic\Compiler\Expressions\FunctionExpression.cs" />
-    <Compile Include="Jurassic\Compiler\Expressions\GroupingExpression.cs" />
-    <Compile Include="Jurassic\Compiler\Expressions\IReferenceExpression.cs" />
-    <Compile Include="Jurassic\Compiler\Expressions\ListExpression.cs" />
-    <Compile Include="Jurassic\Compiler\Expressions\LiteralExpression.cs" />
-    <Compile Include="Jurassic\Compiler\Expressions\MemberAccessExpression.cs" />
-    <Compile Include="Jurassic\Compiler\Expressions\NameExpression.cs" />
-    <Compile Include="Jurassic\Compiler\Expressions\NewExpression.cs" />
-    <Compile Include="Jurassic\Compiler\Expressions\OperatorExpression.cs" />
-    <Compile Include="Jurassic\Compiler\Expressions\TernaryExpression.cs" />
-    <Compile Include="Jurassic\Compiler\Expressions\ThisExpression.cs" />
-    <Compile Include="Jurassic\Compiler\Expressions\UnaryExpression.cs" />
-    <Compile Include="Jurassic\Compiler\Lexer\IdentifierToken.cs" />
-    <Compile Include="Jurassic\Compiler\Lexer\KeywordToken.cs" />
-    <Compile Include="Jurassic\Compiler\Lexer\Lexer.cs" />
-    <Compile Include="Jurassic\Compiler\Lexer\LiteralToken.cs" />
-    <Compile Include="Jurassic\Compiler\Lexer\PunctuatorToken.cs" />
-    <Compile Include="Jurassic\Compiler\Lexer\RegularExpressionLiteral.cs" />
-    <Compile Include="Jurassic\Compiler\Lexer\Token.cs" />
-    <Compile Include="Jurassic\Compiler\MethodGenerator\CodeContext.cs" />
-    <Compile Include="Jurassic\Compiler\MethodGenerator\CompilerOptions.cs" />
-    <Compile Include="Jurassic\Compiler\MethodGenerator\EvalMethodGenerator.cs" />
-    <Compile Include="Jurassic\Compiler\MethodGenerator\FunctionMethodGenerator.cs" />
-    <Compile Include="Jurassic\Compiler\MethodGenerator\GeneratedMethod.cs" />
-    <Compile Include="Jurassic\Compiler\MethodGenerator\GlobalMethodGenerator.cs" />
-    <Compile Include="Jurassic\Compiler\MethodGenerator\MethodGenerator.cs" />
-    <Compile Include="Jurassic\Compiler\Parser\AstNode.cs" />
-    <Compile Include="Jurassic\Compiler\Parser\Operator.cs" />
-    <Compile Include="Jurassic\Compiler\Parser\Parser.cs" />
-    <Compile Include="Jurassic\Compiler\Scope\DeclarativeScope.cs" />
-    <Compile Include="Jurassic\Compiler\Scope\ObjectScope.cs" />
-    <Compile Include="Jurassic\Compiler\Scope\Scope.cs" />
-    <Compile Include="Jurassic\Compiler\Statements\BlockStatement.cs" />
-    <Compile Include="Jurassic\Compiler\Statements\BreakStatement.cs" />
-    <Compile Include="Jurassic\Compiler\Statements\ContinueStatement.cs" />
-    <Compile Include="Jurassic\Compiler\Statements\DebuggerStatement.cs" />
-    <Compile Include="Jurassic\Compiler\Statements\DoWhileStatement.cs" />
-    <Compile Include="Jurassic\Compiler\Statements\EmptyStatement.cs" />
-    <Compile Include="Jurassic\Compiler\Statements\ExpressionStatement.cs" />
-    <Compile Include="Jurassic\Compiler\Statements\ForInStatement.cs" />
-    <Compile Include="Jurassic\Compiler\Statements\ForStatement.cs" />
-    <Compile Include="Jurassic\Compiler\Statements\IfStatement.cs" />
-    <Compile Include="Jurassic\Compiler\Statements\LoopStatement.cs" />
-    <Compile Include="Jurassic\Compiler\Statements\ReturnStatement.cs" />
-    <Compile Include="Jurassic\Compiler\Statements\Statement.cs" />
-    <Compile Include="Jurassic\Compiler\Statements\SwitchStatement.cs" />
-    <Compile Include="Jurassic\Compiler\Statements\ThrowStatement.cs" />
-    <Compile Include="Jurassic\Compiler\Statements\TryCatchFinallyStatement.cs" />
-    <Compile Include="Jurassic\Compiler\Statements\VarStatement.cs" />
-    <Compile Include="Jurassic\Compiler\Statements\WhileStatement.cs" />
-    <Compile Include="Jurassic\Compiler\Statements\WithStatement.cs" />
-    <Compile Include="Jurassic\Core\BigInteger.cs" />
-    <Compile Include="Jurassic\Core\CompatibilityMode.cs" />
-    <Compile Include="Jurassic\Core\ConcatenatedString.cs" />
-    <Compile Include="Jurassic\Core\JavaScriptException.cs" />
-    <Compile Include="Jurassic\Core\Null.cs" />
-    <Compile Include="Jurassic\Core\NumberFormatter.cs" />
-    <Compile Include="Jurassic\Core\NumberParser.cs" />
-    <Compile Include="Jurassic\Core\ReflectionHelpers.cs" />
-    <Compile Include="Jurassic\Core\ScriptEngine.cs" />
-    <Compile Include="Jurassic\Core\ScriptSource\FileScriptSource.cs" />
-    <Compile Include="Jurassic\Core\ScriptSource\ScriptSource.cs" />
-    <Compile Include="Jurassic\Core\ScriptSource\StringScriptSource.cs" />
-    <Compile Include="Jurassic\Core\Serialization.cs" />
-    <Compile Include="Jurassic\Core\StringHelpers.cs" />
-    <Compile Include="Jurassic\Core\TypeComparer.cs" />
-    <Compile Include="Jurassic\Core\TypeConverter.cs" />
-    <Compile Include="Jurassic\Core\TypeUtilities.cs" />
-    <Compile Include="Jurassic\Core\Undefined.cs" />
-    <Compile Include="Jurassic\Library\Array\ArrayConstructor.cs" />
-    <Compile Include="Jurassic\Library\Array\ArrayInstance.cs" />
-    <Compile Include="Jurassic\Library\Array\SparseArray.cs" />
-    <Compile Include="Jurassic\Library\Boolean\BooleanConstructor.cs" />
-    <Compile Include="Jurassic\Library\Boolean\BooleanInstance.cs" />
-    <Compile Include="Jurassic\Library\ClrWrapper\ClrInstanceTypeWrapper.cs" />
-    <Compile Include="Jurassic\Library\ClrWrapper\ClrInstanceWrapper.cs" />
-    <Compile Include="Jurassic\Library\ClrWrapper\ClrStaticTypeWrapper.cs" />
-    <Compile Include="Jurassic\Library\Date\DateConstructor.cs" />
-    <Compile Include="Jurassic\Library\Date\DateInstance.cs" />
-    <Compile Include="Jurassic\Library\Date\DateParser.cs" />
-    <Compile Include="Jurassic\Library\Error\ErrorConstructor.cs" />
-    <Compile Include="Jurassic\Library\Error\ErrorInstance.cs" />
-    <Compile Include="Jurassic\Library\FirebugConsole\FirebugConsole.cs" />
-    <Compile Include="Jurassic\Library\FirebugConsole\IFirebugConsoleOutput.cs" />
-    <Compile Include="Jurassic\Library\FirebugConsole\StandardConsoleOutput.cs" />
-    <Compile Include="Jurassic\Library\Function\ArgumentsInstance.cs" />
-    <Compile Include="Jurassic\Library\Function\BoundFunction.cs" />
-    <Compile Include="Jurassic\Library\Function\ClrFunction.cs" />
-    <Compile Include="Jurassic\Library\Function\Delegates.cs" />
-    <Compile Include="Jurassic\Library\Function\FunctionConstructor.cs" />
-    <Compile Include="Jurassic\Library\Function\FunctionInstance.cs" />
-    <Compile Include="Jurassic\Library\Function\ThrowTypeErrorFunction.cs" />
-    <Compile Include="Jurassic\Library\Function\UserDefinedFunction.cs" />
-    <Compile Include="Jurassic\Library\GlobalObject.cs" />
-    <Compile Include="Jurassic\Library\JSON\JSONLexer.cs" />
-    <Compile Include="Jurassic\Library\JSON\JSONObject.cs" />
-    <Compile Include="Jurassic\Library\JSON\JSONParser.cs" />
-    <Compile Include="Jurassic\Library\JSON\JSONSerializer.cs" />
-    <Compile Include="Jurassic\Library\MathObject.cs" />
-    <Compile Include="Jurassic\Library\Number\NumberConstructor.cs" />
-    <Compile Include="Jurassic\Library\Number\NumberInstance.cs" />
-    <Compile Include="Jurassic\Library\Object\Attributes.cs" />
-    <Compile Include="Jurassic\Library\Object\HiddenClassSchema.cs" />
-    <Compile Include="Jurassic\Library\Object\JSFunctionFlags.cs" />
-    <Compile Include="Jurassic\Library\Object\ObjectConstructor.cs" />
-    <Compile Include="Jurassic\Library\Object\ObjectInstance.cs" />
-    <Compile Include="Jurassic\Library\Object\PropertyAccessorValue.cs" />
-    <Compile Include="Jurassic\Library\Object\PropertyAttributes.cs" />
-    <Compile Include="Jurassic\Library\Object\PropertyDescriptor.cs" />
-    <Compile Include="Jurassic\Library\Object\PropertyNameAndValue.cs" />
-    <Compile Include="Jurassic\Library\Object\SchemaProperty.cs" />
-    <Compile Include="Jurassic\Library\RegExp\RegExpConstructor.cs" />
-    <Compile Include="Jurassic\Library\RegExp\RegExpInstance.cs" />
-    <Compile Include="Jurassic\Library\String\StringConstructor.cs" />
-    <Compile Include="Jurassic\Library\String\StringInstance.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\crc32.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\EncodingFoundException.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\HtmlAttribute.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\HtmlAttributeCollection.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\HtmlCmdLine.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\HtmlCommentNode.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\HtmlConsoleListener.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\HtmlDocument.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\HtmlElementFlag.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\HtmlEntity.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\HtmlNameTable.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\HtmlNode.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\HtmlNodeCollection.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\HtmlNodeNavigator.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\HtmlNodeType.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\HtmlParseError.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\HtmlParseErrorCode.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\HtmlTextNode.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\HtmlWeb.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\HtmlWebException.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\IOLibrary.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\MixedCodeDocument.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\MixedCodeDocumentCodeFragment.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\MixedCodeDocumentFragment.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\MixedCodeDocumentFragmentList.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\MixedCodeDocumentFragmentType.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\MixedCodeDocumentTextFragment.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\NameValuePair.cs" />
+    <Compile Include="3rdParty\HtmlAgilityPack\NameValuePairList.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Binders\Binder.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Binders\BinderMethod.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Binders\BinderUtilities.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Binders\ClrBinder.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Binders\FieldBinders.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Binders\JSBinder.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Binders\JSBinderMethod.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Binders\MethodBinder.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Debugging\COMHelpers.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Debugging\SourceCodePosition.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Debugging\SourceCodeSpan.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Emit\EmitConversion.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Emit\EmitHelpers.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Emit\ILGenerator\DynamicILGenerator.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Emit\ILGenerator\ILGenerator.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Emit\ILGenerator\ILLabel.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Emit\ILGenerator\ILLocalVariable.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Emit\ILGenerator\LoggingILGenerator.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Emit\ILGenerator\ReflectionEmitILGenerator.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Emit\LongJumpException.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Emit\MethodOptimizationHints.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Emit\OptimizationInfo.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Emit\PrimitiveType.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Emit\PrimitiveTypeUtilities.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Expressions\AssignmentExpression.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Expressions\BinaryExpression.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Expressions\Expression.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Expressions\FunctionCallExpression.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Expressions\FunctionExpression.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Expressions\GroupingExpression.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Expressions\IReferenceExpression.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Expressions\ListExpression.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Expressions\LiteralExpression.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Expressions\MemberAccessExpression.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Expressions\NameExpression.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Expressions\NewExpression.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Expressions\OperatorExpression.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Expressions\TernaryExpression.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Expressions\ThisExpression.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Expressions\UnaryExpression.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Lexer\IdentifierToken.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Lexer\KeywordToken.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Lexer\Lexer.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Lexer\LiteralToken.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Lexer\PunctuatorToken.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Lexer\RegularExpressionLiteral.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Lexer\Token.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\MethodGenerator\CodeContext.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\MethodGenerator\CompilerOptions.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\MethodGenerator\EvalMethodGenerator.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\MethodGenerator\FunctionMethodGenerator.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\MethodGenerator\GeneratedMethod.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\MethodGenerator\GlobalMethodGenerator.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\MethodGenerator\MethodGenerator.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Parser\AstNode.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Parser\Operator.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Parser\Parser.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Scope\DeclarativeScope.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Scope\ObjectScope.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Scope\Scope.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Statements\BlockStatement.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Statements\BreakStatement.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Statements\ContinueStatement.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Statements\DebuggerStatement.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Statements\DoWhileStatement.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Statements\EmptyStatement.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Statements\ExpressionStatement.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Statements\ForInStatement.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Statements\ForStatement.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Statements\IfStatement.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Statements\LoopStatement.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Statements\ReturnStatement.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Statements\Statement.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Statements\SwitchStatement.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Statements\ThrowStatement.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Statements\TryCatchFinallyStatement.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Statements\VarStatement.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Statements\WhileStatement.cs" />
+    <Compile Include="3rdParty\Jurassic\Compiler\Statements\WithStatement.cs" />
+    <Compile Include="3rdParty\Jurassic\Core\BigInteger.cs" />
+    <Compile Include="3rdParty\Jurassic\Core\CompatibilityMode.cs" />
+    <Compile Include="3rdParty\Jurassic\Core\ConcatenatedString.cs" />
+    <Compile Include="3rdParty\Jurassic\Core\JavaScriptException.cs" />
+    <Compile Include="3rdParty\Jurassic\Core\Null.cs" />
+    <Compile Include="3rdParty\Jurassic\Core\NumberFormatter.cs" />
+    <Compile Include="3rdParty\Jurassic\Core\NumberParser.cs" />
+    <Compile Include="3rdParty\Jurassic\Core\ReflectionHelpers.cs" />
+    <Compile Include="3rdParty\Jurassic\Core\ScriptEngine.cs" />
+    <Compile Include="3rdParty\Jurassic\Core\ScriptSource\FileScriptSource.cs" />
+    <Compile Include="3rdParty\Jurassic\Core\ScriptSource\ScriptSource.cs" />
+    <Compile Include="3rdParty\Jurassic\Core\ScriptSource\StringScriptSource.cs" />
+    <Compile Include="3rdParty\Jurassic\Core\Serialization.cs" />
+    <Compile Include="3rdParty\Jurassic\Core\StringHelpers.cs" />
+    <Compile Include="3rdParty\Jurassic\Core\TypeComparer.cs" />
+    <Compile Include="3rdParty\Jurassic\Core\TypeConverter.cs" />
+    <Compile Include="3rdParty\Jurassic\Core\TypeUtilities.cs" />
+    <Compile Include="3rdParty\Jurassic\Core\Undefined.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Array\ArrayConstructor.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Array\ArrayInstance.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Array\SparseArray.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Boolean\BooleanConstructor.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Boolean\BooleanInstance.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\ClrWrapper\ClrInstanceTypeWrapper.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\ClrWrapper\ClrInstanceWrapper.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\ClrWrapper\ClrStaticTypeWrapper.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Date\DateConstructor.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Date\DateInstance.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Date\DateParser.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Error\ErrorConstructor.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Error\ErrorInstance.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\FirebugConsole\FirebugConsole.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\FirebugConsole\IFirebugConsoleOutput.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\FirebugConsole\StandardConsoleOutput.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Function\ArgumentsInstance.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Function\BoundFunction.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Function\ClrFunction.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Function\Delegates.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Function\FunctionConstructor.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Function\FunctionInstance.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Function\ThrowTypeErrorFunction.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Function\UserDefinedFunction.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\GlobalObject.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\JSON\JSONLexer.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\JSON\JSONObject.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\JSON\JSONParser.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\JSON\JSONSerializer.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\MathObject.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Number\NumberConstructor.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Number\NumberInstance.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Object\Attributes.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Object\HiddenClassSchema.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Object\JSFunctionFlags.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Object\ObjectConstructor.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Object\ObjectInstance.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Object\PropertyAccessorValue.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Object\PropertyAttributes.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Object\PropertyDescriptor.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Object\PropertyNameAndValue.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\Object\SchemaProperty.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\RegExp\RegExpConstructor.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\RegExp\RegExpInstance.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\String\StringConstructor.cs" />
+    <Compile Include="3rdParty\Jurassic\Library\String\StringInstance.cs" />
     <Compile Include="LocalizableDisplayNameAttribute.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="MPUrlSourceFilter\AfhsManifestUrl.cs" />
@@ -487,456 +487,456 @@
     <Compile Include="MPUrlSourceFilter\UdpRtpUrl.cs" />
     <Compile Include="MPUrlSourceFilter\UserSettings\UdpRtpUrlSettings.cs" />
     <Compile Include="MPUrlSourceFilter\UrlFactory.cs" />
-    <Compile Include="Newtonsoft.Json\Bson\BsonBinaryType.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Bson\BsonBinaryType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Bson\BsonBinaryWriter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Bson\BsonBinaryWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Bson\BsonObjectId.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Bson\BsonObjectId.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Bson\BsonReader.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Bson\BsonReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Bson\BsonToken.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Bson\BsonToken.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Bson\BsonType.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Bson\BsonType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Bson\BsonWriter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Bson\BsonWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\ConstructorHandling.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\ConstructorHandling.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Converters\BinaryConverter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Converters\BinaryConverter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Converters\BsonObjectIdConverter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Converters\BsonObjectIdConverter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Converters\CustomCreationConverter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Converters\CustomCreationConverter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Converters\DataSetConverter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Converters\DataSetConverter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Converters\DataTableConverter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Converters\DataTableConverter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Converters\DateTimeConverterBase.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Converters\DateTimeConverterBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Converters\EntityKeyMemberConverter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Converters\EntityKeyMemberConverter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Converters\ExpandoObjectConverter.cs" />
-    <Compile Include="Newtonsoft.Json\Converters\HtmlColorConverter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Converters\ExpandoObjectConverter.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\Converters\HtmlColorConverter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Converters\IsoDateTimeConverter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Converters\IsoDateTimeConverter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Converters\JavaScriptDateTimeConverter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Converters\JavaScriptDateTimeConverter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Converters\JsonDateTimeSerializationMode.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Converters\JsonDateTimeSerializationMode.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Converters\KeyValuePairConverter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Converters\KeyValuePairConverter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Converters\RegexConverter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Converters\RegexConverter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Converters\StringEnumConverter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Converters\StringEnumConverter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Converters\VersionConverter.cs" />
-    <Compile Include="Newtonsoft.Json\Converters\XmlNodeConverter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Converters\VersionConverter.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\Converters\XmlNodeConverter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\DateFormatHandling.cs" />
-    <Compile Include="Newtonsoft.Json\DateParseHandling.cs" />
-    <Compile Include="Newtonsoft.Json\DateTimeZoneHandling.cs" />
-    <Compile Include="Newtonsoft.Json\DefaultValueHandling.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\DateFormatHandling.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\DateParseHandling.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\DateTimeZoneHandling.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\DefaultValueHandling.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\FormatterAssemblyStyle.cs" />
-    <Compile Include="Newtonsoft.Json\Formatting.cs" />
-    <Compile Include="Newtonsoft.Json\IJsonLineInfo.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\FormatterAssemblyStyle.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\Formatting.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\IJsonLineInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\JsonArrayAttribute.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonArrayAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\JsonConstructorAttribute.cs" />
-    <Compile Include="Newtonsoft.Json\JsonContainerAttribute.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonConstructorAttribute.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonContainerAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\JsonConvert.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonConvert.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\JsonConverter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonConverter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\JsonConverterAttribute.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonConverterAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\JsonConverterCollection.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonConverterCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\JsonDictionaryAttribute.cs" />
-    <Compile Include="Newtonsoft.Json\JsonException.cs" />
-    <Compile Include="Newtonsoft.Json\JsonIgnoreAttribute.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonDictionaryAttribute.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonException.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonIgnoreAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\JsonObjectAttribute.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonObjectAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\JsonPosition.cs" />
-    <Compile Include="Newtonsoft.Json\JsonPropertyAttribute.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonPosition.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonPropertyAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\JsonReader.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\JsonReaderException.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonReaderException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\JsonSerializationException.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonSerializationException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\JsonSerializer.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\JsonSerializerSettings.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonSerializerSettings.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\JsonTextReader.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonTextReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\JsonTextWriter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonTextWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\JsonToken.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonToken.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\JsonValidatingReader.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonValidatingReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\JsonWriter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\JsonWriterException.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\JsonWriterException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Linq\ComponentModel\JPropertyDescriptor.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Linq\ComponentModel\JPropertyDescriptor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Linq\ComponentModel\JTypeDescriptionProvider.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Linq\ComponentModel\JTypeDescriptionProvider.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Linq\ComponentModel\JTypeDescriptor.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Linq\ComponentModel\JTypeDescriptor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Linq\Extensions.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Linq\Extensions.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Linq\IJEnumerable.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Linq\IJEnumerable.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Linq\JArray.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Linq\JArray.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Linq\JConstructor.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Linq\JConstructor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Linq\JContainer.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Linq\JContainer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Linq\JEnumerable.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Linq\JEnumerable.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Linq\JObject.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Linq\JObject.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Linq\JPath.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Linq\JPath.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Linq\JProperty.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Linq\JProperty.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Linq\JPropertyDescriptor.cs" />
-    <Compile Include="Newtonsoft.Json\Linq\JPropertyKeyedCollection.cs" />
-    <Compile Include="Newtonsoft.Json\Linq\JRaw.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Linq\JPropertyDescriptor.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\Linq\JPropertyKeyedCollection.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\Linq\JRaw.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Linq\JToken.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Linq\JToken.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Linq\JTokenEqualityComparer.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Linq\JTokenEqualityComparer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Linq\JTokenReader.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Linq\JTokenReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Linq\JTokenType.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Linq\JTokenType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Linq\JTokenWriter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Linq\JTokenWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Linq\JValue.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Linq\JValue.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\MemberSerialization.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\MemberSerialization.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\MissingMemberHandling.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\MissingMemberHandling.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\NullValueHandling.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\NullValueHandling.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\ObjectCreationHandling.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\ObjectCreationHandling.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\PreserveReferencesHandling.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\PreserveReferencesHandling.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\ReferenceLoopHandling.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\ReferenceLoopHandling.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Required.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Required.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Schema\Extensions.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Schema\Extensions.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Schema\JsonSchema.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Schema\JsonSchema.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Schema\JsonSchemaBuilder.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Schema\JsonSchemaBuilder.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Schema\JsonSchemaConstants.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Schema\JsonSchemaConstants.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Schema\JsonSchemaException.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Schema\JsonSchemaException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Schema\JsonSchemaGenerator.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Schema\JsonSchemaGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Schema\JsonSchemaModel.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Schema\JsonSchemaModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Schema\JsonSchemaModelBuilder.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Schema\JsonSchemaModelBuilder.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Schema\JsonSchemaNode.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Schema\JsonSchemaNode.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Schema\JsonSchemaNodeCollection.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Schema\JsonSchemaNodeCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Schema\JsonSchemaResolver.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Schema\JsonSchemaResolver.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Schema\JsonSchemaType.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Schema\JsonSchemaType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Schema\JsonSchemaWriter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Schema\JsonSchemaWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Schema\UndefinedSchemaIdHandling.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Schema\UndefinedSchemaIdHandling.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Schema\ValidationEventArgs.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Schema\ValidationEventArgs.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Schema\ValidationEventHandler.cs" />
-    <Compile Include="Newtonsoft.Json\SerializationBinder.cs" />
-    <Compile Include="Newtonsoft.Json\Serialization\CachedAttributeGetter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Schema\ValidationEventHandler.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\SerializationBinder.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\CachedAttributeGetter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\CamelCasePropertyNamesContractResolver.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\CamelCasePropertyNamesContractResolver.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\DefaultContractResolver.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\DefaultContractResolver.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\DefaultReferenceResolver.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\DefaultReferenceResolver.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\DefaultSerializationBinder.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\DefaultSerializationBinder.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\DynamicValueProvider.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\DynamicValueProvider.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\ErrorContext.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\ErrorContext.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\ErrorEventArgs.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\ErrorEventArgs.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\IContractResolver.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\IContractResolver.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\IReferenceResolver.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\IReferenceResolver.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\IValueProvider.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\IValueProvider.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\JsonArrayContract.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\JsonArrayContract.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\JsonContainerContract.cs" />
-    <Compile Include="Newtonsoft.Json\Serialization\JsonContract.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\JsonContainerContract.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\JsonContract.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\JsonDictionaryContract.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\JsonDictionaryContract.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\JsonDynamicContract.cs" />
-    <Compile Include="Newtonsoft.Json\Serialization\JsonFormatterConverter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\JsonDynamicContract.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\JsonFormatterConverter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\JsonISerializableContract.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\JsonISerializableContract.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\JsonLinqContract.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\JsonLinqContract.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\JsonObjectContract.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\JsonObjectContract.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\JsonPrimitiveContract.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\JsonPrimitiveContract.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\JsonProperty.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\JsonProperty.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\JsonPropertyCollection.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\JsonPropertyCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\JsonSerializerInternalBase.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\JsonSerializerInternalBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\JsonSerializerInternalReader.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\JsonSerializerInternalReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\JsonSerializerInternalWriter.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\JsonSerializerInternalWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\JsonSerializerProxy.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\JsonSerializerProxy.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\JsonStringContract.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\JsonStringContract.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\JsonTypeReflector.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\JsonTypeReflector.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\LateBoundMetadataTypeAttribute.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\LateBoundMetadataTypeAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\ObjectConstructor.cs" />
-    <Compile Include="Newtonsoft.Json\Serialization\OnErrorAttribute.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\ObjectConstructor.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\OnErrorAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Serialization\ReflectionValueProvider.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Serialization\ReflectionValueProvider.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\StreamingContext.cs" />
-    <Compile Include="Newtonsoft.Json\TypeNameHandling.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\StreamingContext.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\TypeNameHandling.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\Base64Encoder.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\Base64Encoder.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\BidirectionalDictionary.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\BidirectionalDictionary.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\CollectionUtils.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\CollectionUtils.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\CollectionWrapper.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\CollectionWrapper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\ConvertUtils.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\ConvertUtils.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\DateTimeUtils.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\DateTimeUtils.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\DictionaryWrapper.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\DictionaryWrapper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\DynamicProxy.cs" />
-    <Compile Include="Newtonsoft.Json\Utilities\DynamicProxyMetaObject.cs" />
-    <Compile Include="Newtonsoft.Json\Utilities\DynamicReflectionDelegateFactory.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\DynamicProxy.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\DynamicProxyMetaObject.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\DynamicReflectionDelegateFactory.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\DynamicUtils.cs" />
-    <Compile Include="Newtonsoft.Json\Utilities\DynamicWrapper.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\DynamicUtils.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\DynamicWrapper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\EnumUtils.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\EnumUtils.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\EnumValue.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\EnumValue.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\EnumValues.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\EnumValues.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\ILGeneratorExtensions.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\ILGeneratorExtensions.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\JavaScriptUtils.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\JavaScriptUtils.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\LateBoundReflectionDelegateFactory.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\LateBoundReflectionDelegateFactory.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\LinqBridge.cs" />
-    <Compile Include="Newtonsoft.Json\Utilities\ListWrapper.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\LinqBridge.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\ListWrapper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\MathUtils.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\MathUtils.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\MethodCall.cs" />
-    <Compile Include="Newtonsoft.Json\Utilities\MiscellaneousUtils.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\MethodCall.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\MiscellaneousUtils.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\ReflectionDelegateFactory.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\ReflectionDelegateFactory.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\ReflectionUtils.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\ReflectionUtils.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\StringBuffer.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\StringBuffer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\StringReference.cs" />
-    <Compile Include="Newtonsoft.Json\Utilities\StringUtils.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\StringReference.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\StringUtils.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\ThreadSafeStore.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\ThreadSafeStore.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\Utilities\TypeExtensions.cs" />
-    <Compile Include="Newtonsoft.Json\Utilities\ValidationUtils.cs">
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\TypeExtensions.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\Utilities\ValidationUtils.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Newtonsoft.Json\WriteState.cs" />
+    <Compile Include="3rdParty\Newtonsoft.Json\WriteState.cs" />
     <Compile Include="OnlineVideosException.cs" />
     <Compile Include="Helpers\ProcessHelper.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -949,36 +949,36 @@
     <Compile Include="Reflection\FieldPropertyDescriptorByRef.cs" />
     <Compile Include="Reflection\FilterCache.cs" />
     <Compile Include="Reflection\UserConfigurable.cs" />
-    <Compile Include="RssToolkit\Rss\Constants.cs" />
-    <Compile Include="RssToolkit\Rss\DocumentType.cs" />
-    <Compile Include="RssToolkit\Opml\OpmlBody.cs" />
-    <Compile Include="RssToolkit\Opml\OpmlDocument.cs" />
-    <Compile Include="RssToolkit\Opml\OpmlHead.cs" />
-    <Compile Include="RssToolkit\Opml\OpmlOutline.cs" />
-    <Compile Include="RssToolkit\Opml\OutlineInfo.cs" />
-    <Compile Include="RssToolkit\Rss\DownloadManager.cs" />
-    <Compile Include="RssToolkit\Rss\Pluralizer.cs" />
-    <Compile Include="RssToolkit\Rss\RssAggregationEventArgs.cs" />
-    <Compile Include="RssToolkit\Rss\RssAggregator.cs" />
-    <Compile Include="RssToolkit\Rss\RssCategory.cs" />
-    <Compile Include="RssToolkit\Rss\RssChannel.cs" />
-    <Compile Include="RssToolkit\Rss\RssCloud.cs" />
-    <Compile Include="RssToolkit\Rss\RssDocument.cs" />
-    <Compile Include="RssToolkit\Rss\RssDocumentBase.cs" />
-    <Compile Include="RssToolkit\Rss\RssDocumentHttpHandler.cs" />
-    <Compile Include="RssToolkit\Rss\RssEnclosure.cs" />
-    <Compile Include="RssToolkit\Rss\RssGuid.cs" />
-    <Compile Include="RssToolkit\Rss\RssHttpHandlerBase.cs" />
-    <Compile Include="RssToolkit\Rss\RssHttpHandlerHelper.cs" />
-    <Compile Include="RssToolkit\Rss\RssImage.cs" />
-    <Compile Include="RssToolkit\Rss\RssItem.cs" />
-    <Compile Include="RssToolkit\Rss\RssSeverityType.cs" />
-    <Compile Include="RssToolkit\Rss\RssSkipDays.cs" />
-    <Compile Include="RssToolkit\Rss\RssSkipHours.cs" />
-    <Compile Include="RssToolkit\Rss\RssSource.cs" />
-    <Compile Include="RssToolkit\Rss\RssTextInput.cs" />
-    <Compile Include="RssToolkit\Rss\RssXmlHelper.cs" />
-    <Compile Include="RssToolkit\Rss\RssXmlSchemaValidator.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\Constants.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\DocumentType.cs" />
+    <Compile Include="3rdParty\RssToolkit\Opml\OpmlBody.cs" />
+    <Compile Include="3rdParty\RssToolkit\Opml\OpmlDocument.cs" />
+    <Compile Include="3rdParty\RssToolkit\Opml\OpmlHead.cs" />
+    <Compile Include="3rdParty\RssToolkit\Opml\OpmlOutline.cs" />
+    <Compile Include="3rdParty\RssToolkit\Opml\OutlineInfo.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\DownloadManager.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\Pluralizer.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\RssAggregationEventArgs.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\RssAggregator.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\RssCategory.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\RssChannel.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\RssCloud.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\RssDocument.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\RssDocumentBase.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\RssDocumentHttpHandler.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\RssEnclosure.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\RssGuid.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\RssHttpHandlerBase.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\RssHttpHandlerHelper.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\RssImage.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\RssItem.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\RssSeverityType.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\RssSkipDays.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\RssSkipHours.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\RssSource.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\RssTextInput.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\RssXmlHelper.cs" />
+    <Compile Include="3rdParty\RssToolkit\Rss\RssXmlSchemaValidator.cs" />
     <Compile Include="SerializableDictionary.cs" />
     <Compile Include="Sites\AMF.cs" />
     <Compile Include="Sites\Base\ContextMenu.cs" />
@@ -1031,14 +1031,14 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="RssToolkit\Resources\Rss20.xsd" />
+    <EmbeddedResource Include="3rdParty\RssToolkit\Resources\Rss20.xsd" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="RssToolkit\Resources\AtomToRss20.xsl" />
-    <EmbeddedResource Include="RssToolkit\Resources\RdfToRss20.xsl" />
-    <EmbeddedResource Include="RssToolkit\Resources\Rss20ToAtom.xsl" />
-    <EmbeddedResource Include="RssToolkit\Resources\Rss20ToOpml.xsl" />
-    <EmbeddedResource Include="RssToolkit\Resources\Rss20ToRdf.xsl" />
+    <EmbeddedResource Include="3rdParty\RssToolkit\Resources\AtomToRss20.xsl" />
+    <EmbeddedResource Include="3rdParty\RssToolkit\Resources\RdfToRss20.xsl" />
+    <EmbeddedResource Include="3rdParty\RssToolkit\Resources\Rss20ToAtom.xsl" />
+    <EmbeddedResource Include="3rdParty\RssToolkit\Resources\Rss20ToOpml.xsl" />
+    <EmbeddedResource Include="3rdParty\RssToolkit\Resources\Rss20ToRdf.xsl" />
   </ItemGroup>
   <ItemGroup>
     <WebReferences Include="Web References\" />
