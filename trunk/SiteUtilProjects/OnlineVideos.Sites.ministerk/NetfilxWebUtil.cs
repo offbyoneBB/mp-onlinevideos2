@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using OnlineVideos.Sites.Ministerk.Extensions;
 using OnlineVideos.Sites.Utils;
 using System.Collections.Specialized;
+using OnlineVideos.Helpers;
 
 namespace OnlineVideos.Sites.BrowserUtilConnectors
 {

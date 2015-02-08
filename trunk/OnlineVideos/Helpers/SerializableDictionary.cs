@@ -3,7 +3,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace OnlineVideos
+namespace OnlineVideos.Helpers
 {
 	/// <summary>
 	/// Represents an XML serializable collection of keys and values.

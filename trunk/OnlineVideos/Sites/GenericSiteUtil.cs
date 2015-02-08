@@ -695,7 +695,7 @@ namespace OnlineVideos.Sites
                 {
                     foreach (RssItem rssItem in RssToolkit.Rss.RssDocument.Load(data).Channel.Items)
                     {
-                        VideoInfo video = VideoInfo.FromRssItem(rssItem, regEx_FileUrl != null, new Predicate<string>(IsPossibleVideo));
+                        VideoInfo video = Helpers.RssUtils.VideoInfoFromRssItem(rssItem, regEx_FileUrl != null, new Predicate<string>(IsPossibleVideo));
                         // only if a video url was set, add this Video to the list
                         if (!string.IsNullOrEmpty(video.VideoUrl))
                         {

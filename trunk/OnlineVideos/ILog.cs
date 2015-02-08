@@ -17,8 +17,8 @@ namespace OnlineVideos
     /// <summary>
     /// This static class simply delegates Log calls to the <see cref="OnlineVideoSettings.Logger"/>.
 	/// If no logger is set - no exception is generated - the messages are simply ignored.
-	/// The logging class lives in the main applications AppDomain, 
-	/// so make sure the objects passed as args <see cref="Serializable"/> or <see cref="MarshalByRefObject"/>.
+	/// The logging class lives in the main applications AppDomain, so make sure the objects passed as args
+    /// are marked with the <see cref="SerializableAttribute"/> or inherit from <see cref="MarshalByRefObject"/>.
     /// </summary>
     public static class Log
     {

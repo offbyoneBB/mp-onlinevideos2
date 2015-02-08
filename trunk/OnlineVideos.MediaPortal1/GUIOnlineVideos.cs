@@ -2252,7 +2252,7 @@ namespace OnlineVideos.MediaPortal1
                     Player.PlayList playbackItems = new Player.PlayList();
                     foreach (string url in loUrlList)
                     {
-                        VideoInfo vi = playItem.Video.CloneForPlayList(url, url == loUrlList[0]);
+                        VideoInfo vi = playItem.Video.CloneForPlaylist(url, url == loUrlList[0]);
                         string url_new = url;
                         if (url == loUrlList[0])
                         {
@@ -2629,7 +2629,7 @@ namespace OnlineVideos.MediaPortal1
                 saveItems.DownloadItems = new List<DownloadInfo>();
                 foreach (string url in loUrlList)
                 {
-                    VideoInfo vi = saveItems.CurrentItem.VideoInfo.CloneForPlayList(url, url == loUrlList[0]);
+                    VideoInfo vi = saveItems.CurrentItem.VideoInfo.CloneForPlaylist(url, url == loUrlList[0]);
                     string url_new = url;
                     if (url == loUrlList[0])
                     {
