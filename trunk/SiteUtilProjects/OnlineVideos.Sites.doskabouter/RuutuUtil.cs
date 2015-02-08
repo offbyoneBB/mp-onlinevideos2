@@ -293,25 +293,17 @@ namespace OnlineVideos.Sites
                     };
                     sub.SubCategories.Add(sub2);
 
-                    var listNode = nextRealSibbling(node2);
-                    while (listNode != null)
+                    var nodes3 = node2.ParentNode.SelectNodes(@".//li/a");
+                    foreach (var node3 in nodes3)//afgaan...
                     {
-                        var nodes3 = listNode.SelectNodes(@".//li/a");
-                        if (nodes3 != null)
+                        RssLink sub3 = new RssLink()
                         {
-                            foreach (var node3 in nodes3)//afgaan...
-                            {
-                                RssLink sub3 = new RssLink()
-                                {
-                                    Name = node3.InnerText,
-                                    ParentCategory = sub2,
-                                    HasSubCategories = true,
-                                    Url = FormatDecodeAbsolutifyUrl(baseUrl, node3.Attributes["href"].Value, "", UrlDecoding.None)
-                                };
-                                sub2.SubCategories.Add(sub3);
-                            }
-                        }
-                        listNode = nextRealSibbling(listNode);
+                            Name = node3.InnerText,
+                            ParentCategory = sub2,
+                            HasSubCategories = true,
+                            Url = FormatDecodeAbsolutifyUrl(baseUrl, node3.Attributes["href"].Value, "", UrlDecoding.None)
+                        };
+                        sub2.SubCategories.Add(sub3);
                     }
                     sub2.SubCategoriesDiscovered = true;
                 }
