@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel;
 
 namespace OnlineVideos.CrossDomain
 {
 	public class PropertyChangedExecutor : MarshalByRefObject
 	{
-		public System.ComponentModel.PropertyChangedEventHandler InvokeHandler { get; set; }
+		public PropertyChangedEventHandler InvokeHandler { get; set; }
 
 		public void Execute(object s, string propertyName)
 		{
-			InvokeHandler.Invoke(s, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+			InvokeHandler.Invoke(s, new PropertyChangedEventArgs(propertyName));
 		}
 
 		#region MarshalByRefObject overrides
@@ -27,7 +25,7 @@ namespace OnlineVideos.CrossDomain
 	{
 		public PropertyChangedExecutor InvokeTarget { get; set; }
 
-		public void EventDelegate(object s, System.ComponentModel.PropertyChangedEventArgs e)
+		public void EventDelegate(object s, PropertyChangedEventArgs e)
 		{
 			InvokeTarget.Execute(s, e.PropertyName);
 		}

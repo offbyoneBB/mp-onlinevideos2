@@ -19,7 +19,6 @@ namespace OnlineVideos
         public string Length { get; set; }
         public string Airdate { get; set; }
         public string StartTime { get; set; }
-        
 		public Dictionary<string, string> PlaybackOptions;
 
         /// <summary>If the SiteUtil for this VideoInfo implements <see cref="Sites.IChoice"/> setting this to true will show the details view (default), false will play the video</summary>
@@ -82,39 +81,6 @@ namespace OnlineVideos
 			))).ToString();
 		}
 
-        /// <summary>
-        /// Example: startTime = 02:34:25.00 should result in 9265 seconds
-        /// </summary>
-        /// <returns></returns>
-        public double GetSecondsFromStartTime()
-        {
-            try
-            {
-                double hours = 0.0d;
-                double minutes = 0.0d;
-                double seconds = 0.0d;
-
-                double.TryParse(StartTime.Substring(0, 2), out hours);
-                double.TryParse(StartTime.Substring(3, 2), out minutes);
-                double.TryParse(StartTime.Substring(6, 2), out seconds);
-
-                seconds += (((hours * 60) + minutes) * 60);
-
-                return seconds;
-            }
-            catch (Exception ex)
-            {
-                Log.Warn("Error getting seconds from StartTime ({0}): {1}", StartTime, ex.Message);
-                return 0.0d;
-            }
-        }
-
-		public Dictionary<string, string> GetExtendedProperties()
-		{
-			IVideoDetails details = Other as IVideoDetails;
-			return details == null ? null : details.GetExtendedProperties();
-		}
-
         public static VideoInfo FromRssItem(RssItem rssItem, bool useLink, System.Predicate<string> isPossibleVideo)
         {
             VideoInfo video = new VideoInfo() { PlaybackOptions = new Dictionary<string, string>() };
@@ -149,8 +115,8 @@ namespace OnlineVideos
                 video.Thumb = rssItem.Enclosure.Url;
             }
 
-			if (!string.IsNullOrEmpty(rssItem.Blip_Runtime)) video.Length = GetDuration(rssItem.Blip_Runtime);
-            if (string.IsNullOrEmpty(video.Length)) video.Length = GetDuration(rssItem.iT_Duration);
+			if (!string.IsNullOrEmpty(rssItem.Blip_Runtime)) video.Length = Utils.FormatDuration(rssItem.Blip_Runtime);
+            if (string.IsNullOrEmpty(video.Length)) video.Length = Utils.FormatDuration(rssItem.iT_Duration);
 
             // if we are forced to use the Link of the RssItem, just set the video link
             if (useLink) video.VideoUrl = rssItem.Link;
@@ -181,7 +147,7 @@ namespace OnlineVideos
                 foreach (RssItem.MediaContent content in rssItem.MediaContents)
                 {
                     if (!useLink && content.Url != null && isPossibleVideo(content.Url.Trim())) AddToPlaybackOption(video.PlaybackOptions, content);
-                    if (string.IsNullOrEmpty(video.Length)) video.Length = GetDuration(content.Duration);
+                    if (string.IsNullOrEmpty(video.Length)) video.Length = Utils.FormatDuration(content.Duration);
                 }
             }
             if (rssItem.MediaGroups.Count > 0) // videos might be wrapped in groups, try to get the first MediaContent
@@ -191,7 +157,7 @@ namespace OnlineVideos
                     foreach (RssItem.MediaContent content in grp.MediaContents)
                     {
                         if (!useLink && content.Url != null && isPossibleVideo(content.Url.Trim())) AddToPlaybackOption(video.PlaybackOptions, content);
-                        if (string.IsNullOrEmpty(video.Length)) video.Length = GetDuration(content.Duration);
+                        if (string.IsNullOrEmpty(video.Length)) video.Length = Utils.FormatDuration(content.Duration);
                     }
                 }
             }
@@ -254,20 +220,6 @@ namespace OnlineVideos
                 }
                 playbackOptions.Add(info, content.Url.Trim());
             }
-        }
-
-        public static string GetDuration(string duration)
-        {
-            if (!string.IsNullOrEmpty(duration))
-            {
-                double seconds;
-                if (double.TryParse(duration, System.Globalization.NumberStyles.None | System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.CreateSpecificCulture("en-US"), out seconds))
-                {
-                    return new DateTime(TimeSpan.FromSeconds(seconds).Ticks).ToString("HH:mm:ss");
-                }
-                else return duration;
-            }
-            return "";
         }
         
         public VideoInfo CloneForPlayList(string videoUrl, bool withPlaybackOptions)

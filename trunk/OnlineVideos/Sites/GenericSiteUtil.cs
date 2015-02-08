@@ -311,7 +311,7 @@ namespace OnlineVideos.Sites
             return loVideoList;
         }
 
-        public virtual string getFormattedVideoUrl(VideoInfo video)
+        public virtual string GetFormattedVideoUrl(VideoInfo video)
         {
             string resultUrl = video.VideoUrl;
             // 1. do some formatting with the videoUrl
@@ -338,7 +338,7 @@ namespace OnlineVideos.Sites
             return resultUrl;
         }
 
-        public virtual string getPlaylistUrl(string resultUrl)
+        public virtual string GetPlaylistUrl(string resultUrl)
         {
             // 3.a extra step to get a playlist file if needed
             if (regEx_PlaylistUrl != null)
@@ -411,12 +411,12 @@ namespace OnlineVideos.Sites
             if (video.Other is string && (video.Other as string).StartsWith("PlaybackOptions://"))
                 video.PlaybackOptions = Utils.DictionaryFromString((video.Other as string).Substring("PlaybackOptions://".Length));
 
-            string resultUrl = getFormattedVideoUrl(video);
+            string resultUrl = GetFormattedVideoUrl(video);
 
             // 3. retrieve a file from the web to find the actual playback url
             if (regEx_PlaylistUrl != null || regEx_FileUrl != null)
             {
-                string playListUrl = getPlaylistUrl(resultUrl);
+                string playListUrl = GetPlaylistUrl(resultUrl);
                 if (String.IsNullOrEmpty(playListUrl))
                     return String.Empty; // if no match, return empty url -> error
 
@@ -530,7 +530,7 @@ namespace OnlineVideos.Sites
             {
                 if (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0)
                 {
-                    resultUrl = parseHosterLinks(resultUrl, video);
+                    resultUrl = ParseHosterLinks(resultUrl, video);
                     if (video.PlaybackOptions == null) resultUrl = GetVideoUrl(resultUrl);
                 }
                 else
@@ -538,14 +538,14 @@ namespace OnlineVideos.Sites
                     List<string> valueList = video.PlaybackOptions.Values.ToList();
                     video.PlaybackOptions.Clear();
                     foreach (string value in valueList)
-                        parseHosterLinks(value, video);
+                        ParseHosterLinks(value, video);
                 }
             }
 
             return resultUrl;
         }
 
-        protected string parseHosterLinks(string link, VideoInfo video)
+        protected string ParseHosterLinks(string link, VideoInfo video)
         {
             string webData = GetWebData<string>(link);
             Dictionary<string, string> options = new Dictionary<string, string>();

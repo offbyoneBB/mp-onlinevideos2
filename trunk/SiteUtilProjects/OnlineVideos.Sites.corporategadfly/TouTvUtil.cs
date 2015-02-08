@@ -230,7 +230,7 @@ namespace OnlineVideos.Sites
                 
         public override string GetVideoUrl(VideoInfo video)
         {
-            string playListUrl = getPlaylistUrl(video.VideoUrl);
+            string playListUrl = GetPlaylistUrl(video.VideoUrl);
             if (String.IsNullOrEmpty(playListUrl))
                 return String.Empty; // if no match, return empty url -> error
             

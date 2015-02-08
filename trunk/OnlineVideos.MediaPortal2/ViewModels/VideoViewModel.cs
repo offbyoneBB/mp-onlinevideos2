@@ -691,5 +691,18 @@ namespace OnlineVideos.MediaPortal2
 				}
 			}
 		}
+
+        public bool GetExtendedPropertyValue(string name, out string value)
+        {
+            value = null;
+            var details = VideoInfo.Other as IVideoDetails;
+            if (details != null)
+            {
+                var custom = details.GetExtendedProperties();
+                if (custom != null)
+                    return custom.TryGetValue(name, out value);
+            }
+            return false;
+        }
 	}
 }

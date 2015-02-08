@@ -5,26 +5,35 @@ namespace OnlineVideos
     public interface IFavoritesDatabase
     {
         List<KeyValuePair<string, uint>> GetSiteIds();
-        bool AddFavoriteVideo(VideoInfo foVideo, string titleFromUtil, string siteName);
-        bool RemoveFavoriteVideo(FavoriteVideoInfo foVideo);
-        bool RemoveAllFavoriteVideos(string fsSiteId);
+        
+        bool AddFavoriteVideo(VideoInfo video, string titleFromUtil, string siteName);
+
+        bool RemoveFavoriteVideo(FavoriteVideoInfo video);
+        
+        bool RemoveAllFavoriteVideos(string siteId);
+
         /// <summary>
         /// Method used to get all favorite videos, with restriction to a given site or searchquery (both can be null).
         /// The implementation should already filter videos in case the age confirmation is used and no age has been confirmed yet.
         /// </summary>
-        /// <param name="fsSiteId">The name of a site to restrict the returned videos to. (if null, don't restrict to a site)</param>
-        /// <param name="fsQuery">A search string to filter the resulting videos. (if null, don't restrict to a term)</param>
+        /// <param name="siteId">The name of a site to restrict the returned videos to. (if null, don't restrict to a site)</param>
+        /// <param name="query">A search string to filter the resulting videos. (if null, don't restrict to a term)</param>
         /// <returns>A list of <see cref="VideoInfo"/> objects matching the parameters.</returns>
-        List<VideoInfo> GetFavoriteVideos(string fsSiteId, string fsQuery);
+        List<VideoInfo> GetFavoriteVideos(string siteId, string query);
+        
         /// <summary>
         /// Get a list of categories the use
         /// </summary>
         /// <param name="siteId">The name of a site to return categories for</param>
         /// <returns>A list of <see cref="Category"/> objects for the given site.</returns>
         List<Category> GetFavoriteCategories(string siteId);
+        
         List<string> GetFavoriteCategoriesNames(string siteId);
-        bool AddFavoriteCategory(Category cat, string siteName);
-        bool RemoveFavoriteCategory(Category cat);
+        
+        bool AddFavoriteCategory(Category category, string siteName);
+        
+        bool RemoveFavoriteCategory(Category category);
+        
         bool RemoveFavoriteCategory(string siteName, string recursiveCategoryName);
     }
 

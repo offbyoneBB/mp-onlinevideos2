@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml;
 using System.Text.RegularExpressions;
+using System.Xml;
 
 namespace OnlineVideos
 {
-    public class SubtitleUtils
+    public static class SubtitleUtils
     {
+        class SAMIItem
+        {
+            internal int StartTime { get; set; }
+            internal string Subtitle { get; set; }
+        }
+
         static string srtFormat = "{0}\r\n{1} --> {2}\r\n{3}\r\n\r\n";
+
         public static string TimedText2SRT(string TTAFTxt)
         {
             if (string.IsNullOrEmpty(TTAFTxt))
@@ -22,9 +27,9 @@ namespace OnlineVideos
             {
                 if (p.Attributes["begin"] == null || p.Attributes["end"] == null)
                     continue;
-                string startTime = convertTTAFTime(p.Attributes["begin"].Value);
-                string endTime = convertTTAFTime(p.Attributes["end"].Value);
-                string subtitle = getSubtitleTxt(p);
+                string startTime = ConvertTTAFTime(p.Attributes["begin"].Value);
+                string endTime = ConvertTTAFTime(p.Attributes["end"].Value);
+                string subtitle = GetSubtitleTxt(p);
                 builder += string.Format(srtFormat, id, startTime, endTime, subtitle);
                 id++;
             }
@@ -65,7 +70,7 @@ namespace OnlineVideos
                 SAMIItem item = new SAMIItem();
                 item.StartTime = start;
                 foreach (XmlNode p in sync.SelectNodes("./P"))
-                    item.Subtitle += getSubtitleTxt(p);
+                    item.Subtitle += GetSubtitleTxt(p);
                 items.Add(item);
             }
             string subtitle = "";
@@ -84,7 +89,7 @@ namespace OnlineVideos
             return subtitle;
         }
 
-        static string getSubtitleTxt(XmlNode p)
+        static string GetSubtitleTxt(XmlNode p)
         {
             string text = "";
             foreach (XmlNode t in p.ChildNodes)
@@ -94,14 +99,14 @@ namespace OnlineVideos
                 else if (t.Name == "br")
                     text += "\r\n";
                 else if (t.Name == "span")
-                    text += getSubtitleTxt(t);
+                    text += GetSubtitleTxt(t);
             }
             if (text.EndsWith("\r\n"))
                 text = text.Remove(text.Length - 2);
             return text;
         }
 
-        static string convertTTAFTime(string input)
+        static string ConvertTTAFTime(string input)
         {
             int index = input.LastIndexOf(".");
             if (index > -1)
@@ -124,11 +129,5 @@ namespace OnlineVideos
             }
             return input;
         }
-    }
-
-    class SAMIItem
-    {
-        internal int StartTime { get; set; }
-        internal string Subtitle { get; set; }
     }
 }

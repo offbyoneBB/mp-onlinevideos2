@@ -60,7 +60,7 @@ namespace OnlineVideos.MediaPortal1
         public OnlineVideosGuiListItem(VideoInfo item, bool useTitle2 = false)
         {
             Label = useTitle2 ? item.Title2 : item.Title;
-            Label2 = !string.IsNullOrEmpty(item.Length) ? VideoInfo.GetDuration(item.Length) : item.Airdate;
+            Label2 = !string.IsNullOrEmpty(item.Length) ? Utils.FormatDuration(item.Length) : item.Airdate;
             Item = item;
             IconImage = "defaultVideo.png";
             IconImageBig = "defaultVideoBig.png";

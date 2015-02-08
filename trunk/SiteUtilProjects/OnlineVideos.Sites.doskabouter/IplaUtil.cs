@@ -59,7 +59,7 @@ namespace OnlineVideos.Sites
                 VideoInfo video = new VideoInfo();
                 video.Title = vidNode.Attributes["title"].Value;
                 video.Airdate = epoch.AddSeconds(float.Parse(vidNode.Attributes["timestamp"].Value)).ToString();
-                video.Length = VideoInfo.GetDuration(vidNode.Attributes["dur"].Value);
+                video.Length = Utils.FormatDuration(vidNode.Attributes["dur"].Value);
                 video.Thumb = getThumb(vidNode);
 
                 video.PlaybackOptions = new Dictionary<string, string>();
