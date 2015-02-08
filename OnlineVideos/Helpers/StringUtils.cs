@@ -62,13 +62,13 @@ namespace OnlineVideos.Helpers
                 result = Regex.Replace(result, @"  +", "", RegexOptions.Multiline);
 
                 // Replace <br/> with \n
-                result = Regex.Replace(result, @"< *br */*>", "\n", RegexOptions.IgnoreCase & RegexOptions.Multiline);
+                result = Regex.Replace(result, @"< *br */*>", "\n", RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
                 // Remove remaining HTML tags                
                 result = Regex.Replace(result, @"<[^>]*>", "", RegexOptions.Multiline);
 
                 // Replace multiple newlines with just one
-                result = Regex.Replace(result, @"(\r?\n)+", "\n", RegexOptions.IgnoreCase & RegexOptions.Multiline);
+                result = Regex.Replace(result, @"(\r?\n)+", "\n", RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
                 // Remove whitespace at the beginning and end
                 result = result.Trim();
