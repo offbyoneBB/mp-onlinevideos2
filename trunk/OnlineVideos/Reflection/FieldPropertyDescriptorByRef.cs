@@ -39,6 +39,8 @@ namespace OnlineVideos.Reflection
 
         public bool IsEnum { get { return FieldPropertyDescriptor.PropertyType.IsEnum; } }
 
+        public string Namespace { get { return FieldPropertyDescriptor.PropertyType.Namespace; } }
+
         public string[] GetEnumValues()
         {
             return Enum.GetNames(FieldPropertyDescriptor.PropertyType);

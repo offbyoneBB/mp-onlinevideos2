@@ -12,7 +12,11 @@ namespace OnlineVideos.MediaPortal1
     {
         public static Sites.SiteUtilBase ShowDialog(Sites.SiteUtilBase selectedSite)
         {
-			List<OnlineVideos.Reflection.FieldPropertyDescriptorByRef> actualProps = selectedSite.GetUserConfigurationProperties();
+            List<OnlineVideos.Reflection.FieldPropertyDescriptorByRef> actualProps = selectedSite.GetUserConfigurationProperties();
+
+            // limit to what the UI can show
+            actualProps = actualProps.Where(prop => (prop.IsEnum || prop.Namespace == "System")).ToList();
+
             if (actualProps.Count > 0)
             {
                 bool changes = false;
