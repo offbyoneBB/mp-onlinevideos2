@@ -88,12 +88,17 @@ namespace OnlineVideos.Helpers
             return s.Substring(p, q - p);
         }
 
-        public static string GetRegExData(string regex, string data, string group)
+        public static string GetRegExData(string regex, string data, string group = null)
         {
             string result = string.Empty;
             Match m = Regex.Match(data, regex);
             if (m.Success)
-                result = m.Groups[group].Value;
+            {
+                if (group == null)
+                    result = m.Groups[1].Value;
+                else
+                    result = m.Groups[group].Value;
+            }
             return result == null ? string.Empty : result;
         }
 
