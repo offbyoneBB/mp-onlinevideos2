@@ -16,7 +16,7 @@ namespace OnlineVideos.Hoster
             string page = WebCache.Instance.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
-                string sWaitTime = Helpers.StringUtils.GetRegExData(@"Wait\s(?:<(.|\n)*?>)?(?<waittime>\d*?)(?:<(.|\n)*?>)?\sseconds", page, "waittime");
+                string sWaitTime = Helpers.StringUtils.GetRegExData(@"Wait\s(?:<(?:.|\n)*?>)?(?<waittime>\d*?)(?:<(?:.|\n)*?>)?\sseconds", page);
                 int iWaitTime = 5;
                 if (!string.IsNullOrEmpty(sWaitTime))
                 {
