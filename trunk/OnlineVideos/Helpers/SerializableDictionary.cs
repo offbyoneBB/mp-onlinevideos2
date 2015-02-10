@@ -1,150 +1,161 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
 namespace OnlineVideos.Helpers
 {
-	/// <summary>
-	/// Represents an XML serializable collection of keys and values.
-	/// </summary>
-	/// <typeparam name="TKey">The type of the keys in the dictionary.</typeparam>
-	/// <typeparam name="TValue">The type of the values in the dictionary.</typeparam>
-	[XmlRoot("dictionary")]
-	public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IXmlSerializable
-	{
-		#region Constants
+    /// <summary>
+    /// Represents an XML serializable collection of keys and values.
+    /// </summary>
+    /// <typeparam name="TKey">The type of the keys in the dictionary.</typeparam>
+    /// <typeparam name="TValue">The type of the values in the dictionary.</typeparam>
+    [Serializable]
+    [XmlRoot("dictionary")]
+    public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IXmlSerializable
+    {
+        #region ctor
 
-		/// <summary>
-		/// The default XML tag name for an item.
-		/// </summary>
-		private const string DEFAULT_ITEM_TAG = "Item";
+        public SerializableDictionary() { }
 
-		/// <summary>
-		/// The default XML tag name for a key.
-		/// </summary>
-		private const string DEFAULT_KEY_TAG = "Key";
+        public SerializableDictionary(SerializationInfo info, StreamingContext context) : base(info, context) { }
 
-		/// <summary>
-		/// The default XML tag name for a value.
-		/// </summary>
-		private const string DEFAULT_VALUE_TAG = "Value";
+        #endregion
 
-		#endregion
+        #region Constants
 
-		#region Protected Properties
+        /// <summary>
+        /// The default XML tag name for an item.
+        /// </summary>
+        private const string DEFAULT_ITEM_TAG = "Item";
 
-		/// <summary>
-		/// Gets the XML tag name for an item.
-		/// </summary>
-		protected virtual string ItemTagName
-		{
-			get
-			{
-				return DEFAULT_ITEM_TAG;
-			}
-		}
+        /// <summary>
+        /// The default XML tag name for a key.
+        /// </summary>
+        private const string DEFAULT_KEY_TAG = "Key";
 
-		/// <summary>
-		/// Gets the XML tag name for a key.
-		/// </summary>
-		protected virtual string KeyTagName
-		{
-			get
-			{
-				return DEFAULT_KEY_TAG;
-			}
-		}
+        /// <summary>
+        /// The default XML tag name for a value.
+        /// </summary>
+        private const string DEFAULT_VALUE_TAG = "Value";
 
-		/// <summary>
-		/// Gets the XML tag name for a value.
-		/// </summary>
-		protected virtual string ValueTagName
-		{
-			get
-			{
-				return DEFAULT_VALUE_TAG;
-			}
-		}
+        #endregion
 
-		#endregion
+        #region Protected Properties
 
-		#region Public Methods
+        /// <summary>
+        /// Gets the XML tag name for an item.
+        /// </summary>
+        protected virtual string ItemTagName
+        {
+            get
+            {
+                return DEFAULT_ITEM_TAG;
+            }
+        }
 
-		/// <summary>
-		/// Gets the XML schema for the XML serialization.
-		/// </summary>
-		/// <returns>An XML schema for the serialized object.</returns>
-		public XmlSchema GetSchema()
-		{
-			return null;
-		}
+        /// <summary>
+        /// Gets the XML tag name for a key.
+        /// </summary>
+        protected virtual string KeyTagName
+        {
+            get
+            {
+                return DEFAULT_KEY_TAG;
+            }
+        }
 
-		/// <summary>
-		/// Deserializes the object from XML.
-		/// </summary>
-		/// <param name="reader">The XML representation of the object.</param>
-		public void ReadXml(XmlReader reader)
-		{
-			XmlSerializer keySerializer = new XmlSerializer(typeof(TKey));
-			XmlSerializer valueSerializer = new XmlSerializer(typeof(TValue));
+        /// <summary>
+        /// Gets the XML tag name for a value.
+        /// </summary>
+        protected virtual string ValueTagName
+        {
+            get
+            {
+                return DEFAULT_VALUE_TAG;
+            }
+        }
 
-			bool wasEmpty = reader.IsEmptyElement;
+        #endregion
 
-			reader.Read();
+        #region Public Methods
 
-			if (wasEmpty)
-			{
-				return;
-			}
+        /// <summary>
+        /// Gets the XML schema for the XML serialization.
+        /// </summary>
+        /// <returns>An XML schema for the serialized object.</returns>
+        public XmlSchema GetSchema()
+        {
+            return null;
+        }
 
-			while (reader.NodeType != XmlNodeType.EndElement)
-			{
-				reader.ReadStartElement(ItemTagName);
+        /// <summary>
+        /// Deserializes the object from XML.
+        /// </summary>
+        /// <param name="reader">The XML representation of the object.</param>
+        public void ReadXml(XmlReader reader)
+        {
+            XmlSerializer keySerializer = new XmlSerializer(typeof(TKey));
+            XmlSerializer valueSerializer = new XmlSerializer(typeof(TValue));
 
-				reader.ReadStartElement(KeyTagName);
-				TKey key = (TKey)keySerializer.Deserialize(reader);
-				reader.ReadEndElement();
+            bool wasEmpty = reader.IsEmptyElement;
 
-				reader.ReadStartElement(ValueTagName);
-				TValue value = (TValue)valueSerializer.Deserialize(reader);
-				reader.ReadEndElement();
+            reader.Read();
 
-				this.Add(key, value);
+            if (wasEmpty)
+            {
+                return;
+            }
 
-				reader.ReadEndElement();
-				reader.MoveToContent();
-			}
+            while (reader.NodeType != XmlNodeType.EndElement)
+            {
+                reader.ReadStartElement(ItemTagName);
 
-			reader.ReadEndElement();
-		}
+                reader.ReadStartElement(KeyTagName);
+                TKey key = (TKey)keySerializer.Deserialize(reader);
+                reader.ReadEndElement();
 
-		/// <summary>
-		/// Serializes this instance to XML.
-		/// </summary>
-		/// <param name="writer">The writer to serialize to.</param>
-		public void WriteXml(XmlWriter writer)
-		{
-			XmlSerializer keySerializer = new XmlSerializer(typeof(TKey));
-			XmlSerializer valueSerializer = new XmlSerializer(typeof(TValue));
+                reader.ReadStartElement(ValueTagName);
+                TValue value = (TValue)valueSerializer.Deserialize(reader);
+                reader.ReadEndElement();
 
-			foreach (TKey key in this.Keys)
-			{
-				writer.WriteStartElement(ItemTagName);
+                this.Add(key, value);
 
-				writer.WriteStartElement(KeyTagName);
-				keySerializer.Serialize(writer, key);
-				writer.WriteEndElement();
+                reader.ReadEndElement();
+                reader.MoveToContent();
+            }
 
-				writer.WriteStartElement(ValueTagName);
-				TValue value = this[key];
-				valueSerializer.Serialize(writer, value);
-				writer.WriteEndElement();
+            reader.ReadEndElement();
+        }
 
-				writer.WriteEndElement();
-			}
-		}
+        /// <summary>
+        /// Serializes this instance to XML.
+        /// </summary>
+        /// <param name="writer">The writer to serialize to.</param>
+        public void WriteXml(XmlWriter writer)
+        {
+            XmlSerializer keySerializer = new XmlSerializer(typeof(TKey));
+            XmlSerializer valueSerializer = new XmlSerializer(typeof(TValue));
 
-		#endregion
-	}
+            foreach (TKey key in this.Keys)
+            {
+                writer.WriteStartElement(ItemTagName);
+
+                writer.WriteStartElement(KeyTagName);
+                keySerializer.Serialize(writer, key);
+                writer.WriteEndElement();
+
+                writer.WriteStartElement(ValueTagName);
+                TValue value = this[key];
+                valueSerializer.Serialize(writer, value);
+                writer.WriteEndElement();
+
+                writer.WriteEndElement();
+            }
+        }
+
+        #endregion
+    }
 }
