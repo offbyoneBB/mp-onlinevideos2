@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
 
   <Target Name="BeforeBuild">
-    <Exec Command='subwcrev "$(SolutionDir)." "$(ProjectDir)Properties\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"'/>
+    <Exec Command='subwcrev "$(SolutionDir)." "$(SolutionDir)Build\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"'/>
   </Target>
 
   <PropertyGroup>
@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <Target Name="AfterBuild">
+    <!-- Copy all plugin files to MediaPortal2 Plugins\OnlineVideos folder -->
     <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginDestination)" />
     <Copy SourceFiles="@(APIFiles)" DestinationFolder="$(PluginDestination)" />
     <Copy SourceFiles="@(BrowserHostFiles)" DestinationFolder="$(PluginDestination)" />

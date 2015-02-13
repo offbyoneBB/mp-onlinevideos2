@@ -386,7 +386,6 @@
     <None Include="Properties\DataSources\RssLink.datasource" />
     <None Include="Properties\DataSources\SiteSettings.datasource" />
     <None Include="Properties\DataSources\SitesGroup.datasource" />
-    <None Include="Properties\VersionInfo.cs.tmpl" />
     <None Include="Resources\Add.png" />
     <None Include="Resources\Delete.png" />
     <None Include="Resources\Down.png" />
