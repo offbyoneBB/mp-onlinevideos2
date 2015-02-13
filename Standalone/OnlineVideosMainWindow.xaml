@@ -2,6 +2,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ovs="clr-namespace:OnlineVideos;assembly=OnlineVideos"
+    xmlns:ovsDL="clr-namespace:OnlineVideos.Downloading;assembly=OnlineVideos"
     xmlns:DirectShowControls="clr-namespace:WPFMediaKit.DirectShow.Controls"
     xmlns:local="clr-namespace:Standalone" x:Name="mainWindow"
     Title="OnlineVideos" Height="620" Width="820" Loaded="Window_Loaded" Closed="Window_Closed" FocusManager.FocusedElement="{Binding ElementName=listViewMain}" Icon="OnlineVideos.ico">
@@ -85,8 +86,8 @@
             </WrapPanel>
             <TextBlock Grid.Column="1" VerticalAlignment="Bottom" Text="{Binding ElementName=mainWindow, Path=CurrentFilter, StringFormat=[\{0\}]}" HorizontalAlignment="Right" FontSize="10" Margin="5 0 0 0" Foreground="Gray" Visibility="{Binding ElementName=mainWindow, Path=CurrentFilter, Converter={StaticResource NullVisibilityConverter}}"/>
             <WrapPanel Grid.Column="2">
-                <TextBlock x:Name="downloadNotifier" Height="34" Width="34" Text="{Binding Source={x:Static ovs:DownloadManager.Instance}, Path=Count}" TextAlignment="Center" Padding="0 10 3 0" FontSize="16"
-                           Visibility="{Binding Source={x:Static ovs:DownloadManager.Instance}, Path=Count, Converter={StaticResource ZeroVisibilityConverter}}">
+                <TextBlock x:Name="downloadNotifier" Height="34" Width="34" Text="{Binding Source={x:Static ovsDL:DownloadManager.Instance}, Path=Count}" TextAlignment="Center" Padding="0 10 3 0" FontSize="16"
+                           Visibility="{Binding Source={x:Static ovsDL:DownloadManager.Instance}, Path=Count, Converter={StaticResource ZeroVisibilityConverter}}">
                     <TextBlock.Background>
                         <ImageBrush ImageSource="Images/Disk.png"/>
                     </TextBlock.Background>

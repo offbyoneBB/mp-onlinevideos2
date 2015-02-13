@@ -11,6 +11,9 @@ using System.Windows.Threading;
 using OnlineVideos;
 using OnlineVideos.Sites;
 using OnlineVideos.MPUrlSourceFilter;
+using OnlineVideos.Downloading;
+using OnlineVideos.CrossDomain;
+using OnlineVideos.Helpers;
 
 namespace Standalone
 {
@@ -334,7 +337,7 @@ namespace Standalone
 				Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
 					delegate()
 					{
-						return SelectedSite.getVideoList(category);
+						return SelectedSite.GetVideos(category);
 					},
 					delegate(Gui2UtilConnector.ResultInfo resultInfo)
 					{
@@ -361,7 +364,7 @@ namespace Standalone
 				Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
 					delegate()
 					{
-						return SelectedSite.getNextPageVideos();
+						return SelectedSite.GetNextPageVideos();
 					},
 					delegate(Gui2UtilConnector.ResultInfo resultInfo)
 					{
@@ -382,7 +385,7 @@ namespace Standalone
 				Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
 					delegate()
 					{
-						return ((IChoice)SelectedSite).getVideoChoices(video.Model);
+						return ((IChoice)SelectedSite).GetVideoChoices(video.Model);
 					},
 					delegate(Gui2UtilConnector.ResultInfo resultInfo)
 					{
@@ -391,9 +394,14 @@ namespace Standalone
 						{
 							listViewMain.Visibility = System.Windows.Visibility.Hidden;
 							detailsView.DataContext = video;
-							var extendedInfos = video.Model.GetExtendedProperties();
-							if (extendedInfos != null && extendedInfos.ContainsKey("Plot")) detailsView.txtSynopsis.Text = extendedInfos["Plot"];
-							// todo : display all extended infos in details view
+
+                            var details = video.Model.Other as IVideoDetails;
+                            if (details != null)
+                            {
+                                var extendedInfos = details.GetExtendedProperties();
+                                if (extendedInfos != null && extendedInfos.ContainsKey("Plot")) detailsView.txtSynopsis.Text = extendedInfos["Plot"];
+                                // todo : display all extended infos in details view
+                            }
 							detailsView.listViewTrailers.ItemsSource = ViewModels.VideoList.GetVideosView(this, resultInfo.ResultObject as List<VideoInfo>, false, true);
 							if (detailsView.listViewTrailers.Items.Count > 0)
 							{
@@ -410,7 +418,7 @@ namespace Standalone
 			}
 			else
 			{
-				Play_Step1(new PlayListItem(video.Model, SelectedSite is OnlineVideos.Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[video.Model.SiteName] : SelectedSite), false);
+				Play_Step1(new PlayListItem(video.Model, SelectedSite is OnlineVideos.Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(video.Model as FavoriteVideoInfo).SiteName] : SelectedSite), false);
 			}
 		}
 
@@ -528,7 +536,7 @@ namespace Standalone
 			{
 				Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
 				{
-					return SelectedSite.getPlaylistItemUrl(playItem.Video, CurrentPlayList[0].ChosenPlaybackOption, CurrentPlayList.IsPlayAll);
+					return SelectedSite.GetPlaylistItemVideoUrl(playItem.Video, CurrentPlayList[0].ChosenPlaybackOption, CurrentPlayList.IsPlayAll);
 				},
 				delegate(Gui2UtilConnector.ResultInfo resultInfo)
 				{
@@ -545,7 +553,7 @@ namespace Standalone
                 Log.Info("Going to play: '{0}'{1}", playItem.Video.Title, string.IsNullOrEmpty(playItem.Video.Title2) ? "" : string.Format(" -  '{0}'", playItem.Video.Title2));
 				Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
 				{
-					return SelectedSite.getMultipleVideoUrls(playItem.Video, CurrentPlayList != null && CurrentPlayList.Count > 1);
+					return SelectedSite.GetMultipleVideoUrls(playItem.Video, CurrentPlayList != null && CurrentPlayList.Count > 1);
 				},
 				delegate(Gui2UtilConnector.ResultInfo resultInfo)
 				{
@@ -575,11 +583,11 @@ namespace Standalone
 				PlayList playbackItems = new PlayList();
 				foreach (string url in urlList)
 				{
-					VideoInfo vi = playItem.Video.CloneForPlayList(url, url == urlList[0]);
+					VideoInfo vi = playItem.Video.CloneForPlaylist(url, url == urlList[0]);
 					string url_new = url;
 					if (url == urlList[0])
 					{
-						url_new = SelectedSite.getPlaylistItemUrl(vi, string.Empty, CurrentPlayList != null && CurrentPlayList.IsPlayAll);
+						url_new = SelectedSite.GetPlaylistItemVideoUrl(vi, string.Empty, CurrentPlayList != null && CurrentPlayList.IsPlayAll);
 					}
 					playbackItems.Add(new PlayListItem(vi, playItem.Util)
 					{
@@ -649,7 +657,7 @@ namespace Standalone
 		{
             // check for valid url and cut off additional parameter
             if (String.IsNullOrEmpty(urlToPlay) ||
-				!Utils.IsValidUri((urlToPlay.IndexOf(OnlineVideos.MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? urlToPlay.Substring(0, urlToPlay.IndexOf(OnlineVideos.MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : urlToPlay))
+				!UriUtils.IsValidUri((urlToPlay.IndexOf(OnlineVideos.MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? urlToPlay.Substring(0, urlToPlay.IndexOf(OnlineVideos.MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : urlToPlay))
 			{
 				notification.Show(Translation.Instance.Error, Translation.Instance.UnableToPlayVideo);
 				return;
@@ -712,7 +720,7 @@ namespace Standalone
                 Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
                     delegate()
                     {
-                        return saveItems.CurrentItem.Util.getPlaylistItemUrl(saveItems.CurrentItem.VideoInfo, saveItems.ChosenPlaybackOption);
+                        return saveItems.CurrentItem.Util.GetPlaylistItemVideoUrl(saveItems.CurrentItem.VideoInfo, saveItems.ChosenPlaybackOption);
                     },
                     delegate(Gui2UtilConnector.ResultInfo resultInfo)
                     {
@@ -730,7 +738,7 @@ namespace Standalone
                 Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
                     delegate()
                     {
-                        return saveItems.CurrentItem.Util.getMultipleVideoUrls(saveItems.CurrentItem.VideoInfo);
+                        return saveItems.CurrentItem.Util.GetMultipleVideoUrls(saveItems.CurrentItem.VideoInfo);
                     },
                     delegate(Gui2UtilConnector.ResultInfo resultInfo)
                     {
@@ -761,11 +769,11 @@ namespace Standalone
                 saveItems.DownloadItems = new List<DownloadInfo>();
                 foreach (string url in loUrlList)
                 {
-                    VideoInfo vi = saveItems.CurrentItem.VideoInfo.CloneForPlayList(url, url == loUrlList[0]);
+                    VideoInfo vi = saveItems.CurrentItem.VideoInfo.CloneForPlaylist(url, url == loUrlList[0]);
                     string url_new = url;
                     if (url == loUrlList[0])
                     {
-                        url_new = saveItems.CurrentItem.Util.getPlaylistItemUrl(vi, string.Empty);
+                        url_new = saveItems.CurrentItem.Util.GetPlaylistItemVideoUrl(vi, string.Empty);
                     }
                     DownloadInfo pli = DownloadInfo.Create(vi, saveItems.CurrentItem.Category, saveItems.CurrentItem.Util);
                     pli.Title = string.Format("{0} - {1} / {2}", vi.Title, (saveItems.DownloadItems.Count + 1).ToString(), loUrlList.Count);
@@ -825,7 +833,7 @@ namespace Standalone
         {
             // check for valid url and cut off additional parameter
             if (String.IsNullOrEmpty(url) ||
-                !Utils.IsValidUri((url.IndexOf(SimpleUrl.ParameterSeparator) > 0) ? url.Substring(0, url.IndexOf(SimpleUrl.ParameterSeparator)) : url))
+                !UriUtils.IsValidUri((url.IndexOf(SimpleUrl.ParameterSeparator) > 0) ? url.Substring(0, url.IndexOf(SimpleUrl.ParameterSeparator)) : url))
             {
                 notification.Show(Translation.Instance.Error, Translation.Instance.UnableToDownloadVideo);
                 return;
@@ -856,8 +864,8 @@ namespace Standalone
                     System.IO.Path.GetExtension(saveItems.CurrentItem.LocalFile));
             }
 
-            saveItems.CurrentItem.LocalFile = Utils.GetNextFileName(saveItems.CurrentItem.LocalFile);
-            saveItems.CurrentItem.ThumbFile = string.IsNullOrEmpty(saveItems.CurrentItem.VideoInfo.ThumbnailImage) ? saveItems.CurrentItem.VideoInfo.ImageUrl : saveItems.CurrentItem.VideoInfo.ThumbnailImage;
+            saveItems.CurrentItem.LocalFile = FileUtils.GetNextFileName(saveItems.CurrentItem.LocalFile);
+            saveItems.CurrentItem.ThumbFile = string.IsNullOrEmpty(saveItems.CurrentItem.VideoInfo.ThumbnailImage) ? saveItems.CurrentItem.VideoInfo.Thumb : saveItems.CurrentItem.VideoInfo.ThumbnailImage;
 
             // make sure the target dir exists
             if (!(System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(saveItems.CurrentItem.LocalFile))))
@@ -880,7 +888,7 @@ namespace Standalone
                 {
                     IDownloader dlHelper = null;
                     if (dlList.CurrentItem.Url.ToLower().StartsWith("mms://")) dlHelper = new MMSDownloader();
-                    else dlHelper = new MPUrlSourceFilterDownloader();
+                    else dlHelper = new OnlineVideos.MPUrlSourceFilter.Downloader();
                     dlList.CurrentItem.Downloader = dlHelper;
                     dlList.CurrentItem.Start = DateTime.Now;
                     Log.Info("Starting download of '{0}' to '{1}' from Site '{2}'", dlList.CurrentItem.Url, dlList.CurrentItem.LocalFile, dlList.CurrentItem.Util.Settings.Name);
@@ -935,7 +943,7 @@ namespace Standalone
                     // if the image given was an url -> check if thumb exists otherwise download
                     if (saveItems.CurrentItem.ThumbFile.ToLower().StartsWith("http"))
                     {
-                        string thumbFile = Utils.GetThumbFile(saveItems.CurrentItem.ThumbFile);
+                        string thumbFile = FileUtils.GetThumbFile(saveItems.CurrentItem.ThumbFile);
                         if (System.IO.File.Exists(thumbFile)) saveItems.CurrentItem.ThumbFile = thumbFile;
                         else if (ImageDownloader.DownloadAndCheckImage(saveItems.CurrentItem.ThumbFile, thumbFile)) saveItems.CurrentItem.ThumbFile = thumbFile;
                     }
@@ -1056,14 +1064,14 @@ namespace Standalone
 					Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
 						delegate()
 						{
-							return SelectedSite.DoSearch(search.Trim());
+							return SelectedSite.Search(search.Trim());
 						},
 						delegate(Gui2UtilConnector.ResultInfo resultInfo)
 						{
 							waitCursor.Visibility = System.Windows.Visibility.Hidden;
 							if (ReactToResult(resultInfo, Translation.Instance.GettingCategoryVideos))
 							{
-                                DisplaySearchResultItems(Translation.Instance.SearchResults + " [" + search + "]", resultInfo.ResultObject as List<ISearchResultItem>);
+                                DisplaySearchResultItems(Translation.Instance.SearchResults + " [" + search + "]", resultInfo.ResultObject as List<SearchResultItem>);
 							}
 						}
 					);
@@ -1071,7 +1079,7 @@ namespace Standalone
 			}
 		}
 
-        private void DisplaySearchResultItems(string title, List<ISearchResultItem> result)
+        private void DisplaySearchResultItems(string title, List<SearchResultItem> result)
         {
             if (result.Count > 0)
             {
@@ -1294,7 +1302,7 @@ namespace Standalone
 				int i = 0;
 				while (i < loUrlList.Count)
 				{
-					if (String.IsNullOrEmpty(loUrlList[i]) || !Utils.IsValidUri(loUrlList[i]))
+					if (String.IsNullOrEmpty(loUrlList[i]) || !UriUtils.IsValidUri(loUrlList[i]))
 					{
 						OnlineVideoSettings.Instance.Logger.Debug("removed invalid url {0}", loUrlList[i]);
 						loUrlList.RemoveAt(i);

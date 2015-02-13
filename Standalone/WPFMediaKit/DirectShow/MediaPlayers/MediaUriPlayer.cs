@@ -4,6 +4,7 @@
 using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
+using OnlineVideos;
 #endregion
 
 namespace WPFMediaKit.DirectShow.MediaPlayers
@@ -131,7 +132,7 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
                 IBaseFilter sourceFilter = null;
                 try
                 {
-                    int result = m_graph.FindFilterByName(OnlineVideos.MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName, out sourceFilter);
+                    int result = m_graph.FindFilterByName(OnlineVideos.MPUrlSourceFilter.Downloader.FilterName, out sourceFilter);
                     if (result == 0)
                     {
                         long total = 0, current = 0;
@@ -161,8 +162,8 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
             {
                 case "http":
                 case "rtmp":
-                    sourceFilter = DShowNET.Helper.FilterFromFile.LoadFilterFromDll(@"MPUrlSource\MPUrlSourceSplitter.ax", new Guid(OnlineVideos.MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterCLSID), true);
-                    return filterGraph.AddFilter(sourceFilter, OnlineVideos.MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName);
+                    sourceFilter = DShowNET.Helper.FilterFromFile.LoadFilterFromDll(@"MPUrlSource\MPUrlSourceSplitter.ax", new Guid(OnlineVideos.MPUrlSourceFilter.Downloader.FilterCLSID), true);
+                    return filterGraph.AddFilter(sourceFilter, OnlineVideos.MPUrlSourceFilter.Downloader.FilterName);
                 case "sop":
                     sourceFilter = Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid("{A895A82C-7335-4D6B-A811-82E9E3C4403E}"))) as IBaseFilter;
                     return filterGraph.AddFilter(sourceFilter, "SopCast ASF Splitter");
@@ -226,13 +227,17 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
 
                 if (!fileSource.Contains("live=true") && !fileSource.Contains("RtmpLive=1"))
                 {
-                    OnlineVideos.MPUrlSourceFilter.IFilterState filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.IFilterState;
+                    var filterState = sourceFilter as OnlineVideos.MPUrlSourceFilter.IFilterStateEx;
                     if (filterState != null)
                     {
                         // wait max. 20 seconds for the filter to be ready - then try to connect anyway
                         DateTime startTime = DateTime.Now;
-                        while (!filterState.IsFilterReadyToConnectPins() && ((DateTime.Now - startTime).TotalSeconds <= 20))
+                        bool readyToConnect = false;
+                        while (!readyToConnect && ((DateTime.Now - startTime).TotalSeconds <= 20))
                         {
+                            hr = filterState.IsFilterReadyToConnectPins(out readyToConnect);
+                            if (hr < 0)
+                                throw new OnlineVideosException(string.Format("Error IsFilterReadyToConnectPins: {0}", hr));
                             long total = 0, current = 0;
                             ((IAMOpenProgress)sourceFilter).QueryProgress(out total, out current);
                             m_BufferedPercent = (float)current / (float)total * 100.0f;
@@ -388,7 +393,7 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
                 IBaseFilter sourceFilter = null;
                 try
                 {
-                    int result = m_graph.FindFilterByName(OnlineVideos.MPUrlSourceFilter.MPUrlSourceFilterDownloader.FilterName, out sourceFilter);
+                    int result = m_graph.FindFilterByName(OnlineVideos.MPUrlSourceFilter.Downloader.FilterName, out sourceFilter);
                     if (result == 0 && sourceFilter != null)
                     {
                         ((IAMOpenProgress)sourceFilter).AbortOperation();

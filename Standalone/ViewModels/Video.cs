@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows.Data;
 using System.ComponentModel;
 using System.Collections;
+using OnlineVideos.CrossDomain;
 
 namespace Standalone.ViewModels
 {
@@ -23,8 +24,8 @@ namespace Standalone.ViewModels
 			Airdate = videoInfo.Airdate;
 
 			// we cannot attach directly to the PropertyChanged event of the Model as it is in another domain and PropertyChangedEventArgs is not serializable
-			eventDelegator = OnlineVideos.OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(OnlineVideos.PropertyChangedDelegator).Assembly.FullName, typeof(OnlineVideos.PropertyChangedDelegator).FullName) as OnlineVideos.PropertyChangedDelegator;
-			eventDelegator.InvokeTarget = new OnlineVideos.PropertyChangedExecutor() { InvokeHandler = ModelPropertyChanged };
+			eventDelegator = OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(PropertyChangedDelegator).Assembly.FullName, typeof(PropertyChangedDelegator).FullName) as PropertyChangedDelegator;
+			eventDelegator.InvokeTarget = new PropertyChangedExecutor() { InvokeHandler = ModelPropertyChanged };
 			Model.PropertyChanged += eventDelegator.EventDelegate;
 		}
 
@@ -38,7 +39,7 @@ namespace Standalone.ViewModels
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		protected OnlineVideos.PropertyChangedDelegator eventDelegator = null;
+		protected PropertyChangedDelegator eventDelegator = null;
 		protected void ModelPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			System.Windows.Application.Current.Dispatcher.BeginInvoke((Action)(() =>
