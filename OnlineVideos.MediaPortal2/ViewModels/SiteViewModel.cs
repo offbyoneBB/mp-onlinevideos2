@@ -149,7 +149,7 @@ namespace OnlineVideos.MediaPortal2
 		{
 			var list = new ItemsList();
 
-			foreach (var propDef in Site.GetUserConfigurationProperties())
+            foreach (var propDef in Site.GetUserConfigurationProperties().Where(prop => (prop.IsEnum || prop.Namespace == "System")))
 			{
 				list.Add(new SiteSettingViewModel(this, propDef));
 			}
