@@ -21,6 +21,7 @@
   <string name="OnlineVideos.Category">Kategorie</string>
   <string name="OnlineVideos.CategoryNotFound">Kategorie nebyla nalezena</string>
   <string name="OnlineVideos.Categories">Kategorie</string>
+  <string name="OnlineVideos.ChangeSettings">Změna nastavení</string>
   <string name="OnlineVideos.Creator">Autor</string>
   <string name="OnlineVideos.CreateNewPlaylist">Vytvořit nový seznam stop ...</string>
   <string name="OnlineVideos.CheckingForPluginUpdate">Kontrolují se aktualizace ...</string>
@@ -97,6 +98,7 @@
   <string name="OnlineVideos.Others">Ostatní</string>
   <!--P-->
   <string name="OnlineVideos.PlayAll">Přehrát vše</string>
+  <string name="OnlineVideos.PlayAllFromHere">Přehrát vše (z aktuální pozice)</string>
   <string name="OnlineVideos.PlayAllRandom">Přehrát vše (náhodné pořadí)</string>
   <string name="OnlineVideos.PlayWith">Přehrát pomocí ...</string>
   <string name="OnlineVideos.Playlists">Seznamy stop</string>
