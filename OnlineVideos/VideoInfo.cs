@@ -78,6 +78,12 @@ namespace OnlineVideos
 					new XElement("String", Airdate))
 			))).ToString();
 		}
+
+        public virtual Dictionary<string, string> GetExtendedProperties()
+        {
+            IVideoDetails details = Other as IVideoDetails;
+            return details == null ? null : details.GetExtendedProperties();
+        }
         
         public VideoInfo CloneForPlaylist(string videoUrl, bool withPlaybackOptions)
         {

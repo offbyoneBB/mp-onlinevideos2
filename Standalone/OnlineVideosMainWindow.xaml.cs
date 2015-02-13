@@ -395,11 +395,10 @@ namespace Standalone
 							listViewMain.Visibility = System.Windows.Visibility.Hidden;
 							detailsView.DataContext = video;
 
-                            var details = video.Model.Other as IVideoDetails;
-                            if (details != null)
+                            var extendedInfos = video.Model.GetExtendedProperties();
+                            if (extendedInfos != null)
                             {
-                                var extendedInfos = details.GetExtendedProperties();
-                                if (extendedInfos != null && extendedInfos.ContainsKey("Plot")) detailsView.txtSynopsis.Text = extendedInfos["Plot"];
+                                if (extendedInfos.ContainsKey("Plot")) detailsView.txtSynopsis.Text = extendedInfos["Plot"];
                                 // todo : display all extended infos in details view
                             }
 							detailsView.listViewTrailers.ItemsSource = ViewModels.VideoList.GetVideosView(this, resultInfo.ResultObject as List<VideoInfo>, false, true);

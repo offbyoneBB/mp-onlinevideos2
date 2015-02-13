@@ -3326,18 +3326,14 @@ namespace OnlineVideos.MediaPortal1
 
             if (videoInfo != null)
             {
-                var details = videoInfo.Other as IVideoDetails;
-                if (details != null)
+                var custom = videoInfo.GetExtendedProperties();
+                if (custom != null)
                 {
-                    var custom = details.GetExtendedProperties();
-                    if (custom != null)
+                    foreach (string property in custom.Keys)
                     {
-                        foreach (string property in custom.Keys)
-                        {
-                            string label = prefix + property;
-                            string value = custom[property];
-                            SetExtendedGuiProperty(label, value);
-                        }
+                        string label = prefix + property;
+                        string value = custom[property];
+                        SetExtendedGuiProperty(label, value);
                     }
                 }
             }
