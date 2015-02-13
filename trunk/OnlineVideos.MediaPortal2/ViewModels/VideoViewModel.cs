@@ -428,7 +428,7 @@ namespace OnlineVideos.MediaPortal2
 				saveItems.DownloadItems = new List<DownloadInfo>();
 				foreach (string url in urls)
 				{
-					VideoInfo vi = saveItems.CurrentItem.VideoInfo.CloneForPlayList(url, url == urls[0]);
+					VideoInfo vi = saveItems.CurrentItem.VideoInfo.CloneForPlaylist(url, url == urls[0]);
 					string url_new = url;
 					if (url == urls[0])
 					{
@@ -691,18 +691,5 @@ namespace OnlineVideos.MediaPortal2
 				}
 			}
 		}
-
-        public bool GetExtendedPropertyValue(string name, out string value)
-        {
-            value = null;
-            var details = VideoInfo.Other as IVideoDetails;
-            if (details != null)
-            {
-                var custom = details.GetExtendedProperties();
-                if (custom != null)
-                    return custom.TryGetValue(name, out value);
-            }
-            return false;
-        }
 	}
 }

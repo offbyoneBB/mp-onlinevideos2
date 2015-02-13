@@ -107,11 +107,13 @@ namespace OnlineVideos.MediaPortal2
             if (model != null && model.VideoInfo != null && !string.IsNullOrEmpty(param))
             {
                 string myValue;
-				if (model.GetExtendedPropertyValue(param, out myValue)) 
-                {
-                    result = myValue;
-                    return true;
-                }
+                var custom = model.VideoInfo.GetExtendedProperties();
+                if (custom != null)
+                    if (custom.TryGetValue(param, out myValue))
+                    {
+                        result = myValue;
+                        return true;
+                    }
             }
             return false;
         }
