@@ -5,40 +5,30 @@
     <Exec Command='subwcrev "$(SolutionDir)." "$(SolutionDir)Build\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"'/>
   </Target>
 
-  <PropertyGroup>
-    <PluginDestination>$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\</PluginDestination>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PluginFiles Include="$(TargetDir)$(ProjectName).*" />
-    <PluginFiles Include="$(TargetDir)plugin.xml" />
-    <APIFiles Include="$(TargetDir)OnlineVideos.dll" />
-    <APIFiles Include="$(TargetDir)OnlineVideos.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
-    <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\OnlineVideos.WebAutomation.BrowserHost.exe" />
-    <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\OnlineVideos.WebAutomation.BrowserHost.exe.config" />
-    <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\OnlineVideos.WebAutomation.BrowserHost.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
-  </ItemGroup>
-
-  <ItemGroup>
-    <LanguageFiles Include="$(ProjectDir)Language\*.*" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <SkinFiles Include="$(ProjectDir)Skin\**\*.*" Exclude="$(ProjectDir)Skin\**\.svn\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <MPUrlSourceSplitterFiles Include="$(TargetDir)MPUrlSourceSplitter\*.*" />
-  </ItemGroup>
-
   <Target Name="AfterBuild">
+
+    <PropertyGroup>
+      <PluginDestination>$(SolutionDir)..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\OnlineVideos\</PluginDestination>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PluginFiles Include="$(TargetDir)$(ProjectName).*" />
+      <PluginFiles Include="$(TargetDir)plugin.xml" />
+      <APIFiles Include="$(TargetDir)OnlineVideos.dll" />
+      <APIFiles Include="$(TargetDir)OnlineVideos.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
+      <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\OnlineVideos.WebAutomation.BrowserHost.exe*" />
+      <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\OnlineVideos.WebAutomation.BrowserHost.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
+      <LanguageFiles Include="$(ProjectDir)Language\*.*" />
+      <SkinFiles Include="$(ProjectDir)Skin\**\*.*" Exclude="$(ProjectDir)Skin\**\.svn\**" />
+      <MPUrlSourceSplitterFiles Include="$(TargetDir)MPUrlSourceSplitter\*.*" />
+    </ItemGroup>
+
     <!-- Copy all plugin files to MediaPortal2 Plugins\OnlineVideos folder -->
     <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginDestination)" />
     <Copy SourceFiles="@(APIFiles)" DestinationFolder="$(PluginDestination)" />
     <Copy SourceFiles="@(BrowserHostFiles)" DestinationFolder="$(PluginDestination)" />
     <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(PluginDestination)Language\" />
-    <Copy SourceFiles="@(SkinFiles)"
-          DestinationFiles="@(SkinFiles->'$(PluginDestination)Skin\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(SkinFiles)" DestinationFiles="@(SkinFiles->'$(PluginDestination)Skin\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(MPUrlSourceSplitterFiles)" DestinationFolder="$(PluginDestination)MPUrlSourceSplitter\" />
 
     <!-- Copy again to NuGetPackage folder for simple package creation -->
@@ -49,8 +39,7 @@
     <Copy SourceFiles="@(APIFiles)" DestinationFolder="$(PackageContent)" />
     <Copy SourceFiles="@(BrowserHostFiles)" DestinationFolder="$(PackageContent)" />
     <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(PackageContent)Language\" />
-    <Copy SourceFiles="@(SkinFiles)"
-          DestinationFiles="@(SkinFiles->'$(PackageContent)Skin\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(SkinFiles)" DestinationFiles="@(SkinFiles->'$(PackageContent)Skin\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(MPUrlSourceSplitterFiles)" DestinationFolder="$(PackageContent)MPUrlSourceSplitter\" />
 
     <!-- Uncomment to enable automatic packaging -->
