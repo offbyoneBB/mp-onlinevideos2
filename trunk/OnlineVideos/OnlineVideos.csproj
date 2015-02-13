@@ -1104,9 +1104,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\VersionInfo.cs.tmpl" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="build.targets" />
   </ItemGroup>
   <ItemGroup>
