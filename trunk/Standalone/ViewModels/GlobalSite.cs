@@ -7,7 +7,7 @@ using System.Windows.Data;
 
 namespace Standalone.ViewModels
 {
-    public class GlobalSite : OnlineVideos.ISearchResultItem, INotifyPropertyChanged
+    public class GlobalSite : OnlineVideos.SearchResultItem
     {
         public GlobalSite(OnlineVideos.OnlineVideosWebservice.Site site)
         {
@@ -15,35 +15,17 @@ namespace Standalone.ViewModels
 
             Owner = Model.Owner_FK.Substring(0, Model.Owner_FK.IndexOf('@')).Replace('.', ' ').Replace('_', ' ');
             Language = Util.GetLocalizedLanguageDisplayName(site.Language);
+            Other = Model;
         }
 
         public OnlineVideos.OnlineVideosWebservice.Site Model { get; protected set; }
 
         public string Name { get { return Model.Name; } }
-        public System.DateTime LastUpdated { get { return Model.LastUpdated; } }
+        public DateTime LastUpdated { get { return Model.LastUpdated; } }
         public OnlineVideos.OnlineVideosWebservice.SiteState State { get { return Model.State; } }
         public bool IsAdult { get { return Model.IsAdult; } }
-
         public string Owner { get; protected set; }
         public string Language { get; protected set; }
-
-        public string Description { get { return Model.Description; } set { Model.Description = value; } }
-        public object Other { get { return Model; } set { Model = value as OnlineVideos.OnlineVideosWebservice.Site ?? Model; } }
-        protected string _ThumbnailImage = "";
-        public string ThumbnailImage 
-        { 
-            get { return _ThumbnailImage; } 
-            set 
-            {
-                if (_ThumbnailImage != value)
-                {
-                    _ThumbnailImage = value;
-                    if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("ThumbnailImage"));
-                }
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 
     public static class GlobalSiteList

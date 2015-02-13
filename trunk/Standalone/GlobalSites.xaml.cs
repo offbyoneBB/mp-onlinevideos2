@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.ComponentModel;
 using OnlineVideos;
 using System.Windows.Threading;
+using OnlineVideos.Downloading;
 
 namespace Standalone
 {
