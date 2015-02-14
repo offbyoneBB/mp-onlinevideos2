@@ -6,7 +6,7 @@
     <ProductVersion>3.5</ProductVersion>
     <ProjectGuid>{9b495b83-5932-476c-8872-5d7befbd3589}</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>OnlineVideosWpfStandalone</OutputName>
+    <OutputName>OnlineVideos.Standalone</OutputName>
     <OutputType>Package</OutputType>
     <EnableProjectHarvesting>True</EnableProjectHarvesting>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
