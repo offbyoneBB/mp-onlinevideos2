@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*" Name="OnlineVideosWPF" Language="1033" Version="1.9.0.0" Manufacturer="offbyone" UpgradeCode="91c44233-766d-45e6-a51e-0cc26fae85dc">
+	<Product Id="*" Name="OnlineVideosWPF" Language="1033" Version="2.0.0.0" Manufacturer="offbyone" UpgradeCode="91c44233-766d-45e6-a51e-0cc26fae85dc">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x86" />
 
 		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION"/>
@@ -39,22 +39,30 @@
 						<File Id="NLog" Source="$(var.Standalone.TargetDir)NLog.dll" DiskId="1" Vital="yes"/>
 						<RemoveFile Id="LogFile" On="both" Name="log.txt" />
 					</Component>
-					<Directory Id="MPUrlSource" Name="MPUrlSource">
+          <Component Id="xyVsFilter" Guid="d80b0582-9e65-4fa9-9d85-966443f49f51">
+            <File KeyPath="yes" Id="xyVsFilterDll" Source="$(var.Standalone.TargetDir)VSFilter.dll" DiskId="1" Vital="yes"/>
+          </Component>
+					<Directory Id="MPUrlSourceSplitter" Name="MPUrlSourceSplitter">
 						<Component Id="MPUrlSource" Guid="04047A84-E2C0-4EC8-A490-8467EDC2D302">
-							<File Id="MPUrlSource_ax" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter.ax" DiskId="1" Vital="yes"/>
-							<File Id="libcurl_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\libcurl.dll" DiskId="1" Vital="yes"/>
-              <File Id="MPUrlSource_Protocol_Afhs_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Afhs.dll" DiskId="1" Vital="yes"/>
-              <File Id="MPUrlSource_Protocol_Http_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Http.dll" DiskId="1" Vital="yes"/>
-              <File Id="MPUrlSource_Protocol_Mms_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Mms.dll" DiskId="1" Vital="yes"/>
-              <File Id="MPUrlSource_Protocol_Mshs_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Mshs.dll" DiskId="1" Vital="yes"/>
-              <File Id="MPUrlSource_Protocol_Rtmp_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Protocol_Rtmp.dll" DiskId="1" Vital="yes"/>
-              <File Id="MPUrlSource_Parser_Asx_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Parser_Asx.dll" DiskId="1" Vital="yes"/>
-              <File Id="MPUrlSource_Parser_F4m_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Parser_F4M.dll" DiskId="1" Vital="yes"/>
-              <File Id="MPUrlSource_Parser_Mshs_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Parser_MSHS.dll" DiskId="1" Vital="yes"/>
-              <File Id="MPUrlSource_Decryption_Akamai" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\MPUrlSourceSplitter_Afhs_Decryption_Akamai.dll" DiskId="1" Vital="yes"/>
-              <File Id="avcodec_54_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avcodec-mpurlsourcesplitter-54.dll" DiskId="1" Vital="yes"/>
-							<File Id="avformat_54_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avformat-mpurlsourcesplitter-54.dll" DiskId="1" Vital="yes"/>
-							<File Id="avutil_51_dll" Source="$(var.SolutionDir)MPUrlSourceSplitter\bin_Win32\avutil-mpurlsourcesplitter-51.dll" DiskId="1" Vital="yes"/>
+							<File Id="MPUrlSource_ax" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter.ax" DiskId="1" Vital="yes"/>
+              <File Id="libcurl_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_libcurl.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Parser_Default_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_Default.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Parser_F4m_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_F4M.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Parser_M3u8_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_M3U8.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Parser_Mpeg2Ts_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_MPEG2TS.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Parser_Mshs_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Parser_MSHS.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Protocol_Afhs_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Protocol_Afhs_Decryption_Akamai_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Akamai.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Protocol_Afhs_Decryption_Default_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Protocol_Http_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Http.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Protocol_M3U8_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Protocol_Mshs_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Mshs.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Protocol_Rtmp_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtmp.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Protocol_Rtsp_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtsp.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Protocol_Udp_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Udp.dll" DiskId="1" Vital="yes"/>              
+              <File Id="avcodec_54_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\avcodec-mpurlsourcesplitter-54.dll" DiskId="1" Vital="yes"/>
+							<File Id="avformat_54_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\avformat-mpurlsourcesplitter-54.dll" DiskId="1" Vital="yes"/>
+							<File Id="avutil_51_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\avutil-mpurlsourcesplitter-51.dll" DiskId="1" Vital="yes"/>
             </Component>
 					</Directory>
 					<Directory Id="Images" Name="Images">
@@ -109,6 +117,10 @@
 							<File Id="fi_xml" Source="$(var.SolutionDir)Language\OnlineVideos\fi.xml" DiskId="1" Vital="yes"/>
 							<File Id="fr_xml" Source="$(var.SolutionDir)Language\OnlineVideos\fr.xml" DiskId="1" Vital="yes"/>
 							<File Id="he_xml" Source="$(var.SolutionDir)Language\OnlineVideos\he.xml" DiskId="1" Vital="yes"/>
+              <File Id="hi_xml" Source="$(var.SolutionDir)Language\OnlineVideos\hi.xml" DiskId="1" Vital="yes"/>
+              <File Id="hr_xml" Source="$(var.SolutionDir)Language\OnlineVideos\hr.xml" DiskId="1" Vital="yes"/>
+              <File Id="id_xml" Source="$(var.SolutionDir)Language\OnlineVideos\id.xml" DiskId="1" Vital="yes"/>
+              <File Id="is_xml" Source="$(var.SolutionDir)Language\OnlineVideos\is.xml" DiskId="1" Vital="yes"/>
 							<File Id="it_xml" Source="$(var.SolutionDir)Language\OnlineVideos\it.xml" DiskId="1" Vital="yes"/>
 							<File Id="lt_xml" Source="$(var.SolutionDir)Language\OnlineVideos\lt.xml" DiskId="1" Vital="yes"/>
 							<File Id="nl_xml" Source="$(var.SolutionDir)Language\OnlineVideos\nl.xml" DiskId="1" Vital="yes"/>
@@ -117,6 +129,7 @@
 							<File Id="pt_xml" Source="$(var.SolutionDir)Language\OnlineVideos\pt.xml" DiskId="1" Vital="yes"/>
 							<File Id="ru_xml" Source="$(var.SolutionDir)Language\OnlineVideos\ru.xml" DiskId="1" Vital="yes"/>
 							<File Id="sk_xml" Source="$(var.SolutionDir)Language\OnlineVideos\sk.xml" DiskId="1" Vital="yes"/>
+              <File Id="sl_xml" Source="$(var.SolutionDir)Language\OnlineVideos\sl.xml" DiskId="1" Vital="yes"/>
 							<File Id="sv_xml" Source="$(var.SolutionDir)Language\OnlineVideos\sv.xml" DiskId="1" Vital="yes"/>
 							<File Id="tr_xml" Source="$(var.SolutionDir)Language\OnlineVideos\tr.xml" DiskId="1" Vital="yes"/>
 							<File Id="zh_xml" Source="$(var.SolutionDir)Language\OnlineVideos\zh.xml" DiskId="1" Vital="yes"/>
@@ -148,6 +161,7 @@
 
 		<Feature Id="ProductFeature" Title="OnlineVideos Standalone" Level="1" ConfigurableDirectory="INSTALLLOCATION" Display="expand" AllowAdvertise="no" Absent="disallow" Description="Required core files of the OnlineVideos Standalone application.">
 			<ComponentRef Id="OnlineVideosStandalone" />
+      <ComponentRef Id="xyVsFilter" />
       <ComponentRef Id="MPUrlSource" />
 			<ComponentRef Id="OnlineVideosStandaloneImages" />
 			<ComponentRef Id="OnlineVideosLanguageFlags" />
