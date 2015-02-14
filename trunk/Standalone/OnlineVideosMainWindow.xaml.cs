@@ -665,8 +665,33 @@ namespace Standalone
 			// Play
 			CurrentPlayListItem = null;
             Log.Info("Starting Playback: '{0}'", urlToPlay);
+			mediaPlayer.SubtitleFilePath = GetSubtitleFile(playItem);
 			mediaPlayer.Source = new Uri(urlToPlay);
 			CurrentPlayListItem = playItem;
+		}
+
+		private static string GetSubtitleFile(PlayListItem playItem)
+		{
+			string subFile = null;
+
+			Uri subtitleUri = null;
+			bool validUri = !String.IsNullOrEmpty(playItem.Video.SubtitleUrl) && Uri.TryCreate(playItem.Video.SubtitleUrl, UriKind.Absolute, out subtitleUri);
+			if (!string.IsNullOrEmpty(playItem.Video.SubtitleText) || (validUri && !subtitleUri.IsFile))
+			{
+				string subs = string.IsNullOrEmpty(playItem.Video.SubtitleText) ? WebCache.Instance.GetWebData(playItem.Video.SubtitleUrl) : playItem.Video.SubtitleText;
+				if (!string.IsNullOrEmpty(subs))
+				{
+					subFile = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "OnlineVideoSubtitles.txt");
+					System.IO.File.WriteAllText(subFile, subs, System.Text.Encoding.UTF8);
+				}
+			}
+			else
+			{
+				if (validUri && subtitleUri.IsFile)
+					subFile = subtitleUri.AbsolutePath;
+			}
+
+			return subFile;
 		}
 
 		bool PlayNextPlaylistItem()

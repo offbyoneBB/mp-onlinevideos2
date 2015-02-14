@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.ComponentModel;
 using System.Windows.Data;
 
 namespace Standalone.ViewModels
@@ -12,10 +10,13 @@ namespace Standalone.ViewModels
         public GlobalSite(OnlineVideos.OnlineVideosWebservice.Site site)
         {
             Model = site;
+            Other = Model;
 
             Owner = Model.Owner_FK.Substring(0, Model.Owner_FK.IndexOf('@')).Replace('.', ' ').Replace('_', ' ');
             Language = Util.GetLocalizedLanguageDisplayName(site.Language);
-            Other = Model;
+
+            ThumbnailImage = Path.Combine(OnlineVideos.OnlineVideoSettings.Instance.ThumbsDir, @"Icons\" + site.Name + ".png");
+            Thumb = "http://onlinevideos.nocrosshair.de/Icons/" + site.Name + ".png";
         }
 
         public OnlineVideos.OnlineVideosWebservice.Site Model { get; protected set; }

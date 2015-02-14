@@ -63,6 +63,8 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
             }
         }
 
+		public string SubtitleFilePath { get; set; }
+
         /// <summary>
         /// The renderer type to use when
         /// rendering video
@@ -162,7 +164,7 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
             {
                 case "http":
                 case "rtmp":
-                    sourceFilter = DShowNET.Helper.FilterFromFile.LoadFilterFromDll(@"MPUrlSource\MPUrlSourceSplitter.ax", new Guid(OnlineVideos.MPUrlSourceFilter.Downloader.FilterCLSID), true);
+                    sourceFilter = DShowNET.Helper.FilterFromFile.LoadFilterFromDll(@"MPUrlSourceSplitter\MPUrlSourceSplitter.ax", new Guid(OnlineVideos.MPUrlSourceFilter.Downloader.FilterCLSID), true);
                     return filterGraph.AddFilter(sourceFilter, OnlineVideos.MPUrlSourceFilter.Downloader.FilterName);
                 case "sop":
                     sourceFilter = Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid("{A895A82C-7335-4D6B-A811-82E9E3C4403E}"))) as IBaseFilter;
@@ -221,6 +223,13 @@ namespace WPFMediaKit.DirectShow.MediaPlayers
 
                 if (hr == -1 || sourceFilter == null) throw new Exception("Could not find a source filter!");
                 DsError.ThrowExceptionForHR(hr);
+
+				if (!string.IsNullOrEmpty(SubtitleFilePath))
+				{
+					var _vsFilter = DShowNET.Helper.FilterFromFile.LoadFilterFromDll("VSFilter.dll", new Guid("{93A22E7A-5091-45EF-BA61-6DA26156A5D0}"), true);
+					if (_vsFilter != null)
+						hr = filterGraph.AddFilter(_vsFilter, "xy-VSFilter");
+				}
 
                 hr = ((IFileSourceFilter)sourceFilter).Load(fileSource, null);
                 DsError.ThrowExceptionForHR(hr);
