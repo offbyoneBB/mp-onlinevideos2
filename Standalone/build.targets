@@ -5,22 +5,17 @@
     <Exec Command='subwcrev "$(SolutionDir)." "$(ProjectDir)Properties\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"'/>
   </Target>
 
-  <PropertyGroup>
-    <DataDestination>$(ProgramData)\OnlineVideos\</DataDestination>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <SiteUtilDllFiles Include="$(SolutionDir)Build\SiteUtilDlls\OnlineVideos.Sites.*.dll" />
-    <SiteUtilDllFiles Include="$(SolutionDir)Build\SiteUtilDlls\OnlineVideos.Sites.*.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
-  </ItemGroup>
-
-  <ItemGroup>
-    <MPUrlSourceSplitterFiles Include="$(SolutionDir)MPUrlSourceSplitter\bin_Win32\*.ax" />
-    <MPUrlSourceSplitterFiles Include="$(SolutionDir)MPUrlSourceSplitter\bin_Win32\*.dll" />
-  </ItemGroup>
-
   <Target Name="AfterBuild">
+
+    <PropertyGroup>
+      <DataDestination>$(ProgramData)\OnlineVideos\</DataDestination>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <SiteUtilDllFiles Include="$(SolutionDir)Build\SiteUtilDlls\OnlineVideos.Sites.*.dll" />
+      <SiteUtilDllFiles Include="$(SolutionDir)Build\SiteUtilDlls\OnlineVideos.Sites.*.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
+    </ItemGroup>
+
     <Copy SourceFiles="@(SiteUtilDllFiles)" DestinationFolder="$(DataDestination)SiteUtilDlls\" />
-    <Copy SourceFiles="@(MPUrlSourceSplitterFiles)" DestinationFolder="$(TargetDir)MPUrlSource\" />
   </Target>
 </Project>

@@ -121,10 +121,27 @@ namespace WPFMediaKit.DirectShow.Controls
         }
 
         #endregion
-        
-        #region Source
 
-        public static readonly DependencyProperty SourceProperty =
+		#region SubtitleFilePath
+
+		public static readonly DependencyProperty SubtitleFilePathProperty =
+			DependencyProperty.Register("SubtitleFilePath", typeof(string), typeof(MediaUriElement));
+
+		/// <summary>
+		/// The Uri source to the media.  This can be a file path or a
+		/// URL source
+		/// </summary>
+		public string SubtitleFilePath
+		{
+			get { return (string)GetValue(SubtitleFilePathProperty); }
+			set { SetValue(SubtitleFilePathProperty, value); }
+		}
+
+		#endregion
+
+		#region Source
+
+		public static readonly DependencyProperty SourceProperty =
             DependencyProperty.Register("Source", typeof(Uri), typeof(MediaUriElement),
                 new FrameworkPropertyMetadata(null,
                     new PropertyChangedCallback(OnSourceChanged)));
@@ -154,9 +171,13 @@ namespace WPFMediaKit.DirectShow.Controls
         {
             var source = Source;
             var rendererType = VideoRenderer;
+            var subtitle = SubtitleFilePath;
 
             MediaPlayerBase.Dispatcher.BeginInvoke((Action) delegate
             {
+				/* Set the optional subtitle file path */
+				MediaUriPlayer.SubtitleFilePath = subtitle;
+
                 /* Set the renderer type */
                 MediaUriPlayer.VideoRenderer = rendererType;
 
