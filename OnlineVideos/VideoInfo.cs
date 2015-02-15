@@ -4,8 +4,6 @@ using System.Xml.Linq;
 
 namespace OnlineVideos
 {
-    public enum VideoKind { Other, TvSeries, Movie, MovieTrailer, GameTrailer, MusicVideo, News }
-
     public class VideoInfo : SearchResultItem
     {
         public string Title { get; set; }

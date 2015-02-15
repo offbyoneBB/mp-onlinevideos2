@@ -15,6 +15,8 @@ namespace OnlineVideos
         string ID_TVDB { get; set; }
     }
 
+    public enum VideoKind { Other, TvSeries, Movie, MovieTrailer, GameTrailer, MusicVideo, News }
+
     [Serializable]
     public class TrackingInfo : ITrackingInfo
     {
