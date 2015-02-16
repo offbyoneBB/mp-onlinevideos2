@@ -101,7 +101,6 @@ namespace OnlineVideos.Sites
                     DateTime airdate = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(Convert.ToDouble(ep.Value<string>("airDate")));
                     VideoInfo videoInfo = CreateVideoInfo();
                     videoInfo.Title = preTitle + ep.Value<string>("title");
-                    videoInfo.Title2 = ep.Value<string>("number");
                     videoInfo.VideoUrl = String.Format("http://www.cc.com/feeds/mrss?uri=mgid:arc:episode:comedycentral.com:{0}", ep.Value<string>("id"));
                     videoInfo.Thumb = String.Format("{0}?quality=0.85&width=560&height=315&crop=true", ep["images"][0].Value<string>("url"));
                     videoInfo.Length = ep.Value<string>("duration");

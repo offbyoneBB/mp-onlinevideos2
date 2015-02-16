@@ -196,7 +196,7 @@ namespace OnlineVideos.MediaPortal1
         List<OnlineVideosGuiListItem> currentFacadeItems = new List<OnlineVideosGuiListItem>();
 
         List<VideoInfo> currentVideoList = new List<VideoInfo>();
-        List<VideoInfo> currentTrailerList = new List<VideoInfo>();
+        List<DetailVideoInfo> currentTrailerList = new List<DetailVideoInfo>();
         Player.PlayList currentPlaylist = null;
         Player.PlayListItem currentPlayingItem = null;
 
@@ -797,7 +797,7 @@ namespace OnlineVideos.MediaPortal1
                     selectedCategory = null;
                     selectedVideo = null;
                     currentVideoList = new List<VideoInfo>();
-                    currentTrailerList = new List<VideoInfo>();
+                    currentTrailerList = new List<DetailVideoInfo>();
                     currentNavigationContextSwitch = null;
                     loadParamInfo = null;
                     DisplayGroups();
@@ -814,7 +814,7 @@ namespace OnlineVideos.MediaPortal1
                     selectedCategory = null;
                     selectedVideo = null;
                     currentVideoList = new List<VideoInfo>();
-                    currentTrailerList = new List<VideoInfo>();
+                    currentTrailerList = new List<DetailVideoInfo>();
                     currentNavigationContextSwitch = null;
                     loadParamInfo = null;
                     DisplaySites();
@@ -1547,16 +1547,16 @@ namespace OnlineVideos.MediaPortal1
                     else
                         GUIPropertyManager.SetProperty("#OnlineVideos.Details.Poster", selectedVideo.Thumb);
 
-                    SetVideosToInfoList(result as List<VideoInfo>);
+                    SetVideosToInfoList(result as List<DetailVideoInfo>);
                 }
             },
             Translation.Instance.GettingVideoDetails, true);
         }
 
-        private void SetVideosToInfoList(List<VideoInfo> loVideoList)
+        private void SetVideosToInfoList(List<DetailVideoInfo> videos)
         {
             SetGuiProperties_ExtendedVideoInfo(null, false);
-            currentTrailerList = loVideoList;
+            currentTrailerList = videos;
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
             GUIControl.ClearControl(GetID, GUI_infoList.GetID);
             OnlineVideosGuiListItem loListItem = new OnlineVideosGuiListItem("..");
@@ -1566,20 +1566,20 @@ namespace OnlineVideos.MediaPortal1
             MediaPortal.Util.Utils.SetDefaultIcons(loListItem);
             GUI_infoList.Add(loListItem);
             Dictionary<string, bool> imageHash = new Dictionary<string, bool>();
-            if (loVideoList != null)
+            if (videos != null)
             {
-                foreach (VideoInfo loVideoInfo in loVideoList)
+                foreach (var video in videos)
                 {
-                    loListItem = new OnlineVideosGuiListItem(loVideoInfo, true);
+                    loListItem = new OnlineVideosGuiListItem(video);
                     loListItem.ItemId = GUI_infoList.Count;
                     loListItem.OnItemSelected += OnItemSelected;
                     GUI_infoList.Add(loListItem);
-                    if (!string.IsNullOrEmpty(loVideoInfo.Thumb)) imageHash[loVideoInfo.Thumb] = true;
+                    if (!string.IsNullOrEmpty(video.Thumb)) imageHash[video.Thumb] = true;
                 }
             }
-            if (imageHash.Count > 0) ImageDownloader.GetImages<VideoInfo>(currentTrailerList);
+            if (imageHash.Count > 0) ImageDownloader.GetImages<DetailVideoInfo>(currentTrailerList);
 
-            if (loVideoList.Count > 0)
+            if (videos.Count > 0)
             {
                 if (selectedClipIndex == 0 || selectedClipIndex >= GUI_infoList.Count) selectedClipIndex = 1;
                 GUI_infoList.SelectedListItemIndex = selectedClipIndex;
@@ -2507,9 +2507,9 @@ namespace OnlineVideos.MediaPortal1
         {
             currentPlaylist = new Player.PlayList() { IsPlayAll = true };
             currentPlayingItem = null;
-            List<VideoInfo> loVideoList = (SelectedSite is IChoice && currentState == State.details) ? currentTrailerList : currentVideoList;
+            var videos = (SelectedSite is IChoice && currentState == State.details) ? currentTrailerList.ConvertAll(v => (VideoInfo)v) : currentVideoList;
 			bool startVideoFound = startWith == null;
-            foreach (VideoInfo video in loVideoList)
+            foreach (VideoInfo video in videos)
             {
                 // when not in details view of a site with details view only include videos that don't have details
                 if (currentState != State.details && SelectedSite is IChoice && video.HasDetails) continue;
@@ -3389,7 +3389,7 @@ namespace OnlineVideos.MediaPortal1
             selectedCategory = null;
             selectedVideo = null;
             currentVideoList = new List<VideoInfo>();
-            currentTrailerList = new List<VideoInfo>();
+            currentTrailerList = new List<DetailVideoInfo>();
             currentNavigationContextSwitch = null;
             currentPlaylist = null;
             currentPlayingItem = null;

@@ -302,9 +302,9 @@ namespace OnlineVideos.Sites.Pondman
 
         #region IChoice
 
-        public List<VideoInfo> GetVideoChoices(VideoInfo video)
+        public List<DetailVideoInfo> GetVideoChoices(VideoInfo video)
         {
-            List<VideoInfo> clips = new List<VideoInfo>();
+            List<DetailVideoInfo> clips = new List<DetailVideoInfo>();
             
             TitleDetails title = IMDbAPI.GetTitle(apiSession, video.VideoUrl as string);
 
@@ -323,7 +323,7 @@ namespace OnlineVideos.Sites.Pondman
 					if (clip.Description == null)
 						clip.Description = video.Description;
 
-                    VideoInfo vid = new VideoInfo();
+                    DetailVideoInfo vid = new DetailVideoInfo();
                     vid.Other = clip;
                     vid.Title = title.Title + " - " + clip.Title;
                     vid.Title2 = clip.Title;

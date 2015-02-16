@@ -401,7 +401,7 @@ namespace Standalone
                                 if (extendedInfos.ContainsKey("Plot")) detailsView.txtSynopsis.Text = extendedInfos["Plot"];
                                 // todo : display all extended infos in details view
                             }
-							detailsView.listViewTrailers.ItemsSource = ViewModels.VideoList.GetVideosView(this, resultInfo.ResultObject as List<VideoInfo>, false, true);
+							detailsView.listViewTrailers.ItemsSource = ViewModels.VideoList.GetVideosView(this, resultInfo.ResultObject as List<DetailVideoInfo>, false, true);
 							if (detailsView.listViewTrailers.Items.Count > 0)
 							{
 								detailsView.listViewTrailers.SelectedIndex = 0;
@@ -549,7 +549,7 @@ namespace Standalone
 			}
 			else
 			{
-                Log.Info("Going to play: '{0}'{1}", playItem.Video.Title, string.IsNullOrEmpty(playItem.Video.Title2) ? "" : string.Format(" -  '{0}'", playItem.Video.Title2));
+                Log.Info("Going to play: '{0}'", playItem.Video.Title);
 				Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
 				{
 					return SelectedSite.GetMultipleVideoUrls(playItem.Video, CurrentPlayList != null && CurrentPlayList.Count > 1);

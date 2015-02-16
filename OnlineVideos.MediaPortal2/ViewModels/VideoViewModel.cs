@@ -82,7 +82,7 @@ namespace OnlineVideos.MediaPortal2
         }
 
         public VideoViewModel(VideoInfo videoInfo, Category category, string siteName, string utilName, bool isDetailsVideo)
-            : base(Consts.KEY_NAME, !string.IsNullOrEmpty(videoInfo.Title2) ? videoInfo.Title2 : videoInfo.Title)
+            : base(Consts.KEY_NAME, isDetailsVideo ? ((DetailVideoInfo)videoInfo).Title2 : videoInfo.Title)
         {
             VideoInfo = videoInfo;
 			Category = category;
@@ -91,7 +91,7 @@ namespace OnlineVideos.MediaPortal2
 			IsDetailsVideo = isDetailsVideo;
 
             _titleProperty = new WProperty(typeof(string), videoInfo.Title);
-            _title2Property = new WProperty(typeof(string), videoInfo.Title2);
+            _title2Property = new WProperty(typeof(string), isDetailsVideo ? ((DetailVideoInfo)videoInfo).Title2 : string.Empty);
             _descriptionProperty = new WProperty(typeof(string), videoInfo.Description);
             _lengthProperty = new WProperty(typeof(string), videoInfo.Length);
 			_airdateProperty = new WProperty(typeof(string), videoInfo.Airdate);

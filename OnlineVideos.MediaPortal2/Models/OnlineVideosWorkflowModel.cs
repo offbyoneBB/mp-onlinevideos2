@@ -219,7 +219,7 @@ namespace OnlineVideos.MediaPortal2
 				if (SelectedSite.Site is Sites.IChoice && videoModel.VideoInfo.HasDetails)
                 {
                     // get details videos and show details view
-                    BackgroundTask.Instance.Start<List<VideoInfo>>(
+                    BackgroundTask.Instance.Start<List<DetailVideoInfo>>(
 						() =>
 						{
                             return ((Sites.IChoice)SelectedSite.Site).GetVideoChoices(videoModel.VideoInfo);
@@ -349,11 +349,11 @@ namespace OnlineVideos.MediaPortal2
             workflowManager.NavigatePushAsync(Guids.WorkflowStateVideos, new NavigationContextConfig() { NavigationContextDisplayLabel = SelectedCategory.Name });
         }
 
-        void ShowDetails(List<VideoInfo> choices)
+        void ShowDetails(List<DetailVideoInfo> choices)
         {
             DetailsVideosList = new List<VideoViewModel>();
 			choices.ForEach(r => { r.CleanDescriptionAndTitle(); DetailsVideosList.Add(new VideoViewModel(r, SelectedCategory != null ? SelectedCategory.Category : null, SelectedSite.Name, SelectedSite.Site.Settings.UtilName, true)); });
-            ImageDownloader.GetImages<VideoInfo>(choices);
+            ImageDownloader.GetImages<DetailVideoInfo>(choices);
             IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
             workflowManager.NavigatePushAsync(Guids.WorkflowStateDetails, new NavigationContextConfig() { NavigationContextDisplayLabel = SelectedVideo.Title });
         }

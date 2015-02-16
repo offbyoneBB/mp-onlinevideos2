@@ -17,7 +17,7 @@ namespace Standalone.ViewModels
 
 			videoInfo.CleanDescriptionAndTitle();
 
-			Name = useTitle2 ? videoInfo.Title2 : videoInfo.Title;
+			Name = useTitle2 ? ((OnlineVideos.DetailVideoInfo)videoInfo).Title2 : videoInfo.Title;
 			Description = videoInfo.Description;
 			ThumbnailImage = videoInfo.ThumbnailImage;
 			Length = videoInfo.Length;
@@ -69,7 +69,7 @@ namespace Standalone.ViewModels
 
 	public static class VideoList
 	{
-		public static ListCollectionView GetVideosView(OnlineVideosMainWindow window, IList<OnlineVideos.VideoInfo> videoList, bool addNextPage, bool useTitle2 = false)
+		public static ListCollectionView GetVideosView<T>(OnlineVideosMainWindow window, IList<T> videoList, bool addNextPage, bool useTitle2 = false) where T : OnlineVideos.VideoInfo
 		{
 			List<Video> convertedVideos = new List<Video>();
 			foreach (OnlineVideos.VideoInfo video in videoList)

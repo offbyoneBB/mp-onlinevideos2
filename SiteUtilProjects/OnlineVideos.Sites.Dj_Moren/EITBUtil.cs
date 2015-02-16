@@ -90,7 +90,6 @@ namespace OnlineVideos.Sites
                 VideoInfo video = new VideoInfo();
                 JObject customFields = JObject.Parse(episodio["customFields"].ToString());
                 video.Title = (String)customFields.SelectToken("name_c");
-                video.Title2 = (String)episodio.SelectToken("name");
                 video.Description = (String)customFields.SelectToken("shortdescription_c");
                 video.Airdate = ConvertFromUnixTimestamp(double.Parse((String)episodio.SelectToken("publishedDate"))).ToString("dd-MM-yyyy HH:mm:ss");
                 TimeSpan ts = TimeSpan.FromMilliseconds(double.Parse(episodio.SelectToken("length").ToString()));
