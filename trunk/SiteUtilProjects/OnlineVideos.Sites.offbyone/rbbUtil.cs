@@ -100,7 +100,7 @@ namespace OnlineVideos.Sites
 							//video.ImageUrl = category.Thumb;
 							foreach (var sub_li in sub_lis)
 							{
-								var subVideo = new VideoInfo() { Title = video.Title };
+								var subVideo = new DetailVideoInfo() { Title = video.Title };
 								FillVideoInfoFromLI(sub_li, subVideo, false);
 								subVideo.Length = subVideo.Length.Replace("min", "").Trim();
 								if (!string.IsNullOrEmpty(subVideo.VideoUrl))
@@ -135,8 +135,12 @@ namespace OnlineVideos.Sites
 				if (link != null)
 					video.VideoUrl = "http://mediathek.rbb-online.de" + link.GetAttributeValue("href", "");
 
-				video.Title += " - " + h3.InnerText.Trim();
-				video.Title2 = h3.InnerText.Trim();
+                if (appendTitle)
+                    video.Title += " - " + h3.InnerText.Trim();
+                else
+                {
+                    (video as DetailVideoInfo).Title2 = h3.InnerText.Trim();
+                }
 			}
 
 			var span = li.Descendants("span").Where(s => s.GetAttributeValue("class", "") == "mt-airtime").FirstOrDefault();
@@ -153,7 +157,7 @@ namespace OnlineVideos.Sites
 			}
 		}
 
-		public List<VideoInfo> GetVideoChoices(VideoInfo video)
+        public List<DetailVideoInfo> GetVideoChoices(VideoInfo video)
 		{
 			return (video as RbbVideoInfo).Children;
 		}
@@ -187,9 +191,9 @@ namespace OnlineVideos.Sites
 	{
 		public RbbVideoInfo() 
 		{
-			Children = new List<VideoInfo>();
+			Children = new List<DetailVideoInfo>();
 		}
 
-		public List<VideoInfo> Children { get; set; }
+        public List<DetailVideoInfo> Children { get; set; }
 	}
 }

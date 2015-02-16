@@ -343,7 +343,6 @@ namespace OnlineVideos.Sites
                     video.Title = m2.Groups["title"].Value;
                     video.Title = video.Title.Replace("&#160;", " ");
 
-                    video.Title2 = m2.Groups["showtitle"].Value;
                     video.Thumb = m2.Groups["img"].Value;
                     video.VideoUrl = ORF_BASE + m2.Groups["url"].Value;
                     video.Other = CategoryType.Live;

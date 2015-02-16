@@ -152,8 +152,8 @@ namespace OnlineVideos.Sites.Pondman {
 			return getVideoList(section);
 		}
 
-		public List<VideoInfo> GetVideoChoices(VideoInfo video) {
-			List<VideoInfo> clips = new List<VideoInfo>();
+		public List<DetailVideoInfo> GetVideoChoices(VideoInfo video) {
+            List<DetailVideoInfo> clips = new List<DetailVideoInfo>();
 
 			// make the movie request
 			Movie movie = video.Other as Movie;
@@ -175,7 +175,7 @@ namespace OnlineVideos.Sites.Pondman {
 			}
 			// get initial video list
 			foreach (Video clip in movie.Videos) {
-				VideoInfo vid = new VideoInfo();
+                DetailVideoInfo vid = new DetailVideoInfo();
 				vid.Other = clip;
 				vid.Title = movie.Title + " - " + clip.Title;
 				vid.Title2 = clip.Title;

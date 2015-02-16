@@ -57,13 +57,18 @@ namespace OnlineVideos.MediaPortal1
             MediaPortal.Util.Utils.SetDefaultIcons(this);
         }
 
-        public OnlineVideosGuiListItem(VideoInfo item, bool useTitle2 = false)
+        public OnlineVideosGuiListItem(VideoInfo item)
         {
-            Label = useTitle2 ? item.Title2 : item.Title;
+            Label = item.Title;
             Label2 = !string.IsNullOrEmpty(item.Length) ? Helpers.TimeUtils.TimeFromSeconds(item.Length) : item.Airdate;
             Item = item;
             IconImage = "defaultVideo.png";
             IconImageBig = "defaultVideoBig.png";
+        }
+
+        public OnlineVideosGuiListItem(DetailVideoInfo item) : this((VideoInfo)item)
+        {
+            Label = item.Title2;
         }
         #endregion
 

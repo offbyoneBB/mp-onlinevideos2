@@ -1,5 +1,4 @@
-﻿using OnlineVideos.Sites;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace OnlineVideos
@@ -7,8 +6,6 @@ namespace OnlineVideos
     public class VideoInfo : SearchResultItem
     {
         public string Title { get; set; }
-        /// <summary>Used as label for the clips retrieved by <see cref="IChoice.GetVideoChoices"/></summary>
-        public string Title2 { get; set; }
         public string VideoUrl { get; set; }
         public string SubtitleUrl { get; set; }
         public string SubtitleText { get; set; }
@@ -23,7 +20,6 @@ namespace OnlineVideos
         public VideoInfo()
         {
             Title = string.Empty;
-            Title2 = string.Empty;
             Description = string.Empty;
             VideoUrl = string.Empty;
             Thumb = string.Empty;

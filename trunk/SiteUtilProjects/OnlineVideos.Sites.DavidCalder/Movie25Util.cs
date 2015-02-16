@@ -87,16 +87,17 @@ namespace OnlineVideos.Sites.DavidCalder
       return videos;
     }
 
-    public List<VideoInfo> GetVideoChoices(VideoInfo video)
+    public List<DetailVideoInfo> GetVideoChoices(VideoInfo video)
     {
-      List<VideoInfo> videos = new List<VideoInfo>();
+      List<DetailVideoInfo> videos = new List<DetailVideoInfo>();
+      videos.Add(new DetailVideoInfo(video) { Title2 = "Full Movie" });
       if (video.Other.GetType() == typeof(TMDbVideoDetails))
       {
         TMDbVideoDetails videoDetail = (TMDbVideoDetails)video.Other;
 
         foreach (TMDB.Trailer trailer in videoDetail.TMDbDetails.videos.TrailerList())
         {
-          VideoInfo clip = new VideoInfo();
+          var clip = new DetailVideoInfo();
           clip.Description = videoDetail.TMDbDetails.overview;
           clip.Thumb = videoDetail.TMDbDetails.PosterPathFullUrl();
           clip.Title = string.Format("{0}  –  {1}", video.Title, trailer.name);
@@ -106,7 +107,7 @@ namespace OnlineVideos.Sites.DavidCalder
           videos.Add(clip);
         }
       }
-      videos.Insert(0, video);
+      
       return videos;
     }
 
