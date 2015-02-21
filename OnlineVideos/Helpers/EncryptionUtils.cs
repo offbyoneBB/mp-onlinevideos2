@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace OnlineVideos.Helpers
@@ -34,6 +36,21 @@ namespace OnlineVideos.Helpers
             }
 
             return result.ToString();
+        }
+
+        static byte[] aditionalEntropy = { };
+        public static string SymEncryptLocalPC(string data)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(data);
+            bytes = ProtectedData.Protect(bytes, aditionalEntropy, DataProtectionScope.LocalMachine);
+            return Convert.ToBase64String(bytes);
+        }
+
+        public static string SymDecryptLocalPC(string data)
+        {
+            byte[] bytes = Convert.FromBase64String(data);
+            bytes = ProtectedData.Unprotect(bytes, aditionalEntropy, DataProtectionScope.LocalMachine);
+            return Encoding.UTF8.GetString(bytes);
         }
     }
 }

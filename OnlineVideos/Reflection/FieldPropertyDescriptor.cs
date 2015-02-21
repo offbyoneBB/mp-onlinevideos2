@@ -60,8 +60,14 @@ namespace OnlineVideos.Reflection
             object[] attrs = fieldInfo.GetCustomAttributes(typeof(CategoryAttribute), false);
             if (attrs.Length > 0 && ((CategoryAttribute)attrs[0]).Category == UserConfigurable.ONLINEVIDEOS_USERCONFIGURATION_CATEGORY)
             {
+                // values marked as password must be encrypted
+                bool encrypt = false;
+                attrs = fieldInfo.GetCustomAttributes(typeof(PasswordPropertyTextAttribute), false);
+                if (attrs != null && attrs.Length > 0)
+                    encrypt = ((PasswordPropertyTextAttribute)attrs[0]).Password;
+
                 string key = ((UserConfigurable)component).GetConfigurationKey(fieldInfo.Name);
-                OnlineVideoSettings.Instance.UserStore.SetValue(key, value.ToString());
+                OnlineVideoSettings.Instance.UserStore.SetValue(key, value.ToString(), encrypt);
             }
         }
     }
