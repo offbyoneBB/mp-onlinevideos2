@@ -23,16 +23,17 @@ namespace OnlineVideos.MediaPortal2.Configuration
 				_settings.Entries = new SerializableDictionary<string, string>();
 		}
 
-		public string GetValue(string key)
+        public string GetValue(string key, bool decrypt = false)
 		{
 			string result = null;
 			_settings.Entries.TryGetValue(key, out result);
-			return result;
+            return (result != null && decrypt) ? EncryptionUtils.SymDecryptLocalPC(result) : result;
 		}
 
-		public void SetValue(string key, string value)
+        public void SetValue(string key, string value, bool encrypt = false)
 		{
 			_hasChanges = true;
+            if (encrypt) value = EncryptionUtils.SymEncryptLocalPC(value);
 			_settings.Entries[key] = value;
 		}
 

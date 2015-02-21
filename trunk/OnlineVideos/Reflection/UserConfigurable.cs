@@ -126,16 +126,28 @@ namespace OnlineVideos
 
         internal abstract string GetConfigurationKey(string fieldName);
 
+        /// <summary>
+        /// Sets the user configurable value from the <see cref="OnlineVideoSettings.UserStore "/> to the given field
+        /// when it is attributed with the <see cref="CategoryAttribute"/> and the <see cref="ONLINEVIDEOS_USERCONFIGURATION_CATEGORY"/>.
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="categoryAttribute"></param>
         protected virtual void SetUserConfigurationValue(FieldInfo field, CategoryAttribute categoryAttribute)
         {
             if (categoryAttribute != null &&
-                categoryAttribute.Category == ONLINEVIDEOS_USERCONFIGURATION_CATEGORY && 
+                categoryAttribute.Category == ONLINEVIDEOS_USERCONFIGURATION_CATEGORY &&
                 OnlineVideoSettings.Instance.UserStore != null)
             {
-                string value = OnlineVideoSettings.Instance.UserStore.GetValue(GetConfigurationKey(field.Name));
-                if (value != null)
+                try
                 {
-                    try
+                    // values marked as password must be decrypted
+                    bool decrypt = false;
+                    object[] attrs = field.GetCustomAttributes(typeof(PasswordPropertyTextAttribute), false);
+                    if (attrs != null && attrs.Length > 0)
+                        decrypt = ((PasswordPropertyTextAttribute)attrs[0]).Password;
+
+                    string value = OnlineVideoSettings.Instance.UserStore.GetValue(GetConfigurationKey(field.Name), decrypt);
+                    if (value != null)
                     {
                         if (field.FieldType.IsEnum)
                         {
@@ -146,10 +158,10 @@ namespace OnlineVideos
                             field.SetValue(this, Convert.ChangeType(value, field.FieldType));
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        Log.Warn("{0} - could not set User Configuration Value: {1}. Error: {2}", ToString(), field.Name, ex.Message);
-                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Warn("{0} - could not set User Configuration Value: {1}. Error: {2}", ToString(), field.Name, ex.Message);
                 }
             }
         }

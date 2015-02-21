@@ -31,7 +31,8 @@ namespace OnlineVideos.Reflection
         {
             get
             {
-                return FieldPropertyDescriptor.Attributes.Contains(new System.ComponentModel.PasswordPropertyTextAttribute(true));
+                var pwAttr = FieldPropertyDescriptor.Attributes[typeof(PasswordPropertyTextAttribute)];
+                return pwAttr != null ? ((PasswordPropertyTextAttribute)pwAttr).Password : false;
             }
         }
 
