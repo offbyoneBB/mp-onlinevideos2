@@ -21,7 +21,10 @@ namespace OnlineVideos.MediaPortal1
             using (Settings settings = new MPSettings())
             {
                 if (encrypt) value = EncryptionUtils.SymEncryptLocalPC(value);
-                settings.SetValue(PluginConfiguration.CFG_SECTION, key, value);
+                if (string.IsNullOrWhiteSpace(value))
+                    settings.RemoveEntry(PluginConfiguration.CFG_SECTION, key);
+                else
+                    settings.SetValue(PluginConfiguration.CFG_SECTION, key, value);
             }
         }
 
