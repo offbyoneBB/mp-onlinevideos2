@@ -2204,13 +2204,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Dreamfilm.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{2509f6ea-67a8-47ad-af16-b80729cbe3e4}-Dreamfilm.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Dreamfilm.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\Sky Go Uk.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{3006fde1-5971-443e-b788-8a96c3140216}-Sky Go Uk.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Sky Go Uk.png</DestinationFilename>
@@ -2242,13 +2235,6 @@
               <LocalFileName>..\SiteImages\Banners\4oD Web.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{2e2c50b9-3f1a-46ef-bfb1-133f8bbfef67}-4oD Web.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\4oD Web.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Dreamfilm.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{4b6a7da2-03fb-4470-a695-35def89cc64d}-Dreamfilm.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Dreamfilm.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -2435,13 +2421,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\TFPlay.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{0d9a550c-dd61-4a74-ae3c-b8283b3a81d8}-TFPlay.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TFPlay.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\Amazon Prime UK.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{1769b239-3843-4cdc-9549-89ef1ee78883}-Amazon Prime UK.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Amazon Prime UK.png</DestinationFilename>
@@ -2494,13 +2473,6 @@
               <LocalFileName>..\SiteImages\Icons\Sweflix.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{c52052ac-fd0a-403f-8bc1-b7e2a40aa49d}-Sweflix.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Sweflix.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\TFPlay.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{019d13a5-caf9-48de-b76a-bcea3e70538e}-TFPlay.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TFPlay.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -3936,13 +3908,14 @@ public class Script
     <VersionDescription>fixed SearchHistory not restored correctly on next MP start (Encoding was wrong)
 fixed possible MediaPortal crashes due to the notify dialog after Download not called on UI thread
 added option to pass subtitle info from a Hoster to a SiteUtil
+added automatic encryption of user's passwords
 improved Browser Host Player
 included Titan skin files
 moved to .Net 4.0
 changed to use the new IPTV filter</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=10&amp;cf_id=65</OnlineLocation>
-    <ReleaseDate>2015-02-01T15:00:00</ReleaseDate>
+    <ReleaseDate>2015-02-21T15:00:00</ReleaseDate>
     <Tags>online,videos,youtube</Tags>
     <Location>..\MPEI\[Name][Version].mpe1</Location>
     <Params>
@@ -6173,13 +6146,6 @@ changed to use the new IPTV filter</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Dreamfilm.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{2509f6ea-67a8-47ad-af16-b80729cbe3e4}-Dreamfilm.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Dreamfilm.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\Sky Go Uk.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{3006fde1-5971-443e-b788-8a96c3140216}-Sky Go Uk.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Sky Go Uk.png</DestinationFilename>
@@ -6211,13 +6177,6 @@ changed to use the new IPTV filter</VersionDescription>
         <LocalFileName>..\SiteImages\Banners\4oD Web.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{2e2c50b9-3f1a-46ef-bfb1-133f8bbfef67}-4oD Web.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\4oD Web.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Dreamfilm.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{4b6a7da2-03fb-4470-a695-35def89cc64d}-Dreamfilm.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Dreamfilm.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -6404,13 +6363,6 @@ changed to use the new IPTV filter</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\TFPlay.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{0d9a550c-dd61-4a74-ae3c-b8283b3a81d8}-TFPlay.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TFPlay.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\Amazon Prime UK.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{1769b239-3843-4cdc-9549-89ef1ee78883}-Amazon Prime UK.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Amazon Prime UK.png</DestinationFilename>
@@ -6463,13 +6415,6 @@ changed to use the new IPTV filter</VersionDescription>
         <LocalFileName>..\SiteImages\Icons\Sweflix.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{c52052ac-fd0a-403f-8bc1-b7e2a40aa49d}-Sweflix.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Sweflix.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\TFPlay.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{019d13a5-caf9-48de-b76a-bcea3e70538e}-TFPlay.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TFPlay.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
