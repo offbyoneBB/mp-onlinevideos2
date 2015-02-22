@@ -4,10 +4,10 @@ using System.Runtime.Serialization;
 using System.Xml;
 using System.Text;
 
-namespace Standalone
+namespace Standalone.Configuration
 {
-	[DataContract(Name = "OnlineVideos")]
-	public class Config
+    [DataContract(Name = "OnlineVideos", Namespace = "http://schemas.datacontract.org/2004/07/Standalone")]
+	public class Settings
 	{
 		const string FileName = "OnlineVideoSettings.xml";
 
@@ -20,30 +20,33 @@ namespace Standalone
 				{
                     using (var fs = File.OpenRead(filePath))
                     {
-                        Instance = new DataContractSerializer(typeof(Config)).ReadObject(fs) as Config;
+                        Instance = new DataContractSerializer(typeof(Settings)).ReadObject(fs) as Settings;
                     }
 				}
 				catch (Exception ex)
 				{
 					OnlineVideos.OnlineVideoSettings.Instance.Logger.Error(ex);
-					Instance = new Config();
+					Instance = new Settings();
 				}
 			}
 			else
 			{
-				Instance = new Config();
+				Instance = new Settings();
 			}
 			Instance.FilePath = filePath;
 		}
 
 		public void Save()
 		{
-			var writer = XmlWriter.Create(FilePath, new XmlWriterSettings() { Indent = true, CloseOutput = true, Encoding = Encoding.UTF8, OmitXmlDeclaration = true });
-			new DataContractSerializer(typeof(Config)).WriteObject(writer, this);
-			writer.Close();
+            using (var writer = XmlWriter.Create(FilePath, new XmlWriterSettings() { Indent = true, CloseOutput = true, Encoding = Encoding.UTF8, OmitXmlDeclaration = true }))
+            {
+                new DataContractSerializer(typeof(Settings)).WriteObject(writer, this);
+                writer.Flush();
+                writer.Close();
+            }
 		}
 
-		public static Config Instance { get; private set; }
+		public static Settings Instance { get; private set; }
 
 		public string FilePath { get; private set; }
 

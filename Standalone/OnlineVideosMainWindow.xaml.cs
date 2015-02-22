@@ -14,6 +14,7 @@ using OnlineVideos.MPUrlSourceFilter;
 using OnlineVideos.Downloading;
 using OnlineVideos.CrossDomain;
 using OnlineVideos.Helpers;
+using Standalone.Configuration;
 
 namespace Standalone
 {
@@ -54,9 +55,10 @@ namespace Standalone
             // set and create folders at CommonApplicationData/OnlineVideos
             string writeableBaseDir = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "OnlineVideos\\");
             if (!System.IO.Directory.Exists(writeableBaseDir)) System.IO.Directory.CreateDirectory(writeableBaseDir);
-            Config.Load(writeableBaseDir);
+            Settings.Load(writeableBaseDir);
             OnlineVideoSettings.Instance.ConfigDir = writeableBaseDir;
             OnlineVideoSettings.Instance.Logger = new Logger(System.IO.Path.Combine(writeableBaseDir, "Logs"));
+            OnlineVideoSettings.Instance.UserStore = new Configuration.UserSettings(writeableBaseDir);
             OnlineVideoSettings.Instance.DllsDir = System.IO.Path.Combine(writeableBaseDir, "SiteUtilDlls");
             if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.DllsDir)) System.IO.Directory.CreateDirectory(OnlineVideoSettings.Instance.DllsDir);
 			OnlineVideoSettings.Instance.ThumbsDir = System.IO.Path.Combine(writeableBaseDir, "Thumbs");
@@ -100,7 +102,7 @@ namespace Standalone
             OnlineVideoSettings.Instance.LoadSites();
 			// force autoupdate when no dlls or icons or banners are found -> fresh install
 			bool forceUpdate = System.IO.Directory.GetFiles(OnlineVideoSettings.Instance.DllsDir, "OnlineVideos.Sites.*.dll").Length == 0 || System.IO.Directory.GetFiles(OnlineVideoSettings.Instance.ThumbsDir, "*.png", System.IO.SearchOption.AllDirectories).Length == 0;
-			if (forceUpdate || (DateTime.Now - Config.Instance.LastAutoUpdate > TimeSpan.FromHours(1) && MessageBox.Show(Translation.Instance.PerformAutomaticUpdate, Translation.Instance.AutomaticUpdate, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes) == MessageBoxResult.Yes))
+			if (forceUpdate || (DateTime.Now - Settings.Instance.LastAutoUpdate > TimeSpan.FromHours(1) && MessageBox.Show(Translation.Instance.PerformAutomaticUpdate, Translation.Instance.AutomaticUpdate, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes) == MessageBoxResult.Yes))
             {
 				Title = "OnlineVideos - " + Translation.Instance.AutomaticUpdate + " ...";
                 waitCursor.Visibility = System.Windows.Visibility.Visible;
@@ -119,7 +121,7 @@ namespace Standalone
                     },
                     delegate(Gui2UtilConnector.ResultInfo resultInfo)
                     {
-						Config.Instance.LastAutoUpdate = DateTime.Now;
+						Settings.Instance.LastAutoUpdate = DateTime.Now;
                         Title = "OnlineVideos";
                         waitCursor.tbxCenter.Text = "";
                         waitCursor.Visibility = System.Windows.Visibility.Hidden;
@@ -1380,7 +1382,7 @@ namespace Standalone
 
 		private void Window_Closed(object sender, EventArgs e)
 		{
-			Config.Instance.Save();
+			Settings.Instance.Save();
 		}
 
         double volumeToRestore = 0.0d;
