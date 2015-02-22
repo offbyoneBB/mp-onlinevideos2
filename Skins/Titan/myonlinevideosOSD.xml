@@ -207,9 +207,7 @@
     	<font>font11</font>
       <textcolor>ff00b7ff</textcolor>
 		</control>
-	
-		<include>videoOSD.mediainfo.xml</include>
-		
+			
 		<control>
 			<description>Info bg</description>
 			<type>image</type>
