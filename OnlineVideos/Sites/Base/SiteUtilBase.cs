@@ -1,11 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Net;
 using System.Reflection;
-using System.Text;
-using System.Xml;
 using OnlineVideos.MPUrlSourceFilter.UserSettings;
 
 namespace OnlineVideos.Sites
@@ -376,51 +372,5 @@ namespace OnlineVideos.Sites
             return Settings == null ? base.ToString() : Settings.Name;
         }
 
-        # region helper functions
-
-        /// <summary>
-        /// Generic version of <see cref="GetWebData"/> that will automatically convert the retrieved data into the type you provided.
-        /// </summary>
-        /// <typeparam name="T">The type you want the returned data to be. Supported are:
-        /// <list type="bullet">
-        /// <item><description><see cref="String"/></description></item>
-        /// <item><description><see cref="Newtonsoft.Json.Linq.JToken"/></description></item>
-        /// <item><description><see cref="Newtonsoft.Json.Linq.JObject"/></description></item>
-        /// <item><description><see cref="RssToolkit.Rss.RssDocument"/></description></item>
-        /// <item><description><see cref="XmlDocument"/></description></item>
-        /// <item><description><see cref="System.Xml.Linq.XDocument"/></description></item>
-        /// <item><description><see cref="HtmlAgilityPack.HtmlDocument"/></description></item>
-        /// </list>
-        /// </typeparam>
-        /// <returns>The data returned by a <see cref="HttpWebResponse"/> converted to the specified type.</returns>
-        protected virtual T GetWebData<T>(string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
-        {
-            return WebCache.Instance.GetWebData<T>(url, postData, cookies, referer, proxy, forceUTF8, allowUnsafeHeader, userAgent, encoding, headers, cache);
-        }
-
-        /// <summary>
-        /// This method should be used whenever requesting data via http (GET or POST) in your SiteUtil.
-        /// Retrieved data is added to a cache if a GET request with HTTP Status 200 and more than 500 bytes was successful. 
-        /// The cache timeout is user configurable (<see cref="OnlineVideoSettings.CacheTimeout"/>).
-        /// You can provide some request settings with the optional parameters.
-        /// </summary>
-        /// <param name="url">The url to request data from - the only mandatory parameter.</param>
-        /// <param name="postData">Any data you want to POST with your request.</param>
-        /// <param name="cookies">A <see cref="CookieContainer"/> that will send cookies along with the request and afterwards contains all cookies of the response.</param>
-        /// <param name="referer">A referer that will be send with the request.</param>
-        /// <param name="proxy">If you want to use a proxy for the request, give a <see cref="IWebProxy"/>.</param>
-        /// <param name="forceUTF8">Some server are not returning a valid CharacterSet on the response, set to true to force reading the response content as UTF8.</param>
-        /// <param name="allowUnsafeHeader">Some server return headers that are treated as unsafe by .net. In order to retrieve that data set this to true.</param>
-        /// <param name="userAgent">You can provide a custom UserAgent for the request, otherwise the default one (<see cref="OnlineVideoSettings.UserAgent"/>) is used.</param>
-        /// <param name="encoding">Set an <see cref="Encoding"/> for reading the response data.</param>
-        /// <param name="headers">Allows to set your own custom headers for the request</param>
-        /// <param name="cache">Controls if the result should be cached - default true</param>
-        /// <returns>The data returned by a <see cref="HttpWebResponse"/>.</returns>
-        protected virtual string GetWebData(string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
-        {
-            return WebCache.Instance.GetWebData(url, postData, cookies, referer, proxy, forceUTF8, allowUnsafeHeader, userAgent, encoding, headers, cache);
-        }
-
-        #endregion
     }
 }
