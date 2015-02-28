@@ -286,6 +286,7 @@
     <Compile Include="Helpers\EncryptionUtils.cs" />
     <Compile Include="Helpers\FileUtils.cs" />
     <Compile Include="Helpers\RssUtils.cs" />
+    <Compile Include="Helpers\StringHash.cs" />
     <Compile Include="Helpers\StringUtils.cs" />
     <Compile Include="Helpers\TimeUtils.cs" />
     <Compile Include="Helpers\UriUtils.cs" />
