@@ -139,7 +139,7 @@ namespace OnlineVideos
         public bool ShouldSerializeDescription() { return !string.IsNullOrEmpty(Description); }
 
         [DataMember(EmitDefaultValue = false, Order = 8)]
-        public StringHash Configuration { get; set; }
+        public Helpers.StringHash Configuration { get; set; }
         public bool ShouldSerializeConfiguration() { return Configuration != null && Configuration.Count > 0; }
 
         [DataMember(EmitDefaultValue = false, Order = 9)]
@@ -210,7 +210,7 @@ namespace OnlineVideos
             }
 
             // 2. get a "clean" site by creating it with empty SiteSettings
-            Configuration = new StringHash();
+            Configuration = new Helpers.StringHash();
             Sites.SiteUtilBase cleanSiteUtil = Sites.SiteUtilFactory.CreateFromShortName(UtilName, this);
 
             // 3. compare and collect different settings
@@ -408,57 +408,4 @@ namespace OnlineVideos
         }
         #endregion
     }
-
-    #region HelperClass to Serialize a Dictionary of strings
-
-    [Serializable]
-    public class StringHash: Dictionary<string, string>, IXmlSerializable
-    {
-		public StringHash() : base() { }
-
-		protected StringHash(SerializationInfo info, StreamingContext context) : base(info, context) { }
-
-        public System.Xml.Schema.XmlSchema GetSchema()
-        {
-            return null;
-        } 
-
-        public void ReadXml(System.Xml.XmlReader reader)
-        {
-            bool wasEmpty = reader.IsEmptyElement;
-            reader.Read();
-            if (wasEmpty) return;            
-            while (reader.NodeType != System.Xml.XmlNodeType.EndElement)
-            {
-                if (reader.IsEmptyElement)
-                {
-                    reader.Read();
-                }
-                else
-                {
-                    string key = reader.GetAttribute("key");
-                    reader.ReadStartElement("item");
-                    string value = reader.ReadContentAsString();
-                    reader.ReadEndElement();
-                    this.Add(key, value);
-                    reader.MoveToContent();
-                }
-            }            
-            reader.ReadEndElement();            
-        } 
-
-        public void WriteXml(System.Xml.XmlWriter writer)
-        {
-            foreach (string key in this.Keys)
-            {
-                writer.WriteStartElement("item");
-                writer.WriteAttributeString("key", key);
-                writer.WriteCData(this[key]);
-                writer.WriteEndElement();
-            }
-        }
-    }
-
-    #endregion
-
 }
