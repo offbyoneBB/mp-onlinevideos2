@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace OnlineVideos.Sites
 {
     /// <summary>
-    /// Description of FavoriteUtil.
+    /// A site implementation for favorites that uses the <see cref="IFavoritesDatabase"/>.
     /// </summary>
     public class FavoriteUtil : SiteUtilBase, IFilter
     {
@@ -14,12 +14,13 @@ namespace OnlineVideos.Sites
             public SiteUtilBase FavSite { get; protected set; }
             public SiteUtilBase Site { get; protected set; }
             public Category SiteCategory { get; protected set; }
+            public FavoriteDbCategory FavoriteDbCategory { get; protected set; }
 
-            public FavoriteCategory(RssLink favCat, SiteUtilBase util, SiteUtilBase favUtil)
+            public FavoriteCategory(FavoriteDbCategory favCat, SiteUtilBase util, SiteUtilBase favUtil)
             {
-                this.Site = util;
+                Site = util;
                 FavSite = favUtil;
-                Other = favCat;
+                FavoriteDbCategory = favCat;
                 Name = favCat.Name;
                 Description = favCat.Description;
                 Thumb = favCat.Thumb;
@@ -27,7 +28,7 @@ namespace OnlineVideos.Sites
 
             public void DiscoverSiteCategory()
             {
-                string[] hierarchy = ((string)(Other as RssLink).Other).Split('|');
+                string[] hierarchy = FavoriteDbCategory.RecursiveName.Split('|');
                 for (int i = 0; i < hierarchy.Length; i++)
                 {
                     if (SiteCategory != null)
@@ -61,7 +62,7 @@ namespace OnlineVideos.Sites
 
         public override List<String> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
-            SiteUtilBase util = OnlineVideoSettings.Instance.SiteUtilsList[(video as FavoriteVideoInfo).SiteName];
+            SiteUtilBase util = OnlineVideoSettings.Instance.SiteUtilsList[(video as FavoriteDbVideoInfo).SiteName];
             return util.GetMultipleVideoUrls(video, inPlaylist);
         }
 
@@ -124,7 +125,7 @@ namespace OnlineVideos.Sites
                         Settings.Categories.Add(cat);
 
                         // create subcategories if any
-                        List<Category> favCats = OnlineVideoSettings.Instance.FavDB.GetFavoriteCategories(aSite.Name);
+                        var favCats = OnlineVideoSettings.Instance.FavDB.GetFavoriteCategories(aSite.Name);
                         if (favCats.Count > 0)
                         {
                             cat.HasSubCategories = true;
@@ -134,12 +135,12 @@ namespace OnlineVideos.Sites
                             {
                                 cat.SubCategories.Add(new RssLink() { Name = Translation.Instance.All, Url = aSite.Name, ParentCategory = cat, EstimatedVideoCount = lsSiteId.Value });
                             }
-                            foreach (Category favCat in favCats)
+                            foreach (var favCat in favCats)
                             {
-                                FavoriteCategory fc = new FavoriteCategory(favCat as RssLink, util, this) { ParentCategory = cat };
+                                FavoriteCategory fc = new FavoriteCategory(favCat, util, this) { ParentCategory = cat };
                                 if (String.IsNullOrEmpty(fc.Description))
                                 {
-                                    string[] parts = ((string)(fc.Other as RssLink).Other).Split('|');
+                                    string[] parts = favCat.RecursiveName.Split('|');
                                     if (parts.Length > 1)
                                         fc.Description = String.Join(" / ", parts, 0, parts.Length - 1);
                                 }
@@ -198,13 +199,13 @@ namespace OnlineVideos.Sites
             {
                 if (selectedCategory is FavoriteCategory)
                 {
-                    result.RefreshCurrentItems = OnlineVideoSettings.Instance.FavDB.RemoveFavoriteCategory(((FavoriteCategory)selectedCategory).Other as Category);
+                    result.RefreshCurrentItems = OnlineVideoSettings.Instance.FavDB.RemoveFavoriteCategory(((FavoriteCategory)selectedCategory).FavoriteDbCategory);
                     if (result.RefreshCurrentItems) selectedCategory.ParentCategory.SubCategories.Remove(selectedCategory);
                     return result;
                 }
                 else
                 {
-                    result.RefreshCurrentItems = OnlineVideoSettings.Instance.FavDB.RemoveFavoriteVideo(selectedItem as FavoriteVideoInfo);
+                    result.RefreshCurrentItems = OnlineVideoSettings.Instance.FavDB.RemoveFavoriteVideo(selectedItem as FavoriteDbVideoInfo);
                 }
                 // we have to manually refresh the categories
                 if (result.RefreshCurrentItems && selectedCategory.ParentCategory != null) DiscoverDynamicCategories();

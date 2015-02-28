@@ -103,7 +103,7 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-        public bool RemoveFavoriteVideo(FavoriteVideoInfo foVideo)
+        public bool RemoveFavoriteVideo(FavoriteDbVideoInfo foVideo)
         {
             String lsSQL = string.Format("delete from FAVORITE_VIDEOS where VDO_ID='{0}' ", foVideo.Id);
             m_db.Execute(lsSQL);
@@ -141,7 +141,7 @@ namespace OnlineVideos.MediaPortal1
 
             for (int iRow = 0; iRow < loResultSet.Rows.Count; iRow++)
             {
-                var video = CrossDomain.OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(FavoriteVideoInfo).Assembly.FullName, typeof(FavoriteVideoInfo).FullName) as FavoriteVideoInfo;
+                var video = CrossDomain.OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(FavoriteDbVideoInfo).Assembly.FullName, typeof(FavoriteDbVideoInfo).FullName) as FavoriteDbVideoInfo;
                 video.Description = DatabaseUtility.Get(loResultSet, iRow, "VDO_DESC");
                 video.Thumb = DatabaseUtility.Get(loResultSet, iRow, "VDO_IMG_URL");
                 video.Length = DatabaseUtility.Get(loResultSet, iRow, "VDO_LENGTH");
@@ -197,20 +197,20 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-        public List<Category> GetFavoriteCategories(string siteName)
+        public List<FavoriteDbCategory> GetFavoriteCategories(string siteName)
         {
 			DatabaseUtility.RemoveInvalidChars(ref siteName);
-            List<Category> results = new List<Category>();
+            var results = new List<FavoriteDbCategory>();
             SQLiteResultSet resultSet = m_db.Execute(string.Format("select * from Favorite_Categories where CAT_SITE_ID = '{0}'", siteName));
             for (int iRow = 0; iRow < resultSet.Rows.Count; iRow++)
             {
                 results.Add(
-                    new RssLink() { 
-                        Name = DatabaseUtility.Get(resultSet, iRow, "CAT_Name"), 
+                    new FavoriteDbCategory() { 
+                        Name = DatabaseUtility.Get(resultSet, iRow, "CAT_Name"),
                         Description = DatabaseUtility.Get(resultSet, iRow, "CAT_Desc"),
                         Thumb = DatabaseUtility.Get(resultSet, iRow, "CAT_ThumbUrl"),
-                        Url = DatabaseUtility.Get(resultSet, iRow, "CAT_ID"),
-                        Other = DatabaseUtility.Get(resultSet, iRow, "CAT_Hierarchy")
+                        Id = DatabaseUtility.GetAsInt(resultSet, iRow, "CAT_ID"),
+                        RecursiveName = DatabaseUtility.Get(resultSet, iRow, "CAT_Hierarchy")
                     });
             }
             return results;
@@ -228,10 +228,10 @@ namespace OnlineVideos.MediaPortal1
             return results;
         }
 
-        public bool RemoveFavoriteCategory(Category cat)
+        public bool RemoveFavoriteCategory(FavoriteDbCategory cat)
         {
-            String lsSQL = string.Format("delete from Favorite_Categories where CAT_ID = '{0}'", (cat as RssLink).Url);
-            m_db.Execute(lsSQL);
+            String query = string.Format("delete from Favorite_Categories where CAT_ID = '{0}'", cat.Id);
+            m_db.Execute(query);
             return m_db.ChangedRows() > 0;
         }
 

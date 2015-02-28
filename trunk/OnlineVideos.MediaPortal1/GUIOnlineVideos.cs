@@ -504,7 +504,7 @@ namespace OnlineVideos.MediaPortal1
                                                 {
                                                     Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                                                     Video = aVideo,
-                                                    Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(selectedVideo as FavoriteVideoInfo).SiteName] : selectedSite,
+                                                    Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(selectedVideo as FavoriteDbVideoInfo).SiteName] : selectedSite,
                                                     ForcedPlayer = forcedPlayer
                                                 }, true);
                                     }
@@ -983,7 +983,7 @@ namespace OnlineVideos.MediaPortal1
                                             {
                                                 Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                                                 Video = selectedVideo,
-                                                Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(selectedVideo as FavoriteVideoInfo).SiteName] : selectedSite
+                                                Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(selectedVideo as FavoriteDbVideoInfo).SiteName] : selectedSite
                                             }, true);
                                 }
                             }
@@ -1011,7 +1011,7 @@ namespace OnlineVideos.MediaPortal1
                         {
                             Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                             Video = selectedVideo,
-                            Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(selectedVideo as FavoriteVideoInfo).SiteName] : selectedSite
+                            Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(selectedVideo as FavoriteDbVideoInfo).SiteName] : selectedSite
                         }, true, true);
                     }
                 }
@@ -1039,7 +1039,7 @@ namespace OnlineVideos.MediaPortal1
                     {
                         Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                         Video = (GUI_infoList.SelectedListItem as OnlineVideosGuiListItem).Item as VideoInfo,
-                        Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(selectedVideo as FavoriteVideoInfo).SiteName] : selectedSite
+                        Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(selectedVideo as FavoriteDbVideoInfo).SiteName] : selectedSite
                     }, true, actionType != Action.ActionType.ACTION_SELECT_ITEM);
                 }
             }
@@ -2525,7 +2525,7 @@ namespace OnlineVideos.MediaPortal1
                 {
                     Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                     Video = video,
-                    Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(video as FavoriteVideoInfo).SiteName] : SelectedSite
+                    Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(video as FavoriteDbVideoInfo).SiteName] : SelectedSite
                 });
             }
             if (currentPlaylist.Count > 0)
