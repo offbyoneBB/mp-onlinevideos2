@@ -131,6 +131,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             js += "container.style.height = window.innerHeight + 'px';";
             js += "container.className = \"\";";
             js += "container.className = \"js-hbo_video_container hbo_video_container fixed topleft full_width clip_container row z_9\";";
+            js += "document.getElementsByClassName('fixed_top_menu')[0].style.zIndex = 0; ";
             js += "var obj = document.getElementsByTagName('object')[0];";
             js += "obj.style.height = window.innerHeight + 'px';";
             js += "obj.style.width = window.innerWidth + 'px';";
