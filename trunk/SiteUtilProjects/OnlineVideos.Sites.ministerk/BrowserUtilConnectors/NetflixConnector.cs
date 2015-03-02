@@ -34,25 +34,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         private State _currentState = State.None;
         private bool _isPlayingOrPausing = false;
-        protected PictureBox _loadingPicture = new PictureBox();
-
-        /// <summary>
-        /// Show a loading image
-        /// </summary>
-        public void ShowLoading()
-        {
-            _loadingPicture.Image = Resources.loading;
-            _loadingPicture.Dock = DockStyle.Fill;
-            _loadingPicture.SizeMode = PictureBoxSizeMode.CenterImage;
-            _loadingPicture.BackColor = Color.Black;
-            if (!Browser.FindForm().Controls.Contains(_loadingPicture))
-                Browser.FindForm().Controls.Add(_loadingPicture);
-            _loadingPicture.BringToFront();
-            if (!_showLoading)
-            {
-                _loadingPicture.Hide();
-            }
-        }
 
         public override void OnClosing()
         {
@@ -89,7 +70,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             username = username.Replace("REMEMBERLOGIN", string.Empty);
             _showLoading = username.Contains("SHOWLOADING");
             username = username.Replace("SHOWLOADING", string.Empty);
-            ShowLoading();
+            if (_showLoading)
+                ShowLoading();
             string[] userProfile = username.Split('¥');
             _username = userProfile[0];
             _profile = userProfile[1];
@@ -104,7 +86,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         public override Entities.EventResult PlayVideo(string videoToPlay)
         {
-            ShowLoading();
+            if (_showLoading)
+                ShowLoading();
             ProcessComplete.Finished = false;
             ProcessComplete.Success = false;
             Url = videoToPlay;
@@ -183,7 +166,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 case State.Playing:
                     if (Url.Contains("movieid"))
                     {
-                        _loadingPicture.Hide();
+                        if (_showLoading)
+                            HideLoading();
                         _currentState = State.Playing;
                         ProcessComplete.Finished = true;
                         ProcessComplete.Success = true;
