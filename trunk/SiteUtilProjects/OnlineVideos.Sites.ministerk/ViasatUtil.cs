@@ -322,29 +322,33 @@ namespace OnlineVideos.Sites
 
         private string GetSubtitle(string url)
         {
-            XmlDocument xDoc = GetWebData<XmlDocument>(url, encoding: System.Text.Encoding.UTF8);
             string srt = string.Empty;
-            string srtFormat = "{0}\r\n{1}0 --> {2}0\r\n{3}\r\n";
-            string begin;
-            string end;
-            string text;
-            string textPart;
-            string line;
-            foreach (XmlElement p in xDoc.GetElementsByTagName("Subtitle"))
+            try
             {
-                text = string.Empty;
-                begin = p.GetAttribute("TimeIn");
-                end = p.GetAttribute("TimeOut");
-                line = p.GetAttribute("SpotNumber");
-                XmlNodeList textNodes = p.SelectNodes(".//text()");
-                foreach (XmlNode textNode in textNodes)
+                XmlDocument xDoc = GetWebData<XmlDocument>(url, encoding: System.Text.Encoding.UTF8);
+                string srtFormat = "{0}\r\n{1}0 --> {2}0\r\n{3}\r\n";
+                string begin;
+                string end;
+                string text;
+                string textPart;
+                string line;
+                foreach (XmlElement p in xDoc.GetElementsByTagName("Subtitle"))
                 {
-                    textPart = textNode.InnerText;
-                    textPart.Trim();
-                    text += string.IsNullOrEmpty(textPart) ? "" : textPart + "\r\n";
+                    text = string.Empty;
+                    begin = p.GetAttribute("TimeIn");
+                    end = p.GetAttribute("TimeOut");
+                    line = p.GetAttribute("SpotNumber");
+                    XmlNodeList textNodes = p.SelectNodes(".//text()");
+                    foreach (XmlNode textNode in textNodes)
+                    {
+                        textPart = textNode.InnerText;
+                        textPart.Trim();
+                        text += string.IsNullOrEmpty(textPart) ? "" : textPart + "\r\n";
+                    }
+                    srt += string.Format(srtFormat, line, ReplaceLastOccurrence(begin, ":", ",").Substring(0, begin.Length - 1), ReplaceLastOccurrence(end, ":", ",").Substring(0, begin.Length - 1), text);
                 }
-                srt += string.Format(srtFormat, line, ReplaceLastOccurrence(begin, ":", ",").Substring(0, begin.Length - 1), ReplaceLastOccurrence(end, ":", ",").Substring(0, begin.Length - 1), text);
             }
+            catch { }
             return srt;
         }
 
