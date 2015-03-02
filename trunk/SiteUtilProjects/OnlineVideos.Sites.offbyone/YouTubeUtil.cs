@@ -310,9 +310,7 @@ namespace OnlineVideos.Sites
                     }
                     catch (Google.GData.Client.GDataRequestException queryEx)
                     {
-                        string reason = ((XText)((IEnumerable<object>)XDocument.Parse(queryEx.ResponseString).XPathEvaluate("//*[local-name() = 'internalReason']/text()")).FirstOrDefault()).Value;
-                        if (!string.IsNullOrEmpty(reason)) throw new OnlineVideosException(reason);
-                        else throw queryEx;
+                        HandleGDataErrorMessage(queryEx);
                     }                    
                     GetPlaylistEntriesAsCategories(parentCategory, feed);
                 }
@@ -333,9 +331,7 @@ namespace OnlineVideos.Sites
                     }
                     catch (Google.GData.Client.GDataRequestException queryEx)
                     {
-                        string reason = ((XText)((IEnumerable<object>)XDocument.Parse(queryEx.ResponseString).XPathEvaluate("//*[local-name() = 'internalReason']/text()")).FirstOrDefault()).Value;
-                        if (!string.IsNullOrEmpty(reason)) throw new OnlineVideosException(reason);
-                        else throw queryEx;
+                        HandleGDataErrorMessage(queryEx);
                     }
                     foreach (SubscriptionEntry subScr in feed.Entries)
                     {
@@ -439,9 +435,7 @@ namespace OnlineVideos.Sites
             }
             catch (Google.GData.Client.GDataRequestException queryEx)
             {
-                string reason = ((XText)((IEnumerable<object>)XDocument.Parse(queryEx.ResponseString).XPathEvaluate("//*[local-name() = 'internalReason']/text()")).FirstOrDefault()).Value;
-                if (!string.IsNullOrEmpty(reason)) throw new OnlineVideosException(reason);
-                else throw queryEx;
+                HandleGDataErrorMessage(queryEx);
             }
             
             hasNextPage = !string.IsNullOrEmpty(feed.NextChunk);
@@ -504,6 +498,30 @@ namespace OnlineVideos.Sites
                 Log.Error("Error retrieving YouTube Categories: " + ex.Message);
             }
             return categories;
+        }
+
+        void HandleGDataErrorMessage(Google.GData.Client.GDataRequestException queryEx)
+        {
+            try
+            {
+                var xDoc = XDocument.Parse(queryEx.ResponseString);
+                
+                var innerReasonElement = xDoc.XPathSelectElement("//*[local-name() = 'internalReason']");
+                if (innerReasonElement != null && !string.IsNullOrWhiteSpace(innerReasonElement.Value))
+                    throw new OnlineVideosException(innerReasonElement.Value);
+
+                var titleElement = xDoc.XPathSelectElement("//*[local-name() = 'TITLE']");
+                if (titleElement != null && !string.IsNullOrWhiteSpace(titleElement.Value))
+                    throw new OnlineVideosException(titleElement.Value);
+
+                Log.Debug("Could not get an error text from GData: {0}", queryEx.ResponseString);
+            }
+            catch (Exception ex)
+            {
+                Log.Info("Error getting GData error message: {0}{1}{2}", ex.Message, Environment.NewLine, queryEx.ResponseString);
+            }
+            
+            throw queryEx;
         }
 
         #region Paging
