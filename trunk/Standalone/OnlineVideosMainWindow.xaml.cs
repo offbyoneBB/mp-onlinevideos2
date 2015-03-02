@@ -419,7 +419,7 @@ namespace Standalone
 			}
 			else
 			{
-				Play_Step1(new PlayListItem(video.Model, SelectedSite is OnlineVideos.Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(video.Model as FavoriteVideoInfo).SiteName] : SelectedSite), false);
+				Play_Step1(new PlayListItem(video.Model, SelectedSite is OnlineVideos.Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(video.Model as FavoriteDbVideoInfo).SiteName] : SelectedSite), false);
 			}
 		}
 
