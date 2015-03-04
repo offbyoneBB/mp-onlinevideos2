@@ -307,7 +307,10 @@ namespace OnlineVideos.Sites
                     string subUrl = subNode.GetAttributeValue("src", "");
                     if (!string.IsNullOrEmpty(subUrl))
                     {
-                        video.SubtitleText = GetWebData(subUrl);
+                        Uri result;
+                        if (!Uri.TryCreate(subUrl, UriKind.Absolute, out result))
+                            Uri.TryCreate(new Uri(baseUrl), subUrl, out result);
+                        video.SubtitleText = GetWebData(result.ToString());
                         int newLineIndex = video.SubtitleText.IndexOf("\r\n");
                         if (newLineIndex > -1 && !video.SubtitleText.StartsWith("1") && video.SubtitleText.Count() - newLineIndex >= 2)
                         {
