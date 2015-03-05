@@ -35,6 +35,15 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private State _currentState = State.None;
         private bool _isPlayingOrPausing = false;
 
+        private void SendKeyToBrowser(string key)
+        {
+            Cursor.Position = new System.Drawing.Point(Browser.FindForm().Location.X + 300, Browser.Location.Y + 300);
+            Application.DoEvents();
+            CursorHelper.DoLeftMouseClick();
+            Application.DoEvents();
+            System.Windows.Forms.SendKeys.Send(key);
+        }
+
         public override void OnClosing()
         {
             //Process.GetProcessesByName("OnlineVideos.WebAutomation.BrowserHost").First().Kill();
@@ -46,23 +55,16 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             {
                 if (actionEnumName == "ACTION_MOVE_LEFT")
                 {
-                    Cursor.Position = new System.Drawing.Point(300, 300);
-                    Application.DoEvents();
-                    CursorHelper.DoLeftMouseClick();
-                    Application.DoEvents();
-                    System.Windows.Forms.SendKeys.Send("{LEFT}");
+                    SendKeyToBrowser("{LEFT}");
                 }
                 if (actionEnumName == "ACTION_MOVE_RIGHT")
                 {
-                    Cursor.Position = new System.Drawing.Point(300, 300);
-                    Application.DoEvents();
-                    CursorHelper.DoLeftMouseClick();
-                    Application.DoEvents();
-                    System.Windows.Forms.SendKeys.Send("{RIGHT}");
+                    SendKeyToBrowser("{RIGHT}");
                 }
             }
         }
 
+ 
         public override Entities.EventResult PerformLogin(string username, string password)
         {
 
@@ -109,12 +111,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             if (_currentState != State.Playing || _isPlayingOrPausing || Browser.Document == null || Browser.Document.Body == null) return EventResult.Complete();
             _isPlayingOrPausing = true;
-            Cursor.Position = new System.Drawing.Point(300, 300);
-            Application.DoEvents();
-            CursorHelper.DoLeftMouseClick();
-            Application.DoEvents();
+            SendKeyToBrowser(" ");
             _isPlayingOrPausing = false;
-            System.Windows.Forms.SendKeys.Send(" ");
             return EventResult.Complete();
         }
 
