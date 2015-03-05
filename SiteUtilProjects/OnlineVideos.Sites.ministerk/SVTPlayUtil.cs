@@ -255,33 +255,62 @@ namespace OnlineVideos.Sites
         private VideoInfo getVideoFromArticle(HtmlNode article)
         {
             VideoInfo video = new VideoInfo();
-            HtmlNode playLinkSubNode = article.Descendants("span").FirstOrDefault(s => s.GetAttributeValue("class", "") == "play-link-sub");
             string title = article.GetAttributeValue("data-title", "");
-            if (playLinkSubNode != null)
+            if (string.IsNullOrWhiteSpace(title))
             {
-                string playLinkSub = playLinkSubNode.InnerText.Trim().Replace('\n', ' ');
-                if (playLinkSub != "" && !title.Contains(playLinkSub))
+                //A-Ö listings
+                HtmlNode a = article.SelectSingleNode(".//a[contains(@class,'header-link')]");
+                if (a != null)
                 {
-                    title = playLinkSub + " - " + title;
+                    video.Title = a.InnerText;
+                    video.VideoUrl = a.GetAttributeValue("href", "");
+                    HtmlNode p = article.SelectSingleNode(".//p[contains(@class,'description-text')]");
+                    video.Description = ""; 
+                    if (p != null)
+                        video.Description = HttpUtility.HtmlDecode(p.InnerText);
+                    p = article.SelectSingleNode(".//p[contains(@class,'expire-date')]");
+                    if (p != null)
+                        video.Description += "\r\n" + HttpUtility.HtmlDecode(p.InnerText.Trim());
+                    p = article.SelectSingleNode(".//p[contains(@class,'meta-info')]");
+                    if (p != null)
+                        video.Airdate = HttpUtility.HtmlDecode(p.InnerText.Trim());
+                    HtmlNode time = article.SelectSingleNode(".//time");
+                    if (time != null)
+                        video.Length = time.InnerText;
+                    HtmlNode img = article.SelectSingleNode(".//img");
+                    if (img != null)
+                        video.Thumb = img.GetAttributeValue("src", "");
                 }
-            }
-            video.Title = title;
-            video.Description = article.GetAttributeValue("data-description", "");
-            video.Airdate = HttpUtility.HtmlDecode(article.GetAttributeValue("data-broadcasted", ""));
-            video.Length = article.GetAttributeValue("data-length", "");
-            HtmlNode a = article.SelectSingleNode("a");
-            Uri uri = new Uri(new Uri(baseUrl), a.GetAttributeValue("href", ""));
-            video.VideoUrl = uri.ToString();
-            HtmlNode img = a.Descendants("img").FirstOrDefault(i => !string.IsNullOrEmpty(i.GetAttributeValue("data-imagename", "")));
-            if (img == null)
-            {
-                img = a.Descendants("img").FirstOrDefault(i => !string.IsNullOrEmpty(i.GetAttributeValue("src", "")));
-                if (img != null)
-                    video.Thumb = img.GetAttributeValue("src", "");
             }
             else
             {
-                video.Thumb = img.GetAttributeValue("data-imagename", "");
+                HtmlNode playLinkSubNode = article.Descendants("span").FirstOrDefault(s => s.GetAttributeValue("class", "") == "play-link-sub");
+                if (playLinkSubNode != null)
+                {
+                    string playLinkSub = playLinkSubNode.InnerText.Trim().Replace('\n', ' ');
+                    if (playLinkSub != "" && !title.Contains(playLinkSub))
+                    {
+                        title = playLinkSub + " - " + title;
+                    }
+                }
+                video.Title = title;
+                video.Description = article.GetAttributeValue("data-description", "");
+                video.Airdate = HttpUtility.HtmlDecode(article.GetAttributeValue("data-broadcasted", ""));
+                video.Length = article.GetAttributeValue("data-length", "");
+                HtmlNode a = article.SelectSingleNode("a");
+                Uri uri = new Uri(new Uri(baseUrl), a.GetAttributeValue("href", ""));
+                video.VideoUrl = uri.ToString();
+                HtmlNode img = a.Descendants("img").FirstOrDefault(i => !string.IsNullOrEmpty(i.GetAttributeValue("data-imagename", "")));
+                if (img == null)
+                {
+                    img = a.Descendants("img").FirstOrDefault(i => !string.IsNullOrEmpty(i.GetAttributeValue("src", "")));
+                    if (img != null)
+                        video.Thumb = img.GetAttributeValue("src", "");
+                }
+                else
+                {
+                    video.Thumb = img.GetAttributeValue("data-imagename", "");
+                }
             }
             video.CleanDescriptionAndTitle();
             return video;
@@ -354,6 +383,10 @@ namespace OnlineVideos.Sites
         public override string GetVideoUrl(VideoInfo video)
         {
             string url = "";
+            Uri result;
+            if (!Uri.TryCreate(video.VideoUrl, UriKind.Absolute, out result))
+                Uri.TryCreate(new Uri(baseUrl), video.VideoUrl, out result);
+            video.VideoUrl = result.ToString();
             JToken videoToken = GetWebData<JObject>(video.VideoUrl + "?output=json")["video"];
             if (RetrieveSubtitles)
             {
