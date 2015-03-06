@@ -18,6 +18,7 @@ using System.Threading;
 using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
 using OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation;
 using OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers;
+using OnlineVideos.Sites.WebAutomation.BrowserHost.RemoteHandling;
 
 namespace OnlineVideos.Sites.WebAutomation.BrowserHost
 {
@@ -32,24 +33,6 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             Pause 
         }
 
-        // Some of the WNDProc messages we'll actually respond to - I've taken this list from the remote implementations
-        // I want to filter the messages to reduce the amount of traffic over the service
-        private const int WM_KEYDOWN = 0x0100;
-        private const int WM_SYSKEYDOWN = 0x0104;
-        private const int WM_APPCOMMAND = 0x0319;
-        private const int WM_LBUTTONDOWN = 0x0201;
-        private const int WM_RBUTTONDOWN = 0x0204;
-        private const int FAPPCOMMAND_MASK = 0xF000;
-
-        // These constants are used in some of the remotes, but we'll ignore them in the browser host (for now)
-        //private const int WM_POWERBROADCAST = 0x0218; 
-        //private const int WM_TIMER = 0x0113;
-        //private const int WM_MOUSEMOVE = 0x0200;
-        //private const int WM_SETCURSOR = 0x0020;
-        //private const int WM_ACTIVATE = 0x0006;
-        //private const int WA_INACTIVE = 0;
-        //private const int WA_ACTIVE = 1;
-
         public bool ForceClose { get; private set; }
 
         private string _connectorType;
@@ -63,11 +46,9 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         private DateTime _lastKeyPressedTime;
 
         private PlayPauseToggle _lastPlayPauseState = PlayPauseToggle.Play;
-        private ServiceHost _service;
-        private ServiceHost _callbackService;
-
         private DateTime _lastActionTime;
         private ILog _logger = new DebugLogger();
+        private RemoteProcessing _remoteProcessing = new RemoteProcessing();
 
         /// <summary>
         /// Store/retrieve the current screen the web player is showing on - this is stored in the user config
@@ -133,14 +114,13 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 ForceClose = false;
                 this.Activate();
                 this.Focus();
-                _logger.Info("Initialising services");
-                _callbackService = new WebBrowserPlayerCallbackServiceHost();
-                _service = new WebBrowserPlayerServiceHost();
-
-                WebBrowserPlayerService.ServiceImplementation.WebBrowserPlayerService.OnNewActionReceived += OnNewActionFromClient;
+                
                 _logger.Info(string.Format("Browser Host started with connector type: {0}, video info: {1}, Username: {2}", _connectorType, _videoInfo, _userName));
                 WebBrowserPlayerCallbackService.LogInfo(string.Format("Browser Host started with connector type: {0}, video info: {1}", _connectorType, _videoInfo));
 
+                _remoteProcessing.ActionReceived += RemoteProcessing_OnNewAction;
+                _remoteProcessing.InitHandlers();
+                
                 _logger.Info("Loading Connector");
                 _connector = BrowserInstanceConnectorFactory.GetConnector(_connectorType, _logger, webBrowser);
 
@@ -210,21 +190,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         {
             HandleKeyPress(e.KeyValue);
         }
-
-        /// <summary>
-        /// Handle the event from the service when a client sends us a new action
-        /// </summary>
-        /// <param name="action"></param>
-        protected void OnNewActionFromClient(string action)
-        {
-            if (InvokeRequired)
-            {
-                Invoke((MethodInvoker)delegate() { OnNewAction(action); });
-                return;
-            } 
-            OnNewAction(action);
-        }
-        
+                
         /// <summary>
         /// Used to pass messages to remotes. Pre-filter to only messages we're likely to be interested in
         /// </summary>
@@ -233,14 +199,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         {
             try
             {
-                if (msg.Msg == WM_APPCOMMAND || msg.Msg == WM_KEYDOWN || msg.Msg == WM_LBUTTONDOWN ||
-                        msg.Msg == WM_RBUTTONDOWN || msg.Msg == WM_SYSKEYDOWN)
-                {
-
-                    _logger.Info(string.Format("WndProc message to be processed {0}, appCommand {1}, LParam {2}, WParam {3}", msg.Msg, GET_APPCOMMAND_LPARAM(msg.LParam), msg.LParam, msg.WParam));
-                    if (WebBrowserPlayerCallbackService.SendWndProc(msg))
-                        return;
-                }
+                if (_remoteProcessing.ProcessWndProc(msg)) return;
             }
             catch  (Exception ex)
             {
@@ -251,6 +210,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             }
             base.WndProc(ref msg);
         }
+
         /// <summary>
         /// Event sink for key press
         /// </summary>
@@ -271,10 +231,21 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 return;
             }
 
-            // Get the client implementation to translate the key press - this means we can truly detach the browser host from MediaPortal
-            // The client handler for this event should fire the OnNewAction when the key has been translated
-            WebBrowserPlayerCallbackService.SendKeyPress(keyPressed);
+            _remoteProcessing.ProcessKeyPress(keyPressed);
         }
+        
+        /// <summary>
+        /// Remote processing event handler
+        /// </summary>
+        /// <param name="action"></param>
+        void RemoteProcessing_OnNewAction(string action)
+        {
+            if (InvokeRequired)
+                Invoke((MethodInvoker)delegate() { OnNewAction(action); });
+            else
+                OnNewAction(action);
+        }
+
         /// <summary>
         /// Handle actions
         /// We'll make play/pause a toggle, just so we can ensure we support media buttons properly
@@ -288,6 +259,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             
             _lastActionTime = DateTime.Now;
             _logger.Info(string.Format("OnNewAction received {0}", action));
+
             switch (action)
             {
                 case "ACTION_PLAY":
@@ -384,28 +356,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 this.Location = Screen.AllScreens[CurrentScreen].Bounds.Location;
                 if (!_debugMode) this.WindowState = FormWindowState.Maximized;
             }
-        }
-
-        /// <summary>
-        /// Taken from MediaPortal Core to help translate a wndproc message to AppCommand
-        /// </summary>
-        /// <param name="val"></param>
-        /// <returns></returns>
-        private static int HIWORD(int val)
-        {
-            return ((val >> 16) & 0xffff);
-        }
-
-        /// <summary>
-        /// Taken from MediaPortal Core to help translate a wndproc message to AppCommand
-        /// The value returned here will be a MediaPortal.AppCommands value (MediaPortal-1/mediaportal/RemotePlugins/AppCommands.cs) 
-        /// </summary>
-        /// <param name="lParam"></param>
-        /// <returns></returns>
-        private static int GET_APPCOMMAND_LPARAM(IntPtr lParam)
-        {
-            return ((short)HIWORD(lParam.ToInt32()) & ~FAPPCOMMAND_MASK);
-        } 
+        }    
 
     }
 }

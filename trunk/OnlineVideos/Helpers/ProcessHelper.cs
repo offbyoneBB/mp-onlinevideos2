@@ -48,17 +48,21 @@ namespace OnlineVideos.Helpers
             SW_MAX = 11
         }
 
-        private const Int32 WM_KEYDOWN = 0x100;
-        private const Int32 WM_KEYUP = 0x101;
-
         private const int HWND_TOPMOST = -1;
         private const UInt32 SWP_NOSIZE = 0x0001;
         private const UInt32 SWP_NOMOVE = 0x0002;
         #endregion
 
         #region Declarations for sending messages
-
+        
+        public const int WM_KEYDOWN = 0x100;
+        public const int WM_KEYUP = 0x101;
         public const int WM_COPYDATA = 0x004a;
+        public const int FAPPCOMMAND_MASK = 0xF000;
+        public const int WM_SYSKEYDOWN = 0x0104;
+        public const int WM_APPCOMMAND = 0x0319;
+        public const int WM_LBUTTONDOWN = 0x0201;
+        public const int WM_RBUTTONDOWN = 0x0204;
 
         [StructLayout(LayoutKind.Sequential)]
         public struct COPYDATASTRUCT
@@ -192,6 +196,27 @@ namespace OnlineVideos.Helpers
                 return str;
             }
             return string.Empty;
+        }
+
+        /// <summary>
+        /// Taken from MediaPortal Core to help translate a wndproc message to AppCommand
+        /// The value returned here will be a MediaPortal.AppCommands value (MediaPortal-1/mediaportal/RemotePlugins/AppCommands.cs) 
+        /// </summary>
+        /// <param name="lParam"></param>
+        /// <returns></returns>
+        public static int GetLparamToAppCommand(IntPtr lParam)
+        {
+            return ((short)HIWORD(lParam.ToInt32()) & ~ProcessHelper.FAPPCOMMAND_MASK);
+        }
+
+        /// <summary>
+        /// Taken from MediaPortal Core to help translate a wndproc message to AppCommand
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        public static int HIWORD(int val)
+        {
+            return ((val >> 16) & 0xffff);
         }
     }
 }
