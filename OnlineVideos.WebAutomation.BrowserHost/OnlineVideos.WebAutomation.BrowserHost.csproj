@@ -83,6 +83,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers\IERegistryVersion.cs" />
     <Compile Include="Properties\VersionInfo.cs" />
+    <Compile Include="RemoteHandling\RemoteImplementations\WebServiceRemoteHandling.cs" />
+    <Compile Include="RemoteHandling\RemoteImplementations\MediaPortal1RemoteHandling.cs" />
+    <Compile Include="RemoteHandling\RemoteImplementations\RemoteHandlingBase.cs" />
+    <Compile Include="RemoteHandling\RemoteProcessing.cs" />
     <EmbeddedResource Include="BrowserForm.resx">
       <DependentUpon>BrowserForm.cs</DependentUpon>
     </EmbeddedResource>

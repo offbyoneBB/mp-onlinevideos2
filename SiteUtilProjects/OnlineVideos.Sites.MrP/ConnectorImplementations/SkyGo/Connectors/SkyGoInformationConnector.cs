@@ -77,10 +77,13 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                 catchUpCategory.SubCategories.Add(new Category { Name = "Fox", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/FOX", ParentCategory = catchUpCategory });
                 catchUpCategory.SubCategories.Add(new Category { Name = "Gold", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/Gold", ParentCategory = catchUpCategory });
                 catchUpCategory.SubCategories.Add(new Category { Name = "History", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/History", ParentCategory = catchUpCategory });
+                catchUpCategory.SubCategories.Add(new Category { Name = "ITV", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/ITV", ParentCategory = catchUpCategory });
                 catchUpCategory.SubCategories.Add(new Category { Name = "MTV", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/MTV", ParentCategory = catchUpCategory });
+                catchUpCategory.SubCategories.Add(new Category { Name = "Nickelodeon", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/Nickelodeon", ParentCategory = catchUpCategory });
+                catchUpCategory.SubCategories.Add(new Category { Name = "Nick Jr", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/Nick_Jr", ParentCategory = catchUpCategory });
                 catchUpCategory.SubCategories.Add(new Category { Name = "Nat Geo", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/Nat_Geo", ParentCategory = catchUpCategory });
                 catchUpCategory.SubCategories.Add(new Category { Name = "Sky Sports", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/Sky_Sports", ParentCategory = catchUpCategory });
-                catchUpCategory.SubCategories.Add(new Category { Name = "Sky TV", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/Sky_TV", ParentCategory = catchUpCategory });
+                catchUpCategory.SubCategories.Add(new Category { Name = "Sky TV", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/Sky_Channels", ParentCategory = catchUpCategory });
                 catchUpCategory.SubCategories.Add(new Category { Name = "TLC", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/TLC", ParentCategory = catchUpCategory });
                 catchUpCategory.SubCategories.Add(new Category { Name = "Watch", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/Watch", ParentCategory = catchUpCategory });
             }

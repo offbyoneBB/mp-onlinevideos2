@@ -11,8 +11,6 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
 {
     static class Program
     {
-        private static string _assemblyPath = "";
-
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
