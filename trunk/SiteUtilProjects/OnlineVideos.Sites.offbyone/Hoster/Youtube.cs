@@ -100,7 +100,7 @@ namespace OnlineVideos.Hoster
 
             if (!string.IsNullOrEmpty(Items.Get("url_encoded_fmt_stream_map")))
             {
-                string swfUrl = Regex.Unescape(Regex.Match(contents, "\"url\":\\s\"([^\"]+)\"").Groups[1].Value);
+                string swfUrl = Regex.Unescape(Regex.Match(contents, @"""url""\s*:\s*""(https?:\\/\\/.*?watch[^""]+\.swf)""").Groups[1].Value);
 
 				List<KeyValuePair<string[], string>> qualities = new List<KeyValuePair<string[], string>>();
 
@@ -205,11 +205,19 @@ namespace OnlineVideos.Hoster
 				{
 					if (javascriptUrl.StartsWith("//"))
 						javascriptUrl = "http:" + javascriptUrl;
+                    /*
+                    var match = Regex.Match(javascriptUrl, @".*?-(?<id>[a-zA-Z0-9_-]+)(?:/watch_as3|/html5player)?\.(?<ext>[a-z]+)$");
+                    if (!match.Success)
+                        throw new Exception(string.Format("Cannot identify player {0}", javascriptUrl));
+                    var player_type = match.Groups["ext"];
+                    var player_id = match.Groups["id"];
+                    */
 					string jsContent = WebCache.Instance.GetWebData(javascriptUrl);
-					string signatureMethodName = Regex.Match(jsContent, "signature=([a-zA-Z]+)").Groups[1].Value;
+
+					string signatureMethodName = Regex.Match(jsContent, @"\.sig\|\|([a-zA-Z0-9$]+)\(").Groups[1].Value;
 					string methods = Regex.Match(jsContent, "\\n(.*?function " + signatureMethodName + @".*?)function [a-zA-Z]+\(\)").Groups[1].Value;
 
-					var engine = new Jurassic.ScriptEngine();
+                    var engine = new Jurassic.ScriptEngine();
 					engine.Execute(methods);
 					string decrypted = engine.CallGlobalFunction(signatureMethodName, s).ToString();
 					if (!string.IsNullOrEmpty(decrypted))
