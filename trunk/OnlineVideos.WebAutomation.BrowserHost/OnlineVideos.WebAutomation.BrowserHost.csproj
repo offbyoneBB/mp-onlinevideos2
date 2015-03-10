@@ -56,6 +56,14 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Core">
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RemotePlugins">
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\RemotePlugins.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />

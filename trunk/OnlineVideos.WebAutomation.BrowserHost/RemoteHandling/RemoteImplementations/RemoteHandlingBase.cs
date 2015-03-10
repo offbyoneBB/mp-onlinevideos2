@@ -49,7 +49,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.RemoteHandling.RemoteImpl
         protected void OnNewActionFromClient(string action)
         {
             _logger.Debug("Action received {0}", action);
-            ActionReceived.Invoke(action);
+            if (ActionReceived != null) ActionReceived.Invoke(action);
         }
     }
 }

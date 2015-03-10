@@ -47,8 +47,8 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
 
         private PlayPauseToggle _lastPlayPauseState = PlayPauseToggle.Play;
         private DateTime _lastActionTime;
-        private ILog _logger = new DebugLogger();
-        private RemoteProcessing _remoteProcessing = new RemoteProcessing();
+        private static ILog _logger = new DebugLogger();
+        private RemoteProcessing _remoteProcessing = new RemoteProcessing(_logger);
 
         /// <summary>
         /// Store/retrieve the current screen the web player is showing on - this is stored in the user config
@@ -79,7 +79,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         {
             try
             {
-                _logger.Info("Loading browser form");
+                _logger.Debug("Loading browser form");
                 InitializeComponent();
                 _connectorType = connectorType;
                 _videoInfo = videoInfo;
@@ -107,21 +107,23 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             try
             {
 
-                _logger.Info("Setting current screen");
+                _logger.Debug("Setting current screen");
                 SetScreenState();
                 SetCurrentScreen();
 
                 ForceClose = false;
                 this.Activate();
                 this.Focus();
-                
-                _logger.Info(string.Format("Browser Host started with connector type: {0}, video info: {1}, Username: {2}", _connectorType, _videoInfo, _userName));
+                _logger.Debug("AppDomain Root {0}", AppDomain.CurrentDomain.BaseDirectory);
+                _logger.Debug("Current Directory {0}", Directory.GetCurrentDirectory());
+                _logger.Debug(string.Format("Browser Host started with connector type: {0}, video info: {1}, Username: {2}", _connectorType, _videoInfo, _userName));
                 WebBrowserPlayerCallbackService.LogInfo(string.Format("Browser Host started with connector type: {0}, video info: {1}", _connectorType, _videoInfo));
-
+                
+                // Set up remote handling
                 _remoteProcessing.ActionReceived += RemoteProcessing_OnNewAction;
                 _remoteProcessing.InitHandlers();
-                
-                _logger.Info("Loading Connector");
+
+                _logger.Debug("Loading Connector");
                 _connector = BrowserInstanceConnectorFactory.GetConnector(_connectorType, _logger, webBrowser);
 
                 if (_connector == null)
@@ -131,17 +133,17 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 }
 
                 _connector.DebugMode = _debugMode;
-                _logger.Info("Performing Log in");
+                _logger.Debug("Performing Log in");
                 _connector.PerformLogin(_userName, _password);
 
                 var result = _connector.WaitForComplete(ForceQuitting, OnlineVideoSettings.Instance.UtilTimeout);
 
                 if (result)
                 {
-                    _logger.Info("Playing Video");
+                    _logger.Debug("Playing Video");
                     _connector.PlayVideo(_videoInfo);
                     result = _connector.WaitForComplete(ForceQuitting, OnlineVideoSettings.Instance.UtilTimeout);
-                    _logger.Info("Playing WaitforComplete " + result.ToString());
+                    _logger.Debug("Playing WaitforComplete " + result.ToString());
                     if (!result)
                         ForceQuit();
                 }
@@ -222,7 +224,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             _lastKeyPressed = keyPressed;
             _lastKeyPressedTime = DateTime.Now;
 
-            _logger.Info(string.Format("HandleKeyPress to be processed {0}", keyPressed));
+            _logger.Debug(string.Format("HandleKeyPress to be processed {0} {1}", keyPressed, ((Keys)keyPressed).ToString()));
 
             // Always force close when escape is pressed
             if (keyPressed == (int)Keys.Escape)
@@ -241,7 +243,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         void RemoteProcessing_OnNewAction(string action)
         {
             if (InvokeRequired)
-                Invoke((MethodInvoker)delegate() { OnNewAction(action); });
+                BeginInvoke((MethodInvoker)delegate() { OnNewAction(action); });
             else
                 OnNewAction(action);
         }
@@ -258,7 +260,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 return;
             
             _lastActionTime = DateTime.Now;
-            _logger.Info(string.Format("OnNewAction received {0}", action));
+            _logger.Debug(string.Format("OnNewAction received {0}", action));
 
             switch (action)
             {
