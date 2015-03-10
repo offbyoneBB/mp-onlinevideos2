@@ -3,6 +3,7 @@ using OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers;
 using OnlineVideos.Sites.WebAutomation.BrowserHost.RemoteHandling.RemoteImplementations;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -16,8 +17,28 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.RemoteHandling
     {
         public Action<string> ActionReceived;
 
-        private static List<RemoteHandlingBase> _remoteHandlers = new List<RemoteHandlingBase> { new WebServiceRemoteHandling(new DebugLogger())};//, new MediaPortal1RemoteHandling(new DebugLogger()) };
+        private static List<RemoteHandlingBase> _remoteHandlers = new List<RemoteHandlingBase>();
 
+        /// <summary>
+        /// CTor
+        /// </summary>
+        public RemoteProcessing(ILog logger)
+        {
+            // Add the MP1 specific remote handling if enabled in the config
+            var mp1HandlingEnabledConfig = ConfigurationManager.AppSettings["EnableMP1SpecificRemoteHandling"];
+            var mp1HandlingEnabled = (!string.IsNullOrEmpty(mp1HandlingEnabledConfig) && mp1HandlingEnabledConfig.ToUpper() == "TRUE");
+
+            // MP1 handling must always be added first 
+            if (mp1HandlingEnabled)
+                _remoteHandlers.Add(new MediaPortal1RemoteHandling(logger));
+
+            // Always add the web service handling - this will be a fallback event handler, but we'll only respond to actions from the service if the MP1 handling is enabled
+            _remoteHandlers.Add(new WebServiceRemoteHandling(logger, !mp1HandlingEnabled));
+        }
+
+        /// <summary>
+        /// Initialise the remote handlers
+        /// </summary>
         public void InitHandlers()
         {
             _remoteHandlers.ForEach(handler => {

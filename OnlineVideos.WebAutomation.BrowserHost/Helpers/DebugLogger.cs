@@ -15,6 +15,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers
         private bool _writeDebugLog = false; // Allow for debug logging to be independant of debug mode
         private string _debugLogPath;
         private bool _debugEntryWritten = false;
+        private readonly object _fileLock = new object();
 
         /// <summary>
         /// Ctor - load values from the config file
@@ -38,12 +39,15 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers
             {
                 if (!string.IsNullOrEmpty(_debugLogPath) && Directory.Exists(Path.GetDirectoryName(_debugLogPath)))
                 {
-                    var msg = string.Format("[{0}] [Log    ] [BrowserHost] [{1,-5}] - {2}\r\n", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss,fff"), level, message);
-                    // Create a new file for first line to be written
-                    if (!_debugEntryWritten)
-                        File.WriteAllText(_debugLogPath, msg);
-                    else
-                        File.AppendAllText(_debugLogPath, msg);
+                    lock (_fileLock)
+                    {
+                        var msg = string.Format("[{0}] [Log    ] [BrowserHost] [{1,-5}] - {2}\r\n", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss,fff"), level, message);
+                        // Create a new file for first line to be written
+                        if (!_debugEntryWritten)
+                            File.WriteAllText(_debugLogPath, msg);
+                        else
+                            File.AppendAllText(_debugLogPath, msg);
+                    }
                 }
                 _debugEntryWritten = true;
             }

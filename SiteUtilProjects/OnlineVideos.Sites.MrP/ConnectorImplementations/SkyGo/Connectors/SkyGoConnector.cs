@@ -176,7 +176,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         public override EventResult PlayVideo(string videoToPlay)
         {
             // Clean up the xap file to see if it helps playback
-            RemoveFileFromTempInternetFiles("SkyPlayer", ".xap");
+            //RemoveFileFromTempInternetFiles("SkyPlayer", ".xap");
             _currentState = State.VideoInfo;
             ProcessComplete.Finished = false;
             ProcessComplete.Success = false;
@@ -246,8 +246,10 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             _isPlayOrPausing = true;
 
             if (_playPauseHeight <= 0 || _playPausePos <= 0) _playPauseHeight = Browser.FindForm().Bottom - 80;
-            // Move the cursor near the top of the screen to make sure the play/pause buttons become visible
-            Cursor.Position = new System.Drawing.Point(10, 10);
+            // Move the cursor near the top of the screen and left click to make sure the play/pause buttons become visible
+            Cursor.Position = new System.Drawing.Point(Browser.FindForm().Left + 10, Browser.FindForm().Top + 10);
+            Application.DoEvents();
+            CursorHelper.DoLeftMouseClick();
             Application.DoEvents();
 
             // We've previously found the play/pause button, so re-use its position

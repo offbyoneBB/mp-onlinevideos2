@@ -14,8 +14,8 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
     /// </summary>
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, 
                         InstanceContextMode = InstanceContextMode.PerSession,
-                        UseSynchronizationContext = false), 
-        CallbackBehavior(UseSynchronizationContext = false)]
+                        UseSynchronizationContext = false),
+        CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, UseSynchronizationContext = false)]
     public class WebBrowserPlayerCallbackService : IWebBrowserPlayerCallbackService
     {
         private static readonly List<IWebBrowserPlayerCallback> _subscribers = new List<IWebBrowserPlayerCallback>();

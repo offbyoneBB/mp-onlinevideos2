@@ -18,14 +18,15 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.RemoteHandling.RemoteImpl
     {
         private ServiceHost _service;
         private ServiceHost _callbackService;
-
+        private bool _shouldSendEventsToService = true;
         /// <summary>
         /// CTor
         /// </summary>
         /// <param name="logger"></param>
-        public WebServiceRemoteHandling(ILog logger)
+        public WebServiceRemoteHandling(ILog logger, bool shouldSendEventsToService)
             : base(logger)
-        { 
+        {
+            _shouldSendEventsToService = shouldSendEventsToService;
         }
 
         /// <summary>
@@ -33,7 +34,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.RemoteHandling.RemoteImpl
         /// </summary>
         public override void Initialise()
         {
-            _logger.Info("Initialising services");
+            _logger.Debug("Initialising services");
             _callbackService = new WebBrowserPlayerCallbackServiceHost();
             _service = new WebBrowserPlayerServiceHost();
 
@@ -47,20 +48,22 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.RemoteHandling.RemoteImpl
         /// <returns></returns>
         public override bool ProcessWndProc(Message msg)
         {
-            _logger.Info(string.Format("WebServiceRemoteHandling - WndProc message to be processed {0}, appCommand {1}, LParam {2}, WParam {3}", msg.Msg, ProcessHelper.GetLparamToAppCommand(msg.LParam), msg.LParam, msg.WParam));
+            if (!_shouldSendEventsToService) return false;
+            _logger.Debug(string.Format("WebServiceRemoteHandling - WndProc message to be processed {0}, appCommand {1}, LParam {2}, WParam {3}", msg.Msg, ProcessHelper.GetLparamToAppCommand(msg.LParam), msg.LParam, msg.WParam));
             if (WebBrowserPlayerCallbackService.SendWndProc(msg))
                 return true;
 
             return false;
         }
-
+        
         /// <summary>
         /// Process key press events
         /// </summary>
         /// <param name="keyPressed"></param>
         public override void ProcessKeyPress(int keyPressed)
         {
-            _logger.Debug("WebServiceRemoteHandling - ProcessKeyPress {0}", keyPressed);
+            if (!_shouldSendEventsToService) return;
+            _logger.Debug("WebServiceRemoteHandling - ProcessKeyPress {0} {1}", keyPressed, ((Keys)keyPressed).ToString());
             // Get the client implementation to translate the key press - this means we can truly detach the browser host from MediaPortal
             // The client handler for this event should fire the OnNewAction when the key has been translated
             WebBrowserPlayerCallbackService.SendKeyPress(keyPressed);
