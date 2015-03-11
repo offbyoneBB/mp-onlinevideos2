@@ -13,12 +13,16 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), Description("Proxy to use for WebRequests. Define like this: 83.84.85.86:8116")]
         string proxy = null;
 
+        [Category("OnlineVideosConfiguration")]
+        protected string azRegEx;
+
         private enum Depth { MainMenu = 0, Alfabet = 1, Series = 2, Seasons = 3, BareList = 4 };
         public CookieContainer cc = null;
         private string nextVideoListPageUrl = null;
         private Category currCategory = null;
 
         private WebProxy webProxy = null;
+        private Regex regex_Az;
         #region singleton
         private WebProxy GetProxy()
         {
@@ -58,7 +62,7 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             //GetBaseCookie();
-
+            regex_Az = new Regex(azRegEx, defaultRegexOptions);
             base.DiscoverDynamicCategories();
             int i = 0;
             do
@@ -109,7 +113,7 @@ namespace OnlineVideos.Sites
             {
                 case Depth.MainMenu:
                     webData = Helpers.StringUtils.GetSubString(webData, @"class=""pagination""", @"class=""listbig""");
-                    m = regEx_dynamicCategories.Match(webData);
+                    m = regex_Az.Match(webData);
                     break;
                 case Depth.Alfabet:
                     webData = Helpers.StringUtils.GetSubString(webData, @"class=""listbig""", @"class=""clear""");
