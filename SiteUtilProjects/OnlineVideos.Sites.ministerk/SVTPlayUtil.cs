@@ -279,7 +279,11 @@ namespace OnlineVideos.Sites
                         video.Length = time.InnerText;
                     HtmlNode img = article.SelectSingleNode(".//img");
                     if (img != null)
+                    {
                         video.Thumb = img.GetAttributeValue("src", "");
+                        string alt = HttpUtility.HtmlDecode(img.GetAttributeValue("alt", ""));
+                        video.Title = string.IsNullOrWhiteSpace(alt) ? video.Title : alt + " - " + video.Title;
+                    }
                 }
             }
             else
@@ -423,6 +427,14 @@ namespace OnlineVideos.Sites
                 }.ToString();
             }
             return url;
+        }
+
+        public override ITrackingInfo GetTrackingInfo(VideoInfo video)
+        {
+            Regex rgx = new Regex(@"(?<VideoKind>TvSeries)(?<Title>[^-]*).*?[Ss]äsong.*?(?<Season>\d+).*?[Aa]vsnitt.*?(?<Episode>\d+)");
+            Match m = rgx.Match("TvSeries" + video.Title);
+            ITrackingInfo ti = new TrackingInfo() { Regex = m };
+            return ti;
         }
 
         #endregion

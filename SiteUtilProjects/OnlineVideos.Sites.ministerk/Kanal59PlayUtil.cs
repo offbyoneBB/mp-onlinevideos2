@@ -8,6 +8,7 @@ using System.Net;
 using Newtonsoft.Json;
 using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites
 {
@@ -93,7 +94,7 @@ namespace OnlineVideos.Sites
                     VideoInfo video = new VideoInfo()
                     {
                         Thumb = (string)episode["posterUrl"],
-                        Title = string.Format("{0}: {1}", (string)episode["episodeText"], (string)episode["title"]),
+                        Title = string.Format("{0} - {1} {2}: {3}", category.ParentCategory.Name, category.Name, (string)episode["episodeText"], (string)episode["title"]),
                         Description = (string)episode["description"],
                         Airdate = airtime,
                         //Length = episode["length"].ToString() Not working correctly...
@@ -161,6 +162,14 @@ namespace OnlineVideos.Sites
                 }
             }
             return new List<string>() { video.VideoUrl };
+        }
+
+        public override ITrackingInfo GetTrackingInfo(VideoInfo video)
+        {
+            Regex rgx = new Regex(@"(?<VideoKind>TvSeries)(?<Title>[^-]*).*?[Ss]äsong.*?(?<Season>\d+).*?[Aa]vsnitt.*?(?<Episode>\d+)");
+            Match m = rgx.Match("TvSeries" + video.Title);
+            ITrackingInfo ti = new TrackingInfo() { Regex = m };
+            return ti;
         }
 
         private string formatSubtitle(JArray subtitleJson)
