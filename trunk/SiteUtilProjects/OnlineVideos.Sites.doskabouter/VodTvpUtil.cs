@@ -80,21 +80,28 @@ namespace OnlineVideos.Sites
                 JArray formats = content["formats"] as JArray;
                 if (formats != null)
                 {
-                    SortedList<int, string> options = new SortedList<int, string>();
+                    SortedList<int, SortedList<string, string>> bitrateList = new SortedList<int, SortedList<string, string>>();
+                    //inner sortedlist is extention->url
                     foreach (JToken format in formats)
                     {
-                        if (!"application/x-mpegurl".Equals(format.Value<string>("mimeType")))
-                        {
-                            int bitrate = format.Value<int>("totalBitrate");
-                            options.Add(bitrate, format.Value<string>("url"));
-                        }
+                        int bitrate = format.Value<int>("totalBitrate");
+                        string url = format.Value<string>("url");
+                        string ext = System.IO.Path.GetExtension(url);
+
+                        if (!bitrateList.ContainsKey(bitrate))
+                            bitrateList.Add(bitrate, new SortedList<string, string>());
+                        bitrateList[bitrate].Add(ext, url);
                     }
                     Dictionary<string, string> result = new Dictionary<string, string>();
-                    foreach (KeyValuePair<int, string> option in options)
+                    foreach (KeyValuePair<int, SortedList<string, string>> option in bitrateList)
                     {
-                        string key = String.Format("{0}Kb", option.Key / 1000);
-                        if (!result.ContainsKey(key))
-                            result.Add(key, option.Value);
+                        SortedList<string, string> extList = option.Value;
+                        foreach (var ext in extList)
+                        {
+                            string key = String.Format("{0}Kb", option.Key / 1000) + ext.Key;
+                            if (!result.ContainsKey(key))
+                                result.Add(key, ext.Value);
+                        }
                     }
                     if (result.Count > 1)
                         video.PlaybackOptions = result;
