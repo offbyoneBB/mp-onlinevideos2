@@ -58,8 +58,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         protected bool enableHomePlayNow = false;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Sort titles in Browse by..."), Description("Sort titles in Browse by...")]
         protected BrowseSortOrders browseSort = BrowseSortOrders.SuggestionsForYou;
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Max search results"), Description("Maximum number of titles in search result, default and max is 500")]
-        protected uint maxSearchResultsx = 500;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Max search results"), Description("Maximum number of titles in search result, default and max is 300")]
+        protected uint maxSearchResults = 300;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Remember log-in in browser"), Description("Remember the log-in in the Browser Player")]
         protected bool rememberLogin = false;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show loading spinner"), Description("Show the loading spinner in the Browser Player")]
@@ -67,21 +67,20 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show help Category"), Description("Show link to forum or not, http://tinyurl.com/ov-netflix")]
         protected bool enableHelp = true;
 
-        protected bool GetAuthUrl { get { return enableDesc || enableAddRemoveMylist; } }
-        protected uint MaxSearchResults { get { return (maxSearchResultsx > 500 ? 500 : maxSearchResultsx); } }
+        protected uint MaxSearchResults { get { return (maxSearchResults > 300 ? 300 : maxSearchResults); } }
 
         #endregion
 
         #region Lots of urls
-        private string loginUrl = @"https://www2.netflix.com/Login";
-        private string homeUrl = @"https://www2.netflix.com/WiHome";
+        private string loginUrl = @"https://www.netflix.com/Login";
+        private string homeUrl = @"https://www.netflix.com/WiHome";
         private string loginPostData = @"authURL={0}&email={1}&password={2}&RememberMe=on";
-        private string myListUrl = @"http://www2.netflix.com/MyList";
+        private string myListUrl = @"http://www.netflix.com/MyList";
         private string movieUrl = @"http://www.netflix.com/WiMovie/";
         private string genreUrl = @"{0}/{1}/wigenre?genreId={2}&full=false&from={3}&to={4}&secure=false&_retry=0&orderBy={5}";
-        private string kidsUrl = @"http://www2.netflix.com/Kids";
-        private string seasonDetailsUrl = @"http://www2.netflix.com/WiMovie/{0}?actionMethod=seasonDetails&seasonId={1}&seasonKind=ELECTRONIC";
-        private string playerUrl = @"http://www2.netflix.com/WiPlayer?movieid={0}";/*&trkid={1}*/
+        private string kidsUrl = @"http://www.netflix.com/Kids";
+        private string seasonDetailsUrl = @"http://www.netflix.com/WiMovie/{0}?actionMethod=seasonDetails&seasonId={1}&seasonKind=ELECTRONIC";
+        private string playerUrl = @"http://www.netflix.com/WiPlayer?movieid={0}";/*&trkid={1}*/
         private string searchUrl = @"{0}/desktop/search/instantsearch?esn=www&term={1}&ngv={2}"; //500 results maximum
         private string switchProfileUrl = @"{0}/desktop/account/profiles/switch?switchProfileGuid={1}";
         private string bobUrl = @"{0}/{1}/bob?&titleid={2}&trackid={3}&authURL={4}";
@@ -269,14 +268,11 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             if (!isLoadingProfile)
                 LoadProfiles();
             string data = GetWebData(url, cookies: cc, proxy: proxy);
-            if (GetAuthUrl)
+            Regex rgx = new Regex(@"\""authURL\"":""([^\""]*)");
+            Match m = rgx.Match(data);
+            if (m.Success)
             {
-                Regex rgx = new Regex(@"\""authURL\"":""([^\""]*)");
-                Match m = rgx.Match(data);
-                if (m.Success)
-                {
-                    latestAuthUrl = m.Groups[1].Value;
-                }
+                latestAuthUrl = m.Groups[1].Value;
             }
             return data;
         }
@@ -767,54 +763,34 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                         #region Netflix title
                         else
                         {
-                            JArray episodesExtras = new JArray();
-                            if (enableDesc)
-                            {
-                                string extraData = MyGetWebData(string.Format(netflixOrgEpisodes, apiRoot, (parentCategory as RssLink).Url, latestAuthUrl));
-                                JObject extraInfo = (JObject)JsonConvert.DeserializeObject(extraData);
-                                foreach (JArray seasonArray in extraInfo["episodes"])
-                                {
-                                    foreach (JToken et in seasonArray)
-                                    {
-                                        episodesExtras.Add(et);
-                                    }
-                                }
-
-                            }
-                            foreach (JProperty season in json["odp"]["data"]["meta"]["episodes"])
-                            {
-                                JToken episodes = season.Value<JToken>();
-                                foreach (JArray episodesArray in episodes)
-                                {
-                                    foreach (JToken episode in episodesArray)
-                                    {
-                                        int e = (int)episode["episodeSequenceNumber"];
-                                        int s = (int)episode["seasonSequenceNumber"];
-                                        RssLink cat = new RssLink()
-                                        {
-                                            Name = s + "x" + (e < 10 ? ("0" + e) : e.ToString()) + " " + (string)episode["title"],
-                                            ParentCategory = parentCategory,
-                                            Thumb = parentCategory.Thumb,
-                                            HasSubCategories = false,
-                                            Url = ((int)episode["silverlightId"]).ToString()
-                                        };
-                                        if (enableDesc)
-                                        {
-                                            JToken episodeExtra = episodesExtras.FirstOrDefault(t => (int)t["season"] == s && (int)t["episode"] == e);
-                                            if (episodeExtra != null)
-                                            {
-                                                cat.Description = episodeExtra["synopsis"].Value<string>();
-                                                JToken stills = episodeExtra["stills"];
-                                                if (stills != null && stills.Count() > 0)
-                                                {
-                                                    cat.Thumb = stills.Last()["url"].Value<string>();
-                                                }
-                                            }
-                                        }
-                                        parentCategory.SubCategories.Add(cat);
-                                    }
-                                }
-                            }
+                             data = MyGetWebData(string.Format(netflixOrgEpisodes, apiRoot, (parentCategory as RssLink).Url, latestAuthUrl));
+                             json = (JObject)JsonConvert.DeserializeObject(data);
+                             foreach (JArray seasonArray in json["episodes"])
+                             {
+                                 foreach (JToken episode in seasonArray.Where(e => e["availableForED"] == null || e["availableForED"].Value<bool>()))
+                                 {
+                                     int e = (int)episode["episode"];
+                                     int s = (int)episode["season"];
+                                     RssLink cat = new RssLink()
+                                     {
+                                         Name = s + "x" + (e < 10 ? ("0" + e) : e.ToString()) + " " + (string)episode["title"],
+                                         ParentCategory = parentCategory,
+                                         Thumb = parentCategory.Thumb,
+                                         HasSubCategories = false,
+                                         Url = episode["episodeId"].ToString()
+                                     };
+                                     JToken stills = episode["stills"];
+                                     if (stills != null && stills.Count() > 0)
+                                     {
+                                         cat.Thumb = stills.Last()["url"].Value<string>();
+                                     }
+                                     if (enableDesc)
+                                     {
+                                         cat.Description = episode["synopsis"].Value<string>();
+                                     }
+                                     parentCategory.SubCategories.Add(cat);
+                                 }
+                             }
                             parentCategory.SubCategories.Sort((c1, c2) => c1.Name.CompareTo(c2.Name));
                         }
                         #endregion
