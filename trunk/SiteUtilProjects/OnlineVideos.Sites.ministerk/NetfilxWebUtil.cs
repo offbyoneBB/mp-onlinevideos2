@@ -17,7 +17,7 @@ using OnlineVideos.Helpers;
 namespace OnlineVideos.Sites.BrowserUtilConnectors
 {
 
-    public class NetfilxWebUtil : SiteUtilBase, IBrowserSiteUtil
+    public class NetfilxWebUtil : LatestVideosSiteUtilBase, IBrowserSiteUtil
     {
         #region Meta data
         protected class NetflixData
@@ -1055,5 +1055,31 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         #endregion
 
+        #region LatestVideos
+        public override List<VideoInfo> GetLatestVideos()
+        {
+            List<VideoInfo> videos = new List<VideoInfo>();
+            Category category = new RssLink()
+            {
+                Name = "Latest",
+                Url = @"http://www.netflix.com/WiRecentAdditionsGallery?nRT=all&nRR=arrivalDate"
+            };
+
+            try
+            {
+                foreach (NetflixData d in GetSinglePageNetflixData(category))
+                {
+                    videos.Add(new VideoInfo()
+                    {
+                        Title = d.Title,
+                        Thumb = d.Cover,
+                        Description = d.Description,
+                    });
+                }
+            }
+            catch { }
+            return videos.Count >= LatestVideosCount ? videos.GetRange(0, (int)LatestVideosCount) : new List<VideoInfo>();
+        }
+        #endregion
     }
 }
