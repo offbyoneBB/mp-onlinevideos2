@@ -190,6 +190,22 @@ namespace OnlineVideos.Sites
             return results;
         }
 
+        private string GetVideomegaUrl(string url)
+        {
+            CookieContainer vmcc = new CookieContainer();
+            string data = GetWebData(url, cookies: vmcc, referer: "http://www.swefilmer.com");
+            Regex rgx = new Regex(@"<source.*?src=""(?<url>[^""]*)");
+            Match m = rgx.Match(data);
+            if (m.Success)
+            {
+                MPUrlSourceFilter.HttpUrl httpUrl = new MPUrlSourceFilter.HttpUrl(m.Groups["url"].Value);
+                httpUrl.Referer = url;
+                httpUrl.Cookies.Add(vmcc.GetCookies(new Uri("http://videomega.tv")));
+                return httpUrl.ToString();
+            }
+            return string.Empty;
+        }
+
         public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<Hoster.HosterBase> hosters = Hoster.HosterFactory.GetAllHosters();
@@ -209,16 +225,26 @@ namespace OnlineVideos.Sites
                     if (urlMatch.Success)
                     {
                         string url = urlMatch.Groups[1].Value;
-                        Hoster.HosterBase hoster = hosters.FirstOrDefault(h => url.Contains(h.GetHosterUrl()));
-                        if (hoster != null)
+                        //Handle watchmega.tv separtately, needs referer to work with swefilmer
+                        if (url.Contains("videomega.tv"))
                         {
-                            Dictionary<string, string> hosterPo = hoster.GetPlaybackOptions(url);
-                            if (hosterPo != null)
+                            string vmurl = GetVideomegaUrl(url);
+                            if (!string.IsNullOrEmpty(vmurl))
+                                video.PlaybackOptions.Add("Videomega (Player " + playerIndex + ")", vmurl);
+                        }
+                        else
+                        {
+                            Hoster.HosterBase hoster = hosters.FirstOrDefault(h => url.Contains(h.GetHosterUrl()));
+                            if (hoster != null)
                             {
-                                foreach (string key in hosterPo.Keys)
+                                Dictionary<string, string> hosterPo = hoster.GetPlaybackOptions(url);
+                                if (hosterPo != null)
                                 {
-                                    if (!string.IsNullOrEmpty(hosterPo[key]))
-                                        video.PlaybackOptions.Add(hoster.GetType().Name + " " + key + " (Player " + playerIndex + ")", hosterPo[key]);
+                                    foreach (string key in hosterPo.Keys)
+                                    {
+                                        if (!string.IsNullOrEmpty(hosterPo[key]))
+                                            video.PlaybackOptions.Add((hoster.GetType().Name != key ? hoster.GetType().Name + " " : "") + key + " (Player " + playerIndex + ")", hosterPo[key]);
+                                    }
                                 }
                             }
                         }
