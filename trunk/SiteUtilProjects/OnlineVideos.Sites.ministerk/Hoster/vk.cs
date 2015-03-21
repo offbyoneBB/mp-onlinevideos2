@@ -19,65 +19,25 @@ namespace OnlineVideos.Hoster
 
         public override Dictionary<string, string> GetPlaybackOptions(string url)
         {
-            Regex rgx;
-            Match m;
-            if (url.Contains("vk.php?v="))
-            {
-                rgx = new Regex(@"v=(?<url>.*)");
-                m = rgx.Match(url);
-                if (m.Success)
-                {
-                    url = m.Groups["url"].Value;
-                    url = HttpUtility.UrlDecode(url);
-                }
-            }
-            string data = WebCache.Instance.GetWebData(HttpUtility.HtmlDecode(url)) ?? "";
-            //location.href
-            rgx = new Regex(@"location.href(?:[^""]*)""(?<url>[^""]*)");
-            m = rgx.Match(data);
-            if (m.Success)
-            {
-                string url2 = m.Groups["url"].Value.Replace("'", string.Empty).Replace("+", string.Empty);
-                data = WebCache.Instance.GetWebData(HttpUtility.HtmlDecode(url2), referer: url) ?? "";
-                m = rgx.Match(data);
-                if (m.Success)
-                {
-                    string url3 = m.Groups["url"].Value.Replace("'", string.Empty).Replace("+", string.Empty);
-                    data = WebCache.Instance.GetWebData(HttpUtility.HtmlDecode(url3), referer: url2) ?? "";
-                }
-            }
+            string data = WebCache.Instance.GetWebData(url);
             Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
             List<KeyValuePair<string, string>> pairs = new List<KeyValuePair<string, string>>();
 
-            rgx = new Regex(@"var vars = (.*)");
-            m = rgx.Match(data);
-            if (m.Success)
+            Regex rgx = new Regex(@"""url(?<res>\d+)?"":""(?<url>[^""]*)");
+            foreach (Match m in rgx.Matches(data))
             {
-                var json = JObject.Parse(m.Groups[1].Value);
-                rgx = new Regex(@"url([0-9]+)");
-                int res;
-                foreach (JToken token in json.Descendants())
-                {
-                    JProperty property = token as JProperty;
-                    if (property != null)
-                    {
-                        m = rgx.Match(property.Name);
-                        if (m.Success)
-                        {
-                            res = int.Parse(m.Groups[1].Value);
-                            url = ((string)json[string.Format("url{0}", res)]).Replace("https://","http://");
-                            pairs.Add(new KeyValuePair<string, string>(string.Format("{0}p", res), url));
-                        }
-                    }
-                }
+                string u = m.Groups["url"].Value.Replace(@"\/",@"/");
+                string r = m.Groups["res"].Value;
+                playbackOptions.Add(r, u);
             }
-            var sorted = from pair in pairs
-                         orderby pair.Key descending
-                         select pair;
-            foreach (var pair in sorted)
+            playbackOptions = playbackOptions.OrderByDescending((p) =>
             {
-                playbackOptions.Add(pair.Key, pair.Value);
-            }
+                string resKey = p.Key;
+                int parsedRes = 0;
+                int.TryParse(resKey, out parsedRes);
+                return parsedRes;
+            }).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
             return playbackOptions;
         }
 

@@ -192,54 +192,44 @@ namespace OnlineVideos.Sites
 
         public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
-            string decodedBase64 = "";
-            string bestUrl = "";
+            List<Hoster.HosterBase> hosters = Hoster.HosterFactory.GetAllHosters();
             video.PlaybackOptions = new Dictionary<string, string>();
-            HtmlDocument doc = GetWebData<HtmlDocument>(video.VideoUrl, cookies: GetCookie());
-            var playerholder = doc.DocumentNode.SelectSingleNode("//div[@id = 'Playerholder']");
-            if (playerholder == null)
-                throw new OnlineVideosException("You have to logged in to be able to watch this video");
-            var script = playerholder.SelectSingleNode("script").InnerText;
-            Regex rgx = new Regex(@"'(.*)'");
-            Match m = rgx.Match(script);
-            if (m.Success)
+            string doc = GetWebData<string>(video.VideoUrl, cookies: GetCookie());
+            Regex rgx = new Regex(@"id=""page\d+""[^\(]*\(.*?swe.zzz\('([^']*)");
+            int playerIndex = 1;
+            foreach (Match m in rgx.Matches(doc))
             {
-                var base64 = m.Groups[1].Value;
-                decodedBase64 = System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(base64));
-            }
-            doc = new HtmlAgilityPack.HtmlDocument();
-            doc.LoadHtml(decodedBase64);
-            var iframe = doc.DocumentNode.SelectSingleNode("//iframe");
-            string videoUrl = "";
-            if (iframe != null)
-            {
-                videoUrl = iframe.GetAttributeValue("src", "");
-            }
-            else
-            {
-                var obj = doc.DocumentNode.SelectSingleNode("//object");
-                if (obj != null)
+                try
                 {
-                    var flashVars = obj.SelectSingleNode("//param[@name = 'FlashVars']").GetAttributeValue("value", "");
-                    rgx = new Regex(@"proxy.link=(.*)");
-                    m = rgx.Match(flashVars);
-                    if (m.Success)
+                    string data = m.Groups[1].Value;
+                    string decodedBase64 = System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(data));
+                    Regex urlRgx = new Regex(@"src=""([^""]*)");
+                    Match urlMatch = urlRgx.Match(decodedBase64);
+
+                    if (urlMatch.Success)
                     {
-                        videoUrl = HttpUtility.UrlDecode(m.Groups[1].Value);
+                        string url = urlMatch.Groups[1].Value;
+                        Hoster.HosterBase hoster = hosters.FirstOrDefault(h => url.Contains(h.GetHosterUrl()));
+                        if (hoster != null)
+                        {
+                            Dictionary<string, string> hosterPo = hoster.GetPlaybackOptions(url);
+                            if (hosterPo != null)
+                            {
+                                foreach (string key in hosterPo.Keys)
+                                {
+                                    if (!string.IsNullOrEmpty(hosterPo[key]))
+                                        video.PlaybackOptions.Add(hoster.GetType().Name + " " + key + " (Player " + playerIndex + ")", hosterPo[key]);
+                                }
+                            }
+                        }
+                        playerIndex++;
                     }
                 }
+                catch { }
             }
-
-            if (!string.IsNullOrEmpty(videoUrl))
-            {
-
-                video.PlaybackOptions = Hoster.HosterFactory.GetHoster("vk").GetPlaybackOptions(videoUrl);
-
-                if (video.PlaybackOptions.Count > 0)
-                    bestUrl = video.PlaybackOptions.First().Value;
-            }
+            string firstUrl = video.PlaybackOptions.Count() > 0 ? video.PlaybackOptions.First().Value : string.Empty;
             if (inPlaylist) video.PlaybackOptions.Clear();
-            return new List<string>() { bestUrl };
+            return new List<string>() { firstUrl };
         }
 
         public override ITrackingInfo GetTrackingInfo(VideoInfo video)

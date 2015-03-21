@@ -69,6 +69,8 @@
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorSv.cs" />
     <Compile Include="Extensions\NetflixExtensions.cs" />
     <Compile Include="HboNordicWebUtil.cs" />
+    <Compile Include="Hoster\Buggerdugger.cs" />
+    <Compile Include="Hoster\MailRu.cs" />
     <Compile Include="Hoster\vk.cs" />
     <Compile Include="MovHunterUtil.cs" />
     <Compile Include="NetfilxWebUtil.cs" />
@@ -103,7 +105,11 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ViaplayVideoControl.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
