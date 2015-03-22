@@ -19,12 +19,12 @@ namespace OnlineVideos.Hoster
         {
             Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
             CookieContainer cc = new CookieContainer();
-            string data = GetWebData(url, cookies: cc);
+            string data = GetWebData(url, cookies: cc, cache: false);
             Regex rgx = new Regex(@"""metadataUrl"":""(?<url>[^""]*)");
             Match m = rgx.Match(data);
             if (m.Success)
             {
-                JObject json = GetWebData<JObject>(m.Groups["url"].Value, cookies:cc);
+                JObject json = GetWebData<JObject>(m.Groups["url"].Value, cookies: cc, cache: false);
                 JToken videos = json["videos"];
                 if (videos != null)
                 {
