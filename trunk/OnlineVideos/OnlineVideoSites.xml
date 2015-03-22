@@ -1247,30 +1247,26 @@
       <Description>Red Bull TV - Watch sports, music and entertainment TV online. Free.</Description>
       <Configuration>
         <item key="videoListRegExLive"><![CDATA[<tr\sclass="[^"]*">\s*<td\sclass="status"><span[^>]*>@Cat@</span></td>\s*<td\sclass="date"><span\sclass="localtime-date-only-med">(?<Airdate1>[^<]*)</span></td>\s*<td\sclass="time"><span\sclass="localtime-time-only">(?<Airdate>[^<]*)</span>\s-\s<span\sclass="localtime-time-only\stz-abbr">(?<AirdateEnd>[^<]*)</span></td>\s*<td\sclass="program">\s*<h3><a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)<span>(?<Title2>[^<]*)</span></a></h3>\s*</td>\s*<td\sclass="description">(?<Description>[^<]*)<]]></item>
-        <item key="nextPageRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*)"\sclass="next">Next</a></li>]]></item>
         <item key="fileUrlRegExLive"><![CDATA[data-player-key="(?<playerKey>[^"]*)"\sdata-player-id="(?<contentId>[^"]*)">]]></item>
         <item key="hashValueLive"><![CDATA[da46116ed5e11a378272c1baab78c5d3d57eb895]]></item>
         <item key="requestUrlLive"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerKey=AQ~~,AAAApYJ7UqE~,xqr_zXk0I-zzNndy8NlHogrCb5QdyZRf]]></item>
+        
         <item key="baseUrl"><![CDATA[http://www.redbull.tv/]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\sclass="no-border">\s*<span\sclass="featured-image">\s*<img\ssrc="(?<thumb>[^"]*)"\s/>\s*<span\sclass="show-information">\s*Watch\snow\s*</span>\s*</span>\s*<span\sclass="title">(?<title>[^<]*)</span>\s*<span>(?<description>[^&<]*)(?:&nbsp;)*</span>\s*<span\sclass="episode-count">[^<]*</span>\s*<span\sclass="latest-addition"><span>Updated:\s*[^<]*</span></span>\s*<span\sclass="clear"></span>]]></item>
-        <item key="videoListRegEx"><![CDATA[<tr(?:\sclass="active")?>\s*<td><a\shref="(?<VideoUrl>[^"]*)">[^<]*</a></td>\s*<td><a\shref="[^"]*">(?<Title>[^<]*)</a></td>\s*<td><a\shref="[^"]*">(?<Duration>[^<]*)</a></td>\s*<td><a\shref="[^"]*">\s*(?<Airdate>[^<]*)</a></td>\s*</tr>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<param\sname="playerID"\svalue="(?<experienceId>[^"]*)"\s/>\s*<param\sname="isSlim"\svalue="[^"]*"\s/>\s*<param\sname="dynamicStreaming"\svalue="[^"]*"\s/>\s*<param\sname="@videoPlayer"\svalue="(?<contentId>[^"]*)"\s/>]]></item>
-        <item key="hashValue"><![CDATA[98778a410805682c693e3b02004f01d338e8a7ec]]></item>
-        <item key="playerId"><![CDATA[1398061561001]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass='navigation__item'>\s*<img\salt="[^"]*"\sclass="channel-image"\ssrc="(?<thumb>[^"]*)"\s/>\s*<a\sclass="[^"]*"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>]]></item>
+        <item key="dynamicSubCategoriesSportsRegEx"><![CDATA[<li\sclass='navigation__sub-item\sswiper-slide'>\s*<a\sclass="[^"]*"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>\s*</li>]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[(<div\sclass='grid__unit'>\s*<article\sclass='teaser\steaser--show\saspect-ratio\saspect-ratio--2x3'>\s*<a\sclass="aspect-ratio__inner"\shref="(?<url>[^"]*)"\stitle="(?<title>[^"]*)"><div\sclass="responsive-image\s"><picture\sclass="[^"]*"\sdata-id="[^"]*"><source\sclass="[^"]*"\s(?:(?:media="[^"]*"\s)|(?:data-))srcset="(?<thumb>[^"]*)")|((?#for live)<a\sclass="button\sbutton--primary"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>)]]></item>
+        <item key="dynamicSubCategoriesNextPageRegEx"><![CDATA[href="(?<url>[^"]*)">More\sshows</a>]]></item>
+        <item key="videoListRegEx"><![CDATA[(<a\sclass="teaser__link"\shref="(?<VideoUrl>[^\#]*)\#autostart"><div\sclass='teaser__image'>\s*<div\sclass='aspect-ratio\saspect-ratio[^']*'>\s*<div\sclass="responsive-image\saspect-ratio__inner"><picture\sclass="[^"]*"\sdata-id="[^"]*"><source\sclass="[^"]*"\s(?:(?:media="[^"]*"\s)|(?:data-))srcset="(?<ImageUrl>[^"]*)"[^>]*>(?:<source[^>]*>)*<img[^>]*></picture>(?:</div>\s*)*<span\sclass='teaser__label\scategory-label\scategory-label[^']*'>[^<]*</span>\s*<div\sclass='teaser__overlay'>\s*<h2\sclass='h3\steaser__title\steaser__title--popup'>(?<Title>[^<]*)</h2>\s*<h3\sclass='h4\steaser__subtitle'>[^<]*</h3>\s*<p\sclass='teaser__description\steaser__description--popup\stext--small'>(?<Description>[^<]*)</p>\s*</div>)
+        |
+        ((?#for live_replays)
+        <a\sclass="teaser__link"\shref="(?<VideoUrl>[^\#]*)\#autostart"><div\sclass='teaser__image'>\s*<div\sclass='aspect-ratio\saspect-ratio[^']*'>\s*<div\sclass="responsive-image\saspect-ratio__inner"><picture\sclass="[^"]*"\sdata-id="[^"]*"><source\sclass="[^"]*"\s(?:(?:media="[^"]*"\s)|(?:data-))srcset="(?<ImageUrl>[^"]*)"[^>]*>(?:<source[^>]*>)*<img[^>]*></picture>(?:</div>\s*)*(?:<span\sclass='teaser__label\scategory-label\scategory-label[^']*'>[^<]*</span>)?\s*<div\sclass='teaser__overlay\steaser__overlay--event'>\s*<div\sclass='teaser__meta\steaser__meta--dimmed\steaser__meta--event'>\s*<div\sclass='vcenter\svcenter--hcenter'>\s*<div\sclass='vcenter__wrap'>\s*<div\sclass='vcenter__inner'>\s*<div\sclass='date-mark'>\s*<div\sclass='date-mark__inner'>\s*<span\sclass='date-mark__data\sdate-mark__month'>(?<Month>[^<]*)</span>\s*<span\sclass='date-mark__data\sdate-mark__date'>(?<Date>[^<]*)</span>\s*</div>\s*</div>\s*</div>\s*</div>\s*</div>\s*</div>\s*<h2\sclass='h3\steaser__title\steaser__title--popup'>(?<Title>[^<]*)</h2>\s*<h3\sclass='h4\steaser__subtitle'>(?<Description>[^<]*)</h3>\s*</div>)]]></item>
+        <item key="nextPageRegEx"><![CDATA[(href="(?<url>[^"]*)">More\svideos</a>)|((?#for live)data-show-more-container="\.grid\.past-events"\sdata-show-more="true"\shref="(?<url>[^"]*)">More\sevents</a>)]]></item>
+        <item key="fileUrlRegEx"><![CDATA[videoPlayer=(?<contentRefId>[^"]*)"]]></item>
+        <item key="hashValue"><![CDATA[63cfaa5119fd8e383eadf26f1118f24d87251f76]]></item>
         <item key="requestType"><![CDATA[ViewerExperienceRequest]]></item>
-        <item key="requestUrl"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerId=1398061561001]]></item>
+        <item key="playerKey"><![CDATA[AQ~~,AAACZYoJeMk~,6-AuiH-yar7vhFK8T1lKHxOJlJLkWYk4]]></item>
+        <item key="requestUrl"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerKey=AQ~~,AAACZYoJeMk~,6-AuiH-yar7vhFK8T1lKHxOJlJLkWYk4]]></item>
       </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Shows">
-          <SubCategories>
-            <Category xsi:type="RssLink" name="Page 1">http://www.redbull.tv/cs/Satellite?_=1315253035003&amp;pagename=RBWebTV%2FRBTV_P%2FRBWTVShowContainer&amp;orderby=latest&amp;p=1242970775246&amp;start=1</Category>
-            <Category xsi:type="RssLink" name="Page 2">http://www.redbull.tv/cs/Satellite?_=1315253035003&amp;pagename=RBWebTV%2FRBTV_P%2FRBWTVShowContainer&amp;orderby=latest&amp;p=1242970775246&amp;start=9</Category>
-          </SubCategories>
-        </Category>
-        <Category xsi:type="RssLink" name="Upcoming" desc="Upcoming">http://live.redbull.tv/includes/fragments/schedule_list.php</Category>
-        <Category xsi:type="RssLink" name="Live" desc="Live">http://live.redbull.tv/includes/fragments/schedule_list.php</Category>
-        <Category xsi:type="RssLink" name="Past Programs" desc="Past">http://live.redbull.tv/includes/fragments/schedule_list.php</Category>
-      </Categories>
     </Site>
     <Site name="Rockpalast" util="Rockpalast" agecheck="false" enabled="true" lang="de">
       <Description>Rockpalast, das Kult-Programm mit festem wöchentlichen Sendeplatz und regelmäßigen zusätzlichen Rocknächten</Description>
