@@ -190,17 +190,26 @@ namespace OnlineVideos.Sites
             return results;
         }
 
-        private string GetVideomegaUrl(string url)
+        private string GetVideomegaUrl(string url, string refUrl)
         {
             CookieContainer vmcc = new CookieContainer();
-            string data = GetWebData(url, cookies: vmcc, referer: "http://www.swefilmer.com");
+            string data = GetWebData(url, cookies: vmcc, referer: refUrl, cache: false);
             Regex rgx = new Regex(@"<source.*?src=""(?<url>[^""]*)");
             Match m = rgx.Match(data);
             if (m.Success)
             {
                 MPUrlSourceFilter.HttpUrl httpUrl = new MPUrlSourceFilter.HttpUrl(m.Groups["url"].Value);
                 httpUrl.Referer = url;
+                Cookie cookie = new Cookie()
+                {
+                    Domain = ".videomega.tv",
+                    Path = "/",
+                    Name = "_ga",
+                    Value = "GA1.2.1000000000.1000000000"
+                };
+                vmcc.Add(cookie);
                 httpUrl.Cookies.Add(vmcc.GetCookies(new Uri("http://videomega.tv")));
+                string test = httpUrl.ToString();
                 return httpUrl.ToString();
             }
             return string.Empty;
@@ -228,7 +237,7 @@ namespace OnlineVideos.Sites
                         //Handle watchmega.tv separtately, needs referer to work with swefilmer
                         if (url.Contains("videomega.tv"))
                         {
-                            string vmurl = GetVideomegaUrl(url);
+                            string vmurl = GetVideomegaUrl(url, video.VideoUrl);
                             if (!string.IsNullOrEmpty(vmurl))
                                 video.PlaybackOptions.Add("Videomega (Player " + playerIndex + ")", vmurl);
                         }
