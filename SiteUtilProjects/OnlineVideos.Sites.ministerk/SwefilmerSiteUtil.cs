@@ -192,24 +192,14 @@ namespace OnlineVideos.Sites
 
         private string GetVideomegaUrl(string url, string refUrl)
         {
-            CookieContainer vmcc = new CookieContainer();
-            string data = GetWebData(url, cookies: vmcc, referer: refUrl, cache: false);
+            string data = GetWebData(url, referer: refUrl, cache: false, userAgent: "Apple-iPhone/701.341");
             Regex rgx = new Regex(@"<source.*?src=""(?<url>[^""]*)");
             Match m = rgx.Match(data);
             if (m.Success)
             {
                 MPUrlSourceFilter.HttpUrl httpUrl = new MPUrlSourceFilter.HttpUrl(m.Groups["url"].Value);
                 httpUrl.Referer = url;
-                Cookie cookie = new Cookie()
-                {
-                    Domain = ".videomega.tv",
-                    Path = "/",
-                    Name = "_ga",
-                    Value = "GA1.2.1000000000.1000000000"
-                };
-                vmcc.Add(cookie);
-                httpUrl.Cookies.Add(vmcc.GetCookies(new Uri("http://videomega.tv")));
-                string test = httpUrl.ToString();
+                httpUrl.UserAgent = "Apple-iPhone/701.341";
                 return httpUrl.ToString();
             }
             return string.Empty;
@@ -235,16 +225,15 @@ namespace OnlineVideos.Sites
                     {
                         string url = urlMatch.Groups[1].Value;
                         //Handle watchmega.tv separtately, needs referer to work with swefilmer
-                        if (url.Contains("videomega.tv"))
+                        if (url.ToLower().Contains("videomega.tv"))
                         {
-                            //do nothing, does not work properly. It did for aprox 24h, keeping code for future testing
-                            //string vmurl = GetVideomegaUrl(url, video.VideoUrl);
-                            //if (!string.IsNullOrEmpty(vmurl))
-                            //    video.PlaybackOptions.Add("Videomega (Player " + playerIndex + ")", vmurl);
+                            string vmurl = GetVideomegaUrl(url, video.VideoUrl);
+                            if (!string.IsNullOrEmpty(vmurl))
+                                video.PlaybackOptions.Add("Videomega (Player " + playerIndex + ")", vmurl);
                         }
                         else
                         {
-                            Hoster.HosterBase hoster = hosters.FirstOrDefault(h => url.Contains(h.GetHosterUrl()));
+                            Hoster.HosterBase hoster = hosters.FirstOrDefault(h => url.ToLower().Contains(h.GetHosterUrl().ToLower()));
                             if (hoster != null)
                             {
                                 Dictionary<string, string> hosterPo = hoster.GetPlaybackOptions(url);
@@ -256,6 +245,10 @@ namespace OnlineVideos.Sites
                                             video.PlaybackOptions.Add((hoster.GetType().Name != key ? hoster.GetType().Name + " " : "") + key + " (Player " + playerIndex + ")", hosterPo[key]);
                                     }
                                 }
+                            }
+                            else
+                            {
+                                Log.Debug("Swefilmer, no hoster found for Player {0} url: {1}", playerIndex, url);
                             }
                         }
                         playerIndex++;
