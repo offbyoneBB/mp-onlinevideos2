@@ -237,9 +237,10 @@ namespace OnlineVideos.Sites
                         //Handle watchmega.tv separtately, needs referer to work with swefilmer
                         if (url.Contains("videomega.tv"))
                         {
-                            string vmurl = GetVideomegaUrl(url, video.VideoUrl);
-                            if (!string.IsNullOrEmpty(vmurl))
-                                video.PlaybackOptions.Add("Videomega (Player " + playerIndex + ")", vmurl);
+                            //do nothing, does not work properly. It did for aprox 24h, keeping code for future testing
+                            //string vmurl = GetVideomegaUrl(url, video.VideoUrl);
+                            //if (!string.IsNullOrEmpty(vmurl))
+                            //    video.PlaybackOptions.Add("Videomega (Player " + playerIndex + ")", vmurl);
                         }
                         else
                         {
