@@ -112,13 +112,13 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AmazonLoginUrl" xml:space="preserve">
-    <value>https://www.amazon.de/ap/signin?_encoding=UTF8&amp;amp;openid.assoc_handle=deflex&amp;amp;openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&amp;amp;openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&amp;amp;openid.mode=checkid_setup&amp;amp;openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&amp;amp;openid.ns.pape=http%3A%2F%2Fspecs.openid.net%2Fextensions%2Fpape%2F1.0&amp;amp;openid.pape.max_auth_age=0&amp;amp;openid.return_to=https%3A%2F%2Fwww.amazon.de%2Fgp%2Fyourstore%2Fhome%3Fie%3DUTF8%26ref_%3Dnav_signin_btn</value>
+    <value>https://www.amazon.de/ap/signin?_encoding=UTF8&amp;openid.assoc_handle=deflex&amp;openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&amp;openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&amp;openid.mode=checkid_setup&amp;openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&amp;openid.ns.pape=http%3A%2F%2Fspecs.openid.net%2Fextensions%2Fpape%2F1.0&amp;openid.pape.max_auth_age=0&amp;openid.return_to=https%3A%2F%2Fwww.amazon.de%2Fgp%2Fyourstore%2Fhome%3Fie%3DUTF8%26ref_%3Dnav_signin_btn</value>
   </data>
   <data name="AmazonMovieCategoriesUrl" xml:space="preserve">
     <value>http://www.amazon.de/b/ref=atv_sn_piv_cl1_mv_gn?_encoding=UTF8&amp;node=3794661031</value>
@@ -129,13 +129,40 @@
   <data name="AmazonMovieUrl" xml:space="preserve">
     <value>http://www.amazon.de/gp/product/{VIDEO_ID}?ref_=pda_recs_wdgt_nav_dyn_{VIDEO_ID}</value>
   </data>
+  <data name="AmazonMovieWatchlistUrl" xml:space="preserve">
+    <value>https://www.amazon.de/gp/video/watchlist/movies/ref=dv_web_wtls_nr_bar_mov?show=24&amp;sort=DATE_ADDED_DESC</value>
+  </data>
   <data name="AmazonRootUrl" xml:space="preserve">
     <value>http://www.amazon.de</value>
+  </data>
+  <data name="AmazonSearchUrl" xml:space="preserve">
+    <value>http://www.amazon.de/s/ref=nb_sb_noss_1?url=search-alias%3Dprime-instant-video&amp;ie=UTF8&amp;lo=prime-instant-video&amp;field-keywords={QUERY}</value>
   </data>
   <data name="AmazonTVCategoriesUrl" xml:space="preserve">
     <value>http://www.amazon.de/b/ref=atv_sn_piv_cl2_tv_gn?_encoding=UTF8&amp;node=3794658031</value>
   </data>
   <data name="AmazonTvIcon" xml:space="preserve">
     <value>http://ecx.images-amazon.com/images/I/51qB6Z-XI3L._SX200_.jpg</value>
+  </data>
+  <data name="AmazonTVWatchlistUrl" xml:space="preserve">
+    <value>https://www.amazon.de/gp/video/watchlist/tv/ref=dv_web_wtls_nr_bar_tv?show=24&amp;sort=DATE_ADDED_DESC</value>
+  </data>
+  <data name="AmazonMoviePopularUrl" xml:space="preserve">
+    <value>http://www.amazon.de/s/ref=atv_sn_piv_cl1_mv_pl?_encoding=UTF8&amp;rh=n%3A3010075031%2Cn%3A3356018031&amp;sort=popularity-rank</value>
+  </data>
+  <data name="AmazonMovieRecentUrl" xml:space="preserve">
+    <value>http://www.amazon.de/s/ref=atv_sn_piv_cl1_mv_ra?_encoding=UTF8&amp;rh=n%3A3010075031%2Cn%3A3356018031%2Cn%3A4190509031&amp;sort=popularity-rank</value>
+  </data>
+  <data name="AmazonMovieEditorsUrl" xml:space="preserve">
+    <value>http://www.amazon.de/Prime-Filme-Empfehlungen-der-Redaktion/b/ref=atv_sn_piv_cl1_mv_ep?_encoding=UTF8&amp;node=3794662031</value>
+  </data>
+  <data name="AmazonTVPopularUrl" xml:space="preserve">
+    <value>http://www.amazon.de/s/ref=atv_sn_piv_cl2_tv_pl?_encoding=UTF8&amp;rh=n%3A3010075031%2Cn%3A3356019031&amp;sort=popularity-rank</value>
+  </data>
+  <data name="AmazonTVRecentUrl" xml:space="preserve">
+    <value>http://www.amazon.de/s/ref=atv_sn_piv_cl2_tv_ra?_encoding=UTF8&amp;bbn=3279204031&amp;rh=n%3A3279204031%2Cn%3A3010075031%2Cn%3A3015916031&amp;sort=date-desc-rank</value>
+  </data>
+  <data name="AmazonTVEditorsUrl" xml:space="preserve">
+    <value>http://www.amazon.de/Prime-TV-Empfehlungen-der-Redaktion/b/ref=atv_sn_piv_cl2_tv_ep?_encoding=UTF8&amp;node=3794659031</value>
   </data>
 </root>

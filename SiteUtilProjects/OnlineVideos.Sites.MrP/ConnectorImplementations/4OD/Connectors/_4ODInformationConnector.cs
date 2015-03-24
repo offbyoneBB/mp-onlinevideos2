@@ -200,5 +200,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connect
             return results;
         }
 
+        public bool CanSearch { get { return false; } }
+
+        public List<SearchResultItem> DoSearch(string query) { return null; }
     }
 }

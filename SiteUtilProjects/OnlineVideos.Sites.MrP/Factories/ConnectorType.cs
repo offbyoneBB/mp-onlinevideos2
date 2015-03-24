@@ -12,6 +12,7 @@ namespace OnlineVideos.Sites.WebAutomation.Factories
     {
         SkyGo,
         _4oD,
-        AmazonPrime
+        AmazonPrime,
+        AmazonPrimeDe
     }
 }

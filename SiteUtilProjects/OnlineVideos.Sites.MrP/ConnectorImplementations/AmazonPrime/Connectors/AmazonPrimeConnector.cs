@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using OnlineVideos.Helpers;
 using System.Drawing;
 using OnlineVideos.Sites.WebAutomation.Extensions;
+using OnlineVideos.Sites.WebAutomation.ConnectorImplementations;
 
 namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.Connectors
 {
@@ -123,9 +124,19 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
                     _currentState = State.PlayPage1;
                     break;
                 case State.PlayPage1:
+                    
+                    // Retry play every 1 second(s)
+                    var jsPlay = "var mpOVPlay = function() { ";
+                    jsPlay += "   try {";
+                    jsPlay += "         AMZNDetails.dvPlayer.play();";
+                    jsPlay += "         amzn.webGlobalVideoPlayer._mainPlayer._enableFullWindowPlaybackMode();";
+                    jsPlay += "   } catch(err) {";
+                    jsPlay += "      setTimeout(mpOVPlay,1000);";
+                    jsPlay += "   }";
+                    jsPlay += "};";
+                    jsPlay += "mpOVPlay();";
 
-                    InvokeScript("AMZNDetails.dvPlayer.play();");
-                    InvokeScript("amzn.webGlobalVideoPlayer._mainPlayer._enableFullWindowPlaybackMode();");
+                    InvokeScript(jsPlay);
 
                     // Hide the scroll bar - can't get the webpage to do this nicely :-(
                     _blankPanel.Height = Browser.Height;
@@ -172,6 +183,12 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
                     SendKeyToControl("{LEFT}");
                 if (actionEnumName == "ACTION_MOVE_RIGHT")
                     SendKeyToControl("{RIGHT}");
+                // Jump to beginning of clip
+                if (actionEnumName == "ACTION_PREV_ITEM")
+                    InvokeScript("amzn.webGlobalVideoPlayer._mainPlayer.seek(0)");
+                // Jump to next episode, more complicated than it could be, because jquery "click()" does not seem work
+                if (actionEnumName == "ACTION_NEXT_ITEM")
+                    InvokeScript("$('.episode-list .selected-episode').next().find('a.episode-list-link').each(function() { location.href = $(this).attr('href'); });");
             }
         }
 

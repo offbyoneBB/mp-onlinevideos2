@@ -5,6 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using OnlineVideos.Sites.WebAutomation.Extensions;
+using OnlineVideos.Sites.WebAutomation.ConnectorImplementations;
+using OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.Connectors;
+using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.Extensions
 {
@@ -18,11 +21,11 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        public static List<VideoInfo> LoadVideosFromUrl(this string url)
+        public static List<VideoInfo> LoadVideosFromUrl(this string url, AmazonBrowserSession session)
         {
             var results = new List<VideoInfo>();
             HtmlDocument doc = null;
-            var tmpWeb = new HtmlWeb();
+            var tmpWeb = session;
             HtmlNode detailNode = null;
 
             // Attempt the URL up to 15 times as amazon wants us to use the api!
@@ -55,8 +58,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
                                                             infoNode.GetNodeByClass("dv-meta-info").NavigatePath(new[] { 0 }).GetInnerText().Replace("\n", string.Empty).Trim() + " " +
                                                             infoNode.GetNodeByClass("dv-meta-info").NavigatePath(new[] { 1 }).GetInnerText().Replace("\n", string.Empty).Trim();
 
-                    var imageUrlNode = detailNode.NavigatePath(new[] { 3, 1, 0, 0, 1 });
-                    video.Thumb = imageUrlNode == null ? string.Empty : imageUrlNode.Attributes["src"].Value;
+                    var imageUrlNode = doc.GetElementbyId("dv-dp-left-content").GetNodeByClass("dp-meta-icon-container");
+                    video.Thumb = imageUrlNode == null ? string.Empty : imageUrlNode.SelectSingleNode(".//img").Attributes["src"].Value;
                     video.Length = infoNode.NavigatePath(new[] { 2, 3 }).GetInnerText().Replace("\n", string.Empty).Trim();
                     video.Other = doc.GetElementbyId("ASIN").Attributes["value"].Value;
                     results.Add(video);
@@ -78,18 +81,32 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.
                         var video = new VideoInfo();
                         var titleNode = usesAltLayout ? item.GetNodeByClass("dv-extender").NavigatePath(new[]{0,0}) : item.GetNodeByClass("episode-title");
                          
-                        video.Title = titleNode.GetInnerText().Trim();
+                        var seen = "";
+                        /*if (item.GetNodeByClass("progress-bar") == null)
+                        {
+                            seen = " (new)";
+                        }*/
+                        video.Title = Regex.Replace(titleNode.GetInnerText().Replace("\n", String.Empty).Trim(), @"^\d+", m => m.Value.PadLeft(2, '0')) + seen;
 
                         video.Description = titleNode.NextSibling.GetInnerText().Replace("\n", string.Empty).Trim() + "\r\n" +
                                              "Released: " + item.GetNodeByClass("release-date").GetInnerText().Replace("\n", string.Empty).Trim();
 
-                        var imageUrlNode = doc.GetElementbyId("dv-dp-left-content").GetNodeByClass("dp-meta-icon-container");
-                        video.Thumb = imageUrlNode == null ? string.Empty : imageUrlNode.FindAllChildElements()[1].Attributes["src"].Value;
+                        var imageUrlNode = item.GetNodeByClass("episode-list-image");
+                        if (imageUrlNode != null)
+                        {
+                            video.Thumb = imageUrlNode.Attributes["src"].Value;
+                        }
+                        else
+                        {
+                            imageUrlNode = doc.GetElementbyId("dv-dp-left-content").GetNodeByClass("dp-meta-icon-container");
+                            video.Thumb = imageUrlNode == null ? string.Empty : imageUrlNode.SelectSingleNode(".//img").Attributes["src"].Value;
+                        }
                         video.Length = item.GetNodeByClass("runtime").GetInnerText().Replace("\n", string.Empty).Trim();
                         var videoUrl = usesAltLayout ? titleNode.GetAttribute("href") : item.GetAttribute("href");
                         videoUrl = videoUrl.Substring(videoUrl.IndexOf("/product/") + 9);
                         videoUrl = videoUrl.Substring(0, videoUrl.IndexOf("/"));
                         video.Other = videoUrl;
+                        video.CleanDescriptionAndTitle();
                         results.Add(video);
                     }
                 }

@@ -259,5 +259,9 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             }
             return -1;
         }
+
+        public bool CanSearch { get { return false; } }
+
+        public List<SearchResultItem> DoSearch(string query) { return null; }
     }
 }
