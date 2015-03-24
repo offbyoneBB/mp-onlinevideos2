@@ -20,6 +20,8 @@ namespace OnlineVideos.Sites
         protected string playerId = null;
         [Category("OnlineVideosConfiguration"), Description("4th value in array")]
         protected string array4 = null;
+        [Category("OnlineVideosConfiguration"), Description("playerKey")]
+        protected string playerKey = String.Empty;
         [Category("OnlineVideosConfiguration"), Description("Request type")]
         protected RequestType requestType = RequestType.ViewerExperienceRequest;
 
@@ -81,7 +83,7 @@ namespace OnlineVideos.Sites
                 ViewerExperienceRequest.Add("playerKey", g.Value);
             }
             else
-                ViewerExperienceRequest.Add("playerKey", String.Empty);
+                ViewerExperienceRequest.Add("playerKey", playerKey);
             ViewerExperienceRequest.Add("deliveryType", double.NaN);
             ViewerExperienceRequest.Add("contentOverrides", array);
             ViewerExperienceRequest.Add("URL", videoUrl);
