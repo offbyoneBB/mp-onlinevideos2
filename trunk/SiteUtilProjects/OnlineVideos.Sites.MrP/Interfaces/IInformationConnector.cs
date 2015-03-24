@@ -33,5 +33,10 @@ namespace OnlineVideos.Sites.WebAutomation.Interfaces
         /// Should the main util sort the video results
         /// </summary>
         bool ShouldSortResults { get; }
+
+        bool CanSearch { get; }
+
+        List<SearchResultItem> DoSearch(string query);
+
     }
 }

@@ -25,6 +25,8 @@ namespace OnlineVideos.Sites.WebAutomation.Factories
                 return new _4ODInformationConnector(siteUtil);
             if (connectorType == ConnectorType.AmazonPrime)
                 return new AmazonPrimeInformationConnector(siteUtil);
+            if (connectorType == ConnectorType.AmazonPrimeDe)
+                return new AmazonPrimeInformationConnector(siteUtil);
             return null;
         }
     }

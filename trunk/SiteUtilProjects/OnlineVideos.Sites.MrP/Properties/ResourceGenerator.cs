@@ -102,13 +102,31 @@ namespace OnlineVideos.Sites.WebAutomation.Properties
 
 		public static string AmazonMovieCategoriesUrl { get { return GetResourceString("AmazonMovieCategoriesUrl"); } }
 
+        public static string AmazonMovieWatchlistUrl { get { return GetResourceString("AmazonMovieWatchlistUrl"); } }
+
+        public static string AmazonMoviePopularUrl { get { return GetResourceString("AmazonMoviePopularUrl"); } }
+
+        public static string AmazonMovieRecentUrl { get { return GetResourceString("AmazonMovieRecentUrl"); } }
+
+        public static string AmazonMovieEditorsUrl { get { return GetResourceString("AmazonMovieEditorsUrl"); } }
+
 		public static string AmazonTVCategoriesUrl { get { return GetResourceString("AmazonTVCategoriesUrl"); } }
 
-		public static string AmazonRootUrl { get { return GetResourceString("AmazonRootUrl"); } }
+        public static string AmazonTVWatchlistUrl { get { return GetResourceString("AmazonTVWatchlistUrl"); } }
+
+        public static string AmazonTVPopularUrl { get { return GetResourceString("AmazonTVPopularUrl"); } }
+
+        public static string AmazonTVRecentUrl { get { return GetResourceString("AmazonTVRecentUrl"); } }
+
+        public static string AmazonTVEditorsUrl { get { return GetResourceString("AmazonTVEditorsUrl"); } }
+        
+        public static string AmazonRootUrl { get { return GetResourceString("AmazonRootUrl"); } }
 
 		public static string AmazonMovieIcon { get { return GetResourceString("AmazonMovieIcon"); } }
 
 		public static string AmazonTvIcon { get { return GetResourceString("AmazonTvIcon"); } }
+
+        public static string AmazonSearchUrl { get { return GetResourceString("AmazonSearchUrl"); } }
 
 		public static string Resources_de { get { return GetResourceString("Resources.de"); } }
 
@@ -134,12 +152,21 @@ namespace OnlineVideos.Sites.WebAutomation.Properties
 			public const string _4OD_VideoPlayUrl = "_4OD_VideoPlayUrl";
 			public const string AmazonLoginUrl = "AmazonLoginUrl";
 			public const string AmazonMovieUrl = "AmazonMovieUrl";
-			public const string AmazonMovieCategoriesUrl = "AmazonMovieCategoriesUrl";
-			public const string AmazonTVCategoriesUrl = "AmazonTVCategoriesUrl";
-			public const string AmazonRootUrl = "AmazonRootUrl";
+            public const string AmazonMovieWatchlistUrl = "AmazonMovieWatchlistUrl";
+            public const string AmazonMovieCategoriesUrl = "AmazonMovieCategoriesUrl";
+            public const string AmazonMoviePopularUrl = "AmazonMoviePopularUrl";
+            public const string AmazonMovieRecentUrl = "AmazonMovieRecentUrl";
+            public const string AmazonMovieEditorsUrl = "AmazonMovieEditorsUrl";
+            public const string AmazonTVCategoriesUrl = "AmazonTVCategoriesUrl";
+            public const string AmazonTVWatchlistUrl = "AmazonTVWatchlistUrl";
+            public const string AmazonTVPopularUrl = "AmazonTVPopularUrl";
+            public const string AmazonTVRecentUrl = "AmazonTVRecentUrl";
+            public const string AmazonTVEditorsUrl = "AmazonTVEditorsUrl";
+            public const string AmazonRootUrl = "AmazonRootUrl";
 			public const string AmazonMovieIcon = "AmazonMovieIcon";
 			public const string AmazonTvIcon = "AmazonTvIcon";
-			public const string Resources_de = "Resources_de";
-		}
+            public const string AmazonSearchUrl = "AmazonSearchUrl";
+            public const string Resources_de = "Resources_de";
+  		}
 	}
 }
