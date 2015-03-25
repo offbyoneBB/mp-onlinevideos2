@@ -13,9 +13,9 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>LAVFilters-0.63.0.exe</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{9e859995-335a-44a9-ac1f-41bb7b38ab11}-LAVFilters-0.63.0.exe</ZipFileName>
-              <DestinationFilename>%Base%\LAVFilters-0.63.0.exe</DestinationFilename>
+              <LocalFileName>LAVFilters-0.64.0.exe</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{9e859995-335a-44a9-ac1f-41bb7b38ab11}-LAVFilters-0.64.0.exe</ZipFileName>
+              <DestinationFilename>%Base%\LAVFilters-0.64.0.exe</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -46,7 +46,7 @@
               <Params>
                 <Items>
                   <SectionParam Name="Path to application">
-                    <Value>%Base%\LAVFilters-0.63.0.exe</Value>
+                    <Value>%Base%\LAVFilters-0.64.0.exe</Value>
                     <ValueType>Template</ValueType>
                     <Description>Path to the application like 
  %Base%\MediaPortal.exe</Description>
@@ -100,7 +100,7 @@ public class Script
   public static void Main(PackageClass packageClass, ActionItem actionItem)
   {
     string setupExe = Path.Combine(
-      MpeInstaller.TransformInRealPath("%Base%"), "LAVFilters-0.63.0.exe");
+      MpeInstaller.TransformInRealPath("%Base%"), "LAVFilters-0.64.0.exe");
 
     try
     {
@@ -179,36 +179,29 @@ public class Script
     <UpdateUrl>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=162&amp;cf_id=52</UpdateUrl>
     <Version>
       <Major>0</Major>
-      <Minor>63</Minor>
+      <Minor>64</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>The extension installs the LAV Filter package, which contains a splitter, audio and video decoder for the most common formats that are used around the web.</ExtensionDescription>
-    <VersionDescription>0.63.0 - 2014/10/03
+    <VersionDescription>0.64.0 - 2015/02/13
+General
+- NEW: Individual LAV Filters can now be blacklisted through the registry by creating a key with the executable name in HKCU\Software\LAV\&lt;Filter&gt;\Blacklist
+
 LAV Splitter
-- NEW: Support for playing AES encrypted HLS streams
-- NEW: Advanced Subtitle selection allows selecting subtitles by a string match on the stream title
-- NEW: Support for rtspu, rtspm, rtspt and rtsph URLs to force the RTSP transport protocol
-- NEW: Animated GIF image support
-- Fixed: Improved timestamp handling of badly muxed/corrupted H.264 streams
-- Fixed: 4K ProRes streams in MKV didn't play reliably
-- Fixed: Some HEVC streams in MKV/MP4 didn't play properly
-- Fixed: VobSubs in MP4 didn't properly export their color palette
-- Fixed: Streaming MP3s through the Microsoft URL filter could result in the last audio frame to be partially repeated
-- Fixed: The duration of MP3 files would be wrong if it contained long IDv3 tags
-- Fixed: TrueHD streams with an Dolby Atmos sub-stream were not demuxed properly
+- NEW: Support for RTMP using rtmpdump-style parameter syntax
+- NEW: Support for Opus-in-TS
+- Fixed: The language reported for audio/subtitle streams on some Blu-rays could be wrong
 
 LAV Video
-- NEW: Experimental support for CUVID and DXVA2 HEVC acceleration
-- Faster: HEVC decoding is up to 100% faster
-- Fixed: DVD subtitle rendering could crash in 64-bit builds
-
-LAV Audio
-- Fixed: TrueHD streams with an Dolby Atmos sub-stream did not decode
-</VersionDescription>
+- NEW: HEVC Main10 decoding in DXVA2 Copy-Back mode
+- Faster: DXVA2 Copy-Back in direct output mode uses up to 50% less CPU and performance is improved accordingly
+- Fixed: H.264 streams with only DTS timestamps would play out of sync with DXVA2
+- Fixed: DXVA2 could crash on some MPEG-2 streams
+- Fixed: Improved compatibility with a few HEVC streams when using DXVA2</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=162&amp;cf_id=24</OnlineLocation>
-    <ReleaseDate>2014-10-29T15:00:00</ReleaseDate>
+    <ReleaseDate>2015-03-25T15:00:00</ReleaseDate>
     <Tags>codec</Tags>
     <Location>.\LAVFilters[Version].mpe1</Location>
     <Params>
@@ -248,9 +241,9 @@ LAV Audio
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>LAVFilters-0.63.0.exe</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{9e859995-335a-44a9-ac1f-41bb7b38ab11}-LAVFilters-0.63.0.exe</ZipFileName>
-        <DestinationFilename>%Base%\LAVFilters-0.63.0.exe</DestinationFilename>
+        <LocalFileName>LAVFilters-0.64.0.exe</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{9e859995-335a-44a9-ac1f-41bb7b38ab11}-LAVFilters-0.64.0.exe</ZipFileName>
+        <DestinationFilename>%Base%\LAVFilters-0.64.0.exe</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="true" Modified="true">
         <Param1 />
