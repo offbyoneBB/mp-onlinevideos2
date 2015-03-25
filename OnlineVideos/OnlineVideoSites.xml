@@ -744,7 +744,8 @@
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.svtplay.se/]]></item>
         <item key="oppetArkivListUrl"><![CDATA[http://www.oppetarkiv.se/kategori/titel]]></item>
-        <item key="hdcore"><![CDATA[3.5.0]]></item>
+        <item key="swfUrl"><![CDATA[http://media.svt.se/swf/video/svtplayer-2015.01.swf]]></item>
+        <item key="hdcore"><![CDATA[3.7.0]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Program A-Ö">http://www.svtplay.se/program</Category>

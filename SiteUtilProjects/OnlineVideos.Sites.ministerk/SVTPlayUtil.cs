@@ -25,6 +25,8 @@ namespace OnlineVideos.Sites
         protected string oppetArkivListUrl;
         [Category("OnlineVideosConfiguration"), Description("hdcore value for manifest-urls")]
         protected string hdcore;
+        [Category("OnlineVideosConfiguration"), Description("swfUrl")]
+        protected string swfUrl;
 
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Hämta undertexter"), Description("Välj om du vill hämta eventuella undertexter")]
         protected JaNej retrieveSubtitles = JaNej.Ja;
@@ -164,7 +166,12 @@ namespace OnlineVideos.Sites
                 }
                 Settings.Categories.Add(cat);
             }
-            Settings.DynamicCategoriesDiscovered = Settings.Categories.Count > 1;
+            Settings.Categories.Add(new Category()
+            {
+                Name = "Kanaler",
+                HasSubCategories = false
+            });
+            Settings.DynamicCategoriesDiscovered = Settings.Categories.Count > 0;
             return Settings.Categories.Count;
         }
 
@@ -376,6 +383,22 @@ namespace OnlineVideos.Sites
             {
                 return category.Other as List<VideoInfo>;
             }
+            else if (category.ParentCategory == null && category.Name == "Kanaler")
+            {
+                List < VideoInfo >  videos = new List<VideoInfo>()
+                {
+                    new VideoInfo() {Title = "SVT1"},
+                    new VideoInfo() {Title = "SVT2"},
+                    new VideoInfo() {Title = "Barnkanalen"},
+                    new VideoInfo() {Title = "SVT24"},
+                    new VideoInfo() {Title = "Kunskapskanalen"}
+                };
+                videos.ForEach(v => 
+                {
+                    v.VideoUrl = string.Format("http://www.svtplay.se/kanaler/{0}", v.Title.ToLower());
+                });
+                return videos;
+            }
             else
             {
                 var htmlNode = GetWebData<HtmlDocument>((category as RssLink).Url).DocumentNode;
@@ -423,7 +446,7 @@ namespace OnlineVideos.Sites
                 url = new MPUrlSourceFilter.AfhsManifestUrl(url)
                 {
                     LiveStream = live,
-                    Referer = video.VideoUrl
+                    Referer = swfUrl
                 }.ToString();
             }
             return url;
