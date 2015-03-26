@@ -76,7 +76,7 @@ namespace OnlineVideos.Sites
 
         public override string GetVideoUrl(VideoInfo video)
         {
-            string webData = GetWebData(video.VideoUrl, userAgent: UserAgent);
+            string webData = GetWebData(video.VideoUrl);//, userAgent: UserAgent);
             Match m = regEx_FileUrl.Match(webData);
             if (m.Success)
                 return m.Groups["m0"].Value;
