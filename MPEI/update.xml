@@ -61,1906 +61,6 @@
               <Items />
             </Files>
           </GroupItem>
-          <GroupItem Name="TrailerButton">
-            <DisplayName>TrailerButton</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>TrailerButton</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="MPUrlSource">
-            <DisplayName>MPUrlSource</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>MPUrlSource</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="LAVFilters">
-            <DisplayName>LAVFilters</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>LAVFilters</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-        </Items>
-      </Groups>
-      <Sections>
-        <Items />
-      </Sections>
-      <Dependencies>
-        <Items>
-          <DependencyItem>
-            <Type>MediaPortal</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MaxVersion>
-            <WarnOnly>false</WarnOnly>
-            <Message>This version of OnlineVideos requires MediaPortal 1.2 RC or Final or higher!</Message>
-            <Name>MediaPortal</Name>
-          </DependencyItem>
-        </Items>
-      </Dependencies>
-      <PluginDependencies>
-        <Items>
-          <PluginDependencyItem AssemblyName="OnlineVideos.MediaPortal1.dll">
-            <CompatibleVersion>
-              <Items>
-                <CompatibleVersionItem>
-                  <MinRequiredVersion>1.1.6.27644</MinRequiredVersion>
-                  <DesignedForVersion>1.1.6.27644</DesignedForVersion>
-                </CompatibleVersionItem>
-              </Items>
-            </CompatibleVersion>
-            <SubSystemsUsed>
-              <Items>
-                <SubSystemItem Name="MP.Players.Video" />
-                <SubSystemItem Name="MP.Input" />
-                <SubSystemItem Name="MP.Externals.SQLite" />
-                <SubSystemItem Name="MP.Config" />
-                <SubSystemItem Name="MP.SkinEngine" />
-              </Items>
-            </SubSystemsUsed>
-          </PluginDependencyItem>
-        </Items>
-      </PluginDependencies>
-      <GeneralInfo>
-        <Name>OnlineVideos</Name>
-        <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
-        <Author>offbyone</Author>
-        <HomePage>http://code.google.com/p/mp-onlinevideos2/</HomePage>
-        <ForumPage>http://forum.team-mediaportal.com/onlinevideos-244/</ForumPage>
-        <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
-        <Version>
-          <Major>1</Major>
-          <Minor>0</Minor>
-          <Build>0</Build>
-          <Revision>0</Revision>
-        </Version>
-        <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, MTV MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-        <VersionDescription>added: support for "next page" while viewing catgeories
-added: source filter that supports HTTP ranges and RTMP using rtmplib
-added: updated siteutil dlls will be reloaded while MediaPortal is running
-added: latest online videos can be shown e.g. on Basic Home screen
-added: downloads can be enqueued or concurrent
-added: open a group of sites directly via load paramter
-added: favorited categories are marked and removable in their respective sites
-added: play a video by pressing PLAY without showing the choices dialog
-changed: OnlineVideos uses its own logfile</VersionDescription>
-        <DevelopmentStatus>Stable</DevelopmentStatus>
-        <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.0.0.0.mpe1</OnlineLocation>
-        <ReleaseDate>2011-12-18T11:00:00</ReleaseDate>
-        <Tags>online,videos,youtube</Tags>
-        <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
-        <Params>
-          <Items>
-            <SectionParam Name="Online Icon">
-              <Value>http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/OnlineVideos.png</Value>
-              <ValueType>String</ValueType>
-              <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
-            </SectionParam>
-            <SectionParam Name="Configuration file">
-              <Value>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</Value>
-              <ValueType>Template</ValueType>
-              <Description>The file used to configure the extension.
- If have .exe extension the will be executed
- If have .dll extension used like MP plugin configuration</Description>
-            </SectionParam>
-            <SectionParam Name="Online Screenshots">
-              <Value>http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories.png;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_ListView.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_LargeIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png</Value>
-              <ValueType>String</ValueType>
-              <Description>Online stored screenshot urls separated by ; </Description>
-            </SectionParam>
-            <SectionParam Name="Force to uninstall on update">
-              <Value>YES</Value>
-              <ValueType>Bool</ValueType>
-              <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
-            </SectionParam>
-          </Items>
-        </Params>
-      </GeneralInfo>
-      <UniqueFileList>
-        <Items />
-      </UniqueFileList>
-      <ProjectSettings>
-        <FolderGroups />
-      </ProjectSettings>
-      <IsSkin>false</IsSkin>
-    </PackageClass>
-    <PackageClass>
-      <Version>2.0</Version>
-      <Groups>
-        <Items>
-          <GroupItem Name="Thumbs">
-            <DisplayName>Thumbs</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Thumbs</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Skins">
-            <DisplayName>Skins</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Skins</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Plugin">
-            <DisplayName>Plugin</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Plugin</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Language">
-            <DisplayName>Language</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Language</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Default">
-            <DisplayName>Default</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Default</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="DefaultWide">
-            <DisplayName>DefaultWide</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>DefaultWide</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="GenericSiteTool">
-            <DisplayName>GenericSiteTool</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>GenericSiteTool</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="TrailerButton">
-            <DisplayName>TrailerButton</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>TrailerButton</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="MPUrlSourceSplitter">
-            <DisplayName>MPUrlSourceSplitter</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>MPUrlSourceSplitter</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="LAVFilters">
-            <DisplayName>LAVFilters</DisplayName>
-            <DefaulChecked>false</DefaulChecked>
-            <Description>LAVFilters</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-        </Items>
-      </Groups>
-      <Sections>
-        <Items />
-      </Sections>
-      <Dependencies>
-        <Items>
-          <DependencyItem>
-            <Type>MediaPortal</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MaxVersion>
-            <WarnOnly>false</WarnOnly>
-            <Message>This version of OnlineVideos requires MediaPortal 1.2 RC or Final or higher!</Message>
-            <Name>MediaPortal</Name>
-          </DependencyItem>
-        </Items>
-      </Dependencies>
-      <PluginDependencies>
-        <Items>
-          <PluginDependencyItem AssemblyName="OnlineVideos.MediaPortal1.dll">
-            <CompatibleVersion>
-              <Items>
-                <CompatibleVersionItem>
-                  <MinRequiredVersion>1.1.6.27644</MinRequiredVersion>
-                  <DesignedForVersion>1.1.6.27644</DesignedForVersion>
-                </CompatibleVersionItem>
-              </Items>
-            </CompatibleVersion>
-            <SubSystemsUsed>
-              <Items>
-                <SubSystemItem Name="MP.SkinEngine" />
-                <SubSystemItem Name="MP.Players.Video" />
-                <SubSystemItem Name="MP.Input" />
-                <SubSystemItem Name="MP.Externals.SQLite" />
-                <SubSystemItem Name="MP.Config" />
-              </Items>
-            </SubSystemsUsed>
-          </PluginDependencyItem>
-        </Items>
-      </PluginDependencies>
-      <GeneralInfo>
-        <Name>OnlineVideos</Name>
-        <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
-        <Author>offbyone</Author>
-        <HomePage>http://code.google.com/p/mp-onlinevideos2/</HomePage>
-        <ForumPage>http://forum.team-mediaportal.com/onlinevideos-244/</ForumPage>
-        <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
-        <Version>
-          <Major>1</Major>
-          <Minor>1</Minor>
-          <Build>0</Build>
-          <Revision>0</Revision>
-        </Version>
-        <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-        <VersionDescription>fixed: progress dialogs not closing (updating sites)
-fixed: frozen MP GUI on some occassions when starting playback or showing playback choices
-fixed: installer not registering the source filter on some systems
-fixed: removing a Category from Favorites while inside Favorites doesn't work
-fixed: downloading of mms streams
-fixed: PlayAll does not respect the current filter
-fixed: trying to play videos from GenericSite more than once with url resolving would fail
-fixed: video of NextPage in Favorited Categories would not play
-changed: new source filter that includes LAV Splitter functionality, with changes to fix seeking in online streams
-changed: when downloading in a queue, only ask for quality on the first item, after that use the default choice
-changed: all downloaded thumbs will be saved to a subdirectory named "Cache" under the configured Thumbnail directory
-changed: rework of the "Sites" tab in Configuration
-added: all settings string (Extensions Plugin) now use localization
-added: possibility to play all shown videos in random order
-added: filter Options: OnlyLocal, OnlyRemote and context menu entry: Remove all in SiteManager
-added: queued downloads now visible in the "Current Downloads" category
-added: OnlineVideos internal player now also uses preferred codecs as configured in MediaPortal</VersionDescription>
-        <DevelopmentStatus>Stable</DevelopmentStatus>
-        <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.1.0.0.mpe1</OnlineLocation>
-        <ReleaseDate>2012-02-18T11:00:00</ReleaseDate>
-        <Tags>online,videos,youtube</Tags>
-        <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
-        <Params>
-          <Items>
-            <SectionParam Name="Online Icon">
-              <Value>http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/OnlineVideos.png</Value>
-              <ValueType>String</ValueType>
-              <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
-            </SectionParam>
-            <SectionParam Name="Configuration file">
-              <Value>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</Value>
-              <ValueType>Template</ValueType>
-              <Description>The file used to configure the extension.
- If have .exe extension the will be executed
- If have .dll extension used like MP plugin configuration</Description>
-            </SectionParam>
-            <SectionParam Name="Online Screenshots">
-              <Value>http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_AutoGroupByLanguage.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories.png;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_ListView.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_LargeIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png</Value>
-              <ValueType>String</ValueType>
-              <Description>Online stored screenshot urls separated by ; </Description>
-            </SectionParam>
-            <SectionParam Name="Force to uninstall on update">
-              <Value>YES</Value>
-              <ValueType>Bool</ValueType>
-              <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
-            </SectionParam>
-          </Items>
-        </Params>
-      </GeneralInfo>
-      <UniqueFileList>
-        <Items />
-      </UniqueFileList>
-      <ProjectSettings>
-        <FolderGroups />
-      </ProjectSettings>
-      <IsSkin>false</IsSkin>
-    </PackageClass>
-    <PackageClass>
-      <Version>2.0</Version>
-      <Groups>
-        <Items>
-          <GroupItem Name="Thumbs">
-            <DisplayName>Thumbs</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Thumbs</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Skins">
-            <DisplayName>Skins</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Skins</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Plugin">
-            <DisplayName>Plugin</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Plugin</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Language">
-            <DisplayName>Language</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Language</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Default">
-            <DisplayName>Default</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Default</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="DefaultWide">
-            <DisplayName>DefaultWide</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>DefaultWide</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="GenericSiteTool">
-            <DisplayName>GenericSiteTool</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>GenericSiteTool</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="TrailerButton">
-            <DisplayName>TrailerButton</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>TrailerButton</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="MPUrlSourceSplitter">
-            <DisplayName>MPUrlSourceSplitter</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>MPUrlSourceSplitter</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="LAVFilters">
-            <DisplayName>LAVFilters</DisplayName>
-            <DefaulChecked>false</DefaulChecked>
-            <Description>LAVFilters</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="ExtensionsPlugin">
-            <DisplayName>ExtensionsPlugin</DisplayName>
-            <DefaulChecked>false</DefaulChecked>
-            <Description>ExtensionsPlugin</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-        </Items>
-      </Groups>
-      <Sections>
-        <Items />
-      </Sections>
-      <Dependencies>
-        <Items>
-          <DependencyItem>
-            <Type>MediaPortal</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MaxVersion>
-            <WarnOnly>false</WarnOnly>
-            <Message>This version of OnlineVideos requires MediaPortal 1.2 RC or Final or higher!</Message>
-            <Name>MediaPortal</Name>
-          </DependencyItem>
-        </Items>
-      </Dependencies>
-      <PluginDependencies>
-        <Items>
-          <PluginDependencyItem AssemblyName="OnlineVideos.MediaPortal1.dll">
-            <CompatibleVersion>
-              <Items>
-                <CompatibleVersionItem>
-                  <MinRequiredVersion>1.1.6.27644</MinRequiredVersion>
-                  <DesignedForVersion>1.1.6.27644</DesignedForVersion>
-                </CompatibleVersionItem>
-              </Items>
-            </CompatibleVersion>
-            <SubSystemsUsed>
-              <Items>
-                <SubSystemItem Name="MP.Input" />
-                <SubSystemItem Name="MP.SkinEngine" />
-                <SubSystemItem Name="MP.Players.Video" />
-                <SubSystemItem Name="MP.Config" />
-                <SubSystemItem Name="MP.Externals.SQLite" />
-              </Items>
-            </SubSystemsUsed>
-          </PluginDependencyItem>
-        </Items>
-      </PluginDependencies>
-      <GeneralInfo>
-        <Name>OnlineVideos</Name>
-        <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
-        <Author>offbyone</Author>
-        <HomePage>http://code.google.com/p/mp-onlinevideos2/</HomePage>
-        <ForumPage>http://forum.team-mediaportal.com/onlinevideos-244/</ForumPage>
-        <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
-        <Version>
-          <Major>1</Major>
-          <Minor>2</Minor>
-          <Build>0</Build>
-          <Revision>0</Revision>
-        </Version>
-        <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-        <VersionDescription>improved: context menu handling - more flexibility for utils (YouTube: rate and comment a video, manage playlists)
-improved: you can now add any category at any hierarchy level to favorites
-improved: SiteManager screen autorefreshes + removed unneccessary buttons
-improved: MPUrlSourceSplitter filter freezing on slow connections
-added: when going to SiteManager from inside a Site, preselect that Site in the list
-added: allow refresh rate adaption according to FPS and settings in MediaPortal
-added: press the INFO key (F9) when in videos view to show additional information (skin update required)
-added: event when a download finished for other plugins
-added: pressing HOME (H) goes to OnlineVideos root view
-added: include Extensions plugin mpe in the installer (optional install)
-added: dialog to create a RtmpUrl with parameters from the CreateEditSite dialog
-added: Allow reordering of Groups, RssLinks and Channels in Edit Site dialog
-added: methods OnPlaybackEnded and OnDownloadEnded to SiteUtilBase class
-added: remember Layout per Category and Site
-fixed: possible MP GUI freezing on stopping videos
-fixed: SiteManager now also shows sites that are only in local file, so user can delete them</VersionDescription>
-        <DevelopmentStatus>Stable</DevelopmentStatus>
-        <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.2.0.0.mpe1</OnlineLocation>
-        <ReleaseDate>2012-04-06T11:00:00</ReleaseDate>
-        <Tags>online,videos,youtube</Tags>
-        <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
-        <Params>
-          <Items>
-            <SectionParam Name="Online Icon">
-              <Value>http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/OnlineVideos.png</Value>
-              <ValueType>String</ValueType>
-              <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
-            </SectionParam>
-            <SectionParam Name="Configuration file">
-              <Value>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</Value>
-              <ValueType>Template</ValueType>
-              <Description>The file used to configure the extension.
- If have .exe extension the will be executed
- If have .dll extension used like MP plugin configuration</Description>
-            </SectionParam>
-            <SectionParam Name="Online Screenshots">
-              <Value>http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_AutoGroupByLanguage.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories.png;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_ListView.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_LargeIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png</Value>
-              <ValueType>String</ValueType>
-              <Description>Online stored screenshot urls separated by ; </Description>
-            </SectionParam>
-            <SectionParam Name="Force to uninstall on update">
-              <Value>YES</Value>
-              <ValueType>Bool</ValueType>
-              <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
-            </SectionParam>
-          </Items>
-        </Params>
-      </GeneralInfo>
-      <UniqueFileList>
-        <Items />
-      </UniqueFileList>
-      <ProjectSettings>
-        <FolderGroups />
-      </ProjectSettings>
-      <IsSkin>false</IsSkin>
-    </PackageClass>
-    <PackageClass>
-      <Version>2.0</Version>
-      <Groups>
-        <Items>
-          <GroupItem Name="Thumbs">
-            <DisplayName>Thumbs</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Thumbs</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Skins">
-            <DisplayName>Skins</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Skins</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Plugin">
-            <DisplayName>Plugin</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Plugin</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Language">
-            <DisplayName>Language</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Language</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Default">
-            <DisplayName>Default</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Default</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="DefaultWide">
-            <DisplayName>DefaultWide</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>DefaultWide</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="GenericSiteTool">
-            <DisplayName>GenericSiteTool</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>GenericSiteTool</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="TrailerButton">
-            <DisplayName>TrailerButton</DisplayName>
-            <DefaulChecked>false</DefaulChecked>
-            <Description>TrailerButton</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="MPUrlSourceSplitter">
-            <DisplayName>MPUrlSourceSplitter</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>MPUrlSourceSplitter</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="LAVFilters">
-            <DisplayName>LAVFilters</DisplayName>
-            <DefaulChecked>false</DefaulChecked>
-            <Description>LAVFilters</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="ExtensionsPlugin">
-            <DisplayName>ExtensionsPlugin</DisplayName>
-            <DefaulChecked>false</DefaulChecked>
-            <Description>ExtensionsPlugin</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-        </Items>
-      </Groups>
-      <Sections>
-        <Items />
-      </Sections>
-      <Dependencies>
-        <Items>
-          <DependencyItem>
-            <Type>MediaPortal</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MaxVersion>
-            <WarnOnly>false</WarnOnly>
-            <Message>This version of OnlineVideos requires MediaPortal 1.2 RC or Final or higher!</Message>
-            <Name>MediaPortal</Name>
-          </DependencyItem>
-        </Items>
-      </Dependencies>
-      <PluginDependencies>
-        <Items>
-          <PluginDependencyItem AssemblyName="OnlineVideos.MediaPortal1.dll">
-            <CompatibleVersion>
-              <Items>
-                <CompatibleVersionItem>
-                  <MinRequiredVersion>1.1.6.27644</MinRequiredVersion>
-                  <DesignedForVersion>1.2.100.0</DesignedForVersion>
-                </CompatibleVersionItem>
-              </Items>
-            </CompatibleVersion>
-            <SubSystemsUsed>
-              <Items>
-                <SubSystemItem Name="MP.SkinEngine" />
-                <SubSystemItem Name="MP.Players.Video" />
-                <SubSystemItem Name="MP.Input" />
-                <SubSystemItem Name="MP.Externals.SQLite" />
-                <SubSystemItem Name="MP.Config" />
-              </Items>
-            </SubSystemsUsed>
-          </PluginDependencyItem>
-        </Items>
-      </PluginDependencies>
-      <GeneralInfo>
-        <Name>OnlineVideos</Name>
-        <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
-        <Author>offbyone</Author>
-        <HomePage>http://code.google.com/p/mp-onlinevideos2/</HomePage>
-        <ForumPage>http://forum.team-mediaportal.com/onlinevideos-244/</ForumPage>
-        <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
-        <Version>
-          <Major>1</Major>
-          <Minor>3</Minor>
-          <Build>0</Build>
-          <Revision>0</Revision>
-        </Version>
-        <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-        <VersionDescription>fixed: SiteManager live filter for user crashes MP when you have local sites that have no online pendent
-fixed: playing a file from Downloaded Videos in MP1 did not use refresh rate adaption
-fixed: source filters rare freeze on seek, pause, stop and play
-fixed: source filter improved seeking and faster video starting
-fixed: incompatibility with latest LAV filters
-added: source filter ASX stream parser and MMS protocol
-added: source filter option for specifying cache folder
-added: support for png files for thumbs
-added: support for subtitles from text in addition to url
-changed: plugin settings xml for MPEI GUI plugin now split into sections and uses minvalue/maxvalue feature</VersionDescription>
-        <DevelopmentStatus>Stable</DevelopmentStatus>
-        <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.3.0.0.mpe1</OnlineLocation>
-        <ReleaseDate>2012-07-17T11:00:00</ReleaseDate>
-        <Tags>online,videos,youtube</Tags>
-        <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
-        <Params>
-          <Items>
-            <SectionParam Name="Online Icon">
-              <Value>http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/OnlineVideos.png</Value>
-              <ValueType>String</ValueType>
-              <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
-            </SectionParam>
-            <SectionParam Name="Configuration file">
-              <Value>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</Value>
-              <ValueType>Template</ValueType>
-              <Description>The file used to configure the extension.
- If have .exe extension the will be executed
- If have .dll extension used like MP plugin configuration</Description>
-            </SectionParam>
-            <SectionParam Name="Online Screenshots">
-              <Value>http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_AutoGroupByLanguage.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories.png;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_ListView.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_LargeIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png</Value>
-              <ValueType>String</ValueType>
-              <Description>Online stored screenshot urls separated by ; </Description>
-            </SectionParam>
-            <SectionParam Name="Force to uninstall on update">
-              <Value>YES</Value>
-              <ValueType>Bool</ValueType>
-              <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
-            </SectionParam>
-          </Items>
-        </Params>
-      </GeneralInfo>
-      <UniqueFileList>
-        <Items />
-      </UniqueFileList>
-      <ProjectSettings>
-        <FolderGroups />
-      </ProjectSettings>
-      <IsSkin>false</IsSkin>
-    </PackageClass>
-    <PackageClass>
-      <Version>2.0</Version>
-      <Groups>
-        <Items>
-          <GroupItem Name="Thumbs">
-            <DisplayName>Thumbs</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Thumbs</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Skins">
-            <DisplayName>Skins</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Skins</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Plugin">
-            <DisplayName>Plugin</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Plugin</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Language">
-            <DisplayName>Language</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Language</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Default">
-            <DisplayName>Default</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Default</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="DefaultWide">
-            <DisplayName>DefaultWide</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>DefaultWide</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="GenericSiteTool">
-            <DisplayName>GenericSiteTool</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>GenericSiteTool</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="TrailerButton">
-            <DisplayName>TrailerButton</DisplayName>
-            <DefaulChecked>false</DefaulChecked>
-            <Description>TrailerButton</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="MPUrlSourceSplitter">
-            <DisplayName>MPUrlSourceSplitter</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>MPUrlSourceSplitter</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="LAVFilters">
-            <DisplayName>LAVFilters</DisplayName>
-            <DefaulChecked>false</DefaulChecked>
-            <Description>LAVFilters</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="ExtensionsPlugin">
-            <DisplayName>ExtensionsPlugin</DisplayName>
-            <DefaulChecked>false</DefaulChecked>
-            <Description>ExtensionsPlugin</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-        </Items>
-      </Groups>
-      <Sections>
-        <Items />
-      </Sections>
-      <Dependencies>
-        <Items>
-          <DependencyItem>
-            <Type>MediaPortal</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MaxVersion>
-            <WarnOnly>false</WarnOnly>
-            <Message>This version of OnlineVideos requires MediaPortal 1.2 RC or Final or higher!</Message>
-            <Name>MediaPortal</Name>
-          </DependencyItem>
-        </Items>
-      </Dependencies>
-      <PluginDependencies>
-        <Items>
-          <PluginDependencyItem AssemblyName="OnlineVideos.MediaPortal1.dll">
-            <CompatibleVersion>
-              <Items>
-                <CompatibleVersionItem>
-                  <MinRequiredVersion>1.1.6.27644</MinRequiredVersion>
-                  <DesignedForVersion>1.2.100.0</DesignedForVersion>
-                </CompatibleVersionItem>
-              </Items>
-            </CompatibleVersion>
-            <SubSystemsUsed>
-              <Items>
-                <SubSystemItem Name="MP.Config" />
-                <SubSystemItem Name="MP.Externals.SQLite" />
-                <SubSystemItem Name="MP.Input" />
-                <SubSystemItem Name="MP.Players.Video" />
-                <SubSystemItem Name="MP.SkinEngine" />
-              </Items>
-            </SubSystemsUsed>
-          </PluginDependencyItem>
-        </Items>
-      </PluginDependencies>
-      <GeneralInfo>
-        <Name>OnlineVideos</Name>
-        <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
-        <Author>offbyone</Author>
-        <HomePage>http://code.google.com/p/mp-onlinevideos2/</HomePage>
-        <ForumPage>http://forum.team-mediaportal.com/onlinevideos-244/</ForumPage>
-        <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
-        <Version>
-          <Major>1</Major>
-          <Minor>4</Minor>
-          <Build>0</Build>
-          <Revision>0</Revision>
-        </Version>
-        <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-        <VersionDescription>added support for dynamic HTTP streaming protocols from Adobe and Microsoft
-now showing error messages source filter to have more info for the user than "no url"
-changed format of translation xml files - now using Transifex
-fixed Configuration SitesGroup Thumbnail not saved
-added prompt to DownloadedVideos when selecting Delete or Delete All
-fixed some problems with downloading of videos
-fixed topbar showing up and keeping focus in fullscreen playback and pressing UP to do an instant skip step
-fixed WinXP problems: only call EVR functions in dshowhelper.dll when MP is using EVR
-fixed problems with playlist playback (and split videos)
-fixed url generation with relative Urls in GenericSiteUtil</VersionDescription>
-        <DevelopmentStatus>Stable</DevelopmentStatus>
-        <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.4.0.0.mpe1</OnlineLocation>
-        <ReleaseDate>2012-11-30T11:00:00</ReleaseDate>
-        <Tags>online,videos,youtube</Tags>
-        <Location>..\MPEI\OnlineVideos[Version].mpe1</Location>
-        <Params>
-          <Items>
-            <SectionParam Name="Online Icon">
-              <Value>http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/OnlineVideos.png</Value>
-              <ValueType>String</ValueType>
-              <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
-            </SectionParam>
-            <SectionParam Name="Configuration file">
-              <Value>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</Value>
-              <ValueType>Template</ValueType>
-              <Description>The file used to configure the extension.
- If have .exe extension the will be executed
- If have .dll extension used like MP plugin configuration</Description>
-            </SectionParam>
-            <SectionParam Name="Online Screenshots">
-              <Value>http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_AutoGroupByLanguage.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories.png;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_ListView.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_LargeIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png</Value>
-              <ValueType>String</ValueType>
-              <Description>Online stored screenshot urls separated by ; </Description>
-            </SectionParam>
-            <SectionParam Name="Force to uninstall on update">
-              <Value>YES</Value>
-              <ValueType>Bool</ValueType>
-              <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
-            </SectionParam>
-          </Items>
-        </Params>
-      </GeneralInfo>
-      <UniqueFileList>
-        <Items />
-      </UniqueFileList>
-      <ProjectSettings>
-        <FolderGroups />
-      </ProjectSettings>
-      <IsSkin>false</IsSkin>
-    </PackageClass>
-    <PackageClass>
-      <Version>2.0</Version>
-      <Groups>
-        <Items>
-          <GroupItem Name="Thumbs">
-            <DisplayName>Thumbs</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Thumbs</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Skins">
-            <DisplayName>Skins</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Skins</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Plugin">
-            <DisplayName>Plugin</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Plugin</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Language">
-            <DisplayName>Language</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Language</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Default">
-            <DisplayName>Default</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Default</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="DefaultWide">
-            <DisplayName>DefaultWide</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>DefaultWide</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="GenericSiteTool">
-            <DisplayName>GenericSiteTool</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>GenericSiteTool</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="TrailerButton">
-            <DisplayName>TrailerButton</DisplayName>
-            <DefaulChecked>false</DefaulChecked>
-            <Description>TrailerButton</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="MPUrlSourceSplitter">
-            <DisplayName>MPUrlSourceSplitter</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>MPUrlSourceSplitter</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="LAVFilters">
-            <DisplayName>LAVFilters</DisplayName>
-            <DefaulChecked>false</DefaulChecked>
-            <Description>LAVFilters</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="ExtensionsPlugin">
-            <DisplayName>ExtensionsPlugin</DisplayName>
-            <DefaulChecked>false</DefaulChecked>
-            <Description>ExtensionsPlugin</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-        </Items>
-      </Groups>
-      <Sections>
-        <Items />
-      </Sections>
-      <Dependencies>
-        <Items>
-          <DependencyItem>
-            <Type>MediaPortal</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MaxVersion>
-            <WarnOnly>false</WarnOnly>
-            <Message>This version of OnlineVideos requires MediaPortal 1.2 RC or newer!</Message>
-            <Name>MediaPortal</Name>
-          </DependencyItem>
-        </Items>
-      </Dependencies>
-      <PluginDependencies>
-        <Items>
-          <PluginDependencyItem AssemblyName="OnlineVideos.MediaPortal1.dll">
-            <CompatibleVersion>
-              <Items>
-                <CompatibleVersionItem>
-                  <MinRequiredVersion>1.1.6.27644</MinRequiredVersion>
-                  <DesignedForVersion>1.2.100.0</DesignedForVersion>
-                </CompatibleVersionItem>
-              </Items>
-            </CompatibleVersion>
-            <SubSystemsUsed>
-              <Items>
-                <SubSystemItem Name="MP.Config" />
-                <SubSystemItem Name="MP.Externals.SQLite" />
-                <SubSystemItem Name="MP.Input" />
-                <SubSystemItem Name="MP.Players.Video" />
-                <SubSystemItem Name="MP.SkinEngine" />
-              </Items>
-            </SubSystemsUsed>
-          </PluginDependencyItem>
-        </Items>
-      </PluginDependencies>
-      <GeneralInfo>
-        <Name>OnlineVideos</Name>
-        <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
-        <Author>offbyone</Author>
-        <HomePage>http://code.google.com/p/mp-onlinevideos2/</HomePage>
-        <ForumPage>http://forum.team-mediaportal.com/onlinevideos-244/</ForumPage>
-        <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
-        <Version>
-          <Major>1</Major>
-          <Minor>5</Minor>
-          <Build>0</Build>
-          <Revision>0</Revision>
-        </Version>
-        <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-        <VersionDescription>changed Skin Properties: #header.label -&gt; #OnlineVideos.HeaderLabel / #header.image -&gt; #OnlineVideos.HeaderImage
-SiteParser: enhanced Layout, added ToolTips, allow to select Icon and Banner, fixed NextPage Videos, added ability to specify and test searching
-MpUrlSourceSplitter: fixed compatibility with MPAR, allow sending cookies, improved AFHS protocol
-fixed: VideoScreen switching between Fullscreen and MiniWindow not working in MP1.3 
-fixed: VolumeOverlay shown incorrectly in MP1.3 in FullScreenVideo
-fixed: extended search useless, because the text is not set as initial in the VirtualKeyboard
-fixed: show correct number of Videos in details view
-fixed: changing "auto group by language" settings to yes via MPEI plugin and going back to OV has only Other group - groups needed to be build
-fixed: SiteManager after deleting a site - cursor is placed on first site, not the one below (when "only local" are shown)
-fixed: incorrect reading of translation xml files (escaped apostrophes)
-fixed: unable to view videos from deleted sites in Downloadeds
-added: sorting in Favorites Site (by Name, Airdate, Duration)
-added: downloading subtitles when videos are downloaded
-improved: conflict resolution for SiteUtils and Hosters with equal names: Use the Type defined in the assembly with the latest compile time
-improved: DefaultWide skin uses an OnlineVideos specific video overlay</VersionDescription>
-        <DevelopmentStatus>Stable</DevelopmentStatus>
-        <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.5.0.0.mpe1</OnlineLocation>
-        <ReleaseDate>2013-02-09T15:00:00</ReleaseDate>
-        <Tags>online,videos,youtube</Tags>
-        <Location>..\MPEI\[Name][Version].mpe1</Location>
-        <Params>
-          <Items>
-            <SectionParam Name="Online Icon">
-              <Value>http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/OnlineVideos.png</Value>
-              <ValueType>String</ValueType>
-              <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
-            </SectionParam>
-            <SectionParam Name="Configuration file">
-              <Value>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</Value>
-              <ValueType>Template</ValueType>
-              <Description>The file used to configure the extension.
- If have .exe extension the will be executed
- If have .dll extension used like MP plugin configuration</Description>
-            </SectionParam>
-            <SectionParam Name="Online Screenshots">
-              <Value>http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_AutoGroupByLanguage.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories.png;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_ListView.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_LargeIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png</Value>
-              <ValueType>String</ValueType>
-              <Description>Online stored screenshot urls separated by ; </Description>
-            </SectionParam>
-            <SectionParam Name="Force to uninstall on update">
-              <Value>YES</Value>
-              <ValueType>Bool</ValueType>
-              <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
-            </SectionParam>
-          </Items>
-        </Params>
-      </GeneralInfo>
-      <UniqueFileList>
-        <Items />
-      </UniqueFileList>
-      <ProjectSettings>
-        <FolderGroups />
-      </ProjectSettings>
-      <IsSkin>false</IsSkin>
-    </PackageClass>
-    <PackageClass>
-      <Version>2.0</Version>
-      <Groups>
-        <Items>
-          <GroupItem Name="Thumbs">
-            <DisplayName>Thumbs</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Thumbs</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Skins">
-            <DisplayName>Skins</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Skins</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Plugin">
-            <DisplayName>Plugin</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Plugin</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Language">
-            <DisplayName>Language</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Language</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Default">
-            <DisplayName>Default</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Default</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="DefaultWide">
-            <DisplayName>DefaultWide</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>DefaultWide</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Titan">
-            <DisplayName>Titan</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Titan</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="GenericSiteTool">
-            <DisplayName>GenericSiteTool</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>GenericSiteTool</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="MPUrlSourceSplitter">
-            <DisplayName>MPUrlSourceSplitter</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>MPUrlSourceSplitter</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="LAVFilters">
-            <DisplayName>LAVFilters</DisplayName>
-            <DefaulChecked>false</DefaulChecked>
-            <Description>LAVFilters</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="ExtensionsPlugin">
-            <DisplayName>ExtensionsPlugin</DisplayName>
-            <DefaulChecked>false</DefaulChecked>
-            <Description>ExtensionsPlugin</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-        </Items>
-      </Groups>
-      <Sections>
-        <Items />
-      </Sections>
-      <Dependencies>
-        <Items>
-          <DependencyItem>
-            <Type>MediaPortal</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MaxVersion>
-            <WarnOnly>false</WarnOnly>
-            <Message>This version of OnlineVideos requires MediaPortal 1.2 RC or newer!</Message>
-            <Name>MediaPortal</Name>
-          </DependencyItem>
-          <DependencyItem>
-            <Type>Installer</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>3</Minor>
-              <Build>0</Build>
-              <Revision>0</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>9</Major>
-              <Minor>9</Minor>
-              <Build>9</Build>
-              <Revision>9</Revision>
-            </MaxVersion>
-            <WarnOnly>false</WarnOnly>
-            <Message>This Installer of OnlineVideos requires MediaPortal version 1.3 Final or newer!</Message>
-            <Name>Installer</Name>
-          </DependencyItem>
-        </Items>
-      </Dependencies>
-      <PluginDependencies>
-        <Items>
-          <PluginDependencyItem AssemblyName="OnlineVideos.MediaPortal1.dll">
-            <CompatibleVersion>
-              <Items>
-                <CompatibleVersionItem>
-                  <MinRequiredVersion>1.1.6.27644</MinRequiredVersion>
-                  <DesignedForVersion>1.2.100.0</DesignedForVersion>
-                </CompatibleVersionItem>
-              </Items>
-            </CompatibleVersion>
-            <SubSystemsUsed>
-              <Items>
-                <SubSystemItem Name="MP.Config" />
-                <SubSystemItem Name="MP.Externals.SQLite" />
-                <SubSystemItem Name="MP.Input" />
-                <SubSystemItem Name="MP.Players.Video" />
-                <SubSystemItem Name="MP.SkinEngine" />
-              </Items>
-            </SubSystemsUsed>
-          </PluginDependencyItem>
-        </Items>
-      </PluginDependencies>
-      <GeneralInfo>
-        <Name>OnlineVideos</Name>
-        <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
-        <Author>offbyone</Author>
-        <HomePage>http://code.google.com/p/mp-onlinevideos2/</HomePage>
-        <ForumPage>http://forum.team-mediaportal.com/onlinevideos-244/</ForumPage>
-        <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
-        <Version>
-          <Major>1</Major>
-          <Minor>6</Minor>
-          <Build>0</Build>
-          <Revision>0</Revision>
-        </Version>
-        <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-        <VersionDescription>added: "Play All (From here)" to context menu 
-added: SearchRelatedKeywords via context menu (thx Guzzi)
-added: new virtual method to Hoster class that allows passing a proxy
-fixed: Toggle subtitles (L on keyboard) not working in fullscreen playback
-fixed: incorrect dialog asking to update the local site when trying to report it broken
-siteparser: now possible to edit videolistregex at search-results
-improved: made MPUrlSourceSplitter a standalone MPE package and included it as reference</VersionDescription>
-        <DevelopmentStatus>Stable</DevelopmentStatus>
-        <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.6.0.0.mpe1</OnlineLocation>
-        <ReleaseDate>2013-05-01T15:00:00</ReleaseDate>
-        <Tags>online,videos,youtube</Tags>
-        <Location>..\MPEI\[Name][Version].mpe1</Location>
-        <Params>
-          <Items>
-            <SectionParam Name="Online Icon">
-              <Value>http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/OnlineVideos.png</Value>
-              <ValueType>String</ValueType>
-              <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
-            </SectionParam>
-            <SectionParam Name="Configuration file">
-              <Value>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</Value>
-              <ValueType>Template</ValueType>
-              <Description>The file used to configure the extension.
- If have .exe extension the will be executed
- If have .dll extension used like MP plugin configuration</Description>
-            </SectionParam>
-            <SectionParam Name="Online Screenshots">
-              <Value>http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_AutoGroupByLanguage.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories.png;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_ListView.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_LargeIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png</Value>
-              <ValueType>String</ValueType>
-              <Description>Online stored screenshot urls separated by ; </Description>
-            </SectionParam>
-            <SectionParam Name="Force to uninstall on update">
-              <Value>YES</Value>
-              <ValueType>Bool</ValueType>
-              <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
-            </SectionParam>
-          </Items>
-        </Params>
-      </GeneralInfo>
-      <UniqueFileList>
-        <Items />
-      </UniqueFileList>
-      <ProjectSettings>
-        <FolderGroups />
-      </ProjectSettings>
-      <IsSkin>false</IsSkin>
-    </PackageClass>
-    <PackageClass>
-      <Version>2.0</Version>
-      <Groups>
-        <Items>
-          <GroupItem Name="Thumbs">
-            <DisplayName>Thumbs</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Thumbs</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Skins">
-            <DisplayName>Skins</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Skins</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Plugin">
-            <DisplayName>Plugin</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Plugin</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Language">
-            <DisplayName>Language</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Language</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Default">
-            <DisplayName>Default</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Default</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="DefaultWide">
-            <DisplayName>DefaultWide</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>DefaultWide</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Titan">
-            <DisplayName>Titan</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Titan</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="GenericSiteTool">
-            <DisplayName>GenericSiteTool</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>GenericSiteTool</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="MPUrlSourceSplitter">
-            <DisplayName>MPUrlSourceSplitter</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>MPUrlSourceSplitter</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="LAVFilters">
-            <DisplayName>LAVFilters</DisplayName>
-            <DefaulChecked>false</DefaulChecked>
-            <Description>LAVFilters</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="ExtensionsPlugin">
-            <DisplayName>ExtensionsPlugin</DisplayName>
-            <DefaulChecked>false</DefaulChecked>
-            <Description>ExtensionsPlugin</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-        </Items>
-      </Groups>
-      <Sections>
-        <Items />
-      </Sections>
-      <Dependencies>
-        <Items>
-          <DependencyItem>
-            <Type>MediaPortal</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MaxVersion>
-            <WarnOnly>false</WarnOnly>
-            <Message>This version of OnlineVideos requires MediaPortal 1.4 or newer!</Message>
-            <Name>MediaPortal</Name>
-          </DependencyItem>
-          <DependencyItem>
-            <Type>Installer</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>3</Minor>
-              <Build>0</Build>
-              <Revision>0</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>9</Major>
-              <Minor>9</Minor>
-              <Build>9</Build>
-              <Revision>9</Revision>
-            </MaxVersion>
-            <WarnOnly>false</WarnOnly>
-            <Message>This Installer of OnlineVideos requires MediaPortal version 1.3 Final or newer!</Message>
-            <Name>Installer</Name>
-          </DependencyItem>
-        </Items>
-      </Dependencies>
-      <PluginDependencies>
-        <Items>
-          <PluginDependencyItem AssemblyName="OnlineVideos.MediaPortal1.dll">
-            <CompatibleVersion>
-              <Items>
-                <CompatibleVersionItem>
-                  <MinRequiredVersion>1.3.100.0</MinRequiredVersion>
-                  <DesignedForVersion>1.3.100.0</DesignedForVersion>
-                </CompatibleVersionItem>
-              </Items>
-            </CompatibleVersion>
-            <SubSystemsUsed>
-              <Items>
-                <SubSystemItem Name="MP.Config" />
-                <SubSystemItem Name="MP.Externals.Log4Net" />
-                <SubSystemItem Name="MP.Externals.SQLite" />
-                <SubSystemItem Name="MP.Input" />
-                <SubSystemItem Name="MP.Players.Video" />
-                <SubSystemItem Name="MP.SkinEngine" />
-              </Items>
-            </SubSystemsUsed>
-          </PluginDependencyItem>
-        </Items>
-      </PluginDependencies>
-      <GeneralInfo>
-        <Name>OnlineVideos</Name>
-        <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
-        <Author>offbyone</Author>
-        <HomePage>http://code.google.com/p/mp-onlinevideos2/</HomePage>
-        <ForumPage>http://forum.team-mediaportal.com/onlinevideos-244/</ForumPage>
-        <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
-        <Version>
-          <Major>1</Major>
-          <Minor>6</Minor>
-          <Build>1</Build>
-          <Revision>0</Revision>
-        </Version>
-        <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-        <VersionDescription>compatibility with MediaPortal 1.4</VersionDescription>
-        <DevelopmentStatus>Stable</DevelopmentStatus>
-        <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.6.1.0.mpe1</OnlineLocation>
-        <ReleaseDate>2013-05-01T15:00:00</ReleaseDate>
-        <Tags>online,videos,youtube</Tags>
-        <Location>..\MPEI\[Name][Version].mpe1</Location>
-        <Params>
-          <Items>
-            <SectionParam Name="Online Icon">
-              <Value>http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/OnlineVideos.png</Value>
-              <ValueType>String</ValueType>
-              <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
-            </SectionParam>
-            <SectionParam Name="Configuration file">
-              <Value>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</Value>
-              <ValueType>Template</ValueType>
-              <Description>The file used to configure the extension.
- If have .exe extension the will be executed
- If have .dll extension used like MP plugin configuration</Description>
-            </SectionParam>
-            <SectionParam Name="Online Screenshots">
-              <Value>http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_AutoGroupByLanguage.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories.png;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_ListView.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_LargeIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png</Value>
-              <ValueType>String</ValueType>
-              <Description>Online stored screenshot urls separated by ; </Description>
-            </SectionParam>
-            <SectionParam Name="Force to uninstall on update">
-              <Value>YES</Value>
-              <ValueType>Bool</ValueType>
-              <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
-            </SectionParam>
-          </Items>
-        </Params>
-      </GeneralInfo>
-      <UniqueFileList>
-        <Items />
-      </UniqueFileList>
-      <ProjectSettings>
-        <FolderGroups />
-      </ProjectSettings>
-      <IsSkin>false</IsSkin>
-    </PackageClass>
-    <PackageClass>
-      <Version>2.0</Version>
-      <Groups>
-        <Items>
-          <GroupItem Name="Thumbs">
-            <DisplayName>Thumbs</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Thumbs</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Skins">
-            <DisplayName>Skins</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Skins</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Plugin">
-            <DisplayName>Plugin</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Plugin</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Language">
-            <DisplayName>Language</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Language</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Default">
-            <DisplayName>Default</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Default</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="DefaultWide">
-            <DisplayName>DefaultWide</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>DefaultWide</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="GenericSiteTool">
-            <DisplayName>GenericSiteTool</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>GenericSiteTool</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="MPUrlSourceSplitter">
-            <DisplayName>MPUrlSourceSplitter</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>MPUrlSourceSplitter</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="LAVFilters">
-            <DisplayName>LAVFilters</DisplayName>
-            <DefaulChecked>false</DefaulChecked>
-            <Description>LAVFilters</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="ExtensionsPlugin">
-            <DisplayName>ExtensionsPlugin</DisplayName>
-            <DefaulChecked>false</DefaulChecked>
-            <Description>ExtensionsPlugin</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-        </Items>
-      </Groups>
-      <Sections>
-        <Items />
-      </Sections>
-      <Dependencies>
-        <Items>
-          <DependencyItem>
-            <Type>MediaPortal</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>1</Major>
-              <Minor>1</Minor>
-              <Build>6</Build>
-              <Revision>27644</Revision>
-            </MaxVersion>
-            <WarnOnly>false</WarnOnly>
-            <Message>This version of OnlineVideos requires MediaPortal 1.4 or newer!</Message>
-            <Name>MediaPortal</Name>
-          </DependencyItem>
-          <DependencyItem>
-            <Type>Installer</Type>
-            <Id />
-            <MinVersion>
-              <Major>1</Major>
-              <Minor>3</Minor>
-              <Build>0</Build>
-              <Revision>0</Revision>
-            </MinVersion>
-            <MaxVersion>
-              <Major>9</Major>
-              <Minor>9</Minor>
-              <Build>9</Build>
-              <Revision>9</Revision>
-            </MaxVersion>
-            <WarnOnly>false</WarnOnly>
-            <Message>This Installer of OnlineVideos requires MediaPortal version 1.3 Final or newer!</Message>
-            <Name>Installer</Name>
-          </DependencyItem>
-        </Items>
-      </Dependencies>
-      <PluginDependencies>
-        <Items>
-          <PluginDependencyItem AssemblyName="OnlineVideos.MediaPortal1.dll">
-            <CompatibleVersion>
-              <Items>
-                <CompatibleVersionItem>
-                  <MinRequiredVersion>1.3.100.0</MinRequiredVersion>
-                  <DesignedForVersion>1.3.100.0</DesignedForVersion>
-                </CompatibleVersionItem>
-              </Items>
-            </CompatibleVersion>
-            <SubSystemsUsed>
-              <Items>
-                <SubSystemItem Name="MP.Config" />
-                <SubSystemItem Name="MP.Externals.Log4Net" />
-                <SubSystemItem Name="MP.Externals.SQLite" />
-                <SubSystemItem Name="MP.Input" />
-                <SubSystemItem Name="MP.Players.Video" />
-                <SubSystemItem Name="MP.SkinEngine" />
-              </Items>
-            </SubSystemsUsed>
-          </PluginDependencyItem>
-        </Items>
-      </PluginDependencies>
-      <GeneralInfo>
-        <Name>OnlineVideos</Name>
-        <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
-        <Author>offbyone</Author>
-        <HomePage>http://code.google.com/p/mp-onlinevideos2/</HomePage>
-        <ForumPage>http://forum.team-mediaportal.com/onlinevideos-244/</ForumPage>
-        <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
-        <Version>
-          <Major>1</Major>
-          <Minor>7</Minor>
-          <Build>0</Build>
-          <Revision>0</Revision>
-        </Version>
-        <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, RTL, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-        <VersionDescription>fixed: SiteManager converts LastUpdated to Local Time taking the timezone into account
-fixed: removed excessive logging of MMS Downloader 
-changed: Webservice reference now uses DNS instead of IP
-changed: OnlineVideos log files preserve extension
-changed: removed Titan skin files from SVN and installer (they are maintained by Titan Team)
-added: downloaded video also save matroska xml with the Title, Description, Airdate
-added: made skipping single categories user-configurable for each site</VersionDescription>
-        <DevelopmentStatus>Stable</DevelopmentStatus>
-        <OnlineLocation>http://mp-onlinevideos2.googlecode.com/files/OnlineVideos1.7.0.0.mpe1</OnlineLocation>
-        <ReleaseDate>2013-10-01T15:00:00</ReleaseDate>
-        <Tags>online,videos,youtube</Tags>
-        <Location>..\MPEI\[Name][Version].mpe1</Location>
-        <Params>
-          <Items>
-            <SectionParam Name="Online Icon">
-              <Value>http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/OnlineVideos.png</Value>
-              <ValueType>String</ValueType>
-              <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
-            </SectionParam>
-            <SectionParam Name="Configuration file">
-              <Value>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</Value>
-              <ValueType>Template</ValueType>
-              <Description>The file used to configure the extension.
- If have .exe extension the will be executed
- If have .dll extension used like MP plugin configuration</Description>
-            </SectionParam>
-            <SectionParam Name="Online Screenshots">
-              <Value>http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_AutoGroupByLanguage.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories.png;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_ListView.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_LargeIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png</Value>
-              <ValueType>String</ValueType>
-              <Description>Online stored screenshot urls separated by ; </Description>
-            </SectionParam>
-            <SectionParam Name="Force to uninstall on update">
-              <Value>YES</Value>
-              <ValueType>Bool</ValueType>
-              <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
-            </SectionParam>
-          </Items>
-        </Params>
-      </GeneralInfo>
-      <UniqueFileList>
-        <Items />
-      </UniqueFileList>
-      <ProjectSettings>
-        <FolderGroups />
-      </ProjectSettings>
-      <IsSkin>false</IsSkin>
-    </PackageClass>
-    <PackageClass>
-      <Version>2.0</Version>
-      <Groups>
-        <Items>
-          <GroupItem Name="Thumbs">
-            <DisplayName>Thumbs</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Thumbs</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Skins">
-            <DisplayName>Skins</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Skins</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Plugin">
-            <DisplayName>Plugin</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Plugin</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Language">
-            <DisplayName>Language</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Language</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="Default">
-            <DisplayName>Default</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>Default</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="DefaultWide">
-            <DisplayName>DefaultWide</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>DefaultWide</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
-          <GroupItem Name="GenericSiteTool">
-            <DisplayName>GenericSiteTool</DisplayName>
-            <DefaulChecked>true</DefaulChecked>
-            <Description>GenericSiteTool</Description>
-            <Files>
-              <Items />
-            </Files>
-          </GroupItem>
           <GroupItem Name="MPUrlSourceSplitter">
             <DisplayName>MPUrlSourceSplitter</DisplayName>
             <DefaulChecked>true</DefaulChecked>
@@ -2515,6 +615,233 @@ included Titan skin files
         <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=10&amp;cf_id=65</OnlineLocation>
         <ReleaseDate>2014-09-07T15:00:00</ReleaseDate>
         <Tags>online,videos,youtube</Tags>
+        <Location>..\MPEI\[Name][Version].mpe1</Location>
+        <Params>
+          <Items>
+            <SectionParam Name="Online Icon">
+              <Value>http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/OnlineVideos.png</Value>
+              <ValueType>String</ValueType>
+              <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
+            </SectionParam>
+            <SectionParam Name="Configuration file">
+              <Value>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</Value>
+              <ValueType>Template</ValueType>
+              <Description>The file used to configure the extension.
+ If have .exe extension the will be executed
+ If have .dll extension used like MP plugin configuration</Description>
+            </SectionParam>
+            <SectionParam Name="Online Screenshots">
+              <Value>http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_AutoGroupByLanguage.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories.png;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_ListView.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_LargeIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png</Value>
+              <ValueType>String</ValueType>
+              <Description>Online stored screenshot urls separated by ; </Description>
+            </SectionParam>
+            <SectionParam Name="Force to uninstall on update">
+              <Value>YES</Value>
+              <ValueType>Bool</ValueType>
+              <Description>Show dialog and force to uninstall previous version when updating an extension. Should only be disabled if you are using an NSIS/MSI installer.</Description>
+            </SectionParam>
+          </Items>
+        </Params>
+      </GeneralInfo>
+      <UniqueFileList>
+        <Items />
+      </UniqueFileList>
+      <ProjectSettings>
+        <FolderGroups />
+      </ProjectSettings>
+      <IsSkin>false</IsSkin>
+    </PackageClass>
+    <PackageClass>
+      <Version>2.0</Version>
+      <Groups>
+        <Items>
+          <GroupItem Name="Thumbs">
+            <DisplayName>Thumbs</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Thumbs</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="Skins">
+            <DisplayName>Skins</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Skins</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="Plugin">
+            <DisplayName>Plugin</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Plugin</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="Language">
+            <DisplayName>Language</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Language</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="Default">
+            <DisplayName>Default</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Default</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="DefaultWide">
+            <DisplayName>DefaultWide</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>DefaultWide</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="GenericSiteTool">
+            <DisplayName>GenericSiteTool</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>GenericSiteTool</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="MPUrlSourceSplitter">
+            <DisplayName>MPUrlSourceSplitter</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>MPUrlSourceSplitter</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="LAVFilters">
+            <DisplayName>LAVFilters</DisplayName>
+            <DefaulChecked>false</DefaulChecked>
+            <Description>LAVFilters</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="ExtensionsPlugin">
+            <DisplayName>ExtensionsPlugin</DisplayName>
+            <DefaulChecked>false</DefaulChecked>
+            <Description>ExtensionsPlugin</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+          <GroupItem Name="Titan">
+            <DisplayName>Titan</DisplayName>
+            <DefaulChecked>true</DefaulChecked>
+            <Description>Titan</Description>
+            <Files>
+              <Items />
+            </Files>
+          </GroupItem>
+        </Items>
+      </Groups>
+      <Sections>
+        <Items />
+      </Sections>
+      <Dependencies>
+        <Items>
+          <DependencyItem>
+            <Type>MediaPortal</Type>
+            <Id />
+            <MinVersion>
+              <Major>1</Major>
+              <Minor>1</Minor>
+              <Build>6</Build>
+              <Revision>27644</Revision>
+            </MinVersion>
+            <MaxVersion>
+              <Major>1</Major>
+              <Minor>1</Minor>
+              <Build>6</Build>
+              <Revision>27644</Revision>
+            </MaxVersion>
+            <WarnOnly>false</WarnOnly>
+            <Message>This version of OnlineVideos requires MediaPortal 1.7 or newer!</Message>
+            <Name>MediaPortal</Name>
+          </DependencyItem>
+          <DependencyItem>
+            <Type>Installer</Type>
+            <Id />
+            <MinVersion>
+              <Major>1</Major>
+              <Minor>3</Minor>
+              <Build>0</Build>
+              <Revision>0</Revision>
+            </MinVersion>
+            <MaxVersion>
+              <Major>9</Major>
+              <Minor>9</Minor>
+              <Build>9</Build>
+              <Revision>9</Revision>
+            </MaxVersion>
+            <WarnOnly>false</WarnOnly>
+            <Message>This Installer of OnlineVideos requires MediaPortal version 1.3 Final or newer!</Message>
+            <Name>Installer</Name>
+          </DependencyItem>
+        </Items>
+      </Dependencies>
+      <PluginDependencies>
+        <Items>
+          <PluginDependencyItem AssemblyName="OnlineVideos.MediaPortal1.dll">
+            <CompatibleVersion>
+              <Items>
+                <CompatibleVersionItem>
+                  <MinRequiredVersion>1.6.100.0</MinRequiredVersion>
+                  <DesignedForVersion>1.6.100.0</DesignedForVersion>
+                </CompatibleVersionItem>
+              </Items>
+            </CompatibleVersion>
+            <SubSystemsUsed>
+              <Items>
+                <SubSystemItem Name="MP.Config" />
+                <SubSystemItem Name="MP.Externals.Log4Net" />
+                <SubSystemItem Name="MP.Externals.SQLite" />
+                <SubSystemItem Name="MP.Input" />
+                <SubSystemItem Name="MP.Players.Video" />
+                <SubSystemItem Name="MP.Plugins.Videos" />
+                <SubSystemItem Name="MP.SkinEngine" />
+              </Items>
+            </SubSystemsUsed>
+          </PluginDependencyItem>
+        </Items>
+      </PluginDependencies>
+      <GeneralInfo>
+        <Name>OnlineVideos</Name>
+        <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
+        <Author>offbyone</Author>
+        <HomePage>http://code.google.com/p/mp-onlinevideos2/</HomePage>
+        <ForumPage>http://forum.team-mediaportal.com/onlinevideos-244/</ForumPage>
+        <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
+        <Version>
+          <Major>2</Major>
+          <Minor>0</Minor>
+          <Build>0</Build>
+          <Revision>0</Revision>
+        </Version>
+        <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
+        <VersionDescription>fixed: search history not restored on next start (encoding was wrong)
+fixed: possible MediaPortal crash due to the notify dialog after a download not called on UI thread
+added: option to pass subtitle info from a Hoster to a SiteUtil
+added: automatic encryption of user's passwords
+improved Browser Host Player
+included Titan skin files
+moved to .Net 4.0
+changed: now using the new (merged) IPTV/URL filter
+OnlineVideos core API cleanup</VersionDescription>
+        <DevelopmentStatus>Stable</DevelopmentStatus>
+        <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=10&amp;cf_id=67</OnlineLocation>
+        <ReleaseDate>2015-03-26T15:00:00</ReleaseDate>
+        <Tags>online,videos,youtube,netflix</Tags>
         <Location>..\MPEI\[Name][Version].mpe1</Location>
         <Params>
           <Items>
