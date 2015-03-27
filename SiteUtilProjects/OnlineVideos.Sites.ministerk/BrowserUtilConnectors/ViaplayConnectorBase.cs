@@ -137,7 +137,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     break;
                 case State.LoginAndPlay:
                     //Pause two sec. before trying (wait for animation after page loaded)
-                    var js = "setTimeout(\"myPlay()\",2000);function myLogin(){if ($('section.login-required').length > 0) {$('section.login-required').find('input[type=email].username').filter(':visible:first').val(\"" + _username + "\");$('section.login-required').find('input[type=password].password').filter(':visible:first').val(\"" + _password + "\");$('section.login-required').find('input[type=submit]').filter(':visible:first').click();} else {setTimeout(\"myLogin()\",250);}};function myPlay() {if ($('figure.mediaplayer>a.play:first').length > 0 && $('figure.mediaplayer>a.play:first').is(':visible')) {$('figure.mediaplayer>a.play:first').click();setTimeout(\"myLogin()\",250);} else {setTimeout(\"myPlay()\",250);}};";
+                    var js = "setTimeout(\"myPlay()\",2000);function myLogin(){if ($('section.login-required').length > 0) {$('section.login-required').find('input[type=email].username').filter(':visible:first').val(\"" + _username + "\");$('section.login-required').find('input[type=password].password').filter(':visible:first').val(\"" + _password + "\");$('section.login-required').find('input[type=submit]').filter(':visible:first').click();} else {setTimeout(\"myLogin()\",250);}};function myPlay() {if ($('a.play-link.large:first').length > 0 && $('a.play-link.large:first').is(':visible')) {$('a.play-link.large:first').click();setTimeout(\"myLogin()\",250);} else {setTimeout(\"myPlay()\",250);}};";
                     InvokeScript(js);
                     _currentState = State.StartPlaying;
                     break;
