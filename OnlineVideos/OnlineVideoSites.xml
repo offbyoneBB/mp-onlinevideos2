@@ -55,7 +55,7 @@
       <Configuration>
         <item key="sendungenUrl"><![CDATA[http://www1.wdr.de/mediathek/video/sendungen/index.html]]></item>
         <item key="searchUrl"><![CDATA[http://www1.wdr.de/mediathek/video/suche/videosuche106.jsp]]></item>
-        <item key="livestreamUrl"><![CDATA[http://www1.wdr.de/mediathek/video/livestream/videostreamstundenwdrfernsehen104-videoplayer_size-L.html]]></item>
+        <item key="livestreamUrl"><![CDATA[http://www1.wdr.de/fernsehen/videostreamstundenlivestream100-videoplayer_size-L.html]]></item>
       </Configuration>
     </Site>
     <Site name="ZDF Mediathek" util="ZDFMediathek" agecheck="false" enabled="true" lang="de">
