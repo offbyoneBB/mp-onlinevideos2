@@ -23,10 +23,12 @@ namespace OnlineVideos.Sites
             Settings.Categories.Clear();
             string url = language == Language.DE ? "http://www.arte.tv/guide/de/plus7" : "http://www.arte.tv/guide/fr/plus7";
             var doc = GetWebData<HtmlDocument>(url);
-            var list = doc.DocumentNode.Descendants("ul").Where(ul => ul.GetAttributeValue("class", "").Contains("program-list")).FirstOrDefault();
-            foreach (var li in list.Elements("li"))
+            var section = doc.DocumentNode.Descendants("section").Where(s => s.GetAttributeValue("class", "") == "nav-clusters").FirstOrDefault();
+            if (section == null)
+                throw new OnlineVideosException("Site changed, needs fixing!");
+
+            foreach (var a in section.Descendants("a"))
             {
-                var a = li.Element("a");
                 RssLink cat = new RssLink();
                 cat.Url = a.GetAttributeValue("href", "");
                 cat.Name = a.Element("span").InnerText.Trim();
@@ -62,9 +64,13 @@ namespace OnlineVideos.Sites
             var json = GetWebData<JObject>(video.VideoUrl);
             foreach (var quality in json["videoJsonPlayer"]["VSR"])
             {
+                string qualityName = string.Format("{0} | {1} | {2}", 
+                    quality.First.Value<string>("versionShortLibelle").PadRight(3),
+                    quality.First.Value<string>("mediaType").PadRight(4), 
+                    quality.First.Value<string>("quality"));
+
                 if (quality.First.Value<string>("mediaType") == "rtmp")
                 {
-                    string qualityName = quality.First.Value<string>("quality");
                     if (!video.PlaybackOptions.ContainsKey(qualityName))
                     {
                         string host = quality.First.Value<string>("streamer");
@@ -73,8 +79,13 @@ namespace OnlineVideos.Sites
                         video.PlaybackOptions.Add(qualityName, playbackUrl);
                     }
                 }
+                else if (quality.First.Value<string>("mediaType") == "mp4")
+                {
+                    string file = quality.First.Value<string>("url");
+                    video.PlaybackOptions.Add(qualityName, file);
+                }
             }
-            return video.PlaybackOptions.FirstOrDefault(q => q.Key.StartsWith(videoQuality.ToString())).Value;
+            return video.PlaybackOptions.FirstOrDefault(q => q.Key.Contains(videoQuality.ToString())).Value;
         }
 
         private VideoInfo getVideoInfo(HtmlNode itemDiv)
