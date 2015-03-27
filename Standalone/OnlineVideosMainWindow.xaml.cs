@@ -664,11 +664,16 @@ namespace Standalone
 				return;
 			}
 
+            // decode and make an url valid for our filter
+            var uri = new Uri(urlToPlay);
+            string protocol = uri.Scheme.Substring(0, Math.Min(uri.Scheme.Length, 4));
+            if (protocol == "http" ||protocol == "rtmp") uri = new Uri(UrlBuilder.GetFilterUrl(playItem.Util, urlToPlay));
+
 			// Play
 			CurrentPlayListItem = null;
-            Log.Info("Starting Playback: '{0}'", urlToPlay);
+            Log.Info("Starting Playback: '{0}'", uri);
 			mediaPlayer.SubtitleFilePath = GetSubtitleFile(playItem);
-			mediaPlayer.Source = new Uri(urlToPlay);
+            mediaPlayer.Source = uri;
 			CurrentPlayListItem = playItem;
 		}
 
