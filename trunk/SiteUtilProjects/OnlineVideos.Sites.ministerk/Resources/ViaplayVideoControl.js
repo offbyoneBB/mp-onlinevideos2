@@ -23,7 +23,7 @@ function showOsd(indexNameToShow) {
 	if (divHidden) {
 		contentDiv.style.position = 'fixed';
 		contentDiv.style.top = '-100px';
-		mainDiv.setAttribute('style', 'position:fixed;left:0px;bottom:0px;width:100%;height:100px;background:#000;color:#fff;text-align: center;font-size: 50px;');
+		mainDiv.setAttribute('style', 'position:fixed;left:0px;bottom:-10px;width:100%;padding:60px;background:#000;color:#fff;text-align: center;font-size: 50px;');
 		divHidden = false;
 	};
 	mainDiv.innerText = stepNames[indexNameToShow];
