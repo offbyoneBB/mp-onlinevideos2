@@ -20,18 +20,87 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         protected enum State
         {
             None,
-            OpenPage,
-            LoginAndPlay,
+            Login,
+            PostLogin,
             StartPlaying,
+            WaitForPlay,
             Playing
         }
 
         protected State _currentState = State.None;
         protected string _username;
         protected string _password;
-
+        protected string _videoToPlay;
 
         public abstract string BaseUrl { get; }
+        public abstract string LoginUrl { get; }
+
+        public override EventResult PerformLogin(string username, string password)
+        {
+            ShowLoading();
+            _password = password;
+            _username = username;
+            _currentState = State.Login;
+            Url = LoginUrl;
+            ProcessComplete.Finished = false;
+            ProcessComplete.Success = false;
+            return EventResult.Complete();
+        }
+
+        public override EventResult PlayVideo(string videoToPlay)
+        {
+            ProcessComplete.Finished = false;
+            ProcessComplete.Success = false;
+            _videoToPlay = videoToPlay;
+            Uri uri = new Uri(BaseUrl + videoToPlay);
+            Url = uri.GetLeftPart(UriPartial.Path);
+            _currentState = State.StartPlaying;
+            return EventResult.Complete();
+        }
+
+        public override EventResult BrowserDocumentComplete()
+        {
+            switch (_currentState)
+            {
+                case State.Login:
+                    if (Url == LoginUrl)
+                    {
+                        InvokeScript(Properties.Resources.ViaplayPlayMovieJs + "setTimeout(\"myLogin('" + _username + "','" + _password + "')\", 500);");
+                    }
+                    else
+                    {
+                        _currentState = State.None;
+                        ProcessComplete.Finished = true;
+                        ProcessComplete.Success = true;
+                    }
+                    break;
+                case State.PostLogin:
+                        _currentState = State.None;
+                        ProcessComplete.Finished = true;
+                        ProcessComplete.Success = true;
+                        break;
+                case State.StartPlaying:
+                    InvokeScript(Properties.Resources.ViaplayPlayMovieJs + "__url = '"+ _videoToPlay + "'; setTimeout(\"myPlay()\", 1000);");
+                    _currentState = State.WaitForPlay;
+                    break;
+                case State.WaitForPlay:
+                    if (Url.Contains("/player"))
+                    {
+                        ProcessComplete.Finished = true;
+                        ProcessComplete.Success = true;
+                        _currentState = State.Playing;
+                        HideLoading();
+                    }
+                    break;
+                case State.Playing:
+                    ProcessComplete.Finished = true;
+                    ProcessComplete.Success = true;
+                    break;
+                default:
+                    break;
+            }
+            return EventResult.Complete();
+        }
 
         private bool doInit = true;
         private void initJs()
@@ -72,7 +141,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
         }
 
-
         public override EventResult Pause()
         {
 
@@ -85,6 +153,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         }
 
         protected bool _paused = false;
+
         private EventResult PlayPause()
         {
             if (_currentState != State.Playing) return EventResult.Complete();
@@ -105,62 +174,5 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             return EventResult.Complete();
         }
 
-
-        public override EventResult PerformLogin(string username, string password)
-        {
-            ShowLoading();
-            _password = password;
-            _username = username;
-            _currentState = State.None;
-            Url = "about:blank";
-            ProcessComplete.Finished = true;
-            ProcessComplete.Success = true;
-            return EventResult.Complete();
-        }
-
-        public override EventResult PlayVideo(string videoToPlay)
-        {
-            ProcessComplete.Finished = false;
-            ProcessComplete.Success = false;
-            Uri uri = new Uri(BaseUrl + videoToPlay);
-            Url = uri.GetLeftPart(UriPartial.Path);
-            _currentState = State.OpenPage;
-            return EventResult.Complete();
-        }
-
-        public override EventResult BrowserDocumentComplete()
-        {
-            switch (_currentState)
-            {
-                case State.OpenPage:
-                    _currentState = State.LoginAndPlay;
-                    break;
-                case State.LoginAndPlay:
-                    //Pause two sec. before trying (wait for animation after page loaded)
-                    var js = "setTimeout(\"myPlay()\",2000);function myLogin(){if ($('section.login-required').length > 0) {$('section.login-required').find('input[type=email].username').filter(':visible:first').val(\"" + _username + "\");$('section.login-required').find('input[type=password].password').filter(':visible:first').val(\"" + _password + "\");$('section.login-required').find('input[type=submit]').filter(':visible:first').click();} else {setTimeout(\"myLogin()\",250);}};function myPlay() {if ($('a.play-link.large:first').length > 0 && $('a.play-link.large:first').is(':visible')) {$('a.play-link.large:first').click();setTimeout(\"myLogin()\",250);} else {setTimeout(\"myPlay()\",250);}};";
-                    InvokeScript(js);
-                    _currentState = State.StartPlaying;
-                    break;
-                case State.StartPlaying:
-                    // Remove banner
-                    //Wait some time.. sometimes slow ajax/javascriptloading.
-                    InvokeScript("setTimeout(function(){if ($('#hellobar-close').length != 0) { $('#hellobar-close').click(); }}, 8000);");
-                    //Remove cookie banner
-                    InvokeScript("setTimeout(function(){if ($('.button.agree-button').length != 0) { $('.button.agree-button:first').click(); }}, 9000);");
-                    ProcessComplete.Finished = true;
-                    ProcessComplete.Success = true;
-                    _currentState = State.Playing;
-                    break;
-                case State.Playing:
-                    ProcessComplete.Finished = true;
-                    ProcessComplete.Success = true;
-                    HideLoading();
-                    break;
-                default:
-                    break;
-
-            }
-            return EventResult.Complete();
-        }
     }
 }
