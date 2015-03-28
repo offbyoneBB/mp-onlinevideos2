@@ -22,6 +22,7 @@ namespace OnlineVideos.Sites
 (<img.+?src=""(?<img>[^""]+)""[^>]*>\s*)?
 </a>\s*</div>\s*
 <h3>\s*<a[^>]*>(?<title>[^<]+)</a>\s*</h3>\s*
+<p\s+class=""subtitle"">(?<subtitle>[^<]*)</p>\s*
 <p\s+class=""avAirTime"">\s*(?<airdate>.+?)</p>\s*
 <div[^>]*><.*?></div>\s*
 <a.*?dataURL:'(?<dataurl>[^']+)'";
@@ -116,6 +117,7 @@ namespace OnlineVideos.Sites
                     Name = string.Format("{0} ({1})", HttpUtility.HtmlDecode(m.Groups["title"].Value.Trim()), Helpers.StringUtils.PlainTextFromHtml(m.Groups["airdate"].Value).Replace("\n", " ")),
                     Thumb = new Uri(new Uri(baseUrl), m.Groups["img"].Value).AbsoluteUri,
                     Url = new Uri(new Uri(baseUrl), m.Groups["dataurl"].Value).AbsoluteUri,
+                    Description = Helpers.StringUtils.PlainTextFromHtml(m.Groups["subtitle"].Value),
                     ParentCategory = parentCategory
                 };
                 parentCategory.SubCategories.Add(video);
