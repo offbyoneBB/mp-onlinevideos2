@@ -61,6 +61,23 @@ namespace OnlineVideos.Sites.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to setTimeout(&quot;myPlay()&quot;,2000);
+        ///
+        ///function myPlay() {
+        ///    if ($(&apos;a.play-link.large:first&apos;).length &gt; 0 &amp;&amp; $(&apos;a.play-link.large:first&apos;).is(&apos;:visible&apos;)) {
+        ///        $(&apos;a.play-link.large:first&apos;).click();
+        ///    } else {
+        ///        setTimeout(&quot;myPlay()&quot;, 250);
+        ///    }
+        ///};.
+        /// </summary>
+        internal static string ViaplayPlayMovieJs {
+            get {
+                return ResourceManager.GetString("ViaplayPlayMovieJs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to var steps = [-10000000, -7200, -3600, -1800, -900, -600, -300, -180, -60, -30, -15, 0, 15, 30, 60, 180, 300, 600, 900, 1800, 3600, 7200, 10000000];
         ///var stepNames = [&apos;Start&apos;, &apos;-2h&apos;, &apos;-1h&apos;, &apos;-30m&apos;, &apos;-15m&apos;, &apos;-10m&apos;, &apos;-5m&apos;, &apos;-3m&apos;, &apos;-1m&apos;, &apos;-30s&apos;, &apos;-15s&apos;, &apos; &apos;, &apos;+15s&apos;, &apos;+30s&apos;, &apos;+1m&apos;, &apos;+3m&apos;, &apos;+5m&apos;, &apos;+10m&apos;, &apos;+15m&apos;, &apos;+30m&apos;, &apos;+1h&apos;, &apos;+2h&apos;, &apos;End&apos;];
         ///var skipIndex = 11;

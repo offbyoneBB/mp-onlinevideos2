@@ -11,5 +11,11 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             get { return "http://viaplay.dk"; }
         }
+
+        public override string LoginUrl
+        {
+            get { return "https://account.viaplay.dk/login"; }
+        }
+
     }
 }
