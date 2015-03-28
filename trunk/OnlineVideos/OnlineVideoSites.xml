@@ -462,40 +462,35 @@
         <Category xsi:type="RssLink" name="Home page">http://www.collegehumor.com/videos</Category>
       </Categories>
     </Site>
-    <Site name="CNN" util="GenericSite" agecheck="false" enabled="true" lang="en">
-      <Description>Videos from the Cable News Network.</Description>
-      <Configuration>
-        <item key="videoUrlRegEx"><![CDATA[(/video)?(?<m0>.+)]]></item>
-        <item key="videoUrlFormatString"><![CDATA[http://ht.cdn.turner.com/cnn/big{0}_640x360_dl.flv]]></item>
-        <item key="videoItemXml"><![CDATA[//cnn_video/video]]></item>
-        <item key="videoTitleXml"><![CDATA[tease_txt]]></item>
-        <item key="videoThumbXml"><![CDATA[image_url]]></item>
-        <item key="videoUrlXml"><![CDATA[video_id]]></item>
-        <item key="videoDurationXml"><![CDATA[vid_duration]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Top Stories">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/top_stories.xml</Category>
-        <Category xsi:type="RssLink" name="Most Popular">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/most_popular.xml</Category>
-        <Category xsi:type="RssLink" name="Staff Picks">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/staff_picks.xml</Category>
-        <Category xsi:type="RssLink" name="CNN TV">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/cnn_tv.xml</Category>
-        <Category xsi:type="RssLink" name="I-Reports">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_ireports.xml</Category>
-        <Category xsi:type="RssLink" name="US">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_us.xml</Category>
-        <Category xsi:type="RssLink" name="US Crime">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_crime.xml</Category>
-        <Category xsi:type="RssLink" name="World">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_world.xml</Category>
-        <Category xsi:type="RssLink" name="International">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_international.xml</Category>
-        <Category xsi:type="RssLink" name="CNN En Espanol">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_espanol.xml</Category>
-        <Category xsi:type="RssLink" name="Politics">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_politics.xml</Category>
-        <Category xsi:type="RssLink" name="Entertainment">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_showbiz.xml</Category>
-        <Category xsi:type="RssLink" name="Offbeat">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_funny_news.xml</Category>
-        <Category xsi:type="RssLink" name="Tech">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_tech.xml</Category>
-        <Category xsi:type="RssLink" name="Living">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_living.xml</Category>
-        <Category xsi:type="RssLink" name="Student News">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_student.xml</Category>
-        <Category xsi:type="RssLink" name="Health">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_health.xml</Category>
-        <Category xsi:type="RssLink" name="Business">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_business.xml</Category>
-        <Category xsi:type="RssLink" name="Sports">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_sports.xml</Category>
-        <Category xsi:type="RssLink" name="Weather">http://www.cnn.com/.element/ssi/www/auto/2.0/video/xml/by_section_weather.xml</Category>
+    <Site name="CNN" util="CNN" agecheck="false" enabled="true" lang="en">
+	    <Description>Videos from the Cable News Network.</Description>
+	    <Configuration>
+		    <item key="playlistUrlRegEx"><![CDATA["videoId":"(?<url>[^"]+)"]]></item>
+		    <item key="playlistUrlFormatString"><![CDATA[http://edition.cnn.com/video/data/3.0/video/{0}/index.xml?xml=true]]></item>
+		    <item key="fileUrlRegEx"><![CDATA[<file>(?<url>[^<]+)</file>]]></item>
+	    </Configuration>
+	    <Categories>
+		    <Category xsi:type="RssLink" name="Top Stories">http://rss.cnn.com/rss/edition.rss</Category>
+		    <Category xsi:type="RssLink" name="World">http://rss.cnn.com/rss/edition_world.rss</Category>
+		    <Category xsi:type="RssLink" name="Africa">http://rss.cnn.com/rss/edition_africa.rss</Category>
+		    <Category xsi:type="RssLink" name="Americas">http://rss.cnn.com/rss/edition_americas.rss</Category>
+		    <Category xsi:type="RssLink" name="Asia">http://rss.cnn.com/rss/edition_asia.rss</Category>
+		    <Category xsi:type="RssLink" name="Europe">http://rss.cnn.com/rss/edition_europe.rss</Category>
+		    <Category xsi:type="RssLink" name="Middle East">http://rss.cnn.com/rss/edition_meast.rss</Category>
+		    <Category xsi:type="RssLink" name="U.S.">http://rss.cnn.com/rss/edition_us.rss</Category>
+		    <Category xsi:type="RssLink" name="Money">http://rss.cnn.com/rss/money_news_international.rss</Category>
+		    <Category xsi:type="RssLink" name="Technology">http://rss.cnn.com/rss/edition_technology.rss</Category>
+		    <Category xsi:type="RssLink" name="Science &amp; Space">http://rss.cnn.com/rss/edition_space.rss</Category>
+		    <Category xsi:type="RssLink" name="Entertainment">http://rss.cnn.com/rss/edition_entertainment.rss</Category>
+		    <Category xsi:type="RssLink" name="World Sport">http://rss.cnn.com/rss/edition_sport.rss</Category>
+		    <Category xsi:type="RssLink" name="Football">http://rss.cnn.com/rss/edition_football.rss</Category>  
+		    <Category xsi:type="RssLink" name="Golf">http://rss.cnn.com/rss/edition_golf.rss</Category>
+		    <Category xsi:type="RssLink" name="Motorsport">http://rss.cnn.com/rss/edition_motorsport.rss</Category>
+		    <Category xsi:type="RssLink" name="Tennis">http://rss.cnn.com/rss/edition_tennis.rss</Category>
+		    <Category xsi:type="RssLink" name="Travel">http://travel.cnn.com/rss.xml</Category>
+		    <Category xsi:type="RssLink" name="Video">http://rss.cnn.com/rss/cnn_freevideo.rss</Category>
       </Categories>
-    </Site>
+	  </Site>
     <Site name="BBC iPlayer" util="BBCiPlayer" agecheck="false" enabled="true" lang="en">
       <Description>The BBC iPlayer allows to catch up on the last 7 days of BBC TV (only available in the UK).</Description>
       <Configuration>
