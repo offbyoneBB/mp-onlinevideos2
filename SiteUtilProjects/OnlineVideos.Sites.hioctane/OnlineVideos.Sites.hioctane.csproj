@@ -69,9 +69,7 @@
     <Compile Include="NdrUtil.cs" />
     <Compile Include="Pro7Util.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sat1Util.cs" />
     <Compile Include="ScrewattackUtil.cs" />
-    <Compile Include="RTLGroupUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
