@@ -557,10 +557,11 @@
     <Site name="spiegel.de" util="GenericSite" agecheck="false" enabled="true" lang="de">
       <Description>Videos des deutschen Newsportals spiegel.de</Description>
       <Configuration>
-        <item key="playlistUrlRegEx"><![CDATA[var\s+spMetadataAssetId\s+='(?<url>[^']+)';]]></item>
-        <item key="playlistUrlFormatString"><![CDATA[http://video.spiegel.de/flash/{0}.xml]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<filename>(?<m0>[^<]+)</filename>.*?<totalbitrate>(?<n0>\d+)</totalbitrate>]]></item>
-        <item key="fileUrlFormatString"><![CDATA[http://video.spiegel.de/flash/{0}]]></item>
+        <item key="fileUrlRegEx">
+          <![CDATA[var\s+server\s*=\s*"(?<m0>[^"]+)";.*?
+spStartVideo5\([^']*'(?<m1>[^']+)']]>
+        </item>
+        <item key="fileUrlFormatString"><![CDATA[{0}{1}]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Politik und Wirtschaft">http://www.spiegel.de/video/politik_wirtschaft/index.rss</Category>
