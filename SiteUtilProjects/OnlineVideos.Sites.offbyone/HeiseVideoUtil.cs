@@ -132,15 +132,24 @@ namespace OnlineVideos.Sites
 
 		public override string GetVideoUrl(VideoInfo video)
 		{
-			var match = Regex.Match(GetWebData(video.VideoUrl), @"json_url:\s*""(?<url>http://www.heise.de/videout/[^""]+)""");
+            video.PlaybackOptions = new Dictionary<string, string>();
+            string videoConfigUrl = "http://www.heise.de/videout/feed?container={0}&sequenz={1}";
+			var match = Regex.Match(GetWebData(video.VideoUrl), @"<div\s+class=""videoplayerjw"".*?data-container=""(?<cont>[^""]+)""\s+data-sequenz=""(?<seq>[^""]+)""");
 			if (match.Success)
 			{
-				string json_url = match.Groups["url"].Value;
-				var json = JsonConvert.DeserializeObject<JObject>(GetWebData(json_url));
-				return json["formats"]["mp4"].First.First.Value<string>("url");
+                string fileUrl = string.Format(videoConfigUrl, match.Groups["cont"].Value, match.Groups["seq"].Value);
+                var xDoc = GetWebData<System.Xml.XmlDocument>(fileUrl);
+                foreach (System.Xml.XmlElement file in xDoc.SelectNodes("//*[local-name() = 'source']"))
+                {
+                    if (file.GetAttribute("type") == "video/mp4")
+                    {
+                        video.PlaybackOptions.Add(file.GetAttribute("label"), file.GetAttribute("file").Replace("https://", "http://"));
+                    }
+                }
+                return video.PlaybackOptions.FirstOrDefault().Value;
 			}
 			else
-				throw new OnlineVideosException("Regex for Json Url outdated!");
+				throw new OnlineVideosException("Regex for Xml Url outdated!");
 		}
 
 		public override bool CanSearch { get { return true; } }
