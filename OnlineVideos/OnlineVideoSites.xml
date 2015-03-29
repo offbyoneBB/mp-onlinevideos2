@@ -1058,16 +1058,16 @@ spStartVideo5\([^']*'(?<m1>[^']+)']]>
         <item key="requestUrl"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerKey=AQ~~,AAAAiDenBUk~,YtnxvBxGO012li9YJqNYbzn7j1MkRsgk]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="Gemist" thumb="" desc="">
+        <Category xsi:type="RssLink" thumb="" desc="" name="Gemist">
           <SubCategories>
-            <Category xsi:type="RssLink" name="Alles" thumb="" desc="">http://www.kijk.nl/ajax/section/overview/missed-all_MissedChannel-all/1/10</Category>
-            <Category xsi:type="RssLink" name="SBS6" thumb="" desc="">http://www.kijk.nl/ajax/section/overview/missed-all_MissedChannel-sbs6/1/10</Category>
-            <Category xsi:type="RssLink" name="NET5" thumb="" desc="">http://www.kijk.nl/ajax/section/overview/missed-all_MissedChannel-net5/1/10</Category>
-            <Category xsi:type="RssLink" name="Veronica TV" thumb="" desc="">http://www.kijk.nl/ajax/section/overview/missed-all_MissedChannel-veronicatv/1/10</Category>
+            <Category xsi:type="RssLink" thumb="" desc="" name="Alles">http://www.kijk.nl/ajax/section/overview/missed-all_MissedChannel-all/1/10</Category>
+            <Category xsi:type="RssLink" thumb="" desc="" name="SBS6">http://www.kijk.nl/ajax/section/overview/missed-all_MissedChannel-sbs6/1/10</Category>
+            <Category xsi:type="RssLink" thumb="" desc="" name="NET5">http://www.kijk.nl/ajax/section/overview/missed-all_MissedChannel-net5/1/10</Category>
+            <Category xsi:type="RssLink" thumb="" desc="" name="Veronica TV">http://www.kijk.nl/ajax/section/overview/missed-all_MissedChannel-veronicatv/1/10</Category>
           </SubCategories>http://www.kijk.nl/gemist</Category>
-        <Category xsi:type="RssLink" name="Series" thumb="" desc="">http://www.kijk.nl/series</Category>
-        <Category xsi:type="RssLink" name="Genres" thumb="" desc="">http://www.kijk.nl/genres</Category>
-        <Category xsi:type="RssLink" name="A - Z" thumb="" desc="">http://www.kijk.nl/programmas</Category>
+        <Category xsi:type="RssLink" thumb="" desc="" name="Series">http://www.kijk.nl/series</Category>
+        <Category xsi:type="RssLink" thumb="" desc="" name="Genres">http://www.kijk.nl/genres</Category>
+        <Category xsi:type="RssLink" thumb="" desc="" name="A - Z">http://www.kijk.nl/programmas</Category>
       </Categories>
     </Site>
     <Site name="League of Legends Streams" util="LeagueOfLegends" agecheck="false" enabled="true" lang="en">

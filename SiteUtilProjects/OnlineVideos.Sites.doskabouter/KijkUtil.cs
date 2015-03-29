@@ -47,7 +47,7 @@ namespace OnlineVideos.Sites
                 };
                 if (!cat.HasSubCategories)
                 {
-                    cat.Other = node.NextSibling;//ParseVideos(url, node.NextSibling);
+                    cat.Other = NextRealSibling(node);//ParseVideos(url, node.NextSibling);
                     parentCategory.SubCategories.Add(cat);
                 }
                 else
@@ -70,13 +70,13 @@ namespace OnlineVideos.Sites
 
             category.ParentCategory.SubCategories.Remove(category);
             return ParseSubCategories((RssLink)category.ParentCategory,
-                htmlDoc.DocumentNode.SelectSingleNode("//h2[@class = 'showcase-heading']").NextSibling, kn.pagenr);
+                NextRealSibling(htmlDoc.DocumentNode.SelectSingleNode("//h2[@class = 'showcase-heading']")), kn.pagenr);
         }
 
         protected override List<VideoInfo> Parse(string url, string data)
         {
             HtmlDocument htmlDoc = GetHtmlDocument(url);
-            return ParseVideos(url, htmlDoc.DocumentNode);
+            return ParseVideos(url, NextRealSibling(htmlDoc.DocumentNode.SelectSingleNode("//h2[@class = 'showcase-heading']")));
         }
 
         public override List<VideoInfo> GetVideos(Category category)
@@ -219,6 +219,15 @@ namespace OnlineVideos.Sites
             doc.LoadHtml(webData);
             return doc;
         }
+
+        private HtmlNode NextRealSibling(HtmlNode node)
+        {
+            node = node.NextSibling;
+            if (node != null && node.NodeType == HtmlNodeType.Text)
+                node = node.NextSibling;
+            return node;
+        }
+
 
         private class KijkNextPageCategory : NextPageCategory
         {
