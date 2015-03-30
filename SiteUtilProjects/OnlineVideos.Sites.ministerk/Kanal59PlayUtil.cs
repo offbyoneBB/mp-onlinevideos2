@@ -73,16 +73,15 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> GetVideos(Category category)
         {
-            string videosUrl = string.Format("{0}/getMobileSeasonContent?programId={1}&seasonNumber={2}&format=FLASH", apiBaseUrl, (category.ParentCategory as RssLink).Url, (category as RssLink).Url);
+            string videosUrl = string.Format("{0}/getMobileSeasonContent?programId={1}&seasonNumber={2}&format=ALL_MOBILE", apiBaseUrl, (category.ParentCategory as RssLink).Url, (category as RssLink).Url);
             JObject data = GetWebData<JObject>(videosUrl);
             JArray episodes = (JArray)data["episodes"];
             List<VideoInfo> videos = new List<VideoInfo>();
-            bool widevineRequired = false;
             foreach (JToken episode in episodes)
             {
-                if (!(bool)episode["widevineRequired"])
+                //Airtime not always there...
+                if (episode["streams"].Any(s => !s["drmProtected"].Value<bool>()))
                 {
-                    //Airtime not always there...
                     JToken air = episode["shownOnTvDateTimestamp"];
                     string airtime = "";
                     if (air != null)
@@ -97,73 +96,85 @@ namespace OnlineVideos.Sites
                         Title = string.Format("{0} - {1} {2}: {3}", category.ParentCategory.Name, category.Name, (string)episode["episodeText"], (string)episode["title"]),
                         Description = (string)episode["description"],
                         Airdate = airtime,
-                        //Length = episode["length"].ToString() Not working correctly...
-                        PlaybackOptions = new Dictionary<string, string>(),
+                        VideoUrl = videosUrl,
+                        Other = episode["id"].ToString(),
+                        PlaybackOptions = new Dictionary<string, string>()
                     };
-                    JArray streams = (JArray)episode["streams"];
-                    string streamBaseUrl = (string)episode["streamBaseUrl"];
-                    if (streamBaseUrl != null)
-                    {
-                        int maxBitrate = 0;
-                        foreach (JToken stream in streams)
-                        {
-                            int bitrate = (int)stream["bitrate"] / 1000;
-                            maxBitrate = maxBitrate > bitrate ? maxBitrate : bitrate;
-                            MPUrlSourceFilter.RtmpUrl url = new MPUrlSourceFilter.RtmpUrl(streamBaseUrl)
-                            {
-                                SwfUrl = swfPlayer,
-                                SwfVerify = true,
-                                PlayPath = (string)stream["source"]
-                            };
-                            video.PlaybackOptions.Add(string.Format("{0} kbps", bitrate), url.ToString());
-                        }
-                        video.VideoUrl = video.PlaybackOptions.First(po => po.Key == maxBitrate.ToString() + " kbps").Value;
-                        if ((bool)episode["hasSubtitle"])
-                        {
-                            video.SubtitleUrl = string.Format("{0}/subtitles/{1}", apiBaseUrl, episode["id"].ToString());
-                        }
-                        videos.Add(video);
-                    }
-                }
-                else
-                {
-                    widevineRequired = true;
+                    videos.Add(video);
                 }
             }
-            if (videos.Count < 1 && widevineRequired)
+            if (videos.Count == 0 && episodes.Count > 0)
             {
-                throw new OnlineVideosException(string.Format("All \"{0} - {1} \" episodes DRM protected", category.ParentCategory.Name, category.Name), false);
+                throw new OnlineVideosException(string.Format("Only DRM protected content: \"{0} - {1} \"", category.ParentCategory.Name, category.Name), false);
             }
-
-            videos.Reverse();
             return videos;
         }
 
         public override List<String> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
-            if (!string.IsNullOrEmpty(video.SubtitleUrl) && retrieveSubtitles)
+            JObject data = GetWebData<JObject>(video.VideoUrl);
+            video.PlaybackOptions.Clear();
+            JArray episodes = (JArray)data["episodes"];
+            JToken episode = episodes.FirstOrDefault(e => e["id"].ToString() == video.GetOtherAsString());
+            IEnumerable<JToken> hlsStreams = episode["streams"].Where(s => s["format"].Value<string>().ToLower() == "ipad" && !s["drmProtected"].Value<bool>());
+            if (hlsStreams == null || hlsStreams.Count() == 0)
+                hlsStreams = episode["streams"].Where(s => s["format"].Value<string>().ToLower() == "iphone" && !s["drmProtected"].Value<bool>());
+            if (hlsStreams != null && hlsStreams.Count() > 0)
             {
-                string subData = GetWebData(video.SubtitleUrl);
-                JArray subtitleJson = (JArray)JsonConvert.DeserializeObject(subData);
-                video.SubtitleText = formatSubtitle(subtitleJson);
-            }
-           
-            if (inPlaylist)
-            {
-                video.Other = video.PlaybackOptions;
-                video.PlaybackOptions = null;
-            }
-            else
-            {
-                if (video.PlaybackOptions == null && video.Other != null)
+                try
                 {
-                    video.PlaybackOptions = video.Other as Dictionary<string, string>;
-                    video.Other = null;
+                    string url = hlsStreams.First()["source"].Value<string>();
+                    string m3u8 = GetWebData(url);
+                    Regex rgx = new Regex(@"WIDTH=(?<bitrate>\d+)[^c]*(?<url>[^\.]*\.m3u8)");
+                    foreach (Match m in rgx.Matches(m3u8))
+                    {
+                        video.PlaybackOptions.Add(m.Groups["bitrate"].Value.ToString(), Regex.Replace(url, @"([^/]*?.m3u8)", delegate(Match match)
+                        {
+                            return m.Groups["url"].Value;
+                        }));
+                    }
+                    video.PlaybackOptions = video.PlaybackOptions.OrderByDescending(p => int.Parse(p.Key)).ToDictionary(kvp => ((int.Parse(kvp.Key) /1000) + " kbps (HLS)"), kvp => kvp.Value);
+                }
+                catch { }
+            }
+            IEnumerable<JToken> streams = episode["streams"].Where(s => s["format"].Value<string>().ToLower() == "flash" && !s["drmProtected"].Value<bool>());
+            string streamBaseUrl = (string)episode["streamBaseUrl"];
+            Dictionary<string, string> rtmpD = new Dictionary<string, string>();
+            if (streamBaseUrl != null && streams != null && streams.Count() > 0)
+            {
+                foreach (JToken stream in streams)
+                {
+                    MPUrlSourceFilter.RtmpUrl url = new MPUrlSourceFilter.RtmpUrl(streamBaseUrl)
+                    {
+                        SwfUrl = swfPlayer,
+                        SwfVerify = true,
+                        PlayPath = (string)stream["source"]
+                    };
+                    rtmpD.Add(((int)stream["bitrate"] / 1000).ToString(), url.ToString());
+                }
+                rtmpD = rtmpD.OrderByDescending(p => int.Parse(p.Key)).ToDictionary(kvp => (kvp.Key + " kbps (RTMP)"), kvp => kvp.Value);
+                video.PlaybackOptions = video.PlaybackOptions.Concat(rtmpD).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+                if (retrieveSubtitles && (bool)episode["hasSubtitle"])
+                {
+                    string subData = GetWebData(string.Format("{0}/subtitles/{1}", apiBaseUrl, episode["id"].ToString()));
+                    JArray subtitleJson = (JArray)JsonConvert.DeserializeObject(subData);
+                    video.SubtitleText = formatSubtitle(subtitleJson);
+
                 }
             }
-            return new List<string>() { video.VideoUrl };
+            string firsturl = video.PlaybackOptions.First().Value;
+            if (inPlaylist)
+                video.PlaybackOptions.Clear();
+            return new List<string>() { firsturl };
         }
 
+        public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
+        {
+            string f = base.GetFileNameForDownload(video, category, url);
+            if (f.EndsWith(".m3u8"))
+                f = f.Replace(".m3u8", ".mp4");
+            return f; 
+        }
         public override ITrackingInfo GetTrackingInfo(VideoInfo video)
         {
             Regex rgx = new Regex(@"(?<VideoKind>TvSeries)(?<Title>[^-]*).*?[Ss]äsong.*?(?<Season>\d+).*?[Aa]vsnitt.*?(?<Episode>\d+)");
