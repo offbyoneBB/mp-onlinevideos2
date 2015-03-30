@@ -905,6 +905,14 @@ namespace OnlineVideos.Sites
             return new List<string>() { video.VideoUrl.Replace(ApiUrl, string.Empty) };
         }
 
+        public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
+        {
+            string f = base.GetFileNameForDownload(video, category, url);
+            if (f.EndsWith(".m3u8"))
+                f = f.Replace(".m3u8", ".mp4");
+            return f;
+        }
+
         public override ITrackingInfo GetTrackingInfo(VideoInfo video)
         {
             if (Settings.Player == PlayerType.Internal)
