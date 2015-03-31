@@ -96,8 +96,8 @@ namespace OnlineVideos.Sites
                         Title = string.Format("{0} - {1} {2}: {3}", category.ParentCategory.Name, category.Name, (string)episode["episodeText"], (string)episode["title"]),
                         Description = (string)episode["description"],
                         Airdate = airtime,
-                        VideoUrl = videosUrl,
-                        Other = episode["id"].ToString(),
+                        VideoUrl = episode["id"].ToString(),
+                        Other = videosUrl,
                         PlaybackOptions = new Dictionary<string, string>()
                     };
                     videos.Add(video);
@@ -112,10 +112,10 @@ namespace OnlineVideos.Sites
 
         public override List<String> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
-            JObject data = GetWebData<JObject>(video.VideoUrl);
+            JObject data = GetWebData<JObject>(video.GetOtherAsString());
             video.PlaybackOptions.Clear();
             JArray episodes = (JArray)data["episodes"];
-            JToken episode = episodes.FirstOrDefault(e => e["id"].ToString() == video.GetOtherAsString());
+            JToken episode = episodes.FirstOrDefault(e => e["id"].ToString() == video.VideoUrl);
             IEnumerable<JToken> hlsStreams = episode["streams"].Where(s => s["format"].Value<string>().ToLower() == "ipad" && !s["drmProtected"].Value<bool>());
             if (hlsStreams == null || hlsStreams.Count() == 0)
                 hlsStreams = episode["streams"].Where(s => s["format"].Value<string>().ToLower() == "iphone" && !s["drmProtected"].Value<bool>());
