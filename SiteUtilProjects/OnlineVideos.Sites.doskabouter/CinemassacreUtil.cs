@@ -256,10 +256,8 @@ namespace OnlineVideos.Sites
             }
             if (thisUrl.IndexOf("player.screenwavemedia.com") >= 0)
             {
-                string webData = GetWebData(thisUrl);
-                Match m = Regex.Match(webData, @"{file:\s'(?<url>[^']*.f4m)'");
-                if (m.Success)
-                    return m.Groups["url"].Value;
+                videoUrlFormatString = thisUrl;
+                return base.GetVideoUrl(video);
             }
             return null;
         }
