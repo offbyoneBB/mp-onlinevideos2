@@ -33,6 +33,8 @@ namespace OnlineVideos.Hoster
 (yt\.?player\.?Config\s*=\s*\{.*?""args""\:\s*(?<json>\{[^\}]+\}))", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
         static Regex unicodeFinder = new Regex(@"\\[uU]([0-9A-F]{4})", RegexOptions.Compiled);
 
+        Dictionary<string, Jurassic.ScriptEngine> cachedJavascript = new Dictionary<string, Jurassic.ScriptEngine>();
+
 		public override Dictionary<string, string> GetPlaybackOptions(string url)
 		{
 			IWebProxy proxy = null;
@@ -215,78 +217,47 @@ namespace OnlineVideos.Hoster
 					string jsContent = WebCache.Instance.GetWebData(javascriptUrl);
 
 					string signatureMethodName = Regex.Match(jsContent, @"\.sig\|\|([a-zA-Z0-9$]+)\(").Groups[1].Value;
-					string methods = Regex.Match(jsContent, "\\n(.*?function " + signatureMethodName + @".*?)function [a-zA-Z]+\(\)").Groups[1].Value;
+                    
+                    Jurassic.ScriptEngine engine;
+                    if (!cachedJavascript.TryGetValue(jsContent, out engine))
+                    {
+                        engine = new Jurassic.ScriptEngine();
+                        
+                        // define globals that are used in the script
+                        engine.Global["window"] = engine.Global;
+                        engine.Global["document"] = engine.Global;
+                        engine.Global["navigator"] = engine.Global;
+                        
+                        // this regexp is not valid for .net but js : https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/RegExp
+                        var fixedJs = jsContent.Replace("[^]", ".");
 
-                    var engine = new Jurassic.ScriptEngine();
-					engine.Execute(methods);
+                        // cut out the global function(){...} surrounding everything, so our method is defined global in Jurassic
+                        fixedJs = fixedJs.Substring(fixedJs.IndexOf('{') + 1);
+                        fixedJs = fixedJs.Substring(0, fixedJs.LastIndexOf('}'));
+                        
+                        // due to js nature - all methods called in our target function must be defined before, so for performance cut off where our function ends
+                        var method = Regex.Match(fixedJs, "(function\\s+" + signatureMethodName + @".*?)function [a-zA-Z]+\(\)").Groups[1];
+                        fixedJs = fixedJs.Substring(0, method.Index + method.Length);
+
+                        engine.Execute(fixedJs);
+                        cachedJavascript.Add(jsContent, engine);
+                    }
 					string decrypted = engine.CallGlobalFunction(signatureMethodName, s).ToString();
-					if (!string.IsNullOrEmpty(decrypted))
-						return decrypted;
+                    if (!string.IsNullOrEmpty(decrypted))
+                        return decrypted;
+                    else
+                        Log.Info("Javascript decryption function returned nothing!");
 				}
 				catch (Exception ex)
 				{
-					Log.Info("YouTube signature decryption by executing the Javascript failed: {0}", ex.Message);
+					Log.Info("Signature decryption by executing the Javascript failed: {0}", ex.Message);
 				}
 			}
-
-			// try static decryption (most likely out of date)
-			switch (s.Length)
-			{
-				case 93:
-					return s.Slice(86, 29, -1) + s[88] + s.Slice(28, 5, -1);
-				case 92:
-					return s[25] + s.Slice(3, 25) + s[0] + s.Slice(26, 42) + s[79] + s.Slice(43, 79) + s[91] + s.Slice(80, 83);
-				case 91:
-					return s.Slice(84, 27, -1) + s[86] + s.Slice(26, 5, -1);
-				case 90:
-					return s[25] + s.Slice(3, 25) + s[2] + s.Slice(26, 40) + s[77] + s.Slice(41, 77) + s[89] + s.Slice(78, 81);
-				case 89:
-					return s.Slice(84, 78, -1) + s[87] + s.Slice(77, 60, -1) + s[0] + s.Slice(59, 3, -1);
-				case 88:
-                    return s.Slice(7, 28) + s[87] + s.Slice(29, 45) + s[55] + s.Slice(46, 55) + s[2] + s.Slice(56, 87) + s[28];
-				case 87:
-                    return s.Slice(6, 27) + s[4] + s.Slice(28, 39) + s[27] + s.Slice(40, 59) + s[2] + s.Slice(60);
-				case 86:
-					return s.Slice(80, 72, -1) + s[16] + s.Slice(71, 39, -1) + s[72] + s.Slice(38, 16, -1) + s[82] + s.Slice(15, step: -1);
-				case 85:
-					return s.Slice(3, 11) + s[0] + s.Slice(12, 55) + s[84] + s.Slice(56, 84);
-				case 84:
-					return s.Slice(78, 70, -1) + s[14] + s.Slice(69, 37, -1) + s[70] + s.Slice(36, 14, -1) + s[80] + s.Slice(0, 14).Slice(0, step: -1);
-				case 83:
-					return s.Slice(80, 63, -1) + s[0] + s.Slice(62, 0, -1) + s[63];
-				case 82:
-					return s.Slice(80, 37, -1) + s[7] + s.Slice(36, 7, -1) + s[0] + s.Slice(6, 0, -1) + s[37];
-				case 81:
-					return s[56] + s.Slice(79, 56, -1) + s[41] + s.Slice(55, 41, -1) + s[80] + s.Slice(40, 34, -1) + s[0] + s.Slice(33, 29, -1) + s[34] + s.Slice(28, 9, -1) + s[29] + s.Slice(8, 0, -1) + s[9];
-                case 80:
-                    return s.Slice(1, 19) + s[0] + s.Slice(20, 68) + s[19] + s.Slice(69, 80);
-				case 79:
-					return s[54] + s.Slice(77, 54, -1) + s[39] + s.Slice(53, 39, -1) + s[78] + s.Slice(38, 34, -1) + s[0] + s.Slice(33, 29, -1) + s[34] + s.Slice(28, 9, -1) + s[29] + s.Slice(8, 0, -1) + s[9];
-				default:
-					throw new OnlineVideosException(string.Format("Unable to decrypt signature, key length {0} not supported; retrying might work", s.Length));
-			}
+            else
+            {
+                Log.Info("No Javascript url for decrpyting signature!");
+            }
+            return string.Empty;
 		}
     }
-
-    public static class PythonExtensions
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="str"></param>
-        /// <param name="startIndex">start index (inclusive9, default: 0</param>
-        /// <param name="endIndex">end index (exclusive), default: length of string</param>
-        /// <param name="step">default: 1</param>
-        /// <returns></returns>
-        public static string Slice(this String str, int startIndex = 0, int endIndex = int.MaxValue, int step = 1)
-        {
-            var result = new System.Text.StringBuilder("");
-            endIndex = Math.Min(str.Length, endIndex);
-            for (int i = startIndex; i != endIndex; i += step)
-            {
-                result.Append(str[i]);
-            }
-            return result.ToString();
-        }
-    }   
 }
