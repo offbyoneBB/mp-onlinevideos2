@@ -19,10 +19,10 @@ namespace OnlineVideos.Sites
 		string streamsUrl = "/streams?limit=100&game={0}";
 		string searchUrl = "/search/streams?limit=100&query={0}";
 		string tokenUrl = "http://api.twitch.tv/api/channels/{0}/access_token";
-		string playlistUrl = "http://usher.twitch.tv/select/{0}.m3u8?nauthsig={1}&nauth={2}&allow_source=true";
+		string playlistUrl = "http://usher.justin.tv/api/channel/hls/{0}.m3u8?allow_source=true&player=twitchweb&token={1}&segment_preference=2&sig={2}";
 		string swfUrl = "http://www-cdn.jtvnw.net/widgets/live_site_player.reecf0cca00fdb5cb6edc8e227c91702545504613.swf";
 		string pageUrlBase = "http://de.twitch.tv/";
-		string m3u8Regex = @"#EXT-X-STREAM-INF:PROGRAM-ID=\d,BANDWIDTH=(?<bitrate>\d+),(RESOLUTION=\d+x\d+,)?VIDEO=""(?<quality>[^""]+)""\n(?<url>.*)";
+		string m3u8Regex = @"#EXT-X-STREAM-INF:PROGRAM-ID=\d,BANDWIDTH=(?<bitrate>\d+),(RESOLUTION=(\d+x\d+,))?VIDEO=""(?<quality>[^""]+)"".*?\n(?<url>.*)";
 
 		string nextPageUrl;
 
@@ -86,19 +86,20 @@ namespace OnlineVideos.Sites
 
 		public override string GetVideoUrl(OnlineVideos.VideoInfo video)
 		{
-			video.PlaybackOptions = new Dictionary<string, string>();
-
+            video.PlaybackOptions = new Dictionary<string, string>();
 			var tokenDataJson = GetWebData<JToken>(string.Format(tokenUrl, video.VideoUrl));
 			var token= tokenDataJson["token"];
 			var sig = tokenDataJson["sig"];
-			var m3u8Data = GetWebData(string.Format(playlistUrl, video.VideoUrl, sig, token));
+            string hlsPlaylistUrl = string.Format(playlistUrl, video.VideoUrl, HttpUtility.UrlEncode(token.ToString()), sig);
+            var m3u8Data = GetWebData(hlsPlaylistUrl);
 			foreach (Match match in Regex.Matches(m3u8Data, m3u8Regex))
 			{
 				video.PlaybackOptions.Add(
 					string.Format("{0} - {1} kbps", match.Groups["quality"].Value, int.Parse(match.Groups["bitrate"].Value) / 1000),
 					match.Groups["url"].Value);
 			}
-			return video.PlaybackOptions.Select(p => p.Value).FirstOrDefault();
+
+            return video.PlaybackOptions.Select(p => p.Value).FirstOrDefault();
 		}
 
 		List<VideoInfo> VideosFromApiUrl(string url)
