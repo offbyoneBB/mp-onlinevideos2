@@ -127,20 +127,20 @@
     <Site name="mySpass" util="GenericSite" agecheck="false" enabled="true" lang="de">
       <Description>kostenlose TVShows von MySpass.de ansehen</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[onclick='location.href="(?<url>[^"]+)"'>\s*<td\sclass="title">(?<title>[^<]+)<]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li><a\s+href="(?<url>/myspass/shows[^"]+)"\s+ title="(?<title>[^"]+)"]]></item>
         <item key="dynamicCategoryUrlFormatString"><![CDATA[http://www.myspass.de{0}]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[ajax.php',\s'(?<url>getEpisodeListFromSeason[^']+)',[^>]+>(?<title>[^<]+)</a></li>]]></item>
-        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://www.myspass.de/myspass/includes/php/ajax.php?action={0}]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA["(?<url>getEpisodeListFromSeason[^"]*category=full_episode[^"]*)".*?>\s*<span.*?>\s*<a.*?onclick=".*?'(?<title>[^']+)'\]\);">]]></item>
+        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://www.myspass.de/myspass/includes/php/ajax.php?v=2&ajax=true&action={0}]]></item>
         <item key="dynamicSubCategoryUrlDecoding"><![CDATA[HtmlDecode]]></item>
-        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]+)"[^>]*>(?<Title>[^<]+)</a>\s*<[^>]+>\s*<[^>]+>\s*<div\sclass="tooltipTop">\s*<div\sclass="spacer10"></div>\s*<div\sclass="toolTipLeft"><img\ssrc="(?<ImageUrl>[^"]+)"\salt="[^<]+</div>\s*<div\sclass="toolTipRight"><h5>[^<]+</h5>(?<Description>[^<]+)</div>]]></item>
-        <item key="playlistUrlRegEx"><![CDATA[load_vote_stars\('video',\s(?<url>[^,]+),]]></item>
-        <item key="playlistUrlFormatString"><![CDATA[http://www.myspass.de/myspass/includes/apps/video/getvideometadataxml.php?id={0}]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<url_flv><!\[CDATA\[(?<m0>[^\]]+)\]\]></url_flv>]]></item>
+        <item key="videoListRegEx"><![CDATA[<td\s+class="title".*?<a\s+href="(?<VideoUrl>[^"]*)".*?<img\s+src="(?<ImageUrl>[^"]*)".*?<h5.*?>(?<Title>[^<]*)</h5>.*?</div>\s*(?<Description>[^<]*)<.*?<td\s+class="duration".*?>(?<Duration>[^<]*)</a>]]></item>
         <item key="nextPageRegEx"><![CDATA[ajax.php',\s'(?<url>[^']+)'[^>]+><img\ssrc="/myspass/media/images/buttons/pageination/pageination_arr_right_simple_active.gif"\salt="Seite\svor"\s/>]]></item>
         <item key="nextPageRegExUrlFormatString"><![CDATA[http://www.myspass.de/myspass/includes/php/ajax.php?action={0}]]></item>
         <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
-        <item key="baseUrl"><![CDATA[http://www.myspass.de/myspass/shows/tvshows]]></item>
-        <item key="allowUnsafeHeaders"><![CDATA[true]]></item>
+        <item key="playlistUrlRegEx"><![CDATA[<input\s+type="hidden"\s+name="contentId"\s+value="(?<url>[^"]+)".*?>]]></item>
+        <item key="playlistUrlFormatString"><![CDATA[http://www.myspass.de/myspass/includes/apps/video/getvideometadataxml.php?id={0}]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<url_flv><!\[CDATA\[(?<m0>[^\]]+)\]\]></url_flv>]]></item>
+        <item key="baseUrl"><![CDATA[http://www.myspass.de/]]></item>
+        <item key="allowUnsafeHeaders"><![CDATA[True]]></item>
       </Configuration>
     </Site>
     <Site name="SouthParkWORLD" util="SouthPark" agecheck="false" enabled="true" lang="en">
