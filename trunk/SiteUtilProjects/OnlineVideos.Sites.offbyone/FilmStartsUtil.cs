@@ -13,10 +13,18 @@ namespace OnlineVideos.Sites
 
         [Category("OnlineVideosConfiguration"), Description("Alternative Regex used for the result of a search.")]
         string SearchResultVideoListRegEx = @"<a\s+href='(?<VideoUrl>[^']+)'>\s*<img\s+src='(?<ImageUrl>[^']+)'\s+alt='(?<Title>[^']+)'\s*/>\s*</a>";
-        [Category("OnlineVideosConfiguration"), Description("Regex to find an already present paging value in the query of an url for replacing with next page value.")]
-        string PagingRegEx = @"([\?&](p|page))=\d+";
+        [Category("OnlineVideosConfiguration"), Description("Alternative Regex used to find the next page link in the result of a search.")]
+        string SearchResultNextPageRegEx = @"<span\s+class=""navcurrpage"">(?<currentPage>\d+)</span>";
         [Category("OnlineVideosUserConfiguration"), Description("Chose the default Quality that will be preselected.")]
         Quality DefaultQuality = Quality.High;
+
+        Regex regEx_SearchResultNextPage;
+
+        public override void Initialize(SiteSettings siteSettings)
+        {
+            base.Initialize(siteSettings);
+            if (!string.IsNullOrEmpty(SearchResultNextPageRegEx)) regEx_SearchResultNextPage = new Regex(SearchResultNextPageRegEx, defaultRegexOptions);
+        }
 
         public override string GetVideoUrl(VideoInfo video)
         {
@@ -78,6 +86,9 @@ namespace OnlineVideos.Sites
 
         protected override List<VideoInfo> Parse(string url, string data)
         {
+            nextPageAvailable = false;
+            nextPageUrl = "";
+
             bool isSearch = url != null && (new Uri(url).GetComponents(UriComponents.SchemeAndServer | UriComponents.Path, UriFormat.Unescaped) == new Uri(searchUrl).GetComponents(UriComponents.SchemeAndServer | UriComponents.Path, UriFormat.Unescaped));
             List<VideoInfo> result;
             if (isSearch)
@@ -102,36 +113,32 @@ namespace OnlineVideos.Sites
                     result.Add(videoInfo);
                     m = m.NextMatch();
                 }
+
+                Match mNext = regEx_SearchResultNextPage.Match(data);
+                if (mNext.Success)
+                {
+                    int currentPage = 0;
+                    if (int.TryParse(mNext.Groups["currentPage"].Value, out currentPage))
+                    {
+                        nextPageAvailable = true;
+                        nextPageUrl = url.Substring(0, url.IndexOf("&p=")) + "&p=" + (currentPage + 1);
+                    }
+                }
             }
             else
             {
                 result = base.Parse(url, data);
-                result.ForEach(v => v.Title = v.Title.Replace("<br/>", " -").Replace("</strong>", " -"));
-            }
 
-            if (data == null) data = GetWebData(url);
+                if (data == null) data = GetWebData(url);
 
-            nextPageAvailable = false;
-            nextPageUrl = "";
-            Match mNext = regEx_NextPage.Match(data);
-            if (mNext.Success)
-            {
-                int currentPage = 0;
-                int maxPages = 0;
-                int.TryParse(mNext.Groups["curentPage"].Value, out currentPage);
-                int.TryParse(mNext.Groups["maxPages"].Value, out maxPages);
-                if (currentPage + 1 <= maxPages)
+                Match mNext = regEx_NextPage.Match(data);
+                if (mNext.Success)
                 {
-                    nextPageAvailable = true;
-                    if (Regex.IsMatch(url, PagingRegEx))
+                    int currentPage = 0;
+                    if (int.TryParse(mNext.Groups["currentPage"].Value, out currentPage))
                     {
-                        nextPageUrl = Regex.Replace(url, @"([\?&](p|page))=\d+", "$1=" + (currentPage + 1).ToString());
-                    }
-                    else
-                    {
-                        nextPageUrl = url + 
-                                    (string.IsNullOrEmpty(new Uri(url).Query) ? "?" : "&") + 
-                                    (isSearch ? "p=" + (currentPage + 1).ToString() : "page=" + (currentPage + 1).ToString());
+                        nextPageAvailable = true;
+                        nextPageUrl = new Uri(url).GetLeftPart(UriPartial.Scheme | UriPartial.Path) + "?page=" + (currentPage + 1);
                     }
                 }
             }
