@@ -233,10 +233,9 @@ namespace Standalone
             if (Gui2UtilConnector.Instance.IsBusy) return; // don't do anything if currently working on a background task
             object boundObject = ((ListViewItem)sender).Content;
             if (boundObject is ViewModels.Video)
-            {
-                VideoInfo video = (boundObject as ViewModels.Video).Model;
-                ShowContextMenuForVideo(video);
-            }
+                ShowContextMenuForVideo((boundObject as ViewModels.Video).Model);
+            else if (boundObject is ViewModels.Site)
+                ShowContextMenuForSite(boundObject as ViewModels.Site);
         }
 
 		void SiteSelected(SiteUtilBase site)
@@ -422,6 +421,28 @@ namespace Standalone
 				Play_Step1(new PlayListItem(video.Model, SelectedSite is OnlineVideos.Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(video.Model as FavoriteDbVideoInfo).SiteName] : SelectedSite), false);
 			}
 		}
+
+        void ShowContextMenuForSite(ViewModels.Site siteViewModel)
+        {
+            SiteUtilBase selectedSite = siteViewModel.Model;
+            var p = listViewMain.PointToScreen(new Point(20, 10));
+            var dlg = new WindowSiteSettings(selectedSite) { Width = listViewMain.ActualWidth - 40, Height = listViewMain.ActualHeight - 20, Owner = this, Left = p.X, Top = p.Y };
+            dlg.lblHeading.Content = string.Format("{0}: {1}", Translation.Instance.Actions, selectedSite.Settings.Name);
+            if (dlg.ShowDialog() == true)
+            {
+                var newUtilInstance = SiteUtilFactory.CloneFreshSiteFromExisting(selectedSite);
+                OnlineVideoSettings.Instance.SiteUtilsList[newUtilInstance.Settings.Name] = newUtilInstance;
+
+                (OnlineVideoSettings.Instance.UserStore as UserSettings).SaveAll();
+
+                // refresh current site viewmodel with new site instance
+                SelectedSite = newUtilInstance;
+                var c = listViewMain.ItemsSource as System.Windows.Data.ListCollectionView;
+                c.EditItem(siteViewModel);
+                siteViewModel.Model = newUtilInstance;
+                c.CommitEdit();
+            }
+        }
 
         void ShowContextMenuForVideo(VideoInfo video)
         {

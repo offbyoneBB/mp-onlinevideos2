@@ -6,6 +6,7 @@
     <StackPanel>
     <TextBlock x:Name="lblHeading" Text="{Binding Converter={StaticResource TranslationConverter}, ConverterParameter='Search', StringFormat=\{0\}:}" FontWeight="Bold"/>
         <TextBox x:Name="tbxSearch" Margin="5" Width="400"/>
+        <PasswordBox x:Name="tbxPasswrd" Margin="5" Width="400" Visibility="Collapsed"/>
         <WrapPanel HorizontalAlignment="Right">
             <Button IsDefault="True" Width="80" Height="30" Content="OK" Margin="0 5 5 5" Click="OK_Click" />
             <Button IsCancel="True" Width="80" Height="30" Content="{Binding Converter={StaticResource TranslationConverter}, ConverterParameter='Cancel'}" Margin="0 5 5 5" Click="Cancel_Click" />

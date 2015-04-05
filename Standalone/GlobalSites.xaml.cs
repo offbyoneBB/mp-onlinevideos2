@@ -85,7 +85,7 @@ namespace Standalone
             {
                 // add or remove
                 OnlineVideos.OnlineVideosWebservice.Site onlineSite = ((sender as FrameworkElement).DataContext as ViewModels.GlobalSite).Model;
-                SiteSettings localSite = OnlineVideoSettings.Instance.SiteSettingsList.FirstOrDefault(i => i.Name == onlineSite.Name);
+                var localSite = OnlineVideoSettings.Instance.SiteSettingsList.FirstOrDefault(i => i.Name == onlineSite.Name);
                 if (localSite == null)
                     AddSite(sender, e);
                 else
