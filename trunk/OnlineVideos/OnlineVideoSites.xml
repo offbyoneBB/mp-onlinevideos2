@@ -1050,7 +1050,7 @@ spStartVideo5\([^']*'(?<m1>[^']+)']]>
       </Configuration>
     </Site>
     <Site name="Kijk.nl" util="Kijk" agecheck="false" enabled="true" lang="nl">
-      <Description>Videos van SBS6, Net5 en Veronica</Description>
+      <Description>Videos van SBS6, SBS9, Net5 en Veronica</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.kijk.nl/]]></item>
         <item key="fileUrlRegEx"><![CDATA[<object\sid=\\"myExperience[^"]*"\sclass=\\"BrightcoveExperience\\">"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param\sname=\\"playerID\\"\svalue=\\"(?<experienceId>[^\\]*)\\"\s/>"\s*\+\s"<param\sname=\\"playerKey\\"\svalue=\\"(?<playerKey>[^\\]*)\\"\s/>"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param\sname=\\"@videoPlayer\\"\svalue=\\"(?<contentId>[^\\]*)\\"\s/>]]></item>
@@ -1063,6 +1063,7 @@ spStartVideo5\([^']*'(?<m1>[^']+)']]>
           <SubCategories>
             <Category xsi:type="RssLink" thumb="" desc="" name="Alles">http://www.kijk.nl/ajax/section/overview/missed-all_MissedChannel-all/1/10</Category>
             <Category xsi:type="RssLink" thumb="" desc="" name="SBS6">http://www.kijk.nl/ajax/section/overview/missed-all_MissedChannel-sbs6/1/10</Category>
+            <Category xsi:type="RssLink" thumb="" desc="" name="SBS9">http://www.kijk.nl/ajax/section/overview/missed-all_MissedChannel-sbs9/1/10</Category>
             <Category xsi:type="RssLink" thumb="" desc="" name="NET5">http://www.kijk.nl/ajax/section/overview/missed-all_MissedChannel-net5/1/10</Category>
             <Category xsi:type="RssLink" thumb="" desc="" name="Veronica TV">http://www.kijk.nl/ajax/section/overview/missed-all_MissedChannel-veronicatv/1/10</Category>
           </SubCategories>http://www.kijk.nl/gemist</Category>
