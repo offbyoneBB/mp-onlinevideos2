@@ -59,6 +59,9 @@ namespace Standalone
             OnlineVideoSettings.Instance.ConfigDir = writeableBaseDir;
             OnlineVideoSettings.Instance.Logger = new Logger(System.IO.Path.Combine(writeableBaseDir, "Logs"));
             OnlineVideoSettings.Instance.UserStore = new Configuration.UserSettings(writeableBaseDir);
+            var favDB = new FavoriteDB(System.IO.Path.Combine(writeableBaseDir, "OnlineVideosFavorites.db3"));
+            if (favDB.Init())
+                OnlineVideoSettings.Instance.FavDB = favDB;
             OnlineVideoSettings.Instance.DllsDir = System.IO.Path.Combine(writeableBaseDir, "SiteUtilDlls");
             if (!System.IO.Directory.Exists(OnlineVideoSettings.Instance.DllsDir)) System.IO.Directory.CreateDirectory(OnlineVideoSettings.Instance.DllsDir);
 			OnlineVideoSettings.Instance.ThumbsDir = System.IO.Path.Combine(writeableBaseDir, "Thumbs");
@@ -451,6 +454,11 @@ namespace Standalone
             {
                 dialogOptions.Add(new KeyValuePair<string, ContextMenuEntry>(string.Format("{0} ({1})", Translation.Instance.Download, Translation.Instance.Concurrent), null));
                 dialogOptions.Add(new KeyValuePair<string, ContextMenuEntry>(string.Format("{0} ({1})", Translation.Instance.Download, Translation.Instance.Queued), null));
+                
+                if (!(SelectedSite is FavoriteUtil) && OnlineVideoSettings.Instance.FavDB != null)
+                {
+                    dialogOptions.Add(new KeyValuePair<string, ContextMenuEntry>(Translation.Instance.AddToFavourites, null));
+                }
             }
             foreach (var entry in SelectedSite.GetContextMenuEntries(SelectedCategory, video))
             {
@@ -473,6 +481,10 @@ namespace Standalone
                         else if (dlg.lvChoices.SelectedItem.ToString().Contains(Translation.Instance.Queued))
                         {
                             SaveVideo_Step1(DownloadList.Create(DownloadInfo.Create(video, SelectedCategory, SelectedSite)), true);
+                        }
+                        else if (dlg.lvChoices.SelectedItem.ToString().Contains(Translation.Instance.AddToFavourites))
+                        {
+                            AddFavoriteVideo(video);
                         }
                     }
                     else
@@ -1065,6 +1077,13 @@ namespace Standalone
                     SaveVideo_Step1(continuationList, null);
                 }
             }
+        }
+
+        void AddFavoriteVideo(VideoInfo video)
+        {
+            string suggestedTitle = SelectedSite.GetFileNameForDownload(video, SelectedCategory, null);
+            bool successAddingToFavs = OnlineVideoSettings.Instance.FavDB.AddFavoriteVideo(video, suggestedTitle, SelectedSite.Settings.Name);
+            notification.Show(successAddingToFavs ? Translation.Instance.Success : Translation.Instance.Error, Translation.Instance.AddingToFavorites);
         }
 
         public void SelectAndFocusItem(int index = 0)

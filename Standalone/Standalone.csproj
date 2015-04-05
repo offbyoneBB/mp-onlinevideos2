@@ -35,7 +35,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>false</BootstrapperEnabled>
-    <NuGetPackageImportStamp>534fca30</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>5469f0f6</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -73,6 +73,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite">
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.96.0\lib\net40\System.Data.SQLite.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
@@ -99,6 +102,7 @@
     <Compile Include="DetailsView.xaml.cs">
       <DependentUpon>DetailsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FavoriteDB.cs" />
     <Compile Include="FilterFromFile.cs" />
     <Compile Include="GlobalSites.xaml.cs">
       <DependentUpon>GlobalSites.xaml</DependentUpon>
@@ -226,6 +230,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="App.config" />
     <None Include="build.targets" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -368,6 +373,8 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\MediaPortal.UrlSourceSplitter.2.1.7.5510\build\MediaPortal.UrlSourceSplitter.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MediaPortal.UrlSourceSplitter.2.1.7.5510\build\MediaPortal.UrlSourceSplitter.targets'))" />
     <Error Condition="!Exists('..\packages\xy-VSFilter.3.0.0.211\build\xy-VSFilter.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xy-VSFilter.3.0.0.211\build\xy-VSFilter.targets'))" />
+    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.96.0\build\net40\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.96.0\build\net40\System.Data.SQLite.Core.targets'))" />
   </Target>
   <Import Project="..\packages\xy-VSFilter.3.0.0.211\build\xy-VSFilter.targets" Condition="Exists('..\packages\xy-VSFilter.3.0.0.211\build\xy-VSFilter.targets')" />
+  <Import Project="..\packages\System.Data.SQLite.Core.1.0.96.0\build\net40\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.96.0\build\net40\System.Data.SQLite.Core.targets')" />
 </Project>

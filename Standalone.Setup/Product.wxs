@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*" Name="OnlineVideosWPF" Language="1033" Version="2.0.0.0" Manufacturer="offbyone" UpgradeCode="91c44233-766d-45e6-a51e-0cc26fae85dc">
+	<Product Id="*" Name="OnlineVideos Standalone" Language="1033" Version="2.0.0.0" Manufacturer="offbyone" UpgradeCode="91c44233-766d-45e6-a51e-0cc26fae85dc">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x86" />
 
 		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION"/>
@@ -33,11 +33,14 @@
 								<Icon Id="$(var.Standalone.TargetFileName)" SourceFile="$(var.Standalone.TargetPath)" />
 							</Shortcut>
 						</File>
+            <File Id="MainExecutableConfig" Source="$(var.Standalone.TargetPath).config" DiskId="1" Vital="yes"/>
 						<File Id="OnlineVideosCore" Source="$(var.OnlineVideos.TargetPath)" DiskId="1" Vital="yes"/>
 						<File Id="DirectShowLib" Source="$(var.Standalone.TargetDir)DirectShowLib-2005.dll" DiskId="1" Vital="yes"/>
 						<File Id="EVRPresenter32" Source="$(var.Standalone.TargetDir)EVRPresenter32.dll" DiskId="1" Vital="yes"/>
 						<File Id="NLog" Source="$(var.Standalone.TargetDir)NLog.dll" DiskId="1" Vital="yes"/>
-						<RemoveFile Id="LogFile" On="both" Name="log.txt" />
+            <File Id="SystemDataSQLite" Source="$(var.Standalone.TargetDir)System.Data.SQLite.dll" DiskId="1" Vital="yes"/>
+            <File Id="SQLiteInterop" Source="$(var.Standalone.TargetDir)x86\SQLite.Interop.dll" DiskId="1" Vital="yes"/>
+            <RemoveFile Id="LogFile" On="both" Name="log.txt" />
 					</Component>
           <Component Id="xyVsFilter" Guid="d80b0582-9e65-4fa9-9d85-966443f49f51">
             <File KeyPath="yes" Id="xyVsFilterDll" Source="$(var.Standalone.TargetDir)VSFilter.dll" DiskId="1" Vital="yes"/>
@@ -144,11 +147,13 @@
             <Directory Id="OVDataFolderThumbsIcons" Name="Icons">
               <Component Id="OnlineVideosSiteIcons" Guid="E5D9F5CC-25AA-4A57-91E5-8935D6E76067">
                 <File Id="DownloadsIcon" Source="$(var.SolutionDir)SiteImages\Icons\DownloadedVideo.png" DiskId="1" Vital="yes"/>
+                <File Id="FavoritesIcon" Source="$(var.SolutionDir)SiteImages\Icons\Favorite.png" DiskId="1" Vital="yes"/>
               </Component>
             </Directory>
             <Directory Id="OVDataFolderThumbsBanners" Name="Banners">
               <Component Id="OnlineVideosSiteBanners" Guid="128C5F93-A0F2-48A7-B9F1-059350CC88A9">
                 <File Id="DownloadsBanner" Source="$(var.SolutionDir)SiteImages\Banners\DownloadedVideo.png" DiskId="1" Vital="yes"/>
+                <File Id="FavoritesBanner" Source="$(var.SolutionDir)SiteImages\Banners\Favorite.png" DiskId="1" Vital="yes"/>
               </Component>
             </Directory>
           </Directory>
