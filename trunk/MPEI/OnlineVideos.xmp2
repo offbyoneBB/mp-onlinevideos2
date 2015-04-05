@@ -104,13 +104,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Kabel1.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{beac344c-69b2-483c-be5f-624eed69a42e}-Kabel1.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Kabel1.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\Mdr.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{63d6dc32-e40b-4ee6-a9a5-7ee8a04b2b85}-Mdr.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Mdr.png</DestinationFilename>
@@ -219,13 +212,6 @@
               <LocalFileName>..\SiteImages\Icons\Revision3.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{be7c1e5d-4ddc-49d3-827c-3aa7ee6425fc}-Revision3.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Revision3.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Sat1.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{8cd8e18b-f4a6-4129-b815-b836d4e9db48}-Sat1.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Sat1.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -440,13 +426,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Kabel1.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{37e8cdb4-1eff-45a3-8ca5-e7b1a7b9629d}-Kabel1.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Kabel1.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Banners\Mdr.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{870ee6b9-fa30-4e0d-b54e-1fcc246ebee0}-Mdr.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Mdr.png</DestinationFilename>
@@ -562,13 +541,6 @@
               <LocalFileName>..\SiteImages\Banners\Revision3.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{4ca68d15-a42d-4e39-bbd0-8a2f3c266467}-Revision3.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Revision3.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Sat1.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{350ab5e3-46b2-457f-82af-065923ce7bc9}-Sat1.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Sat1.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -1570,20 +1542,6 @@
               <LocalFileName>..\SiteImages\Banners\ITV Player.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{e32cf3a9-0faf-4a5c-9c21-98753f75244f}-ITV Player.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ITV Player.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\RTL2 Now.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{b34c84e1-3b86-400b-a944-e6f765bb38a6}-RTL2 Now.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\RTL2 Now.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\RTL2 Now.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{d2e80a96-704d-47ff-b3cd-4926d324a9a0}-RTL2 Now.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\RTL2 Now.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -3867,29 +3825,7 @@ public class Script
     </Items>
   </Dependencies>
   <PluginDependencies>
-    <Items>
-      <PluginDependencyItem AssemblyName="OnlineVideos.MediaPortal1.dll">
-        <CompatibleVersion>
-          <Items>
-            <CompatibleVersionItem>
-              <MinRequiredVersion>1.6.100.0</MinRequiredVersion>
-              <DesignedForVersion>1.6.100.0</DesignedForVersion>
-            </CompatibleVersionItem>
-          </Items>
-        </CompatibleVersion>
-        <SubSystemsUsed>
-          <Items>
-            <SubSystemItem Name="MP.Config" />
-            <SubSystemItem Name="MP.Externals.Log4Net" />
-            <SubSystemItem Name="MP.Externals.SQLite" />
-            <SubSystemItem Name="MP.Input" />
-            <SubSystemItem Name="MP.Players.Video" />
-            <SubSystemItem Name="MP.Plugins.Videos" />
-            <SubSystemItem Name="MP.SkinEngine" />
-          </Items>
-        </SubSystemsUsed>
-      </PluginDependencyItem>
-    </Items>
+    <Items />
   </PluginDependencies>
   <GeneralInfo>
     <Name>OnlineVideos</Name>
@@ -3897,7 +3833,7 @@ public class Script
     <Author>offbyone</Author>
     <HomePage>http://code.google.com/p/mp-onlinevideos2/</HomePage>
     <ForumPage>http://forum.team-mediaportal.com/onlinevideos-244/</ForumPage>
-    <UpdateUrl>http://mp-onlinevideos2.googlecode.com/svn/trunk/MPEI/update.xml</UpdateUrl>
+    <UpdateUrl>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=10&amp;cf_id=52</UpdateUrl>
     <Version>
       <Major>2</Major>
       <Minor>0</Minor>
@@ -4047,13 +3983,6 @@ OnlineVideos core API cleanup</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Kabel1.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{beac344c-69b2-483c-be5f-624eed69a42e}-Kabel1.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Kabel1.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\Mdr.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{63d6dc32-e40b-4ee6-a9a5-7ee8a04b2b85}-Mdr.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Mdr.png</DestinationFilename>
@@ -4162,13 +4091,6 @@ OnlineVideos core API cleanup</VersionDescription>
         <LocalFileName>..\SiteImages\Icons\Revision3.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{be7c1e5d-4ddc-49d3-827c-3aa7ee6425fc}-Revision3.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Revision3.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Sat1.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{8cd8e18b-f4a6-4129-b815-b836d4e9db48}-Sat1.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Sat1.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -4383,13 +4305,6 @@ OnlineVideos core API cleanup</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Kabel1.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{37e8cdb4-1eff-45a3-8ca5-e7b1a7b9629d}-Kabel1.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Kabel1.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Banners\Mdr.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{870ee6b9-fa30-4e0d-b54e-1fcc246ebee0}-Mdr.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Mdr.png</DestinationFilename>
@@ -4505,13 +4420,6 @@ OnlineVideos core API cleanup</VersionDescription>
         <LocalFileName>..\SiteImages\Banners\Revision3.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{4ca68d15-a42d-4e39-bbd0-8a2f3c266467}-Revision3.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Revision3.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Sat1.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{350ab5e3-46b2-457f-82af-065923ce7bc9}-Sat1.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Sat1.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -5513,20 +5421,6 @@ OnlineVideos core API cleanup</VersionDescription>
         <LocalFileName>..\SiteImages\Banners\ITV Player.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{e32cf3a9-0faf-4a5c-9c21-98753f75244f}-ITV Player.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ITV Player.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\RTL2 Now.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{b34c84e1-3b86-400b-a944-e6f765bb38a6}-RTL2 Now.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\RTL2 Now.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\RTL2 Now.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{d2e80a96-704d-47ff-b3cd-4926d324a9a0}-RTL2 Now.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\RTL2 Now.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
