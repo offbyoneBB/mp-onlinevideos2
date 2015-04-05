@@ -53,6 +53,10 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             if (_currentState == State.Playing && !_isPlayingOrPausing)
             {
+                if (actionEnumName == "REMOTE_0")
+                {
+                    SendKeyToBrowser("^(%(+(d)))");
+                }
                 if (actionEnumName == "ACTION_MOVE_LEFT")
                 {
                     SendKeyToBrowser("{LEFT}");
