@@ -11,7 +11,7 @@
         <local:TranslationConverter x:Key="TranslationConverter"/>
 
         <SolidColorBrush x:Key="BackgroundColor" Color="#FFE3F4FC"/>
-        <SolidColorBrush x:Key="TransparentBackgroundColor" Color="#DDE3F4FC"/>
+        <SolidColorBrush x:Key="TransparentBackgroundColor" Color="#EEE3F4FC"/>
 
         <!-- make images on buttons look grayed when the button is disabled -->
         <Style TargetType="Button">

@@ -17,7 +17,7 @@ namespace Standalone.ViewModels
 			Description = siteUtil.Settings.Description;
 		}
 
-		public OnlineVideos.Sites.SiteUtilBase Model { get; protected set; }
+		public OnlineVideos.Sites.SiteUtilBase Model { get; set; }
 
 		public string Name { get; protected set; }
 		public string Language { get; protected set; }

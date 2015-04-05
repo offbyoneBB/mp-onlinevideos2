@@ -112,6 +112,9 @@
     <Compile Include="Notification.xaml.cs">
       <DependentUpon>Notification.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WindowSiteSettings.xaml.cs">
+      <DependentUpon>WindowSiteSettings.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PlaybackChoices.xaml.cs">
       <DependentUpon>PlaybackChoices.xaml</DependentUpon>
     </Compile>
@@ -184,6 +187,10 @@
       <DependentUpon>OnlineVideosMainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="WindowSiteSettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="PlaybackChoices.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
