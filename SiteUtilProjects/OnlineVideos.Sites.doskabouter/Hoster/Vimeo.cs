@@ -62,8 +62,12 @@ namespace OnlineVideos.Hoster
 
                     if (!String.IsNullOrEmpty(subtitleLanguages))
                     {
-                        string data = WebCache.Instance.GetWebData(getSubUrl(request["text_tracks"] as JArray, subtitleLanguages));
-                        subtitleText = Helpers.SubtitleUtils.Webvtt2SRT(data);
+                        string subUrl = getSubUrl(request["text_tracks"] as JArray, subtitleLanguages);
+                        if (!String.IsNullOrEmpty(subUrl))
+                        {
+                            string data = WebCache.Instance.GetWebData(subUrl);
+                            subtitleText = Helpers.SubtitleUtils.Webvtt2SRT(data);
+                        }
                     }
                 }
             }
