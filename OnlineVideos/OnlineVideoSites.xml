@@ -1691,21 +1691,21 @@ spStartVideo5\([^']*'(?<m1>[^']+)']]>
     <Site name="YouPorn" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Description>YouPorn.com is the largest porn site on the web with the best variety of free full length porn videos - XXX, sex, porno, hardcore and more.</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<div>\s*<a\s+href="(?<url>[^"]+)".*?<strong[^>]*>(?<title>[^<]*)</strong>\s*<var>(?<description>[^<]*)</var>]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<div\s+class='category-content'>\s*<a\s+href="(?<url>[^"]+)".*?>.*?<img.*?alt="(?<title>[^"]+)"]]></item>
         <item key="videoListRegEx">
           <![CDATA[<li\s+class="videoBox[^>]*>\s*<div\s+class="wrapping-video-box">\s*
     <a\s+href="(?<VideoUrl>/watch/[^"]+)"[^>]*>.*?<img(?:(?!src).)+src="(?<ImageUrl>[^"\?]+)[^"]*"[^>]+>\s*
-    <p\s+class="videoTitle"\s*>(?<Title>[^<]+)\s*</p>\s*
+    <p\s+class="videoTitle".*?>(?<Title>[^<]+)\s*</p>\s*
     <span\s+class="duration[^"]*">(?<Duration>[^<]*)</span>]]>
         </item>
-        <item key="nextPageRegEx"><![CDATA[<li\s+class="prev-next">\s*<a\s+href="(?<url>[^"]+)">[^<]*<span>&raquo;</span>\s*</a>\s*</li>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<li\s+class="prev-next">\s*<a.*?href="(?<url>[^"]*)".*?>NEXT]]></item>
         <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
         <item key="fileUrlRegEx"><![CDATA[(?<=<ul\s+class="downloadList">.*)<li[^>]*>\s*<span>[^<]*</span>\s*<a\s+href="(?<m0>[^"]+)">\s*(?<n0>[^<\r\n]+).*?</a>\s*(?<n1>[^<\r\n]*)]]></item>
         <item key="fileUrlNameFormatString"><![CDATA[{0} {1}]]></item>
         <item key="fileUrlDecoding"><![CDATA[HtmlDecode]]></item>
         <item key="searchUrl"><![CDATA[http://www.youporn.com/search/?query={0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.youporn.com/categories/]]></item>
-        <item key="cookies"><![CDATA[age_verified=1]]></item>
+        <item key="cookies"><![CDATA[_gat=1,age_verified=1]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Newest">http://www.youporn.com/</Category>
@@ -1716,14 +1716,16 @@ spStartVideo5\([^']*'(?<m1>[^']+)']]>
     <Site name="RedTube" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Description>The home of free porn videos.</Description>
       <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li>\s*<div\s+class="video">\s*<a\s+href="(?<url>[^"]+)"\s+title="(?<title>[^"]+)">\s*<img.*?src="(?<thumb>[^"]*)"]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\sclass="video">\s*
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li.*?>\s*<div\s+class="video">\s*<a\s+href="(?<url>[^"]+)"\s+title="(?<title>[^"]+)">\s*<img.*?src="(?<thumb>[^"]*)"]]></item>
+        <item key="videoListRegEx">
+          <![CDATA[<li.*?>\s*
 <a\shref="(?<VideoUrl>[^"]+)"\stitle="(?<Title>[^"]*)"[^>]*>\s*
-<img\s(?:(?!src).)*src="(?<ImageUrl>[^"]*)"
-(?:(?!<div\sclass="time">).)*<div\sclass="time">\s*<div[^>]*>\s*<span[^>]*>(?<Duration>[^<]*)<]]></item>
+<span\s+class="video-duration".*?>(?<Duration>[^<]*)</span>\s*
+<img\s(?:(?!src).)*src="(?<ImageUrl>[^"]*)"]]>
+        </item>
         <item key="nextPageRegEx"><![CDATA[title="Next\s*Page\s*"\s+href="(?<url>[^"]*page=\d{1,})">]]></item>
         <item key="prevPageRegEx"><![CDATA[<a\stitle="Previous\spage"\shref="(?<url>[^"]*page=\d{1,})">Prev</a>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[&(?<n0>[a-zA-Z0-9_]+)_url=(?<m0>[^&"]+)]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<param\s+name="FlashVars"\s+value="quality_480p=(?<m0>.*?)&.*]]></item>
         <item key="searchUrl"><![CDATA[http://www.redtube.com/?search={0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.redtube.com/channels]]></item>
         <item key="cookies"><![CDATA[pp=1]]></item>
@@ -1738,6 +1740,7 @@ spStartVideo5\([^']*'(?<m1>[^']+)']]>
     <Site name="xHamster" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Description>xHamster - just porn, no bullshit.</Description>
       <Configuration>
+        <item key="baseUrl"><![CDATA[http://www.xhamster.com]]></item>
         <item key="dynamicCategoriesRegEx"><![CDATA[<a\s+href='(?<url>/channels/[^']+)'>(?<title>[^<]+)</a>]]></item>
         <item key="videoListRegEx">
           <![CDATA[<div\s+class='video'>\s*
@@ -1748,26 +1751,23 @@ spStartVideo5\([^']*'(?<m1>[^']+)']]>
 <u[^>]*>(?<Title>.*?)</u>]]>
         </item>
         <item key="nextPageRegEx"><![CDATA[<a\shref='(?<url>[^']*)'[^>]*>\s*<div[^>]*>[^<]*</div>Next</a>]]></item>
-        <item key="prevPageRegEx"><![CDATA[<SPAN\sclass=navPrev><A\sHREF="(?<url>.+)">Prev</A></SPAN>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[&srv=(?<m0>[^&]*)&file=(?<m1>[^&]*)]]></item>
-        <item key="fileUrlFormatString"><![CDATA[{0}/key={1}]]></item>
         <item key="searchUrl"><![CDATA[http://www.xhamster.com/search.php?q={0}]]></item>
-        <item key="baseUrl"><![CDATA[http://www.xhamster.com]]></item>
+        <item key="fileUrlRegEx"><![CDATA[&file=(?<m0>[^&]*)&.*]]></item>
+        <item key="prevPageRegEx"><![CDATA[<SPAN\sclass=navPrev><A\sHREF="(?<url>.+)">Prev</A></SPAN>]]></item>
       </Configuration>
     </Site>
     <Site name="Tube8" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Description>A Huge selection of hardcore videos is what makes Tube8 the best porn tube site. The site contains 100% user-uploaded free porn.</Description>
       <Configuration>
         <item key="videoListRegEx">
-          <![CDATA[<div\sid="video_i\d+"[^>]*>\s*
+          <![CDATA[<div\sid="video_i\d+"[^>]*>.*?
 <a\shref="(?<VideoUrl>[^"]+)"[^>]*>\s*
-<img\s(?:(?!\ssrc).)*\ssrc="(?<ImageUrl>[^"]+)".*?/></a>\s*
+<img\s(?:(?!\ssrc).)*\ssrc="(?<ImageUrl>[^"]+)".*?/>\s*</a>\s*
 .*?<a\shref="[^"]*"\stitle="(?<Title>[^"]+)">\s*
 (?:(?!<strong>).)*<strong>(?<Duration>[^<]*)</strong>]]>
         </item>
         <item key="nextPageRegEx"><![CDATA[<a\s+id="pagination_next"\s+href="(?<url>[^"]+)">Next</a>]]></item>
         <item key="fileUrlRegEx"><![CDATA[videoUrlJS\s*=\s*'(?<m0>[^']+)']]></item>
-        <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
         <item key="searchUrl"><![CDATA[http://www.tube8.com/search.html?q={0}]]></item>
         <item key="baseUrl"><![CDATA[http://www.tube8.com]]></item>
         <item key="cookies"><![CDATA[t8disclaimer=1]]></item>
