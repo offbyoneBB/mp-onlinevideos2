@@ -63,31 +63,42 @@
     </Site>
     <Site name="3sat" util="GenericSite" agecheck="false" enabled="true" lang="de">
       <Description>Einziges öffentlich-rechtliches Gemeinschaftsprogramm des deutschen Sprachraums (ZDF – ORF – SRG – ARD).</Description>
-      <Categories>
-        <Category xsi:type="RssLink" name="Kulturzeit" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_kulturzeit.jpg">http://www.3sat.de/mediathek/rss/mediathek_Kulturzeit.xml</Category>
-        <Category xsi:type="RssLink" name="nano" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_nano.jpg">http://www.3sat.de/mediathek/rss/mediathek_nano.xml</Category>
-        <Category xsi:type="RssLink" name="hitec" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_hitec.jpg">http://www.3sat.de/mediathek/rss/mediathek_hitec.xml</Category>
-        <Category xsi:type="RssLink" name="scobel" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_scobel.jpg">http://www.3sat.de/mediathek/rss/mediathek_scobel.xml</Category>
-        <Category xsi:type="RssLink" name="3satbörse" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_boerse.jpg">http://www.3sat.de/mediathek/rss/mediathek_boerse.xml</Category>
-        <Category xsi:type="RssLink" name="Hessenreporter" thumb="http://www.3sat.de/dynamic/mediathek/images/m_hessenreporter.jpg">http://www.3sat.de/mediathek/rss/mediathek_hessenreporter.xml</Category>
-        <Category xsi:type="RssLink" name="vivo" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_vivo.jpg">http://www.3sat.de/mediathek/rss/mediathek_vivo.xml</Category>
-        <Category xsi:type="RssLink" name="SchweizWeit" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_schweizweit.jpg">http://www.3sat.de/mediathek/rss/mediathek_schweizweit.xml</Category>
-        <Category xsi:type="RssLink" name="neues" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_neues.jpg">http://www.3sat.de/mediathek/rss/mediathek_neues.xml</Category>
-        <Category xsi:type="RssLink" name="bookmark" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_bookmark.jpg">http://www.3sat.de/mediathek/rss/mediathek_bookmark.xml</Category>
-        <Category xsi:type="RssLink" name="Peter Voß fragt" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_petervossfragt.jpg">http://www.3sat.de/mediathek/rss/mediathek_begegnungen.xml</Category>
-        <Category xsi:type="RssLink" name="Gero von Boehm" thumb="http://www.3sat.de/dynamic/mediathek/images/m_gero.jpg">http://www.3sat.de/mediathek/rss/mediathek_gero.xml</Category>
-        <Category xsi:type="RssLink" name="Bauerfeind" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_bauerfeind.jpg">http://www.3sat.de/mediathek/rss/mediathek_bauerfeind.xml</Category>
-        <Category xsi:type="RssLink" name="Buchzeit" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_buchzeit.jpg">http://www.3sat.de/mediathek/rss/mediathek_buchzeit.xml</Category>
-        <Category xsi:type="RssLink" name="Delta" thumb="http://www.3sat.de/dynamic/mediathek/images/m_delta.jpg">http://www.3sat.de/mediathek/rss/mediathek_delta.xml</Category>
-        <Category xsi:type="RssLink" name="Kabarett" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_kabarett.jpg">http://www.3sat.de/mediathek/rss/mediathek_kabarett.xml</Category>
-        <Category xsi:type="RssLink" name="Film" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_film.jpg">http://www.3sat.de/mediathek/rss/mediathek_film.xml</Category>
-        <Category xsi:type="RssLink" name="Musik" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_musik.jpg">http://www.3sat.de/mediathek/rss/mediathek_musik.xml</Category>
-        <Category xsi:type="RssLink" name="Theater und Foyer" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_theater.jpg">http://www.3sat.de/mediathek/rss/mediathek_theater.xml</Category>
-        <Category xsi:type="RssLink" name="Recht brisant" thumb="http://www.3sat.de/dynamic/sitegen/gfx/id_rechtbrisant.jpg">http://www.3sat.de/mediathek/rss/mediathek_Recht%20brisant.xml</Category>
-      </Categories>
-    </Site>
-    <Site name="Arte+7" util="ArtePlus7" agecheck="false" enabled="true" lang="de">
-      <Description>Eine Auswahl der Sendungen des ARTE-Programms steht nach der Fernsehausstrahlung weitere sieben Tage lang kostenfrei per Streaming im Internet zur Verfügung. </Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx">
+          <![CDATA[<div\s+class="BoxPicture\s+MediathekListPic">\s*<a.*?href="(?<url>[^"]*)".*?>\s*<img.*?src="(?<thumb>[^"]*)".*?>\s*</a>\s*</div>\s*
+<div\s+class="BoxHeadline[^"]*">\s*<a.*?>(?<title>[^<]*)</a>\s*</div>\s*
+<div\s+class="FloatText[^"]*">\s*<a.*?>(?<description>[^<]*)</a>\s*</div>]]>
+        </item>
+        <item key="dynamicCategoriesNextPageRegEx"><![CDATA[<div\s+class="BoxLabel\s+BoxLabelMore">mehr.*?</div>\s*<a.*?href="(?<url>[^"]+)".*?>]]></item>
+        <item key="videoListRegEx">
+          <![CDATA[(?<=<div\s+class="BoxLabel">(?<Airdate>[^<]*)<.*?)<div\s+class="BoxPicture\s+MediathekListPic">\s*<a.*?href="(?<VideoUrl>[^"]*)".*?>\s*<img.*?src="(?<ImageUrl>[^"]*)".*?>\s*</a>\s*
+<span.*?>(?<Duration>[^<]*)</span>\s*</div>\s*
+<div\s+class="BoxHeadline[^"]*".*?>\s*<a.*?>(?<Title>[^<]*)</a>\s*</div>\s*
+<div\s+class="FloatText[^"]*".*?>\s*<a.*?>(?<Description>[^<]*)</a>]]>
+        </item>
+        <item key="videoListUrlDecoding"><![CDATA[HtmlDecode]]></item>
+        <item key="videoUrlDecoding"><![CDATA[UrlDecode]]></item>
+        <item key="nextPageRegEx"><![CDATA[<div\s+class="BoxLabel\s+BoxLabelMore">mehr.*?</div>\s*<a.*?href="(?<url>[^"]+)".*?>]]></item>
+        <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
+        <item key="playlistUrlRegEx"><![CDATA[var\s+url_xmlservice\s*=\s*"(?<url>[^"]+)"]]></item>
+        <item key="fileUrlRegEx">
+          <![CDATA[<formitaet[^>]*>\s*
+<quality>(?<n0>[^<]*)</quality>\s*
+<url>(?<m0>http[^<]*mp4)</url>\s*
+<ratio>\d*:\d*</ratio>\s*
+<height>(?<n2>\d*)</height>\s*
+<width>(?<n1>\d*)</width>\s*
+<videoBitrate>\d*</videoBitrate>\s*
+<audioBitrate>\d*</audioBitrate>\s*
+<filesize>\d*</filesize>\s*
+<facets>\s*
+<facet>progressive</facet>\s*
+</facets>\s*
+</formitaet>]]>
+        </item>
+        <item key="fileUrlNameFormatString"><![CDATA[{0} {1}x{2}]]></item>
+        <item key="baseUrl"><![CDATA[http://www.3sat.de/mediathek/?mode=sendungenaz]]></item>
+      </Configuration>
     </Site>
     <Site name="Orf" util="Orf" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen aus der TV-Thek des Österreichischen Rundfunks (ORF).</Description>
