@@ -165,6 +165,7 @@
     <Content Include="Skin\default\screens\dialogSearch.xaml" />
     <Content Include="Skin\default\screens\details.xaml" />
     <Content Include="Skin\default\screens\ovsDialogItemContextMenu.xaml" />
+    <Content Include="Skin\default\themes\default\styles\OnlineVideosConsts.xaml" />
     <Content Include="Skin\default\themes\default\styles\OnlineVideosStyles.xaml" />
     <Content Include="Skin\Reflexion\themes\default\styles\OnlineVideosStyles.xaml" />
     <Content Include="Skin\default\screens\ovsSiteSettings.xaml" />
