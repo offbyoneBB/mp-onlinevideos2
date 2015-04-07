@@ -3,23 +3,23 @@
     xmlns="www.team-mediaportal.com/2008/mpf/directx"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Source="screens\master_menu.xaml">
-	<Include.Resources>
+    <Include.Resources>
 
-		<Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
+        <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
 
-		<!-- Header -->
-		<ResourceWrapper x:Key="Header_Text" EnableBindings="True" Resource="{Binding Source={StaticResource OnlineVideosModel}, Path=SelectedSite.Name, Mode=OneTime}"/>
+        <!-- Header -->
+        <ResourceWrapper x:Key="Header_Text" EnableBindings="True" Resource="{Binding Source={StaticResource OnlineVideosModel}, Path=SelectedSite.Name, Mode=OneTime}"/>
 
-		<!-- Contents -->
-		<ControlTemplate x:Key="Contents_Template">
-			<DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}">
+        <!-- Contents -->
+        <ControlTemplate x:Key="Contents_Template">
+            <DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}">
 
-				<ListView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center" 
-							Style="{ThemeResource ovsCategoriesListViewStyle}"
-							ItemsSource="{Binding Path=CategoriesList}"/>
-			</DockPanel>
+                <ListView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center" 
+                          Style="{ThemeResource ovsCategoriesListViewStyle}"
+                          ItemsSource="{Binding Path=CategoriesList}"/>
+            </DockPanel>
 
-		</ControlTemplate>
+        </ControlTemplate>
 
-	</Include.Resources>
+    </Include.Resources>
 </Include>

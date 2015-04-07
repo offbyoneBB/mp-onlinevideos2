@@ -4,29 +4,29 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Source="screens\master_dialog_bare.xaml"
     >
-	<Include.Resources>
+    <Include.Resources>
 
-		<!-- Header -->
-		<ResourceWrapper x:Key="Dialog_Header_Text" EnableBindings="True" 
-						 Resource="{Binding Source={Service WorkflowManager}, Path=CurrentNavigationContext.DisplayLabel, Mode=OneTime}"/>
+        <!-- Header -->
+        <ResourceWrapper x:Key="Dialog_Header_Text" EnableBindings="True" 
+                         Resource="{Binding Source={Service WorkflowManager}, Path=CurrentNavigationContext.DisplayLabel, Mode=OneTime}"/>
 
-		<!-- Contents -->
-		<ControlTemplate x:Key="Contents_Template">
-			<ListView x:Name="DialogMenu" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SetFocusPrio="DefaultHigh" MinWidth="400"
-						Style="{ThemeResource MenuListViewStyle}" 
-						ItemsSource="{Binding Source={Service WorkflowManager}, Path=CurrentNavigationContext.ContextVariables[Items]}">
-				<ListView.Resources>
-          <CommandList x:Key="Menu_Command">
-            <Command Source="{Service ScreenManager}" Path="CloseTopmostDialog"/>
-            <Command Source="{Binding Source={Service WorkflowManager}, Path=CurrentNavigationContext.ContextVariables[Command]}" Path="Execute">
-              <Command.Parameters>
-                <LateBoundValue BindingValue="{Binding}"/>
-              </Command.Parameters>
-            </Command>
-          </CommandList>
-				</ListView.Resources>
-			</ListView>
-		</ControlTemplate>
-		
-	</Include.Resources>
+        <!-- Contents -->
+        <ControlTemplate x:Key="Contents_Template">
+            <ListView x:Name="DialogMenu" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SetFocusPrio="DefaultHigh" MinWidth="400"
+                      Style="{ThemeResource MenuListViewStyle}" 
+                      ItemsSource="{Binding Source={Service WorkflowManager}, Path=CurrentNavigationContext.ContextVariables[Items]}">
+                <ListView.Resources>
+                    <CommandList x:Key="Menu_Command">
+                        <Command Source="{Service ScreenManager}" Path="CloseTopmostDialog"/>
+                        <Command Source="{Binding Source={Service WorkflowManager}, Path=CurrentNavigationContext.ContextVariables[Command]}" Path="Execute">
+                            <Command.Parameters>
+                                <LateBoundValue BindingValue="{Binding}"/>
+                            </Command.Parameters>
+                        </Command>
+                    </CommandList>
+                </ListView.Resources>
+            </ListView>
+        </ControlTemplate>
+
+    </Include.Resources>
 </Include>
