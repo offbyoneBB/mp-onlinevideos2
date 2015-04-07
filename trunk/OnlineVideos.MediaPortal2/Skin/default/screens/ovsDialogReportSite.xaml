@@ -7,25 +7,23 @@
     <Include.Resources>
 
         <!-- Header -->
-      <ResourceWrapper x:Key="Dialog_Header_Text" EnableBindings="True"
-						 Resource="{Binding Source={Service WorkflowManager}, Path=CurrentNavigationContext.DisplayLabel, Mode=OneTime}"/>
+        <ResourceWrapper x:Key="Dialog_Header_Text" EnableBindings="True" Resource="{Binding Source={Service WorkflowManager}, Path=CurrentNavigationContext.DisplayLabel, Mode=OneTime}"/>
 
         <ControlTemplate x:Key="Contents_Template">
             <StackPanel Width="500" Height="200">
-                <TextBox x:Name="tbxText" SetFocus="true" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                />
+                <TextBox x:Name="tbxText" SetFocus="true" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                 <Grid HorizontalAlignment="Right">
                     <Button Style="{ThemeResource DialogButtonStyle}" Content="[System.Ok]" HorizontalAlignment="Right" Margin="0,0,220,0">
                         <Button.Command>
                             <CommandList>
                                 <Command Source="{Service ScreenManager}" Path="CloseTopmostDialog"/>
-                              <Command Source="{Binding Source={Service WorkflowManager}, Path=CurrentNavigationContext.ContextVariables[Command]}" Path="Execute">
-                                <Command.Parameters>
-                                  <LateBoundValue BindingValue="{Binding ElementName=tbxText,Path=Text}"/>
-                                </Command.Parameters>
-                              </Command>
+                                <Command Source="{Binding Source={Service WorkflowManager}, Path=CurrentNavigationContext.ContextVariables[Command]}" Path="Execute">
+                                    <Command.Parameters>
+                                        <LateBoundValue BindingValue="{Binding ElementName=tbxText,Path=Text}"/>
+                                    </Command.Parameters>
+                                </Command>
                             </CommandList>
-                        </Button.Command>                    
+                        </Button.Command>
                     </Button>
                     <Button Style="{ThemeResource DialogButtonStyle}" Content="[System.Cancel]" HorizontalAlignment="Right"
                         Command="{Command Source={Service ScreenManager},Path=CloseTopmostDialog}"/>

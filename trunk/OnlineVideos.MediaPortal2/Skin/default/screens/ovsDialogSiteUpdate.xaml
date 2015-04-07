@@ -6,18 +6,18 @@
     >
     <Include.Resources>
 
-      <!-- Header -->
-		  <ResourceWrapper x:Key="Dialog_Header_Text" Resource="[OnlineVideos.AutomaticUpdate]"/>
+        <!-- Header -->
+        <ResourceWrapper x:Key="Dialog_Header_Text" Resource="[OnlineVideos.AutomaticUpdate]"/>
 
-      <Model x:Key="Model" Id="C8EA3B4B-E484-469B-AE3E-56A8E9EF9F04"/>
+        <Model x:Key="Model" Id="C8EA3B4B-E484-469B-AE3E-56A8E9EF9F04"/>
 
-      <!-- Contents -->
+        <!-- Contents -->
         <ControlTemplate x:Key="Contents_Template">
-          <DockPanel Width="600" Height="200" DataContext="{Binding Source={StaticResource Model}}" LastChildFill="true" Margin="10">
-            <ProgressBar x:Name="ProgressBar" DockPanel.Dock="Top" Height="15" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+            <DockPanel Width="600" Height="200" DataContext="{Binding Source={StaticResource Model}}" LastChildFill="true" Margin="10">
+                <ProgressBar x:Name="ProgressBar" DockPanel.Dock="Top" Height="15" HorizontalAlignment="Stretch" VerticalAlignment="Center"
                   Value="{Binding Path=UpdateProgress}" Margin="0,0,0,10"/>
-            <Label Content="{Binding Path=UpdateInfo}" FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}" Wrap="true"/>
-          </DockPanel>
+                <Label Content="{Binding Path=UpdateInfo}" FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}" Wrap="true"/>
+            </DockPanel>
         </ControlTemplate>
 
     </Include.Resources>

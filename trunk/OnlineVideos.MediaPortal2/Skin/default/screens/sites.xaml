@@ -7,19 +7,19 @@
 
         <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
 
-		<!-- Contents -->
+        <!-- Contents -->
         <ControlTemplate x:Key="Client_Template">
-			<DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}" LastChildFill="true">
-				
-				<Label Color="{ThemeResource HintTextColor}" DockPanel.Dock="Bottom" Height="40" Margin="100,0,100,1"
-					  HorizontalAlignment="Stretch" VerticalAlignment="Center" Wrap="True" Scroll="Auto" FontSize="{ThemeResource SmallerFontSize}"
-					  DataContext="{Binding ElementName=siteslist,Path=CurrentItem}"
-					  Content="{Binding Description}" />
+            <DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}" LastChildFill="true">
 
-				<ListView x:Name="siteslist" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center" 
-							Style="{ThemeResource ovsSitesListViewStyle}"
-							CurrentItem="{Binding Path=FocusedSite, Mode=OneWayToSource}"
-							ItemsSource="{Binding Path=SitesList}" SetFocusPrio="RestoreState"/>
+                <Label Color="{ThemeResource HintTextColor}" DockPanel.Dock="Bottom" Height="40" Margin="100,0,100,1"
+                       HorizontalAlignment="Stretch" VerticalAlignment="Center" Wrap="True" Scroll="Auto" FontSize="{ThemeResource SmallerFontSize}"
+                       DataContext="{Binding ElementName=siteslist,Path=CurrentItem}"
+                       Content="{Binding Description}" />
+
+                <ListView x:Name="siteslist" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center" 
+                          Style="{ThemeResource ovsSitesListViewStyle}"
+                          CurrentItem="{Binding Path=FocusedSite, Mode=OneWayToSource}"
+                          ItemsSource="{Binding Path=SitesList}" SetFocusPrio="RestoreState"/>
             </DockPanel>
         </ControlTemplate>
 
