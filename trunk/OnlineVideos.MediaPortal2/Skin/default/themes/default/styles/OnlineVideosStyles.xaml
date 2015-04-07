@@ -3,23 +3,12 @@
     xmlns="www.team-mediaportal.com/2008/mpf/directx"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ovs="clr-namespace:OnlineVideos.MediaPortal2;assembly=OnlineVideos.MediaPortal2"
-    DependsOnStyleResources="Buttons,Colors,Consts">
+    DependsOnStyleResources="Buttons,Colors,Consts,OnlineVideosConsts">
 
     <ovs:SiteUtilIconConverter x:Key="ovsSiteUtilIconConverter"/>
     <ovs:LanguageIconConverter x:Key="ovsLanguageIconConverter"/>
     <ovs:BoolFocusPrioConverter x:Key="ovsBoolFocusPrioConverter"/>
     <ovs:SiteStateColorConverter x:Key="ovsSiteStateColorConverter"/>
-
-    <RadialGradientBrush x:Key="ovsItemBackground" GradientOrigin="0.85,0.82">
-        <RadialGradientBrush.RelativeTransform>
-            <TransformGroup>
-                <ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1.335" ScaleY="1.582"/>
-                <TranslateTransform X="0.027" Y="-0.006"/>
-            </TransformGroup>
-        </RadialGradientBrush.RelativeTransform>
-        <GradientStop Color="#00000000" Offset="0"/>
-        <GradientStop Color="#00000000" Offset="1"/>
-    </RadialGradientBrush>
 
     <ControlTemplate x:Key="ovsListViewTemplate" TargetType="{x:Type ListView}">
         <ScrollViewer Style="{ThemeResource DefaultScrollViewerStyle}" CanContentScroll="true" HorizontalScrollBarVisibility="Disabled"
@@ -44,18 +33,23 @@
     </Storyboard>
 
     <DataTemplate x:Key="ovsSiteItemDataTemplate" DataType="{x:Type ovs:SiteViewModel}">
-        <Grid Width="127" Height="127" Margin="4">
-            <Rectangle x:Name="ButtonControlRectangle" StrokeThickness="1" Stroke="{ThemeResource ButtonStrokeColor}" Width="127" Height="127" RadiusX="7" RadiusY="7" Fill="{ThemeResource ovsItemBackground}"/>
-            <Image x:Name="thumb" Stretch="Uniform" Margin="8" Source="{Binding Path=Site, Converter={StaticResource ovsSiteUtilIconConverter}}"/>
-            <Image Width="20" Stretch="Uniform" Margin="0,2,3,0" HorizontalAlignment="Right" VerticalAlignment="Top" Source="{Binding Path=Language, Converter={StaticResource ovsLanguageIconConverter}}"/>
-            <Label x:Name="ItemLabelBig" HorizontalAlignment="Center" VerticalAlignment="Center" Wrap="true" Content="{Binding Path=Name}" FontSize="{ThemeResource SmallerFontSize}" IsVisible="{Binding ElementName=thumb, Path=!HasImage}" Color="{ThemeResource TextColor}"/>
-            <Label x:Name="ItemLabel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="{Binding Path=Name}" FontSize="{ThemeResource LittleFontSize}" IsVisible="{Binding ElementName=thumb, Path=HasImage}" Color="{ThemeResource TextColor}"/>
+        <Grid Width="{ResolutionResource ovsSiteItemWidth}" Height="{ResolutionResource ovsSiteItemHeight}" Margin="{ResolutionResource ovsSiteItemMargin}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Image x:Name="thumb" Stretch="Uniform" Margin="{ResolutionResource ovsSiteItemThumbMargin}" Source="{Binding Path=Site, Converter={StaticResource ovsSiteUtilIconConverter}}"/>
+            <Image Width="{ResolutionResource ovsLanguageImageWidth}" Stretch="Uniform" Margin="0,2,3,0" HorizontalAlignment="Right" VerticalAlignment="Top" Source="{Binding Path=Language, Converter={StaticResource ovsLanguageIconConverter}}"/>
+            <Label x:Name="ItemLabelBig" HorizontalAlignment="Center" VerticalAlignment="Center" Wrap="true" Content="{Binding Path=Name}" IsVisible="{Binding ElementName=thumb, Path=!HasImage}" Color="{ThemeResource TextColor}"/>
+            <Label x:Name="ItemLabel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="{Binding Path=Name}" FontSize="{ThemeResource SmallerFontSize}" IsVisible="{Binding ElementName=thumb, Path=HasImage}"
+                   Color="{ThemeResource TextColor}" Background="#A0000000"/>
         </Grid>
     </DataTemplate>
 
     <DataTemplate x:Key="ovsCategoryItemDataTemplate" DataType="{x:Type ovs:CategoryViewModel}">
         <Grid Width="255" Height="90" Margin="2">
-            <Rectangle x:Name="ButtonControlRectangle" StrokeThickness="1" Stroke="{ThemeResource ButtonStrokeColor}" RadiusX="7" RadiusY="7" Width="255" Height="90" Fill="{ThemeResource ovsItemBackground}"/>
             <DockPanel>
                 <Image DockPanel.Dock="Left" x:Name="thumb" Stretch="Uniform" Margin="8" Source="{Binding Path=Thumb}"/>
                 <Label DockPanel.Dock="Right" x:Name="ItemLabel" VerticalAlignment="Center" Wrap="true" FontSize="{ThemeResource SmallerFontSize}" Content="{Binding Path=Name}" Color="{ThemeResource TextColor}"/>
@@ -66,7 +60,12 @@
 
     <DataTemplate x:Key="ovsVideoItemDataTemplate" DataType="{x:Type ovs:VideoViewModel}">
         <Grid Width="152" Height="115" Margin="2">
-            <Rectangle x:Name="ButtonControlRectangle" StrokeThickness="1" Stroke="{ThemeResource ButtonStrokeColor}" RadiusX="7" RadiusY="7" Width="152" Height="115" Fill="{ThemeResource ovsItemBackground}"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
             <Image x:Name="thumb" Stretch="Uniform" VerticalAlignment="Top" Margin="6" MaxHeight="95" Source="{Binding Path=ThumbnailImage}"/>
             <Label x:Name="ItemLabelBig" Margin="4"  HorizontalAlignment="Center" VerticalAlignment="Center" Wrap="true" Content="{Binding Path=Title}" FontSize="{ThemeResource SmallerFontSize}" IsVisible="{Binding ElementName=thumb, Path=!HasImage}" Color="{ThemeResource TextColor}"/>
             <Label x:Name="ItemLabel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Wrap="true" Content="{Binding Path=Title}" FontSize="10" IsVisible="{Binding ElementName=thumb, Path=HasImage}" Color="{ThemeResource TextColor}"/>
@@ -77,7 +76,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListViewItem}">
-                    <Button x:Name="ovsGrowControl" RenderTransformOrigin="0.5,0.5" Style="{ThemeResource EmptyStyle}">
+                    <Button x:Name="ovsGrowControl" RenderTransformOrigin="0.5,0.5" Margin="{ResolutionResource ovsSiteItemContainerMargin}">
                         <Button.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform x:Name="frameScale" ScaleX="1" ScaleY="1"/>

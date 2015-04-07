@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary
+    xmlns="www.team-mediaportal.com/2008/mpf/directx"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ovs="clr-namespace:OnlineVideos.MediaPortal2;assembly=OnlineVideos.MediaPortal2">
+
+    <!-- Site styles 720p -->
+    <ResourceWrapper x:Key="ovsSiteItemWidth720">160</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsSiteItemHeight720">120</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsSiteItemMargin720">4</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsSiteItemContainerMargin720">3</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsSiteItemThumbMargin720">5</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsLanguageImageWidth720">20</ResourceWrapper>
+
+    <ResourceWrapper x:Key="ovsSitePageLabelHeight720">50</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsSitePageLabelMargin720">100,0,100,5</ResourceWrapper>
+
+    <!-- Site styles 1080p -->
+    <ResourceWrapper x:Key="ovsSiteItemWidth1080">240</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsSiteItemHeight1080">180</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsSiteItemMargin1080">4</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsSiteItemContainerMargin1080">6</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsSiteItemThumbMargin1080">8</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsLanguageImageWidth1080">40</ResourceWrapper>
+
+    <ResourceWrapper x:Key="ovsSitePageLabelHeight1080">75</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsSitePageLabelMargin1080">100,0,100,5</ResourceWrapper>
+
+</ResourceDictionary>
