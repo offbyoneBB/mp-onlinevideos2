@@ -96,7 +96,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListViewItem}">
-                    <Button x:Name="ovsGrowControl" RenderTransformOrigin="0.5,0.5" SetFocusPrio="{Binding Path=Selected, Mode=OneTime, Converter={StaticResource ovsBoolFocusPrioConverter}}">
+                    <Button x:Name="ovsGrowControl" RenderTransformOrigin="0.5,0.5" SetFocusPrio="{Binding Path=Selected, Mode=OneTime, Converter={StaticResource ovsBoolFocusPrioConverter}}"
+                             Margin="{ResolutionResource ovsCategoryItemContainerMargin}">
                         <Button.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform x:Name="frameScale" ScaleX="1" ScaleY="1"/>
@@ -120,7 +121,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListViewItem}">
-                    <Button x:Name="ovsGrowControl" RenderTransformOrigin="0.5,0.5" SetFocusPrio="{Binding Path=Selected, Mode=OneTime, Converter={StaticResource ovsBoolFocusPrioConverter}}">
+                    <Button x:Name="ovsGrowControl" RenderTransformOrigin="0.5,0.5" SetFocusPrio="{Binding Path=Selected, Mode=OneTime, Converter={StaticResource ovsBoolFocusPrioConverter}}"
+                             Margin="{ResolutionResource ovsVideoItemContainerMargin}">
                         <Button.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform x:Name="frameScale" ScaleX="1" ScaleY="1"/>
@@ -170,7 +172,7 @@
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
-                    <WrapPanel IsItemsHost="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    <WrapPanel IsItemsHost="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="{ResolutionResource ovsSitesPanelMargin}"/>
                 </ItemsPanelTemplate>
             </Setter.Value>
         </Setter>
@@ -184,7 +186,7 @@
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
-                    <WrapPanel IsItemsHost="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    <WrapPanel IsItemsHost="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="{ResolutionResource ovsCategoriesPanelMargin}"/>
                 </ItemsPanelTemplate>
             </Setter.Value>
         </Setter>
@@ -198,7 +200,7 @@
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
-                    <WrapPanel IsItemsHost="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    <WrapPanel IsItemsHost="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="{ResolutionResource ovsVideosPanelMargin}"/>
                 </ItemsPanelTemplate>
             </Setter.Value>
         </Setter>
