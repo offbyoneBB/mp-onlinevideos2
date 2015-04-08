@@ -7,13 +7,23 @@
     <!-- Site styles 720p -->
     <ResourceWrapper x:Key="ovsSiteItemWidth720">160</ResourceWrapper>
     <ResourceWrapper x:Key="ovsSiteItemHeight720">120</ResourceWrapper>
-    <ResourceWrapper x:Key="ovsSiteItemMargin720">4</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsSiteItemMargin720">0</ResourceWrapper>
     <ResourceWrapper x:Key="ovsSiteItemContainerMargin720">3</ResourceWrapper>
     <ResourceWrapper x:Key="ovsSiteItemThumbMargin720">5</ResourceWrapper>
     <ResourceWrapper x:Key="ovsLanguageImageWidth720">20</ResourceWrapper>
 
     <ResourceWrapper x:Key="ovsSitePageLabelHeight720">50</ResourceWrapper>
     <ResourceWrapper x:Key="ovsSitePageLabelMargin720">100,0,100,5</ResourceWrapper>
+
+    <ResourceWrapper x:Key="ovsCategoryItemWidth720">250</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsCategoryItemHeight720">90</ResourceWrapper>
+
+    <ResourceWrapper x:Key="ovsVideoItemWidth720">160</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsVideoItemHeight720">120</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsVideoItemThumbMaxHeight720">95</ResourceWrapper>
+
+    <ResourceWrapper x:Key="ovsSiteStateRadius720">16</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsReportLabelWidth720">130</ResourceWrapper>
 
     <!-- Site styles 1080p -->
     <ResourceWrapper x:Key="ovsSiteItemWidth1080">240</ResourceWrapper>
@@ -25,5 +35,15 @@
 
     <ResourceWrapper x:Key="ovsSitePageLabelHeight1080">75</ResourceWrapper>
     <ResourceWrapper x:Key="ovsSitePageLabelMargin1080">100,0,100,5</ResourceWrapper>
+
+    <ResourceWrapper x:Key="ovsCategoryItemWidth1080">360</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsCategoryItemHeight1080">140</ResourceWrapper>
+
+    <ResourceWrapper x:Key="ovsVideoItemWidth1080">240</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsVideoItemHeight1080">180</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsVideoItemThumbMaxHeight1080">140</ResourceWrapper>
+
+    <ResourceWrapper x:Key="ovsSiteStateRadius1080">30</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsReportLabelWidth1080">200</ResourceWrapper>
 
 </ResourceDictionary>
