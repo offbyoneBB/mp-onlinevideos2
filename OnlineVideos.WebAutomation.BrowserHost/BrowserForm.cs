@@ -49,6 +49,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         private DateTime _lastActionTime;
         private static ILog _logger = new DebugLogger();
         private RemoteProcessing _remoteProcessing = new RemoteProcessing(_logger);
+        private int _connectorTimeout = 20;
 
         /// <summary>
         /// Store/retrieve the current screen the web player is showing on - this is stored in the user config
@@ -90,6 +91,12 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 var configValue = ConfigurationManager.AppSettings["DebugMode"];
                 if (!string.IsNullOrEmpty(configValue) && configValue.ToUpper() == "TRUE")
                     _debugMode = true;
+                
+                configValue = ConfigurationManager.AppSettings["BrowserHostWaitTimeout"];
+                var tmpVal = 0;
+                if (!string.IsNullOrEmpty(configValue) && Int32.TryParse(configValue, out tmpVal))
+                    _connectorTimeout = tmpVal;
+                
             }
             catch (Exception ex)
             {
@@ -136,13 +143,13 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 _logger.Debug("Performing Log in");
                 _connector.PerformLogin(_userName, _password);
 
-                var result = _connector.WaitForComplete(ForceQuitting, OnlineVideoSettings.Instance.UtilTimeout);
+                var result = _connector.WaitForComplete(ForceQuitting, _connectorTimeout);
 
                 if (result)
                 {
                     _logger.Debug("Playing Video");
                     _connector.PlayVideo(_videoInfo);
-                    result = _connector.WaitForComplete(ForceQuitting, OnlineVideoSettings.Instance.UtilTimeout);
+                    result = _connector.WaitForComplete(ForceQuitting, _connectorTimeout);
                     _logger.Debug("Playing WaitforComplete " + result.ToString());
                     if (!result)
                         ForceQuit();
