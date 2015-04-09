@@ -50,7 +50,14 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.Factories
 
                 foreach (string aDll in dllFilesToCheck)
                 {
-                    assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(aDll)));
+                    try
+                    {
+                        assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(aDll)));
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error(ex);
+                    }
                 }
             }
 
@@ -60,23 +67,29 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.Factories
                 WebBrowserPlayerCallbackService.LogInfo(string.Format("Looking for BrowserUtilConnector in {0} (Version: {1})",
                     assembly.GetName().Name,
                     assembly.GetName().Version.ToString()));
-
-                Type[] typeArray = assembly.GetExportedTypes();
-                foreach (Type type in typeArray)
+                try
                 {
-                    if (type.BaseType != null && type.IsSubclassOf(typeof(BrowserUtilConnector)) && !type.IsAbstract)
+                    Type[] typeArray = assembly.GetExportedTypes();
+                    foreach (Type type in typeArray)
                     {
-                        if (type.FullName == connectorType)
+                        if (type.BaseType != null && type.IsSubclassOf(typeof(BrowserUtilConnector)) && !type.IsAbstract)
                         {
-                            // Weve hit gold!
-                            var connector = Activator.CreateInstance(type) as BrowserUtilConnector;
-                            if (connector != null)
+                            if (type.FullName == connectorType)
                             {
-                                connector.Initialise(browser ?? new WebBrowser { ScriptErrorsSuppressed = true }, logger);
-                                return connector;
+                                // Weve hit gold!
+                                var connector = Activator.CreateInstance(type) as BrowserUtilConnector;
+                                if (connector != null)
+                                {
+                                    connector.Initialise(browser ?? new WebBrowser { ScriptErrorsSuppressed = true }, logger);
+                                    return connector;
+                                }
                             }
                         }
                     }
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex);
                 }
             }
             return null;
