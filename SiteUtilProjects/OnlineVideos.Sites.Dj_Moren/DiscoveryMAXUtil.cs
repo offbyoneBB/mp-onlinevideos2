@@ -13,12 +13,11 @@ using System.Net;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json.Linq;
-using OnlineVideos.AMF;
 using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Sites
 {
-    public class DiscoveryMAXUtil : BrightCoveUtil
+    public class DiscoveryMAXUtil : GenericSiteUtil
     {
 
         [Category("OnlineVideosConfiguration")]
@@ -170,9 +169,6 @@ namespace OnlineVideos.Sites
             return category;
         }
 
-        //********************************************************************************************************************************
-        //****************************************************** Brightcove util *********************************************************
-        //********************************************************************************************************************************
 
         public override string GetVideoUrl(VideoInfo video)
         {
@@ -187,35 +183,35 @@ namespace OnlineVideos.Sites
             if (!m.Success)
                 return String.Empty;
 
-            AMFArray renditions = GetResultsFromFindByMediaId(m, video.VideoUrl);
+            string videoId = video.VideoUrl.Substring(video.VideoUrl.LastIndexOf("/") + 2);
+            string playerID = m.Groups["experienceId"].Value;
+            string playerKey = m.Groups["playerKey"].Value;
 
-            return FillPlaybackOptions(video, renditions, m);
+            string url = "http://c.brightcove.com/services/viewer/htmlFederated?&%40videoPlayer=" + videoId + "&playerKey=" + playerKey + "&playerID=" + playerID;
+
+            string webdata = GetWebData(url);
+
+            return FillPlaybackOptions(video, webdata, m);
         }
 
-
-        protected AMFArray GetResultsFromFindByMediaId(Match m, string videoUrl)
+        protected string FillPlaybackOptions(VideoInfo video, string webdata, Match m)
         {
-            AMFSerializer ser = new AMFSerializer();
-            object[] values = new object[4];
-            values[0] = hashValue;
-            values[1] = Convert.ToDouble(m.Groups["experienceId"].Value);
-            values[2] = Convert.ToDouble(videoUrl.Substring(videoUrl.LastIndexOf("/") + 2));
-            values[3] = Convert.ToDouble(array4);
-            byte[] data = ser.Serialize2("com.brightcove.player.runtime.PlayerMediaFacade.findMediaById", values, AMFVersion.AMF3);
-            AMFObject obj = AMFObject.GetResponse(requestUrl + m.Groups["playerKey"].Value, data);
-            return obj.GetArray("renditions");
-        }
 
-        protected new string FillPlaybackOptions(VideoInfo video, AMFArray renditions, Match m)
-        {
+            string experienceJSONStr = webdata.Split(new string[] { "var experienceJSON = " }, StringSplitOptions.None)[1]
+                .Split(new string[] { "brightcove.loadMetrics" }, StringSplitOptions.None)[0].Trim();
+
+            experienceJSONStr = experienceJSONStr.Substring(0, experienceJSONStr.Length - 1);
+
+            JObject experienceJSON = JObject.Parse(experienceJSONStr);
+
+            JArray renditions = (JArray)experienceJSON["data"]["programmedContent"]["videoPlayer"]["mediaDTO"]["renditions"];
+
             video.PlaybackOptions = new Dictionary<string, string>();
 
-            foreach (AMFObject rendition in renditions.OrderBy(u => u.GetIntProperty("encodingRate")))
+            foreach (JObject rendition in renditions.OrderBy(u => u["encodingRate"]))
             {
-                string nm = String.Format("{0}x{1} {2}K",
-                    rendition.GetIntProperty("frameWidth"), rendition.GetIntProperty("frameHeight"),
-                    rendition.GetIntProperty("encodingRate") / 1024);
-                string url = HttpUtility.UrlDecode(rendition.GetStringProperty("defaultURL"));
+                string nm = String.Format("{0}x{1} {2}K", rendition["frameWidth"], rendition["frameHeight"], int.Parse(rendition["encodingRate"].ToString()) / 1024);
+                string url = HttpUtility.UrlDecode(rendition["defaultURL"].ToString());
                 video.PlaybackOptions.Add(nm, url);
             }
 
@@ -234,4 +230,5 @@ namespace OnlineVideos.Sites
         }
 
     }
+
 }
