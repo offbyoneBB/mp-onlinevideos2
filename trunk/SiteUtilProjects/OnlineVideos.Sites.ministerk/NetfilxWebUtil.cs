@@ -763,37 +763,44 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                         #region Netflix title
                         else
                         {
-                             data = MyGetWebData(string.Format(netflixOrgEpisodes, apiRoot, (parentCategory as RssLink).Url, latestAuthUrl));
-                             json = (JObject)JsonConvert.DeserializeObject(data);
-                             foreach (JArray seasonArray in json["episodes"])
-                             {
-                                 foreach (JToken episode in seasonArray.Where(e => e["availableForED"] == null || e["availableForED"].Value<bool>()))
-                                 {
-                                     int e = (int)episode["episode"];
-                                     int s = (int)episode["season"];
-                                     RssLink cat = new RssLink()
-                                     {
-                                         Name = s + "x" + (e < 10 ? ("0" + e) : e.ToString()) + " " + (string)episode["title"],
-                                         ParentCategory = parentCategory,
-                                         Thumb = parentCategory.Thumb,
-                                         HasSubCategories = false,
-                                         Url = episode["episodeId"].ToString()
-                                     };
-                                     JToken stills = episode["stills"];
-                                     if (stills != null && stills.Count() > 0)
-                                     {
-                                         cat.Thumb = stills.Last()["url"].Value<string>();
-                                     }
-                                     if (enableDesc)
-                                     {
-                                         cat.Description = episode["synopsis"].Value<string>();
-                                     }
-                                     parentCategory.SubCategories.Add(cat);
-                                 }
-                             }
-                            parentCategory.SubCategories.Sort((c1, c2) => c1.Name.CompareTo(c2.Name));
-                        }
+                            data = MyGetWebData(string.Format(netflixOrgEpisodes, apiRoot, (parentCategory as RssLink).Url, latestAuthUrl));
+                            rgx = new Regex(@"({""title"":[^$]*)");
+                            m = rgx.Match(data);
+                            if (m.Success)
+                            {
+                                data = m.Groups[1].Value;
+
+                                json = (JObject)JsonConvert.DeserializeObject(data);
+                                foreach (JArray seasonArray in json["episodes"])
+                                {
+                                    foreach (JToken episode in seasonArray.Where(e => e["availableForED"] == null || e["availableForED"].Value<bool>()))
+                                    {
+                                        int e = (int)episode["episode"];
+                                        int s = (int)episode["season"];
+                                        RssLink cat = new RssLink()
+                                        {
+                                            Name = s + "x" + (e < 10 ? ("0" + e) : e.ToString()) + " " + (string)episode["title"],
+                                            ParentCategory = parentCategory,
+                                            Thumb = parentCategory.Thumb,
+                                            HasSubCategories = false,
+                                            Url = episode["episodeId"].ToString()
+                                        };
+                                        JToken stills = episode["stills"];
+                                        if (stills != null && stills.Count() > 0)
+                                        {
+                                            cat.Thumb = stills.Last()["url"].Value<string>();
+                                        }
+                                        if (enableDesc)
+                                        {
+                                            cat.Description = episode["synopsis"].Value<string>();
+                                        }
+                                        parentCategory.SubCategories.Add(cat);
+                                    }
+                                }
+                                parentCategory.SubCategories.Sort((c1, c2) => c1.Name.CompareTo(c2.Name));
+                            }
                         #endregion
+                        }
                     }
                     #endregion
 
