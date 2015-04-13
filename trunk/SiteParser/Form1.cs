@@ -419,8 +419,9 @@ namespace SiteParser
             if (parentCat != null && staticList.Contains(parentCat))
             {
                 List<RssLink> subcats = new List<RssLink>();
-                foreach (RssLink tmp in parentCat.SubCategories)
-                    subcats.Add(tmp);
+                if (parentCat.SubCategories != null)
+                    foreach (RssLink tmp in parentCat.SubCategories)
+                        subcats.Add(tmp);
                 parentCat.SubCategories = new List<Category>(f3.Execute(subcats).ToArray());
                 GetSubCategoriesButton_Click(sender, e);
             }
