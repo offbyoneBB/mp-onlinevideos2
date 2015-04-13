@@ -52,7 +52,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         public HttpUrl(Uri uri)
             : base(uri)
         {
-            if (this.Uri.Scheme != "http")
+            if (this.Uri.Scheme != "http" && this.Uri.Scheme != "https")
             {
                 throw new ArgumentException("The protocol is not supported.", "uri");
             }
