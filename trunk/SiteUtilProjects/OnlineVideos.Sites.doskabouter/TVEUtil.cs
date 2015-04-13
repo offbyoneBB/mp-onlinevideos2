@@ -119,7 +119,13 @@ namespace OnlineVideos.Sites
                     if (ti > 0 && ti <= int_cypher.Length)
                         plaintext += int_cypher[ti - 1];
                 }
-                HttpUrl res = new HttpUrl(plaintext.Replace("www.rtve.es", "media5.rtve.es"));
+                int p = plaintext.IndexOf("/resources");
+                string url = @"http://flash.akamaihd.multimedia.cdn.rtve.es/auth" + plaintext.Substring(p) +
+                    "?v=2.6.8&fp=WIN%2016,0,0,305&r=TDBDO&g=UZEYDOLYKFLY";
+
+                string data = GetWebData(url);
+
+                HttpUrl res = new HttpUrl(plaintext.Substring(0, p - 1) + data);
                 res.Cookies.Add(new Cookie("odin", "odin=banebdyede"));
                 return res.ToString();
             }
