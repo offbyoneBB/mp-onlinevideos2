@@ -67,10 +67,14 @@
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorDa.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorBase.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorSv.cs" />
+    <Compile Include="DreamfilmHDUtil.cs" />
     <Compile Include="Extensions\NetflixExtensions.cs" />
     <Compile Include="HboNordicWebUtil.cs" />
     <Compile Include="Hoster\Buggerdugger.cs" />
+    <Compile Include="Hoster\IReferer.cs" />
     <Compile Include="Hoster\MailRu.cs" />
+    <Compile Include="Hoster\Videomega.cs" />
+    <Compile Include="Hoster\VkPass.cs" />
     <Compile Include="Hoster\vk.cs" />
     <Compile Include="MovHunterUtil.cs" />
     <Compile Include="NetfilxWebUtil.cs" />

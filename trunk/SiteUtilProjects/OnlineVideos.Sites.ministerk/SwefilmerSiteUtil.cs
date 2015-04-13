@@ -190,20 +190,6 @@ namespace OnlineVideos.Sites
             return results;
         }
 
-        private string GetVideomegaUrl(string url, string refUrl)
-        {
-            string data = GetWebData(url, referer: refUrl, cache: false, userAgent: "Apple-iPhone/701.341");
-            Regex rgx = new Regex(@"<source.*?src=""(?<url>[^""]*)");
-            Match m = rgx.Match(data);
-            if (m.Success)
-            {
-                MPUrlSourceFilter.HttpUrl httpUrl = new MPUrlSourceFilter.HttpUrl(m.Groups["url"].Value);
-                httpUrl.Referer = url;
-                httpUrl.UserAgent = "Apple-iPhone/701.341";
-                return httpUrl.ToString();
-            }
-            return string.Empty;
-        }
 
         public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
@@ -224,32 +210,24 @@ namespace OnlineVideos.Sites
                     if (urlMatch.Success)
                     {
                         string url = urlMatch.Groups[1].Value;
-                        //Handle watchmega.tv separtately, needs referer to work with swefilmer
-                        if (url.ToLower().Contains("videomega.tv"))
+                        Hoster.HosterBase hoster = hosters.FirstOrDefault(h => url.ToLower().Contains(h.GetHosterUrl().ToLower()));
+                        if (hoster != null)
                         {
-                            string vmurl = GetVideomegaUrl(url, video.VideoUrl);
-                            if (!string.IsNullOrEmpty(vmurl))
-                                video.PlaybackOptions.Add("Videomega (Player " + playerIndex + ")", vmurl);
+                            if (hoster is Hoster.IReferer)
+                                (hoster as Hoster.IReferer).RefererUrl = video.VideoUrl;
+                            Dictionary<string, string> hosterPo = hoster.GetPlaybackOptions(url);
+                            if (hosterPo != null)
+                            {
+                                foreach (string key in hosterPo.Keys)
+                                {
+                                    if (!string.IsNullOrEmpty(hosterPo[key]))
+                                        video.PlaybackOptions.Add((hoster.GetType().Name != key ? hoster.GetType().Name + " " : "") + key + " (Player " + playerIndex + ")", hosterPo[key]);
+                                }
+                            }
                         }
                         else
                         {
-                            Hoster.HosterBase hoster = hosters.FirstOrDefault(h => url.ToLower().Contains(h.GetHosterUrl().ToLower()));
-                            if (hoster != null)
-                            {
-                                Dictionary<string, string> hosterPo = hoster.GetPlaybackOptions(url);
-                                if (hosterPo != null)
-                                {
-                                    foreach (string key in hosterPo.Keys)
-                                    {
-                                        if (!string.IsNullOrEmpty(hosterPo[key]))
-                                            video.PlaybackOptions.Add((hoster.GetType().Name != key ? hoster.GetType().Name + " " : "") + key + " (Player " + playerIndex + ")", hosterPo[key]);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                Log.Debug("Swefilmer, no hoster found for Player {0} url: {1}", playerIndex, url);
-                            }
+                            Log.Debug("Swefilmer, no hoster found for Player {0} url: {1}", playerIndex, url);
                         }
                         playerIndex++;
                     }
