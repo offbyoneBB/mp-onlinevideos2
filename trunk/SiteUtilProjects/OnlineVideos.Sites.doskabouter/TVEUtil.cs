@@ -125,7 +125,7 @@ namespace OnlineVideos.Sites
 
                 string data = GetWebData(url);
 
-                HttpUrl res = new HttpUrl(plaintext.Substring(0, p - 1) + data);
+                HttpUrl res = new HttpUrl(plaintext.Substring(0, p) + data);
                 res.Cookies.Add(new Cookie("odin", "odin=banebdyede"));
                 return res.ToString();
             }
