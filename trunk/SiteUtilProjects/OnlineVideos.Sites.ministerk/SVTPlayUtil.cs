@@ -291,6 +291,8 @@ namespace OnlineVideos.Sites
                         string alt = HttpUtility.HtmlDecode(img.GetAttributeValue("alt", ""));
                         video.Title = string.IsNullOrWhiteSpace(alt) ? video.Title : alt + " - " + video.Title;
                     }
+                    if (video.Title.ToLower().StartsWith("spela"))
+                        video.Title = video.Title.Substring(5).Trim();
                 }
             }
             else
