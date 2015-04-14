@@ -1,4 +1,5 @@
-﻿using OnlineVideos.Sites.WebAutomation.BrowserHost.Factories;
+﻿using OnlineVideos.Helpers;
+using OnlineVideos.Sites.WebAutomation.BrowserHost.Factories;
 using OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
        
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
+                ProcessHelper.PreventMonitorPowerdown();
 
                 // Process requires path to MediaPortal, Video Id, Web Automation Type, Username, Password
                 if (args.Length < 5) return;
