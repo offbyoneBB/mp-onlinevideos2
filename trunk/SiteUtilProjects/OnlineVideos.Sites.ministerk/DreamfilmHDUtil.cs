@@ -198,7 +198,9 @@ namespace OnlineVideos.Sites
             string url = null;
             encodedIframe = System.Text.Encoding.ASCII.GetString(System.Convert.FromBase64String(encodedIframe));
             encodedIframe = HttpUtility.UrlDecode(encodedIframe);
-            if (encodedIframe.StartsWith("http"))
+            if (encodedIframe.StartsWith("//"))
+                url = "http:" + encodedIframe;
+            else if (encodedIframe.StartsWith("http"))
             {
                 url = encodedIframe;
             }

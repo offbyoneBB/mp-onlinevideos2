@@ -76,7 +76,6 @@
     <Compile Include="Hoster\Videomega.cs" />
     <Compile Include="Hoster\VkPass.cs" />
     <Compile Include="Hoster\vk.cs" />
-    <Compile Include="MovHunterUtil.cs" />
     <Compile Include="NetfilxWebUtil.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
