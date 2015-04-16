@@ -124,8 +124,11 @@ namespace OnlineVideos.Sites
                     "?v=2.6.8&fp=WIN%2016,0,0,305&r=TDBDO&g=UZEYDOLYKFLY";
 
                 string data = GetWebData(url);
+                p = data.IndexOf('?');
+                string finalUrl = plaintext.Substring(0, p) + data.Substring(0, p);
+                finalUrl = Regex.Replace(finalUrl, @"(//.*?.rtve.es)", @"//mvod.lvlt.rtve.es");
 
-                HttpUrl res = new HttpUrl(plaintext.Substring(0, p) + data);
+                HttpUrl res = new HttpUrl(finalUrl);
                 res.Cookies.Add(new Cookie("odin", "odin=banebdyede"));
                 return res.ToString();
             }
