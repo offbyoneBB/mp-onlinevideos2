@@ -23,33 +23,42 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
         /// <returns></returns>
         public static HtmlDocument LoadSkyGoContentFromUrl(this string url, string zoneName = "content")
         {
-            var xmlDoc = new XmlDocument();
-            // Connect to the api and download the content
-            xmlDoc.Load(url);
-
-            var redirectNode = xmlDoc.GetElementsByTagName("redirect");
-            // Sometimes we get a redirect response
-            if (redirectNode.Count > 0 && redirectNode[0].Attributes["fullpageredirect"].Value == "true")
+            try
             {
-                var tmpUrl = new Uri(url);
-                xmlDoc.Load(tmpUrl.Scheme + "://" + tmpUrl.Authority + redirectNode[0].InnerText + "&aaxmlrequest=true");
-            }
+                var xmlDoc = new XmlDocument();
+                // Connect to the api and download the content
+                xmlDoc.Load(url);
 
-            var zoneNodes = xmlDoc.GetElementsByTagName("zone");
-            var content = "";
-            foreach (XmlNode zone in zoneNodes)
-            {
-                if (zone.Attributes.Count > 0 && zone.Attributes[0].Value == zoneName)
+                var redirectNode = xmlDoc.GetElementsByTagName("redirect");
+                // Sometimes we get a redirect response
+                if (redirectNode.Count > 0 && redirectNode[0].Attributes["fullpageredirect"].Value == "true")
                 {
-                    content = zone.InnerText.Replace("\r", "").Replace("\t", "").Replace("\n", "");
-                    break;
+                    var tmpUrl = new Uri(url);
+                    xmlDoc.Load(tmpUrl.Scheme + "://" + tmpUrl.Authority + redirectNode[0].InnerText + "&aaxmlrequest=true");
                 }
+
+                var zoneNodes = xmlDoc.GetElementsByTagName("zone");
+                var content = "";
+                foreach (XmlNode zone in zoneNodes)
+                {
+                    if (zone.Attributes.Count > 0 && zone.Attributes[0].Value == zoneName)
+                    {
+                        content = zone.InnerText.Replace("\r", "").Replace("\t", "").Replace("\n", "");
+                        break;
+                    }
+                }
+
+                HtmlWeb hw = new HtmlWeb();
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(content);
+                return doc;
+            }
+            catch (Exception ex)
+            {
+                OnlineVideos.Log.Error("{0}: {1}",url, ex.ToString());
             }
 
-            HtmlWeb hw = new HtmlWeb();
-            HtmlDocument doc = new HtmlDocument();
-            doc.LoadHtml(content);
-            return doc;
+            return null;
         }
 
         /// <summary>
