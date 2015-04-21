@@ -12,7 +12,6 @@ using OnlineVideos.Sites.WebAutomation.Interfaces;
 using OnlineVideos.Sites.WebAutomation.Entities;
 using System.Globalization;
 using OnlineVideos.Sites.WebAutomation.Properties;
-using OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.Connectors;
 
 namespace OnlineVideos.Sites.WebAutomation
 {
@@ -46,37 +45,9 @@ namespace OnlineVideos.Sites.WebAutomation
         {
             get { return password; }
         }
-
-        /// <summary>
-        /// The AmznAdultPin
-        /// </summary>
-        public string AmznAdultPin
-        {
-            get { return amznAdultPin; }
-        }
-
-        /// <summary>
-        /// The VideoQuality
-        /// </summary>
-        public VideoQuality StreamVideoQuality
-        {
-            get { return videoQuality; }
-        }
-
-        /// <summary>
-        /// The Amazon player type
-        /// </summary>
-        public AmazonPlayerType AmznPlayerType
-        {
-            get { return amznPlayerType; }
-        }
-
-        public enum VideoQuality { Low, Medium, High, HD, FullHD };
-
-        public enum AmazonPlayerType { Internal, Browser };
-
+        
         [Category("OnlineVideosConfiguration"), Description("Type of web automation to run")]
-        ConnectorType webAutomationType = ConnectorType.AmazonPrime;
+        ConnectorType webAutomationType = ConnectorType.SkyGo;
 
         /// <summary>
         /// Username required for some web automation
@@ -89,25 +60,7 @@ namespace OnlineVideos.Sites.WebAutomation
         /// </summary>
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("Website password"), PasswordPropertyText(true)]
         string password;
-
-        /// <summary>
-        /// Password required for some web automation
-        /// </summary>
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Amazon Adult Pin"), Description("Amazon Adult Pin"), PasswordPropertyText(true)]
-        string amznAdultPin;
-
-        /// <summary>
-        /// Video Quality Selection
-        /// </summary>
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Amazon Video Quality"), Description("Defines the maximum quality for the video to be played.")]
-        VideoQuality videoQuality = VideoQuality.Medium;
-
-        /// <summary>
-        /// Player type for amazon
-        /// </summary>
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Amazon Player Type"), Description("Amazon Player Type, Browser(Silverlight) or Internal Player(Rtmp/Flash)")]
-        AmazonPlayerType amznPlayerType = AmazonPlayerType.Internal;
-
+        
         /// <summary>
         /// Set the Web Automation Description from the enum
         /// </summary>
@@ -174,16 +127,7 @@ namespace OnlineVideos.Sites.WebAutomation
             if (categTyped == null) return categ.Name;
             return categTyped.SortValue;
         }
-
-        public override List<String> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
-        {
-            if (_connector is AmazonPrimeInformationConnector)
-            {
-                return ((AmazonPrimeInformationConnector)_connector).getMultipleVideoUrls(video, inPlaylist);
-            }
-            return new List<string>() { video.Other.ToString() };
-        }
-
+        
         /// <summary>
         /// Get the next page of categories
         /// </summary>
@@ -201,6 +145,16 @@ namespace OnlineVideos.Sites.WebAutomation
                 nextPagecategory.ParentCategory.SubCategories.AddRange(results);
             */
             return nextPagecategory.ParentCategory.SubCategories.Count;
+        }
+        
+        /// <summary>
+        /// For the web browser automation we'll send the video id, which is stored in the other element
+        /// </summary>
+        /// <param name="video"></param>
+        /// <returns></returns>
+        public override string GetVideoUrl(VideoInfo video)
+        {
+            return video.Other.ToString();
         }
 
         /// <summary>

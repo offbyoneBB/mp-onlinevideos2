@@ -123,7 +123,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 this.Focus();
                 _logger.Debug("AppDomain Root {0}", AppDomain.CurrentDomain.BaseDirectory);
                 _logger.Debug("Current Directory {0}", Directory.GetCurrentDirectory());
-                _logger.Debug(string.Format("Browser Host started with connector type: {0}, video info: {1}, Username: {2}", _connectorType, _videoInfo, _userName));
+                _logger.Debug(string.Format("Browser Host started with connector type: {0}, video info: {1}", _connectorType, _videoInfo));
                 WebBrowserPlayerCallbackService.LogInfo(string.Format("Browser Host started with connector type: {0}, video info: {1}", _connectorType, _videoInfo));
                 
                 // Set up remote handling

@@ -19,6 +19,7 @@ namespace OnlineVideos.Sites.WebAutomation.Extensions
         /// <returns></returns>
         public static HtmlNodeCollection GetElementsByTagName(this HtmlDocument document, string tagName)
         {
+            if (document == null || document.DocumentNode == null) return null;
             return document.DocumentNode.SelectNodes("//" + tagName);
         }
 
@@ -30,6 +31,7 @@ namespace OnlineVideos.Sites.WebAutomation.Extensions
         /// <returns></returns>
         public static HtmlNode GetElementById(this HtmlDocument document, string id)
         {
+            if (document == null) return null;
             return document.GetElementbyId(id);
         }
 

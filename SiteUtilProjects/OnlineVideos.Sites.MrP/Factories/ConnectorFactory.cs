@@ -1,6 +1,5 @@
 ﻿using OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD;
 using OnlineVideos.Sites.WebAutomation.ConnectorImplementations._4OD.Connectors;
-using OnlineVideos.Sites.WebAutomation.ConnectorImplementations.AmazonPrime.Connectors;
 using OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo;
 using OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connectors;
 using OnlineVideos.Sites.WebAutomation.Interfaces;
@@ -23,10 +22,6 @@ namespace OnlineVideos.Sites.WebAutomation.Factories
                 return new SkyGoInformationConnector(siteUtil);
             if (connectorType == ConnectorType._4oD)
                 return new _4ODInformationConnector(siteUtil);
-            if (connectorType == ConnectorType.AmazonPrime)
-                return new AmazonPrimeInformationConnector(siteUtil);
-            if (connectorType == ConnectorType.AmazonPrimeDe)
-                return new AmazonPrimeInformationConnector(siteUtil);
             return null;
         }
     }

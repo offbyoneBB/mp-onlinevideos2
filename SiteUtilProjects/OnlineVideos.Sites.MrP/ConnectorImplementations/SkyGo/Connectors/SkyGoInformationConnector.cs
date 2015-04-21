@@ -107,29 +107,37 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             var tmpchar = "%23";
             var currentAToZPos = 0;
             var currThreadHandle = 0;
-
-            // Loop through the whole alphabet
-            while ((currentAToZPos + 64) <= 90)
+            try
             {
-                var tmpParams = new LoadSubCategParams { CurrentChar = tmpchar, ParentCategory = parentCategory, Index = currThreadHandle };
-                resetEvents[currThreadHandle] = new ManualResetEvent(false);
-                ThreadPool.QueueUserWorkItem(new WaitCallback(LoadCharacterSubCateg), (object)tmpParams);
-                
-                currentAToZPos++;
 
-                // Move to the next character
-                tmpchar = ((char)(currentAToZPos + 64)).ToString();
-                currThreadHandle++;
-
-                // Wait for all threads to complete if the array is fully loaded
-                if (currThreadHandle >= NumThreads)
+                // Loop through the whole alphabet
+                while ((currentAToZPos + 64) <= 90)
                 {
-                    //WaitHandle.WaitAll(resetEvents, 10000);
-                    foreach (var e in resetEvents)
-                        e.WaitOne(10000); 
-                    currThreadHandle = 0;
+                    var tmpParams = new LoadSubCategParams { CurrentChar = tmpchar, ParentCategory = parentCategory, Index = currThreadHandle };
+                    resetEvents[currThreadHandle] = new ManualResetEvent(false);
+                    ThreadPool.QueueUserWorkItem(new WaitCallback(LoadCharacterSubCateg), (object)tmpParams);
+
+                    currentAToZPos++;
+
+                    // Move to the next character
+                    tmpchar = ((char)(currentAToZPos + 64)).ToString();
+                    currThreadHandle++;
+
+                    // Wait for all threads to complete if the array is fully loaded
+                    if (currThreadHandle >= NumThreads)
+                    {
+                        //WaitHandle.WaitAll(resetEvents, 10000);
+                        foreach (var e in resetEvents)
+                            e.WaitOne(10000);
+                        currThreadHandle = 0;
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                OnlineVideos.Log.Error(ex);
+            }
+
         }
 
         /// <summary>
@@ -138,22 +146,31 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         /// <param name="parametersObject"></param>
         private void LoadCharacterSubCateg(object parametersObject)
         {
-            var pages = -1;
-            var currentPagePos = 0;
             var parameters = (LoadSubCategParams)parametersObject;
-
-            while (pages > -2)
+            try
             {
-                LoadThisCategoryPage(parameters.ParentCategory, parameters.CurrentChar, currentPagePos, out pages);
+                var pages = -1;
+                var currentPagePos = 0;
 
-                // Handle multiple pages per char
-                if (currentPagePos < pages)
-                    currentPagePos++;
-                else
-                    pages = -2;
+                while (pages > -2)
+                {
+                    LoadThisCategoryPage(parameters.ParentCategory, parameters.CurrentChar, currentPagePos, out pages);
+
+                    // Handle multiple pages per char
+                    if (currentPagePos < pages)
+                        currentPagePos++;
+                    else
+                        pages = -2;
+                }
+
+
             }
-
+            catch (Exception ex)
+            {
+                OnlineVideos.Log.Error(ex);
+            }
             resetEvents[parameters.Index].Set();
+
         }
 
         /// <summary>

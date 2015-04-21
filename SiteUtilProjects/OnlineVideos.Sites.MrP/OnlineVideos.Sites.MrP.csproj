@@ -48,12 +48,6 @@
     <Compile Include="ConnectorImplementations\4OD\Extensions\_4ODCategoryData.cs" />
     <Compile Include="ConnectorImplementations\4OD\Extensions\_4ODCategoryParser.cs" />
     <Compile Include="ConnectorImplementations\4OD\Extensions\_4ODVideoParser.cs" />
-    <Compile Include="ConnectorImplementations\AmazonPrime\Connectors\AmazonPrimeConnector.cs" />
-    <Compile Include="ConnectorImplementations\AmazonPrimeDe\Connectors\AmazonPrimeDeConnector.cs" />
-    <Compile Include="ConnectorImplementations\AmazonPrime\Connectors\AmazonPrimeInformationConnector.cs" />
-    <Compile Include="ConnectorImplementations\AmazonPrime\Extensions\AmazonPrimeCategoryParser.cs" />
-    <Compile Include="ConnectorImplementations\AmazonPrime\Extensions\AmazonPrimeVideoParser.cs" />
-    <Compile Include="ConnectorImplementations\AmazonPrime\Connectors\AmazonBrowserSession.cs" />
     <Compile Include="ConnectorImplementations\BrowserSessionBase.cs" />
     <Compile Include="ConnectorImplementations\BrowserUtilConnectorBase.cs" />
     <Compile Include="ConnectorImplementations\FormElementCollection.cs" />
