@@ -8,6 +8,7 @@ using System.Xml;
 using HtmlAgilityPack;
 using OnlineVideos.Sites.WebAutomation.Extensions;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connectors
 {
@@ -109,44 +110,36 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             var currThreadHandle = 0;
             try
             {
+                var pool = new List<Task>();
 
                 // Loop through the whole alphabet
                 while ((currentAToZPos + 64) <= 90)
                 {
                     var tmpParams = new LoadSubCategParams { CurrentChar = tmpchar, ParentCategory = parentCategory, Index = currThreadHandle };
-                    resetEvents[currThreadHandle] = new ManualResetEvent(false);
-                    ThreadPool.QueueUserWorkItem(new WaitCallback(LoadCharacterSubCateg), (object)tmpParams);
+                 
+                    pool.Add(Task.Factory.StartNew(() => LoadCharacterSubCateg(tmpParams)));
 
                     currentAToZPos++;
 
                     // Move to the next character
                     tmpchar = ((char)(currentAToZPos + 64)).ToString();
-                    currThreadHandle++;
 
-                    // Wait for all threads to complete if the array is fully loaded
-                    if (currThreadHandle >= NumThreads)
-                    {
-                        //WaitHandle.WaitAll(resetEvents, 10000);
-                        foreach (var e in resetEvents)
-                            e.WaitOne(10000);
-                        currThreadHandle = 0;
-                    }
                 }
+                var timeout = OnlineVideoSettings.Instance.UtilTimeout <=0 ? 30000 : OnlineVideoSettings.Instance.UtilTimeout * 1000;
+                Task.WaitAll(pool.ToArray(),timeout);
             }
             catch (Exception ex)
             {
                 OnlineVideos.Log.Error(ex);
             }
-
         }
 
         /// <summary>
         /// Load the category page for the specified character in a separate thread - this will pull out all pages for the specified character 
         /// </summary>
         /// <param name="parametersObject"></param>
-        private void LoadCharacterSubCateg(object parametersObject)
+        private void LoadCharacterSubCateg(LoadSubCategParams parameters)
         {
-            var parameters = (LoadSubCategParams)parametersObject;
             try
             {
                 var pages = -1;
@@ -169,7 +162,6 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             {
                 OnlineVideos.Log.Error(ex);
             }
-            resetEvents[parameters.Index].Set();
 
         }
 
