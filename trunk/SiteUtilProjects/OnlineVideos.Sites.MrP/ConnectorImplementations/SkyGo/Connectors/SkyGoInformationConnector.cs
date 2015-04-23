@@ -65,7 +65,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                 var catchUpCategory = new Category { Name = "Catch up", SubCategoriesDiscovered = true, HasSubCategories = true };
 
                 result.Add(catchUpCategory);
-                result.Add(new Category { Name = "Live TV", SubCategoriesDiscovered = false, HasSubCategories = false, Other = "L~Live_TV" });
+                result.Add(new Category { Name = "Live TV", SubCategoriesDiscovered = true, HasSubCategories = false, Other = "L~Live_TV" });
                 result.Add(new Category { Name = "Sky Movies", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Sky_Movies" });
                 result.Add(new Category { Name = "TV Box Sets", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~TV_Box_Sets" });
                 catchUpCategory.SubCategories = new List<Category>();
