@@ -67,12 +67,15 @@ namespace Standalone.ViewModels
 			int? indexToSelect = null;
 			List<Category> convertedCategories = new List<Category>();
 			int i = 0;
-			foreach (var c in categories)
-			{
-				if (preselectedCategoryName != null && c.Name == preselectedCategoryName) indexToSelect = i;
-				convertedCategories.Add(new Category(c));
-				i++;
-			}
+            if (categories != null)
+            {
+                foreach (var c in categories)
+                {
+                    if (preselectedCategoryName != null && c.Name == preselectedCategoryName) indexToSelect = i;
+                    convertedCategories.Add(new Category(c));
+                    i++;
+                }
+            }
 			ListCollectionView view = new ListCollectionView(convertedCategories)
 			{
 				Filter = new Predicate<object>(cat => (((Category)cat).Name ?? "").ToLower().Contains(window.CurrentFilter))

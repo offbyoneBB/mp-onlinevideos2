@@ -330,7 +330,7 @@ namespace Standalone
                                 category.SubCategories[category.SubCategories.Count - 1].ThumbnailImage = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images\\NextPage.png");
                             }
 							listViewMain.ItemsSource = ViewModels.CategoryList.GetCategoriesView(this, category.SubCategories);
-                            ImageDownloader.GetImages<Category>(category.SubCategories);
+                            if (category.SubCategories != null) ImageDownloader.GetImages<Category>(category.SubCategories);
                             SelectAndFocusItem();
 						}
 					}
@@ -1152,7 +1152,7 @@ namespace Standalone
 
         private void DisplaySearchResultItems(string title, List<SearchResultItem> result)
         {
-            if (result.Count > 0)
+            if (result != null && result.Count > 0)
             {
                 if (result[0] is VideoInfo)
                 {
