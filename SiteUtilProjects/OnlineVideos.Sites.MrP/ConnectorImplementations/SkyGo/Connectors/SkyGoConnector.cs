@@ -270,7 +270,6 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             }
             else
             {
-                Cursor.Show();
                 _playPausePos = FindPlayPauseButton(_playPauseHeight);
                 var attempts = 0;
                 // Move up the screen in 10 pixel increments trying to find play - only go up 20 times
@@ -285,7 +284,6 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                         break;
                     attempts++;
                 }
-                Cursor.Hide();
             }
 
             _isPlayOrPausing = false;
