@@ -25,9 +25,28 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
         {
             try
             {
-                var xmlDoc = new XmlDocument();
-                // Connect to the api and download the content
-                xmlDoc.Load(url);
+                var xmlDoc = new XmlDocument(); 
+                var retries = 0;
+
+                while (retries < 3)
+                {
+                    try
+                    {
+                        var pageData = WebCache.Instance.GetWebData<string>(url, cache: false);
+                        if (pageData.StartsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"))
+                        {
+                            xmlDoc.LoadXml(pageData);
+                            break;
+                        }
+                    }
+                    catch
+                    {
+                    }
+                    retries++;
+                }
+
+                if (retries >= 3)
+                    throw new ApplicationException("Max retries reached for category");
 
                 var redirectNode = xmlDoc.GetElementsByTagName("redirect");
                 // Sometimes we get a redirect response
