@@ -7,6 +7,7 @@ using System.Text;
 using System.Xml;
 using Newtonsoft.Json;
 using System.Globalization;
+using System.Threading;
 
 namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extensions
 {
@@ -28,16 +29,19 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
                 var xmlDoc = new XmlDocument(); 
                 var retries = 0;
 
-                while (retries < 3)
+                // Try up to 5 times with a half second gap between retries
+                while (retries < 5)
                 {
                     try
                     {
+                        // The LoadXml method seems to take ages (sometimes seconds) to determine if it is valid xml or not, so we'll just get the web data as text and do a manual check first
                         var pageData = WebCache.Instance.GetWebData<string>(url, cache: false);
                         if (pageData.StartsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"))
                         {
                             xmlDoc.LoadXml(pageData);
                             break;
                         }
+                        Thread.Sleep(500);
                     }
                     catch
                     {
@@ -45,7 +49,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
                     retries++;
                 }
 
-                if (retries >= 3)
+                if (retries >= 5)
                     throw new ApplicationException("Max retries reached for category");
 
                 var redirectNode = xmlDoc.GetElementsByTagName("redirect");

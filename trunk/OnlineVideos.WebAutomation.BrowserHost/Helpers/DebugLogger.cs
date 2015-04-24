@@ -55,7 +55,10 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers
 
         public void Debug(string format, params object[] arg)
         {
-            WriteDebugLog(string.Format(format, arg), "DEBUG");
+            if (arg == null || arg.Length == 0)
+                WriteDebugLog(format, "DEBUG");
+            else 
+                WriteDebugLog(string.Format(format, arg), "DEBUG");
         }
         public void Error(Exception ex)
         {
@@ -63,15 +66,24 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers
         }
         public void Error(string format, params object[] arg)
         {
-            WriteDebugLog(string.Format(format, arg), "ERROR");
+            if (arg == null || arg.Length == 0)
+                WriteDebugLog(format, "ERROR");
+            else 
+                WriteDebugLog(string.Format(format, arg), "ERROR");
         }
         public void Info(string format, params object[] arg)
         {
-            WriteDebugLog(string.Format(format, arg), "INFO");
+            if (arg == null || arg.Length == 0)
+                WriteDebugLog(format, "INFO");
+            else 
+                WriteDebugLog(string.Format(format, arg), "INFO");
         }
         public void Warn(string format, params object[] arg)
         {
-            WriteDebugLog(string.Format(format, arg), "WARN");
+            if (arg == null || arg.Length == 0)
+                WriteDebugLog(format, "WARN");
+            else 
+                WriteDebugLog(string.Format(format, arg), "WARN");
         }
     }
 }

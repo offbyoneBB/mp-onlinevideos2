@@ -145,7 +145,7 @@
     <value>http://go.sky.com/vod/content/SKYENTERTAINMENT/content/videoId/{VIDEO_ID}/l/l/content/videoActions.do?aaxmlrequest=true&amp;aazones=vdactions</value>
   </data>
   <data name="SkyGo_VideoDetailsUrl" xml:space="preserve">
-    <value>http://go.sky.com/vod/content/SKYENTERTAINMENT/content/videoId/{VIDEO_ID}/content/1984/videoDetailsPage.do?aaxmlrequest=true&amp;aazones=content</value>
+    <value>http://go.sky.com/vod/content/SKYENTERTAINMENT/content/videoId/{VIDEO_ID}/content/default/videoDetailsPage.do?aaxmlrequest=true&amp;aazones=content</value>
   </data>
   <data name="SkyGo_VideoPlayUrl" xml:space="preserve">
     <value>http://go.sky.com/vod/content/SKYENTERTAINMENT/content/assetId/{ASSET_ID}/videoId/{VIDEO_ID}/l/l/content/progressivePlay.do</value>
