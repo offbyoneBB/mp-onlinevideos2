@@ -200,6 +200,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         /// <returns></returns>
         public override EventResult Play()
         {
+            MessageHandler.Info("Play", "");
             return DoPlayOrPause();
         }
 
@@ -209,6 +210,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         /// <returns></returns>
         public override EventResult Pause()
         {
+            MessageHandler.Info("Pause", "");
             return DoPlayOrPause();
         }
 
@@ -232,7 +234,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                     return stringToParse.Substring(startPos + 8, endPos - startPos - 8).Replace("'", "").Trim() + "____";
                 }
             }
-            return string.Empty;
+                return string.Empty;
         }
 
         /// <summary>
@@ -241,17 +243,21 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         /// <returns></returns>
         private EventResult DoPlayOrPause()
         {
+            MessageHandler.Info("DoPlayOrPause() IsPlayOrPausing: {0} Document Null: {1} ", _isPlayOrPausing, Browser.Document == null);
             if (_isPlayOrPausing || Browser.Document == null || Browser.Document.Body == null) return EventResult.Complete();
             
             _isPlayOrPausing = true;
-
+            
             if (_playPauseHeight <= 0 || _playPausePos <= 0) _playPauseHeight = Browser.FindForm().Bottom - 80;
+
+            MessageHandler.Info("DoPlayOrPause() Move To Top Of Form", "");
+
             // Move the cursor near the top of the screen and left click to make sure the play/pause buttons become visible
             Cursor.Position = new System.Drawing.Point(Browser.FindForm().Left + 10, Browser.FindForm().Top + 10);
             Application.DoEvents();
             CursorHelper.DoLeftMouseClick();
             Application.DoEvents();
-
+            MessageHandler.Info("DoPlayOrPause() PlayPausePos: {0}", _playPausePos);
             // We've previously found the play/pause button, so re-use its position
             if (_playPausePos > -1)
             {
@@ -271,6 +277,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             else
             {
                 _playPausePos = FindPlayPauseButton(_playPauseHeight);
+                MessageHandler.Info("DoPlayOrPause() PlayPausePos (after find): {0}", _playPausePos);
                 var attempts = 0;
                 // Move up the screen in 10 pixel increments trying to find play - only go up 20 times
                 while (attempts <= 20)
@@ -279,6 +286,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                     {
                         _playPauseHeight -= 10;
                         _playPausePos = FindPlayPauseButton(_playPauseHeight);
+                        MessageHandler.Info("DoPlayOrPause() PlayPausePos (after find): {0}, attempt {1}", _playPausePos, attempts);
                     }
                     else
                         break;
@@ -300,18 +308,23 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         {
             var startX = Browser.FindForm().Left;
             var coloursToLookFor = new[] { "0090BF", "D8DDE1", "0099CB", "009BCE", "007297", "00789F", "EFEDEA", "0086B1", "00789E", "0083AD" };
-
+            MessageHandler.Info("FindPlayPauseButton() Height: {0}, StartX: {1}", height, startX);
             // Very primitive, but set the cursor at the correct height and move across till we hit the right colour!
             // We have to move the cursor otherwise the play controls disappear
             var currentPos = startX + 40;
             while (currentPos < (startX + (Browser.Document.Body.ClientRectangle.Width / 8)))
             {
+                MessageHandler.Info("FindPlayPauseButton() Height: {0}, currentPos: {1}", height, currentPos);
                 Cursor.Position = new System.Drawing.Point(currentPos + 5, height);
                 currentPos = Cursor.Position.X;
                 Application.DoEvents();
                 if (coloursToLookFor.Contains(CursorHelper.GetColourUnderCursor().Name.Substring(2).ToUpper()))
+                {
+                    MessageHandler.Info("FindPlayPauseButton() found");
                     return Cursor.Position.X;
+                }
                 Application.DoEvents();
+                
                 if (!_isPlayOrPausing) break;
             }
             return -1;
