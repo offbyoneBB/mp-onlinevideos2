@@ -24,10 +24,91 @@ namespace OnlineVideos.Helpers
         [DllImport("user32.dll",CharSet=CharSet.Auto, CallingConvention=CallingConvention.StdCall, EntryPoint="mouse_event")]
         public static extern void Mouse_Event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);   
 
-        private const int MOUSEEVENTF_LEFTDOWN = 0x02;   
-        private const int MOUSEEVENTF_LEFTUP = 0x04;   
-        private const int MOUSEEVENTF_RIGHTDOWN = 0x08;   
-        private const int MOUSEEVENTF_RIGHTUP = 0x10;   
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern UInt32 SendInput(UInt32 numberOfInputs, INPUT[] inputs, Int32 sizeOfInputStructure);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetMessageExtraInfo();
+        
+        [DllImport("user32.dll")]
+        public static extern int GetSystemMetrics(int nIndex);
+
+        private const int SM_CXSCREEN = 0;
+        private const int SM_CYSCREEN = 1;
+
+        private const int MOUSEEVENTF_LEFTDOWN = 0x02;
+        private const int MOUSEEVENTF_LEFTUP = 0x04;
+        private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
+        private const int MOUSEEVENTF_RIGHTUP = 0x10;
+        private const uint MOUSEEVENTF_MOVE = 0x0001;
+        private const uint MOUSEEVENTF_ABSOLUTE = 0x8000;
+
+        private const int INPUT_MOUSE = 0;
+        private const int INPUT_KEYBOARD = 1;
+        private const int INPUT_HARDWARE = 2;
+       
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MOUSEINPUT
+        {
+            public int dx;
+            public int dy;
+            public uint mouseData;
+            public uint dwFlags;
+            public uint time;
+            public IntPtr dwExtraInfo;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct KEYBDINPUT
+        {
+            public ushort wVk;
+            public ushort wScan;
+            public uint dwFlags;
+            public uint time;
+            public IntPtr dwExtraInfo;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct HARDWAREINPUT
+        {
+            uint uMsg;
+            ushort wParamL;
+            ushort wParamH;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        public struct INPUT
+        {
+            [FieldOffset(0)]
+            public int type;
+            [FieldOffset(4)] //*
+            public MOUSEINPUT mi;
+            [FieldOffset(4)] //*
+            public KEYBDINPUT ki;
+            [FieldOffset(4)] //*
+            public HARDWAREINPUT hi;
+        }
+        
+
+        /// <summary>
+        /// Move the mouse to the specified coordinates
+        /// This works better than Cursor.Position because it seems to fire at a lower level. 
+        /// One problem I had with Cursor.Position is that Sky Go (Silverlight) wouldn't detect the mouse move, so wouldn't show the play/pause button.  This works well in that scenario
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public static void MoveMouseTo(int x, int y)
+        {
+            INPUT input = new INPUT();
+            input.type = INPUT_MOUSE;
+            input.mi.mouseData = 0;
+            input.mi.dx = x * (65536 / GetSystemMetrics(SM_CXSCREEN));//x being coord in pixels
+            input.mi.dy = y * (65536 / GetSystemMetrics(SM_CYSCREEN));//y being coord in pixels
+
+            input.mi.dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE;
+            SendInput(1, new[] { input }, Marshal.SizeOf(typeof(INPUT)));
+        }
 
         /// <summary> 
         /// Gets the System.Drawing.Color from under the mouse cursor. 
