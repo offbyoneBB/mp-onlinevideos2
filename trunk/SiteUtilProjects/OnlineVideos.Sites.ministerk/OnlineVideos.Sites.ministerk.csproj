@@ -70,6 +70,7 @@
     <Compile Include="DreamfilmHDUtil.cs" />
     <Compile Include="Extensions\NetflixExtensions.cs" />
     <Compile Include="HboNordicWebUtil.cs" />
+    <Compile Include="HboNordic\HboWebCache.cs" />
     <Compile Include="Hoster\Buggerdugger.cs" />
     <Compile Include="Hoster\IReferer.cs" />
     <Compile Include="Hoster\MailRu.cs" />
@@ -116,6 +117,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ViaplayPlayMovie.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\HboNordic.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

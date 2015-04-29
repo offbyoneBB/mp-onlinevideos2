@@ -61,11 +61,36 @@ namespace OnlineVideos.Sites.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to setTimeout(&quot;myPlay()&quot;,2000);
+        ///   Looks up a localized string similar to function __gotoClickEpisode(e) {
+        ///    var xpath = &quot;//span[text()=&apos;&quot; + e + &quot;&apos;]&quot;;
+        ///    var matchingElement = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        ///}
+        ///
+        ///function __slugify(a) {
+        ///    var b, c, d = &quot;àáäâèéëêìíïîòóöôùúüûñç·/_,:;&quot;, e = &quot;aaaaeeeeiiiioooouuuunc------&quot;;
+        ///    for (a = a.replace(/^\s+|\s+$/g, &quot;&quot;), a = a.toLowerCase(), b = 0, c = d.length; c &gt; b; b++)
+        ///        a = a.replace(new RegExp(d.charAt(b), &quot;g&quot;), e.charAt(b));
+        ///    return a = a.repla [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string HboNordicJs {
+            get {
+                return ResourceManager.GetString("HboNordicJs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to function myLogin(u, p) {
+        ///    $(&apos;#LoginForm_email&apos;).val(u);
+        ///    $(&apos;#LoginForm_password&apos;).val(p);
+        ///    $(&apos;#login-btn&apos;).click();
+        ///}
+        ///
+        ///var __url = &quot;dummy&quot;;
         ///
         ///function myPlay() {
-        ///    if ($(&apos;a.play-link.large:first&apos;).length &gt; 0 &amp;&amp; $(&apos;a.play-link.large:first&apos;).is(&apos;:visible&apos;)) {
-        ///        $(&apos;a.play-link.large:first&apos;).click();
+        ///    var __m = $(&apos;a[href$=&quot;&apos; + __url + &apos;&quot;]&apos;).first();
+        ///    if (__m.length &gt; 0) {
+        ///        __m.click();
         ///    } else {
         ///        setTimeout(&quot;myPlay()&quot;, 250);
         ///    }
