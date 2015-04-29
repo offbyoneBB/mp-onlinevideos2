@@ -13,6 +13,7 @@ using Action = MediaPortal.GUI.Library.Action;
 using System.Windows.Forms;
 using OnlineVideos.Sites.Proxy.WebBrowserPlayerService;
 using OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation;
+using System.Reflection;
 
 namespace OnlineVideos.MediaPortal1.Player
 {
@@ -198,11 +199,9 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 InputDevices.Stop(); //stop input devices so they don't interfere when the browser player starts listening
                 GUIWindowManager.OnNewAction += GUIWindowManager_OnNewAction;
-
-                // hide mediaportal and suspend rendering 
-                GUIGraphicsContext.BlankScreen = true;
-                GUIGraphicsContext.form.Hide();
-                GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
+                
+                // Minimise MePo to tray - this is preferrable 
+                ToggleMinimise(true);
                 
                 _mpWindowHidden = true;
             }
@@ -213,18 +212,44 @@ namespace OnlineVideos.MediaPortal1.Player
                 InputDevices.Init();
 
                 // Resume Mediaportal rendering
-                GUIGraphicsContext.BlankScreen = false;
-                GUIGraphicsContext.form.Show();
+                ToggleMinimise(false);
                 
                 ProcessHelper.SetForeground("mediaportal");
                 
                 GUIGraphicsContext.ResetLastActivity();
                 
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GETFOCUS, 0, 0, 0, 0, 0, null);
-                GUIWindowManager.SendThreadMessage(msg);
-
-                GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
+                
                 _mpWindowHidden = false;
+            }
+        }
+
+        /// <summary>
+        /// We'll use reflection to call in to some core MediaPortal methods to minimise to the system tray
+        /// This seems to work better that other methods I've found because they cause MediaPortal to hog a core when set to suspending  
+        /// </summary>
+        /// <param name="shouldMinimise"></param>
+        private void ToggleMinimise(bool shouldMinimise)
+        {
+            var bindingFlags = BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
+            var formType = GUIGraphicsContext.form.GetType();
+
+            var exitToTrayProperty = formType.GetField("ExitToTray", bindingFlags);
+            var toggleMinimiseToTrayMethod = formType.GetMethod(shouldMinimise ? "MinimizeToTray" : "RestoreFromTray", bindingFlags);
+            var autoHideTaskBarProperty = formType.GetField("AutoHideTaskbar", bindingFlags);
+            var hideTaskBarMethod = formType.GetMethod("HideTaskBar", bindingFlags);
+
+            if (exitToTrayProperty != null) exitToTrayProperty.SetValue(GUIGraphicsContext.form, shouldMinimise);
+            if (toggleMinimiseToTrayMethod != null) toggleMinimiseToTrayMethod.Invoke(GUIGraphicsContext.form, null);
+
+            // If we're minimising to tray, re-hide the task bar if it's set to autohide
+            if (shouldMinimise)
+            {
+                if (autoHideTaskBarProperty != null)
+                {
+                    var propertyValue = autoHideTaskBarProperty.GetValue(GUIGraphicsContext.form);
+                    if (propertyValue != null && propertyValue.ToString().ToLower() == "true")
+                        if (hideTaskBarMethod != null) hideTaskBarMethod.Invoke(GUIGraphicsContext.form, new object[] { true });
+                }
             }
         }
 
