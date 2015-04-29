@@ -9,62 +9,81 @@ using System.Threading;
 using OnlineVideos.Helpers;
 using System.Diagnostics;
 using OnlineVideos.Sites.Utils;
+using System.Xml;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using System.Net;
 
 namespace OnlineVideos.Sites.BrowserUtilConnectors
 {
     public class HboNordicConnector : BrowserUtilConnector
     {
+
         protected enum State
         {
             None,
-            LoadLogIn,
-            LogIn,
-            DoLogIn,
-            Play,
+            Login,
+            Start,
+            HideSpinner,
             Playing
         }
-        bool debug = false;
-        protected bool _isPlayingOrPausing = false;
-        protected bool _hdEnabled;
-        protected bool _doEnableHd;
-        protected State _currentState = State.None;
 
-        public const string baseUrl = "http://hbonordic.com";
+        protected bool _isUsingMouse = false;
+        protected State _currentState = State.None;
         private string _password;
         private string _username;
+        private string _redirectUrl;
+        private bool _removeFormWatchlist = false;
+        private int _currentSubtitle = 0;
+        private int[] _subtitleOffsets = { 72, 112, 152, 192, 232 };
+        private int _xOffset = 157;
+        private int _yOffset = 27;
 
-
-        public string LoginUrl
+        private int SubtitleOffset
         {
-            get { return baseUrl + "/home"; }
+            get
+            {
+                int offset = _currentSubtitle;
+                _currentSubtitle++;
+                _currentSubtitle = _currentSubtitle % 5;
+                return _subtitleOffsets[offset];
+            }
         }
 
+        public override void OnClosing()
+        {
+            base.OnClosing();
+        }
+
+        string _loginUrl;
         public override EventResult PerformLogin(string username, string password)
         {
+            ShowLoading();
+            string[] parts = username.Split('|');
             _password = password;
-            _username = username;
-            _currentState = State.None;
-            Url = LoginUrl;
-            ProcessComplete.Finished = true;
-            ProcessComplete.Success = true;
+            _username = parts[0];
+            _redirectUrl = "about:blank";
+            _loginUrl = parts[1];
+            Url = _loginUrl;
+            _currentState = State.Login;
+            ProcessComplete.Finished = false;
+            ProcessComplete.Success = false;
             return EventResult.Complete();
         }
 
         public override EventResult PlayVideo(string videoToPlay)
         {
-            _doEnableHd = videoToPlay.Contains("DOENABLEHD");
-            _hdEnabled = false;
-            videoToPlay = videoToPlay.Replace("DOENABLEHD", "");
-            ProcessComplete.Finished = true;
-            ProcessComplete.Success = true;
-            Url = baseUrl + videoToPlay;
-            _currentState = State.LoadLogIn;
+            string[] parts = videoToPlay.Split('|');
+            bool.TryParse(parts[1], out _removeFormWatchlist);
+            Url = parts[0];
+            ProcessComplete.Finished = false;
+            ProcessComplete.Success = false;
+            _currentState = State.Start;
             return EventResult.Complete();
         }
 
         public override EventResult Play()
         {
-
             return PlayPause();
         }
 
@@ -75,107 +94,93 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         private EventResult PlayPause()
         {
-            if (_currentState != State.Playing || _isPlayingOrPausing || Browser.Document == null || Browser.Document.Body == null) return EventResult.Complete();
-            _isPlayingOrPausing = true;
-            int x = Browser.FindForm().Left + 30;
-            if (_doEnableHd && !_hdEnabled)
-            {
-                x = Browser.FindForm().Right - 235;
-                _hdEnabled = true;
-            }
-            var y = Browser.FindForm().Bottom - 10;
-            // Need to move the cursor a lot, slow animations.
-            Cursor.Position = new System.Drawing.Point(x, Browser.FindForm().Bottom - 200);
-            Application.DoEvents();
-            // We have to move the cursor to show the play/pause button
-            while (Cursor.Position.Y < y)
-            {
-                Cursor.Position = new System.Drawing.Point(x, Cursor.Position.Y + 2);
-                Application.DoEvents();
-            }
-            Cursor.Position = new System.Drawing.Point(x, y);
+            if (_currentState != State.Playing || _isUsingMouse || Browser.Document == null || Browser.Document.Body == null) return EventResult.Complete();
+            _isUsingMouse = true;
+            Cursor.Position = new System.Drawing.Point(Browser.FindForm().Right - _xOffset, Browser.FindForm().Bottom - 350);
             Application.DoEvents();
             CursorHelper.DoLeftMouseClick();
             Application.DoEvents();
-            _isPlayingOrPausing = false;
+            //To show sub -language
+            Cursor.Position = new System.Drawing.Point(Browser.FindForm().Right - _xOffset, Browser.FindForm().Bottom - _yOffset);
+            Application.DoEvents();
+            _isUsingMouse = false;
             return EventResult.Complete();
         }
 
-        private void runJs()
+        public override void OnAction(string actionEnumName)
         {
-            var js = "var tryToPlayTimer;";
-            js += "var playArray = ['Play','Toista'];";
-            js += "function fn(){";
-            js += @"if (playArray.indexOf(document.elementFromPoint(window.innerWidth/2,342).innerText.replace(/^\s+|\s+$/g, '')) === -1 && playArray.indexOf(document.elementFromPoint(window.innerWidth/2,322).innerText.replace(/^\s+|\s+$/g, '')) === -1) return;";
-            js += "clearInterval(tryToPlayTimer);";
-            js += "setTimeout(\"fn2()\",750);";
-            js += "};";
-            js += "function fn2(){";
-            js += "var i342 = document.elementFromPoint(window.innerWidth/2,342);";
-            js += @"if (playArray.indexOf(i342.innerText.replace(/^\s+|\s+$/g, '')) > -1){";
-            js += "i342.click();";
-            js += "} else {";
-            js += "document.elementFromPoint(window.innerWidth/2,322).click();";
-            js += "};";
-            js += "setTimeout(\"fn3()\",500);";
-            js += "};";
-            js += "function fn3(){";
-            js += "var fset = document.getElementsByTagName('fieldset');";
-            js += "if (fset.length > 0){";
-            js += "fset[0].querySelectorAll('input[type=email]')[0].value = '" + _username + "';";
-            js += "fset[0].querySelectorAll('input[type=password]')[0].value = '" + _password + "';";
-            js += "fset[0].querySelectorAll('input[type=submit]')[0].click();";
-            js += "} else {";
-            js += "document.getElementsByTagName('html')[0].style.overflow = 'hidden';";
-            js += "var container = document.getElementsByClassName('hbo_video_container')[0];";
-            js += "container.style.height = window.innerHeight + 'px';";
-            js += "container.className = \"\";";
-            js += "container.className = \"js-hbo_video_container hbo_video_container fixed topleft full_width clip_container row z_9\";";
-            js += "document.getElementsByClassName('fixed_top_menu')[0].style.zIndex = 0; ";
-            js += "var obj = document.getElementsByTagName('object')[0];";
-            js += "obj.style.height = window.innerHeight + 'px';";
-            js += "obj.style.width = window.innerWidth + 'px';";
-            js += "obj.height = window.innerHeight + 'px';";
-            js += "obj.width = window.innerWidth + 'px';";
-            js += "}};";
-            js += "$(document).ready(function() {tryToPlayTimer = setInterval(\"fn()\",250);});";
-            InvokeScript(js);
+            if (_currentState != State.Playing || _isUsingMouse || Browser.Document == null || Browser.Document.Body == null) return;
+
+            if (actionEnumName == "ACTION_NEXT_SUBTITLE" || actionEnumName == "ACTION_SHOW_INFO")
+            {
+                _isUsingMouse = true;
+                int w = Browser.FindForm().Right;
+                int h = Browser.FindForm().Bottom;
+                int subPosX = w - _xOffset;
+                int subPosY = h - _yOffset;
+                Cursor.Position = new System.Drawing.Point(subPosX, h - 350);
+                Application.DoEvents();
+                int moveOffset = 2;
+                //Move around the mouse...
+                for (int i = 0; i < 20; i++)
+                {
+                    moveOffset *= -1;
+                    Cursor.Position = new System.Drawing.Point(subPosX, subPosY + moveOffset);
+                    Application.DoEvents();
+                    Thread.Sleep(50);
+                }
+                Cursor.Position = new System.Drawing.Point(subPosX, h - SubtitleOffset);
+                Application.DoEvents();
+                CursorHelper.DoLeftMouseClick();
+                Application.DoEvents();
+                _isUsingMouse = false;
+            }
         }
 
         public override EventResult BrowserDocumentComplete()
         {
-            if (debug)
-            {
-                InvokeScript("alert('Debug Time!')");
-                debug = false;
-            }
             switch (_currentState)
             {
-                case State.LoadLogIn:
+                case State.Login:
+                    if (Url == _redirectUrl)
+                    {
+                        ProcessComplete.Finished = true;
+                        ProcessComplete.Success = true;
+                        _currentState = State.None;
+                    }
+                    else if (Url.ToLower().Contains("/account"))
+                    {
+                        InvokeScript(Properties.Resources.HboNordicJs + "setTimeout(\"__login('" + _username + "','" + _password + "','" + _redirectUrl + "' )\", 1000); ");
+                    }
+                    break;
+                case State.Start:
+                    if (Url.Contains("/watchlist"))
+                    {
+                        InvokeScript(Properties.Resources.HboNordicJs + "setTimeout(\"__startWatch()\", 1000);");
+                        if (_removeFormWatchlist)
+                            InvokeScript("setTimeout(\"__removeFromWatchlist()\", 2000);");
+                        _currentState = State.HideSpinner;
+                    }
+                    break;
+                case State.HideSpinner:
                     ProcessComplete.Finished = true;
                     ProcessComplete.Success = true;
-                    _currentState = State.LogIn;
-                    break;
-                case State.LogIn:
-                    runJs();
-                    ProcessComplete.Finished = true;
-                    ProcessComplete.Success = true;
-                    _currentState = State.DoLogIn;
-                    break;
-                case State.DoLogIn:
-                    ProcessComplete.Finished = true;
-                    ProcessComplete.Success = true;
-                    _currentState = State.Play;
-                    break;
-                case State.Play:
-                    runJs();
                     _currentState = State.Playing;
-                    ProcessComplete.Finished = true;
-                    ProcessComplete.Success = true;
+                    System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+                    timer.Tick += (object sender, EventArgs e) =>
+                    {
+                        HideLoading();
+                        timer.Stop();
+                        timer.Dispose();
+                    };
+                    timer.Interval = 1500;
+                    timer.Start();
                     break;
                 case State.Playing:
                     ProcessComplete.Finished = true;
                     ProcessComplete.Success = true;
+                    break;
+                default:
                     break;
             }
             return EventResult.Complete();
