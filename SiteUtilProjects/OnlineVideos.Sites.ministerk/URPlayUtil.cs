@@ -257,9 +257,9 @@ namespace OnlineVideos.Sites
             if (m != null)
             {
                 var json = JObject.Parse(m.Groups[1].Value);
-                var format = "http://{0}/ondemand/_definst_/mp4:{1}/{2}";
-                var fileHD = (string)json["file_hd"];
-                var fileSD = (string)json["file_flash"];
+                var format = "http://{0}/{1}{2}";
+                var fileHD = (string)json["file_http_hd"];
+                var fileSD = (string)json["file_http"];
                 var domain = (string)json["streaming_config"]["streamer"]["redirect"];
                 var manifest = (string)json["streaming_config"]["http_streaming"]["hds_file"];
                 if (!string.IsNullOrEmpty(fileHD))
@@ -275,7 +275,7 @@ namespace OnlineVideos.Sites
 
                 if (AutomaticallyRetrieveSubtitles)
                 {
-                    video.SubtitleText = GetSubtitle(json, subtitleChoice == Subtitle.Förvald_URPlay ? (string)json["subtitle_default"] : subtitleChoice.ToString());
+                    video.SubtitleText = GetSubtitle(json);
                 }
             }
             if (inPlaylist || PreferHD)
@@ -284,52 +284,52 @@ namespace OnlineVideos.Sites
             return new List<string>() { string.IsNullOrEmpty(urlHD) ? urlSD : urlHD };
         }
 
-        private string GetSubtitle(JObject json, string language)
+        private string GetSubtitle(JObject json, string language = null)
         {
-            var subtitle = (string)json["subtitles"];
-            var label = (string)json["subtitle_labels"];
-            if (!string.IsNullOrEmpty(subtitle) && !string.IsNullOrEmpty(label))
+            JArray subtitles = (JArray)json["subtitles"];
+            JToken subtitle = null;
+            string srt = string.Empty;
+            if (language != null)
             {
-                string[] subtitles = subtitle.Split(',');
-                string[] lables = label.Split(',');
-                Dictionary<string, string> subDictionary = new Dictionary<string, string>();
-                for (int i = 0; i < lables.Count() && i < subtitles.Count(); i++)
+                subtitle = subtitles.FirstOrDefault(s => s["label"] != null && s["label"].Value<string>() == language);
+            }
+            else if (subtitleChoice == Subtitle.Förvald_URPlay)
+            {
+                subtitle = subtitles.FirstOrDefault(s => s["default"] != null && s["default"].Value<bool>());
+            }
+            else if (subtitleChoice == Subtitle.Svenska)
+            {
+                subtitle = subtitles.FirstOrDefault(s => s["label"] != null && s["label"].Value<string>() == Subtitle.Svenska.ToString());
+            }
+            if (subtitle != null)
+            {
+                XmlDocument xDoc = GetWebData<XmlDocument>(subtitle["file"].Value<string>());
+                var errorElements = xDoc.SelectNodes("//meta[@name = 'error']");
+                if (errorElements == null || errorElements.Count <= 0)
                 {
-                    subDictionary.Add(lables[i], subtitles[i]);
-                }
-                var url = "";
-                if (subDictionary.TryGetValue(language, out url))
-                {
-                    XmlDocument xDoc = GetWebData<XmlDocument>(url);
-                    string srt = string.Empty;
-                    var errorElements = xDoc.SelectNodes("//meta[@name = 'error']");
-                    if (errorElements == null || errorElements.Count <= 0)
+                    string srtFormat = "{0}\r\n{1}0 --> {2}0\r\n{3}\r\n\r\n";
+                    string begin;
+                    string end;
+                    string text;
+                    string textPart;
+                    int line = 1;
+                    foreach (XmlElement p in xDoc.GetElementsByTagName("p"))
                     {
-                        string srtFormat = "{0}\r\n{1}0 --> {2}0\r\n{3}\r\n\r\n";
-                        string begin;
-                        string end;
-                        string text;
-                        string textPart;
-                        int line = 1;
-                        foreach (XmlElement p in xDoc.GetElementsByTagName("p"))
+                        text = string.Empty;
+                        begin = p.GetAttribute("begin");
+                        end = p.GetAttribute("end");
+                        XmlNodeList textNodes = p.SelectNodes(".//text()");
+                        foreach (XmlNode textNode in textNodes)
                         {
-                            text = string.Empty;
-                            begin = p.GetAttribute("begin");
-                            end = p.GetAttribute("end");
-                            XmlNodeList textNodes = p.SelectNodes(".//text()");
-                            foreach (XmlNode textNode in textNodes)
-                            {
-                                textPart = textNode.InnerText;
-                                textPart.Trim();
-                                text += string.IsNullOrEmpty(textPart) ? "" : textPart + "\r\n";
-                            }
-                            srt += string.Format(srtFormat, line++, begin, end, text);
+                            textPart = textNode.InnerText;
+                            textPart.Trim();
+                            text += string.IsNullOrEmpty(textPart) ? "" : textPart + "\r\n";
                         }
+                        srt += string.Format(srtFormat, line++, begin, end, text);
                     }
-                    return srt;
                 }
             }
-            return "";
+            return srt;
         }
 
         #region Context menu
@@ -361,9 +361,8 @@ namespace OnlineVideos.Sites
                 if (m != null)
                 {
                     var json = JObject.Parse(m.Groups[1].Value);
-                    var label = (string)json["subtitle_labels"];
-                    string[] labels = label.Split(',');
-                    if (labels.Count() > 0)
+                    JArray subtitles = (JArray)json["subtitles"];
+                    if (subtitles != null && subtitles.Count() > 0)
                     {
                         ContextMenuEntry textningssprak = new ContextMenuEntry();
                         textningssprak.Action = ContextMenuEntry.UIAction.ShowList;
@@ -372,10 +371,10 @@ namespace OnlineVideos.Sites
                         ContextMenuEntry entry = new ContextMenuEntry();
                         entry.DisplayText = string.Format(_ingenTextning);
                         textningssprak.SubEntries.Add(entry);
-                        for (int i = 0; i < labels.Count(); i++)
+                        foreach (JToken subtitle in subtitles)
                         {
                             entry = new ContextMenuEntry();
-                            entry.DisplayText = string.Format(labels[i]);
+                            entry.DisplayText = string.Format(subtitle["label"].Value<string>());
                             textningssprak.SubEntries.Add(entry);
                         }
                         entries.Add(textningssprak);
