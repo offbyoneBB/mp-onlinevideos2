@@ -31,9 +31,9 @@ namespace OnlineVideos.Hoster
         {
             subtitleText = null;
             Dictionary<string, string> result = new Dictionary<string, string>();
-            Match u = Regex.Match(url, @"http://(?:www\.)?vimeo.com/moogaloop.swf\?clip_id=(?<url>[^&]*)&");
+            Match u = Regex.Match(url, @"https?://(?:www\.)?vimeo.com/moogaloop.swf\?clip_id=(?<url>[^&]*)&");
             if (!u.Success)
-                u = Regex.Match(url, @"http://player.vimeo.com/video/(?<url>\d+)");
+                u = Regex.Match(url, @"https?://player.vimeo.com/video/(?<url>\d+)");
             if (u.Success)
                 url = @"http://www.vimeo.com/" + u.Groups["url"].Value;
 
