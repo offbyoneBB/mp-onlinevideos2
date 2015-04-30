@@ -82,7 +82,7 @@ namespace OnlineVideos.Sites
                     Length = jvid.Value<string>("durationSec"),
                     Airdate = jvid.Value<string>("published"),
                     Thumb = images.Value<string>("XL"),
-                    VideoUrl = String.Format(@"http://areena.yle.fi/tv/{0}.json", jvid.Value<string>("id"))
+                    VideoUrl = String.Format(@"http://areena-v3.yle.fi/tv/{0}.json", jvid.Value<string>("id"))
                 };
                 result.Add(video);
             }
@@ -208,7 +208,7 @@ namespace OnlineVideos.Sites
             RtmpUrl theUrl = new RtmpUrl(rtmpUrl.Split('?')[0])
             {
                 PlayPath = stream,
-                SwfUrl = @"http://areena.yle.fi/static/player/1.2.8/flowplayer/flowplayer.commercial-3.2.7-encrypted.swf",
+                SwfUrl = @"http://areena-v3.yle.fi/static/player/1.2.8/flowplayer/flowplayer.commercial-3.2.7-encrypted.swf",
                 App = "ondemand?" + rtmpUrl.Split('?')[1],
                 PageUrl = video.VideoUrl.Substring(0, video.VideoUrl.Length - 5),
                 TcUrl = rtmpUrl
