@@ -1453,21 +1453,21 @@ spStartVideo5\([^']*'(?<m1>[^']+)']]>
     <Site name="Yle Areena" util="YleAreena" agecheck="false" enabled="true" lang="fi">
       <Description>Areena - Ylen netti-tv ja -radio</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://areena.yle.fi/]]></item>
+        <item key="baseUrl"><![CDATA[http://areena-v3.yle.fi/]]></item>
         <item key="forceUTF8Encoding"><![CDATA[true]]></item>
-        <item key="videoListRegExFormatString"><![CDATA[http://areena.yle.fi/tv/{0}.json]]></item>
+        <item key="videoListRegExFormatString"><![CDATA[http://areena-v3.yle.fi/tv/{0}.json]]></item>
         <item key="fileUrlRegEx"><![CDATA["media":\s*{\s"id":\s"(?<m0>[^"]*)"]]></item>
         <item key="fileUrlFormatString"><![CDATA[http://papi.yle.fi/ng/mod/rtmp/{0}]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="Ohjelmat A-Ö">http://areena.yle.fi/ohjelmat</Category>
-        <Category xsi:type="RssLink" name="Kaikki ohjelmat">http://areena.yle.fi/tv</Category>
-        <Category xsi:type="RssLink" name="Sarjat ja elokuvat">http://areena.yle.fi/tv/sarjat-ja-elokuvat</Category>
-        <Category xsi:type="RssLink" name="Viihde ja kulttuuri">http://areena.yle.fi/tv/viihde-ja-kulttuuri</Category>
-        <Category xsi:type="RssLink" name="Dokumentit ja fakta">http://areena.yle.fi/tv/dokumentit-ja-fakta</Category>
-        <Category xsi:type="RssLink" name="Uutiset">http://areena.yle.fi/tv/uutiset</Category>
-        <Category xsi:type="RssLink" name="Urheilu">http://areena.yle.fi/tv/urheilu</Category>
-        <Category xsi:type="RssLink" name="Lapset">http://areena.yle.fi/tv/lapset</Category>
+        <Category xsi:type="RssLink" name="Ohjelmat A-Ö">http://areena-v3.yle.fi/ohjelmat</Category>
+        <Category xsi:type="RssLink" name="Kaikki ohjelmat">http://areena-v3.yle.fi/tv</Category>
+        <Category xsi:type="RssLink" name="Sarjat ja elokuvat">http://areena-v3.yle.fi/tv/sarjat-ja-elokuvat</Category>
+        <Category xsi:type="RssLink" name="Viihde ja kulttuuri">http://areena-v3.yle.fi/tv/viihde-ja-kulttuuri</Category>
+        <Category xsi:type="RssLink" name="Dokumentit ja fakta">http://areena-v3.yle.fi/tv/dokumentit-ja-fakta</Category>
+        <Category xsi:type="RssLink" name="Uutiset">http://areena-v3.yle.fi/tv/uutiset</Category>
+        <Category xsi:type="RssLink" name="Urheilu">http://areena-v3.yle.fi/tv/urheilu</Category>
+        <Category xsi:type="RssLink" name="Lapset">http://areena-v3.yle.fi/tv/lapset</Category>
       </Categories>
     </Site>
     <Site name="Zie.nl" util="ZieNl" agecheck="false" enabled="true" lang="nl">
