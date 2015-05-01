@@ -46,6 +46,10 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         protected string username = null;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("Netflix password"), PasswordPropertyText(true)]
         protected string password = null;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Startup user profile"), Description("User profile to start with, defaults to owner profile. Case sensitive.")]
+        protected string startupUserProfile = null;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Remember latest used profile"), Description("Remeber the latest used profile as \"Startup user profile\"")]
+        protected bool rememberStartupUserProfile = false;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable descriptions"), Description("Enable descriptions for titles")]
         protected bool enableDesc = false;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Also enable descriptions in listings"), Description("Enable descriptions for titles in listings, slower browsing")]
@@ -208,7 +212,14 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     profiles = json["profiles"]["data"]["allProfiles"].Value<JArray>();
                     if (string.IsNullOrEmpty(ProfileName) || !profiles.Any(p => p["profileName"].Value<string>() == ProfileName))
                     {
-                        currentProfile = (JObject)profiles.FirstOrDefault(p => p["isAccountOwner"].Value<bool>());
+                        if (!string.IsNullOrWhiteSpace(startupUserProfile) && profiles.Any(p => p["profileName"].Value<string>() == startupUserProfile))
+                        {
+                            currentProfile = (JObject)profiles.FirstOrDefault(p => p["profileName"].Value<string>() == startupUserProfile);
+                        }
+                        else
+                        {
+                            currentProfile = (JObject)profiles.FirstOrDefault(p => p["isAccountOwner"].Value<bool>());
+                        }
                     }
                     else
                     {
@@ -574,6 +585,13 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 currentProfile = parentCategory.GetProfile();
                 parentCategory.ParentCategory.Name = ProfileCategoryName;
                 MyGetWebData(string.Format(switchProfileUrl, apiRoot, ProfileToken));
+                if (rememberStartupUserProfile)
+                {
+                    List<OnlineVideos.Reflection.FieldPropertyDescriptorByRef> props = GetUserConfigurationProperties();
+                    OnlineVideos.Reflection.FieldPropertyDescriptorByRef prop = props.First(p => p.DisplayName == "Startup user profile");
+                    this.SetConfigValueFromString(prop, ProfileName);
+                    startupUserProfile = ProfileName;
+                }
                 throw new OnlineVideosException(CangedToProfile);
 
             }
