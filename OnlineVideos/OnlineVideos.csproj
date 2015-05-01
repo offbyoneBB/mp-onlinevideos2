@@ -468,6 +468,8 @@
     <Compile Include="LocalizableDisplayNameAttribute.cs" />
     <Compile Include="ILog.cs" />
     <Compile Include="MPUrlSourceFilter\AfhsManifestUrl.cs" />
+    <Compile Include="MPUrlSourceFilter\Http\HttpHeader.cs" />
+    <Compile Include="MPUrlSourceFilter\Http\HttpHeaderCollection.cs" />
     <Compile Include="MPUrlSourceFilter\UserSettings\ExpandableUserSettingObjectConverter.cs" />
     <Compile Include="MPUrlSourceFilter\Downloader.cs" />
     <Compile Include="MPUrlSourceFilter\HttpUrl.cs" />

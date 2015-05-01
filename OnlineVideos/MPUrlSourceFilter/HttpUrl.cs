@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Net;
+using OnlineVideos.MPUrlSourceFilter.Http;
 
 namespace OnlineVideos.MPUrlSourceFilter
 {
@@ -25,6 +26,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         private int totalReopenConnectionTimeout = HttpUrl.DefaultHttpTotalReopenConnectionTimeout;
         private bool seekingSupported = HttpUrl.DefaultHttpSeekingSupported;
         private bool seekingSupportDetection = HttpUrl.DefaultHttpSeekingSupportDetection;
+        private HttpHeaderCollection customHeaders;
 
         #endregion
 
@@ -56,7 +58,9 @@ namespace OnlineVideos.MPUrlSourceFilter
             {
                 throw new ArgumentException("The protocol is not supported.", "uri");
             }
+
             this.cookies = new CookieCollection();
+            this.customHeaders = new HttpHeaderCollection();
 
             this.Referer = String.Empty;
             this.UserAgent = String.Empty;
@@ -209,6 +213,14 @@ namespace OnlineVideos.MPUrlSourceFilter
             }
         }
 
+        /// <summary>
+        /// Gets custom headers collection.
+        /// </summary>
+        public HttpHeaderCollection CustomHeaders
+        {
+            get { return this.customHeaders; }
+        }
+
         #endregion
 
         #region Methods
@@ -262,6 +274,20 @@ namespace OnlineVideos.MPUrlSourceFilter
                     container.Add(this.Uri, cookie);
                 }
                 parameters.Add(new Parameter(HttpUrl.ParameterHttpCookie, container.GetCookieHeader(this.Uri)));
+            }
+
+            if (this.CustomHeaders.Count > 0)
+            {
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpHeadersCount, this.CustomHeaders.Count.ToString()));
+
+                for (int i = 0; i < this.CustomHeaders.Count; i++)
+                {
+                    HttpHeader header = this.CustomHeaders[i];
+
+                    parameters.Add(new Parameter(String.Format(HttpUrl.ParameterHttpHeaderFormatName, i), header.Name));
+                    parameters.Add(new Parameter(String.Format(HttpUrl.ParameterHttpHeaderFormatValue, i), header.Value));
+                    
+                }
             }
 
             // return formatted connection string
@@ -343,6 +369,21 @@ namespace OnlineVideos.MPUrlSourceFilter
         protected static readonly String ParameterHttpSeekingSupportDetection = "HttpSeekingSupportDetection";
 
         /// <summary>
+        /// Specifies count of custom HTTP headers.
+        /// </summary>
+        protected static readonly String ParameterHttpHeadersCount = "HttpHeadersCount";
+
+        /// <summary>
+        /// Parameter name format for custom HTTP header.
+        /// </summary>
+        protected static readonly String ParameterHttpHeaderFormatName = "HttpHeaderName{0:D8}";
+
+        /// <summary>
+        /// Parameter value format for custom HTTP header.
+        /// </summary>
+        protected static readonly String ParameterHttpHeaderFormatValue = "HttpHeaderValue{0:D8}";
+
+        /// <summary>
         /// Default value for <see cref="ParameterHttpOpenConnectionTimeout"/>.
         /// </summary>
         public static readonly int DefaultHttpOpenConnectionTimeout = 20000;
@@ -391,6 +432,11 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// Default value for <see cref="ParameterHttpSeekingSupportDetection"/>.
         /// </summary>
         public static readonly Boolean DefaultHttpSeekingSupportDetection = true;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpHeadersCount"/>.
+        /// </summary>
+        public static readonly int DefaultHttpHeadersCount = 0;
 
         #endregion
     }
