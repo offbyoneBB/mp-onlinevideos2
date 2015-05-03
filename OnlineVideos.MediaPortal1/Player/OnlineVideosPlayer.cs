@@ -18,10 +18,10 @@ namespace OnlineVideos.MediaPortal1.Player
     {
         #region Refeshrate Adaption
 
-        [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
         static extern double EVRGetVideoFPS(int fpsSource);
 
-        [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
         static extern void EVRUpdateDisplayFPS();
 
         string cacheFile = null;
