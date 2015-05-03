@@ -26,7 +26,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
         string cacheFile = null;
         bool refreshRateAdapted = false;
-        
+
         void AdaptRefreshRateFromCacheFile()
         {
             if (!PluginConfiguration.Instance.AllowRefreshRateChange)
@@ -53,8 +53,8 @@ namespace OnlineVideos.MediaPortal1.Player
                             RefreshRateHelper.ChangeRefreshRateToMatchedFps(matchedFps, cacheFile);
                             try
                             {
-								if (GUIGraphicsContext.IsEvr)
-									EVRUpdateDisplayFPS();
+                                if (GUIGraphicsContext.IsEvr)
+                                    EVRUpdateDisplayFPS();
                             }
                             catch (EntryPointNotFoundException)
                             {
@@ -63,7 +63,7 @@ namespace OnlineVideos.MediaPortal1.Player
                             catch (Exception ex)
                             {
                                 Log.Instance.Warn("OnlineVideosPlayer: Exception trying update refresh rate fo EVR: {0}", ex.ToString());
-                            }                            
+                            }
                         }
                         else
                         {
@@ -88,47 +88,47 @@ namespace OnlineVideos.MediaPortal1.Player
 
         void AdaptRefreshRateFromVideoRenderer()
         {
-			if (GUIGraphicsContext.IsEvr)
-			{
-				if (!refreshRateAdapted && m_state == PlayState.Playing)
-				{
-					try
-					{
-						if (!PluginConfiguration.Instance.AllowRefreshRateChange)
-						{
-							refreshRateAdapted = true;
-							return;
-						}
+            if (GUIGraphicsContext.IsEvr)
+            {
+                if (!refreshRateAdapted && m_state == PlayState.Playing)
+                {
+                    try
+                    {
+                        if (!PluginConfiguration.Instance.AllowRefreshRateChange)
+                        {
+                            refreshRateAdapted = true;
+                            return;
+                        }
 
-						double fps = EVRGetVideoFPS(0);
-						if (fps > 1)
-						{
-							refreshRateAdapted = true;
-							Log.Instance.Info("OnlineVideosPlayer got {0} FPS from dshowhelper.dll after {1} sec", fps, CurrentPosition);
-							double matchedFps = RefreshRateHelper.MatchConfiguredFPS(fps);
-							if (matchedFps != default(double))
-							{
-								RefreshRateHelper.ChangeRefreshRateToMatchedFps(matchedFps, m_strCurrentFile);
-								EVRUpdateDisplayFPS();
-							}
-							else
-							{
-								Log.Instance.Info("No matching configured FPS found - skipping RefreshRate Adaption");
-							}
-						}
-					}
-					catch (EntryPointNotFoundException)
-					{
-						Log.Instance.Warn("OnlineVideosPlayer: Your version of dshowhelper.dll does not support FPS reporting.");
-						refreshRateAdapted = true;
-					}
-					catch (Exception ex)
-					{
-						Log.Instance.Warn("OnlineVideosPlayer: Exception trying refresh rate change while playing : {0}", ex.ToString());
-						refreshRateAdapted = true;
-					}
-				}
-			}
+                        double fps = EVRGetVideoFPS(0);
+                        if (fps > 1)
+                        {
+                            refreshRateAdapted = true;
+                            Log.Instance.Info("OnlineVideosPlayer got {0} FPS from dshowhelper.dll after {1} sec", fps, CurrentPosition);
+                            double matchedFps = RefreshRateHelper.MatchConfiguredFPS(fps);
+                            if (matchedFps != default(double))
+                            {
+                                RefreshRateHelper.ChangeRefreshRateToMatchedFps(matchedFps, m_strCurrentFile);
+                                EVRUpdateDisplayFPS();
+                            }
+                            else
+                            {
+                                Log.Instance.Info("No matching configured FPS found - skipping RefreshRate Adaption");
+                            }
+                        }
+                    }
+                    catch (EntryPointNotFoundException)
+                    {
+                        Log.Instance.Warn("OnlineVideosPlayer: Your version of dshowhelper.dll does not support FPS reporting.");
+                        refreshRateAdapted = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Instance.Warn("OnlineVideosPlayer: Exception trying refresh rate change while playing : {0}", ex.ToString());
+                        refreshRateAdapted = true;
+                    }
+                }
+            }
         }
 
         #endregion
@@ -147,10 +147,10 @@ namespace OnlineVideos.MediaPortal1.Player
             m_strCurrentFile = url;
         }
 
-		public override string CurrentFile // hack to get around the MP 1.3 Alpha bug with non http URLs
-		{
-			get { return "http://localhost/OnlineVideo.mp4"; }
-		}
+        public override string CurrentFile // hack to get around the MP 1.3 Alpha bug with non http URLs
+        {
+            get { return "http://localhost/OnlineVideo.mp4"; }
+        }
 
         protected override bool GetInterfaces()
         {
@@ -171,12 +171,12 @@ namespace OnlineVideos.MediaPortal1.Player
                 }
                 else
                 {
-					if (graphBuilder != null && GetSourceFilterName(m_strCurrentFile) == OnlineVideos.MPUrlSourceFilter.Downloader.FilterName) // only when progress reporting is possible
+                    if (graphBuilder != null && GetSourceFilterName(m_strCurrentFile) == OnlineVideos.MPUrlSourceFilter.Downloader.FilterName) // only when progress reporting is possible
                     {
                         IBaseFilter sourceFilter = null;
                         try
                         {
-                            int result = graphBuilder.FindFilterByName(OnlineVideos.MPUrlSourceFilter.Downloader .FilterName, out sourceFilter);
+                            int result = graphBuilder.FindFilterByName(OnlineVideos.MPUrlSourceFilter.Downloader.FilterName, out sourceFilter);
                             if (result == 0)
                             {
                                 long total = 0, current = 0;
@@ -238,7 +238,7 @@ namespace OnlineVideos.MediaPortal1.Player
         /// <returns>true, if the url can be buffered (a graph was started), false if it can't be and null if an error occured building the graph</returns>
         public bool? PrepareGraph()
         {
-			string sourceFilterName = GetSourceFilterName(m_strCurrentFile);
+            string sourceFilterName = GetSourceFilterName(m_strCurrentFile);
 
             if (!string.IsNullOrEmpty(sourceFilterName))
             {
@@ -270,16 +270,16 @@ namespace OnlineVideos.MediaPortal1.Player
                 IBaseFilter sourceFilter = null;
                 try
                 {
-					if (sourceFilterName == OnlineVideos.MPUrlSourceFilter.Downloader.FilterName)
-					{
-						sourceFilter = FilterFromFile.LoadFilterFromDll("MPUrlSourceSplitter\\MPUrlSourceSplitter.ax", new Guid(OnlineVideos.MPUrlSourceFilter.Downloader.FilterCLSID), true);
-						if (sourceFilter != null)
-							Marshal.ThrowExceptionForHR(graphBuilder.AddFilter(sourceFilter, OnlineVideos.MPUrlSourceFilter.Downloader.FilterName));
-					}
-					if (sourceFilter == null)
-					{
-						sourceFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, sourceFilterName);
-					}
+                    if (sourceFilterName == OnlineVideos.MPUrlSourceFilter.Downloader.FilterName)
+                    {
+                        sourceFilter = FilterFromFile.LoadFilterFromDll("MPUrlSourceSplitter\\MPUrlSourceSplitter.ax", new Guid(OnlineVideos.MPUrlSourceFilter.Downloader.FilterCLSID), true);
+                        if (sourceFilter != null)
+                            Marshal.ThrowExceptionForHR(graphBuilder.AddFilter(sourceFilter, OnlineVideos.MPUrlSourceFilter.Downloader.FilterName));
+                    }
+                    if (sourceFilter == null)
+                    {
+                        sourceFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, sourceFilterName);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -297,7 +297,7 @@ namespace OnlineVideos.MediaPortal1.Player
                 return false;
             }
         }
-        
+
         /// <summary>
         /// This function can be called by a background thread. It finishes building the graph and
         /// waits until the buffer is filled to the configured percentage.
@@ -310,7 +310,7 @@ namespace OnlineVideos.MediaPortal1.Player
             VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent; // prevents the BlackRectangle on first time playback
             bool PlaybackReady = false;
             IBaseFilter sourceFilter = null;
-			string sourceFilterName = null;
+            string sourceFilterName = null;
             try
             {
                 sourceFilterName = GetSourceFilterName(m_strCurrentFile);
@@ -599,7 +599,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
                 if (Log.Instance.LogLevel < log4net.Core.Level.Debug)
                 {
-					string sourceFilterName = GetSourceFilterName(m_strCurrentFile);
+                    string sourceFilterName = GetSourceFilterName(m_strCurrentFile);
                     if (!string.IsNullOrEmpty(sourceFilterName))
                     {
                         IBaseFilter sourceFilter;
@@ -638,12 +638,12 @@ namespace OnlineVideos.MediaPortal1.Player
             m_bVisible = false;
             m_iVolume = 100;
             m_state = PlayState.Init;
-			if (strFile != "http://localhost/OnlineVideo.mp4") m_strCurrentFile = strFile; // hack to get around the MP 1.3 Alpha bug with non http URLs
+            if (strFile != "http://localhost/OnlineVideo.mp4") m_strCurrentFile = strFile; // hack to get around the MP 1.3 Alpha bug with non http URLs
             m_bFullScreen = true;
             m_ar = GUIGraphicsContext.ARType;
             VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
             _updateNeeded = true;
-			Log.Instance.Info("OnlineVideosPlayer: Play '{0}'", m_strCurrentFile);
+            Log.Instance.Info("OnlineVideosPlayer: Play '{0}'", m_strCurrentFile);
 
             m_bStarted = false;
             if (!GetInterfaces())
@@ -654,9 +654,9 @@ namespace OnlineVideos.MediaPortal1.Player
             }
 
             // if we are playing a local file set the cache file so refresh rate adaption can happen
-			Uri uri = new Uri(m_strCurrentFile);
+            Uri uri = new Uri(m_strCurrentFile);
             string protocol = uri.Scheme.Substring(0, Math.Min(uri.Scheme.Length, 4));
-			if (protocol == "file") cacheFile = m_strCurrentFile;
+            if (protocol == "file") cacheFile = m_strCurrentFile;
 
             AdaptRefreshRateFromCacheFile();
 
@@ -780,7 +780,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
         public bool GoFullscreen { get; set; }
         public string SubtitleFile { get; set; }
-		public string PlaybackUrl { get { return m_strCurrentFile; } }
+        public string PlaybackUrl { get { return m_strCurrentFile; } }
 
         #endregion
 
