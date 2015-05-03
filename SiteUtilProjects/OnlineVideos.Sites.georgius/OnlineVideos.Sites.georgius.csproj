@@ -44,11 +44,8 @@
     <Compile Include="ApetitTv.cs" />
     <None Include="AutosalonUtil.cs" />
     <None Include="BarrandovTvUtil.cs" />
-    <Compile Include="CeskaTelevizeJsonTextWriter.cs" />
     <Compile Include="CeskaTelevizeUtil.cs" />
     <None Include="DomaUtil.cs" />
-    <Compile Include="CeskaTelevizeVideo.cs" />
-    <Compile Include="CeskaTelevizeVideoCollection.cs" />
     <Compile Include="CsfdCzUtil.cs" />
     <None Include="CzTraileryUtil.cs" />
     <Compile Include="Flowplayer\Commercial\V3_1_5_17_002\Aes.cs" />
