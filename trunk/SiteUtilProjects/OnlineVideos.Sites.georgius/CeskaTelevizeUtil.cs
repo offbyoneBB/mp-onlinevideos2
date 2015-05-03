@@ -326,24 +326,13 @@ namespace OnlineVideos.Sites.georgius
             }
         }
 
-        private String SerializeJsonForPost(Newtonsoft.Json.Linq.JToken token)
+        public override string GetVideoUrl(VideoInfo video)
         {
-            Newtonsoft.Json.JsonSerializer serializer = Newtonsoft.Json.JsonSerializer.Create(null);
-            StringBuilder builder = new StringBuilder();
-            serializer.Serialize(new CeskaTelevizeJsonTextWriter(new System.IO.StringWriter(builder), token), token);
-            return builder.ToString();
-        }
-
-        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
-        {
-            List<String> resultUrls = new List<string>();
-
             if (video.PlaybackOptions == null)
             {
                 video.PlaybackOptions = new Dictionary<string, string>();
             }
-
-            Boolean live = (this.currentCategory.Name == "Živě");
+            video.PlaybackOptions.Clear();
 
             System.Net.CookieContainer container = new System.Net.CookieContainer();
             String baseWebData = GetWebData(video.VideoUrl, cookies: container, forceUTF8: true);
@@ -356,16 +345,16 @@ namespace OnlineVideos.Sites.georgius
                 {
                     String postData = baseWebData.Substring(start + CeskaTelevizeUtil.showEpisodePostStart.Length, end - start - CeskaTelevizeUtil.showEpisodePostStart.Length);
                     Newtonsoft.Json.Linq.JContainer playlistData = (Newtonsoft.Json.Linq.JContainer)Newtonsoft.Json.JsonConvert.DeserializeObject(postData);
-                    
+
                     StringBuilder builder = new StringBuilder();
                     foreach (Newtonsoft.Json.Linq.JProperty child in playlistData.Children())
                     {
                         builder.AppendFormat("&playlist[0][{0}]={1}", child.Name, child.Value.ToString());
                     }
                     builder.AppendFormat("&requestUrl={0}&requestSource=iVysilani&addCommercials=1&type=flash", video.VideoUrl.Remove(0, CeskaTelevizeUtil.baseUrl.Length));
-                    
+
                     String serializedDataForPost = HttpUtility.UrlEncode(builder.ToString()).Replace("%3d", "=").Replace("%26", "&");
-                    String playlistSerializedUrl = CeskaTelevizeUtil.GetWebDataFromPost("http://www.ceskatelevize.cz/ivysilani/ajax/get-playlist-url", serializedDataForPost, container, video.VideoUrl);
+                    String playlistSerializedUrl = CeskaTelevizeUtil.GetWebDataFromPost("http://www.ceskatelevize.cz/ivysilani/ajax/get-client-playlist", serializedDataForPost, container, video.VideoUrl);
                     Newtonsoft.Json.Linq.JContainer playlistJson = (Newtonsoft.Json.Linq.JContainer)Newtonsoft.Json.JsonConvert.DeserializeObject(playlistSerializedUrl);
 
                     String videoDataUrl = String.Empty;
@@ -377,130 +366,230 @@ namespace OnlineVideos.Sites.georgius
                         }
                     }
 
-                    CeskaTelevizeVideoCollection videos = new CeskaTelevizeVideoCollection();
-                    int videoPart = 1;
+                    String videoConfigurationSerialized = GetWebData(videoDataUrl);
+                    Newtonsoft.Json.Linq.JContainer videoConfiguration = (Newtonsoft.Json.Linq.JContainer)Newtonsoft.Json.JsonConvert.DeserializeObject(videoConfigurationSerialized);
 
-                    XmlDocument videoData = new XmlDocument();
-                    videoData.LoadXml(GetWebData(videoDataUrl));
+                    String qualityUrl = (String)((Newtonsoft.Json.Linq.JValue)((Newtonsoft.Json.Linq.JProperty)((Newtonsoft.Json.Linq.JArray)videoConfiguration["playlist"])[0]["streamUrls"].First).Value).Value;
+                    String qualityData = GetWebData(qualityUrl);
 
-                    XmlNodeList videoItems = videoData.SelectNodes("//PlaylistItem[@id]");
-                    foreach (XmlNode videoItem in videoItems)
+                    String[] lines = qualityData.Split(new Char[] { '\n' });
+                    int lastBadwidth = -1;
+
+                    for (int i = 0; i < lines.Length; i++)
                     {
-                        if (videoItem.Attributes["id"].Value.IndexOf("ad", StringComparison.CurrentCultureIgnoreCase) == (-1))
+                        String line = lines[i];
+
+                        if (line == "#EXTM3U")
                         {
-                            // skip advertising
-                            XmlNode itemData = videoData.SelectSingleNode(String.Format("//switchItem[@id = \"{0}\"]", videoItem.Attributes["id"].Value));
-                            if (itemData != null)
-                            {
-                                // now select source with highest bitrate
-                                XmlNodeList sources = itemData.SelectNodes("./video");
-
-                                foreach (XmlNode source in sources)
-                                {
-                                    if (String.Compare(source.Attributes["label"].Value, "AD", StringComparison.CurrentCultureIgnoreCase) != 0)
-                                    {
-                                        // skip advertising
-                                        // create rtmp proxy for selected source
-                                        String baseUrl = itemData.Attributes["base"].Value.Replace("/_definst_", "");
-                                        String playPath = source.Attributes["src"].Value;
-
-                                        String rtmpUrl = baseUrl + "/" + playPath;
-
-                                        String host = new Uri(baseUrl).Host;
-                                        String app = baseUrl.Substring(baseUrl.LastIndexOf('/') + 1);
-                                        String tcUrl = baseUrl;
-
-                                        int swfobjectIndex = baseWebData.IndexOf("swfobject.embedSWF(");
-                                        if (swfobjectIndex >= 0)
-                                        {
-                                            int firstQuote = baseWebData.IndexOf("\"", swfobjectIndex);
-                                            int secondQuote = baseWebData.IndexOf("\"", firstQuote + 1);
-
-                                            if ((firstQuote >= 0) && (secondQuote >= 0) && ((secondQuote - firstQuote) > 0))
-                                            {
-                                                String swfUrl = baseWebData.Substring(firstQuote + 1, secondQuote - firstQuote - 1);
-                                                String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(rtmpUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath, SwfUrl = swfUrl, PageUrl = video.VideoUrl, LiveStream = live }.ToString();
-
-                                                videos.Add(new CeskaTelevizeVideo()
-                                                {
-                                                    Part = videoPart,
-                                                    Label = source.Attributes["label"].Value,
-                                                    Url = resultUrl
-                                                });
-
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            videoPart++;
+                            continue;
                         }
-                    }
-
-                    // remember all videos with their quality
-                    video.Other = videos;
-
-                    videoPart = 0;
-                    bool first = true;
-
-                    foreach (var ctVideo in videos)
-                    {
-                        if (ctVideo.Part != videoPart)
+                        else
                         {
-                            resultUrls.Add(ctVideo.Url);
-                            videoPart = ctVideo.Part;
+                            int bandwidthIndex = line.IndexOf("BANDWIDTH=");
 
-                            if (first)
+                            if (bandwidthIndex == (-1))
                             {
-                                video.PlaybackOptions.Clear();
-
-                                foreach (var vid in videos)
-                                {
-                                    if (vid.Part == videoPart)
-                                    {
-                                        video.PlaybackOptions.Add(vid.Label, vid.Url);
-                                    }
-                                }
-
-                                first = false;
+                                // url line
+                                video.PlaybackOptions.Add(String.Format("Bandwidth (quality) {0}", lastBadwidth), line);
+                            }
+                            else
+                            {
+                                lastBadwidth = int.Parse(line.Substring(bandwidthIndex + "BANDWIDTH=".Length));
                             }
                         }
                     }
                 }
             }
 
-            return resultUrls;
-        }
-
-        public override string GetPlaylistItemVideoUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
-        {
-            CeskaTelevizeVideoCollection videos = (CeskaTelevizeVideoCollection)clonedVideoInfo.Other;
-            CeskaTelevizeVideo keyVideo = videos[clonedVideoInfo.VideoUrl];
-
-            if (clonedVideoInfo.PlaybackOptions == null)
+            if (video.PlaybackOptions.Count > 0)
             {
-                clonedVideoInfo.PlaybackOptions = new Dictionary<string, string>();
-            }
-            clonedVideoInfo.PlaybackOptions.Clear();
-
-            foreach (var ctVideo in videos)
-            {
-                if (ctVideo.Part == keyVideo.Part)
-                {
-                    clonedVideoInfo.PlaybackOptions.Add(ctVideo.Label, ctVideo.Url);
-                }
-            }
-
-            if (clonedVideoInfo.PlaybackOptions.Count > 0)
-            {
-                var enumer = clonedVideoInfo.PlaybackOptions.GetEnumerator();
+                var enumer = video.PlaybackOptions.GetEnumerator();
                 enumer.MoveNext();
                 return enumer.Current.Value;
             }
 
-            return clonedVideoInfo.VideoUrl;
+            return String.Empty;
         }
+
+        //public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        //{
+        //    List<String> resultUrls = new List<string>();
+
+        //    if (video.PlaybackOptions == null)
+        //    {
+        //        video.PlaybackOptions = new Dictionary<string, string>();
+        //    }
+
+        //    Boolean live = (this.currentCategory.Name == "Živě");
+
+        //    System.Net.CookieContainer container = new System.Net.CookieContainer();
+        //    String baseWebData = GetWebData(video.VideoUrl, cookies: container, forceUTF8: true);
+
+        //    HtmlAgilityPack.HtmlDocument document = new HtmlAgilityPack.HtmlDocument();
+        //    using (StringReader reader = new StringReader(baseWebData))
+        //    {
+        //        document.Load(reader);
+        //    }
+            
+        //    int start = baseWebData.IndexOf(CeskaTelevizeUtil.showEpisodePostStart);
+        //    if (start >= 0)
+        //    {
+        //        int end = baseWebData.IndexOf(CeskaTelevizeUtil.showEpisodePostEnd, start + CeskaTelevizeUtil.showEpisodePostStart.Length);
+        //        if (end >= 0)
+        //        {
+        //            String postData = baseWebData.Substring(start + CeskaTelevizeUtil.showEpisodePostStart.Length, end - start - CeskaTelevizeUtil.showEpisodePostStart.Length);
+        //            Newtonsoft.Json.Linq.JContainer playlistData = (Newtonsoft.Json.Linq.JContainer)Newtonsoft.Json.JsonConvert.DeserializeObject(postData);
+                    
+        //            StringBuilder builder = new StringBuilder();
+        //            foreach (Newtonsoft.Json.Linq.JProperty child in playlistData.Children())
+        //            {
+        //                builder.AppendFormat("&playlist[0][{0}]={1}", child.Name, child.Value.ToString());
+        //            }
+        //            builder.AppendFormat("&requestUrl={0}&requestSource=iVysilani&addCommercials=1&type=flash", video.VideoUrl.Remove(0, CeskaTelevizeUtil.baseUrl.Length));
+                    
+        //            String serializedDataForPost = HttpUtility.UrlEncode(builder.ToString()).Replace("%3d", "=").Replace("%26", "&");
+        //            String playlistSerializedUrl = CeskaTelevizeUtil.GetWebDataFromPost("http://www.ceskatelevize.cz/ivysilani/ajax/get-client-playlist", serializedDataForPost, container, video.VideoUrl);
+        //            Newtonsoft.Json.Linq.JContainer playlistJson = (Newtonsoft.Json.Linq.JContainer)Newtonsoft.Json.JsonConvert.DeserializeObject(playlistSerializedUrl);
+
+        //            String videoDataUrl = String.Empty;
+        //            foreach (Newtonsoft.Json.Linq.JProperty child in playlistJson.Children())
+        //            {
+        //                if (child.Name == "url")
+        //                {
+        //                    videoDataUrl = child.Value.ToString().Replace("%26", "&");
+        //                }
+        //            }
+
+        //            CeskaTelevizeVideoCollection videos = new CeskaTelevizeVideoCollection();
+        //            int videoPart = 1;
+
+        //            String videoConfigurationSerialized = GetWebData(videoDataUrl);
+        //            Newtonsoft.Json.Linq.JContainer videoConfiguration = (Newtonsoft.Json.Linq.JContainer)Newtonsoft.Json.JsonConvert.DeserializeObject(videoConfigurationSerialized);
+
+        //            String qualityUrl = (String)((Newtonsoft.Json.Linq.JValue)((Newtonsoft.Json.Linq.JProperty)((Newtonsoft.Json.Linq.JArray)videoConfiguration["playlist"])[0]["streamUrls"].First).Value).Value;
+        //            String qualityData = GetWebData(qualityUrl);
+
+        //            XmlDocument videoData = new XmlDocument();
+        //            videoData.LoadXml(GetWebData(videoDataUrl));
+
+        //            XmlNodeList videoItems = videoData.SelectNodes("//PlaylistItem[@id]");
+        //            foreach (XmlNode videoItem in videoItems)
+        //            {
+        //                if (videoItem.Attributes["id"].Value.IndexOf("ad", StringComparison.CurrentCultureIgnoreCase) == (-1))
+        //                {
+        //                    // skip advertising
+        //                    XmlNode itemData = videoData.SelectSingleNode(String.Format("//switchItem[@id = \"{0}\"]", videoItem.Attributes["id"].Value));
+        //                    if (itemData != null)
+        //                    {
+        //                        // now select source with highest bitrate
+        //                        XmlNodeList sources = itemData.SelectNodes("./video");
+
+        //                        foreach (XmlNode source in sources)
+        //                        {
+        //                            if (String.Compare(source.Attributes["label"].Value, "AD", StringComparison.CurrentCultureIgnoreCase) != 0)
+        //                            {
+        //                                // skip advertising
+        //                                // create rtmp proxy for selected source
+        //                                String baseUrl = itemData.Attributes["base"].Value.Replace("/_definst_", "");
+        //                                String playPath = source.Attributes["src"].Value;
+
+        //                                String rtmpUrl = baseUrl + "/" + playPath;
+
+        //                                String host = new Uri(baseUrl).Host;
+        //                                String app = baseUrl.Substring(baseUrl.LastIndexOf('/') + 1);
+        //                                String tcUrl = baseUrl;
+
+        //                                int swfobjectIndex = baseWebData.IndexOf("swfobject.embedSWF(");
+        //                                if (swfobjectIndex >= 0)
+        //                                {
+        //                                    int firstQuote = baseWebData.IndexOf("\"", swfobjectIndex);
+        //                                    int secondQuote = baseWebData.IndexOf("\"", firstQuote + 1);
+
+        //                                    if ((firstQuote >= 0) && (secondQuote >= 0) && ((secondQuote - firstQuote) > 0))
+        //                                    {
+        //                                        String swfUrl = baseWebData.Substring(firstQuote + 1, secondQuote - firstQuote - 1);
+        //                                        String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(rtmpUrl) { TcUrl = tcUrl, App = app, PlayPath = playPath, SwfUrl = swfUrl, PageUrl = video.VideoUrl, LiveStream = live }.ToString();
+
+        //                                        videos.Add(new CeskaTelevizeVideo()
+        //                                        {
+        //                                            Part = videoPart,
+        //                                            Label = source.Attributes["label"].Value,
+        //                                            Url = resultUrl
+        //                                        });
+
+        //                                    }
+        //                                }
+        //                            }
+        //                        }
+        //                    }
+
+        //                    videoPart++;
+        //                }
+        //            }
+
+        //            // remember all videos with their quality
+        //            video.Other = videos;
+
+        //            videoPart = 0;
+        //            bool first = true;
+
+        //            foreach (var ctVideo in videos)
+        //            {
+        //                if (ctVideo.Part != videoPart)
+        //                {
+        //                    resultUrls.Add(ctVideo.Url);
+        //                    videoPart = ctVideo.Part;
+
+        //                    if (first)
+        //                    {
+        //                        video.PlaybackOptions.Clear();
+
+        //                        foreach (var vid in videos)
+        //                        {
+        //                            if (vid.Part == videoPart)
+        //                            {
+        //                                video.PlaybackOptions.Add(vid.Label, vid.Url);
+        //                            }
+        //                        }
+
+        //                        first = false;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    return resultUrls;
+        //}
+
+        //public override string GetPlaylistItemVideoUrl(VideoInfo clonedVideoInfo, string chosenPlaybackOption, bool inPlaylist = false)
+        //{
+        //    CeskaTelevizeVideoCollection videos = (CeskaTelevizeVideoCollection)clonedVideoInfo.Other;
+        //    CeskaTelevizeVideo keyVideo = videos[clonedVideoInfo.VideoUrl];
+
+        //    if (clonedVideoInfo.PlaybackOptions == null)
+        //    {
+        //        clonedVideoInfo.PlaybackOptions = new Dictionary<string, string>();
+        //    }
+        //    clonedVideoInfo.PlaybackOptions.Clear();
+
+        //    foreach (var ctVideo in videos)
+        //    {
+        //        if (ctVideo.Part == keyVideo.Part)
+        //        {
+        //            clonedVideoInfo.PlaybackOptions.Add(ctVideo.Label, ctVideo.Url);
+        //        }
+        //    }
+
+        //    if (clonedVideoInfo.PlaybackOptions.Count > 0)
+        //    {
+        //        var enumer = clonedVideoInfo.PlaybackOptions.GetEnumerator();
+        //        enumer.MoveNext();
+        //        return enumer.Current.Value;
+        //    }
+
+        //    return clonedVideoInfo.VideoUrl;
+        //}
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
