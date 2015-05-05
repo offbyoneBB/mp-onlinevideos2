@@ -1428,6 +1428,7 @@ namespace Standalone
 		private void Window_Closed(object sender, EventArgs e)
 		{
 			Settings.Instance.Save();
+            (OnlineVideoSettings.Instance.UserStore as UserSettings).SaveAll();
 		}
 
         double volumeToRestore = 0.0d;
