@@ -15,16 +15,6 @@
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
@@ -36,7 +26,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\Build\SiteUtilDlls\</OutputPath>
+    <OutputPath>bin\Debug</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -45,7 +35,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\Build\SiteUtilDlls\</OutputPath>
+    <OutputPath>bin\Release</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -53,350 +43,262 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="Microsoft.Threading.Tasks, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks.Extensions, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Threading.Tasks.Extensions.Desktop, Version=1.0.168.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.IO, Version=2.6.10.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Bcl.1.1.10\lib\net40\System.IO.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Net.Http, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Net.Http.2.2.29\lib\net40\System.Net.Http.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.Extensions, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Net.Http.2.2.29\lib\net40\System.Net.Http.Extensions.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Net.Http.2.2.29\lib\net40\System.Net.Http.Primitives.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Net.Http.2.2.29\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Runtime, Version=2.6.10.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Bcl.1.1.10\lib\net40\System.Runtime.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Threading.Tasks, Version=2.6.10.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Bcl.1.1.10\lib\net40\System.Threading.Tasks.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CNNUtil.cs" />
     <Compile Include="DailyMotionUtil.cs" />
     <Compile Include="DasErsteMediathekUtil.cs" />
     <Compile Include="FilmStartsUtil.cs" />
-    <Compile Include="Google\GData\Client\abstractentry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\abstractfeed.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\appcontrol.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\asyncDataHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\asyncservice.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\atombase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\atombaselink.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\atomcategory.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\atomcontent.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\atomfeed.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\atomfeedentry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\atomFeedgenerator.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\atomfeedparser.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\atomicon.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\atomId.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\atomlink.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\atomlogo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\atomnametable.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\atomperson.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\atomsource.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\atomtextconstruct.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\atomuri.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\authentication.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\authexceptions.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\authsubutil.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\basefeedparser.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\basenametable.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\batcherror.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\batcherrors.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\collections.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\documentquery.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\exceptions.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\extcollections.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\extensionbase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\feedconstants.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\feedmodel.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\feedquery.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\gauthrequest.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\gauthsubrequest.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\gdatabatch.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\goauth2request.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\goauthrequest.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\HttpUtility.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\logrequest.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\mediaservice.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\mediasource.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\oauthbase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\oauthparameters.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\oauthuri.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\oauthutil.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\request.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\resumableupload.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\rssfeedparser.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\service.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\serviceinterface.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\simplecontainer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\simpleelement.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\tracing.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\utilities.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\versioninterface.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Client\xmlextension.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Extensions\apps.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Extensions\comments.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Extensions\contacts.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Extensions\entrylink.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Extensions\enumconstruct.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Extensions\exif.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Extensions\extended.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Extensions\feedlink.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Extensions\gdatanametable.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Extensions\georsswhere.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Google\Apis\Auth\GoogleJsonWebSignature.cs" />
+    <Compile Include="Google\Apis\Auth\JsonWebSignature.cs" />
+    <Compile Include="Google\Apis\Auth\JsonWebToken.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\AuthorizationCodeInstalledApp.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\BearerToken.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\ClientSecrets.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\ComputeCredential.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\Flows\AuthorizationCodeFlow.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\Flows\GoogleAuthorizationCodeFlow.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\Flows\IAuthorizationCodeFlow.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\GoogleClientSecrets.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\GoogleConsts.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\GoogleWebAuthorizationBroker.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\IAccessMethod.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\IAuthorizationCodeInstalledApp.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\ICodeReceiver.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\LocalServerCodeReceiver.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\PromptCodeReceiver.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\Requests\AuthorizationCodeRequestUrl.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\Requests\AuthorizationCodeTokenRequest.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\Requests\AuthorizationRequestUrl.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\Requests\GoogleAssertionTokenRequest.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\Requests\GoogleAuthorizationCodeRequestUrl.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\Requests\GoogleRevokeTokenRequest.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\Requests\RefreshTokenRequest.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\Requests\TokenRequest.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\Requests\TokenRequestExtenstions.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\Responses\AuthorizationCodeResponseUrl.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\Responses\TokenErrorResponse.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\Responses\TokenResponse.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\Responses\TokenResponseException.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\ServiceAccountCredential.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\ServiceCredential.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\UserCredential.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\Web\AuthorizationCodeWebApp.cs" />
+    <Compile Include="Google\Apis\Auth\OAuth2\Web\AuthWebUtility.cs" />
+    <Compile Include="Google\Apis\Discovery\DiscoveryVersion.cs" />
+    <Compile Include="Google\Apis\Discovery\Features.cs" />
+    <Compile Include="Google\Apis\Discovery\IParameter.cs" />
+    <Compile Include="Google\Apis\Discovery\Parameter.cs" />
+    <Compile Include="Google\Apis\YouTube\Google.Apis.YouTube.v3.cs" />
+    <Compile Include="Google\Apis\Http\BackOffHandler.cs" />
+    <Compile Include="Google\Apis\Http\ConfigurableHttpClient.cs" />
+    <Compile Include="Google\Apis\Http\ConfigurableMessageHandler.cs" />
+    <Compile Include="Google\Apis\Http\ExponentialBackOffInitializer.cs" />
+    <Compile Include="Google\Apis\Http\HttpClientFactory.cs" />
+    <Compile Include="Google\Apis\Http\HttpConsts.cs" />
+    <Compile Include="Google\Apis\Http\HttpExtenstions.cs" />
+    <Compile Include="Google\Apis\Http\IConfigurableHttpClientInitializer.cs" />
+    <Compile Include="Google\Apis\Http\IHttpClientFactory.cs" />
+    <Compile Include="Google\Apis\Http\IHttpExceptionHandler.cs" />
+    <Compile Include="Google\Apis\Http\IHttpExecuteInterceptor.cs" />
+    <Compile Include="Google\Apis\Http\IHttpUnsuccessfulResponseHandler.cs" />
+    <Compile Include="Google\Apis\Http\MaxUrlLengthInterceptor.cs" />
+    <Compile Include="Google\Apis\ISerializer.cs" />
+    <Compile Include="Google\Apis\Json\IJsonSerializer.cs" />
+    <Compile Include="Google\Apis\Json\NewtonsoftJsonSerializer.cs" />
+    <Compile Include="Google\Apis\Logging\ILogger.cs" />
+    <Compile Include="Google\Apis\Logging\NullLogger.cs" />
+    <Compile Include="Google\Apis\Requests\BatchRequest.cs" />
+    <Compile Include="Google\Apis\Requests\ClientServiceRequest.cs" />
+    <Compile Include="Google\Apis\Requests\ETagAction.cs" />
+    <Compile Include="Google\Apis\Requests\HttpRequestMessageExtenstions.cs" />
+    <Compile Include="Google\Apis\Requests\IClientServiceRequest.cs" />
+    <Compile Include="Google\Apis\Requests\IDirectResponseSchema.cs" />
+    <Compile Include="Google\Apis\Requests\Parameters\ParameterCollection.cs" />
+    <Compile Include="Google\Apis\Requests\Parameters\ParameterUtils.cs" />
+    <Compile Include="Google\Apis\Requests\Parameters\ParameterValidator.cs" />
+    <Compile Include="Google\Apis\Requests\RequestBuilder.cs" />
+    <Compile Include="Google\Apis\Requests\RequestError.cs" />
+    <Compile Include="Google\Apis\Requests\SingleError.cs" />
+    <Compile Include="Google\Apis\Services\BaseClientService.cs" />
+    <Compile Include="Google\Apis\Services\IClientService.cs" />
+    <Compile Include="Google\Apis\Testing\VisibleForTestOnly.cs" />
+    <Compile Include="Google\Apis\Util\ExponentialBackOff.cs" />
+    <Compile Include="Google\Apis\Util\IBackOff.cs" />
+    <Compile Include="Google\Apis\Util\IClock.cs" />
+    <Compile Include="Google\Apis\Util\Repeatable.cs" />
+    <Compile Include="Google\Apis\Util\RequestParameterAttribute.cs" />
+    <Compile Include="Google\Apis\Util\StandardResponse.cs" />
+    <Compile Include="Google\Apis\Util\Store\FileDataStore.cs" />
+    <Compile Include="Google\Apis\Util\Store\IDataStore.cs" />
+    <Compile Include="Google\Apis\Util\StringValueAttribute.cs" />
+    <Compile Include="Google\Apis\Util\Utilities.cs" />
+    <Compile Include="Google\Apis\[Media]\Download\IDownloadProgress.cs" />
+    <Compile Include="Google\Apis\[Media]\Download\IMediaDownloader.cs" />
+    <Compile Include="Google\Apis\[Media]\Download\MediaDownloader.cs" />
+    <Compile Include="Google\Apis\[Media]\Upload\IUploadProgress.cs" />
+    <Compile Include="Google\Apis\[Media]\Upload\ResumableUpload.cs" />
+    <Compile Include="Google\ApplicationContext.cs" />
+    <Compile Include="Google\GData\Client\abstractentry.cs" />
+    <Compile Include="Google\GData\Client\abstractfeed.cs" />
+    <Compile Include="Google\GData\Client\appcontrol.cs" />
+    <Compile Include="Google\GData\Client\asyncDataHandler.cs" />
+    <Compile Include="Google\GData\Client\asyncservice.cs" />
+    <Compile Include="Google\GData\Client\atombase.cs" />
+    <Compile Include="Google\GData\Client\atombaselink.cs" />
+    <Compile Include="Google\GData\Client\atomcategory.cs" />
+    <Compile Include="Google\GData\Client\atomcontent.cs" />
+    <Compile Include="Google\GData\Client\atomfeed.cs" />
+    <Compile Include="Google\GData\Client\atomfeedentry.cs" />
+    <Compile Include="Google\GData\Client\atomFeedgenerator.cs" />
+    <Compile Include="Google\GData\Client\atomfeedparser.cs" />
+    <Compile Include="Google\GData\Client\atomicon.cs" />
+    <Compile Include="Google\GData\Client\atomId.cs" />
+    <Compile Include="Google\GData\Client\atomlink.cs" />
+    <Compile Include="Google\GData\Client\atomlogo.cs" />
+    <Compile Include="Google\GData\Client\atomnametable.cs" />
+    <Compile Include="Google\GData\Client\atomperson.cs" />
+    <Compile Include="Google\GData\Client\atomsource.cs" />
+    <Compile Include="Google\GData\Client\atomtextconstruct.cs" />
+    <Compile Include="Google\GData\Client\atomuri.cs" />
+    <Compile Include="Google\GData\Client\authentication.cs" />
+    <Compile Include="Google\GData\Client\authexceptions.cs" />
+    <Compile Include="Google\GData\Client\authsubutil.cs" />
+    <Compile Include="Google\GData\Client\basefeedparser.cs" />
+    <Compile Include="Google\GData\Client\basenametable.cs" />
+    <Compile Include="Google\GData\Client\batcherror.cs" />
+    <Compile Include="Google\GData\Client\batcherrors.cs" />
+    <Compile Include="Google\GData\Client\collections.cs" />
+    <Compile Include="Google\GData\Client\documentquery.cs" />
+    <Compile Include="Google\GData\Client\exceptions.cs" />
+    <Compile Include="Google\GData\Client\extcollections.cs" />
+    <Compile Include="Google\GData\Client\extensionbase.cs" />
+    <Compile Include="Google\GData\Client\feedconstants.cs" />
+    <Compile Include="Google\GData\Client\feedmodel.cs" />
+    <Compile Include="Google\GData\Client\feedquery.cs" />
+    <Compile Include="Google\GData\Client\gauthrequest.cs" />
+    <Compile Include="Google\GData\Client\gauthsubrequest.cs" />
+    <Compile Include="Google\GData\Client\gdatabatch.cs" />
+    <Compile Include="Google\GData\Client\goauth2request.cs" />
+    <Compile Include="Google\GData\Client\goauthrequest.cs" />
+    <Compile Include="Google\GData\Client\HttpUtility.cs" />
+    <Compile Include="Google\GData\Client\logrequest.cs" />
+    <Compile Include="Google\GData\Client\mediaservice.cs" />
+    <Compile Include="Google\GData\Client\mediasource.cs" />
+    <Compile Include="Google\GData\Client\oauthbase.cs" />
+    <Compile Include="Google\GData\Client\oauthparameters.cs" />
+    <Compile Include="Google\GData\Client\oauthuri.cs" />
+    <Compile Include="Google\GData\Client\oauthutil.cs" />
+    <Compile Include="Google\GData\Client\request.cs" />
+    <Compile Include="Google\GData\Client\resumableupload.cs" />
+    <Compile Include="Google\GData\Client\rssfeedparser.cs" />
+    <Compile Include="Google\GData\Client\service.cs" />
+    <Compile Include="Google\GData\Client\serviceinterface.cs" />
+    <Compile Include="Google\GData\Client\simplecontainer.cs" />
+    <Compile Include="Google\GData\Client\simpleelement.cs" />
+    <Compile Include="Google\GData\Client\tracing.cs" />
+    <Compile Include="Google\GData\Client\utilities.cs" />
+    <Compile Include="Google\GData\Client\versioninterface.cs" />
+    <Compile Include="Google\GData\Client\xmlextension.cs" />
+    <Compile Include="Google\GData\Extensions\apps.cs" />
+    <Compile Include="Google\GData\Extensions\comments.cs" />
+    <Compile Include="Google\GData\Extensions\contacts.cs" />
+    <Compile Include="Google\GData\Extensions\entrylink.cs" />
+    <Compile Include="Google\GData\Extensions\enumconstruct.cs" />
+    <Compile Include="Google\GData\Extensions\exif.cs" />
+    <Compile Include="Google\GData\Extensions\extended.cs" />
+    <Compile Include="Google\GData\Extensions\feedlink.cs" />
+    <Compile Include="Google\GData\Extensions\gdatanametable.cs" />
+    <Compile Include="Google\GData\Extensions\georsswhere.cs" />
     <Compile Include="Google\GData\Extensions\labelcollection.cs" />
     <Compile Include="Google\GData\Extensions\mailitempropertycollection.cs" />
-    <Compile Include="Google\GData\Extensions\mediarss.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Extensions\misc.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Extensions\originalevent.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Extensions\ratings.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Extensions\recurexception.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Extensions\recurrence.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Extensions\reminder.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Extensions\when.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Extensions\where.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\Extensions\who.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\activitiesfeed.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\activityentry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\commententry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\commentsfeed.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\complaintentry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\friendsentry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\friendsfeed.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\messageentry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\messagefeed.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\playlistentry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\playlistfeed.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\playlistsentry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\playlistsfeed.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\profileentry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\profilefeed.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\showentry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\showfeed.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\showseasonentry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\showseasonfeed.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\subscriptionentry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\subscriptionfeed.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\youtubebaseentry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\youtubeentry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\youtubeextensions.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\youtubefeed.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\youtubequery.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\youtuberequest.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Google\GData\YouTube\youtubeservice.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Google\GData\Extensions\mediarss.cs" />
+    <Compile Include="Google\GData\Extensions\misc.cs" />
+    <Compile Include="Google\GData\Extensions\originalevent.cs" />
+    <Compile Include="Google\GData\Extensions\ratings.cs" />
+    <Compile Include="Google\GData\Extensions\recurexception.cs" />
+    <Compile Include="Google\GData\Extensions\recurrence.cs" />
+    <Compile Include="Google\GData\Extensions\reminder.cs" />
+    <Compile Include="Google\GData\Extensions\when.cs" />
+    <Compile Include="Google\GData\Extensions\where.cs" />
+    <Compile Include="Google\GData\Extensions\who.cs" />
+    <Compile Include="Google\GData\YouTube\activitiesfeed.cs" />
+    <Compile Include="Google\GData\YouTube\activityentry.cs" />
+    <Compile Include="Google\GData\YouTube\commententry.cs" />
+    <Compile Include="Google\GData\YouTube\commentsfeed.cs" />
+    <Compile Include="Google\GData\YouTube\complaintentry.cs" />
+    <Compile Include="Google\GData\YouTube\friendsentry.cs" />
+    <Compile Include="Google\GData\YouTube\friendsfeed.cs" />
+    <Compile Include="Google\GData\YouTube\messageentry.cs" />
+    <Compile Include="Google\GData\YouTube\messagefeed.cs" />
+    <Compile Include="Google\GData\YouTube\playlistentry.cs" />
+    <Compile Include="Google\GData\YouTube\playlistfeed.cs" />
+    <Compile Include="Google\GData\YouTube\playlistsentry.cs" />
+    <Compile Include="Google\GData\YouTube\playlistsfeed.cs" />
+    <Compile Include="Google\GData\YouTube\profileentry.cs" />
+    <Compile Include="Google\GData\YouTube\profilefeed.cs" />
+    <Compile Include="Google\GData\YouTube\showentry.cs" />
+    <Compile Include="Google\GData\YouTube\showfeed.cs" />
+    <Compile Include="Google\GData\YouTube\showseasonentry.cs" />
+    <Compile Include="Google\GData\YouTube\showseasonfeed.cs" />
+    <Compile Include="Google\GData\YouTube\subscriptionentry.cs" />
+    <Compile Include="Google\GData\YouTube\subscriptionfeed.cs" />
+    <Compile Include="Google\GData\YouTube\youtubebaseentry.cs" />
+    <Compile Include="Google\GData\YouTube\youtubeentry.cs" />
+    <Compile Include="Google\GData\YouTube\youtubeextensions.cs" />
+    <Compile Include="Google\GData\YouTube\youtubefeed.cs" />
+    <Compile Include="Google\GData\YouTube\youtubequery.cs" />
+    <Compile Include="Google\GData\YouTube\youtuberequest.cs" />
+    <Compile Include="Google\GData\YouTube\youtubeservice.cs" />
+    <Compile Include="Google\GoogleApiException.cs" />
     <Compile Include="HeiseVideoUtil.cs" />
     <Compile Include="Hoster\Youtube.cs" />
     <Compile Include="Hoster\LiveVideo.cs" />
@@ -448,6 +350,7 @@
     <Compile Include="VidiLifeUtil.cs" />
     <Compile Include="WDRUtil.cs" />
     <Compile Include="YouTubeUtil.cs" />
+    <Compile Include="YouTubeV3Util.cs" />
     <Compile Include="ZDFMediathekUtil.cs" />
     <Compile Include="ZDF\ConfigurationHelper.cs" />
     <Compile Include="ZDF\DTO\channellist.cs" />
@@ -523,34 +426,30 @@
     <EmbeddedResource Include="NrkBrowser\no.xml" />
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Properties\VersionInfo.cs.tmpl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>subwcrev "$(SolutionDir)." "$(ProjectDir)Properties\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"</PreBuildEvent>
   </PropertyGroup>
+  <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
+    <Error Condition="!Exists('..\..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
+    <Error Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
+  </Target>
+  <UsingTask TaskName="ILMerge.MSBuild.Tasks.ILMerge" AssemblyFile="..\..\packages\ILMerge.MSBuild.Tasks.1.0.0.3\tools\ILMerge.MSBuild.Tasks.dll" />
+  <ItemGroup>
+    <MergeAsm Include="$(TargetPath)" />
+    <MergeAsm Include="$(SolutionDir)\packages\Microsoft.Net.Http.2.2.29\lib\net40\System.Net.Http.dll" />
+    <MergeAsm Include="$(SolutionDir)\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll" />
+    <MergeAsm Include="$(SolutionDir)\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll" />
+  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
+       Other similar extension points exist, see Microsoft.Common.targets.-->
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
+    <ILMerge InputAssemblies="@(MergeAsm)" DebugInfo="true" LibraryPath="$(SolutionDir)\OnlineVideos\bin\$(Configuration)\" OutputFile="$(SolutionDir)\Build\SiteUtilDlls\$(TargetFileName)" />
   </Target>
-  -->
 </Project>

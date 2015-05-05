@@ -1,21 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <OnlineVideoSites xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Sites>
-    <Site name="YouTube" util="YouTube" agecheck="false" enabled="true" lang="en">
+    <Site name="YouTube" util="YouTubeV3" agecheck="false" enabled="true" lang="en">
       <Description>Largest video sharing site on the web. Available in any country.</Description>
-      <Categories>
-        <Category xsi:type="RssLink" name="Top Rated">http://gdata.youtube.com/feeds/api/standardfeeds/top_rated</Category>
-        <Category xsi:type="RssLink" name="Recently Added">http://gdata.youtube.com/feeds/api/videos?orderby=published</Category>
-        <Category xsi:type="RssLink" name="Recently Featured">http://gdata.youtube.com/feeds/api/standardfeeds/recently_featured</Category>
-        <Category xsi:type="RssLink" name="Top Favorites">http://gdata.youtube.com/feeds/api/standardfeeds/top_favorites</Category>
-        <Category xsi:type="RssLink" name="Top Viewed">http://gdata.youtube.com/feeds/api/standardfeeds/most_viewed</Category>
-        <Category xsi:type="RssLink" name="Top Viewed:Today">http://gdata.youtube.com/feeds/api/standardfeeds/most_viewed?time=today</Category>
-        <Category xsi:type="RssLink" name="Top Viewed:This Week">http://gdata.youtube.com/feeds/api/standardfeeds/most_viewed?time=this_week</Category>
-        <Category xsi:type="RssLink" name="Top Viewed:This Month">http://gdata.youtube.com/feeds/api/standardfeeds/most_viewed?time=this_month</Category>
-        <Category xsi:type="RssLink" name="HD Content">http://gdata.youtube.com/feeds/api/videos/-/HD</Category>
-        <Category xsi:type="RssLink" name="Free Movies: Most Popular">http://gdata.youtube.com/feeds/api/charts/movies/most_popular?paid-content=false</Category>
-        <Category xsi:type="RssLink" name="Free Movies: Most Recent">http://gdata.youtube.com/feeds/api/charts/movies/most_recent?paid-content=false</Category>
-      </Categories>
     </Site>
     <Site name="Das Erste" util="DasErsteMediathek" agecheck="false" enabled="true" lang="de">
       <Description>Die ARD Mediathek ist ein Gemeinschaftsangebot der Arbeitsgemeinschaft der Rundfunkanstalten der Bundesrepublik Deutschland (ARD) und der Deutschen Welle.</Description>
