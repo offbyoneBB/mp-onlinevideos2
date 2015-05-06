@@ -51,7 +51,7 @@ namespace OnlineVideos.Sites
             if (url.StartsWith(@"http://www.rtve.es/infantil", StringComparison.InvariantCultureIgnoreCase))
             {
                 string webData = GetWebData(url);
-                Match m = Regex.Match(webData, @"data-attribute=""(?<url>[^""]*)""\stitle=""Episodios""");
+                Match m = Regex.Match(webData, @"data-attribute=""(?<url>[^""]*)""\stitle=""Todos""");
                 if (m.Success)
                     url = FormatDecodeAbsolutifyUrl(url, m.Groups["url"].Value, null, UrlDecoding.None) + @"&de=S&ll=N&stt=S&fakeImg=S";
             }
