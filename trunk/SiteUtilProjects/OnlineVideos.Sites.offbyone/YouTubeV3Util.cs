@@ -97,7 +97,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Videos per Page"), Description("Defines the default number of videos to display per page.")]
         int pageSize = 26;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable Login"), Description("Will popup a browser on first use to select your YouTube account.")]
-        bool enableLogin = true;
+        bool enableLogin = false;
         
         string hl = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
         string regionCode = RegionInfo.CurrentRegion.TwoLetterISORegionName;
