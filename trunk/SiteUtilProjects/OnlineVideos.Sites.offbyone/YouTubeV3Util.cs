@@ -275,6 +275,7 @@ namespace OnlineVideos.Sites
 
         public List<VideoInfo> FilterSearchResults(string query, string category, int maxResults, string orderBy, string timeFrame)
         {
+            Enum.TryParse<SearchResource.ListRequest.OrderEnum>(orderBy, out currentSearchOrder);
             return QuerySearchVideos(query, null, category, null);
         }
 
@@ -656,6 +657,17 @@ namespace OnlineVideos.Sites
             query.PageToken = pageToken;
             var response = query.Execute();
             var results = new List<Category>();
+
+            // before all channels add a category that will list all uploads
+            results.Add(new YouTubeCategory()
+            {
+                Name = "Latest Videos",
+                Thumb = parentCategory.Thumb,
+                ParentCategory = parentCategory,
+                Kind = YouTubeCategory.CategoryKind.Other,
+                Other = (Func<List<VideoInfo>>)(() => QueryNewestSubscriptionVideos())
+            });
+
             foreach (var item in response.Items)
             {
                 var category = new YouTubeCategory()
@@ -676,6 +688,32 @@ namespace OnlineVideos.Sites
             if (!string.IsNullOrEmpty(response.NextPageToken))
             {
                 results.Add(new NextPageCategory() { ParentCategory = parentCategory, Other = (Func<List<Category>>)(() => QueryMySubscriptions(parentCategory, response.NextPageToken)) });
+            }
+            return results;
+        }
+
+        List<VideoInfo> QueryNewestSubscriptionVideos(string pageToken = null)
+        {
+            var query = Service.Activities.List("snippet, contentDetails");
+            query.Home = true;
+            query.RegionCode = regionCode;
+            query.MaxResults = pageSize;
+            query.PageToken = pageToken;
+            var response = query.Execute();
+            var results = response.Items.Where(i => i.Snippet.Type == "upload").Select(i => new YouTubeVideo()
+            {
+                Title = i.Snippet.Title,
+                Description = i.Snippet.Description,
+                Thumb = i.Snippet.Thumbnails != null ? i.Snippet.Thumbnails.High.Url : null,
+                Airdate = i.Snippet.PublishedAt != null ? i.Snippet.PublishedAt.Value.ToString("g", OnlineVideoSettings.Instance.Locale) : i.Snippet.PublishedAtRaw,
+                VideoUrl = i.ContentDetails.Upload.VideoId,
+                ChannelId = i.Snippet.ChannelId,
+                ChannelTitle = i.Snippet.ChannelTitle
+            }).ToList<VideoInfo>();
+            if (!string.IsNullOrEmpty(response.NextPageToken))
+            {
+                base.HasNextPage = true;
+                nextPageVideosQuery = () => QueryNewestSubscriptionVideos(response.NextPageToken);
             }
             return results;
         }
