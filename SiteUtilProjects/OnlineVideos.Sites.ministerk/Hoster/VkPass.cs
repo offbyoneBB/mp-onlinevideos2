@@ -27,7 +27,7 @@ namespace OnlineVideos.Hoster
 
             Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
             string data = GetWebData(url, referer: refUrl);
-            Regex rgx = new Regex(@"{file:""(?<url>[^""]*).*?label:""(?<label>[^""]*).*?type:\s*?""mp4""}");
+            Regex rgx = new Regex(@"{file:""(?<url>[^""]*).*?label:""(?<label>[^""]*).*?type:\s*?""mp4""");
             foreach(Match m in rgx.Matches(data))
             {
                 playbackOptions.Add(m.Groups["label"].Value, m.Groups["url"].Value);
