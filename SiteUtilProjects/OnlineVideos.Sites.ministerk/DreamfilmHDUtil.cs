@@ -206,11 +206,20 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                Regex rgx = new Regex(@"src='(?<url>[^']*)");
+                Regex rgx = new Regex(@"src=""(?<url>[^""]*)");
                 Match match = rgx.Match(encodedIframe);
                 if (match.Success)
                 {
                     url = match.Groups["url"].Value;
+                }
+                else
+                {
+                    rgx = new Regex(@"src='(?<url>[^']*)");
+                    match = rgx.Match(encodedIframe);
+                    if (match.Success)
+                    {
+                        url = match.Groups["url"].Value;
+                    }
                 }
             }
             return url;

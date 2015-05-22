@@ -18,7 +18,7 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
-            if (url.ToLower().Contains("/cdn.php"))
+            if (url.ToLower().Contains("/cdn.php") || url.ToLower().Contains("/view.php"))
             {
                 string refUrl = RefererUrl;
                 //Clear referer
