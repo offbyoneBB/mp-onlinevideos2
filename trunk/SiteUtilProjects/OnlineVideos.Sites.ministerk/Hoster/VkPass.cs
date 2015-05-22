@@ -8,9 +8,10 @@ using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Hoster
 {
-    public class VkPass : HosterBase, ISubtitle
+    public class VkPass : HosterBase, ISubtitle, IReferer
     {
         private string subtitleText = null;
+        private string refererUrl = null;
 
         public override string GetHosterUrl()
         {
@@ -20,8 +21,12 @@ namespace OnlineVideos.Hoster
         public override Dictionary<string, string> GetPlaybackOptions(string url)
         {
             subtitleText = null;
+            string refUrl = RefererUrl;
+            //Clear referer
+            RefererUrl = null;
+
             Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
-            string data = GetWebData(url);
+            string data = GetWebData(url, referer: refUrl);
             Regex rgx = new Regex(@"{file:""(?<url>[^""]*).*?label:""(?<label>[^""]*).*?type:\s*?""mp4""}");
             foreach(Match m in rgx.Matches(data))
             {
@@ -72,6 +77,18 @@ namespace OnlineVideos.Hoster
         public string SubtitleText
         {
             get { return subtitleText; }
+        }
+
+        public string RefererUrl
+        {
+            get
+            {
+                return refererUrl;
+            }
+            set
+            {
+                refererUrl = value;
+            }
         }
     }
 }

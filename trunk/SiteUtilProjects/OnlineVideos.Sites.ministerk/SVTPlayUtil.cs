@@ -115,7 +115,7 @@ namespace OnlineVideos.Sites
                     foreach (HtmlNode program in programs)
                     {
                         HtmlNode a = program.SelectSingleNode("a");
-                        Uri uri = new Uri(new Uri(baseUrl), a.GetAttributeValue("href", ""));
+                        Uri uri = new Uri(new Uri("http://www.oppetarkiv.se"), a.GetAttributeValue("href", ""));
                         RssLink programCat = new RssLink() { Name = HttpUtility.HtmlDecode(a.InnerText), Url = uri.ToString(), HasSubCategories = false, ParentCategory = SplitByLetter ? alphaCat : parentCategory };
                         if (SplitByLetter)
                             alphaCat.SubCategories.Add(programCat);
@@ -159,7 +159,7 @@ namespace OnlineVideos.Sites
                     List<VideoInfo> videos = new List<VideoInfo>();
                     foreach (HtmlNode article in section.Descendants("article"))
                     {
-                        videos.Add(getVideoFromArticle(article));
+                        videos.Add(GetVideoFromArticle(article));
                     }
                     cat.Other = videos;
                     cat.EstimatedVideoCount = (uint)videos.Count;
@@ -242,7 +242,7 @@ namespace OnlineVideos.Sites
                         List<VideoInfo> videos = new List<VideoInfo>();
                         foreach (HtmlNode article in div.Descendants("article"))
                         {
-                            videos.Add(getVideoFromArticle(article));
+                            videos.Add(GetVideoFromArticle(article));
                         }
                         category.Other = videos;
                         category.EstimatedVideoCount = (uint)videos.Count;
@@ -259,7 +259,7 @@ namespace OnlineVideos.Sites
 
         #region video
 
-        private VideoInfo getVideoFromArticle(HtmlNode article)
+        private VideoInfo GetVideoFromArticle(HtmlNode article)
         {
             VideoInfo video = new VideoInfo();
             string title = article.GetAttributeValue("data-title", "");
@@ -272,7 +272,7 @@ namespace OnlineVideos.Sites
                     video.Title = a.InnerText;
                     video.VideoUrl = a.GetAttributeValue("href", "");
                     HtmlNode p = article.SelectSingleNode(".//p[contains(@class,'description-text')]");
-                    video.Description = ""; 
+                    video.Description = "";
                     if (p != null)
                         video.Description = HttpUtility.HtmlDecode(p.InnerText);
                     p = article.SelectSingleNode(".//p[contains(@class,'expire-date')]");
@@ -313,34 +313,31 @@ namespace OnlineVideos.Sites
                 HtmlNode a = article.SelectSingleNode("a");
                 Uri uri = new Uri(new Uri(baseUrl), a.GetAttributeValue("href", ""));
                 video.VideoUrl = uri.ToString();
-                HtmlNode img = a.Descendants("img").FirstOrDefault(i => !string.IsNullOrEmpty(i.GetAttributeValue("data-imagename", "")));
-                if (img == null)
-                {
-                    img = a.Descendants("img").FirstOrDefault(i => !string.IsNullOrEmpty(i.GetAttributeValue("src", "")));
-                    if (img != null)
-                        video.Thumb = img.GetAttributeValue("src", "");
-                }
-                else
-                {
-                    video.Thumb = img.GetAttributeValue("data-imagename", "");
-                }
+                HtmlNode img = article.SelectSingleNode(".//img");
+                if (img != null)
+                    video.Thumb = img.GetAttributeValue("src", "");
             }
             video.CleanDescriptionAndTitle();
+            if (video.Thumb != null && video.Thumb.StartsWith("")) video.Thumb = "http:" + video.Thumb;
             return video;
         }
 
-        private List<VideoInfo> getOppetArkivVideoList(HtmlAgilityPack.HtmlNode node)
+        private List<VideoInfo> GetOppetArkivVideoList(HtmlAgilityPack.HtmlNode node)
         {
             List<VideoInfo> videoList = new List<VideoInfo>();
-            var div = node.SelectSingleNode("//div[contains(@class,'svtGridBlock')]");
-            foreach (var article in div.Elements("article"))
+            foreach (var article in node.Descendants("article"))
             {
                 VideoInfo video = new VideoInfo();
                 video.VideoUrl = article.Descendants("a").Select(a => a.GetAttributeValue("href", "")).FirstOrDefault();
+                Uri result;
+                if (!Uri.TryCreate(video.VideoUrl, UriKind.Absolute, out result))
+                    Uri.TryCreate(new Uri("http://www.oppetarkiv.se/"), video.VideoUrl, out result);
+                video.VideoUrl = result.ToString();
                 if (!string.IsNullOrEmpty(video.VideoUrl))
                 {
                     video.Title = HttpUtility.HtmlDecode((article.Descendants("a").Select(a => a.GetAttributeValue("title", "")).FirstOrDefault() ?? "").Trim().Replace('\n', ' '));
-                    video.Thumb = article.Descendants("img").Select(i => i.GetAttributeValue("src", "")).FirstOrDefault();
+                    video.Thumb = (article.SelectSingleNode(".//noscript/img") != null) ? article.SelectSingleNode(".//noscript/img").GetAttributeValue("src", "") : "";
+                    if (video.Thumb.StartsWith("//")) video.Thumb = "http:" + video.Thumb;
                     video.Airdate = article.Descendants("time").Select(t => t.GetAttributeValue("datetime", "")).FirstOrDefault();
                     if (!string.IsNullOrEmpty(video.Airdate)) video.Airdate = DateTime.Parse(video.Airdate).ToString("d", OnlineVideoSettings.Instance.Locale);
                     videoList.Add(video);
@@ -349,7 +346,7 @@ namespace OnlineVideos.Sites
             return videoList;
         }
 
-        private void getNextPageVideosUrl(HtmlAgilityPack.HtmlNode node)
+        private void GetNextPageVideosUrl(HtmlAgilityPack.HtmlNode node)
         {
             HasNextPage = false;
             nextPageUrl = "";
@@ -373,8 +370,8 @@ namespace OnlineVideos.Sites
             if (!string.IsNullOrEmpty(nextPageUrl))
             {
                 HtmlNode htmlNode = GetWebData<HtmlDocument>(nextPageUrl).DocumentNode;
-                getNextPageVideosUrl(htmlNode);
-                return getOppetArkivVideoList(htmlNode);
+                GetNextPageVideosUrl(htmlNode);
+                return GetOppetArkivVideoList(htmlNode);
             }
             return new List<VideoInfo>();
         }
@@ -404,18 +401,21 @@ namespace OnlineVideos.Sites
             else
             {
                 var htmlNode = GetWebData<HtmlDocument>((category as RssLink).Url).DocumentNode;
-                getNextPageVideosUrl(htmlNode);
-                return getOppetArkivVideoList(htmlNode);
+                GetNextPageVideosUrl(htmlNode);
+                return GetOppetArkivVideoList(htmlNode);
             }
         }
 
         public override string GetVideoUrl(VideoInfo video)
         {
             string url = "";
-            Uri result;
-            if (!Uri.TryCreate(video.VideoUrl, UriKind.Absolute, out result))
-                Uri.TryCreate(new Uri(baseUrl), video.VideoUrl, out result);
-            video.VideoUrl = result.ToString();
+            if (!video.VideoUrl.StartsWith("http"))
+            {
+                Uri result;
+                if (!Uri.TryCreate(video.VideoUrl, UriKind.Absolute, out result))
+                    Uri.TryCreate(new Uri(baseUrl), video.VideoUrl, out result);
+                video.VideoUrl = result.ToString();
+            }
             JToken videoToken = GetWebData<JObject>(video.VideoUrl + "?output=json")["video"];
             if (RetrieveSubtitles)
             {
@@ -504,7 +504,7 @@ namespace OnlineVideos.Sites
                     List<VideoInfo> videos = new List<VideoInfo>();
                     foreach (HtmlNode article in section.Descendants("article"))
                     {
-                        videos.Add(getVideoFromArticle(article));
+                        videos.Add(GetVideoFromArticle(article));
                     }
                     cat.Other = videos;
                     cat.EstimatedVideoCount = (uint)videos.Count;
@@ -554,7 +554,7 @@ namespace OnlineVideos.Sites
             {
                 foreach (HtmlNode article in div.Descendants("article"))
                 {
-                    videos.Add(getVideoFromArticle(article));
+                    videos.Add(GetVideoFromArticle(article));
                 }
             }
             return videos.Count >= LatestVideosCount ? videos.GetRange(0, (int)LatestVideosCount) : new List<VideoInfo>();
