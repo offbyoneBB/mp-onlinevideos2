@@ -27,10 +27,21 @@ namespace OnlineVideos.Hoster
 
             Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
             string data = GetWebData(url, referer: refUrl);
-            Regex rgx = new Regex(@"{file:""(?<url>[^""]*).*?label:""(?<label>[^""]*).*?type:\s*?""mp4""");
-            foreach(Match m in rgx.Matches(data))
+            Regex rgx = new Regex(@"video_link:\s*'.*?oid=(?<oid>\d+).*?[^o]id=(?<id>\d+).*?hash=(?<hash>[0-9a-f]*)");
+            Match m = rgx.Match(data);
+            if (m.Success)
             {
-                playbackOptions.Add(m.Groups["label"].Value, m.Groups["url"].Value);
+                string format = @"https://api.vk.com/method/video.getEmbed?oid={0}&video_id={1}&embed_hash={2}&callback=callbackFunc";
+                string vkUrl = string.Format(format, m.Groups["oid"].Value, m.Groups["id"].Value, m.Groups["hash"].Value);
+                return HosterFactory.GetHoster("vk").GetPlaybackOptions(vkUrl);
+            }
+            else
+            {
+                rgx = new Regex(@"{file:""(?<url>[^""]*).*?label:""(?<label>[^""]*).*?type:\s*?""mp4""");
+                foreach (Match match in rgx.Matches(data))
+                {
+                    playbackOptions.Add(match.Groups["label"].Value, match.Groups["url"].Value);
+                }
             }
             string subUrl = "";
             rgx = new Regex(@"file:\s*?'(?<url>[^']*).*?kind:\s*?'captions'.*?label:\s*?'(?<label>[^']*)");
