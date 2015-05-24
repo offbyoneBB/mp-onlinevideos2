@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace OnlineVideos.Sites
 {
@@ -74,6 +75,7 @@ namespace OnlineVideos.Sites
         private const string cUrlEpisodesFormat = @"{0}api/programs/v1/items.json?series={1}&type={2}&availability=ondemand&order=ondemand.publication.starttime%253Adesc&app_id={3}&app_key={4}&limit={5}&offset={6}";
         private const string cUrlProgramFormat = @"{0}api/programs/v1/id/{1}.json?app_id={2}&app_key={3}";
         private const string cUrlAllProgramsFormat = @"{0}tv/a-o";
+        private const string cUrlSearchFormat = @"{0}api/v1/search?language={1}&service=tv&query={2}";
         private const string cUrlLiveServiceFormat = @"http://player.yle.fi/api/v1/services.jsonp?id={0}&region={1}";
         private const string cUrlHdsFormat = @"http://player.yle.fi/api/v1/media.jsonp?protocol=HDS&client=areena-flash-player&id={0}";
         private const string cUrlArchive = @"http://areena.yle.fi/elava-arkisto/a-o";
@@ -810,6 +812,42 @@ namespace OnlineVideos.Sites
  
         #endregion
 
+        #region Search
+
+        public override bool CanSearch
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override List<SearchResultItem> Search(string query, string category = null)
+        {
+            List<SearchResultItem> results = new List<SearchResultItem>();
+            JObject json = GetWebData<JObject>(string.Format(cUrlSearchFormat, BaseUrl, ApiLanguage,HttpUtility.UrlEncode(query)));
+            JArray data = json["data"].Value<JArray>();
+            foreach (JToken t in data)
+            {
+                RssLink program = new RssLink();
+                program.Url = t["id"].Value<string>();
+                program.Name = t["title"][ApiLanguage] == null ? t["title"][ApiOtherLanguage].Value<string>() : t["title"][ApiLanguage].Value<string>();
+                program.Description = (t["description"] == null || !t["description"].HasValues) ? string.Empty : ( t["description"][ApiLanguage] == null ? t["description"][ApiOtherLanguage].Value<string>() : t["description"][ApiLanguage].Value<string>());
+                JToken imageJson = t["image"];
+                string image = string.Empty;
+                if (imageJson != null && imageJson.Count() > 0 && imageJson["available"] != null && imageJson["available"].Value<bool>())
+                {
+                    program.Thumb = (imageJson["id"] != null) ? string.Format(cUrlImageFormat, imageJson["id"].Value<string>()) : image;
+                }
+                program.HasSubCategories = true;
+                program.Other = (Func<List<Category>>)(() => GetProgramSubCategories(program));
+                results.Add(program);
+            }
+            
+            return results;
+        }
+
+        #endregion
         #endregion
     }
 }
