@@ -830,31 +830,6 @@ namespace OnlineVideos.Hoster
 
     }
 
-    public class Videomega : HosterBase
-    {
-        public override string GetHosterUrl()
-        {
-            return "videomega.tv";
-        }
-
-        public override string GetVideoUrl(string url)
-        {
-            int p = url.IndexOf('?');
-            string url2 = url.Insert(p, "iframe.php");
-            string webData = WebCache.Instance.GetWebData(url2);
-            Match m = Regex.Match(webData, @"document\.write\(unescape\(""(?<data>[^""]*)""\)\);");
-            if (m.Success)
-            {
-                string data = HttpUtility.UrlDecode(m.Groups["data"].Value);
-                m = Regex.Match(data, @"file:\s""(?<url>[^""]*)"",");
-                if (m.Success)
-                    return m.Groups["url"].Value;
-            }
-            return String.Empty;
-        }
-    }
-
-
     public class VidTo : HosterBase
     {
         public override string GetHosterUrl()
