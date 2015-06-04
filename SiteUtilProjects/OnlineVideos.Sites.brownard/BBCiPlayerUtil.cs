@@ -12,6 +12,7 @@ namespace OnlineVideos.Sites
     {
         #region Constants
 
+        const string MEDIA_SELECTOR_URL = "http://open.live.bbc.co.uk/mediaselector/5/select/version/2.0/mediaset/pc/vpid/"; //"http://www.bbc.co.uk/mediaselector/4/mtis/stream/";
         const string MOST_POPULAR_URL = "http://www.bbc.co.uk/iplayer/group/most-popular";
         const string ATOZ_URL = "http://www.bbc.co.uk/iplayer/a-z/";
         static readonly string[] atoz = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0-9" };
@@ -90,7 +91,7 @@ namespace OnlineVideos.Sites
             }
 
             XmlDocument doc = new XmlDocument();
-            doc.LoadXml(GetWebData("http://www.bbc.co.uk/mediaselector/4/mtis/stream/" + m.Groups[1].Value, proxy: proxyObj)); //uk only
+            doc.LoadXml(GetWebData(MEDIA_SELECTOR_URL + m.Groups[1].Value, proxy: proxyObj)); //uk only
             XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");
 
@@ -115,7 +116,8 @@ namespace OnlineVideos.Sites
                 string resultUrl = "";
                 foreach (XmlElement connectionElem in mediaElem.SelectNodes("ns1:connection", nsmRequest))
                 {
-                    if (Array.BinarySearch<string>(new string[] { "akamai", "level3", "limelight" }, connectionElem.Attributes["kind"].Value) >= 0)
+                    string supplier = connectionElem.Attributes["supplier"].Value; //"kind"
+                    if (Array.BinarySearch<string>(new string[] { "akamai", "level3", "limelight" }, supplier) >= 0)
                     {
                         // rtmp
                         if (connectionElem.Attributes["protocol"] == null || connectionElem.Attributes["protocol"].Value != "rtmp")
@@ -128,9 +130,9 @@ namespace OnlineVideos.Sites
                         if (string.IsNullOrEmpty(application)) application = "ondemand";
                         string SWFPlayer = "http://www.bbc.co.uk/emp/releases/iplayer/revisions/617463_618125_4/617463_618125_4_emp.swf"; // "http://www.bbc.co.uk/emp/10player.swf";
 
-                        info = string.Format("{0}x{1} | {2} kbps | {3}", mediaElem.GetAttribute("width"), mediaElem.GetAttribute("height"), mediaElem.GetAttribute("bitrate"), connectionElem.Attributes["kind"].Value);
+                        info = string.Format("{0}x{1} | {2} kbps | {3}", mediaElem.GetAttribute("width"), mediaElem.GetAttribute("height"), mediaElem.GetAttribute("bitrate"), supplier);
                         resultUrl = "";
-                        if (connectionElem.Attributes["kind"].Value == "limelight")
+                        if (supplier == "limelight")
                         {
                             resultUrl = new MPUrlSourceFilter.RtmpUrl(string.Format("rtmp://{0}:1935/{1}", server, application + "?" + auth), server, 1935)
                             {
@@ -140,7 +142,7 @@ namespace OnlineVideos.Sites
                                 SwfVerify = true,
                             }.ToString();
                         }
-                        else if (connectionElem.Attributes["kind"].Value == "level3")
+                        else if (supplier == "level3")
                         {
                             resultUrl = new MPUrlSourceFilter.RtmpUrl(string.Format("rtmp://{0}:1935/{1}", server, application + "?" + auth), server, 1935)
                             {
@@ -151,7 +153,7 @@ namespace OnlineVideos.Sites
                                 Token = auth,
                             }.ToString();
                         }
-                        else if (connectionElem.Attributes["kind"].Value == "akamai")
+                        else if (supplier == "akamai")
                         {
                             resultUrl = new MPUrlSourceFilter.RtmpUrl(string.Format("rtmp://{0}:1935/{1}?{2}", server, application, auth))
                             {
