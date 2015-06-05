@@ -9,6 +9,7 @@ using HtmlAgilityPack;
 using OnlineVideos.Sites.WebAutomation.Extensions;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connectors
 {
@@ -37,12 +38,13 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         SiteUtilBase _siteUtil;
         private const int NumThreads = 5;
         private static ManualResetEvent[] resetEvents = new ManualResetEvent[NumThreads];
+        // Sometimes we load the category info from the videos directly, so we might as well cache the video info for later use
+        private Dictionary<VideoInfo, string> _cachedVideos = new Dictionary<VideoInfo, string>();
 
         public SkyGoInformationConnector(SiteUtilBase siteUtil)
         {
             _siteUtil = siteUtil;
         }
-
 
         /// <summary>
         /// Let the util sort the results
@@ -61,72 +63,64 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             var result = new List<Category>();
             if (parentCategory == null)
             {
-                // The site has changed slightly, so we'll hard-code the parent categories for now
-                var catchUpCategory = new Category { Name = "Catch up", SubCategoriesDiscovered = true, HasSubCategories = true };
-
-                result.Add(catchUpCategory);
-                result.Add(new Category { Name = "Live TV", SubCategoriesDiscovered = true, HasSubCategories = false, Other = "L~Live_TV" });
-                result.Add(new Category { Name = "Sky Movies", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Sky_Movies" });
-                result.Add(new Category { Name = "TV Box Sets", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~TV_Box_Sets" });
-                catchUpCategory.SubCategories = new List<Category>();
-                catchUpCategory.SubCategories.Add(new Category { Name = "Alibi", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/ALIBI", ParentCategory = catchUpCategory });
-                catchUpCategory.SubCategories.Add(new Category { Name = "CI", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/CI", ParentCategory = catchUpCategory });
-                catchUpCategory.SubCategories.Add(new Category { Name = "Comedy Central", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/Comedy_Central", ParentCategory = catchUpCategory });
-                catchUpCategory.SubCategories.Add(new Category { Name = "Dave", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/Dave", ParentCategory = catchUpCategory });
-                catchUpCategory.SubCategories.Add(new Category { Name = "Discovery", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/Discovery", ParentCategory = catchUpCategory });
-                catchUpCategory.SubCategories.Add(new Category { Name = "Disney", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/Disney", ParentCategory = catchUpCategory });
-                catchUpCategory.SubCategories.Add(new Category { Name = "Fox", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/FOX", ParentCategory = catchUpCategory });
-                catchUpCategory.SubCategories.Add(new Category { Name = "Gold", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/Gold", ParentCategory = catchUpCategory });
-                catchUpCategory.SubCategories.Add(new Category { Name = "History", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/History", ParentCategory = catchUpCategory });
-                catchUpCategory.SubCategories.Add(new Category { Name = "ITV", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/ITV", ParentCategory = catchUpCategory });
-                catchUpCategory.SubCategories.Add(new Category { Name = "MTV", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/MTV", ParentCategory = catchUpCategory });
-                catchUpCategory.SubCategories.Add(new Category { Name = "Nickelodeon", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/Nickelodeon", ParentCategory = catchUpCategory });
-                catchUpCategory.SubCategories.Add(new Category { Name = "Nick Jr", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/Nick_Jr", ParentCategory = catchUpCategory });
-                catchUpCategory.SubCategories.Add(new Category { Name = "Nat Geo", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/Nat_Geo", ParentCategory = catchUpCategory });
-                catchUpCategory.SubCategories.Add(new Category { Name = "Sky Sports", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/Sky_Sports", ParentCategory = catchUpCategory });
-                catchUpCategory.SubCategories.Add(new Category { Name = "Sky TV", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/Sky_Channels", ParentCategory = catchUpCategory });
-                catchUpCategory.SubCategories.Add(new Category { Name = "TLC", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/TLC", ParentCategory = catchUpCategory });
-                catchUpCategory.SubCategories.Add(new Category { Name = "Watch", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~Catch_Up/Watch", ParentCategory = catchUpCategory });
+                result.Add(new Category { Name = "Catch up", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "C~a27eef2528673410VgnVCM100000255212ac____" });
+                //result.Add(new Category { Name = "Live TV", SubCategoriesDiscovered = true, HasSubCategories = false, Other = "L~Live_TV" });
+                result.Add(new Category { Name = "Sky Movies", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~7fc1acce88d77410VgnVCM1000000b43150a____" });
+                result.Add(new Category { Name = "TV Box Sets", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "B~9bb07a0acc5a7410VgnVCM1000000b43150a____" });
             }
             else
             {
-                if (parentCategory.Type() == SkyGoCategoryData.CategoryType.Series)
-                    LoadSeriesInformation(parentCategory);
-                else
-                    LoadSubCategories(parentCategory);
+                switch (parentCategory.Type())
+                { 
+                    case SkyGoCategoryData.CategoryType.CatchUp:
+                        LoadCatchupInformation(parentCategory);
+                        break;
+                    default:
+                        LoadSubCategories(parentCategory, parentCategory.Type() != SkyGoCategoryData.CategoryType.CatchUpSubCategory);
+                        break;
+                }
             }
 
             return result;
         }
 
         /// <summary>
-        /// Use the api version of the Sky Go pages to load categories
+        /// Use the api version of the Sky Go pages to load categories - we'll multi thread this to load the different alphabet characters simultaneously
         /// </summary>
         /// <param name="parentCategory"></param>
-        private void LoadSubCategories(Category parentCategory)
+        private void LoadSubCategories(Category parentCategory, bool shouldRunThroughAllChars)
         {
             var tmpchar = "%23";
             var currentAToZPos = 0;
             var currThreadHandle = 0;
             try
             {
-                var pool = new List<Task>();
-
-                // Loop through the whole alphabet
-                while ((currentAToZPos + 64) <= 90)
+                if (shouldRunThroughAllChars)
                 {
-                    var tmpParams = new LoadSubCategParams { CurrentChar = tmpchar, ParentCategory = parentCategory, Index = currThreadHandle };
-                 
-                    pool.Add(Task.Factory.StartNew(() => LoadCharacterSubCateg(tmpParams)));
+                    var pool = new List<Task>();
 
-                    currentAToZPos++;
+                    // Loop through the whole alphabet
+                    while ((currentAToZPos + 64) <= 90)
+                    {
+                        var tmpParams = new LoadSubCategParams { CurrentChar = tmpchar, ParentCategory = parentCategory, Index = currThreadHandle };
 
-                    // Move to the next character
-                    tmpchar = ((char)(currentAToZPos + 64)).ToString();
+                        pool.Add(Task.Factory.StartNew(() => LoadCharacterSubCateg(tmpParams)));
 
+                        currentAToZPos++;
+
+                        // Move to the next character
+                        tmpchar = ((char)(currentAToZPos + 64)).ToString();
+
+                    }
+                    var timeout = OnlineVideoSettings.Instance.UtilTimeout <= 0 ? 30000 : OnlineVideoSettings.Instance.UtilTimeout * 1000;
+                    Task.WaitAll(pool.ToArray(), timeout);
                 }
-                var timeout = OnlineVideoSettings.Instance.UtilTimeout <=0 ? 30000 : OnlineVideoSettings.Instance.UtilTimeout * 1000;
-                Task.WaitAll(pool.ToArray(),timeout);
+                else
+                {
+                    var tmpParams = new LoadSubCategParams { CurrentChar = "", ParentCategory = parentCategory, Index = 0 };
+
+                    LoadCharacterSubCateg(tmpParams);
+                }
             }
             catch (Exception ex)
             {
@@ -142,21 +136,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         {
             try
             {
-                var pages = -1;
-                var currentPagePos = 0;
-
-                while (pages > -2)
-                {
-                    LoadThisCategoryPage(parameters.ParentCategory, parameters.CurrentChar, currentPagePos, out pages);
-
-                    // Handle multiple pages per char
-                    if (currentPagePos < pages)
-                        currentPagePos++;
-                    else
-                        pages = -2;
-                }
-
-
+                LoadThisCategory(parameters.ParentCategory, parameters.CurrentChar);
             }
             catch (Exception ex)
             {
@@ -164,33 +144,17 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             }
 
         }
-
+        
         /// <summary>
-        /// Load all videos for the specified category - for SkyGo we're representing a series episode as a category, so LoadVideos here is only ever going to return 1 item
+        /// Load the videos for this category - either from the cache, or loaded from the video info page in the site
         /// </summary>
         /// <param name="parentCategory"></param>
         /// <returns></returns>
         public List<VideoInfo> LoadVideos(Category parentCategory)
         {
-            var results = new List<VideoInfo>();
-            if (parentCategory.Type() != SkyGoCategoryData.CategoryType.Video && parentCategory.Type() != SkyGoCategoryData.CategoryType.LiveTv)
-                throw new ApplicationException("Cannot retrieve videos for non-video category");
-
-
-            if (parentCategory.Type() != SkyGoCategoryData.CategoryType.LiveTv)
-            {
-                var doc = Properties.Resources.SkyGo_VideoDetailsUrl(parentCategory.CategoryId()).LoadSkyGoContentFromUrl();
-                var result = doc.LoadVideoFromDocument(parentCategory.CategoryId());
-
-                results.Add(result);
-            }
-            else
-            {
-
-                var channels = Properties.Resources.SkyGo_LiveTvListingUrl.LoadSkyGoLiveTvChannelsFromUrl();
-                results = Properties.Resources.SkyGo_LiveTvGetNowNextUrl(String.Join(",", channels.Select(x => x.ChannelId).ToArray())).LoadSkyGoLiveTvNowNextVideosFromUrl(channels);
-            }
-            return results;
+            if (_cachedVideos.Where(x => x.Value.Contains("*" + parentCategory.Other + parentCategory.Name + "*")).Count() > 0)
+                return _cachedVideos.Where(x => x.Value.Contains("*" + parentCategory.Other + parentCategory.Name + "*")).Select(x => x.Key).ToList();
+            return LoadGeneralVideos(parentCategory);
         }
 
         /// <summary>
@@ -201,72 +165,154 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             get { return "OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connectors.SkyGoConnector"; }
         }
 
+
         /// <summary>
-        /// Load a specific category page into the parentCategory
+        /// Load a specific category into the parentCategory
         /// </summary>
         /// <param name="parentCategory"></param>
         /// <param name="currentChar"></param>
-        /// <param name="pageNo"></param>
-        /// <param name="pages"></param>
-        private void LoadThisCategoryPage(Category parentCategory, string currentChar, int pageNo, out int pages)
+        private void LoadThisCategory(Category parentCategory, string currentChar)
         {
-            var doc = Properties.Resources.SkyGo_CategoryAToZUrl(parentCategory.CategoryId(), currentChar, pageNo.ToString()).LoadSkyGoContentFromUrl();
-
             lock (parentCategory)
             {
-                doc.LoadChildCategoriesFromDocument(parentCategory);
-            }
-            pages = (TotalResults(doc) - 1) / 50;
-        }
+                VideoInfo video = null;
 
-        /// <summary>
-        /// Retrieve series information for the specified category
-        /// </summary>
-        /// <param name="parentCategory"></param>
-        private void LoadSeriesInformation(Category parentCategory)
-        {
-            var doc = Properties.Resources.SkyGo_SeriesDetailsUrl(parentCategory.CategoryId()).LoadSkyGoContentFromUrl();
-            var result = doc.LoadSeriesItemsFromDocument(parentCategory);
-            parentCategory.SubCategories.AddRange(result);
-            parentCategory.SubCategoriesDiscovered = true;
-        }
+                var tmpObj = (currentChar == "" ? Properties.Resources.SkyGo_CatchUpSubItemsUrl(parentCategory.CategoryId()) : Properties.Resources.SkyGo_AllListUrl(parentCategory.CategoryId(), currentChar)).GetLinksTokensFromUrl(parentCategory.Type());
+                if (tmpObj == null) return;
 
-        /// <summary>
-        /// Retrieve the total results for the specified page
-        /// </summary>
-        /// <param name="document"></param>
-        /// <returns></returns>
-        private int TotalResults(HtmlDocument document)
-        {
-            try
-            {
-                var resultsDiv = document.GetElementById("searchResults");
-
-                // Some pages take ages to load, so wait for the whole table of results
-                if (resultsDiv != null)
+                foreach (var item in tmpObj)
                 {
-                    // First child is a div
-                    if (resultsDiv.ChildNodes.Count > 0)
-                    {
-                        // First child of the first child is a p with the text we need
-                        if (resultsDiv.ChildNodes[0].ChildNodes.Count > 0)
+                    Category thisItem = null;
+                    if (item["title"] != null)
+                    {   
+                        var contentType = item.GetValue("contentType");
+                        if (contentType == "MOVIE" || contentType == "STANDARD_VIDEO")
                         {
-                            if (resultsDiv.ChildNodes[0].ChildNodes[0].OuterHtml.Contains("ATI_noResultsFound")) return 0;
-
-                            // Find out how many results
-                            var text = resultsDiv.ChildNodes[0].ChildNodes[0].InnerText;
-                            if (text.Contains("&nbsp;"))
-                                text = text.Replace("&nbsp;", " ");//text.Substring(text.IndexOf("&nbsp;"));
-                            text = text.Replace("Previous Page", "").Trim();
-                            return int.Parse(text.Split(' ')[3].Trim());
+                            if (contentType == "MOVIE")
+                                video = item.VideoInfoFromToken("movies");
+                            else
+                                video = item.VideoInfoFromToken();
+                            _cachedVideos.Add(video, "");
                         }
+                        else
+                        {
+                            thisItem = new Category();
+                            thisItem.Description = item.GetValue("synopsis") + "\r\n" + item.GetStarring();
+                            thisItem.Name = item.GetValue("title");
+                            thisItem.Other = "C~" + item.GetValue("id");
+                            thisItem.SubCategoriesDiscovered = false;
+                            thisItem.HasSubCategories = item.GetValue("contentType") != "SERIES";
+                            thisItem.Thumb = item.GetImage();
+                        }
+
+                        if (item["categories"] != null && parentCategory.Type() != SkyGoCategoryData.CategoryType.CatchUpSubCategory)
+                        {
+
+                            foreach (var categ in item["categories"])
+                            {
+                                var tmpCateg = parentCategory.SubCategories.Where(x => x.Name == categ.ToString()).FirstOrDefault();
+
+                                if (tmpCateg == null)
+                                {
+                                    tmpCateg = new Category();
+                                    parentCategory.SubCategories.Add(tmpCateg);
+                                }
+
+                                tmpCateg.Other = parentCategory.Other;
+                                tmpCateg.Name = categ.ToString();
+                                if (video != null) _cachedVideos[video] += "*" + tmpCateg.Other + tmpCateg.Name + "*"; 
+                                tmpCateg.SubCategoriesDiscovered = true;
+                                tmpCateg.HasSubCategories = (thisItem != null);
+                                if (tmpCateg.SubCategories == null) tmpCateg.SubCategories = new List<Category>();
+                                if (thisItem != null)
+                                {
+                                    if (thisItem.ParentCategory == null)
+                                        thisItem.ParentCategory = tmpCateg;
+                                    tmpCateg.SubCategories.Add(thisItem);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            parentCategory.SubCategories.Add(thisItem);
+                            thisItem.ParentCategory = parentCategory;
+                        }
+                            
                     }
                 }
+
             }
-            catch
+        }
+
+        /// <summary>
+        /// Load information for catch up category - it's structured differently from other areas
+        /// </summary>
+        /// <param name="parentCategory"></param>
+        private void LoadCatchupInformation(Category parentCategory)
+        {
+            var tmpObj = Properties.Resources.SkyGo_CatchUpCategoriesUrl.GetLinksTokensFromUrl(SkyGoCategoryData.CategoryType.CatchUp);
+
+            foreach (var item in tmpObj)
             {
+                if (item.GetValue("_rel") == "child/node")
+                {
+                    var categoryType = "CS~";
+
+                    var catchUpItem = new Category();
+                    catchUpItem.Name = item.GetValue("_title");
+                    if (catchUpItem.Name == "Featured") continue;
+
+                    var id = item.GetIdFromHrefValue();
+
+                    if (!item.GetValue("_attributes").Contains("\"classifier\": \"page\"")) categoryType = "C1~";
+
+                    catchUpItem.Other = categoryType + id;
+
+                    if (catchUpItem.Type() != SkyGoCategoryData.CategoryType.CatchUpSubCategory)
+                    {
+                        // We have to do an extra lookup for the "All" sub category
+                        var tmpObj2 = Properties.Resources.SkyGo_CatchUpSubItemsUrl(catchUpItem.CategoryId()).GetLinksTokensFromUrl(SkyGoCategoryData.CategoryType.CatchUp);
+                        foreach (var thisLink in tmpObj2)
+                        {
+                            if (thisLink.GetValue("_title") == "All")
+                            {
+
+                                if (catchUpItem.Name == "Demand 5") categoryType = "CS~";
+                                catchUpItem.Other = categoryType + thisLink.GetIdFromHrefValue();
+
+                                break;
+                            }
+                        }
+                    }
+                    catchUpItem.HasSubCategories = true;
+                    catchUpItem.SubCategoriesDiscovered = false;
+                    catchUpItem.ParentCategory = parentCategory;
+                    parentCategory.SubCategoriesDiscovered = true;
+                    parentCategory.HasSubCategories = true;
+                    parentCategory.SubCategories.Add(catchUpItem);
+                }
             }
-            return -1;
+        }
+
+        /// <summary>
+        /// Load general video info (videos we haven't cached)
+        /// </summary>
+        /// <param name="series"></param>
+        /// <returns></returns>
+        private List<VideoInfo> LoadGeneralVideos(Category series)
+        {
+            var result = new List<VideoInfo>();
+            var tmpObj = Properties.Resources.SkyGo_SeriesInfoUrl(series.CategoryId()).GetLinksTokensFromUrl(SkyGoCategoryData.CategoryType.Video);
+            foreach (var item in tmpObj)
+            {
+                if (item.GetValue("_rel") == "episode/episode")
+                {
+                    result.Add(item.VideoInfoFromToken());
+                }
+                   
+            }
+
+            return result;
         }
 
         public bool CanSearch { get { return false; } }

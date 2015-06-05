@@ -62,8 +62,6 @@ namespace OnlineVideos.Sites.WebAutomation.Properties
 		
 		public static string SkyGoLiveTvImageUrl( string CHANNEL_ID) { return GetResourceString("SkyGoLiveTvImageUrl", "{CHANNEL_ID}", CHANNEL_ID); }
 
-		public static string SkyGo_CategoryAToZUrl( string CATEGORY, string CHARACTER, string PAGE) { return GetResourceString("SkyGo_CategoryAToZUrl", "{CATEGORY}", CATEGORY, "{CHARACTER}", CHARACTER, "{PAGE}", PAGE); }
-
 		public static string SkyGo_LiveTvGetNowNextUrl( string CHANNEL_IDS) { return GetResourceString("SkyGo_LiveTvGetNowNextUrl", "{CHANNEL_IDS}", CHANNEL_IDS); }
 
 		public static string SkyGo_LiveTvListingUrl { get { return GetResourceString("SkyGo_LiveTvListingUrl"); } }
@@ -74,13 +72,7 @@ namespace OnlineVideos.Sites.WebAutomation.Properties
 
 		public static string SkyGo_RootUrl { get { return GetResourceString("SkyGo_RootUrl"); } }
 
-		public static string SkyGo_SeriesDetailsUrl( string SERIES_ID) { return GetResourceString("SkyGo_SeriesDetailsUrl", "{SERIES_ID}", SERIES_ID); }
-
-		public static string SkyGo_VideoActionsUrl( string VIDEO_ID) { return GetResourceString("SkyGo_VideoActionsUrl", "{VIDEO_ID}", VIDEO_ID); }
-
-		public static string SkyGo_VideoDetailsUrl( string VIDEO_ID) { return GetResourceString("SkyGo_VideoDetailsUrl", "{VIDEO_ID}", VIDEO_ID); }
-
-		public static string SkyGo_VideoPlayUrl( string ASSET_ID, string VIDEO_ID) { return GetResourceString("SkyGo_VideoPlayUrl", "{ASSET_ID}", ASSET_ID, "{VIDEO_ID}", VIDEO_ID); }
+		public static string SkyGo_VideoPlayUrl( string INTERNAL_ID) { return GetResourceString("SkyGo_VideoPlayUrl", "{INTERNAL_ID}", INTERNAL_ID); }
 
 		public static string _4OD_CatchUpUrl { get { return GetResourceString("_4OD_CatchUpUrl"); } }
 
@@ -96,52 +88,24 @@ namespace OnlineVideos.Sites.WebAutomation.Properties
 
 		public static string _4OD_VideoPlayUrl( string VIDEO_NAME, string VIDEO_ID) { return GetResourceString("_4OD_VideoPlayUrl", "{VIDEO_NAME}", VIDEO_NAME, "{VIDEO_ID}", VIDEO_ID); }
 
-		public static string AmazonLoginUrl { get { return GetResourceString("AmazonLoginUrl"); } }
+		public static string SkyGo_AllListUrl( string INTERNAL_ID, string CHARACTER) { return GetResourceString("SkyGo_AllListUrl", "{INTERNAL_ID}", INTERNAL_ID, "{CHARACTER}", CHARACTER); }
 
-		public static string AmazonMovieUrl( string VIDEO_ID) { return GetResourceString("AmazonMovieUrl", "{VIDEO_ID}", VIDEO_ID); }
+		public static string SkyGo_SeriesInfoUrl( string INTERNAL_ID) { return GetResourceString("SkyGo_SeriesInfoUrl", "{INTERNAL_ID}", INTERNAL_ID); }
 
-		public static string AmazonMovieCategoriesUrl { get { return GetResourceString("AmazonMovieCategoriesUrl"); } }
-
-        public static string AmazonMovieWatchlistUrl { get { return GetResourceString("AmazonMovieWatchlistUrl"); } }
-
-        public static string AmazonMoviePopularUrl { get { return GetResourceString("AmazonMoviePopularUrl"); } }
-
-        public static string AmazonMovieRecentUrl { get { return GetResourceString("AmazonMovieRecentUrl"); } }
-
-        public static string AmazonMovieEditorsUrl { get { return GetResourceString("AmazonMovieEditorsUrl"); } }
-
-		public static string AmazonTVCategoriesUrl { get { return GetResourceString("AmazonTVCategoriesUrl"); } }
-
-        public static string AmazonTVWatchlistUrl { get { return GetResourceString("AmazonTVWatchlistUrl"); } }
-
-        public static string AmazonTVPopularUrl { get { return GetResourceString("AmazonTVPopularUrl"); } }
-
-        public static string AmazonTVRecentUrl { get { return GetResourceString("AmazonTVRecentUrl"); } }
-
-        public static string AmazonTVEditorsUrl { get { return GetResourceString("AmazonTVEditorsUrl"); } }
-        
-        public static string AmazonRootUrl { get { return GetResourceString("AmazonRootUrl"); } }
-
-		public static string AmazonMovieIcon { get { return GetResourceString("AmazonMovieIcon"); } }
-
-		public static string AmazonTvIcon { get { return GetResourceString("AmazonTvIcon"); } }
-
-        public static string AmazonSearchUrl { get { return GetResourceString("AmazonSearchUrl"); } }
+		public static string SkyGo_CatchUpCategoriesUrl { get { return GetResourceString("SkyGo_CatchUpCategoriesUrl"); } }
 
 		public static string Resources_de { get { return GetResourceString("Resources.de"); } }
+
+		public static string SkyGo_CatchUpSubItemsUrl( string INTERNAL_ID) { return GetResourceString("SkyGo_CatchUpSubItemsUrl", "{INTERNAL_ID}", INTERNAL_ID); }
 
 		public static class Names
 		{
 			public const string SkyGoLiveTvImageUrl = "SkyGoLiveTvImageUrl";
-			public const string SkyGo_CategoryAToZUrl = "SkyGo_CategoryAToZUrl";
 			public const string SkyGo_LiveTvGetNowNextUrl = "SkyGo_LiveTvGetNowNextUrl";
 			public const string SkyGo_LiveTvListingUrl = "SkyGo_LiveTvListingUrl";
 			public const string SkyGo_LiveTvPlayUrl = "SkyGo_LiveTvPlayUrl";
 			public const string SkyGo_LoginUrl = "SkyGo_LoginUrl";
 			public const string SkyGo_RootUrl = "SkyGo_RootUrl";
-			public const string SkyGo_SeriesDetailsUrl = "SkyGo_SeriesDetailsUrl";
-			public const string SkyGo_VideoActionsUrl = "SkyGo_VideoActionsUrl";
-			public const string SkyGo_VideoDetailsUrl = "SkyGo_VideoDetailsUrl";
 			public const string SkyGo_VideoPlayUrl = "SkyGo_VideoPlayUrl";
 			public const string _4OD_CatchUpUrl = "_4OD_CatchUpUrl";
 			public const string _4OD_CategoryListUrl = "_4OD_CategoryListUrl";
@@ -150,23 +114,11 @@ namespace OnlineVideos.Sites.WebAutomation.Properties
 			public const string _4OD_RootUrl = "_4OD_RootUrl";
 			public const string _4OD_VideoDetailsUrl = "_4OD_VideoDetailsUrl";
 			public const string _4OD_VideoPlayUrl = "_4OD_VideoPlayUrl";
-			public const string AmazonLoginUrl = "AmazonLoginUrl";
-			public const string AmazonMovieUrl = "AmazonMovieUrl";
-            public const string AmazonMovieWatchlistUrl = "AmazonMovieWatchlistUrl";
-            public const string AmazonMovieCategoriesUrl = "AmazonMovieCategoriesUrl";
-            public const string AmazonMoviePopularUrl = "AmazonMoviePopularUrl";
-            public const string AmazonMovieRecentUrl = "AmazonMovieRecentUrl";
-            public const string AmazonMovieEditorsUrl = "AmazonMovieEditorsUrl";
-            public const string AmazonTVCategoriesUrl = "AmazonTVCategoriesUrl";
-            public const string AmazonTVWatchlistUrl = "AmazonTVWatchlistUrl";
-            public const string AmazonTVPopularUrl = "AmazonTVPopularUrl";
-            public const string AmazonTVRecentUrl = "AmazonTVRecentUrl";
-            public const string AmazonTVEditorsUrl = "AmazonTVEditorsUrl";
-            public const string AmazonRootUrl = "AmazonRootUrl";
-			public const string AmazonMovieIcon = "AmazonMovieIcon";
-			public const string AmazonTvIcon = "AmazonTvIcon";
-            public const string AmazonSearchUrl = "AmazonSearchUrl";
-            public const string Resources_de = "Resources_de";
-  		}
+			public const string SkyGo_AllListUrl = "SkyGo_AllListUrl";
+			public const string SkyGo_SeriesInfoUrl = "SkyGo_SeriesInfoUrl";
+			public const string SkyGo_CatchUpCategoriesUrl = "SkyGo_CatchUpCategoriesUrl";
+			public const string Resources_de = "Resources_de";
+			public const string SkyGo_CatchUpSubItemsUrl = "SkyGo_CatchUpSubItemsUrl";
+		}
 	}
 }

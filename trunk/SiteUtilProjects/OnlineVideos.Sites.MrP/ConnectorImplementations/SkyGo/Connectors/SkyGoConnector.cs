@@ -22,7 +22,6 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             None,
             LoggingIn,
             LoginResult,
-            VideoInfo,
             PlayPage,
             PlayPageLiveTv
         }
@@ -30,14 +29,10 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         private State _currentState = State.None;
         private string _username;
         private string _password;
-        private string _nextVideoToPlayId;
-        private bool _isPlayOrPausing;
-        private int _playPausePos = -1;
-        private int _playPauseHeight = -1;
-        private bool _isLiveTv = false;
+        private DateTime _lastPlayClick = DateTime.Now;
         private bool _isSilverlightAppStorageEnabled = true;
         private Thread  _disableAppStorageThread;
-
+        private Thread _playPressThread;
         /// <summary>
         /// Perform a log in to the sky go site
         /// </summary>
@@ -46,6 +41,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         /// <returns></returns>
         protected override EventResult PerformActualLogin(string username, string password)
         {
+            Browser.NewWindow += Browser_NewWindow;
             // Enable silverlight application storage initially
             _isSilverlightAppStorageEnabled = WebBrowserHelper.IsSilverlightAppStorageEnabled();
             WebBrowserHelper.ToogleSilverlightAppStorage(true);
@@ -56,6 +52,16 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             ProcessComplete.Success = false;
             Url = Properties.Resources.SkyGo_LoginUrl;
             return EventResult.Complete();
+        }
+
+        /// <summary>
+        /// Don't launch a new window if one is created
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void Browser_NewWindow(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
         }
 
         /// <summary>
@@ -84,19 +90,9 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                         InvokeScript(jsCode);
                         _currentState = State.LoginResult;
                     }
-                    else
-                    {
-                        // Already logged in
-                        if (Url.Contains("/home.do"))
-                        {
-                            _currentState = State.None;
-                            ProcessComplete.Finished = true;
-                            ProcessComplete.Success = true; 
-                        }
-                    }
                     break;
                 case State.LoginResult:
-                    if (Url.Contains("/home.do"))
+                    if (Url == "http://go.sky.com/")
                     {
                         _currentState = State.None;
                         ProcessComplete.Finished = true;
@@ -105,39 +101,44 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                     else
                         return EventResult.Error("SkyGoGeneralConnector/ProcessMessage/Expected home page after log in, was actually " + Url);
                     break;
-                case State.VideoInfo:
-                    if (Url.Contains("videoActions.do") && Url.EndsWith("aaxmlrequest=true&aazones=vdactions"))
-                    {
-                        // Need to lookup the asset id before we can continue
-                        var assetId = GetAssetId(Browser.Document);
-                        if (assetId != string.Empty)
-                        {
-                            Browser.Stop();
-                            _currentState = State.PlayPage;
-                            Url = Properties.Resources.SkyGo_VideoPlayUrl(assetId,_nextVideoToPlayId);
-                        }
-                    }
-                    break;
                 case State.PlayPage:
-                    if (Url.Contains("/progressivePlay.do"))
+                    if (Url.Contains("/content/videos"))
                     {
-                        Browser.Refresh(WebBrowserRefreshOption.Completely);// Need to do this for some reason
+                        //Browser.Refresh(WebBrowserRefreshOption.Completely);// Need to do this for some reason
                         _currentState = State.None;
-                        HideLoading();
+
+                         // The js code to wait for the video to appear
+                        var jsCode = "setTimeout('doMaximise()', 1000);";
+                        jsCode += "function doMaximise() {";
+                        jsCode += "if(document.getElementsByClassName('silverlightVodPlayerWrapper') != null) {";
+                        jsCode += "    document.getElementsByClassName('silverlightVodPlayerWrapper')[0].setAttribute('style', 'position: fixed; width: 100%; height: 100%; left: 0; top: 0; background: rgba(51,51,51,0.7); z-index: 10;');";
+                        jsCode += "}";
+                        jsCode += "else setTimeout('doMaximise()', 1000);";
+                        jsCode += "}";
+
+                        InvokeScript(jsCode);
+
+                        var startTime = DateTime.Now;
+                        
+                        _playPressThread = new Thread(new ParameterizedThreadStart(ClickPlayAfterFullScreen));
+                        _playPressThread.Start();
+                      
                         ProcessComplete.Finished = true;
                         ProcessComplete.Success = true;
-                        // Wait 5 seconds for the video to start before disabling app storage - we'll do this in a separate thread
+
+                        // Wait 15 seconds for the video to start before disabling app storage - we'll do this in a separate thread
                         if (_disableAppStorageThread == null)
                         {
                             _disableAppStorageThread = new Thread(new ParameterizedThreadStart(DisableAppStorage));
                             _disableAppStorageThread.Start();
                         }
+                        
                         Browser.FindForm().Activate();
                         Browser.FindForm().Focus();
                     }
                     else
                     {
-                        if (!Url.EndsWith("videoDetailsPage.do"))
+                        if (!Url.EndsWith("/content/videos"))
                             return EventResult.Error("SkyGoOnDemandConnector/ProcessMessage/Expected video play page, was actually " + Url);
                     }
                     break;
@@ -177,22 +178,10 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         /// <returns></returns>
         public override EventResult PlayVideo(string videoToPlay)
         {
-            // Clean up the xap file to see if it helps playback
-            //RemoveFileFromTempInternetFiles("SkyPlayer", ".xap");
-            _currentState = State.VideoInfo;
             ProcessComplete.Finished = false;
             ProcessComplete.Success = false;
-            if (videoToPlay.StartsWith("LTV~")) _isLiveTv = true;
-            _nextVideoToPlayId = videoToPlay.Replace("LTV~", string.Empty);
-
-            if (!_isLiveTv)
-                Url = Properties.Resources.SkyGo_VideoActionsUrl(_nextVideoToPlayId);
-            else
-            {
-                _currentState = State.PlayPageLiveTv;
-                Url = Properties.Resources.SkyGo_LiveTvPlayUrl(_nextVideoToPlayId);
-            }
-
+            _currentState = State.PlayPage;
+            Url = Properties.Resources.SkyGo_VideoPlayUrl(videoToPlay);
             return EventResult.Complete();
         }
 
@@ -217,111 +206,18 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         }
 
         /// <summary>
-        /// Load the asset from the document
-        /// </summary>
-        /// <param name="document"></param>
-        /// <returns></returns>
-        public static string GetAssetId(HtmlDocument document)
-        {
-            if (document.ActiveElement == null) return string.Empty;
-            var stringToParse = document.ActiveElement.OuterHtml;
-            // Need to get the asset id from the video details links
-            var startPos = stringToParse.IndexOf("assetId: ");
-            // Load the asset id
-            if (startPos > -1)
-            {
-                var endPos = stringToParse.IndexOf(",", startPos);
-                if (endPos > -1)
-                {
-                    return stringToParse.Substring(startPos + 8, endPos - startPos - 8).Replace("'", "").Trim() + "____";
-                }
-            }
-                return string.Empty;
-        }
-
-        /// <summary>
         /// Find the play/pause button and click it
         /// </summary>
         /// <returns></returns>
         private EventResult DoPlayOrPause()
         {
-            if (_isPlayOrPausing || Browser.Document == null || Browser.Document.Body == null) return EventResult.Complete();
-            
-            _isPlayOrPausing = true;
-            
-            if (_playPauseHeight <= 0 || _playPausePos <= 0) _playPauseHeight = Browser.FindForm().Bottom - 80;
+            if (DateTime.Now < _lastPlayClick.AddMilliseconds(500)) return EventResult.Complete();
 
-            // Move the cursor near the top of the screen and left click to make sure the play/pause buttons become visible
-            CursorHelper.MoveMouseTo(Browser.FindForm().Left + 10, Browser.FindForm().Top + 10);
-            Application.DoEvents();
+            CursorHelper.MoveMouseTo(Browser.FindForm().Left + (Browser.FindForm().Width / 2) + 50, Browser.FindForm().Top + (Browser.FindForm().Height / 2));
             CursorHelper.DoLeftMouseClick();
-            Application.DoEvents();
-            
-            // We've previously found the play/pause button, so re-use its position
-            if (_playPausePos > -1)
-            {
-                CursorHelper.MoveMouseTo(Browser.FindForm().Left + 10, _playPauseHeight);
-                Application.DoEvents();
-                // We have to move the cursor off the play button for this to work
-                while (Cursor.Position.X < _playPausePos)
-                {
-                    CursorHelper.MoveMouseTo(Cursor.Position.X + 2, _playPauseHeight);
-                    Application.DoEvents();
-                }
-                CursorHelper.MoveMouseTo(_playPausePos, _playPauseHeight);
-                Application.DoEvents();
-                CursorHelper.DoLeftMouseClick();
-                Application.DoEvents();
-            }
-            else
-            {
-                _playPausePos = FindPlayPauseButton(_playPauseHeight);
-                var attempts = 0;
-                // Move up the screen in 10 pixel increments trying to find play - only go up 20 times
-                while (attempts <= 20)
-                {
-                    if (_playPausePos == -1 && _isPlayOrPausing)
-                    {
-                        _playPauseHeight -= 10;
-                        _playPausePos = FindPlayPauseButton(_playPauseHeight);
-                    }
-                    else
-                        break;
-                    attempts++;
-                }
-            }
-
-            _isPlayOrPausing = false;
+            CursorHelper.MoveMouseTo(0, 0);
+            _lastPlayClick = DateTime.Now;
             return EventResult.Complete();
-        }
-
-        /// <summary>
-        /// Move the cursor to try and find to position of the play/pause button
-        /// </summary>
-        /// <param name="height"></param>
-        /// <returns></returns> 
-        private int FindPlayPauseButton(int height)
-        {
-            var startX = Browser.FindForm().Left;
-            var coloursToLookFor = new[] { "0090BF", "D8DDE1", "0099CB", "009BCE", "007297", "00789F", "EFEDEA", "0086B1", "00789E", "0083AD" };
-            // Very primitive, but set the cursor at the correct height and move across till we hit the right colour!
-            // We have to move the cursor otherwise the play controls disappear
-            var currentPos = startX + 40;
-            while (currentPos < (startX + (Browser.Document.Body.ClientRectangle.Width / 8)))
-            {
-                CursorHelper.MoveMouseTo(currentPos + 5, height);
-                currentPos = Cursor.Position.X;
-                Application.DoEvents();
-                if (coloursToLookFor.Contains(CursorHelper.GetColourUnderCursor().Name.Substring(2).ToUpper()))
-                {
-                    MessageHandler.Info("FindPlayPauseButton() found");
-                    return Cursor.Position.X;
-                }
-                Application.DoEvents();
-                
-                if (!_isPlayOrPausing) break;
-            }
-            return -1;
         }
 
         /// <summary>
@@ -341,5 +237,50 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             WebBrowserHelper.ToogleSilverlightAppStorage(false);
         }
 
+        /// <summary>
+        /// After we've gone full screen we'll click the play button 
+        /// </summary>
+        /// <param name="data"></param>
+        private void ClickPlayAfterFullScreen(object data)
+        {
+            var endDate = DateTime.Now.AddSeconds(5);
+
+            while (DateTime.Now < endDate)
+            {
+                Application.DoEvents();
+                Thread.Sleep(100);
+                Browser.FindForm().BeginInvoke((MethodInvoker)delegate()
+                {
+                    var firstMatchingDiv = GetFirstMatchingDivClass(Browser.Document, "silverlightVodPlayerWrapper");
+
+                    if (firstMatchingDiv != null && firstMatchingDiv.GetAttribute("style") != null)
+                    {
+                        if (firstMatchingDiv.OuterHtml.Contains("position: fixed"))
+                        {
+                            HideLoading();
+                            DoPlayOrPause();
+                            return;
+                        }
+                    }
+                });
+            }
+          
+        }
+
+        /// <summary>
+        /// Find the first div which matches the required class name
+        /// </summary>
+        /// <param name="document"></param>
+        /// <param name="className"></param>
+        /// <returns></returns>
+        private HtmlElement GetFirstMatchingDivClass( HtmlDocument document,  string className)
+        {
+            foreach (HtmlElement element in Browser.Document.GetElementsByTagName("div"))
+            {
+                if (element.OuterHtml.Contains("class=") && element.OuterHtml.Contains(className))
+                    return element;
+            }
+            return null;
+        }
     }
 }

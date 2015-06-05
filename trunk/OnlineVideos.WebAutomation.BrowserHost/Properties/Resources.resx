@@ -112,27 +112,9 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="SkyGo_LoginUrl" xml:space="preserve">
-    <value>https://skyid.sky.com/signin/skygo</value>
-  </data>
-  <data name="SkyGo_VideoDetailsUrl" xml:space="preserve">
-    <value>http://go.sky.com/vod/content/SKYENTERTAINMENT/content/videoId/{VIDEO_ID}/l/l/content/videoActions.do?aaxmlrequest=true&amp;aazones=vdactions</value>
-  </data>
-  <data name="SkyGo_VideoPlayUrl" xml:space="preserve">
-    <value>http://go.sky.com/vod/content/SKYENTERTAINMENT/content/assetId/{ASSET_ID}/videoId/{VIDEO_ID}/l/l/content/progressivePlay.do</value>
-  </data>
-  <data name="_4OD_LoginUrl" xml:space="preserve">
-    <value>https://4id.channel4.com/login</value>
-  </data>
-  <data name="_4OD_VideoDetailsUrl" xml:space="preserve">
-    <value>http://www.channel4.com/programmes/asset/{VIDEO_ID}</value>
-  </data>
-  <data name="_4OD_VideoPlayUrl" xml:space="preserve">
-    <value>http://www.channel4.com/programmes/{VIDEO_NAME}/4od/player/{VIDEO_ID}</value>
-  </data>
 </root>

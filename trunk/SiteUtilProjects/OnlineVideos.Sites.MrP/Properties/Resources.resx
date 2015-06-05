@@ -120,9 +120,6 @@
   <data name="SkyGoLiveTvImageUrl" xml:space="preserve">
     <value>http://epgstatic.sky.com/epgdata/1.0/newchanlogos/75/35/skychb{CHANNEL_ID}.png</value>
   </data>
-  <data name="SkyGo_CategoryAToZUrl" xml:space="preserve">
-    <value>http://go.sky.com/vod/content/{CATEGORY}/All/content/default/promoPage.do?aToZ.indexCharacter={CHARACTER}&amp;aToZ.viewIndex={PAGE}&amp;aaxmlrequest=true&amp;aazones=content</value>
-  </data>
   <data name="SkyGo_LiveTvGetNowNextUrl" xml:space="preserve">
     <value>http://go.sky.com/tvlistings-proxy/TvListingsApi/xml/v2/nowNextLater.do?channelIds={CHANNEL_IDS}&amp;siteId=4&amp;accessKey=fdgJRTd345S4fKMER92mddSFJWERJ35285FDdm3412jdRTmsdd</value>
   </data>
@@ -138,17 +135,8 @@
   <data name="SkyGo_RootUrl" xml:space="preserve">
     <value>http://go.sky.com</value>
   </data>
-  <data name="SkyGo_SeriesDetailsUrl" xml:space="preserve">
-    <value>http://go.sky.com/vod/content/SKYENTERTAINMENT/Browse_by_Genre/A-Z/content/seriesId/{SERIES_ID}/content/default/promoPage.do?aaxmlrequest=true&amp;aazones=content</value>
-  </data>
-  <data name="SkyGo_VideoActionsUrl" xml:space="preserve">
-    <value>http://go.sky.com/vod/content/SKYENTERTAINMENT/content/videoId/{VIDEO_ID}/l/l/content/videoActions.do?aaxmlrequest=true&amp;aazones=vdactions</value>
-  </data>
-  <data name="SkyGo_VideoDetailsUrl" xml:space="preserve">
-    <value>http://go.sky.com/vod/content/SKYENTERTAINMENT/content/videoId/{VIDEO_ID}/content/default/videoDetailsPage.do?aaxmlrequest=true&amp;aazones=content</value>
-  </data>
   <data name="SkyGo_VideoPlayUrl" xml:space="preserve">
-    <value>http://go.sky.com/vod/content/SKYENTERTAINMENT/content/assetId/{ASSET_ID}/videoId/{VIDEO_ID}/l/l/content/progressivePlay.do</value>
+    <value>http://go.sky.com/skymovies/programme/content/videos/{INTERNAL_ID}</value>
   </data>
   <data name="_4OD_CatchUpUrl" xml:space="preserve">
     <value>http://www.channel4.com/programmes/4od/catchup</value>
@@ -171,8 +159,20 @@
   <data name="_4OD_VideoPlayUrl" xml:space="preserve">
     <value>http://www.channel4.com/programmes/{VIDEO_NAME}/4od/player/{VIDEO_ID}</value>
   </data>
+  <data name="SkyGo_AllListUrl" xml:space="preserve">
+    <value>http://content.ott.sky.com/v2/brands/go/devices/pc/navigation/nodes/{INTERNAL_ID}/a-z/characters/{CHARACTER}?callback=azPage&amp;represent=(item/item-summary)</value>
+  </data>
+  <data name="SkyGo_SeriesInfoUrl" xml:space="preserve">
+    <value>http://content.ott.sky.com/v2/brands/go/devices/pc/content/series/{INTERNAL_ID}?callback=series&amp;represent=(episode/episode)</value>
+  </data>
+  <data name="SkyGo_CatchUpCategoriesUrl" xml:space="preserve">
+    <value>http://content.ott.sky.com/v2/brands/go/devices/pc/navigation/nodes/a27eef2528673410VgnVCM100000255212ac____?callback=catalogueFeed&amp;represent=(child/node;initial=true(child/page(item-group/item-group(item/item-summary))))</value>
+  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="Resources.de" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\localisation\resources.de.resx;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="SkyGo_CatchUpSubItemsUrl" xml:space="preserve">
+    <value>http://content.ott.sky.com/v2/brands/go/devices/pc/navigation/nodes/{INTERNAL_ID}?callback=catalogueFeed&amp;represent=(parent/node,child/page(item-group/item-group(item/item-summary)))</value>
   </data>
 </root>
