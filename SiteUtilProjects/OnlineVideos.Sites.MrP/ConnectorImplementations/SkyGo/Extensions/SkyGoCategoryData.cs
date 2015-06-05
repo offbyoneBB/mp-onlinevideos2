@@ -13,10 +13,12 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
         public enum CategoryType
         { 
             Unknown,
-            Root,
-            Series,
-            Video,
-            LiveTv
+            Movie,
+            CatchUp,
+            CatchUpSubCategory, 
+            CatchUpSubCategory1,
+            BoxSets,
+            Video
         }
 
         /// <summary>
@@ -26,14 +28,18 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
         /// <returns></returns>
         public static CategoryType Type(this Category category)
         {
-            if (category.Other.ToString().StartsWith("S"))
-                return CategoryType.Series;
-            if (category.Other.ToString().StartsWith("V"))
+            if (category.Other.ToString().StartsWith("M~"))
+                return CategoryType.Movie;
+            if (category.Other.ToString().StartsWith("CS~"))
+                return CategoryType.CatchUpSubCategory;
+            if (category.Other.ToString().StartsWith("C1~"))
+                return CategoryType.CatchUpSubCategory1;
+            if (category.Other.ToString().StartsWith("C~"))
+                return CategoryType.CatchUp;
+            if (category.Other.ToString().StartsWith("B~"))
+                return CategoryType.BoxSets;
+            if (category.Other.ToString().StartsWith("V~"))
                 return CategoryType.Video;
-            if (category.Other.ToString().StartsWith("R"))
-                return CategoryType.Root;
-            if (category.Other.ToString().StartsWith("L"))
-                return CategoryType.LiveTv;
             return CategoryType.Unknown;
         }
 

@@ -53,12 +53,11 @@
     <Compile Include="ConnectorImplementations\FormElementCollection.cs" />
     <Compile Include="ConnectorImplementations\SkyGo\Connectors\SkyGoConnector.cs" />
     <Compile Include="ConnectorImplementations\SkyGo\Connectors\SkyGoInformationConnector.cs" />
-    <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoHtmlAgilityPackExtensions.cs" />
     <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoCategoryData.cs" />
-    <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoCategoryParser.cs" />
+    <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoJSONExtensions.cs" />
     <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoLiveTvChannelItem.cs" />
     <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoVideoData.cs" />
-    <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoVideoParser.cs" />
+    <Compile Include="ConnectorImplementations\SkyGo\SkyGoBrowserSession.cs" />
     <Compile Include="Entities\ExtendedCategory.cs" />
     <Compile Include="Extensions\HtmlAgilityPackExtensions.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />
@@ -70,6 +69,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ResourceGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="SingleAssemblyComponentResourceManager.cs" />
@@ -83,11 +87,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\VersionInfo.cs.tmpl" />
     <None Include="Properties\ResourceGenerator.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ResourceGenerator.cs</LastGenOutput>
     </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Properties\VersionInfo.cs.tmpl" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx" />
