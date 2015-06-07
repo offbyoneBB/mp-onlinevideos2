@@ -31,7 +31,8 @@ namespace OnlineVideos.Sites
         internal String episodiosPaginaRegex = "{\"episodes\":\\[(?<episodios>[^]]*)],\"hasNext\":(?<hayMasPaginas>[^}]*)}";
         internal String episodiosRegex = "{(?<episodios>[^}]*)}";
         internal String xmlURLRegex = "{\"host\":\"(?<url>[^\"]*)\"";
-        internal String xmlDataRegex = "<duration>(?<Duration>[^<]*)</duration>\\s*<videoUrl\\sscrubbing=\"(?<Scrubbing>[^\"]*)\"\\smultipleDef=\"(?<MultipleDef>[^\"]*)\"\\srtmp=\"(?<rtmp>[^\"]*)\">\\s*<link\\sstart=\"(?<start>[^\"]*)\"\\send=\"(?<end>[^\"]*)\">(?<VideoURL>[^<]*)</link>\\s*</videoUrl>";
+        //internal String xmlDataRegex = "<duration>(?<Duration>[^<]*)</duration>\\s*<videoUrl\\sscrubbing=\"(?<Scrubbing>[^\"]*)\"\\smultipleDef=\"(?<MultipleDef>[^\"]*)\"\\srtmp=\"(?<rtmp>[^\"]*)\">\\s*<link\\sstart=\"(?<start>[^\"]*)\"\\send=\"(?<end>[^\"]*)\">(?<VideoURL>[^<]*)</link>\\s*</videoUrl>";
+        internal String xmlDataRegex = "<videoUrl\\s[^>]*>\\s*<link[^>]*>(?<VideoURL>[^<]*)</link>\\s*</videoUrl>";
         internal String episodesData = "";
         internal String timeURL = "http://token.mitele.es/clock.php";
         internal String tokenizerURL = "http://token.mitele.es/";
@@ -301,7 +302,8 @@ namespace OnlineVideos.Sites
             headers.Add("Origin", "http://static1.tele-cinco.net");
             headers.Add("Referer", "http://static1.tele-cinco.net/comun/swf/playerMitele.swf");
             string data = GetWebData(tokenizerURL+"?hash=" + hash + "&id=" + url + "&startTime=0&endTime=0", headers: headers, cache: false);
-            return data.Substring(data.IndexOf("tokenizedUrl\":\"") + "tokenizedUrl\":\"".Length).Split('\"')[0].Replace(" ", "").Replace("\\/", "/");
+            string master = GetWebData(data.Substring(data.IndexOf("tokenizedUrl\":\"") + "tokenizedUrl\":\"".Length).Split('\"')[0].Replace(" ", "").Replace("\\/", "/"));
+            return master.Substring(master.IndexOf("http://"));
         }
 
         public string GetWebDataFromPostMitele(string url, string postData)
