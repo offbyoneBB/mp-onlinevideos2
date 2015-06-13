@@ -22,27 +22,45 @@ namespace OnlineVideos.Sites
 		{
 			Settings.Categories.Add(new RssLink() { Name = "Sendungen A-Z", HasSubCategories = true, Url = "http://www.ardmediathek.de/tv/sendungen-a-z" });
 			Settings.Categories.Add(new RssLink() { Name = "Sendung verpasst?", HasSubCategories = true, Url = "http://www.ardmediathek.de/tv/sendungVerpasst" });
-			Settings.Categories.Add(new RssLink() { Name = "TV-Livestreams", Url = "http://www.ardmediathek.de/tv/live" });
+            Settings.Categories.Add(new RssLink() { Name = "TV-Livestreams", Url = "http://www.ardmediathek.de/tv/live" });
 
 			Uri baseUri = new Uri("http://www.ardmediathek.de/tv");
 			var baseDoc = GetWebData<HtmlDocument>(baseUri.AbsoluteUri);
 			foreach (var modHeadline in baseDoc.DocumentNode.Descendants("h2").Where(h2 => h2.GetAttributeValue("class", "") == "modHeadline"))
 			{
-				var moreLink = modHeadline.ParentNode.Descendants("a").FirstOrDefault(a => a.GetAttributeValue("class", "") == "more");
-				if (moreLink != null)
-				{
-					Settings.Categories.Add(new RssLink() { Name = HttpUtility.HtmlDecode(modHeadline.InnerText), Url = new Uri(baseUri, moreLink.GetAttributeValue("href", "")).AbsoluteUri });
-				}
-				else if (!modHeadline.InnerText.ToLower().Contains("live"))
-				{
-					var cat = new RssLink() { Name = modHeadline.InnerText, Url = baseUri.AbsoluteUri, HasSubCategories = true, SubCategoriesDiscovered = true, SubCategories = new List<Category>() };
-					GetSubcategoriesFromDiv(cat, modHeadline.ParentNode);
-					Settings.Categories.Add(cat);
-				}
+                var title = HttpUtility.HtmlDecode(string.Join("", modHeadline.Elements("#text").Select(t => t.InnerText.Trim()).ToArray()));
+                if (!title.ToLower().Contains("live"))
+                {
+                    var moreLink = modHeadline.ParentNode.Descendants("a").FirstOrDefault(a => a.GetAttributeValue("class", "") == "more");
+                    if (moreLink != null)
+                    {
+                        Settings.Categories.Add(new RssLink() { Name = title, Url = new Uri(baseUri, moreLink.GetAttributeValue("href", "")).AbsoluteUri, HasSubCategories = !SubItemsAreVideos(modHeadline.ParentNode) });
+                    }
+                    else
+                    {
+                        var cat = new RssLink() { Name = title, Url = baseUri.AbsoluteUri, HasSubCategories = true, SubCategoriesDiscovered = true, SubCategories = new List<Category>() };
+                        GetSubcategoriesFromDiv(cat, modHeadline.ParentNode);
+                        Settings.Categories.Add(cat);
+                    }
+                }
 			}
 			Settings.DynamicCategoriesDiscovered = true;
 			return Settings.Categories.Count;
 		}
+
+        bool SubItemsAreVideos(HtmlNode parentNode)
+        {
+            var firstTeaser = parentNode.Descendants("div").FirstOrDefault(d => d.GetAttributeValue("class", "") == "teaser");
+            if (firstTeaser != null)
+            {
+                var firstTeaserLink = firstTeaser.Descendants("a").FirstOrDefault();
+                if (firstTeaserLink != null)
+                {
+                    return firstTeaserLink.GetAttributeValue("href", "").Contains("/Video?");
+                }
+            }
+            return false;
+        }
 
 		void GetSubcategoriesFromDiv(RssLink parentCategory, HtmlNode mainDiv)
 		{
@@ -109,7 +127,7 @@ namespace OnlineVideos.Sites
 				}
 				parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
 			}
-			else if (parentCategory.ParentCategory.Name == "Sendungen A-Z")
+            else if (parentCategory.ParentCategory == null || parentCategory.ParentCategory.Name == "Sendungen A-Z")
 			{
 				var mainDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "elementWrapper")
 					.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "boxCon");
@@ -123,7 +141,7 @@ namespace OnlineVideos.Sites
 				foreach (HtmlNode entry in programmDiv.Descendants("div").Where(div => div.GetAttributeValue("class", "") == "entry" || div.GetAttributeValue("class", "") == "entry active").Skip(1))
 				{
 					var a = entry.Descendants("a").FirstOrDefault();
-					var day = new RssLink() { Name = a.InnerText.Trim(), Url = new Uri(myBaseUri, HttpUtility.HtmlDecode(a.GetAttributeValue("href", ""))).AbsoluteUri };
+                    var day = new RssLink() { Name = a.InnerText.Trim(), Url = new Uri(myBaseUri, HttpUtility.HtmlDecode(a.GetAttributeValue("href", ""))).AbsoluteUri, ParentCategory = parentCategory };
 					var j = HttpUtility.HtmlDecode(entry.GetAttributeValue("data-ctrl-programmloader-source", ""));
 					if (!string.IsNullOrEmpty(j))
 					{
@@ -215,6 +233,8 @@ namespace OnlineVideos.Sites
 				{
 					var video = new VideoInfo();
 					video.VideoUrl = new Uri(myBaseUri, HttpUtility.HtmlDecode(link.GetAttributeValue("href", ""))).AbsoluteUri;
+                    if (!video.VideoUrl.Contains("/Video?"))
+                        continue;
 
 					var img = teaser.Descendants("img").FirstOrDefault();
 					if (img != null) video.Thumb = new Uri(myBaseUri, JObject.Parse(HttpUtility.HtmlDecode(img.GetAttributeValue("data-ctrl-image", ""))).Value<string>("urlScheme").Replace("##width##", "256")).AbsoluteUri;
@@ -232,7 +252,8 @@ namespace OnlineVideos.Sites
 						if (teaserParagraph != null)
 							video.Description += (string.IsNullOrEmpty(video.Description) ? "" : "\n") + teaserParagraph.InnerText;
 
-						var subtitle = textWrapper.Descendants("p").FirstOrDefault(div => div.GetAttributeValue("class", "") == "subtitle").ChildNodes[0].InnerText;
+						var subtitleNode = textWrapper.Descendants("p").FirstOrDefault(div => div.GetAttributeValue("class", "") == "subtitle");
+                        string subtitle = (subtitleNode != null && subtitleNode.ChildNodes.Count > 0) ? subtitleNode.ChildNodes[0].InnerText : "";
 						if (subtitle.Contains('|'))
 						{
 							
