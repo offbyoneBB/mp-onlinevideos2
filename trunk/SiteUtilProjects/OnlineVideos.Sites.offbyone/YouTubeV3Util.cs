@@ -240,7 +240,7 @@ namespace OnlineVideos.Sites
         {
             base.HasNextPage = false;
             nextPageVideosQuery = null;
-            return QuerySearchVideos(query, null, category, null).ConvertAll(v => (SearchResultItem)v);
+            return QuerySearchVideos(query, "videos", null, category, null).ConvertAll(v => (SearchResultItem)v);
         }
 
         #endregion
@@ -276,7 +276,7 @@ namespace OnlineVideos.Sites
         public List<VideoInfo> FilterSearchResults(string query, string category, int maxResults, string orderBy, string timeFrame)
         {
             Enum.TryParse<SearchResource.ListRequest.OrderEnum>(orderBy, out currentSearchOrder);
-            return QuerySearchVideos(query, null, category, null);
+            return QuerySearchVideos(query, "videos", null, category, null);
         }
 
         public List<int> GetResultSteps() { return new List<int>() { 10, 20, 30, 40, 50 }; }
@@ -376,14 +376,14 @@ namespace OnlineVideos.Sites
                     base.HasNextPage = false;
                     nextPageVideosQuery = null;
                     currentVideosTitle = Translation.Instance.RelatedVideos + " [" + selectedItem.Title + "]";
-                    result.ResultItems = QuerySearchVideos(null, null, null, (selectedItem as YouTubeVideo).VideoUrl).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
+                    result.ResultItems = QuerySearchVideos(null, "videos", null, null, (selectedItem as YouTubeVideo).VideoUrl).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
                 }
                 else if (choice.DisplayText.StartsWith(Translation.Instance.UploadsBy))
                 {
                     base.HasNextPage = false;
                     nextPageVideosQuery = null;
                     currentVideosTitle = Translation.Instance.UploadsBy + " [" + (selectedItem as YouTubeVideo).ChannelTitle + "]";
-                    result.ResultItems = QuerySearchVideos(null, (selectedItem as YouTubeVideo).ChannelId, null, null).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
+                    result.ResultItems = QuerySearchVideos(null, "videos", (selectedItem as YouTubeVideo).ChannelId, null, null).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
                 }
                 else if (choice.DisplayText.StartsWith(Translation.Instance.Playlists))
                 {
@@ -622,7 +622,7 @@ namespace OnlineVideos.Sites
                     ParentCategory = parentCategory,
                     Kind = YouTubeCategory.CategoryKind.Channel,
                     Id = channelId,
-                    Other = (Func<List<VideoInfo>>)(() => QuerySearchVideos(null, channelId, null, null))
+                    Other = (Func<List<VideoInfo>>)(() => QuerySearchVideos(null, "videos", parentCategory.Id, null, null, true, null))
                 });
             }
             foreach (var item in response.Items)
@@ -699,6 +699,7 @@ namespace OnlineVideos.Sites
             query.RegionCode = regionCode;
             query.MaxResults = pageSize;
             query.PageToken = pageToken;
+
             var response = query.Execute();
             var results = response.Items.Where(i => i.Snippet.Type == "upload").Select(i => new YouTubeVideo()
             {
@@ -710,6 +711,7 @@ namespace OnlineVideos.Sites
                 ChannelId = i.Snippet.ChannelId,
                 ChannelTitle = i.Snippet.ChannelTitle
             }).ToList<VideoInfo>();
+
             if (!string.IsNullOrEmpty(response.NextPageToken))
             {
                 base.HasNextPage = true;
@@ -780,7 +782,7 @@ namespace OnlineVideos.Sites
         /// <summary>Returns a list of videos for the given search string.</summary>
         /// <param name="queryString">The search string to use as as filter in the query.</param>
         /// <param name="channelId">The channel id to use as filter in the query.</param>
-        List<VideoInfo> QuerySearchVideos(string queryString, string channelId, string categoryId, string relatedToVideoId, string pageToken = null)
+        List<VideoInfo> QuerySearchVideos(string queryString, string searchType, string channelId, string categoryId, string relatedToVideoId, bool sortbyDate = false, string pageToken = null)
         {
             var query = Service.Search.List("snippet");
             if (!string.IsNullOrEmpty(channelId))
@@ -791,11 +793,40 @@ namespace OnlineVideos.Sites
                 query.VideoCategoryId = categoryId;
             if (!string.IsNullOrEmpty(relatedToVideoId))
                 query.RelatedToVideoId = relatedToVideoId;
-            query.Order = currentSearchOrder;
-            query.Type = "video";
+
+            if (sortbyDate)
+            {
+                query.Order = SearchResource.ListRequest.OrderEnum.Date;
+            }
+            else
+            {
+                query.Order = currentSearchOrder;
+            }
+
+            query.Type = searchType;
             query.MaxResults = pageSize;
             query.PageToken = pageToken;
+
             var response = query.Execute();
+
+            // Collect video IDs from response for duration lookup
+            string videoIDs = "";
+
+            foreach (var item in response.Items)
+            {
+                if (string.IsNullOrEmpty(videoIDs))
+                {
+                    videoIDs = item.Id.VideoId;
+                }
+                else
+                {
+                    videoIDs = videoIDs + "," + item.Id.VideoId;
+                }
+            }
+
+            // Retrieve Video durations
+            Dictionary<string, string> videoDurations = QueryVideoInfoDuration(videoIDs);
+
             var results = response.Items.Select(i => new YouTubeVideo()
             {
                 Title = i.Snippet.Title,
@@ -804,16 +835,43 @@ namespace OnlineVideos.Sites
                 Airdate = i.Snippet.PublishedAt != null ? i.Snippet.PublishedAt.Value.ToString("g", OnlineVideoSettings.Instance.Locale) : i.Snippet.PublishedAtRaw,
                 VideoUrl = i.Id.VideoId,
                 ChannelId = i.Snippet.ChannelId,
-                ChannelTitle = i.Snippet.ChannelTitle
+                ChannelTitle = i.Snippet.ChannelTitle,
+                Length = videoDurations.FirstOrDefault(x => x.Key == i.Id.VideoId).Value
             }).ToList<VideoInfo>();
             if (!string.IsNullOrEmpty(response.NextPageToken))
             {
                 base.HasNextPage = true;
-                nextPageVideosQuery = () => QuerySearchVideos(queryString, channelId, categoryId, relatedToVideoId, response.NextPageToken);
+                nextPageVideosQuery = () => QuerySearchVideos(queryString, searchType, channelId, categoryId, relatedToVideoId, sortbyDate, response.NextPageToken);
             }
             return results;
         }
 
+        /// <summary>Returns video durations for given video ids.</summary>
+        /// <param name="videoIDs">VideoIDSs can be a single videoID or multiple separated by ','.</param>
+        Dictionary<string, string> QueryVideoInfoDuration(string videoIDs)
+        {
+            Dictionary<string, string> videoDurations = new Dictionary<string, string>();
+
+            var query = Service.Videos.List("snippet, contentDetails");
+            query.Id = videoIDs;
+            var response = query.Execute();
+
+            foreach (var item in response.Items)
+            {
+                string duration = System.Xml.XmlConvert.ToTimeSpan(item.ContentDetails.Duration).ToString();
+
+                //Trim if no hours found (00:)
+                if (duration.StartsWith("00:"))
+                {
+                    duration = duration.Substring(3);
+                }
+
+                videoDurations.Add(item.Id, duration);
+                //Log.Debug(string.Format("ID: {0}   Duration: {1}", item.Id, duration));
+            }
+
+            return videoDurations;
+        }
         #endregion
     }
 }
