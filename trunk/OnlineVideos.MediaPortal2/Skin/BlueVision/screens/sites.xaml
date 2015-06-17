@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include
+    xmlns="www.team-mediaportal.com/2008/mpf/directx"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ovs="clr-namespace:OnlineVideos.MediaPortal2;assembly=OnlineVideos.MediaPortal2"
+    Source="screens\master_bare.xaml">
+  <Include.Resources>
+
+    <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
+    <ovs:SiteUtilIconConverter x:Key="ovsSiteUtilIconConverter"/>
+    <!-- Contents -->
+    <ControlTemplate x:Key="Client_Template">
+      <DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}" >
+
+        <ListView x:Name="siteslist" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center"
+                  Style="{ThemeResource ovsSitesListViewStyle}" Margin="-30, 0,-45,-5"
+                  CurrentItem="{Binding Path=FocusedSite, Mode=OneWayToSource}" 
+                  ItemsSource="{Binding Path=SitesList}" SetFocusPrio="RestoreState"/>
+
+        <!--StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" VerticalAlignment="Top" Margin="0,375,0,-50" >
+          <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+          <Label Color="{ThemeResource TextColor}"
+                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                   DataContext="{Binding ElementName=siteslist,Path=CurrentItem}" Content="{Binding Path=Name}" />
+          <Label Color="{ThemeResource TextColor}" Opacity="0.6"
+                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Wrap="True" Scroll="Auto"
+                   DataContext="{Binding ElementName=siteslist,Path=CurrentItem}"
+                   Content="{Binding Description}" />
+          </StackPanel>
+          <Image DataContext="{Binding ElementName=siteslist,Path=CurrentItem}" Width="100" Stretch="Uniform" 
+                 Source="{Binding Path=Site, Converter={ThemeResource ovsSiteUtilIconConverter}}"
+                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        </StackPanel-->
+        <Grid DockPanel.Dock="Bottom" VerticalAlignment="Top" Margin="0,630,0,-400">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="200"/>
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+          <Label Grid.Row="0" Grid.Column="0" Color="{ThemeResource TextColor}"
+                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                 DataContext="{Binding ElementName=siteslist,Path=CurrentItem}" Content="{Binding Path=Name}" />
+          <Label Height="170" Grid.Row="1" Grid.Column="0" Color="{ThemeResource TextColor}" Opacity="0.6"
+                 HorizontalAlignment="Stretch" VerticalAlignment="Top" Wrap="True" Scroll="Auto"
+                 DataContext="{Binding ElementName=siteslist,Path=CurrentItem}"
+                 Content="{Binding Description}" />
+          <Image Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" DataContext="{Binding ElementName=siteslist,Path=CurrentItem}" Width="180" Stretch="Uniform"
+                 Source="{Binding Path=Site, Converter={ThemeResource ovsSiteUtilIconConverter}}" Margin="15"
+                 HorizontalAlignment="Stretch" VerticalAlignment="Top"/>           
+        </Grid>
+
+      </DockPanel>
+    </ControlTemplate>
+  </Include.Resources>
+</Include>
