@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -27,9 +28,9 @@ namespace OnlineVideos.Sites
         Ruotsi
     }
 
-    public class YleUtil : SiteUtilBase
+    public class YleUtil : LatestVideosSiteUtilBase
     {
-        #region SiteUtil Configuration
+        #region OnlineVideosUserConfiguration
 
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Vain ulkomailla katsottavat"), Description("Rajaa tarkemmin: Vain ulkomailla katsottavat")]
         protected bool onlyNonGeoblockedContent = false;
@@ -40,7 +41,9 @@ namespace OnlineVideos.Sites
 
         #endregion
 
-        #region Variables
+        #region Variables and constants
+
+        private YleAppInfo appInfo = null;
 
         //Translations
         private Dictionary<string, string> dictionary;
@@ -51,7 +54,6 @@ namespace OnlineVideos.Sites
         private string CurrentSeriesCategoryName = string.Empty;
 
         //Api keys and reference
-        private YleAppInfo appInfo = null;
         private List<string> apiCategories;
         private List<string> apiChannelCategories;
         private List<string> apiSortOrders;
@@ -61,24 +63,28 @@ namespace OnlineVideos.Sites
         private const string cApiContentTypeProgram = "TVProgram";
         private const string cApiContentTypeTvLive = "TVLive";
         private const int cApiLimit = 100;
-
+        private const string cChannelCategory = "ChannelCategory";
 
         //Non API Categories 
         private const string cLiveCategory = "LiveCategory";
-        private const string cChannelCategory = "ChannelCategory";
         private const string cAllProgramsCategory = "AllProgramsCategory";
         private const string cArchiveCategory = "ArchiveCategory";
 
         //Urls
-        private const string cUrlImageFormat = @"http://a4.images.cdn.yle.fi/image/upload/{0}.jpg";
+        //Api urls
         private const string cUrlCategoryFormat = @"{0}api/v1/programs/tv?app_id={1}&app_key={2}&service=tv&category={3}&o={4}&region={5}&olang={6}{7}&limit={8}&offset={9}";
         private const string cUrlEpisodesFormat = @"{0}api/programs/v1/items.json?series={1}&type={2}&availability=ondemand&order=ondemand.publication.starttime%253Adesc&app_id={3}&app_key={4}&limit={5}&offset={6}";
         private const string cUrlProgramFormat = @"{0}api/programs/v1/id/{1}.json?app_id={2}&app_key={3}";
-        private const string cUrlAllProgramsFormat = @"{0}tv/a-o";
         private const string cUrlSearchFormat = @"{0}api/v1/search?language={1}&service=tv&query={2}";
-        private const string cUrlLiveServiceFormat = @"http://player.yle.fi/api/v1/services.jsonp?id={0}&region={1}";
-        private const string cUrlHdsFormat = @"http://player.yle.fi/api/v1/media.jsonp?protocol=HDS&client=areena-flash-player&id={0}";
+        //Image url
+        private const string cUrlImageFormat = @"http://a4.images.cdn.yle.fi/image/upload/{0}.jpg";
+        //HTML urls
+        private const string cUrlAllProgramsFormat = @"{0}tv/a-o";
         private const string cUrlArchive = @"http://areena.yle.fi/elava-arkisto/a-o";
+        //Player api urls
+        private const string cUrlLiveServiceFormat = @"http://player.yle.fi/api/v1/services.jsonp?id={0}&region={1}";
+        private const string cUrlArchiveEmbedFormat = @"http://yle.fi/elavaarkisto/embed/{0}.jsonp?callback=yleEmbed.eaJsonpCallback&instance=1&id={1}&lang=fi";
+        private const string cUrlHdsFormat = @"http://player.yle.fi/api/v1/media.jsonp?protocol=HDS&client=areena-flash-player&id={0}";
         #endregion
 
         #region Properties
@@ -176,7 +182,7 @@ namespace OnlineVideos.Sites
 
         #endregion
 
-        #region SiteUtilBase overides
+        #region LatestVideosSiteUtilBase implementation
 
         public override void Initialize(SiteSettings siteSettings)
         {
@@ -191,7 +197,7 @@ namespace OnlineVideos.Sites
                 apiCategories = new List<string>() { "sarjat-ja-elokuvat", "viihde-ja-kulttuuri", "dokumentit-ja-fakta", "uutiset", "urheilu", "lapset" };
                 apiSortOrders = new List<string>() { "", "suosituimmat", "vielaehdit", "ao" };
             }
-            apiChannelCategories = new List<string>() { "*&k=yle-tv1", "*&k=yle-tv2", "*&k=yle-fem", "*&k=yle-teema", "*&k=yle-areena" };
+            apiChannelCategories = new List<string>() { "*&k=yle-tv1", "*&k=yle-tv2", "*&k=yle-fem", "*&k=yle-teema", "*&k=yle-areena", "*&k=ylex" };
 
             dictionary = new Dictionary<string, string>();
             if (inSwedish)
@@ -236,6 +242,7 @@ namespace OnlineVideos.Sites
             dictionary.Add("*&k=yle-fem", "Yle Fem");
             dictionary.Add("*&k=yle-teema", "Yle Teema");
             dictionary.Add("*&k=yle-areena", "Yle Areena");
+            dictionary.Add("*&k=ylex", "YleX");
         }
 
         #region Categories
@@ -282,17 +289,15 @@ namespace OnlineVideos.Sites
             //Archive Category
             if (!inSwedish)
             {
-                //Not working right now
-               // Category archiveCategory = new Category() { Name = dictionary[cArchiveCategory], HasSubCategories = true };
-               // archiveCategory.Other = (Func<List<Category>>)(() => GetArchiveProgramsSubCategories(archiveCategory));
-               // Settings.Categories.Add(archiveCategory);
+                Category archiveCategory = new Category() { Name = dictionary[cArchiveCategory], HasSubCategories = true };
+                archiveCategory.Other = (Func<List<Category>>)(() => GetArchiveProgramsSubCategories(archiveCategory));
+                Settings.Categories.Add(archiveCategory);
             }
 
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
 
         }
-
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
@@ -443,6 +448,7 @@ namespace OnlineVideos.Sites
             string type = json["data"]["type"].Value<string>();
             if (cApiContentTypeTvSeries == type)
             {
+                //Series episodes and clips
                 json = GetWebData<JObject>(string.Format(cUrlEpisodesFormat, BaseUrl, (category as RssLink).Url, "", AppInfo.AppId, AppInfo.AppKey, 1, 0));
                 JToken meta = json["meta"];
                 uint clipCount = meta[cApiClip].Value<uint>();
@@ -474,6 +480,7 @@ namespace OnlineVideos.Sites
             }
             else
             {
+                //Programs/Movies
                 cats.Add(new RssLink()
                 {
                     Name = category.Name,
@@ -494,20 +501,7 @@ namespace OnlineVideos.Sites
             foreach (HtmlNode li in uls.Descendants("li"))
             {
                 string dataLetterAttribute = li.GetAttributeValue("data-letter", "");
-                if (string.IsNullOrEmpty(dataLetterAttribute))
-                {
-                    HtmlNode a = li.SelectSingleNode("a");
-                    RssLink program = new RssLink()
-                    {
-                        Name = a.InnerText,
-                        Url = a.GetAttributeValue("href", ""),
-                        ParentCategory = subCategories.Last(),
-                        HasSubCategories = false
-                    };
-                    program.Other = (Func<List<Category>>)(() => GetProgramSubCategories(program));
-                    subCategories.Last().SubCategories.Add(program);
-                }
-                else
+                if (!string.IsNullOrEmpty(dataLetterAttribute))
                 {
                     subCategories.Add(new Category()
                     {
@@ -518,6 +512,16 @@ namespace OnlineVideos.Sites
                         SubCategoriesDiscovered = true
                     });
                 }
+                HtmlNode a = li.SelectNodes("a").First(n => !n.GetAttributeValue("href", "").StartsWith("#"));
+                RssLink program = new RssLink()
+                {
+                    Name = a.InnerText,
+                    Url = a.GetAttributeValue("href", "").Replace("/",""),
+                    ParentCategory = subCategories.Last(),
+                    HasSubCategories = false,
+                    Other = cArchiveCategory
+                };
+                subCategories.Last().SubCategories.Add(program);
             }
             return subCategories;
         }
@@ -540,26 +544,10 @@ namespace OnlineVideos.Sites
             else if (cApiContentTypeTvLive == category.GetOtherAsString())
             {
                 videos = GetLiveVideos();
-                /*
-                videos = new List<VideoInfo>();
-                foreach (string channel in apiChannels)
-                {
-                    JObject json = GetWebData<JObject>(string.Format(cUrlLiveServiceFormat, channel, ApiRegion), cache: false);
-                    JToken outlet = json["data"]["outlets"].FirstOrDefault(o => o["outlet"]["language"] != null && o["outlet"]["language"].First.Value<string>() == ApiLanguage && (!onlyNonGeoblockedContent || o["outlet"]["region"].Value<string>() == "World"));
-                    if (outlet == null)
-                        outlet = json["data"]["outlets"].FirstOrDefault(o => !onlyNonGeoblockedContent || o["outlet"]["region"].Value<string>() == "World");
-                    if (outlet != null)
-                    {
-                        VideoInfo video = new VideoInfo()
-                        {
-                            Title = dictionary[channel],
-                            VideoUrl = outlet["outlet"]["media"]["id"].Value<string>(),
-                            Other = cApiContentTypeTvLive
-                        };
-                        videos.Add(video);
-                    }
-                }
-                 */ 
+            }
+            else if (cArchiveCategory == category.GetOtherAsString())
+            {
+                videos = GetArchiveVideos(category);
             }
             else
             {
@@ -576,69 +564,32 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        private List<VideoInfo> GetLiveVideos()
-        {
-            List<VideoInfo> videos = new List<VideoInfo>();
-            HtmlDocument doc = GetWebData<HtmlDocument>(LiveUrl, cache: false);
-            HtmlNodeCollection divs = doc.DocumentNode.SelectNodes("//div[@class='channel-preview']");
-            foreach (HtmlNode d in divs)
-            {
-                HtmlNode div = d.ParentNode;
-                HtmlNode a = div.SelectSingleNode(".//a[@class='channel-live-link']");
-                string id = a.GetAttributeValue("href", "");
-                id = Path.GetFileName(id);
-                id = id.Substring(0, id.IndexOf("#"));
-                JToken outlet = null;
-                VideoInfo video = null; 
-                if (!id.StartsWith("yle"))
-                {
-                    string url = string.Format(cUrlProgramFormat, BaseUrl, id, AppInfo.AppId, AppInfo.AppKey);
-                    JObject json = GetWebData<JObject>(url);
-                    JToken data = json["data"];
-                    video = GetVideoInfoFromJsonData(data, false);
-                }
-                else
-                {
-                    JObject json = GetWebData<JObject>(string.Format(cUrlLiveServiceFormat, id, ApiRegion), cache: false);
-                    outlet = json["data"]["outlets"].FirstOrDefault(o => o["outlet"]["language"] != null && o["outlet"]["language"].First.Value<string>() == ApiLanguage && (!onlyNonGeoblockedContent || o["outlet"]["region"].Value<string>() == "World"));
-                    if (outlet == null)
-                        outlet = json["data"]["outlets"].FirstOrDefault(o => !onlyNonGeoblockedContent || o["outlet"]["region"].Value<string>() == "World");
-                }
-                if (outlet != null || video != null)
-                {
-                    if (video == null)
-                    {
-                        video = new VideoInfo();
-                        video.VideoUrl = outlet["outlet"]["media"]["id"].Value<string>();
-                        video.Other = cApiContentTypeTvLive;
-                    }
-                    video.Title = a.InnerText;
-                    HtmlNode img = div.SelectSingleNode(".//noscript/img");
-                    string imgUrl = img.GetAttributeValue("src", "");
-                    video.Thumb = imgUrl.StartsWith("//") ? "http:" + imgUrl : imgUrl;
-                    string desc = "";
-                    foreach (HtmlNode li in div.SelectNodes(".//li"))
-                    {
-                        desc += li.SelectSingleNode(".//time[@class='dtstart']").InnerText.Trim() + " ";
-                        desc += li.SelectSingleNode(".//div[@class='program-title']").InnerText.Replace("\n", " ").Trim() + "\r\n";
-                        desc += li.SelectSingleNode(".//div[@class='program-desc']").InnerText.Replace("\n", " ").Trim() + "\r\n";
-                    }
-                    desc = Regex.Replace(desc, @"[ \f\t\v]+", " ");
-                    video.Description = desc;
-                    videos.Add(video);
-                }
-            }
-            return videos;
-        }
-
         public override List<VideoInfo> GetNextPageVideos()
         {
+            //Only TV-Series have paging
             return GetSeriesVideos();
         }
 
         public override string GetVideoUrl(VideoInfo video)
         {
-            string url =  string.Format(cUrlHdsFormat, video.VideoUrl);
+            bool isArchive = video.GetOtherAsString() == cArchiveCategory;
+            string archiveUrl = "";
+            if (isArchive)
+            {
+                Regex archiveRgx = new Regex(@".*(?<prefix>\d-)(?<id>\d*)");
+                Match archiveMatch = archiveRgx.Match(video.VideoUrl);
+                if (archiveMatch.Success)
+                {
+                    Regex mediakantaIdRegex = new Regex(@"""mediakantaId"":""(?<id>[^""]*)");
+                    string id = archiveMatch.Groups["id"].Value;
+                    Match mediakantaIdMatch = mediakantaIdRegex.Match(GetWebData(string.Format(cUrlArchiveEmbedFormat, id, id)));
+                    if (mediakantaIdMatch.Success)
+                    {
+                        archiveUrl = archiveMatch.Groups["prefix"].Value + mediakantaIdMatch.Groups["id"].Value;
+                    }
+                }
+            }
+            string url = string.Format(cUrlHdsFormat, isArchive ? archiveUrl : video.VideoUrl);
             JObject json = GetWebData<JObject>(url, cache: false);
             JToken hdsStream = json["data"]["media"]["HDS"].FirstOrDefault(h => h["subtitles"] != null && h["subtitles"].Count() > 0);
             if (hdsStream == null)
@@ -702,6 +653,79 @@ namespace OnlineVideos.Sites
             return result;
         }
 
+        public override List<VideoInfo> GetLatestVideos()
+        {
+            List<VideoInfo> videos = new List<VideoInfo>();
+            try
+            {
+                string url = string.Format(cUrlCategoryFormat, BaseUrl, AppInfo.AppId, AppInfo.AppKey, "*", "", ApiRegion, ApiLanguage, ApiContentLanguage, latestVideosCount, 0);
+                JObject json = GetWebData<JObject>(url);
+                foreach(JToken item in json["data"].Value<JArray>())
+                {
+                    string id = item["latestProgram"]["id"].Value<string>();
+                    JObject programJson = GetWebData<JObject>(string.Format(cUrlProgramFormat, BaseUrl, id, AppInfo.AppId, AppInfo.AppKey));
+                    videos.Add(GetVideoInfoFromJsonData(programJson["data"], item["type"].Value<string>() == cApiContentTypeTvSeries));
+                }
+            }
+            catch { }
+            return videos;
+        }
+
+        private List<VideoInfo> GetLiveVideos()
+        {
+            List<VideoInfo> videos = new List<VideoInfo>();
+            HtmlDocument doc = GetWebData<HtmlDocument>(LiveUrl, cache: false);
+            HtmlNodeCollection divs = doc.DocumentNode.SelectNodes("//div[@class='channel-preview']");
+            foreach (HtmlNode d in divs)
+            {
+                HtmlNode div = d.ParentNode;
+                HtmlNode a = div.SelectSingleNode(".//a[@class='channel-live-link']");
+                string id = a.GetAttributeValue("href", "");
+                id = Path.GetFileName(id);
+                id = id.Substring(0, id.IndexOf("#"));
+                JToken outlet = null;
+                VideoInfo video = null;
+                if (!id.StartsWith("yle"))
+                {
+                    string url = string.Format(cUrlProgramFormat, BaseUrl, id, AppInfo.AppId, AppInfo.AppKey);
+                    JObject json = GetWebData<JObject>(url);
+                    JToken data = json["data"];
+                    video = GetVideoInfoFromJsonData(data, false);
+                }
+                else
+                {
+                    JObject json = GetWebData<JObject>(string.Format(cUrlLiveServiceFormat, id, ApiRegion), cache: false);
+                    outlet = json["data"]["outlets"].FirstOrDefault(o => o["outlet"]["language"] != null && o["outlet"]["language"].First.Value<string>() == ApiLanguage && (!onlyNonGeoblockedContent || o["outlet"]["region"].Value<string>() == "World"));
+                    if (outlet == null)
+                        outlet = json["data"]["outlets"].FirstOrDefault(o => !onlyNonGeoblockedContent || o["outlet"]["region"].Value<string>() == "World");
+                }
+                if (outlet != null || video != null)
+                {
+                    if (video == null)
+                    {
+                        video = new VideoInfo();
+                        video.VideoUrl = outlet["outlet"]["media"]["id"].Value<string>();
+                        video.Other = cApiContentTypeTvLive;
+                    }
+                    video.Title = a.InnerText;
+                    HtmlNode img = div.SelectSingleNode(".//noscript/img");
+                    string imgUrl = img.GetAttributeValue("src", "");
+                    video.Thumb = imgUrl.StartsWith("//") ? "http:" + imgUrl : imgUrl;
+                    string desc = "";
+                    foreach (HtmlNode li in div.SelectNodes(".//li"))
+                    {
+                        desc += li.SelectSingleNode(".//time[@class='dtstart']").InnerText.Trim() + " ";
+                        desc += li.SelectSingleNode(".//div[@class='program-title']").InnerText.Replace("\n", " ").Trim() + "\r\n";
+                        desc += li.SelectSingleNode(".//div[@class='program-desc']").InnerText.Replace("\n", " ").Trim() + "\r\n";
+                    }
+                    desc = Regex.Replace(desc, @"[ \f\t\v]+", " ");
+                    video.Description = desc;
+                    videos.Add(video);
+                }
+            }
+            return videos;
+        }
+
         private List<VideoInfo> GetSeriesVideos()
         {
             List<VideoInfo> videos = new List<VideoInfo>();
@@ -736,22 +760,19 @@ namespace OnlineVideos.Sites
         private VideoInfo GetVideoInfoFromJsonData(JToken data, bool isSeries)
         {
             VideoInfo video = null;
-            string id = string.Empty;
-            JToken publicationEvent = data["publicationEvent"];
-            foreach (JToken pe in publicationEvent)
+            JToken publicationEvents = data["publicationEvent"];
+            JToken publicationEvent = publicationEvents.FirstOrDefault(pe => 
+                    pe["type"].Value<string>() == "OnDemandPublication" && 
+                    pe["temporalStatus"].Value<string>() == "currently" && 
+                    pe["media"] != null && 
+                    pe["media"]["available"] != null && 
+                    pe["media"]["available"].Value<bool>() &&
+                    (!onlyNonGeoblockedContent || pe["region"].Value<string>() == "World")
+                    );
+            if (publicationEvent != null)
             {
-                if (pe["media"] != null && pe["media"]["available"] != null && pe["media"]["available"].Value<bool>())
-                {
-                    if (!onlyNonGeoblockedContent || pe["region"].Value<string>() == "World")
-                    {
-                        id = pe["media"]["id"].Value<string>();
-                        break;
-                    }
-                }
-            }
-
-            if (!string.IsNullOrEmpty(id))
-            {
+                string id = publicationEvent["media"]["id"].Value<string>();
+                DateTime start = publicationEvent["startTime"].Value<DateTime>();
                 string title = string.Empty;
                 string episodeTitle = string.Empty;
                 string type = data["type"].Value<string>();
@@ -770,11 +791,28 @@ namespace OnlineVideos.Sites
                     JToken itemTitleOtherLang = itemTitle[ApiOtherLanguage];
                     if (itemTitleLang != null)
                     {
-                        title = itemTitle[ApiLanguage].Value<string>();
+                        title = itemTitleLang.Value<string>();
                     }
                     else if (itemTitleOtherLang != null)
                     {
-                        title = itemTitle[ApiOtherLanguage].Value<string>();
+                        title = itemTitleOtherLang.Value<string>();
+                    }
+                }
+                if (string.IsNullOrEmpty(title))
+                {
+                    JToken promotionTitle = data["promotionTitle"];
+                    if (promotionTitle != null && promotionTitle.Count() > 0)
+                    {
+                        JToken titleLang = promotionTitle[ApiLanguage];
+                        JToken titleOtherLang = promotionTitle[ApiOtherLanguage];
+                        if (titleLang != null)
+                        {
+                            title = titleLang.Value<string>();
+                        }
+                        else if (titleOtherLang != null)
+                        {
+                            title = titleOtherLang.Value<string>();
+                        }
                     }
                 }
                 if (string.IsNullOrEmpty(title))
@@ -782,7 +820,16 @@ namespace OnlineVideos.Sites
                     JToken titleToken = data["title"];
                     if (titleToken != null && titleToken.Count() > 0)
                     {
-                        title = titleToken[ApiLanguage] == null ? titleToken[ApiOtherLanguage].Value<string>() : titleToken[ApiLanguage].Value<string>();
+                        JToken titleLang = titleToken[ApiLanguage];
+                        JToken titleOtherLang = titleToken[ApiOtherLanguage];
+                        if (titleLang != null)
+                        {
+                            title = titleLang.Value<string>();
+                        }
+                        else if (titleOtherLang != null)
+                        {
+                            title = titleOtherLang.Value<string>();
+                        }
                     }
                 }
                 title = episodeTitle + title;
@@ -804,12 +851,33 @@ namespace OnlineVideos.Sites
                     Title = title,
                     Description = description,
                     Thumb = image,
+                    Airdate = start.ToString(),
                     VideoUrl = id
                 };
             }
             return video;
         }
- 
+
+        private List<VideoInfo> GetArchiveVideos(Category category)
+        {
+            List<VideoInfo> videos = new List<VideoInfo>();
+            HtmlDocument doc = GetWebData<HtmlDocument>(BaseUrl + (category as RssLink).Url);
+            HtmlNodeCollection episodeNodes = doc.DocumentNode.SelectNodes("//li[@itemprop='episode']");
+            foreach (HtmlNode epNode in episodeNodes)
+            {
+                VideoInfo video = new VideoInfo();
+                video.VideoUrl = epNode.GetAttributeValue("data-item-id", "");
+                video.Title = epNode.SelectSingleNode(".//span[@class='program-title']").InnerText;
+                video.Description = epNode.SelectSingleNode(".//span[@class='program-desc']").InnerText;
+                HtmlNode img = epNode.SelectSingleNode(".//noscript/img");
+                string imgUrl = img.GetAttributeValue("src", "");
+                video.Thumb = imgUrl.StartsWith("//") ? "http:" + imgUrl : imgUrl;
+                video.Other = cArchiveCategory;
+                videos.Add(video);
+            }
+            return videos;
+        }
+
         #endregion
 
         #region Search
@@ -825,7 +893,7 @@ namespace OnlineVideos.Sites
         public override List<SearchResultItem> Search(string query, string category = null)
         {
             List<SearchResultItem> results = new List<SearchResultItem>();
-            JObject json = GetWebData<JObject>(string.Format(cUrlSearchFormat, BaseUrl, ApiLanguage,HttpUtility.UrlEncode(query)));
+            JObject json = GetWebData<JObject>(string.Format(cUrlSearchFormat, BaseUrl, ApiLanguage, HttpUtility.UrlEncode(query)));
             JArray data = json["data"].Value<JArray>();
             foreach (JToken t in data)
             {
@@ -848,6 +916,8 @@ namespace OnlineVideos.Sites
         }
 
         #endregion
+
         #endregion
+
     }
 }
