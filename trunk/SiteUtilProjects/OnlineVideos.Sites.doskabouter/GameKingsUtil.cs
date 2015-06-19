@@ -9,6 +9,9 @@ namespace OnlineVideos.Sites
             int p = url.IndexOf(@"http://player.vimeo.com");
             if (p >= 0)
                 return url.Substring(p);
+            p = url.IndexOf(@"https://player.vimeo.com");
+            if (p >= 0)
+                return url.Substring(p);
             return url;
         }
     }
