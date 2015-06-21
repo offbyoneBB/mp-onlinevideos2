@@ -42,6 +42,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             Z_A
         }
 
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable new site workaround"), Description("Enable this if you have the new Netflix layout when using browser")]
+        protected bool enableNewNetflixSiteWorkaround = true;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Username"), Description("Netflix email")]
         protected string username = null;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("Netflix password"), PasswordPropertyText(true)]
@@ -98,6 +100,15 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         #endregion
 
         #region Private parts
+        private string UserAgent
+        {
+            get
+            {
+                if (enableNewNetflixSiteWorkaround)
+                    return "User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:21.0) Gecko/20130331 Firefox/21.0";
+                return null;
+            }
+        }
         protected CookieContainer cc = null;
         private string latestAuthUrl = "";
         private WebProxy proxy = null; //new WebProxy("127.0.0.1", 8888); //Debug proxy
@@ -242,16 +253,12 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             cc = new CookieContainer();
             string url = WebCache.Instance.GetRedirectedUrl(loginUrl).Replace("entrytrap", "Login");
-            NameValueCollection headers = new NameValueCollection();
-            headers.Add("Accept", "*/*"); // accept any content type
-            headers.Add("User-Agent", OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
-            headers.Add("Referer", url);
             // No caching in this case.
-            var htmlDoc = GetWebData<HtmlAgilityPack.HtmlDocument>(url, null, cookies: cc, proxy: proxy, headers: headers, cache: false);
+            var htmlDoc = GetWebData<HtmlAgilityPack.HtmlDocument>(url, null, cookies: cc, proxy: proxy, referer: url, cache: false, userAgent:UserAgent);
             HtmlNode form = htmlDoc.DocumentNode.SelectSingleNode("//form[@id = 'login-form']");
             HtmlNode authInput = form.SelectSingleNode("//input[@name = 'authURL']");
             string authUrl = authInput != null ? authInput.GetAttributeValue("value", "") : "";
-            var data = GetWebData(url, string.Format(loginPostData, HttpUtility.UrlEncode(authUrl), HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password)), cc, proxy: proxy);
+            var data = GetWebData(url, string.Format(loginPostData, HttpUtility.UrlEncode(authUrl), HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password)), cc, proxy: proxy, userAgent:UserAgent);
             if (!IsLoggedIn(data))
             {
                 cc = null;
@@ -278,7 +285,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
             if (!isLoadingProfile)
                 LoadProfiles();
-            string data = GetWebData(url, cookies: cc, proxy: proxy);
+            string data = GetWebData(url, cookies: cc, proxy: proxy, userAgent: UserAgent);
             Regex rgx = new Regex(@"\""authURL\"":""([^\""]*)");
             Match m = rgx.Match(data);
             if (m.Success)
@@ -295,13 +302,15 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             get
             {
+                if (enableNewNetflixSiteWorkaround)
+                    return "OnlineVideos.Sites.BrowserUtilConnectors.NetflixBetaConnector";
                 return "OnlineVideos.Sites.BrowserUtilConnectors.NetflixConnector";
             }
         }
 
         string IBrowserSiteUtil.UserName
         {
-            get { return username + "¥" + ProfileToken + (showLoadingSpinner ? "SHOWLOADING" : "") + (rememberLogin ? "REMEMBERLOGIN" : ""); }
+            get { return username + "¥" + ProfileToken + (showLoadingSpinner ? "SHOWLOADING" : "") + (rememberLogin || enableNewNetflixSiteWorkaround ? "REMEMBERLOGIN" : ""); }
         }
 
         string IBrowserSiteUtil.Password
@@ -1044,7 +1053,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 }
                 GetWebData(string.Format(addRemoveMyListUrl, ShaktiApi, BuildId),
                     string.Format(addRemoveMyListPostData, addMyListOperation, videoId, trackId, latestAuthUrl),
-                    cc);
+                    cc, userAgent: UserAgent);
                 result.RefreshCurrentItems = true;
                 result.ExecutionResultMessage = title + " added to My List";
                 return result;
@@ -1070,7 +1079,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 ContextMenuExecutionResult result = new ContextMenuExecutionResult();
                 GetWebData(string.Format(addRemoveMyListUrl, ShaktiApi, BuildId),
                     string.Format(addRemoveMyListPostData, removeMyListOperation, videoId, trackId, latestAuthUrl),
-                    cc);
+                    cc, userAgent: UserAgent);
                 result.RefreshCurrentItems = true;
                 result.ExecutionResultMessage = title + " removed from My List";
                 return result;
