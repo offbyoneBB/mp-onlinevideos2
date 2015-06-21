@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BrowserUtilConnectors\HboNordicConnector.cs" />
+    <Compile Include="BrowserUtilConnectors\NetflixBetaConnector.cs" />
     <Compile Include="BrowserUtilConnectors\NetflixConnector.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorNo.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorFi.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="Hoster\Videomega.cs" />
     <Compile Include="Hoster\VkPass.cs" />
     <Compile Include="Hoster\vk.cs" />
+    <Compile Include="NetflixBetaUtil.cs" />
     <Compile Include="YleUtil.cs" />
     <Compile Include="NetfilxWebUtil.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
