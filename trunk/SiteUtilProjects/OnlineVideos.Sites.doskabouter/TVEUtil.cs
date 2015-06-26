@@ -135,5 +135,13 @@ namespace OnlineVideos.Sites
 
             return null;
         }
+
+        public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
+        {
+            string name = base.GetFileNameForDownload(video, category, url);
+            if (String.IsNullOrEmpty(System.IO.Path.GetExtension(name)))
+                name = name + ".mp4";
+            return name;
+        }
     }
 }
