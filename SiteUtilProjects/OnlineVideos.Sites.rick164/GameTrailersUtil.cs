@@ -21,9 +21,10 @@ namespace OnlineVideos.Sites
       //
       // No longer required however if issues pop-popup we can get new entries her.
 
-      //videosToSkip.Add("comic-con");
       //videosToSkip.Add("gt/live");
       //videosToSkip.Add("gt time");
+      videosToSkip.Add("comic-con");
+      videosToSkip.Add("e3 " + DateTime.Now.Year);
     }
 
     public override string GetVideoUrl(VideoInfo video)
@@ -130,7 +131,7 @@ namespace OnlineVideos.Sites
                 {
                   if (counter == videoCount)
                   {
-                    if (m2.Groups["gameName"].Value.ToString().ToLower() == "e3 " + DateTime.Now.Year)
+                    if (videosToSkip.Contains(videoInfo.Title.ToLower()) || videosToSkip.Contains(m2.Groups["gameName"].Value.ToString().ToLower()))
                     {
                       //skip invalid entries, mostly E3 without valid URL matched by regex
                     }
