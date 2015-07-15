@@ -124,6 +124,8 @@ namespace OnlineVideos.Sites
             {
               VideoInfo videoInfo = CreateVideoInfo();
               videoInfo.Title = m.Groups["Title"].Value.Replace("&acirc;", "'");
+              videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
+
               //Try to retrieve full title (gameName + title) since these are listed differently per category or spread out, couldn't match those easily with one Regexp.
               if (!url.StartsWith(searchBase))
               {
@@ -131,7 +133,7 @@ namespace OnlineVideos.Sites
                 {
                   if (counter == videoCount)
                   {
-                    if (videosToSkip.Contains(videoInfo.Title.ToLower()) || videosToSkip.Contains(m2.Groups["gameName"].Value.ToString().ToLower()))
+                    if (!videoInfo.VideoUrl.StartsWith("http://") || videoInfo.VideoUrl == string.Empty || videosToSkip.Contains(videoInfo.Title.ToLower()) || videosToSkip.Contains(m2.Groups["gameName"].Value.ToString().ToLower()))
                     {
                       //skip invalid entries, mostly E3 without valid URL matched by regex
                     }
@@ -151,8 +153,6 @@ namespace OnlineVideos.Sites
                   }
                 }
               }
-
-              videoInfo.VideoUrl = m.Groups["VideoUrl"].Value;
 
               //Video url check
               if (!videoInfo.VideoUrl.StartsWith("http://") || videoInfo.VideoUrl == string.Empty || videosToSkip.Contains(videoInfo.Title.ToLower()) || videosToSkip.Contains(m2.Groups["gameName"].Value.ToString().ToLower())
