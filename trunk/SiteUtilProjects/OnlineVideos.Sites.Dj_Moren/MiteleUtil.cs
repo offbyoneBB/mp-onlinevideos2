@@ -37,6 +37,7 @@ namespace OnlineVideos.Sites
         internal String timeURL = "http://token.mitele.es/clock.php";
         internal String tokenizerURL = "http://token.mitele.es/";
         internal String finalVideoURLRegex = "<file[^>]*>(?<url>[^<]*)</file>";
+        internal String msPlayerDataConfigRegex = "data-config=\\s*\"(?<dataConfigUrl>[^\"]*)\"";
         internal int i = 1;
         internal int j = 1;
         internal JArray episodios;
@@ -61,6 +62,7 @@ namespace OnlineVideos.Sites
         internal Regex regexXmlURL;
         internal Regex regexXmlData;
         internal Regex regexFinalVideoURL;
+        internal Regex regexMSPlayerDataConfig; //data-config= "http://www.mitele.es/api/cms/mitele/videos/153471/config/final.json"
 
         public override void Initialize(SiteSettings siteSettings)
         {
@@ -80,7 +82,7 @@ namespace OnlineVideos.Sites
             regexXmlURL = new Regex(xmlURLRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
             regexXmlData = new Regex(xmlDataRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
             regexFinalVideoURL = new Regex(finalVideoURLRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
-            
+            regexMSPlayerDataConfig = new Regex(msPlayerDataConfigRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);   
         }
 
         public override int DiscoverDynamicCategories()
@@ -260,6 +262,33 @@ namespace OnlineVideos.Sites
             Log.Debug("Mitele: getting video URL from video {0} ", video.Title);
             String data = GetWebData(video.VideoUrl);
             String videoURL = "";
+            Match dataConfigUrlMatch = regexMSPlayerDataConfig.Match(data);
+            if (dataConfigUrlMatch.Success)
+            {
+                String dataConfigUrl = dataConfigUrlMatch.Groups["dataConfigUrl"].Value;
+                String dataConfig = GetWebData(dataConfigUrl + "?c=5");
+                String mmcUrl = (String)JObject.Parse(dataConfig).SelectToken("services.mmc");
+                String mmc = GetWebData(mmcUrl);
+                JObject mmcJson = JObject.Parse(mmc);
+                JArray locations = (JArray)mmcJson["locations"];
+                JToken location = locations[0];
+                String icd = (String)location.SelectToken("loc");
+                String bas = (String)location.SelectToken("bas");
+                String ogn = (String)location.SelectToken("ogn");
+                String finalUrl = "http://token.mitele.es/?bas=" + HttpUtility.UrlEncode(bas) + "&icd=" + icd + "&ogn=" + ogn + "&sta=0";
+                String videoFile = GetWebDataFromPostMitele(finalUrl, "");
+                String m3u8 = (String)JObject.Parse(videoFile).SelectToken("file");
+                String master = GetWebData(m3u8);
+                videoURL = master.Substring(master.IndexOf("http://"));
+            }
+            return videoURL;
+        }
+
+        /*public override string GetVideoUrl(VideoInfo video)
+        {
+            Log.Debug("Mitele: getting video URL from video {0} ", video.Title);
+            String data = GetWebData(video.VideoUrl);
+            String videoURL = "";
             Match xmlURLMatch = regexXmlURL.Match(data);
             if (xmlURLMatch.Success)
             {
@@ -285,17 +314,17 @@ namespace OnlineVideos.Sites
                 }
             }
             return videoURL;
-        }
+        }*/
 
-        public String getVideoURLMitele(String url, String startTime, String endTime)
+        /*public String getVideoURLMitele(String url, String startTime, String endTime)
         {
             String serverTime = GetWebData(timeURL);
             String toEncode = serverTime + ";" + url + ";" + startTime + ";" + endTime;
             String encodedParams = Flowplayer.Commercial.V3_1_5_17_002.Aes.Encrypt(toEncode, base64Encode(Flowplayer.Commercial.V3_1_5_17_002.Aes.Key), Flowplayer.Commercial.V3_1_5_17_002.Aes.KeyType.Key256);
             String hash = HttpUtility.UrlEncode(encodedParams);
-            NameValueCollection headers = new NameValueCollection();
-            headers.Add("Accept", "*/*");
-            headers.Add("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.3");
+            NameValueCollection headers = new NameValueCollection();*/
+            //headers.Add("Accept", "*/*");
+            /*headers.Add("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.3");
             headers.Add("Accept-Encoding", "gzip,deflate,sdch");
             headers.Add("Accept-Language", "es-ES,es;q=0.8");
             headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.89 Safari/537.1");
@@ -304,7 +333,7 @@ namespace OnlineVideos.Sites
             string data = GetWebData(tokenizerURL+"?hash=" + hash + "&id=" + url + "&startTime=0&endTime=0", headers: headers, cache: false);
             string master = GetWebData(data.Substring(data.IndexOf("tokenizedUrl\":\"") + "tokenizedUrl\":\"".Length).Split('\"')[0].Replace(" ", "").Replace("\\/", "/"));
             return master.Substring(master.IndexOf("http://"));
-        }
+        }*/
 
         public string GetWebDataFromPostMitele(string url, string postData)
         {
