@@ -141,6 +141,14 @@ namespace OnlineVideos.Sites
                 }
             }
 
+            if (String.IsNullOrEmpty(thisUrl))
+            {
+                Match m = Regex.Match(data2, @"<div\sclass=""videoarea""><script\ssrc=""(?<url>[^""]*)""></script>");
+                if (m.Success)
+                {
+                    thisUrl = m.Groups["url"].Value;
+                }
+            }
 
             if (String.IsNullOrEmpty(thisUrl)) return null;
 
@@ -253,6 +261,40 @@ namespace OnlineVideos.Sites
                 Match m = Regex.Match(webData, @"<meta\sproperty=""og:video""\scontent=""(?<url>[^""]*)""");
                 if (m.Success)
                     return m.Groups["url"].Value;
+            }
+            if (thisUrl.IndexOf("player2.screenwavemedia.com") >= 0)
+            {
+                data = GetWebData(thisUrl);
+                Match m = Regex.Match(data, @"var\sSWMServer\s=\s""(?<server>[^""]*)"";");
+                Match m2 = Regex.Match(thisUrl, @"http://player2\.screenwavemedia\.com/player\.php\?id=(?<id>.+)");
+                if (m.Success && m2.Success)
+                {
+                    string m3u8url = String.Format(@"http://{0}/vod/smil:{1}.smil/", m.Groups["server"].Value, m2.Groups["id"].Value);
+                    thisUrl = m3u8url + "playlist.m3u8";
+                    data = GetWebData(thisUrl);
+                    video.PlaybackOptions = new Dictionary<string, string>();
+                    Match m3 = Regex.Match(data, @"\#EXT-X-STREAM-INF:PROGRAM-ID=[^,]*,BANDWIDTH=[^,]*,RESOLUTION=(?<resolution>[^\s]*)\s*(?<url>[^\s]*)\s");
+                    while (m3.Success)
+                    {
+                        string resolution = m3.Groups["resolution"].Value;
+                        if (resolution != "0x0" && !video.PlaybackOptions.ContainsKey(resolution))
+                            video.PlaybackOptions.Add(resolution,
+                                m3u8url + m3.Groups["url"].Value);
+                        m3 = m3.NextMatch();
+                    }
+                    string resultUrl;
+                    if (video.PlaybackOptions.Count == 0) return String.Empty;
+                    else
+                    {
+                        var enumer = video.PlaybackOptions.GetEnumerator();
+                        enumer.MoveNext();
+                        resultUrl = enumer.Current.Value;
+                    }
+                    if (video.PlaybackOptions.Count == 1) video.PlaybackOptions = null;
+
+                    return resultUrl;
+
+                }
             }
             if (thisUrl.IndexOf("player.screenwavemedia.com") >= 0)
             {
