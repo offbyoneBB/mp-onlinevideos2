@@ -5,15 +5,21 @@
     AutoActivate="True"
     Author="offbyone"
     Copyright="GPL"
-    Description="OnlineVideos Plugin"
-    PluginVersion="1.0">
+    Description="OnlineVideos Plugin">
+
+  <Version
+    PluginVersion="1.0"
+    ReleaseDate="2015-06-21 03:00:00 GMT+01:00"
+    CurrentAPI="1"/>
   
   <DependsOn>
-    <PluginReference PluginId="{D87D92F0-5E71-470a-A2A4-430F90A28BF3}"/> <!-- SkinEngine -->
-    <PluginReference PluginId="{A965AFE5-44F9-46e0-980E-40BBE17F25CA}"/> <!-- VideoPlayers -->
-    <PluginReference PluginId="{15FB35F7-8C85-4404-BC67-BFF28446158A}"/> <!-- Media -->
-    <PluginReference PluginId="{1AFF4467-64B0-4ca1-AF28-9AEDF3525BCE}"/> <!-- ConfigurationManager -->
-    <PluginReference PluginId="{B765A4B6-F455-4941-BDAE-2CE45208BFEB}"/> <!-- Configuration plugin -->
+    <CoreDependency Name="MediaPortal.Common" CompatibleAPI="1" />
+    <CoreDependency Name="MediaPortal.UI" CompatibleAPI="1" />
+    <PluginReference PluginId="{D87D92F0-5E71-470a-A2A4-430F90A28BF3}" CompatibleAPI="1"/> <!-- SkinEngine -->
+    <PluginReference PluginId="{A965AFE5-44F9-46e0-980E-40BBE17F25CA}" CompatibleAPI="1"/> <!-- VideoPlayers -->
+    <PluginReference PluginId="{15FB35F7-8C85-4404-BC67-BFF28446158A}" CompatibleAPI="1"/> <!-- Media -->
+    <PluginReference PluginId="{1AFF4467-64B0-4ca1-AF28-9AEDF3525BCE}" CompatibleAPI="1"/> <!-- ConfigurationManager -->
+    <PluginReference PluginId="{B765A4B6-F455-4941-BDAE-2CE45208BFEB}" CompatibleAPI="1"/> <!-- Configuration plugin -->
   </DependsOn>
   
   <Runtime>
