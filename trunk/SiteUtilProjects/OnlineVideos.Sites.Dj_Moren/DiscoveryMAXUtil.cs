@@ -208,7 +208,7 @@ namespace OnlineVideos.Sites
 
             video.PlaybackOptions = new Dictionary<string, string>();
 
-            foreach (JObject rendition in renditions.OrderBy(u => u["encodingRate"]))
+            foreach (JObject rendition in renditions.OrderBy(u => int.Parse(u["encodingRate"].ToString())))
             {
                 string nm = String.Format("{0}x{1} {2}K", rendition["frameWidth"], rendition["frameHeight"], int.Parse(rendition["encodingRate"].ToString()) / 1024);
                 string url = HttpUtility.UrlDecode(rendition["defaultURL"].ToString());

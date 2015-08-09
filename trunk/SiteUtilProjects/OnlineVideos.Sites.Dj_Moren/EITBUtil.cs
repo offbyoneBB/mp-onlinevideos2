@@ -18,7 +18,7 @@ using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Sites
 {
-    public class EITBUtil : BrightCoveUtil
+    public class EITBUtil : GenericSiteUtil
     {
 
         [Category("OnlineVideosConfiguration")]
@@ -49,6 +49,9 @@ namespace OnlineVideos.Sites
         protected string menu5;
         [Category("OnlineVideosConfiguration")]
         protected string menu6;
+
+        [Category("OnlineVideosConfiguration")]
+        protected string videoUrlService;
         
         internal enum CategoryType
         {
@@ -233,7 +236,34 @@ namespace OnlineVideos.Sites
             return GetFileUrl(video, webdata);
         }
 
-        protected new string GetFileUrl(VideoInfo video, string data)
+        protected string GetFileUrl(VideoInfo video, string data)
+        {
+            string videoId = video.VideoUrl.Substring(video.VideoUrl.LastIndexOf("/") + 1);
+            string mediaData = GetWebData(videoUrlService + videoId);
+            JArray renditions = (JArray)JObject.Parse(mediaData).SelectToken("web_media")[0].SelectToken("RENDITIONS");
+            video.PlaybackOptions = new Dictionary<string, string>();
+            foreach (JObject rendition in renditions.OrderBy(u => int.Parse(u["ENCODING_RATE"].ToString())))
+            {
+                string nm = String.Format("{0}x{1} {2}K", rendition["FRAME_WIDTH"], rendition["FRAME_HEIGHT"], int.Parse(rendition["ENCODING_RATE"].ToString()) / 1024);
+                string url = HttpUtility.UrlDecode(rendition["PMD_URL"].ToString());
+                video.PlaybackOptions.Add(nm, url);
+            }
+
+            if (video.PlaybackOptions.Count == 0) return "";// if no match, return empty url -> error
+            else
+                if (video.PlaybackOptions.Count == 1)
+                {
+                    string resultUrl = video.PlaybackOptions.Last().Value;
+                    video.PlaybackOptions = null;// only one url found, PlaybackOptions not needed
+                    return resultUrl;
+                }
+                else
+                {
+                    return video.PlaybackOptions.Last().Value;
+                }
+        }
+
+        /*protected new string GetFileUrl(VideoInfo video, string data)
         {
             Match m = regEx_FileUrl.Match(data);
 
@@ -281,14 +311,13 @@ namespace OnlineVideos.Sites
                     string playpath = parts[1].Split('?')[0] + auth; //"mp4:102076681001/102076681001_986209826001_26930-20110610-122117.mp4"
                     if (url.IndexOf("edgefcs.net") != -1)
                     {
-                        /*rtmpdump --rtmp "rtmp://cp150446.edgefcs.net/ondemand/&mp4:102076681001/102076681001_1506435728001_66034-20120314-120404.mp4?__nn__=1497926354001&slist=102076681001/&auth=daEbVc2bZd2bpcZdcbxbVdld6cEdWcpb4dC-brKM2q-bWG-rnBBssvx_ABAo_DDCB_GuD&aifp=bcosuds" --app="ondemand?__nn__=1497926354001&slist=102076681001/&auth=daEbVc2bZd2bpcZdcbxbVdld6cEdWcpb4dC-brKM2q-bWG-rnBBssvx_ABAo_DDCB_GuD&aifp=bcosuds&videoId=1506302142001&lineUpId=&pubId=102076681001&playerId=2202962695001" --swfUrl="http://admin.brightcove.com/viewer/us20121213.1025/federatedVideoUI/BrightcovePlayer.swf?uid=1355746343102" --playpath="mp4:102076681001/102076681001_1506435728001_66034-20120314-120404.mp4?__nn__=1497926354001&slist=102076681001/&auth=daEbVc2bZd2bpcZdcbxbVdld6cEdWcpb4dC-brKM2q-bWG-rnBBssvx_ABAo_DDCB_GuD&aifp=bcosuds&videoId=1506302142001" --pageUrl="http://www.eitb.tv/es/#/video/1506302142001" -o "Aduriz-La_cocina_de_las_palabras_-_Aduriz-Hitzen_sukaldea-.mp4"*/
+                        //rtmpdump --rtmp "rtmp://cp150446.edgefcs.net/ondemand/&mp4:102076681001/102076681001_1506435728001_66034-20120314-120404.mp4?__nn__=1497926354001&slist=102076681001/&auth=daEbVc2bZd2bpcZdcbxbVdld6cEdWcpb4dC-brKM2q-bWG-rnBBssvx_ABAo_DDCB_GuD&aifp=bcosuds" --app="ondemand?__nn__=1497926354001&slist=102076681001/&auth=daEbVc2bZd2bpcZdcbxbVdld6cEdWcpb4dC-brKM2q-bWG-rnBBssvx_ABAo_DDCB_GuD&aifp=bcosuds&videoId=1506302142001&lineUpId=&pubId=102076681001&playerId=2202962695001" --swfUrl="http://admin.brightcove.com/viewer/us20121213.1025/federatedVideoUI/BrightcovePlayer.swf?uid=1355746343102" --playpath="mp4:102076681001/102076681001_1506435728001_66034-20120314-120404.mp4?__nn__=1497926354001&slist=102076681001/&auth=daEbVc2bZd2bpcZdcbxbVdld6cEdWcpb4dC-brKM2q-bWG-rnBBssvx_ABAo_DDCB_GuD&aifp=bcosuds&videoId=1506302142001" --pageUrl="http://www.eitb.tv/es/#/video/1506302142001" -o "Aduriz-La_cocina_de_las_palabras_-_Aduriz-Hitzen_sukaldea-.mp4"
                         url = new MPUrlSourceFilter.RtmpUrl(rtmp) { PlayPath = playpath }.ToString();
                     }
                     else
                     {
-                        /*
-                         rtmpdump --rtmp "rtmp://brightcove.fcod.llnwd.net/a500/e1/uds/rtmp/ondemand/&mp4:102076681001/102076681001_986252687001_26930-20110610-122117.mp4&1368558000000&0aa762d184c16de09a21fe533394c3ea" --app="a500/e1/uds/rtmp/ondemand?videoId=986121629001&lineUpId=&pubId=102076681001&playerId=2202962695001" --swfUrl="http://admin.brightcove.com/viewer/us20121218.1107/federatedVideoUI/BrightcovePlayer.swf?uid=1355158765470" --playpath="mp4:102076681001/102076681001_986252687001_26930-20110610-122117.mp4?videoId=986121629001&lineUpId=&pubId=102076681001&playerId=2202962695001" --pageUrl="http://www.eitb.tv/es/#/video/986121629001" -C "B:0" -C "S:mp4:102076681001/102076681001_986252687001_26930-20110610-122117.mp4&1368558000000&0aa762d184c16de09a21fe533394c3ea" -o "Sukalde_maisuak_-_Aduriz-Hitzen_sukaldea-.mp4"
-                         */
+                        
+                        // rtmpdump --rtmp "rtmp://brightcove.fcod.llnwd.net/a500/e1/uds/rtmp/ondemand/&mp4:102076681001/102076681001_986252687001_26930-20110610-122117.mp4&1368558000000&0aa762d184c16de09a21fe533394c3ea" --app="a500/e1/uds/rtmp/ondemand?videoId=986121629001&lineUpId=&pubId=102076681001&playerId=2202962695001" --swfUrl="http://admin.brightcove.com/viewer/us20121218.1107/federatedVideoUI/BrightcovePlayer.swf?uid=1355158765470" --playpath="mp4:102076681001/102076681001_986252687001_26930-20110610-122117.mp4?videoId=986121629001&lineUpId=&pubId=102076681001&playerId=2202962695001" --pageUrl="http://www.eitb.tv/es/#/video/986121629001" -C "B:0" -C "S:mp4:102076681001/102076681001_986252687001_26930-20110610-122117.mp4&1368558000000&0aa762d184c16de09a21fe533394c3ea" -o "Sukalde_maisuak_-_Aduriz-Hitzen_sukaldea-.mp4"
                         string cadena = url.Substring(url.IndexOf(".net/") + 5);
                         cadena = cadena.Remove(cadena.IndexOf("/&"));
                         cadena += "?videoId=" + video.VideoUrl.Substring(video.VideoUrl.LastIndexOf("/") + 1) 
@@ -323,7 +352,7 @@ namespace OnlineVideos.Sites
                 {
                     return video.PlaybackOptions.Last().Value;
                 }
-        }
+        }*/
 
     }
     
