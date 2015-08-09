@@ -442,6 +442,7 @@
   <ItemGroup>
     <MergeAsm Include="$(TargetPath)" />
     <MergeAsm Include="$(SolutionDir)\packages\Microsoft.Net.Http.2.2.29\lib\net40\System.Net.Http.dll" />
+    <MergeAsm Include="$(SolutionDir)\packages\Microsoft.Bcl.1.1.10\lib\net40\System.Runtime.dll" />
     <MergeAsm Include="$(SolutionDir)\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll" />
     <MergeAsm Include="$(SolutionDir)\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll" />
   </ItemGroup>
