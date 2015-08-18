@@ -110,6 +110,7 @@
     <Compile Include="Katsomo.cs" />
     <Compile Include="KhanAcademyUtil.cs" />
     <Compile Include="KijkUtil.cs" />
+    <Compile Include="KissAnimeUtil.cs" />
     <Compile Include="LeagueOfLegendsUtil.cs" />
     <Compile Include="MuzuTV.cs" />
     <Compile Include="NickelodeonNLUtil.cs" />

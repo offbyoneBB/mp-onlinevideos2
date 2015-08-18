@@ -1068,6 +1068,24 @@ spStartVideo5\([^']*'(?<m1>[^']+)']]>
         <Category xsi:type="RssLink" thumb="" desc="" name="A - Z">http://www.kijk.nl/programmas</Category>
       </Categories>
     </Site>
+    <Site name="KissAnime" util="KissAnime" agecheck="false" enabled="true" lang="en">
+      <Description>Watch anime online high quality</Description>
+      <Configuration>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\sclass="bigChar"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>\s*<p>(?<description>[^<]*)</p>\s*</div>'>\s*<a[^>]*>[^<]*</a>(\s*&nbsp;&nbsp;<img[^>]*>){0,2}\s*</td>(?:\s*<td>\s*<a\shref="[^"]*">(?<description>[^<]*)</a>)?]]></item>
+        <item key="videoListRegEx"><![CDATA[<tr>\s*<td>\s*<a\shref="(?<VideoUrl>[^"]*)"\stitle="[^"]*">(?<Title>[^<]*)</a>\s*</td>\s*<td>(?<Airdate>[^<]*)</td>\s*</tr>]]></item>
+        <item key="baseUrl"><![CDATA[http://kissanime.com/AnimeList]]></item>
+        <item key="genresRegex"><![CDATA[<a\shref="(?<url>/Genre[^"]*)"\stitle="(?<description>[^"]*)">(?<title>[^<]*)</a><br/>]]></item>
+        <item key="alphabetRegex"><![CDATA[(<a\shref="(?<url>\?[^"]*)">(?<title>[^<]*)</a>)|(<a\shref="(?<url>[^"]*)">(?<title>All)</a>)]]></item>
+        <item key="fileUrlRegEx"><![CDATA[(?<=<select\sid="selectQuality">.*)<option\svalue="(?<m0>[^"]*)"\s*(?:selected)?>(?<n0>[^<]*)</option>]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" thumb="" desc="" name="Sort by alphabet">http://kissanime.com/AnimeList</Category>
+        <Category xsi:type="RssLink" thumb="" desc="" name="Sort by popularity">http://kissanime.com/AnimeList/MostPopular</Category>
+        <Category xsi:type="RssLink" thumb="" desc="" name="Latest update">http://kissanime.com/AnimeList/LatestUpdate</Category>
+        <Category xsi:type="RssLink" thumb="" desc="" name="New anime">http://kissanime.com/AnimeList/Newest</Category>
+        <Category xsi:type="RssLink" thumb="" desc="" name="Genres">http://kissanime.com/AnimeList/Newest</Category>
+      </Categories>
+    </Site>
     <Site name="League of Legends Streams" util="LeagueOfLegends" agecheck="false" enabled="true" lang="en">
       <Description>League of Legends Streams</Description>
       <Configuration>
