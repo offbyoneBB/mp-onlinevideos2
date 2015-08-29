@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+
+  <PropertyGroup>  
+    <MSBuildCommunityTasksPath Condition=" '$(MSBuildCommunityTasksPath)' == '' ">$(SolutionDir)\packages\MSBuildTasks.1.4.0.88\tools</MSBuildCommunityTasksPath>
+    <VersionFile Condition=" '$(VersionFile)' == '' ">$(SolutionDir)\Build\Version.txt</VersionFile>
+    <GeneratedAssemblyInfoFile Condition=" '$(GeneratedAssemblyInfoFile)' == '' ">$(SolutionDir)\Build\Version.cs</GeneratedAssemblyInfoFile>
+	
+	<BuildDependsOn>
+         SetAssemblyVersion;
+         $(BuildDependsOn)
+      </BuildDependsOn>
+ 
+      <CleanDependsOn>
+         $(CleanDependsOn);
+         SetAssemblyVersionClean
+      </CleanDependsOn>
+  </PropertyGroup>
+  
+  <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets" />
+  
+  <Target Name="SetAssemblyVersion">
+    <PropertyGroup>
+      <Version>$([System.IO.File]::ReadAllText($(VersionFile)))</Version>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Include="$(GeneratedAssemblyInfoFile)" />
+    </ItemGroup>
+ 
+    <GitVersion LocalPath="$(SolutionDir)" Short="false">
+      <Output TaskParameter="CommitHash" PropertyName="GitHash" />
+    </GitVersion>
+	
+	<GitBranch LocalPath="$(SolutionDir)">
+         <Output TaskParameter="Branch" PropertyName="GitBranch" />
+      </GitBranch>
+ 
+    <AssemblyInfo
+      CodeLanguage="CS"
+      OutputFile="$(GeneratedAssemblyInfoFile)"
+      AssemblyInformationalVersion="$(Version) (git $(GitBranch) $(GitHash))"
+      AssemblyVersion="$(Version)"
+      AssemblyFileVersion="$(Version)" />
+  </Target>
+  
+  <Target Name="SetAssemblyVersionClean" Condition="Exists($(GeneratedAssemblyInfoFile))">
+      <Delete Files="$(GeneratedAssemblyInfoFile)" />
+   </Target>
+
+</Project>

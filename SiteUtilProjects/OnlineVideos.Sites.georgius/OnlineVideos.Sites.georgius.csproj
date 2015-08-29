@@ -61,9 +61,7 @@
     <Compile Include="PohadkarUtil.cs" />
     <Compile Include="PrimaUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="Properties\VersionInfo.cs.tmpl" />
     <None Include="PublicTvUtil.cs" />
-    <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="ShowEpisodesRegex.cs" />
     <None Include="SlovenskaTeleviziaUtil.cs" />
     <None Include="StreamCzUtil.cs" />
@@ -79,12 +77,13 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\Build\Version.targets" />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>subwcrev "$(SolutionDir)." "$(ProjectDir)Properties\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"</PreBuildEvent>
+    <PreBuildEvent></PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

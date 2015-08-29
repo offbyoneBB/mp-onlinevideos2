@@ -343,7 +343,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="rbbUtil.cs" />
     <Compile Include="TEDTalksUtil.cs" />
     <Compile Include="TwitchTV.cs" />
@@ -427,12 +426,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Properties\VersionInfo.cs.tmpl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>subwcrev "$(SolutionDir)." "$(ProjectDir)Properties\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"</PreBuildEvent>
-  </PropertyGroup>
   <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
     <Error Condition="!Exists('..\..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
@@ -445,12 +440,14 @@
     <MergeAsm Include="$(SolutionDir)\packages\Microsoft.Bcl.1.1.10\lib\net40\System.Runtime.dll" />
     <MergeAsm Include="$(SolutionDir)\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll" />
     <MergeAsm Include="$(SolutionDir)\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll" />
+    <LibPaths Include="$(SolutionDir)\OnlineVideos\bin\$(Configuration)" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.-->
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
-    <ILMerge InputAssemblies="@(MergeAsm)" DebugInfo="true" LibraryPath="$(SolutionDir)\OnlineVideos\bin\$(Configuration)\" OutputFile="$(SolutionDir)\Build\SiteUtilDlls\$(TargetFileName)" />
+    <ILMerge InputAssemblies="@(MergeAsm)" LibraryPath="@(LibPaths)" DebugInfo="true" OutputFile="$(SolutionDir)\Build\SiteUtilDlls\$(TargetFileName)" />
   </Target>
+  <Import Project="$(SolutionDir)\Build\Version.targets" />
 </Project>

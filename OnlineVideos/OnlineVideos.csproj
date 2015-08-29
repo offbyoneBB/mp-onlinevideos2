@@ -958,7 +958,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="Reflection\FieldPropertyDescriptor.cs" />
     <Compile Include="Reflection\FieldPropertyDescriptorByRef.cs" />
     <Compile Include="Reflection\FilterCache.cs" />
@@ -1039,6 +1038,7 @@
     <Compile Include="WebCache.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Web References\OnlineVideosWebservice\OnlineVideos.wsdl" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -1092,26 +1092,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="build.targets" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\loading.gif" />
   </ItemGroup>
   <ItemGroup>
@@ -1120,5 +1100,5 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="build.targets" />
+  <Import Project="$(SolutionDir)\Build\Version.targets" />
 </Project>

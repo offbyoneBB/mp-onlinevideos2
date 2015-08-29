@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
-  <Target Name="BeforeBuild">
-    <Exec Command='subwcrev "$(SolutionDir)." "$(SolutionDir)Build\VersionInfo.cs.tmpl" "$(ProjectDir)Properties\VersionInfo.cs"'/>
-  </Target>
-
   <PropertyGroup>
     <PluginDestination>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\</PluginDestination>
     <DataDestination>$(ProgramData)\Team MediaPortal\MediaPortal\</DataDestination>

@@ -1,0 +1,10 @@
+*.suo
+/packages
+/Build/Version.cs
+*.user
+/Build/SiteUtilDlls
+obj
+bin
+/OnlineVideos.MediaPortal2/NuGetPackage/PluginContent
+*.mpe1
+*.log
