@@ -52,9 +52,14 @@ namespace OnlineVideos.CrossDomain
             {
                 try
                 {
-                    Log.Info("Looking for SiteUtils and Hosters in {0} (Version: {1}, Compiled: {2})",
-                        assembly.Key.GetName().Name,
-                        assembly.Key.GetName().Version.ToString(),
+                    var versionInfo = assembly.Key.GetName().Version.ToString();
+                    var extendVersionInfoAttrs = assembly.Key.GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false);
+                    if (extendVersionInfoAttrs.Length > 0)
+                        versionInfo = ((AssemblyInformationalVersionAttribute)extendVersionInfoAttrs[0]).InformationalVersion;
+
+                    Log.Info("Looking for SiteUtils and Hosters in {0} [Version: {1}, Compiled: {2}]",
+                        assembly.Key.ManifestModule.Name,
+                        versionInfo,
                         assembly.Value.ToString("yyyy-MM-dd HH:mm:ss"));
 
                     Type[] typeArray = assembly.Key.GetExportedTypes();
