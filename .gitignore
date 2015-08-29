@@ -8,3 +8,4 @@ bin
 /OnlineVideos.MediaPortal2/NuGetPackage/PluginContent
 *.mpe1
 *.log
+/Language/tx.exe
