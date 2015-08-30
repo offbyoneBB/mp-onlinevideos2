@@ -84,7 +84,7 @@ namespace OnlineVideos.Sites
         public enum VideoFormat { flv, mp4, webm };
 
         const string CLIENT = @"eyJpbnN0YWxsZWQiOnsiYXV0aF91cmkiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20vby9vYXV0aDIvYXV0aCIsImNsaWVudF9zZWNyZXQiOiJ4cG52b05vNFB6N3lJUXdiVmdIQUdBcl8iLCJ0b2tlbl91cmkiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20vby9vYXV0aDIvdG9rZW4iLCJjbGllbnRfZW1haWwiOiIiLCJyZWRpcmVjdF91cmlzIjpbInVybjppZXRmOndnOm9hdXRoOjIuMDpvb2IiLCJvb2IiXSwiY2xpZW50X3g1MDlfY2VydF91cmwiOiIiLCJjbGllbnRfaWQiOiI5MjUzNzY1MjgyODAtMm9xdWkydnEwbHE2YjVtZjRzNTNodWNqNnRrb2JxazcuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdXRoX3Byb3ZpZGVyX3g1MDlfY2VydF91cmwiOiJodHRwczovL3d3dy5nb29nbGVhcGlzLmNvbS9vYXV0aDIvdjEvY2VydHMifX0=";
-        
+
         [Category("OnlineVideosConfiguration"), Description("Add some dynamic categories found at startup to the list of configured ones.")]
         bool useDynamicCategories = true;
 
@@ -98,7 +98,7 @@ namespace OnlineVideos.Sites
         int pageSize = 26;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable Login"), Description("Will popup a browser on first use to select your YouTube account.")]
         bool enableLogin = false;
-        
+
         string hl = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
         string regionCode = RegionInfo.CurrentRegion.TwoLetterISORegionName;
         YouTubeService service;
@@ -439,7 +439,7 @@ namespace OnlineVideos.Sites
                     var playlistsCategory = Settings.Categories.FirstOrDefault(c => (c is YouTubeCategory) && (c as YouTubeCategory).IsMine && c.Name.EndsWith(Translation.Instance.Playlists));
                     if (playlistsCategory != null) playlistsCategory.SubCategoriesDiscovered = false;
                 }
-                
+
             }
             catch (Google.GoogleApiException apiEx)
             {
