@@ -75,8 +75,11 @@ namespace OnlineVideos.Sites
                     Settings.Categories.Remove(cat);
                 else
                 {
-                    if (cat.Url.EndsWith("/A"))
+                    if (cat.Name == "Series")
+                    {
                         cat.Other = Depth.MainMenu;
+                        cat.Url = @"http://watchseries.ag/letters/A";
+                    }
                     else
                     {
                         cat.Other = Depth.BareList;
