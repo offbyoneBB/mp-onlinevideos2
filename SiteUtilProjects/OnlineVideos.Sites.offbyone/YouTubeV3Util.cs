@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -107,6 +108,8 @@ namespace OnlineVideos.Sites
         string currentVideosTitle;
         string userFavoritesPlaylistId;
 
+        private const string USER_UPLOADS_FEED = "http(?:s)?://gdata.youtube.com/feeds/api/users/(?<user>[^/]+)/uploads";
+
         public override int DiscoverDynamicCategories()
         {
             if (useDynamicCategories)
@@ -133,6 +136,16 @@ namespace OnlineVideos.Sites
                 }
 
                 Settings.DynamicCategoriesDiscovered = true;
+            }
+
+            foreach (Category link in Settings.Categories)
+            {
+                if (link is RssLink)
+                {
+                    Match m = Regex.Match(((RssLink)link).Url, USER_UPLOADS_FEED);
+                    if (m.Success)
+                        link.Other = (Func<List<VideoInfo>>)(() => QueryUserUploads(m.Groups["user"].Value));
+                }
             }
             return Settings.Categories.Count;
         }
@@ -452,6 +465,19 @@ namespace OnlineVideos.Sites
             return result;
         }
 
+        /// <summary>Returns videos uploaded by user</summary>
+        /// <param name="username">Name of the user</param>
+        List<VideoInfo> QueryUserUploads(string username)
+        {
+            var query = Service.Channels.List("snippet, contentDetails");
+            query.ForUsername = username;
+            query.Hl = hl;
+            var response = query.Execute();
+            if (response.Items.Count == 0)
+                return new List<VideoInfo>();
+            var playlistId = response.Items[0].ContentDetails.RelatedPlaylists.Uploads;
+            return QueryPlaylistVideos(playlistId);
+        }
         #endregion
 
         #region YouTube service wrapper methods
