@@ -64,7 +64,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             if (parentCategory == null)
             {
                 result.Add(new Category { Name = "Catch up", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "C~a27eef2528673410VgnVCM100000255212ac____" });
-                //result.Add(new Category { Name = "Live TV", SubCategoriesDiscovered = true, HasSubCategories = false, Other = "L~Live_TV" });
+                //result.Add(new Category { Name = "Live TV", SubCategoriesDiscovered = false, HasSubCategories = false, Other = "L~Live_TV" });
                 result.Add(new Category { Name = "Sky Movies", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "R~7fc1acce88d77410VgnVCM1000000b43150a____" });
                 result.Add(new Category { Name = "TV Box Sets", SubCategoriesDiscovered = false, HasSubCategories = true, Other = "B~9bb07a0acc5a7410VgnVCM1000000b43150a____" });
             }
@@ -152,6 +152,12 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         /// <returns></returns>
         public List<VideoInfo> LoadVideos(Category parentCategory)
         {
+            if (parentCategory.Type() == SkyGoCategoryData.CategoryType.LiveTv)
+            {
+                var channels = Properties.Resources.SkyGo_LiveTvListingUrl.GetChannelsFromURL();
+                return channels;
+            }
+
             if (_cachedVideos.Where(x => x.Value.Contains("*" + parentCategory.Other + parentCategory.Name + "*")).Count() > 0)
                 return _cachedVideos.Where(x => x.Value.Contains("*" + parentCategory.Other + parentCategory.Name + "*")).Select(x => x.Key).ToList();
             return LoadGeneralVideos(parentCategory);

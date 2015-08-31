@@ -18,7 +18,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
             CatchUpSubCategory, 
             CatchUpSubCategory1,
             BoxSets,
-            Video
+            Video,
+            LiveTv
         }
 
         /// <summary>
@@ -40,6 +41,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
                 return CategoryType.BoxSets;
             if (category.Other.ToString().StartsWith("V~"))
                 return CategoryType.Video;
+            if (category.Other.ToString().StartsWith("L~"))
+                return CategoryType.LiveTv;
             return CategoryType.Unknown;
         }
 

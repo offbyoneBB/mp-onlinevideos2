@@ -54,6 +54,7 @@
     <Compile Include="ConnectorImplementations\BrowserSessionBase.cs" />
     <Compile Include="ConnectorImplementations\BrowserUtilConnectorBase.cs" />
     <Compile Include="ConnectorImplementations\FormElementCollection.cs" />
+    <Compile Include="ConnectorImplementations\SkyGo\Connectors\CursorHelper.cs" />
     <Compile Include="ConnectorImplementations\SkyGo\Connectors\SkyGoConnector.cs" />
     <Compile Include="ConnectorImplementations\SkyGo\Connectors\SkyGoInformationConnector.cs" />
     <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoCategoryData.cs" />

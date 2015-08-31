@@ -153,9 +153,9 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                             System.Threading.Thread.Sleep(200);
                         }
 
-                        CursorHelper.MoveMouseTo(50, 50);
+                        TemporaryCursorHelper.MoveMouseTo(50, 50);
                         Application.DoEvents();
-                        CursorHelper.DoLeftMouseClick();
+                        TemporaryCursorHelper.DoLeftMouseClick();
                         Application.DoEvents();
                         HideLoading();
                         Browser.FindForm().Activate();
@@ -213,9 +213,9 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         {
             if (DateTime.Now < _lastPlayClick.AddMilliseconds(500)) return EventResult.Complete();
 
-            CursorHelper.MoveMouseTo(Browser.FindForm().Left + (Browser.FindForm().Width / 2) + 50, Browser.FindForm().Top + (Browser.FindForm().Height / 2));
-            CursorHelper.DoLeftMouseClick();
-            CursorHelper.MoveMouseTo(0, 0);
+            TemporaryCursorHelper.MoveMouseTo(Browser.FindForm().Left + (Browser.FindForm().Width / 2) + 50, Browser.FindForm().Top + (Browser.FindForm().Height / 2));
+            TemporaryCursorHelper.DoLeftMouseClick();
+            TemporaryCursorHelper.MoveMouseTo(0, 0);
             _lastPlayClick = DateTime.Now;
             return EventResult.Complete();
         }

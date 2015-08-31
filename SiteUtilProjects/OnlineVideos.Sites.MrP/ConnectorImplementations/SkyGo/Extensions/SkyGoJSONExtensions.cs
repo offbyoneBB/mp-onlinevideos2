@@ -102,6 +102,35 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
         }
 
         /// <summary>
+        /// Load the Live TV channels
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static List<VideoInfo> GetChannelsFromURL(this string url)
+        {
+            var browser = new SkyGoBrowserSession();
+            var browserResponse = browser.LoadAsStr(url);
+            browserResponse = browserResponse.Replace("feedChannelList(", "");
+            browserResponse = browserResponse.Replace(");", "");
+
+            var jsonObj = JObject.Parse(browserResponse);
+            var result = new List<VideoInfo>();
+
+            foreach (var item in jsonObj["linearStreams"].Children())
+            {
+                var video = new VideoInfo();
+                //video.Description = token.GetValue("synopsis") + "\r\n" + GetStarring(token);
+
+                video.Thumb = item.GetImage();
+                video.Title = item.GetValue("title");
+                video.Other = "Live/" + item.GetValue("id");
+                result.Add(video);
+
+            }
+            return result.OrderBy(x=>x.Title).ToList();
+        }
+
+        /// <summary>
         /// Get a value from the token as a string
         /// </summary>
         /// <param name="token"></param>

@@ -124,7 +124,7 @@
     <value>http://go.sky.com/tvlistings-proxy/TvListingsApi/xml/v2/nowNextLater.do?channelIds={CHANNEL_IDS}&amp;siteId=4&amp;accessKey=fdgJRTd345S4fKMER92mddSFJWERJ35285FDdm3412jdRTmsdd</value>
   </data>
   <data name="SkyGo_LiveTvListingUrl" xml:space="preserve">
-    <value>http://go.sky.com/vod/page/tvListing.do</value>
+    <value>http://content.ott.sky.com/v2/brands/go/devices/pc/content/linear-streams?callback=feedChannelList</value>
   </data>
   <data name="SkyGo_LiveTvPlayUrl" xml:space="preserve">
     <value>http://go.sky.com/vod/content/Home/content/videoId/{VIDEO_ID}____/l/l/content/detachedLiveTv.do</value>
