@@ -78,7 +78,7 @@ namespace OnlineVideos.Sites
                     if (cat.Name == "Series")
                     {
                         cat.Other = Depth.MainMenu;
-                        cat.Url = @"http://watchseries.ag/letters/A";
+                        cat.Url = @"http://watchseries.ag/series";
                     }
                     else
                     {
