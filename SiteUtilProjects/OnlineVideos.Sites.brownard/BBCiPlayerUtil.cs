@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using OnlineVideos.Sites.Brownard.Extensions;
 using System.Net;
+using OnlineVideos.Sites.Utils;
 
 namespace OnlineVideos.Sites
 {
@@ -16,7 +17,6 @@ namespace OnlineVideos.Sites
         const string MOST_POPULAR_URL = "http://www.bbc.co.uk/iplayer/group/most-popular";
         const string ATOZ_URL = "http://www.bbc.co.uk/iplayer/a-z/";
         static readonly string[] atoz = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0-9" };
-        static readonly List<Category> aToZCategories = new List<Category>();
 
         #endregion
 
@@ -188,31 +188,53 @@ namespace OnlineVideos.Sites
         string getLiveUrls(VideoInfo video)
         {
             WebProxy proxyObj = getProxy();
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(GetWebData("http://www.bbc.co.uk/mediaselector/playlists/hds/pc/ak/" + video.VideoUrl, proxy: proxyObj));
-            SortedList<string, string> sortedPlaybackOptions = new SortedList<string, string>(new QualityComparer());
-            foreach (XmlElement mediaElem in doc.GetElementsByTagName("media"))
+            string playlistStr = GetWebData(video.VideoUrl, proxy: proxyObj, userAgent: HlsPlaylistParser.APPLE_USER_AGENT);
+            HlsPlaylistParser playlist = new HlsPlaylistParser(playlistStr, video.VideoUrl);
+            video.PlaybackOptions = new Dictionary<string, string>();
+            if (playlist.StreamInfos.Count == 0)
             {
-                string url = null;
-                if (mediaElem.Attributes["href"] != null)
-                    url = mediaElem.Attributes["href"].Value + "?live=true";
-                string bitrate = "";
-                if (mediaElem.Attributes["bitrate"] != null)
-                    bitrate = mediaElem.Attributes["bitrate"].Value;
-                if (!string.IsNullOrEmpty(url))
-                    sortedPlaybackOptions.Add(bitrate + " kbps", url);
+                video.PlaybackOptions.Add(video.Title, video.VideoUrl);
+                return video.VideoUrl;
             }
 
             string lastUrl = "";
-            video.PlaybackOptions = new Dictionary<string, string>();
-            var enumer = sortedPlaybackOptions.GetEnumerator();
-            while (enumer.MoveNext())
+            foreach (HlsStreamInfo streamInfo in playlist.StreamInfos)
             {
-                lastUrl = enumer.Current.Value;
-                video.PlaybackOptions.Add(enumer.Current.Key, enumer.Current.Value);
+                lastUrl = streamInfo.Url;
+                string name = string.Format("{0}x{1} | {2} kbps", streamInfo.Width, streamInfo.Height, streamInfo.Bandwidth / 1024);
+                video.PlaybackOptions.Add(name, lastUrl);
             }
-            return lastUrl; //"http://bbcfmhds.vo.llnwd.net/hds-live/livepkgr/_definst_/bbc1/bbc1_1500.f4m";
+            return lastUrl;
         }
+
+        //string getLiveUrls(VideoInfo video)
+        //{
+        //    WebProxy proxyObj = getProxy();
+        //    XmlDocument doc = new XmlDocument();
+        //    doc.LoadXml(GetWebData("http://www.bbc.co.uk/mediaselector/playlists/hds/pc/ak/" + video.VideoUrl, proxy: proxyObj));
+        //    SortedList<string, string> sortedPlaybackOptions = new SortedList<string, string>(new QualityComparer());
+        //    foreach (XmlElement mediaElem in doc.GetElementsByTagName("media"))
+        //    {
+        //        string url = null;
+        //        if (mediaElem.Attributes["href"] != null)
+        //            url = mediaElem.Attributes["href"].Value + "?live=true";
+        //        string bitrate = "";
+        //        if (mediaElem.Attributes["bitrate"] != null)
+        //            bitrate = mediaElem.Attributes["bitrate"].Value;
+        //        if (!string.IsNullOrEmpty(url))
+        //            sortedPlaybackOptions.Add(bitrate + " kbps", url);
+        //    }
+
+        //    string lastUrl = "";
+        //    video.PlaybackOptions = new Dictionary<string, string>();
+        //    var enumer = sortedPlaybackOptions.GetEnumerator();
+        //    while (enumer.MoveNext())
+        //    {
+        //        lastUrl = enumer.Current.Value;
+        //        video.PlaybackOptions.Add(enumer.Current.Key, enumer.Current.Value);
+        //    }
+        //    return lastUrl; //"http://bbcfmhds.vo.llnwd.net/hds-live/livepkgr/_definst_/bbc1/bbc1_1500.f4m";
+        //}
 
         WebProxy getProxy()
         {
@@ -404,19 +426,21 @@ namespace OnlineVideos.Sites
             {
                 VideoInfo video = new VideoInfo();
                 video.Title = channel.StreamName;
-
-                int argIndex = channel.Url.IndexOf('?');
-                if (argIndex < 0) video.VideoUrl = channel.Url;
-                else video.VideoUrl = channel.Url.Remove(argIndex);
-
                 video.Other = "livestream";
                 video.Thumb = channel.Thumb;
-                if (retrieveTVGuide && argIndex > -1)
+
+                string guideId;
+                if (TVGuideGrabber.TryGetId(channel.Url, out guideId))
                 {
-                    Utils.TVGuideGrabber tvGuide = new Utils.TVGuideGrabber();
-                    if (tvGuide.GetNowNextForChannel(channel.Url))
-                        video.Description = tvGuide.FormatTVGuide(tvGuideFormatString);
+                    video.VideoUrl = TVGuideGrabber.RemoveId(channel.Url);
+                    NowNextDetails guide;
+                    if (retrieveTVGuide && TVGuideGrabber.TryGetNowNextForChannel(guideId, out guide))
+                        video.Description = guide.Format(tvGuideFormatString);
                 }
+                else
+                {
+                    video.VideoUrl = channel.Url;
+                }                
                 videos.Add(video);
             }
             return videos;
