@@ -8,8 +8,6 @@ namespace OnlineVideos.Sites
 {
     public class TVNZOnDemandUtil : BrightCoveUtil
     {
-        private string baseUrl = @"http://tvnz.co.nz";
-
         public override int DiscoverDynamicCategories()
         {
             string webData = GetWebData(@"http://tvnz.co.nz/content/ps3_navigation/ps3_xml_skin.xml");

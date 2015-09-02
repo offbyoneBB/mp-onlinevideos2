@@ -1944,7 +1944,7 @@ namespace OnlineVideos.MediaPortal1
 
             foreach (VideoInfo videoInfo in currentVideoList)
             {
-                videoInfo.CleanDescriptionAndTitle();
+                videoInfo.CleanDescriptionTitleAndAirdate();
                 if (!currentFilter.Matches(videoInfo.Title) || FilterOut(videoInfo.Title) || FilterOut(videoInfo.Description)) continue;
                 if (!string.IsNullOrEmpty(videosVKfilter) && !videoInfo.Title.ToLower().Contains(videosVKfilter.ToLower())) continue;
 
