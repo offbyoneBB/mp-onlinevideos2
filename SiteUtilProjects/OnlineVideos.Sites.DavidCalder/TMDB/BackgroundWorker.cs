@@ -6,44 +6,45 @@ using System.Threading;
 
 namespace OnlineVideos.Sites.DavidCalder.TMDB
 {
-  class BackgroundWorker
-  {
-    Thread backgroundThread = null;
-
-    public void start(List<VideoInfo> videos)
+    class BackgroundWorker
     {
-      backgroundThread = new Thread(delegate()
-                      {
-                        try
-                        {
-                          foreach (VideoInfo video in videos)
-                          {
-                            if (TMDB.TMDB_Movie25.SearchForMovie(video))
+        Thread backgroundThread = null;
+
+        public void start(List<VideoInfo> videos)
+        {
+            backgroundThread = new Thread(delegate ()
                             {
-                              TMDbVideoDetails newInfo = new TMDbVideoDetails();
-                              newInfo.TMDbDetails = TMDB.TMDB_Movie25.MovieInfo;
-                              if (!string.IsNullOrEmpty(newInfo.TMDbDetails.runtime))
-                                video.Length = newInfo.TMDbDetails.runtime + " min";
-                              if (!string.IsNullOrEmpty(newInfo.TMDbDetails.ReleaseDateAsString()))
-                                video.Airdate = newInfo.TMDbDetails.ReleaseDateAsString();
-                              if (!string.IsNullOrEmpty(newInfo.TMDbDetails.overview))
-                                video.Description = newInfo.TMDbDetails.overview;
-                              if (!string.IsNullOrEmpty(newInfo.TMDbDetails.PosterPathFullUrl()))
-                                video.Thumb = newInfo.TMDbDetails.PosterPathFullUrl();
-                              if (newInfo != null)
-                                video.Other = newInfo;
-                              video.HasDetails = true;
-                            }
-                            else video.HasDetails = false;
-                          }
-                        }
+                                try
+                                {
+                                    foreach (VideoInfo video in videos)
+                                    {
+                                        if (video.Other == null)
+                                            if (TMDB.TMDB_Movie25.SearchForMovie(video))
+                                            {
+                                                TMDbVideoDetails newInfo = new TMDbVideoDetails();
+                                                newInfo.TMDbDetails = TMDB.TMDB_Movie25.MovieInfo;
+                                                if (!string.IsNullOrEmpty(newInfo.TMDbDetails.runtime))
+                                                    video.Length = newInfo.TMDbDetails.runtime + " min";
+                                                if (!string.IsNullOrEmpty(newInfo.TMDbDetails.ReleaseDateAsString()))
+                                                    video.Airdate = newInfo.TMDbDetails.ReleaseDateAsString();
+                                                if (!string.IsNullOrEmpty(newInfo.TMDbDetails.overview))
+                                                    video.Description = newInfo.TMDbDetails.overview;
+                                                if (!string.IsNullOrEmpty(newInfo.TMDbDetails.PosterPathFullUrl()))
+                                                    video.Thumb = newInfo.TMDbDetails.PosterPathFullUrl();
+                                                if (newInfo != null)
+                                                    video.Other = newInfo;
+                                                video.HasDetails = true;
+                                            }
+                                            else video.HasDetails = false;
+                                    }
+                                }
 
-                        catch
-                        {
+                                catch
+                                {
 
-                        }
-                      });
-      backgroundThread.Start();
+                                }
+                            });
+            backgroundThread.Start();
+        }
     }
-  }
 }
