@@ -25,7 +25,7 @@ namespace OnlineVideos.Sites
         private int pageNr = 0;
         private string baseVideoListUrl = null;
 
-        string matchaz = @"<td><a\shref=""(?<url>[^""]*)""(?:\sclass=""active"")?>(?<title>[^<]*)</a></td>";
+        string matchaz = @"<li\sclass='a-z-scrubber-item'><a\shref=""(?<url>[^""]*)""(?:\sclass=""active"")?>(?<title>[^<]*)</a></li>";
 
         public override int DiscoverDynamicCategories()
         {
@@ -34,8 +34,8 @@ namespace OnlineVideos.Sites
             Settings.Categories.Add(new RssLink() { Name = "Meest bekeken", Url = @"http://www.npo.nl/uitzending-gemist", Other = UgType.MostViewed });
             Settings.Categories.Add(new RssLink() { Name = "Op datum", Url = @"http://www.npo.nl/uitzending-gemist", Other = UgType.Recent });
             Settings.Categories.Add(new RssLink() { Name = "Omroepen", Url = @"http://www.npo.nl/series", Other = UgType.Omroepen });
-            Settings.Categories.Add(new RssLink() { Name = "Genres", Url = @"http://www.npo.nl/series", Other = UgType.Genres });
-            Settings.Categories.Add(new RssLink() { Name = "Programma’s A-Z", Url = @"http://www.npo.nl/series", Other = UgType.AtoZ });
+            //Settings.Categories.Add(new RssLink() { Name = "Genres", Url = @"http://www.npo.nl/series", Other = UgType.Genres });
+            Settings.Categories.Add(new RssLink() { Name = "Programma’s A-Z", Url = @"http://www.npo.nl/a-z", Other = UgType.AtoZ });
             foreach (RssLink cat in Settings.Categories)
                 cat.HasSubCategories = true;
 
