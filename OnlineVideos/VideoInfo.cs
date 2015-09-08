@@ -42,7 +42,12 @@ namespace OnlineVideos
             Title = Helpers.StringUtils.PlainTextFromHtml(Title);
             DateTime airdate;
             if (DateTime.TryParse(Airdate, out airdate))
-                Airdate = airdate.ToString();
+            {
+                if (airdate.TimeOfDay.Ticks == 0)
+                    Airdate = airdate.ToShortDateString();
+                else
+                    Airdate = airdate.ToString();
+            }
         }
 
         public override string ToString()
