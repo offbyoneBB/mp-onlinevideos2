@@ -2300,7 +2300,14 @@ namespace OnlineVideos.MediaPortal1
                 },
                 delegate(bool success, object result)
                 {
-                    if (success) Play_Step4(playItem, result as string, goFullScreen);
+                    if (success)
+                    {
+                        string poUrl = result as string;
+                        if (String.IsNullOrEmpty(poUrl))
+                            DisplayUnableToPlayDialog();
+                        else
+                            Play_Step4(playItem, poUrl, goFullScreen);
+                    }
                 }
                 , Translation.Instance.GettingPlaybackUrlsForVideo, true);
             }
