@@ -80,6 +80,7 @@ namespace OnlineVideos.Sites.DavidCalder
                     Regex = Regex.Match(video.Title, @"(?<Title>[^(]*)\((?<Year>[^)]*)\)"),
                     VideoKind = VideoKind.Movie
                 };
+                return tInfo;
 
             }
             catch (Exception e)
