@@ -24,25 +24,8 @@ namespace OnlineVideos.Sites.DavidCalder
 
             public List<TMDbVideoDetails> VidoesChoices { get; set; }
 
-            public TMDBVideoInfo(VideoInfo video) : base()
+            public TMDBVideoInfo(VideoInfo video) : base(video)
             {
-                Description = video.Description;
-                Thumb = video.Thumb;
-                ThumbnailImage = video.ThumbnailImage;
-                ImageForcedAspectRatio = video.ImageForcedAspectRatio;
-                Other = video.Other;
-
-                Title = video.Title;
-                VideoUrl = video.VideoUrl;
-                Length = video.Length;
-                Airdate = video.Airdate;
-                StartTime = video.StartTime;
-                SubtitleUrl = video.SubtitleUrl;
-                SubtitleText = video.SubtitleText;
-                PlaybackOptions = video.PlaybackOptions;
-                HasDetails = video.HasDetails;
-
-                Title2 = string.Empty;
             }
 
             public override string GetPlaybackOptionUrl(string url)
