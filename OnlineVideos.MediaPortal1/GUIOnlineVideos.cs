@@ -2233,15 +2233,7 @@ namespace OnlineVideos.MediaPortal1
             // if no valid urls were returned show error msg
             if (loUrlList == null || loUrlList.Count == 0)
             {
-                GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                if (dlg != null)
-                {
-                    dlg.Reset();
-                    dlg.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
-                    dlg.SetHeading(Translation.Instance.Error);
-                    dlg.SetText(Translation.Instance.UnableToPlayVideo);
-                    dlg.DoModal(GUIWindowManager.ActiveWindow);
-                }
+                DisplayUnableToPlayDialog();
                 return;
             }
             // create playlist entries if more than one url
@@ -2329,15 +2321,7 @@ namespace OnlineVideos.MediaPortal1
                 &&
                 factory.PreparedPlayerType != PlayerType.Browser)
             {
-                GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                if (dlg != null)
-                {
-                    dlg.Reset();
-                    dlg.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
-                    dlg.SetHeading(Translation.Instance.Error);
-                    dlg.SetText(Translation.Instance.UnableToPlayVideo);
-                    dlg.DoModal(GUIWindowManager.ActiveWindow);
-                }
+                DisplayUnableToPlayDialog();
                 return;
             }
 
@@ -2399,15 +2383,7 @@ namespace OnlineVideos.MediaPortal1
                         Play_Step5(playItem, lsUrl, goFullScreen, factory, prepareResult, true);
                         break;
                     default: // error building graph
-                        GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                        if (dlg != null)
-                        {
-                            dlg.Reset();
-                            dlg.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
-                            dlg.SetHeading(Translation.Instance.Error);
-                            dlg.SetText(Translation.Instance.UnableToPlayVideo);
-                            dlg.DoModal(GUIWindowManager.ActiveWindow);
-                        }
+                        DisplayUnableToPlayDialog();
                         break;
                 }
             }
@@ -2421,15 +2397,7 @@ namespace OnlineVideos.MediaPortal1
                 factory.PreparedPlayer.Dispose();
                 if (showMessage)
                 {
-                    GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-                    if (dlg != null)
-                    {
-                        dlg.Reset();
-                        dlg.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
-                        dlg.SetHeading(Translation.Instance.Error);
-                        dlg.SetText(Translation.Instance.UnableToPlayVideo);
-                        dlg.DoModal(GUIWindowManager.ActiveWindow);
-                    }
+                    DisplayUnableToPlayDialog();
                 }
             }
             else
@@ -2532,6 +2500,19 @@ namespace OnlineVideos.MediaPortal1
             {
                 if (random) ((List<PlayListItem>)currentPlaylist).Randomize();
                 Play_Step1(currentPlaylist[0], true);
+            }
+        }
+
+        private void DisplayUnableToPlayDialog()
+        {
+            GUIDialogNotify dlg = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+            if (dlg != null)
+            {
+                dlg.Reset();
+                dlg.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
+                dlg.SetHeading(Translation.Instance.Error);
+                dlg.SetText(Translation.Instance.UnableToPlayVideo);
+                dlg.DoModal(GUIWindowManager.ActiveWindow);
             }
         }
 
