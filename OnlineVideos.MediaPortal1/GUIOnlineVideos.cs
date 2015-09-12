@@ -16,7 +16,7 @@ using Action = MediaPortal.GUI.Library.Action;
 
 namespace OnlineVideos.MediaPortal1
 {
-	[PluginIcons("OnlineVideos.MediaPortal1.OnlineVideos.png", "OnlineVideos.MediaPortal1.OnlineVideosDisabled.png")]
+    [PluginIcons("OnlineVideos.MediaPortal1.OnlineVideos.png", "OnlineVideos.MediaPortal1.OnlineVideosDisabled.png")]
     public partial class GUIOnlineVideos : GUIWindow, ISetupForm, IShowPlugin
     {
         public const int WindowId = 4755;
@@ -263,7 +263,7 @@ namespace OnlineVideos.MediaPortal1
             GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", " "); GUIPropertyManager.SetProperty("#OnlineVideos.selectedSiteUtil", string.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.currentDownloads", "0");
             GUIPropertyManager.SetProperty("#OnlineVideos.HeaderLabel", "OnlineVideos");
-			GUIPropertyManager.SetProperty("#OnlineVideos.HomeScreenName", "Online Videos");
+            GUIPropertyManager.SetProperty("#OnlineVideos.HomeScreenName", "Online Videos");
             CurrentState = State.sites;
             ExtendedVideoInfo = false;
             // get last active module settings  
@@ -424,17 +424,17 @@ namespace OnlineVideos.MediaPortal1
                             {
                                 dlgSel.Add(Translation.Instance.PlayAll);
                                 dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("PlayAll", null));
-								dlgSel.Add(Translation.Instance.PlayAllFromHere);
-								dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("PlayAllFromHere", null));
+                                dlgSel.Add(Translation.Instance.PlayAllFromHere);
+                                dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("PlayAllFromHere", null));
                                 dlgSel.Add(Translation.Instance.PlayAllRandom);
                                 dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("PlayAllRandom", null));
                             }
-							if (SelectedSite.CanSearch)
-							{
-								// Add context keyword search
-								dlgSel.Add(Translation.Instance.SearchRelatedKeywords);
-								dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("SearchKeywords", null));
-							}
+                            if (SelectedSite.CanSearch)
+                            {
+                                // Add context keyword search
+                                dlgSel.Add(Translation.Instance.SearchRelatedKeywords);
+                                dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>("SearchKeywords", null));
+                            }
                             if (!(SelectedSite is Sites.FavoriteUtil) && !(SelectedSite is Sites.DownloadedVideoUtil))
                             {
                                 dlgSel.Add(Translation.Instance.AddToFavourites);
@@ -512,17 +512,17 @@ namespace OnlineVideos.MediaPortal1
                                 case "PlayAll":
                                     PlayAll();
                                     break;
-								case "PlayAllFromHere":
-									PlayAll(false, aVideo);
-									break;
+                                case "PlayAllFromHere":
+                                    PlayAll(false, aVideo);
+                                    break;
                                 case "PlayAllRandom":
                                     PlayAll(true);
                                     break;
                                 case "SearchKeywords":
-                                  List<string> searchexpressions = new List<string> { selectedItem.Label };
-                                  if (selectedItem.Description.Length > 0) searchexpressions.Add(selectedItem.Description);
-                                  ContextKeywordSelection(searchexpressions);
-                                  break;
+                                    List<string> searchexpressions = new List<string> { selectedItem.Label };
+                                    if (selectedItem.Description.Length > 0) searchexpressions.Add(selectedItem.Description);
+                                    ContextKeywordSelection(searchexpressions);
+                                    break;
                                 case "AddToFav":
                                     string suggestedTitle = SelectedSite.GetFileNameForDownload(aVideo, selectedCategory, null);
                                     bool successAddingToFavs = OnlineVideoSettings.Instance.FavDB.AddFavoriteVideo(aVideo, suggestedTitle, SelectedSite.Settings.Name);
@@ -1620,60 +1620,60 @@ namespace OnlineVideos.MediaPortal1
             Translation.Instance.GettingCategoryVideos, true);
         }
 
-		private void ContextKeywordSelection(List<string> searchexpressions)
-		{
-			string query = null;
-			const int minchars = 4;
-			string[] sep = new string[] { "|", " ", ",", ";" };
-			string[] titlesep = { " - " };
-			int totalitems = 0;
+        private void ContextKeywordSelection(List<string> searchexpressions)
+        {
+            string query = null;
+            const int minchars = 4;
+            string[] sep = new string[] { "|", " ", ",", ";" };
+            string[] titlesep = { " - " };
+            int totalitems = 0;
 
-			GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-			if (dlg == null) return;
-			dlg.SetHeading(Translation.Instance.SearchRelatedKeywords);
+            GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+            if (dlg == null) return;
+            dlg.SetHeading(Translation.Instance.SearchRelatedKeywords);
 
-			if (searchexpressions.Count > 0)
-			{
-				// try to get expression parts from title
-				List<string> titleexpressions = CleanExpression(searchexpressions[0]).Split(titlesep, StringSplitOptions.RemoveEmptyEntries).Where(s => !string.IsNullOrEmpty(s) && s.Length >= minchars).Distinct().ToList();
+            if (searchexpressions.Count > 0)
+            {
+                // try to get expression parts from title
+                List<string> titleexpressions = CleanExpression(searchexpressions[0]).Split(titlesep, StringSplitOptions.RemoveEmptyEntries).Where(s => !string.IsNullOrEmpty(s) && s.Length >= minchars).Distinct().ToList();
 
-				foreach (GUIListItem item in titleexpressions.Select(keyword => new GUIListItem(keyword.Trim().TrimEnd('.').TrimEnd(':'))))
-				{
-					dlg.Add(item);
-					totalitems++;
-				}
-			}
+                foreach (GUIListItem item in titleexpressions.Select(keyword => new GUIListItem(keyword.Trim().TrimEnd('.').TrimEnd(':'))))
+                {
+                    dlg.Add(item);
+                    totalitems++;
+                }
+            }
 
-			// add keywords
-			foreach (string searchexpression in searchexpressions)
-			{
-				List<string> keywords = CleanExpression(searchexpression).Split(sep, StringSplitOptions.RemoveEmptyEntries).Where(s => !string.IsNullOrEmpty(s) && s.Length >= minchars).OrderByDescending(x => x.Length).Distinct().ToList();
+            // add keywords
+            foreach (string searchexpression in searchexpressions)
+            {
+                List<string> keywords = CleanExpression(searchexpression).Split(sep, StringSplitOptions.RemoveEmptyEntries).Where(s => !string.IsNullOrEmpty(s) && s.Length >= minchars).OrderByDescending(x => x.Length).Distinct().ToList();
 
-				foreach (GUIListItem item in keywords.Select(keyword => new GUIListItem(keyword.Trim().TrimEnd('.').TrimEnd(':'))))
-				{
-					dlg.Add(item);
-					totalitems++;
-				}
-			}
+                foreach (GUIListItem item in keywords.Select(keyword => new GUIListItem(keyword.Trim().TrimEnd('.').TrimEnd(':'))))
+                {
+                    dlg.Add(item);
+                    totalitems++;
+                }
+            }
 
-			Log.Instance.Info("Found '{0}' keywords for user selection", totalitems);
-			if (totalitems == 0) return;
+            Log.Instance.Info("Found '{0}' keywords for user selection", totalitems);
+            if (totalitems == 0) return;
 
-			dlg.SelectedLabel = 0;
-			dlg.DoModal(GUIWindowManager.ActiveWindow);
-			if (dlg.SelectedLabel == -1) return;
-			query = dlg.SelectedLabelText;
-			Display_SearchResults(query);
-		}
+            dlg.SelectedLabel = 0;
+            dlg.DoModal(GUIWindowManager.ActiveWindow);
+            if (dlg.SelectedLabel == -1) return;
+            query = dlg.SelectedLabelText;
+            Display_SearchResults(query);
+        }
 
         private string CleanExpression(string expression)
         {
-          // Clean searchexpression
-          expression = expression.Replace(Environment.NewLine, " ").Replace("\n", " ").Replace("\n\r", " ");
-          Regex oRegexReplace = new Regex("[,;!?'\"()]");
-          MatchCollection oMatches = oRegexReplace.Matches(expression);
-          expression = oMatches.Cast<Match>().Aggregate(expression, (current, match) => current.Replace(match.Value, oRegexReplace.Replace(match.Value, string.Empty))).Replace("  ", " ").Trim();
-          return expression;
+            // Clean searchexpression
+            expression = expression.Replace(Environment.NewLine, " ").Replace("\n", " ").Replace("\n\r", " ");
+            Regex oRegexReplace = new Regex("[,;!?'\"()]");
+            MatchCollection oMatches = oRegexReplace.Matches(expression);
+            expression = oMatches.Cast<Match>().Aggregate(expression, (current, match) => current.Replace(match.Value, oRegexReplace.Replace(match.Value, string.Empty))).Replace("  ", " ").Trim();
+            return expression;
         }
 
         private void Display_SearchResults(string query = null)
@@ -1754,7 +1754,7 @@ namespace OnlineVideos.MediaPortal1
             SelectedSearchCategoryIndex = GUI_btnSearchCategories.SelectedItem;
             if (query != String.Empty)
             {
-				lastSearchQuery = query;
+                lastSearchQuery = query;
                 Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
                 {
                     if (moSupportedSearchCategoryList != null && moSupportedSearchCategoryList.Count > 1 && GUI_btnSearchCategories.SelectedLabel != Translation.Instance.All
@@ -2508,7 +2508,7 @@ namespace OnlineVideos.MediaPortal1
             currentPlaylist = new Player.PlayList() { IsPlayAll = true };
             currentPlayingItem = null;
             var videos = (SelectedSite is IChoice && currentState == State.details) ? currentTrailerList.ConvertAll(v => (VideoInfo)v) : currentVideoList;
-			bool startVideoFound = startWith == null;
+            bool startVideoFound = startWith == null;
             foreach (VideoInfo video in videos)
             {
                 // when not in details view of a site with details view only include videos that don't have details
@@ -2518,8 +2518,8 @@ namespace OnlineVideos.MediaPortal1
                 if (!currentFilter.Matches(video.Title) || FilterOut(video.Title) || FilterOut(video.Description)) continue;
                 if (!string.IsNullOrEmpty(videosVKfilter) && !video.Title.ToLower().Contains(videosVKfilter.ToLower())) continue;
 
-				if (!startVideoFound && video != startWith) continue;
-				else startVideoFound = true;
+                if (!startVideoFound && video != startWith) continue;
+                else startVideoFound = true;
 
                 currentPlaylist.Add(new Player.PlayListItem(video.Title, null)
                 {
@@ -2818,19 +2818,20 @@ namespace OnlineVideos.MediaPortal1
             {
                 if (!preventMessageDuetoAdult)
                 {
-					GUIWindowManager.SendThreadCallbackAndWait((p1, p2, dataCurrentItemTitle) => 
-					{
-						GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-						if (loDlgNotify != null)
-						{
-							loDlgNotify.Reset();
-							loDlgNotify.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
-							loDlgNotify.SetHeading(Translation.Instance.Error);
-							loDlgNotify.SetText(string.Format(Translation.Instance.DownloadFailed, (string)dataCurrentItemTitle));
-							loDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
-						}
-						return 0; },
-					0, 0, saveItems.CurrentItem.Title);
+                    GUIWindowManager.SendThreadCallbackAndWait((p1, p2, dataCurrentItemTitle) =>
+                    {
+                        GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                        if (loDlgNotify != null)
+                        {
+                            loDlgNotify.Reset();
+                            loDlgNotify.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
+                            loDlgNotify.SetHeading(Translation.Instance.Error);
+                            loDlgNotify.SetText(string.Format(Translation.Instance.DownloadFailed, (string)dataCurrentItemTitle));
+                            loDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+                        }
+                        return 0;
+                    },
+                    0, 0, saveItems.CurrentItem.Title);
                 }
             }
             else
@@ -2853,11 +2854,11 @@ namespace OnlineVideos.MediaPortal1
                             + Path.GetExtension(saveItems.CurrentItem.ThumbFile);
                         File.Copy(saveItems.CurrentItem.ThumbFile, localImageName, true);
                     }
-					// save subtitles if SubtitlesUrl was set
-					SaveSubtitles(saveItems.CurrentItem.VideoInfo, Path.ChangeExtension(saveItems.CurrentItem.LocalFile, ".srt"));
-					// save matroska tag
-					string niceTitle = saveItems.CurrentItem.Util.GetFileNameForDownload(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, null);
-					File.WriteAllText(Path.ChangeExtension(saveItems.CurrentItem.LocalFile, ".xml"), saveItems.CurrentItem.VideoInfo.CreateMatroskaXmlTag(niceTitle), System.Text.Encoding.UTF8);
+                    // save subtitles if SubtitlesUrl was set
+                    SaveSubtitles(saveItems.CurrentItem.VideoInfo, Path.ChangeExtension(saveItems.CurrentItem.LocalFile, ".srt"));
+                    // save matroska tag
+                    string niceTitle = saveItems.CurrentItem.Util.GetFileNameForDownload(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, null);
+                    File.WriteAllText(Path.ChangeExtension(saveItems.CurrentItem.LocalFile, ".xml"), saveItems.CurrentItem.VideoInfo.CreateMatroskaXmlTag(niceTitle), System.Text.Encoding.UTF8);
                 }
                 catch (Exception ex)
                 {
@@ -2876,22 +2877,23 @@ namespace OnlineVideos.MediaPortal1
 
                 if (!preventMessageDuetoAdult)
                 {
-					GUIWindowManager.SendThreadCallbackAndWait((p1, dataFileSize, dataCurrentItem) => 
-					{
-						GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-						if (loDlgNotify != null)
-						{
-							loDlgNotify.Reset();
-							loDlgNotify.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
-							if (((DownloadInfo)dataCurrentItem).Downloader.Cancelled)
-								loDlgNotify.SetHeading(Translation.Instance.DownloadCancelled);
-							else
-								loDlgNotify.SetHeading(Translation.Instance.DownloadComplete);
-							loDlgNotify.SetText(string.Format("{0}{1}", ((DownloadInfo)dataCurrentItem).Title, dataFileSize > 0 ? " ( " + dataFileSize.ToString("n0") + " KB)" : ""));
-							loDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
-						}
-						return 0; },
-					0, fileSize, saveItems.CurrentItem);
+                    GUIWindowManager.SendThreadCallbackAndWait((p1, dataFileSize, dataCurrentItem) =>
+                    {
+                        GUIDialogNotify loDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+                        if (loDlgNotify != null)
+                        {
+                            loDlgNotify.Reset();
+                            loDlgNotify.SetImage(SiteImageExistenceCache.GetImageForSite("OnlineVideos", type: "Icon"));
+                            if (((DownloadInfo)dataCurrentItem).Downloader.Cancelled)
+                                loDlgNotify.SetHeading(Translation.Instance.DownloadCancelled);
+                            else
+                                loDlgNotify.SetHeading(Translation.Instance.DownloadComplete);
+                            loDlgNotify.SetText(string.Format("{0}{1}", ((DownloadInfo)dataCurrentItem).Title, dataFileSize > 0 ? " ( " + dataFileSize.ToString("n0") + " KB)" : ""));
+                            loDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+                        }
+                        return 0;
+                    },
+                    0, fileSize, saveItems.CurrentItem);
                 }
 
                 // invoke VideoDownloaded event
