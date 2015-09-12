@@ -28,9 +28,16 @@ namespace OnlineVideos.Sites.DavidCalder
             {
             }
 
+            public Movie25Util parent = null;
+
             public override string GetPlaybackOptionUrl(string url)
             {
                 string data = WebCache.Instance.GetWebData(PlaybackOptions[url]);
+                if (parent != null)
+                {
+                    parent.sh.WaitForSubtitleCompleted();
+                    parent.lastPlaybackOptionUrl = PlaybackOptions[url];
+                }
                 Match n = Regex.Match(data, @"<div\sid=""showvideo""><IFRAME\sSRC=""(?<url>[^""]*)""");
                 if (n.Success)
                 {
@@ -104,7 +111,7 @@ namespace OnlineVideos.Sites.DavidCalder
         public List<DetailVideoInfo> GetVideoChoices(VideoInfo video)
         {
             List<DetailVideoInfo> DetailedVideos = new List<DetailVideoInfo>();
-            DetailedVideos.Add(new TMDBVideoInfo(video) { Title2 = "Full Movie" });
+            DetailedVideos.Add(new TMDBVideoInfo(video) { Title2 = "Full Movie", parent=this });
             if (video.Other.GetType() == typeof(TMDbVideoDetails))
             {
                 TMDbVideoDetails videoDetail = (TMDbVideoDetails)video.Other;
