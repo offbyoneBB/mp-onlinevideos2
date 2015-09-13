@@ -63,5 +63,10 @@ namespace OnlineVideos.Hoster
         {
             return GetHosterUrl();
         }
+
+        public bool Matches(string name)
+        {
+            return name.ToLowerInvariant().Contains(GetHosterUrl().ToLowerInvariant());
+        }
     }
 }
