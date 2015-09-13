@@ -706,7 +706,7 @@ namespace OnlineVideos.Sites
                             videoList.Add(video);
                         }
                     }
-                }                
+                }
 
                 if (regEx_NextPage != null)
                 {
@@ -792,7 +792,7 @@ namespace OnlineVideos.Sites
         {
             get { return nextPageAvailable; }
         }
-        
+
         public override List<VideoInfo> GetNextPageVideos()
         {
             return Parse(nextPageUrl, null);

@@ -4,10 +4,10 @@ using System.Reflection;
 
 namespace OnlineVideos.Hoster
 {
-	/// <summary>
-	/// The abstract base class for all hosters. 
+    /// <summary>
+    /// The abstract base class for all hosters. 
     /// Instances might be hosted in a seperate AppDomain than the main application, so it can be unloaded at runtime.
-	/// </summary>
+    /// </summary>
     public abstract class HosterBase : UserConfigurable
     {
         #region UserConfigurable implementation
@@ -49,12 +49,12 @@ namespace OnlineVideos.Hoster
         {
             return new Dictionary<string, string>() { { GetType().Name, GetVideoUrl(url) } };
         }
-        
-		public virtual Dictionary<string, string> GetPlaybackOptions(string url, System.Net.IWebProxy proxy)
-		{
-			return new Dictionary<string, string>() { { GetType().Name, GetVideoUrl(url) } };
-		}
-        
+
+        public virtual Dictionary<string, string> GetPlaybackOptions(string url, System.Net.IWebProxy proxy)
+        {
+            return new Dictionary<string, string>() { { GetType().Name, GetVideoUrl(url) } };
+        }
+
         public abstract string GetVideoUrl(string url);
 
         public abstract string GetHosterUrl();
