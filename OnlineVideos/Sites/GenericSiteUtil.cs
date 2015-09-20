@@ -485,7 +485,7 @@ namespace OnlineVideos.Sites
                 {
                     Uri uri = new Uri(resultUrl);
                     foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
-                        if (uri.Host.ToLower().Contains(hosterUtil.GetHosterUrl().ToLower()))
+                        if (hosterUtil.Matches(uri.Host))
                         {
                             Dictionary<string, string> options = hosterUtil.GetPlaybackOptions(resultUrl);
                             if (hosterUtil is ISubtitle)
@@ -513,7 +513,7 @@ namespace OnlineVideos.Sites
                     {
                         Uri uri = new Uri(value);
                         foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
-                            if (uri.Host.ToLower().Contains(hosterUtil.GetHosterUrl().ToLower()))
+                            if (hosterUtil.Matches(uri.Host))
                             {
                                 Dictionary<string, string> options = hosterUtil.GetPlaybackOptions(value);
                                 if (hosterUtil is ISubtitle)
@@ -625,7 +625,7 @@ namespace OnlineVideos.Sites
         {
             Uri uri = new Uri(url);
             foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
-                if (uri.Host.ToLower().Contains(hosterUtil.GetHosterUrl().ToLower()))
+                if (hosterUtil.Matches(uri.Host))
                 {
                     string ret = hosterUtil.GetVideoUrl(url);
                     if (!string.IsNullOrEmpty(ret))
@@ -706,7 +706,7 @@ namespace OnlineVideos.Sites
                             videoList.Add(video);
                         }
                     }
-                }                
+                }
 
                 if (regEx_NextPage != null)
                 {
@@ -792,7 +792,7 @@ namespace OnlineVideos.Sites
         {
             get { return nextPageAvailable; }
         }
-        
+
         public override List<VideoInfo> GetNextPageVideos()
         {
             return Parse(nextPageUrl, null);

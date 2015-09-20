@@ -29,20 +29,10 @@ namespace OnlineVideos
             HasDetails = true;
         }
 
-        [Obsolete("use CleanDescriptionTitleAndAirdate")]
         public void CleanDescriptionAndTitle()
         {
             Description = Helpers.StringUtils.PlainTextFromHtml(Description);
             Title = Helpers.StringUtils.PlainTextFromHtml(Title);
-        }
-
-        public void CleanDescriptionTitleAndAirdate()
-        {
-            Description = Helpers.StringUtils.PlainTextFromHtml(Description);
-            Title = Helpers.StringUtils.PlainTextFromHtml(Title);
-            DateTime airdate;
-            if (DateTime.TryParse(Airdate, out airdate))
-                Airdate = airdate.ToString();
         }
 
         public override string ToString()

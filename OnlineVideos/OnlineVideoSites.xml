@@ -1284,67 +1284,14 @@ spStartVideo5\([^']*'(?<m1>[^']+)']]>
       <Description>Ruutu - Nelonen, Liv, Jim ja Nelonen Pro. Viihdettä, draamaa, uutisia, urheilua ja lastenohjelmia - katso missä haluat ja milloin haluat.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.ruutu.fi/]]></item>
-        <item key="playlistUrlRegEx"><![CDATA[<div\s*id="mediaplayer"\sdata-media-id="(?<url>[^"]*)"\sdata]]></item>
-        <item key="playlistUrlFormatString"><![CDATA[http://gatling.ruutu.fi/media-xml-cache?id={0}]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<SourceFile>(?<m0>[^<]*)</SourceFile>]]></item>
-        <item key="searchUrl"><![CDATA[http://www.ruutu.fi/hakutulokset/{0}]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<HTTPMediaFile\slabel="(?<n0>[^"]*)"\stype="[^"]*"\sbitrate="[^"]*"\sresolution="[^"]*">(?<m0>[^<]*)</HTTPMediaFile>]]></item>
+        <item key="videoUrlRegEx"><![CDATA[http://www.ruutu.fi/video/(?<m0>.*)]]></item>
+        <item key="videoUrlFormatString"><![CDATA[http://gatling.nelonenmedia.fi/media-xml-cache?id={0}]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="Ohjelmat">http://www.ruutu.fi/ajax/series-navi</Category>
-        <Category xsi:type="RssLink" name="Urheilu" thumb="" desc="">
-          <SubCategories>
-            <Category xsi:type="RssLink" name="Sarjat" thumb="" desc="quicktabs-tabpage-urheilu_uusimmat_qt-0">http://www.ruutu.fi/urheilu</Category>
-            <Category xsi:type="RssLink" name="Jaksot" thumb="" desc="quicktabs-tabpage-urheilu_uusimmat_qt-1">http://www.ruutu.fi/urheilu</Category>
-          </SubCategories>
-        </Category>
-        <Category xsi:type="RssLink" name="Lapset" thumb="" desc="">
-          <SubCategories>
-            <Category xsi:type="RssLink" name="Sarjat" thumb="" desc="">
-              <SubCategories>
-                <Category xsi:type="RssLink" name="Kuvina" thumb="" desc="quicktabs-tabpage-qt_lapset_series-0">http://www.ruutu.fi/lapset</Category>
-                <Category xsi:type="RssLink" name="Listana" thumb="" desc="quicktabs-tabpage-qt_lapset_series-1">http://www.ruutu.fi/lapset</Category>
-              </SubCategories>
-            </Category>
-            <Category xsi:type="RssLink" name="Jaksot" thumb="" desc="">
-              <SubCategories>
-                <Category xsi:type="RssLink" name="Suosituimmat" thumb="" desc="quicktabs-tabpage-qt_lapset_episodit-0">http://www.ruutu.fi/lapset</Category>
-                <Category xsi:type="RssLink" name="Uussimmat" thumb="" desc="quicktabs-tabpage-qt_lapset_episodit-1">http://www.ruutu.fi/lapset</Category>
-              </SubCategories>
-            </Category>
-          </SubCategories>
-        </Category>
-        <Category xsi:type="RssLink" name="Sarjat" thumb="" desc="">
-          <SubCategories>
-            <Category xsi:type="RssLink" name="Sarjat" thumb="" desc="">
-              <SubCategories>
-                <Category xsi:type="RssLink" name="Kuvina" thumb="" desc="quicktabs-tabpage-qt_sarjat_series-0">http://www.ruutu.fi/sarjat</Category>
-                <Category xsi:type="RssLink" name="Listana" thumb="" desc="quicktabs-tabpage-qt_sarjat_series-1">http://www.ruutu.fi/sarjat</Category>
-              </SubCategories>
-            </Category>
-            <Category xsi:type="RssLink" name="Jaksot" thumb="" desc="">
-              <SubCategories>
-                <Category xsi:type="RssLink" name="Suosituimmat" thumb="" desc="quicktabs-tabpage-qt_sarjat_episodit-0">http://www.ruutu.fi/sarjat</Category>
-                <Category xsi:type="RssLink" name="Uussimmat" thumb="" desc="quicktabs-tabpage-qt_sarjat_episodit-1">http://www.ruutu.fi/sarjat</Category>
-              </SubCategories>
-            </Category>
-          </SubCategories>
-        </Category>
-        <Category xsi:type="RssLink" name="Leffat" thumb="" desc="">
-          <SubCategories>
-            <Category xsi:type="RssLink" name="Suosituimmat" thumb="" desc="">
-              <SubCategories>
-                <Category xsi:type="RssLink" name="Kuvina" thumb="" desc="quicktabs-tabpage-qt_leffat_kaikki_kotimaiset_ulk-0">http://www.ruutu.fi/leffat</Category>
-                <Category xsi:type="RssLink" name="Listana" thumb="" desc="quicktabs-tabpage-qt_leffat_kaikki_kotimaiset_ulk-1">http://www.ruutu.fi/leffat</Category>
-              </SubCategories>
-            </Category>
-            <Category xsi:type="RssLink" name="Uussimmat" thumb="" desc="">
-              <SubCategories>
-                <Category xsi:type="RssLink" name="Kuvina" thumb="" desc="quicktabs-tabpage-qt_leffat_kaikki_kotimaiset_ulko-0">http://www.ruutu.fi/leffat</Category>
-                <Category xsi:type="RssLink" name="Listana" thumb="" desc="quicktabs-tabpage-qt_leffat_kaikki_kotimaiset_ulko-1">http://www.ruutu.fi/leffat</Category>
-              </SubCategories>
-            </Category>
-          </SubCategories>
-        </Category>
+        <Category xsi:type="RssLink" name="Ohjelmat">http://www.ruutu.fi/ohjelmat</Category>
+        <Category xsi:type="RssLink" name="Urheilu">http://www.ruutu.fi/urheilu</Category>
+        <Category xsi:type="RssLink" name="Lapset">http://www.ruutu.fi/lapset</Category>
       </Categories>
     </Site>
     <Site name="SBS.au" util="SBSau" agecheck="false" enabled="true" lang="en">
@@ -1418,14 +1365,14 @@ spStartVideo5\([^']*'(?<m1>[^']+)']]>
       <Description>Uitzending Gemist is de videotheek van de publieke omroep op internet en biedt het totaalaanbod van beschikbare TV uitzendingen van de omroepen.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.npo.nl/]]></item>
-        <item key="videoListRegEx"><![CDATA[(<div\sclass='image-container'>\s*<a\shref="(?<VideoUrl>[^"]*)"><img\salt="[^"]*"\sclass="preview\sprogram-image"\s((data-images="[^"]*"\sdata-toggle="image-skimmer"\ssrc="(?<ImageUrl>[^"]*)")|(src="[^"]*"))\s/>\s*</a></div>\s*</div>\s*<div\sclass='span8'>\s*<a[^>]*><h4>(?<Title>[^<]*)<span\sclass='inactive'>[^<]*</span>\s*<span\sclass='av-icon'>\s*</span>\s*</h4>\s*<h5>(?<Airdate>[^<]*?)(?:&\#8226;(?<Duration>[^<]*))?</h5>\s*<p\sclass='without-title\svisible-for-desktop'>(?<Description>[^<]*)</p>\s*</a></div>)(?#videos of one series)
+        <item key="videoListRegEx"><![CDATA[(<div\sclass='image-container'>\s*<a\shref="(?<VideoUrl>[^"]*)"><img\salt="[^"]*"\sclass="preview\sprogram-image"\s((data-images="[^"]*"\sdata-toggle="image-skimmer"\ssrc="(?<ImageUrl>[^"]*)")|(src="[^"]*"))\s/>\s*<div\sclass="overlay-icon"><span\sclass="npo-glyph\scamera"></span>[^<]*</div>\s*</a></div>\s*</div>\s*<div\sclass='span8'>\s*<a[^>]*><h4>(?<Title>[^<]*)<span\sclass='inactive'>[^<]*</span>\s*<span\sclass='av-icon'>\s*</span>\s*</h4>\s*<h5>(?<Airdate>[^<]*?)(?:&\#8226;(?<Duration>[^<]*))?</h5>\s*<p\sclass='without-title\svisible-for-desktop'>(?<Description>[^<]*)</p>\s*</a></div>)(?#videos of one series)
         |
-        (<div\sclass='image-container'>\s*<a\shref="(?<VideoUrl>[^"]*)"><img\salt="[^"]*"\sdata-images="[^"]*"\sdata-toggle="image-skimmer"\ssrc="(?<ImageUrl>[^"]*)"\s/>\s*<div\sclass="overlay-icon"><span\sclass="npo-glyph\scamera"></span></div>\s*</a></div>\s*<div\sclass='description'>(?<Description>[^<]*)<h4[^>]*>\s*<a[^>]*><div\sclass='default-title'>(?<Title>[^<]*)<span[^>]*>[^<]*</span>\s*</div>\s*<div\sclass='contextual-title'>[^<]*</div>\s*</a></h4>\s*<h5>(?<Airdate>[^<]*)</h5>)(?#videos of recent)
+        (<div\sclass='image-container'>\s*<a\shref="(?<VideoUrl>[^"]*)"><img\salt="[^"]*"\sdata-images="[^"]*"\sdata-toggle="image-skimmer"\ssrc="(?<ImageUrl>[^"]*)"\s/>\s*<div\sclass="overlay-icon"><span\sclass="npo-glyph\scamera"></span>(?<Duration>[^<]*)</div>\s*</a></div>\s*<div\sclass='description'>(?<Description>[^<]*)<h4[^>]*>\s*<a[^>]*><div\sclass='default-title'>(?<Title>[^<]*)<span[^>]*>[^<]*</span>\s*</div>\s*<div\sclass='contextual-title'>[^<]*</div>\s*</a></h4>\s*<h5>(?<Airdate>[^<]*)</h5>)(?#videos of recent)
         |
         (<div\sclass='image-container'>\s*<a\shref="(?<VideoUrl>[^"]*)"><img\salt="[^"]*"\sclass="preview\sprogram-image"\s((data-images="[^"]*"\sdata-toggle="image-skimmer"\ssrc="(?<ImageUrl>[^"]*)")|(src="[^"]*"))\s/>\s*<div\sclass="overlay-icon"><span\sclass="npo-glyph\scamera"></span></div>\s*</a></div>\s*</div>\s*<div\sclass='span8'>\s*<a[^>]*><h4>(?<Title>[^<]*)<span\sclass='inactive'>[^<]*</span>\s*<span\sclass='av-icon'>\s*</span>\s*</h4>\s*<h5>(?<Airdate>[^<]*?)(?:&\#8226;(?<Duration>[^<]*))?</h5>\s*<p\sclass='without-title\svisible-for-desktop'>(?<Description>[^<]*)</p>\s*</a></div>)(?#videos of op datum)
         ]]></item>
         <item key="searchUrl"><![CDATA[http://www.npo.nl/zoeken?utf8=%E2%9C%93&commit=Zoeken&q={0}]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<div\sclass='image-container'>\s*<a\shref="(?<url>[^"]*)"><img\salt="[^"]*"\sclass="show-image"\ssrc="(?<thumb>[^"]*)"\s/>\s*</a></div>\s*</div>\s*<div\sclass='span8'>\s*<a[^>]*><h4>(?<title>[^<]*)<span\sclass='inactive'>[^<]*</span>\s*<span\sclass='av-icon'></span>\s*</h4>\s*<h5><span\sclass="inactive">[^<]*</span>\s<a[^>]*>[^<]*</a></h5>\s*<p\sclass='without-title\svisible-for-desktop'>(?:<span>)?(?<description>[^<]*)<]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<div\sclass='image-container'>\s*<a\shref="(?<url>[^"]*)"><img\salt="[^"]*"\sclass="show-image"\ssrc="(?<thumb>[^"]*)"\s/>\s*</a></div>\s*</div>\s*<div\sclass='span8'>\s*<a[^>]*><h4>(?<title>[^<]*)<span\sclass='inactive[^>]*>[^<]*</span>\s*<span\sclass='av-icon'></span>\s*</h4>\s*<h5><span\sclass="inactive">[^<]*</span>\s<a[^>]*>[^<]*</a></h5>\s*<p\sclass='without-title\svisible-for-desktop'>(?:<span>)?(?<description>[^<]*)<]]></item>
         <item key="fileUrlFormatString"><![CDATA[http://ida.omroep.nl/odi/?prid={0}&puboptions=adaptive,h264_bb,h264_sb,h264_std&adaptive=no&part=1&token=]]></item>
         <item key="cookies"><![CDATA[npo_cc=31]]></item>
         <item key="forceUTF8Encoding"><![CDATA[True]]></item>
