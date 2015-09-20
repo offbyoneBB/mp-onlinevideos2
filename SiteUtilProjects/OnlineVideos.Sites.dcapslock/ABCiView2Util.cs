@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace OnlineVideos.Sites
 {
-    public class ABCiViewUtil : SiteUtilBase
+    public class ABCiView2Util : SiteUtilBase
     {
         [Category("OnlineVideosConfiguration"), Description("iView API Base URL")]
         string iViewURLBase = @"https://iview.abc.net.au/api/";
