@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Xml;
+using System.Web;
 using Newtonsoft.Json.Linq;
 using OnlineVideos.MPUrlSourceFilter;
 using System.Threading;
@@ -229,33 +230,7 @@ namespace OnlineVideos.Sites
             {
                 foreach (JToken episode in episodes)
                 {
-                    VideoInfo video = new VideoInfo();
-
-                    video.Title = episode.Value<string>("seriesTitle");
-                    if (!String.IsNullOrEmpty(episode.Value<string>("title")))
-                    {
-                        video.Title += ": " + episode.Value<string>("title");
-                    }
-                    
-                    video.Description = "";
-                    if (FeedSync.WaitOne(0))
-                    {
-                        ProgramData programData;
-
-                        if (ProgramDictionary.TryGetValue(episode.Value<string>("episodeHouseNumber"), out programData))
-                        {
-                            video.Description = programData.description;
-                        }
-
-                        FeedSync.ReleaseMutex();
-                    }
-
-                    video.VideoUrl = episode.Value<string>("href");
-                    video.Thumb = episode.Value<string>("thumbnail");
-                    video.Length = Helpers.TimeUtils.TimeFromSeconds(episode.Value<string>("duration"));
-                    video.Airdate = episode.Value<string>("pubDate");
-                    video.Other = episode.Value<string>("episodeHouseNumber");
-                    res.Add(video);
+                    res.Add(GetVideoInfoFromItem(episode));
                 }
             }
             
@@ -288,11 +263,73 @@ namespace OnlineVideos.Sites
             return playURL;
         }
 
+        #region Search
+
+        public override bool CanSearch { get { return true; } }
+
+        public override List<SearchResultItem> Search(string query, string category = null)
+        {
+            base.HasNextPage = false;
+
+            List<VideoInfo> SearchResults = new List<VideoInfo>();
+
+            string webData = "{items:" + GetiViewWebData(@"/search/?keyword=" + HttpUtility.UrlEncode(query) + "&fields=seriesTitle,title,href,episodeHouseNumber,thumbnail,duration,pubDate") + "}";
+            JObject contentData = (JObject)JObject.Parse(webData);
+
+            if (contentData != null)
+            {
+                JArray SearchItems = contentData["items"] as JArray;
+
+                foreach (JToken SearchItem in SearchItems)
+                {
+                    VideoInfo video = new VideoInfo();
+
+                    SearchResults.Add(GetVideoInfoFromItem(SearchItem));
+                }
+            }
+
+            return SearchResults.ConvertAll(v => (SearchResultItem)v);
+        }
+
+        #endregion
+
         #region API Helper
 
         private string GetiViewWebData(string url)
         {
             return GetWebData(url: iViewURLBase + url, userAgent: iViewUserAgent);
+        }
+
+        private VideoInfo GetVideoInfoFromItem(JToken item)
+        {
+            VideoInfo video = new VideoInfo();
+
+            video.Title = item.Value<string>("seriesTitle");
+            if (!String.IsNullOrEmpty(item.Value<string>("title")))
+            {
+                video.Title += ": " + item.Value<string>("title");
+            }
+
+            video.Description = "";
+            if (FeedSync.WaitOne(0))
+            {
+                ProgramData programData;
+
+                if (ProgramDictionary.TryGetValue(item.Value<string>("episodeHouseNumber"), out programData))
+                {
+                    video.Description = programData.description;
+                }
+
+                FeedSync.ReleaseMutex();
+            }
+
+            video.VideoUrl = item.Value<string>("href");
+            video.Thumb = item.Value<string>("thumbnail");
+            video.Length = Helpers.TimeUtils.TimeFromSeconds(item.Value<string>("duration"));
+            video.Airdate = item.Value<string>("pubDate");
+            video.Other = item.Value<string>("episodeHouseNumber");
+
+            return video;
         }
 
         #endregion
