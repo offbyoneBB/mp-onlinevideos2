@@ -79,6 +79,20 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.DavidCal
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.ksya", "SiteUtilProjects\OnlineVideos.Sites.ksya\OnlineVideos.Sites.ksya.csproj", "{A8B26EC3-664D-4829-A8A4-E72D106E1E69}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{2D9515FA-7881-4258-AE09-20F1A3693979}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{ECC6D240-F5F0-4C9C-A08C-21E85E36307A}"
+	ProjectSection(SolutionItems) = preProject
+		Build.proj = Build.proj
+		.build\MSBuild.Community.Tasks.dll = .build\MSBuild.Community.Tasks.dll
+		.build\MSBuild.Community.Tasks.targets = .build\MSBuild.Community.Tasks.targets
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.dcapslock", "SiteUtilProjects\OnlineVideos.Sites.dcapslock\OnlineVideos.Sites.dcapslock.csproj", "{1F7B7E1D-8779-4FF5-BBB2-A531B8812B3A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -233,6 +247,12 @@ Global
 		{A8B26EC3-664D-4829-A8A4-E72D106E1E69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8B26EC3-664D-4829-A8A4-E72D106E1E69}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A8B26EC3-664D-4829-A8A4-E72D106E1E69}.Release|x86.ActiveCfg = Release|Any CPU
+		{1F7B7E1D-8779-4FF5-BBB2-A531B8812B3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F7B7E1D-8779-4FF5-BBB2-A531B8812B3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F7B7E1D-8779-4FF5-BBB2-A531B8812B3A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1F7B7E1D-8779-4FF5-BBB2-A531B8812B3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F7B7E1D-8779-4FF5-BBB2-A531B8812B3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F7B7E1D-8779-4FF5-BBB2-A531B8812B3A}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -258,5 +278,6 @@ Global
 		{59C03F73-0B0E-4DDE-9C34-788BD7DADC5E} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
 		{4DEAA1AF-E356-4588-BCD7-A3AFC8CA1A95} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
 		{A8B26EC3-664D-4829-A8A4-E72D106E1E69} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
+		{1F7B7E1D-8779-4FF5-BBB2-A531B8812B3A} = {6B73364F-8850-4FD8-87DF-CA29321DF24E}
 	EndGlobalSection
 EndGlobal
