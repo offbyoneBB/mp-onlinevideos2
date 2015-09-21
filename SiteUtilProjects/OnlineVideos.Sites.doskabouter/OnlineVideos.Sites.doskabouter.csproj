@@ -67,7 +67,6 @@
     <Compile Include="..\..\Build\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
-    <Compile Include="ABCiViewUtil.cs" />
     <Compile Include="BigPondVideoUtil.cs" />
     <Compile Include="BrassBandTubeUtil.cs" />
     <Compile Include="CollegeHumorUtil.cs" />
@@ -138,7 +137,6 @@
     <Compile Include="VimeoUtil.cs" />
     <Compile Include="Vimeo\AuthBase.cs" />
     <Compile Include="VodTvpUtil.cs" />
-    <Compile Include="YleAreenaUtil.cs" />
     <Compile Include="ZieNlUtil.cs" />
     <Compile Include="CinemassacreUtil.cs" />
     <Compile Include="MyHosters.cs" />
