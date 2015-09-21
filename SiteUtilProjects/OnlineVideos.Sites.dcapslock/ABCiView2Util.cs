@@ -19,7 +19,7 @@ namespace OnlineVideos.Sites
         string iViewURLHome = @"navigation/mobile/2/";
 
         [Category("OnlineVideosConfiguration"), Description("iView TV Feed URL. This is used to look up Description information and Play URLs.")]
-        string iViewUserAgent = @"https://tviview.abc.net.au/iview/feed/sony/?keyword=0-Z";
+        string iViewUserAgent = @"ABC iview/3.9.4 (iPad; iOS 8.2; Scale/2.00)";
 
         [Category("OnlineVideosConfiguration"), Description("iView Device that allows best user experience with Online Videos")]
         string iViewDevice = @"ios-tablet";
@@ -47,37 +47,7 @@ namespace OnlineVideos.Sites
             //Note: These are always unmetered. 
             //TODO: Play F4M manifest files which will allow unmetered playback.
 
-            new System.Threading.Thread(delegate(object o)
-            {
-                // Next line takes time. We can do this in the background while browsing takes place
-                // Need to only wait once a URL needs to be played
-
-                System.Threading.Mutex ThreadFeedSync = System.Threading.Mutex.OpenExisting("FeedSyncMutex");
-                ThreadFeedSync.WaitOne();
-
-                XmlDocument doc = new XmlDocument();
-                string feedData = GetWebData(o as String);
-
-                doc.LoadXml(feedData);
-                XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
-                nsmRequest.AddNamespace("a", "http://namespace.feedsync");
-
-                XmlNodeList nodes = doc.GetElementsByTagName("asset");
-                foreach (XmlNode node in nodes)
-                {
-                    if (node["type"].InnerText == "video")
-                    {
-                        ProgramData programData;
-                        programData.title = node["title"].InnerText;
-                        programData.description = node["description"].InnerText;
-                        programData.playURL = node["assetUrl"].InnerText;
-
-                        ProgramDictionary.Add(node["id"].InnerText, programData);
-                    }
-                }
-
-                ThreadFeedSync.ReleaseMutex();
-            }) { IsBackground = true, Name = "TVFeedDownload" }.Start(iViewTVFeedURL);
+            new System.Threading.Thread(FeedSyncWorker) { IsBackground = true, Name = "TVFeedDownload" }.Start(iViewTVFeedURL);
             
             List<Category> dynamicCategories = new List<Category>();
 
@@ -243,7 +213,7 @@ namespace OnlineVideos.Sites
             
             if (!FeedSync.WaitOne(60000))
             {
-                //write error
+                Log.Error("ABCiViewUtil2: Wait for FeedSync Thread failed");
             }
             else
             {
@@ -255,7 +225,25 @@ namespace OnlineVideos.Sites
                 }
                 else
                 {
-                    //write error
+                    //Try and get the Feed Again as it may be out of date
+                    Log.Debug("ABCiView2Util: Cannot find episode in TV Feed. Refresh");
+
+                    new System.Threading.Thread(FeedSyncWorker) { IsBackground = true, Name = "TVFeedDownload" }.Start(iViewTVFeedURL);
+                    if (!FeedSync.WaitOne(60000))
+                    {
+                        if (ProgramDictionary.TryGetValue(video.Other.ToString(), out programData))
+                        {
+                            playURL = programData.playURL;
+                        }
+                        else
+                        {
+                            Log.Debug("ABCiView2Util: Cannot find episode in TV Feed after refresh");
+                        }
+                    }
+                    else
+                    {
+                        Log.Error("ABCiViewUtil2: Wait for FeedSync Thread failed");
+                    }
                 }
                 FeedSync.ReleaseMutex();
             }
@@ -319,6 +307,10 @@ namespace OnlineVideos.Sites
                 {
                     video.Description = programData.description;
                 }
+                else
+                {
+                    video.Description = "Descriptions downloading...";
+                }
 
                 FeedSync.ReleaseMutex();
             }
@@ -332,6 +324,45 @@ namespace OnlineVideos.Sites
             return video;
         }
 
+        private void FeedSyncWorker(object o)
+        {
+            System.Threading.Mutex ThreadFeedSync = System.Threading.Mutex.OpenExisting("FeedSyncMutex");
+            ThreadFeedSync.WaitOne();
+
+            XmlDocument doc = new XmlDocument();
+
+            // Next line takes time. We can do this in the background while browsing takes place
+            // Need to only wait once a URL needs to be played
+            Log.Debug("ABCiView2Util: FeedSync Worker Thread Begin");
+            string feedData = GetWebData(o as String);
+
+            doc.LoadXml(feedData);
+            XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
+            nsmRequest.AddNamespace("a", "http://namespace.feedsync");
+
+            XmlNodeList nodes = doc.GetElementsByTagName("asset");
+            foreach (XmlNode node in nodes)
+            {
+                if (node["type"].InnerText == "video")
+                {
+                    ProgramData programData;
+                    programData.title = node["title"].InnerText;
+                    programData.description = node["description"].InnerText;
+                    programData.playURL = node["assetUrl"].InnerText;
+
+                    try
+                    {
+                        ProgramDictionary.Add(node["id"].InnerText, programData);
+                    }
+                    catch (ArgumentException)
+                    {
+                        Log.Debug("ABCiView2Util: Duplicate id reading TV feed: {0}", node["id"].InnerText);
+                    }
+                }
+            }
+
+            ThreadFeedSync.ReleaseMutex();
+        }
         #endregion
     }
 }
