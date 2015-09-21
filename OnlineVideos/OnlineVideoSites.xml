@@ -830,6 +830,9 @@ spStartVideo5\([^']*'(?<m1>[^']+)']]>
     <Site name="Netflix" util="NetfilxWeb" agecheck="false" enabled="true" lang="--" player="Browser">
       <Description>Watch Netflix in OnlineVideos</Description>
     </Site>
+    <Site name="Yle Areena" util="Yle" agecheck="false" enabled="true" lang="fi">
+      <Description>Yle Areena</Description>
+    </Site>
     <Site name="wwitv" util="GenericSite" agecheck="false" enabled="true" lang="--">
       <Description>World Wide Internet TV  - the ultimate guide to Live TV webcasts sorted by country or genre.</Description>
       <Configuration>
