@@ -73,7 +73,7 @@ namespace OnlineVideos.Sites
         //Urls
         //Api urls
         private const string cUrlCategoryFormat = @"{0}api/v1/programs/tv?app_id={1}&app_key={2}&service=tv&category={3}&o={4}&region={5}&olang={6}{7}&limit={8}&offset={9}";
-        private const string cUrlEpisodesFormat = @"{0}api/programs/v1/items.json?series={1}&type={2}&availability=ondemand&order=ondemand.publication.starttime%253Adesc&app_id={3}&app_key={4}&limit={5}&offset={6}";
+        private const string cUrlEpisodesFormat = @"{0}api/programs/v1/items.json?series={1}&type={2}&availability=ondemand&order=ondemand.publication.starttime%3Adesc&app_id={3}&app_key={4}&limit={5}&offset={6}";
         private const string cUrlProgramFormat = @"{0}api/programs/v1/id/{1}.json?app_id={2}&app_key={3}";
         private const string cUrlSearchFormat = @"{0}api/v1/search?language={1}&service=tv&query={2}";
         //Image url
@@ -449,7 +449,8 @@ namespace OnlineVideos.Sites
             if (cApiContentTypeTvSeries == type)
             {
                 //Series episodes and clips
-                json = GetWebData<JObject>(string.Format(cUrlEpisodesFormat, BaseUrl, (category as RssLink).Url, "", AppInfo.AppId, AppInfo.AppKey, 1, 0));
+                string url = string.Format(cUrlEpisodesFormat, BaseUrl, (category as RssLink).Url, "", AppInfo.AppId, AppInfo.AppKey, 1, 0);
+                json = GetWebData<JObject>(url);
                 JToken meta = json["meta"];
                 uint clipCount = meta[cApiClip].Value<uint>();
                 uint programCount = meta[cApiProgram].Value<uint>();
