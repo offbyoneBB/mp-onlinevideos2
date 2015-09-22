@@ -365,8 +365,27 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         private List<VideoInfo> GetSeasonVideos(Category category, uint noOfEpisodes)
         {
-            //TODO... Well...
-            return new List<VideoInfo>();
+            List<VideoInfo> videos = new List<VideoInfo>();
+            string id = (category as RssLink).Url;
+            string data = MyGetWebData(ShaktiApi + "/" + BuildId + "/pathEvaluator?withSize=true&materialize=true&model=harris&fallbackEsn=SLW32",
+                postData: @"{""paths"":[[""seasons""," + id + @",""episodes"",{""from"":-1,""to"":" + noOfEpisodes + @"},[""summary"",""synopsis"",""title"",""runtime""]],[""seasons""," + id + @",""episodes"",{""from"":-1,""to"":" + noOfEpisodes + @"},""interestingMoment"",""_260x146"",""jpg""]],""authURL"":""" + latestAuthUrl + @"""}",
+                contentType: "application/json");
+            JObject json = (JObject)JsonConvert.DeserializeObject(data);
+            foreach (JToken token in json["value"]["videos"].Where(t => t.Values().Count() > 1))
+            {
+                JToken item = token.First();
+                VideoInfo video = new VideoInfo();
+                JToken summary = item["summary"];
+                uint e = summary["episode"].Value<uint>();
+                uint s = summary["season"].Value<uint>();
+                video.Title = s.ToString() + "x" + (e > 9 ? e.ToString() : ("0" + e.ToString())) + " " + item["title"].Value<string>();
+                video.Description = item["synopsis"].Value<string>();
+                video.Thumb = item["interestingMoment"]["_260x146"]["jpg"]["url"].Value<string>();
+                video.VideoUrl = string.Format(playerUrl, summary["id"].Value<UInt32>());
+                videos.Add(video);
+            }
+
+            return videos;
         }
 
         private List<VideoInfo> GetPlayNowShowVideos(Category category)
