@@ -300,11 +300,11 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             List<Category> cats = new List<Category>();
 
             string data = MyGetWebData(ShaktiApi + "/" + BuildId + "/pathEvaluator?withSize=true&materialize=true&model=harris&fallbackEsn=SLW32",
-                postData: @"{""paths"":[[""lolomo"",""summary""],[""lolomo"",""mylist"",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},[""summary"",""title"",""synopsis""]],[""lolomo"",""mylist"",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},""boxarts"",""_342x192"",""jpg""],[""lolomo"",""mylist"",[""context"",""id"",""length"",""name"",""trackIds"",""requestId""]]],""authURL"":""" + latestAuthUrl + @"""}",
+                postData: @"{""paths"":[[""lolomo"",""summary""],[""lolomo"",""mylist"",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems - 1) + @"},[""summary"",""title"",""synopsis""]],[""lolomo"",""mylist"",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},""boxarts"",""_342x192"",""jpg""],[""lolomo"",""mylist"",[""context"",""id"",""length"",""name"",""trackIds"",""requestId""]]],""authURL"":""" + latestAuthUrl + @"""}",
                 contentType: "application/json");
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
 
-            foreach (JToken token in json["value"]["videos"].Where(t => t.Values().Count() > 1))
+            foreach (JToken token in json["value"]["videos"].Where(t => t.Values().Count() > 1 && t.First()["title"] != null))
             {
                 JToken item = token.First();
                 RssLink cat = new RssLink() { ParentCategory = parentCategory, Name = item["title"].Value<string>(), Description = item["synopsis"].Value<string>(), HasSubCategories = true };
@@ -317,10 +317,31 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     cat.Other = (Func<List<Category>>)(() => GetMovieCategories(cat));
                 cats.Add(cat);
             }
-            //TODO... Check for next page...
+
+            //Paging
+            int length = json["value"]["lists"].First(t => t.Values().Count() > 1).First()["length"].Value<int>();
+            if (length > noOfItems + startIndex)
+            {
+                NextPageCategory next = new NextPageCategory() { ParentCategory = parentCategory };
+                next.Other = (Func<List<Category>>)(() => GetMyListCategories(parentCategory, noOfItems + startIndex));
+                cats.Add(next);
+            }
             //Do not remember My List, need to be able to load new items
             parentCategory.SubCategoriesDiscovered = false;
             return cats;
+        }
+
+        public override int DiscoverNextPageCategories(NextPageCategory category)
+        {
+            category.ParentCategory.SubCategories.Remove(category);
+            var method = category.Other as Func<List<Category>>;
+            if (method != null)
+            {
+                List<Category> cats = method.Invoke();
+                category.ParentCategory.SubCategories.AddRange(cats);
+                return cats.Count;
+            }
+            return 0;
         }
 
         private List<Category> GetShowCategories(Category parentCategory)
