@@ -19,6 +19,12 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
     public class NetfilxWebUtil : SiteUtilBase, IBrowserSiteUtil
     {
 
+        private class NetflixCategory : RssLink
+        {
+            //internal string TrackId { get; set; }
+            internal bool InQueue { get; set; }
+        }
+
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Username"), Description("Netflix email")]
         protected string username = null;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("Netflix password"), PasswordPropertyText(true)]
@@ -27,7 +33,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         protected bool rememberLogin = false;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show loading spinner"), Description("Show the loading spinner in the Browser Player")]
         protected bool showLoadingSpinner = true;
-
 
         private const uint noOfItems = 48;
 
@@ -230,6 +235,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         #region SiteUtilBase
 
         #region Categories
+
         public override int DiscoverDynamicCategories()
         {
             LoadProfiles();
@@ -343,13 +349,13 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
 
             data = MyGetWebData(ShaktiApi + "/" + BuildId + "/pathEvaluator?withSize=true&materialize=true&model=harris&fallbackEsn=SLW32",
-                postData: @"{""paths"":[[""genres""," + id + @",""su"",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems - 1) + @"},[""summary"",""title"",""synopsis""]],[""genres""," + id + @",""su"",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems - 1) + @"},""boxarts"",""_342x192"",""jpg""]],""authURL"":""" + latestAuthUrl + @"""}",
+                postData: @"{""paths"":[[""genres""," + id + @",""su"",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems - 1) + @"},[""summary"",""title"",""synopsis"",""queue""]],[""genres""," + id + @",""su"",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems - 1) + @"},""boxarts"",""_342x192"",""jpg""]],""authURL"":""" + latestAuthUrl + @"""}",
                 contentType: "application/json");
             json = (JObject)JsonConvert.DeserializeObject(data);
             foreach (JToken token in json["value"]["videos"].Where(t => t.Values().Count() > 1 && t.First()["title"] != null))
             {
                 JToken item = token.First();
-                RssLink cat = new RssLink() { ParentCategory = parentCategory, Name = item["title"].Value<string>(), Description = item["synopsis"].Value<string>(), HasSubCategories = true };
+                NetflixCategory cat = new NetflixCategory() { ParentCategory = parentCategory, Name = item["title"].Value<string>(), Description = item["synopsis"].Value<string>(), HasSubCategories = true, InQueue = item["queue"]["inQueue"].Value<bool>()};
                 cat.Thumb = item["boxarts"]["_342x192"]["jpg"]["url"].Value<string>();
                 JToken summary = item["summary"];
                 cat.Url = summary["id"].Value<UInt32>().ToString();
@@ -375,14 +381,14 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             List<Category> cats = new List<Category>();
 
             string data = MyGetWebData(ShaktiApi + "/" + BuildId + "/pathEvaluator?withSize=true&materialize=true&model=harris&fallbackEsn=SLW32",
-                postData: @"{""paths"":[[""lolomo"",""summary""],[""lolomo"",""mylist"",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems - 1) + @"},[""summary"",""title"",""synopsis""]],[""lolomo"",""mylist"",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},""boxarts"",""_342x192"",""jpg""],[""lolomo"",""mylist"",[""context"",""id"",""length"",""name"",""trackIds"",""requestId""]]],""authURL"":""" + latestAuthUrl + @"""}",
+                postData: @"{""paths"":[[""lolomo"",""summary""],[""lolomo"",""mylist"",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems - 1) + @"},[""summary"",""title"",""synopsis"",""queue""]],[""lolomo"",""mylist"",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},""boxarts"",""_342x192"",""jpg""],[""lolomo"",""mylist"",[""context"",""id"",""length"",""name"",""trackIds"",""requestId""]]],""authURL"":""" + latestAuthUrl + @"""}",
                 contentType: "application/json");
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
 
             foreach (JToken token in json["value"]["videos"].Where(t => t.Values().Count() > 1 && t.First()["title"] != null))
             {
                 JToken item = token.First();
-                RssLink cat = new RssLink() { ParentCategory = parentCategory, Name = item["title"].Value<string>(), Description = item["synopsis"].Value<string>(), HasSubCategories = true };
+                NetflixCategory cat = new NetflixCategory() { ParentCategory = parentCategory, Name = item["title"].Value<string>(), Description = item["synopsis"].Value<string>(), HasSubCategories = true, InQueue = item["queue"]["inQueue"].Value<bool>() };
                 cat.Thumb = item["boxarts"]["_342x192"]["jpg"]["url"].Value<string>();
                 JToken summary = item["summary"];
                 cat.Url = summary["id"].Value<UInt32>().ToString();
@@ -515,6 +521,44 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             video.Thumb = category.Thumb;
             video.VideoUrl = string.Format(playerUrl, id);
             return new List<VideoInfo>() { video };
+        }
+
+        #endregion
+
+        #region Context menu
+
+        public override List<ContextMenuEntry> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
+        {
+            List<ContextMenuEntry> result = new List<ContextMenuEntry>();
+            if (selectedCategory != null && selectedCategory is NetflixCategory)
+            {
+                ContextMenuEntry entry = new ContextMenuEntry() { DisplayText = ((selectedCategory as NetflixCategory).InQueue ? "Remove from " : "Add to ") + "My List" };
+                result.Add(entry);
+            }
+            return result;
+        }
+
+        public override ContextMenuExecutionResult ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, ContextMenuEntry choice)
+        {
+            if ((choice.DisplayText == "Add to My List" || choice.DisplayText == "Remove from My List") && selectedCategory != null && selectedCategory is NetflixCategory)
+            {
+                ContextMenuExecutionResult result = new ContextMenuExecutionResult();
+                string addRemove = choice.DisplayText == "Add to My List" ? "add" : "remove";
+                string videoId = (selectedCategory as NetflixCategory).Url;
+                //string trackId = (selectedCategory as NetflixCategory).TrackId;
+                string title = selectedCategory.Name;
+                string data = MyGetWebData(ShaktiApi + "/" + BuildId + "/playlistop?fallbackEsn=NFCDSF-01-",
+                    postData: @"{""operation"":"""+ addRemove + @""",""videoId"":" + videoId + @",""trackId"":0,""authURL"":""" + latestAuthUrl + @"""}",
+                    contentType: "application/json");
+                JObject json = (JObject)JsonConvert.DeserializeObject(data);
+                //Do something with the result...
+                result.RefreshCurrentItems = true;
+                result.ExecutionResultMessage = title + (choice.DisplayText == "Add to My List" ? " added to" : " removed from") + " My List";
+                selectedCategory.ParentCategory.SubCategories.Clear();
+                selectedCategory.ParentCategory.SubCategoriesDiscovered = false;
+                return result;
+            }
+            return base.ExecuteContextMenuEntry(selectedCategory, selectedItem, choice);
         }
 
         #endregion
