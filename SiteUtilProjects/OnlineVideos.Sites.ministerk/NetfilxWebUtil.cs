@@ -229,6 +229,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         #region SiteUtilBase
 
+        #region Categories
         public override int DiscoverDynamicCategories()
         {
             LoadProfiles();
@@ -255,9 +256,21 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             var method = parentCategory.Other as Func<List<Category>>;
             if (method != null)
             {
-                parentCategory.SubCategoriesDiscovered = true;
                 parentCategory.SubCategories = method.Invoke();
                 return parentCategory.SubCategories.Count;
+            }
+            return 0;
+        }
+
+        public override int DiscoverNextPageCategories(NextPageCategory category)
+        {
+            category.ParentCategory.SubCategories.Remove(category);
+            var method = category.Other as Func<List<Category>>;
+            if (method != null)
+            {
+                List<Category> cats = method.Invoke();
+                category.ParentCategory.SubCategories.AddRange(cats);
+                return cats.Count;
             }
             return 0;
         }
@@ -269,7 +282,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             List<Category> cats = new List<Category>();
             if (!IsKidsProfile)
             {
-                RssLink browse = new RssLink() { Name = "Browse", HasSubCategories = true, ParentCategory = parentCategory };
+                RssLink browse = new RssLink() { Name = "Browse Genres", HasSubCategories = true, ParentCategory = parentCategory };
                 browse.Other = (Func<List<Category>>)(() => GetBrowseCategories(browse));
                 cats.Add(browse);
             }
@@ -291,9 +304,71 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             string data = MyGetWebData(ShaktiApi + "/" + BuildId + "/pathEvaluator?withSize=true&materialize=true&model=bale&esn=www",
                 postData: @"{""paths"":[[""genreList"",{""from"":0,""to"":24},[""id"",""menuName""]],[""genreList"",""summary""]],""authURL"":""" + latestAuthUrl + @"""}",
                 contentType: "application/json");
-            //TODO... Genarate cats from data....
+            JObject json = (JObject)JsonConvert.DeserializeObject(data);
+            foreach (JToken token in json["value"]["genres"].Where(t => t.Values().Count() > 1 && t.First()["menuName"] != null))
+            {
+                JToken item = token.First();
+                RssLink cat = new RssLink() { ParentCategory = parentCategory, Name = item["menuName"].Value<string>(), Url = item["id"].Value<UInt32>().ToString(), HasSubCategories = true };
+                cat.Other = (Func<List<Category>>)(() => GetGenreCategories(cat, 0, true));
+                cats.Add(cat);
+            }
+            parentCategory.SubCategoriesDiscovered = true;
             return cats;
         }
+
+        private List<Category> GetGenreCategories(Category parentCategory, uint startIndex, bool getSubGenres = false)
+        {
+            List<Category> cats = new List<Category>();
+            string id = (parentCategory as RssLink).Url;
+            string data;
+            JObject json;
+            if (getSubGenres)
+            {
+                Category subgenreCat = new Category() {Name = "Subgenres", SubCategories = new List<Category>(), ParentCategory = parentCategory, HasSubCategories = true, SubCategoriesDiscovered = true};
+                data = MyGetWebData(ShaktiApi + "/" + BuildId + "/pathEvaluator?withSize=true&materialize=true&model=harris&fallbackEsn=SLW32",
+                    postData: @"{""paths"":[[""genres""," + id + @",""subgenres"",{""from"":0,""to"":20},""summary""]],""authURL"":""" + latestAuthUrl + @"""}",
+                    contentType: "application/json");
+                json = (JObject)JsonConvert.DeserializeObject(data);
+                foreach (JToken token in json["value"]["genres"].Where(t => t.Values().Count() > 1 && t.First()["summary"] != null))
+                {
+                    JToken summary = token.First()["summary"];
+                    RssLink subCat = new RssLink() { Name = summary["menuName"].Value<string>(), Url = summary["id"].Value<UInt32>().ToString(), HasSubCategories = true, ParentCategory = subgenreCat};
+                    subCat.Other = (Func<List<Category>>)(() => GetGenreCategories(subCat, 0));
+                    subgenreCat.SubCategories.Add(subCat);
+                }
+                if (subgenreCat.SubCategories.Count > 0)
+                {
+                    cats.Add(subgenreCat);
+                }
+            }
+
+            data = MyGetWebData(ShaktiApi + "/" + BuildId + "/pathEvaluator?withSize=true&materialize=true&model=harris&fallbackEsn=SLW32",
+                postData: @"{""paths"":[[""genres""," + id + @",""su"",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems - 1) + @"},[""summary"",""title"",""synopsis""]],[""genres""," + id + @",""su"",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems - 1) + @"},""boxarts"",""_342x192"",""jpg""]],""authURL"":""" + latestAuthUrl + @"""}",
+                contentType: "application/json");
+            json = (JObject)JsonConvert.DeserializeObject(data);
+            foreach (JToken token in json["value"]["videos"].Where(t => t.Values().Count() > 1 && t.First()["title"] != null))
+            {
+                JToken item = token.First();
+                RssLink cat = new RssLink() { ParentCategory = parentCategory, Name = item["title"].Value<string>(), Description = item["synopsis"].Value<string>(), HasSubCategories = true };
+                cat.Thumb = item["boxarts"]["_342x192"]["jpg"]["url"].Value<string>();
+                JToken summary = item["summary"];
+                cat.Url = summary["id"].Value<UInt32>().ToString();
+                if (summary["type"].Value<string>() == "show")
+                    cat.Other = (Func<List<Category>>)(() => GetShowCategories(cat));
+                else
+                    cat.Other = (Func<List<Category>>)(() => GetMovieCategories(cat));
+                cats.Add(cat);
+            }
+            if (cats.Count() >= noOfItems)
+            {
+                NextPageCategory next = new NextPageCategory() { ParentCategory = parentCategory };
+                next.Other = (Func<List<Category>>)(() => GetGenreCategories(parentCategory, noOfItems + startIndex));
+                cats.Add(next);
+            }
+            parentCategory.SubCategoriesDiscovered = true;
+            return cats;
+        }
+
 
         private List<Category> GetMyListCategories(Category parentCategory, uint startIndex)
         {
@@ -331,19 +406,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             return cats;
         }
 
-        public override int DiscoverNextPageCategories(NextPageCategory category)
-        {
-            category.ParentCategory.SubCategories.Remove(category);
-            var method = category.Other as Func<List<Category>>;
-            if (method != null)
-            {
-                List<Category> cats = method.Invoke();
-                category.ParentCategory.SubCategories.AddRange(cats);
-                return cats.Count;
-            }
-            return 0;
-        }
-
         private List<Category> GetShowCategories(Category parentCategory)
         {
             List<Category> cats = new List<Category>();
@@ -369,6 +431,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 cat.Other = (Func<List<VideoInfo>>)(() => GetSeasonVideos(cat, summary["length"].Value<uint>()));
                 cats.Add(cat);
             }
+            parentCategory.SubCategoriesDiscovered = true;
             return cats;
         }
 
@@ -380,8 +443,23 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             RssLink playNowCat = new RssLink() { Name = "Play Now", Thumb = parentCategory.Thumb, HasSubCategories = false, ParentCategory = parentCategory, Url = id };
             playNowCat.Other = (Func<List<VideoInfo>>)(() => GetPlayNowMovieVideos(playNowCat));
             cats.Add(playNowCat);
-
+            parentCategory.SubCategoriesDiscovered = true;
             return cats;
+        }
+
+        #endregion
+
+        #region Videos
+
+        public override List<VideoInfo> GetVideos(Category category)
+        {
+            var method = category.Other as Func<List<VideoInfo>>;
+            List<VideoInfo> videos = new List<VideoInfo>();
+            if (method != null)
+            {
+                videos = method.Invoke();
+            }
+            return videos;
         }
 
         private List<VideoInfo> GetSeasonVideos(Category category, uint noOfEpisodes)
@@ -439,16 +517,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             return new List<VideoInfo>() { video };
         }
 
-        public override List<VideoInfo> GetVideos(Category category)
-        {
-            var method = category.Other as Func<List<VideoInfo>>;
-            List<VideoInfo> videos = new List<VideoInfo>();
-            if (method != null)
-            {
-                videos = method.Invoke();
-            }
-            return videos;
-        }
+        #endregion
 
         #endregion
 
