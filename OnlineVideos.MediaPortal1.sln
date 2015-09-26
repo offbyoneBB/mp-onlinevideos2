@@ -89,6 +89,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{ECC6D2
 		Build.proj = Build.proj
 		.build\MSBuild.Community.Tasks.dll = .build\MSBuild.Community.Tasks.dll
 		.build\MSBuild.Community.Tasks.targets = .build\MSBuild.Community.Tasks.targets
+		Build\Version.txt = Build\Version.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.dcapslock", "SiteUtilProjects\OnlineVideos.Sites.dcapslock\OnlineVideos.Sites.dcapslock.csproj", "{1F7B7E1D-8779-4FF5-BBB2-A531B8812B3A}"

@@ -1217,13 +1217,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\ABC iView.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{d9ad18f2-a960-46e8-91ad-9597a63f8430}-ABC iView.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ABC iView.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\luckytv.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{4875a8c3-1eb7-481c-87be-e87cd9666e10}-luckytv.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\luckytv.png</DestinationFilename>
@@ -1241,13 +1234,6 @@
               <LocalFileName>..\SiteImages\Icons\Uitzending Gemist.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{ea47145c-3a17-46d5-9e9a-bf32f3d8c11a}-Uitzending Gemist.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Uitzending Gemist.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\ABC iView.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{2b536c94-769b-4fb8-b1e1-2073d148aaa9}-ABC iView.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ABC iView.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -2551,6 +2537,34 @@
               <ZipFileName>Installer{CopyFile}\{85fb9fa8-fb7d-43cb-bb26-b50312ab9bc0}-ro.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Langs\ro.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\KissAnime.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d87e6f1f-b779-4c3e-bd65-cc05cb1e7386}-KissAnime.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\KissAnime.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\MovieNight.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{d24b5bc8-7cfb-461c-a057-7cc12d27f243}-MovieNight.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MovieNight.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\KissAnime.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{33b7efb1-aeb2-4fe2-84cd-e5f925369064}-KissAnime.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\KissAnime.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\MovieNight.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{eb38ab57-a58e-4158-aebf-878a8ac5859d}-MovieNight.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\MovieNight.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -2602,7 +2616,7 @@
               <UpdateOption>AlwaysOverwrite</UpdateOption>
               <LocalFileName>extension_settings.xml</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-              <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\2.0.0.0\extension_settings.xml</DestinationFilename>
+              <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\2.1.0.0\extension_settings.xml</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
@@ -3825,34 +3839,53 @@ public class Script
     </Items>
   </Dependencies>
   <PluginDependencies>
-    <Items />
+    <Items>
+      <PluginDependencyItem AssemblyName="OnlineVideos.MediaPortal1.dll">
+        <CompatibleVersion>
+          <Items>
+            <CompatibleVersionItem>
+              <MinRequiredVersion>1.6.100.0</MinRequiredVersion>
+              <DesignedForVersion>1.6.100.0</DesignedForVersion>
+            </CompatibleVersionItem>
+          </Items>
+        </CompatibleVersion>
+        <SubSystemsUsed>
+          <Items>
+            <SubSystemItem Name="MP.Config" />
+            <SubSystemItem Name="MP.Externals.Log4Net" />
+            <SubSystemItem Name="MP.Externals.SQLite" />
+            <SubSystemItem Name="MP.Input" />
+            <SubSystemItem Name="MP.Players.Video" />
+            <SubSystemItem Name="MP.Plugins.Videos" />
+            <SubSystemItem Name="MP.SkinEngine" />
+          </Items>
+        </SubSystemsUsed>
+      </PluginDependencyItem>
+    </Items>
   </PluginDependencies>
   <GeneralInfo>
     <Name>OnlineVideos</Name>
     <Id>269bd257-7ce5-450a-b786-1c2834c81849</Id>
     <Author>offbyone</Author>
-    <HomePage>http://code.google.com/p/mp-onlinevideos2/</HomePage>
+    <HomePage>https://github.com/offbyoneBB/mp-onlinevideos2</HomePage>
     <ForumPage>http://forum.team-mediaportal.com/onlinevideos-244/</ForumPage>
     <UpdateUrl>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=10&amp;cf_id=52</UpdateUrl>
     <Version>
       <Major>2</Major>
-      <Minor>0</Minor>
+      <Minor>1</Minor>
       <Build>0</Build>
       <Revision>0</Revision>
     </Version>
     <ExtensionDescription>Allows watching videos from various websites, using their RSS feeds, parsing html pages, coding against provided APIs or directly adding urls of live streams. Supported sites include: YouTube, MetaCafe, DailyMotion, iTunes Movie Trailers, IMDB, DasErste, ZDF, SVT, Break, CNN, VeryFunnyAds, MSNBC, Yahoo MusicVideos, wwiTV, Southpark and many more.</ExtensionDescription>
-    <VersionDescription>fixed: search history not restored on next start (encoding was wrong)
-fixed: possible MediaPortal crash due to the notify dialog after a download not called on UI thread
-added: option to pass subtitle info from a Hoster to a SiteUtil
-added: automatic encryption of user's passwords
-improved Browser Host Player
-included Titan skin files
-moved to .Net 4.0
-changed: now using the new (merged) IPTV/URL filter
-OnlineVideos core API cleanup</VersionDescription>
+    <VersionDescription>added HTTPS as valid protocol
+added custom HTTP headers support for MPUrlSource filter
+improved Hoster url matching
+added warning dialog when getting empty url from playbackoptions
+improved browser host memory usage by minimising MediaPortal to the system tray
+moved to github</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
-    <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=10&amp;cf_id=67</OnlineLocation>
-    <ReleaseDate>2015-03-26T15:00:00</ReleaseDate>
+    <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=10&amp;cf_id=68</OnlineLocation>
+    <ReleaseDate>2015-09-26T15:00:00</ReleaseDate>
     <Tags>online,videos,youtube,netflix</Tags>
     <Location>..\MPEI\[Name][Version].mpe1</Location>
     <Params>
@@ -5096,13 +5129,6 @@ OnlineVideos core API cleanup</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\ABC iView.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{d9ad18f2-a960-46e8-91ad-9597a63f8430}-ABC iView.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ABC iView.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\luckytv.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{4875a8c3-1eb7-481c-87be-e87cd9666e10}-luckytv.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\luckytv.png</DestinationFilename>
@@ -5120,13 +5146,6 @@ OnlineVideos core API cleanup</VersionDescription>
         <LocalFileName>..\SiteImages\Icons\Uitzending Gemist.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{ea47145c-3a17-46d5-9e9a-bf32f3d8c11a}-Uitzending Gemist.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Uitzending Gemist.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\ABC iView.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{2b536c94-769b-4fb8-b1e1-2073d148aaa9}-ABC iView.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ABC iView.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -6430,6 +6449,34 @@ OnlineVideos core API cleanup</VersionDescription>
         <ZipFileName>Installer{CopyFile}\{85fb9fa8-fb7d-43cb-bb26-b50312ab9bc0}-ro.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Langs\ro.png</DestinationFilename>
       </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\KissAnime.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d87e6f1f-b779-4c3e-bd65-cc05cb1e7386}-KissAnime.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\KissAnime.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\MovieNight.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{d24b5bc8-7cfb-461c-a057-7cc12d27f243}-MovieNight.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MovieNight.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\KissAnime.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{33b7efb1-aeb2-4fe2-84cd-e5f925369064}-KissAnime.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\KissAnime.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\MovieNight.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{eb38ab57-a58e-4158-aebf-878a8ac5859d}-MovieNight.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\MovieNight.png</DestinationFilename>
+      </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
@@ -6463,7 +6510,7 @@ OnlineVideos core API cleanup</VersionDescription>
         <UpdateOption>AlwaysOverwrite</UpdateOption>
         <LocalFileName>extension_settings.xml</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{724b2553-1d6a-4ec0-a981-2d5500ccd77e}-extension_settings.xml</ZipFileName>
-        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\2.0.0.0\extension_settings.xml</DestinationFilename>
+        <DestinationFilename>%Config%\Installer\V2\269bd257-7ce5-450a-b786-1c2834c81849\2.1.0.0\extension_settings.xml</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
