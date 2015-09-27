@@ -528,9 +528,9 @@
       <Categories>
         <Category xsi:type="Group" name="NASA Live TV" thumb="http://www.castfvg.it/zzz/nasa/nasa_tv_01.jpg">
           <Channels>
-            <Channel name="NASA TV" thumb="http://bombus.altervista.org/online_videos/NASATV.jpg">http://playlist.yahoo.com/makeplaylist.dll?id=1369080&amp;segment=149773</Channel>
-            <Channel name="NASA Digital Media" thumb="http://www.crabtreecompany.com/img/small/digital-nasa-small-1.jpg">http://www.nasa.gov/145590main_Digital_Media.asx</Channel>
-            <Channel name="NASA Edu" thumb="http://www.savetheplanetarium.org/starphotos/whirlpool.jpg">http://www.nasa.gov/145588main_Digital_Edu.asx</Channel>
+            <Channel name="NASA TV" thumb="http://bombus.altervista.org/online_videos/NASATV.jpg">http://nasatv-lh.akamaihd.net/i/NASA_101@319270/index_400_av-p.m3u8?sd=10&amp;rebase=on</Channel>
+            <Channel name="NASA Digital Media" thumb="http://www.crabtreecompany.com/img/small/digital-nasa-small-1.jpg">http://nasatv-lh.akamaihd.net/i/NASA_103@319271/index_400_av-p.m3u8?sd=10&amp;rebase=on</Channel>
+            <Channel name="NASA Edu" thumb="http://www.savetheplanetarium.org/starphotos/whirlpool.jpg">http://nasatv-lh.akamaihd.net/i/NASA_102@319272/index_400_av-p.m3u8?sd=10&amp;rebase=on</Channel>
           </Channels>
         </Category>
         <Category xsi:type="RssLink" name="Hidden Universe HD: NASA's Spitzer Space Telescope" thumb="http://www.spitzer.caltech.edu/Media/happenings/20070516/hd.jpg">http://www.nasa.gov/rss/NASAcast_vodcast.rss</Category>
