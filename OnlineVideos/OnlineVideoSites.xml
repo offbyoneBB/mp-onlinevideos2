@@ -865,6 +865,9 @@ spStartVideo5\([^']*'(?<m1>[^']+)']]>
         <item key="cookies"><![CDATA[site_cookie_consent=yes]]></item>
       </Configuration>
     </Site>
+    <Site name="ABC iView" util="ABCiView2" agecheck="false" enabled="true" lang="en">
+        <Description>iview is catch-up and more from ABC TV</Description>
+    </Site>
     <Site name="Academic Earth" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Online degrees and video courses from leading universities.</Description>
       <Configuration>

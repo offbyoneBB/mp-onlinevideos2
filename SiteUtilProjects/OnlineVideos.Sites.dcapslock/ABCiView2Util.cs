@@ -331,8 +331,6 @@ namespace OnlineVideos.Sites
 
             XmlDocument doc = new XmlDocument();
 
-            // Next line takes time. We can do this in the background while browsing takes place
-            // Need to only wait once a URL needs to be played
             Log.Debug("ABCiView2Util: FeedSync Worker Thread Begin");
             string feedData = GetWebData(o as String);
 
@@ -350,13 +348,9 @@ namespace OnlineVideos.Sites
                     programData.description = node["description"].InnerText;
                     programData.playURL = node["assetUrl"].InnerText;
 
-                    try
+                    if (!ProgramDictionary.ContainsKey(node["id"].InnerText))
                     {
                         ProgramDictionary.Add(node["id"].InnerText, programData);
-                    }
-                    catch (ArgumentException)
-                    {
-                        Log.Debug("ABCiView2Util: Duplicate id reading TV feed: {0}", node["id"].InnerText);
                     }
                 }
             }
