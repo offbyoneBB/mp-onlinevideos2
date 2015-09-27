@@ -133,6 +133,7 @@
   <string name="SelectSource">Vyberte zdroj</string>
   <string name="Sites">stránek</string>
   <string name="Size">Velikost</string>
+  <string name="SkipSingleCategory">Přeskočit jednu kategorii</string>
   <string name="SortOptions">Možnosti řazení</string>
   <string name="Search">Hledat</string>
   <string name="SetDownloadFolderInConfig">Zvolte prosím složku ke stahování v konfiguraci.</string>
