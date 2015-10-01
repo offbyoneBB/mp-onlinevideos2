@@ -127,7 +127,7 @@
     <value>http://content.ott.sky.com/v2/brands/go/devices/pc/content/linear-streams?callback=feedChannelList</value>
   </data>
   <data name="SkyGo_LiveTvPlayUrl" xml:space="preserve">
-    <value>http://go.sky.com/vod/content/Home/content/videoId/{VIDEO_ID}____/l/l/content/detachedLiveTv.do</value>
+    <value>http://go.sky.com/live/{VIDEO_ID}</value>
   </data>
   <data name="SkyGo_LoginUrl" xml:space="preserve">
     <value>https://skyid.sky.com/signin/skygo</value>

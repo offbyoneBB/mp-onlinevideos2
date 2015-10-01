@@ -123,7 +123,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
 
                 video.Thumb = item.GetImage();
                 video.Title = item.GetValue("title");
-                video.Other = "Live/" + item.GetValue("id");
+                video.Other = "LTV~" + item.GetValue("epgChannelId");
                 result.Add(video);
 
             }
