@@ -279,7 +279,12 @@ namespace OnlineVideos.Sites
                 String videoFile = GetWebDataFromPostMitele(finalUrl, "");
                 String m3u8 = (String)JObject.Parse(videoFile).SelectToken("file");
                 String master = GetWebData(m3u8);
-                videoURL = master.Substring(master.IndexOf("http://"));
+                int inicioURL = master.IndexOf("http://");
+                if (inicioURL == -1)
+                {
+                    inicioURL = master.IndexOf("https://");
+                }
+                videoURL = master.Substring(inicioURL);
             }
             return videoURL;
         }

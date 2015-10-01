@@ -528,9 +528,9 @@
       <Categories>
         <Category xsi:type="Group" name="NASA Live TV" thumb="http://www.castfvg.it/zzz/nasa/nasa_tv_01.jpg">
           <Channels>
-            <Channel name="NASA TV" thumb="http://bombus.altervista.org/online_videos/NASATV.jpg">http://playlist.yahoo.com/makeplaylist.dll?id=1369080&amp;segment=149773</Channel>
-            <Channel name="NASA Digital Media" thumb="http://www.crabtreecompany.com/img/small/digital-nasa-small-1.jpg">http://www.nasa.gov/145590main_Digital_Media.asx</Channel>
-            <Channel name="NASA Edu" thumb="http://www.savetheplanetarium.org/starphotos/whirlpool.jpg">http://www.nasa.gov/145588main_Digital_Edu.asx</Channel>
+            <Channel name="NASA TV" thumb="http://bombus.altervista.org/online_videos/NASATV.jpg">http://nasatv-lh.akamaihd.net/i/NASA_101@319270/index_400_av-p.m3u8?sd=10&amp;rebase=on</Channel>
+            <Channel name="NASA Digital Media" thumb="http://www.crabtreecompany.com/img/small/digital-nasa-small-1.jpg">http://nasatv-lh.akamaihd.net/i/NASA_103@319271/index_400_av-p.m3u8?sd=10&amp;rebase=on</Channel>
+            <Channel name="NASA Edu" thumb="http://www.savetheplanetarium.org/starphotos/whirlpool.jpg">http://nasatv-lh.akamaihd.net/i/NASA_102@319272/index_400_av-p.m3u8?sd=10&amp;rebase=on</Channel>
           </Channels>
         </Category>
         <Category xsi:type="RssLink" name="Hidden Universe HD: NASA's Spitzer Space Telescope" thumb="http://www.spitzer.caltech.edu/Media/happenings/20070516/hd.jpg">http://www.nasa.gov/rss/NASAcast_vodcast.rss</Category>
@@ -830,19 +830,8 @@ spStartVideo5\([^']*'(?<m1>[^']+)']]>
     <Site name="Netflix" util="NetfilxWeb" agecheck="false" enabled="true" lang="--" player="Browser">
       <Description>Watch Netflix in OnlineVideos</Description>
     </Site>
-    <Site name="wwitv" util="GenericSite" agecheck="false" enabled="true" lang="--">
-      <Description>World Wide Internet TV  - the ultimate guide to Live TV webcasts sorted by country or genre.</Description>
-      <Configuration>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\sclass="rb"\shref="(?<url>[^"]*)"[^>]*>(?<title>[^\s]*)\s*(?<description>[^\s]*)\s*</a>]]></item>
-        <item key="videoListRegEx"><![CDATA[<a\sclass="travel"\shref="(?<VideoUrl>[^"]+)">(?<Title>[^<]+)</a>\s*</td><td[^>]*><img\ssrc="../img/[^\.]+\.gif"\swidth="50"\sheight="24"></td>\s*<td[^>]*>(?:<center>)?\s*<a\s*class="[sqm]"[^>]*>(?<Duration>[^<]+)</a>\s*</td><td[^>]*><font[^>]*>(?<Description>[^>]*)</td></tr>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[(<a\sclass="s"\shref="(?<m0>[^"]*)">)|(<param\s+Name="initParams"\s+value="VideoSource=(?<m0>[^,]+),)]]></item>
-        <item key="searchUrl"><![CDATA[http://swwitv.com/search.php?zoom_query={0}]]></item>
-        <item key="baseUrl"><![CDATA[http://wwitv.com/menu_left.htm]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Genres">http://wwitv.com/portal.htm</Category>
-        <Category xsi:type="RssLink" name="Countries">http://wwitv.com/menu_left.htm</Category>
-      </Categories>
+    <Site name="Yle Areena" util="Yle" agecheck="false" enabled="true" lang="fi">
+      <Description>Yle Areena</Description>
     </Site>
     <Site name="OnlineTV by on-tv.ru" util="OnTVRu" agecheck="false" enabled="true" lang="ru">
       <Categories>
@@ -862,8 +851,8 @@ spStartVideo5\([^']*'(?<m1>[^']+)']]>
         <item key="cookies"><![CDATA[site_cookie_consent=yes]]></item>
       </Configuration>
     </Site>
-    <Site name="ABC iView" util="ABCiView" agecheck="false" enabled="true" lang="en">
-      <Description>iview is catch-up and more from ABC TV</Description>
+    <Site name="ABC iView" util="ABCiView2" agecheck="false" enabled="true" lang="en">
+        <Description>iview is catch-up and more from ABC TV</Description>
     </Site>
     <Site name="Academic Earth" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Online degrees and video courses from leading universities.</Description>
@@ -1075,6 +1064,7 @@ spStartVideo5\([^']*'(?<m1>[^']+)']]>
       <Description>Watch anime online high quality</Description>
       <Configuration>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\sclass="bigChar"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>\s*<p>(?<description>[^<]*)</p>\s*</div>'>\s*<a[^>]*>[^<]*</a>(\s*&nbsp;&nbsp;<img[^>]*>){0,2}\s*</td>(?:\s*<td>\s*<a\shref="[^"]*">(?<description>[^<]*)</a>)?]]></item>
+        <item key="dynamicSubCategoriesNextPageRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*page=\d+)"\spage=\d{1,}>&rsaquo;\sNext]]></item>
         <item key="videoListRegEx"><![CDATA[<tr>\s*<td>\s*<a\shref="(?<VideoUrl>[^"]*)"\stitle="[^"]*">(?<Title>[^<]*)</a>\s*</td>\s*<td>(?<Airdate>[^<]*)</td>\s*</tr>]]></item>
         <item key="baseUrl"><![CDATA[http://kissanime.com/AnimeList]]></item>
         <item key="genresRegex"><![CDATA[<a\shref="(?<url>/Genre[^"]*)"\stitle="(?<description>[^"]*)">(?<title>[^<]*)</a><br/>]]></item>
@@ -1284,67 +1274,14 @@ spStartVideo5\([^']*'(?<m1>[^']+)']]>
       <Description>Ruutu - Nelonen, Liv, Jim ja Nelonen Pro. Viihdettä, draamaa, uutisia, urheilua ja lastenohjelmia - katso missä haluat ja milloin haluat.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.ruutu.fi/]]></item>
-        <item key="playlistUrlRegEx"><![CDATA[<div\s*id="mediaplayer"\sdata-media-id="(?<url>[^"]*)"\sdata]]></item>
-        <item key="playlistUrlFormatString"><![CDATA[http://gatling.ruutu.fi/media-xml-cache?id={0}]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<SourceFile>(?<m0>[^<]*)</SourceFile>]]></item>
-        <item key="searchUrl"><![CDATA[http://www.ruutu.fi/hakutulokset/{0}]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<HTTPMediaFile\slabel="(?<n0>[^"]*)"\stype="[^"]*"\sbitrate="[^"]*"\sresolution="[^"]*">(?<m0>[^<]*)</HTTPMediaFile>]]></item>
+        <item key="videoUrlRegEx"><![CDATA[http://www.ruutu.fi/video/(?<m0>.*)]]></item>
+        <item key="videoUrlFormatString"><![CDATA[http://gatling.nelonenmedia.fi/media-xml-cache?id={0}]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="Ohjelmat">http://www.ruutu.fi/ajax/series-navi</Category>
-        <Category xsi:type="RssLink" name="Urheilu" thumb="" desc="">
-          <SubCategories>
-            <Category xsi:type="RssLink" name="Sarjat" thumb="" desc="quicktabs-tabpage-urheilu_uusimmat_qt-0">http://www.ruutu.fi/urheilu</Category>
-            <Category xsi:type="RssLink" name="Jaksot" thumb="" desc="quicktabs-tabpage-urheilu_uusimmat_qt-1">http://www.ruutu.fi/urheilu</Category>
-          </SubCategories>
-        </Category>
-        <Category xsi:type="RssLink" name="Lapset" thumb="" desc="">
-          <SubCategories>
-            <Category xsi:type="RssLink" name="Sarjat" thumb="" desc="">
-              <SubCategories>
-                <Category xsi:type="RssLink" name="Kuvina" thumb="" desc="quicktabs-tabpage-qt_lapset_series-0">http://www.ruutu.fi/lapset</Category>
-                <Category xsi:type="RssLink" name="Listana" thumb="" desc="quicktabs-tabpage-qt_lapset_series-1">http://www.ruutu.fi/lapset</Category>
-              </SubCategories>
-            </Category>
-            <Category xsi:type="RssLink" name="Jaksot" thumb="" desc="">
-              <SubCategories>
-                <Category xsi:type="RssLink" name="Suosituimmat" thumb="" desc="quicktabs-tabpage-qt_lapset_episodit-0">http://www.ruutu.fi/lapset</Category>
-                <Category xsi:type="RssLink" name="Uussimmat" thumb="" desc="quicktabs-tabpage-qt_lapset_episodit-1">http://www.ruutu.fi/lapset</Category>
-              </SubCategories>
-            </Category>
-          </SubCategories>
-        </Category>
-        <Category xsi:type="RssLink" name="Sarjat" thumb="" desc="">
-          <SubCategories>
-            <Category xsi:type="RssLink" name="Sarjat" thumb="" desc="">
-              <SubCategories>
-                <Category xsi:type="RssLink" name="Kuvina" thumb="" desc="quicktabs-tabpage-qt_sarjat_series-0">http://www.ruutu.fi/sarjat</Category>
-                <Category xsi:type="RssLink" name="Listana" thumb="" desc="quicktabs-tabpage-qt_sarjat_series-1">http://www.ruutu.fi/sarjat</Category>
-              </SubCategories>
-            </Category>
-            <Category xsi:type="RssLink" name="Jaksot" thumb="" desc="">
-              <SubCategories>
-                <Category xsi:type="RssLink" name="Suosituimmat" thumb="" desc="quicktabs-tabpage-qt_sarjat_episodit-0">http://www.ruutu.fi/sarjat</Category>
-                <Category xsi:type="RssLink" name="Uussimmat" thumb="" desc="quicktabs-tabpage-qt_sarjat_episodit-1">http://www.ruutu.fi/sarjat</Category>
-              </SubCategories>
-            </Category>
-          </SubCategories>
-        </Category>
-        <Category xsi:type="RssLink" name="Leffat" thumb="" desc="">
-          <SubCategories>
-            <Category xsi:type="RssLink" name="Suosituimmat" thumb="" desc="">
-              <SubCategories>
-                <Category xsi:type="RssLink" name="Kuvina" thumb="" desc="quicktabs-tabpage-qt_leffat_kaikki_kotimaiset_ulk-0">http://www.ruutu.fi/leffat</Category>
-                <Category xsi:type="RssLink" name="Listana" thumb="" desc="quicktabs-tabpage-qt_leffat_kaikki_kotimaiset_ulk-1">http://www.ruutu.fi/leffat</Category>
-              </SubCategories>
-            </Category>
-            <Category xsi:type="RssLink" name="Uussimmat" thumb="" desc="">
-              <SubCategories>
-                <Category xsi:type="RssLink" name="Kuvina" thumb="" desc="quicktabs-tabpage-qt_leffat_kaikki_kotimaiset_ulko-0">http://www.ruutu.fi/leffat</Category>
-                <Category xsi:type="RssLink" name="Listana" thumb="" desc="quicktabs-tabpage-qt_leffat_kaikki_kotimaiset_ulko-1">http://www.ruutu.fi/leffat</Category>
-              </SubCategories>
-            </Category>
-          </SubCategories>
-        </Category>
+        <Category xsi:type="RssLink" name="Ohjelmat">http://www.ruutu.fi/ohjelmat</Category>
+        <Category xsi:type="RssLink" name="Urheilu">http://www.ruutu.fi/urheilu</Category>
+        <Category xsi:type="RssLink" name="Lapset">http://www.ruutu.fi/lapset</Category>
       </Categories>
     </Site>
     <Site name="SBS.au" util="SBSau" agecheck="false" enabled="true" lang="en">
@@ -1418,14 +1355,14 @@ spStartVideo5\([^']*'(?<m1>[^']+)']]>
       <Description>Uitzending Gemist is de videotheek van de publieke omroep op internet en biedt het totaalaanbod van beschikbare TV uitzendingen van de omroepen.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.npo.nl/]]></item>
-        <item key="videoListRegEx"><![CDATA[(<div\sclass='image-container'>\s*<a\shref="(?<VideoUrl>[^"]*)"><img\salt="[^"]*"\sclass="preview\sprogram-image"\s((data-images="[^"]*"\sdata-toggle="image-skimmer"\ssrc="(?<ImageUrl>[^"]*)")|(src="[^"]*"))\s/>\s*</a></div>\s*</div>\s*<div\sclass='span8'>\s*<a[^>]*><h4>(?<Title>[^<]*)<span\sclass='inactive'>[^<]*</span>\s*<span\sclass='av-icon'>\s*</span>\s*</h4>\s*<h5>(?<Airdate>[^<]*?)(?:&\#8226;(?<Duration>[^<]*))?</h5>\s*<p\sclass='without-title\svisible-for-desktop'>(?<Description>[^<]*)</p>\s*</a></div>)(?#videos of one series)
+        <item key="videoListRegEx"><![CDATA[(<div\sclass='image-container'>\s*<a\shref="(?<VideoUrl>[^"]*)"><img\salt="[^"]*"\sclass="preview\sprogram-image"\s((data-images="[^"]*"\sdata-toggle="image-skimmer"\ssrc="(?<ImageUrl>[^"]*)")|(src="[^"]*"))\s/>\s*<div\sclass="overlay-icon"><span\sclass="npo-glyph\scamera"></span>[^<]*</div>\s*</a></div>\s*</div>\s*<div\sclass='span8'>\s*<a[^>]*><h4>(?<Title>[^<]*)<span\sclass='inactive'>[^<]*</span>\s*<span\sclass='av-icon'>\s*</span>\s*</h4>\s*<h5>(?<Airdate>[^<]*?)(?:&\#8226;(?<Duration>[^<]*))?</h5>\s*<p\sclass='without-title\svisible-for-desktop'>(?<Description>[^<]*)</p>\s*</a></div>)(?#videos of one series)
         |
-        (<div\sclass='image-container'>\s*<a\shref="(?<VideoUrl>[^"]*)"><img\salt="[^"]*"\sdata-images="[^"]*"\sdata-toggle="image-skimmer"\ssrc="(?<ImageUrl>[^"]*)"\s/>\s*<div\sclass="overlay-icon"><span\sclass="npo-glyph\scamera"></span></div>\s*</a></div>\s*<div\sclass='description'>(?<Description>[^<]*)<h4[^>]*>\s*<a[^>]*><div\sclass='default-title'>(?<Title>[^<]*)<span[^>]*>[^<]*</span>\s*</div>\s*<div\sclass='contextual-title'>[^<]*</div>\s*</a></h4>\s*<h5>(?<Airdate>[^<]*)</h5>)(?#videos of recent)
+        (<div\sclass='image-container'>\s*<a\shref="(?<VideoUrl>[^"]*)"><img\salt="[^"]*"\sdata-images="[^"]*"\sdata-toggle="image-skimmer"\ssrc="(?<ImageUrl>[^"]*)"\s/>\s*<div\sclass="overlay-icon"><span\sclass="npo-glyph\scamera"></span>(?<Duration>[^<]*)</div>\s*</a></div>\s*<div\sclass='description'>(?<Description>[^<]*)<h4[^>]*>\s*<a[^>]*><div\sclass='default-title'>(?<Title>[^<]*)<span[^>]*>[^<]*</span>\s*</div>\s*<div\sclass='contextual-title'>[^<]*</div>\s*</a></h4>\s*<h5>(?<Airdate>[^<]*)</h5>)(?#videos of recent)
         |
         (<div\sclass='image-container'>\s*<a\shref="(?<VideoUrl>[^"]*)"><img\salt="[^"]*"\sclass="preview\sprogram-image"\s((data-images="[^"]*"\sdata-toggle="image-skimmer"\ssrc="(?<ImageUrl>[^"]*)")|(src="[^"]*"))\s/>\s*<div\sclass="overlay-icon"><span\sclass="npo-glyph\scamera"></span></div>\s*</a></div>\s*</div>\s*<div\sclass='span8'>\s*<a[^>]*><h4>(?<Title>[^<]*)<span\sclass='inactive'>[^<]*</span>\s*<span\sclass='av-icon'>\s*</span>\s*</h4>\s*<h5>(?<Airdate>[^<]*?)(?:&\#8226;(?<Duration>[^<]*))?</h5>\s*<p\sclass='without-title\svisible-for-desktop'>(?<Description>[^<]*)</p>\s*</a></div>)(?#videos of op datum)
         ]]></item>
         <item key="searchUrl"><![CDATA[http://www.npo.nl/zoeken?utf8=%E2%9C%93&commit=Zoeken&q={0}]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<div\sclass='image-container'>\s*<a\shref="(?<url>[^"]*)"><img\salt="[^"]*"\sclass="show-image"\ssrc="(?<thumb>[^"]*)"\s/>\s*</a></div>\s*</div>\s*<div\sclass='span8'>\s*<a[^>]*><h4>(?<title>[^<]*)<span\sclass='inactive'>[^<]*</span>\s*<span\sclass='av-icon'></span>\s*</h4>\s*<h5><span\sclass="inactive">[^<]*</span>\s<a[^>]*>[^<]*</a></h5>\s*<p\sclass='without-title\svisible-for-desktop'>(?:<span>)?(?<description>[^<]*)<]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<div\sclass='image-container'>\s*<a\shref="(?<url>[^"]*)"><img\salt="[^"]*"\sclass="show-image"\ssrc="(?<thumb>[^"]*)"\s/>\s*</a></div>\s*</div>\s*<div\sclass='span8'>\s*<a[^>]*><h4>(?<title>[^<]*)<span\sclass='inactive[^>]*>[^<]*</span>\s*<span\sclass='av-icon'></span>\s*</h4>\s*<h5><span\sclass="inactive">[^<]*</span>\s<a[^>]*>[^<]*</a></h5>\s*<p\sclass='without-title\svisible-for-desktop'>(?:<span>)?(?<description>[^<]*)<]]></item>
         <item key="fileUrlFormatString"><![CDATA[http://ida.omroep.nl/odi/?prid={0}&puboptions=adaptive,h264_bb,h264_sb,h264_std&adaptive=no&part=1&token=]]></item>
         <item key="cookies"><![CDATA[npo_cc=31]]></item>
         <item key="forceUTF8Encoding"><![CDATA[True]]></item>
@@ -1451,26 +1388,6 @@ spStartVideo5\([^']*'(?<m1>[^']+)']]>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Serwisy Informacyjne">http://vod.tvp.pl/</Category>
-      </Categories>
-    </Site>
-    <Site name="Yle Areena" util="YleAreena" agecheck="false" enabled="true" lang="fi">
-      <Description>Areena - Ylen netti-tv ja -radio</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[http://areena-v3.yle.fi/]]></item>
-        <item key="forceUTF8Encoding"><![CDATA[true]]></item>
-        <item key="videoListRegExFormatString"><![CDATA[http://areena-v3.yle.fi/tv/{0}.json]]></item>
-        <item key="fileUrlRegEx"><![CDATA["media":\s*{\s"id":\s"(?<m0>[^"]*)"]]></item>
-        <item key="fileUrlFormatString"><![CDATA[http://papi.yle.fi/ng/mod/rtmp/{0}]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Ohjelmat A-Ö">http://areena-v3.yle.fi/ohjelmat</Category>
-        <Category xsi:type="RssLink" name="Kaikki ohjelmat">http://areena-v3.yle.fi/tv</Category>
-        <Category xsi:type="RssLink" name="Sarjat ja elokuvat">http://areena-v3.yle.fi/tv/sarjat-ja-elokuvat</Category>
-        <Category xsi:type="RssLink" name="Viihde ja kulttuuri">http://areena-v3.yle.fi/tv/viihde-ja-kulttuuri</Category>
-        <Category xsi:type="RssLink" name="Dokumentit ja fakta">http://areena-v3.yle.fi/tv/dokumentit-ja-fakta</Category>
-        <Category xsi:type="RssLink" name="Uutiset">http://areena-v3.yle.fi/tv/uutiset</Category>
-        <Category xsi:type="RssLink" name="Urheilu">http://areena-v3.yle.fi/tv/urheilu</Category>
-        <Category xsi:type="RssLink" name="Lapset">http://areena-v3.yle.fi/tv/lapset</Category>
       </Categories>
     </Site>
     <Site name="Zie.nl" util="ZieNl" agecheck="false" enabled="true" lang="nl">
@@ -1705,113 +1622,102 @@ spStartVideo5\([^']*'(?<m1>[^']+)']]>
         <Category xsi:type="RssLink" name="Films" thumb="http://wwwcdn.channel5.com/assets/images/000/016/956/large_size_Circuit_D5.jpg?1315841899">http://www.channel5.com/shows?genre=films</Category>
       </Categories>
     </Site>
-    <Site name="YouPorn" util="GenericSite" agecheck="true" enabled="true" lang="en">
-      <Description>YouPorn.com is the largest porn site on the web with the best variety of free full length porn videos - XXX, sex, porno, hardcore and more.</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<div\s+class='category-content'>\s*<a\s+href="(?<url>[^"]+)".*?>.*?<img.*?alt="(?<title>[^"]+)"]]></item>
-        <item key="videoListRegEx">
-          <![CDATA[<li\s+class="videoBox[^>]*>\s*<div\s+class="wrapping-video-box">\s*
-    <a\s+href="(?<VideoUrl>/watch/[^"]+)"[^>]*>.*?<img(?:(?!src).)+src="(?<ImageUrl>[^"\?]+)[^"]*"[^>]+>\s*
-    <p\s+class="videoTitle".*?>(?<Title>[^<]+)\s*</p>\s*
-    <span\s+class="duration[^"]*">(?<Duration>[^<]*)</span>]]>
-        </item>
-        <item key="nextPageRegEx"><![CDATA[<li\s+class="prev-next">\s*<a.*?href="(?<url>[^"]*)".*?>NEXT]]></item>
-        <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
-        <item key="fileUrlRegEx"><![CDATA[(?<=<ul\s+class="downloadList">.*)<li[^>]*>\s*<span>[^<]*</span>\s*<a\s+href="(?<m0>[^"]+)">\s*(?<n0>[^<\r\n]+).*?</a>\s*(?<n1>[^<\r\n]*)]]></item>
-        <item key="fileUrlNameFormatString"><![CDATA[{0} {1}]]></item>
-        <item key="fileUrlDecoding"><![CDATA[HtmlDecode]]></item>
-        <item key="searchUrl"><![CDATA[http://www.youporn.com/search/?query={0}]]></item>
-        <item key="baseUrl"><![CDATA[http://www.youporn.com/categories/]]></item>
-        <item key="cookies"><![CDATA[_gat=1,age_verified=1]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Newest">http://www.youporn.com/</Category>
-        <Category xsi:type="RssLink" name="Top Rated">http://www.youporn.com/top_rated</Category>
-        <Category xsi:type="RssLink" name="Most Viewed">http://www.youporn.com/most_viewed</Category>
-      </Categories>
-    </Site>
-    <Site name="RedTube" util="GenericSite" agecheck="true" enabled="true" lang="en">
-      <Description>The home of free porn videos.</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li.*?>\s*<div\s+class="video">\s*<a\s+href="(?<url>[^"]+)"\s+title="(?<title>[^"]+)">\s*<img.*?src="(?<thumb>[^"]*)"]]></item>
-        <item key="videoListRegEx">
-          <![CDATA[<li.*?>\s*
-<a\shref="(?<VideoUrl>[^"]+)"\stitle="(?<Title>[^"]*)"[^>]*>\s*
-<span\s+class="video-duration".*?>(?<Duration>[^<]*)</span>\s*
-<img\s(?:(?!src).)*src="(?<ImageUrl>[^"]*)"]]>
-        </item>
-        <item key="nextPageRegEx"><![CDATA[title="Next\s*Page\s*"\s+href="(?<url>[^"]*page=\d{1,})">]]></item>
-        <item key="prevPageRegEx"><![CDATA[<a\stitle="Previous\spage"\shref="(?<url>[^"]*page=\d{1,})">Prev</a>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<param\s+name="FlashVars"\s+value="quality_480p=(?<m0>.*?)&.*]]></item>
-        <item key="searchUrl"><![CDATA[http://www.redtube.com/?search={0}]]></item>
-        <item key="baseUrl"><![CDATA[http://www.redtube.com/channels]]></item>
-        <item key="cookies"><![CDATA[pp=1]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Newest Videos">http://www.redtube.com/</Category>
-        <Category xsi:type="RssLink" name="Top Rated">http://www.redtube.com/top</Category>
-        <Category xsi:type="RssLink" name="Most Viewed">http://www.redtube.com/mostviewed</Category>
-        <Category xsi:type="RssLink" name="Most Favored">http://www.redtube.com/mostfavored</Category>
-      </Categories>
-    </Site>
-    <Site name="xHamster" util="GenericSite" agecheck="true" enabled="true" lang="en">
-      <Description>xHamster - just porn, no bullshit.</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.xhamster.com]]></item>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<a\s+href='(?<url>/channels/[^']+)'>(?<title>[^<]+)</a>]]></item>
-        <item key="videoListRegEx">
-          <![CDATA[<div\s+class='video'>\s*
-<a\s+href='(?<VideoUrl>[^']+)'[^>]*>\s*
-<img.*?src='(?<ImageUrl>[^']+)'[^>]*>\s*
-(<img[^>]*>\s*)?
-<b>(?<Duration>[^<]*)</b>\s*
-<u[^>]*>(?<Title>.*?)</u>]]>
-        </item>
-        <item key="nextPageRegEx"><![CDATA[<a\shref='(?<url>[^']*)'[^>]*>\s*<div[^>]*>[^<]*</div>Next</a>]]></item>
-        <item key="searchUrl"><![CDATA[http://www.xhamster.com/search.php?q={0}]]></item>
-        <item key="fileUrlRegEx"><![CDATA[&file=(?<m0>[^&]*)&.*]]></item>
-        <item key="prevPageRegEx"><![CDATA[<SPAN\sclass=navPrev><A\sHREF="(?<url>.+)">Prev</A></SPAN>]]></item>
-      </Configuration>
-    </Site>
-    <Site name="Tube8" util="GenericSite" agecheck="true" enabled="true" lang="en">
-      <Description>A Huge selection of hardcore videos is what makes Tube8 the best porn tube site. The site contains 100% user-uploaded free porn.</Description>
-      <Configuration>
-        <item key="videoListRegEx">
-          <![CDATA[<div\sid="video_i\d+"[^>]*>.*?
-<a\shref="(?<VideoUrl>[^"]+)"[^>]*>\s*
-<img\s(?:(?!\ssrc).)*\ssrc="(?<ImageUrl>[^"]+)".*?/>\s*</a>\s*
-.*?<a\shref="[^"]*"\stitle="(?<Title>[^"]+)">\s*
-(?:(?!<strong>).)*<strong>(?<Duration>[^<]*)</strong>]]>
-        </item>
-        <item key="nextPageRegEx"><![CDATA[<a\s+id="pagination_next"\s+href="(?<url>[^"]+)">Next</a>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[videoUrlJS\s*=\s*'(?<m0>[^']+)']]></item>
-        <item key="searchUrl"><![CDATA[http://www.tube8.com/search.html?q={0}]]></item>
-        <item key="baseUrl"><![CDATA[http://www.tube8.com]]></item>
-        <item key="cookies"><![CDATA[t8disclaimer=1]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Latest">http://www.tube8.com/latest.html</Category>
-        <Category xsi:type="RssLink" name="Top Rated">http://www.tube8.com/top.html</Category>
-        <Category xsi:type="RssLink" name="Most Viewed">http://www.tube8.com/mostviewed.html</Category>
-        <Category xsi:type="RssLink" name="Most Favorited">http://www.tube8.com/mostfavorited.html</Category>
-        <Category xsi:type="RssLink" name="Most Discussed">http://www.tube8.com/mostdiscussed.html</Category>
-        <Category xsi:type="RssLink" name="Most Voted">http://www.tube8.com/mostvoted.html</Category>
-        <Category xsi:type="RssLink" name="Amateur">http://www.tube8.com/cat/amateur/6/</Category>
-        <Category xsi:type="RssLink" name="Anal">http://www.tube8.com/cat/anal/13/</Category>
-        <Category xsi:type="RssLink" name="Asian">http://www.tube8.com/cat/asian/12/</Category>
-        <Category xsi:type="RssLink" name="Blowjob">http://www.tube8.com/cat/blowjob/7/</Category>
-        <Category xsi:type="RssLink" name="Ebony">http://www.tube8.com/cat/ebony/4/</Category>
-        <Category xsi:type="RssLink" name="Erotic">http://www.tube8.com/cat/erotic/11/</Category>
-        <Category xsi:type="RssLink" name="Fetish">http://www.tube8.com/cat/fetish/5/</Category>
-        <Category xsi:type="RssLink" name="Hardcore">http://www.tube8.com/cat/hardcore/1/</Category>
-        <Category xsi:type="RssLink" name="Indian">http://www.tube8.com/cat/indian/21/</Category>
-        <Category xsi:type="RssLink" name="Latina">http://www.tube8.com/cat/latina/14/</Category>
-        <Category xsi:type="RssLink" name="Lesbian">http://www.tube8.com/cat/lesbian/8/</Category>
-        <Category xsi:type="RssLink" name="Mature">http://www.tube8.com/cat/mature/2/</Category>
-        <Category xsi:type="RssLink" name="Strip">http://www.tube8.com/cat/strip/10/</Category>
-        <Category xsi:type="RssLink" name="Teen">http://www.tube8.com/cat/teen/3/</Category>
-      </Categories>
-    </Site>
+	<Site name="YouPorn" util="GenericSite" agecheck="true" enabled="true" lang="en">
+	  <Description>YouPorn.com is the largest porn site on the web with the best variety of free full length porn videos - XXX, sex, porno, hardcore and more.</Description>
+	  <Configuration>
+		<item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass='sublist-item'>\s*<a\s+href="(?<url>/category[^"]+)".*?>(?<title>[^<]+)<]]></item>
+		<item key="videoListRegEx"><![CDATA[<div\s+class="video-box.*?title="(?<Title>[^"]*)".*?<a\s+href="(?<VideoUrl>/watch/[^"]+)"[^>]*>.*?<img(?:(?!src).)+src="(?<ImageUrl>[^"\?]+)[^"]*"[^>]+>.*?<span\s+class="video-box-duration">(?<Duration>[^<]*)</span>]]></item>
+		<item key="nextPageRegEx"><![CDATA[<div\s+class="prev-next">\s*<a\s+href="(?<url>[^"]*)"]]></item>
+		<item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
+		<item key="fileUrlRegEx"><![CDATA[<div\s+class='downloadOption'>.*?<a\s+href='(?<m0>[^']*)'.*?>(?<n0>[^<]*)</a>\s*<span[^>]*>(?<n1>[^<]*)]]></item>
+		<item key="fileUrlNameFormatString"><![CDATA[{0} {1}]]></item>
+		<item key="fileUrlDecoding"><![CDATA[HtmlDecode]]></item>
+		<item key="searchUrl"><![CDATA[http://www.youporn.com/search/?query={0}]]></item>
+		<item key="baseUrl"><![CDATA[http://www.youporn.com/categories/]]></item>
+		<item key="cookies"><![CDATA[_gat=1,age_verified=1]]></item>
+	  </Configuration>
+	  <Categories>
+		<Category xsi:type="RssLink" name="Newest">http://www.youporn.com/</Category>
+		<Category xsi:type="RssLink" name="Top Rated">http://www.youporn.com/top_rated</Category>
+		<Category xsi:type="RssLink" name="Most Viewed">http://www.youporn.com/most_viewed</Category>
+	  </Categories>
+	</Site>
+	<Site name="RedTube" util="GenericSite" agecheck="true" enabled="true" lang="en">
+	  <Description>The home of free porn videos.</Description>
+	  <Configuration>
+		<item key="dynamicCategoriesRegEx"><![CDATA[<li.*?>\s*<div\s+class="video">\s*<a\s+href="(?<url>[^"]+)"\s+title="(?<title>[^"]+)">\s*<img.*?src="(?<thumb>[^"]*)"]]></item>
+		<item key="videoListRegEx"><![CDATA[<li.*?>\s*
+	<a\shref="(?<VideoUrl>[^"]+)"\stitle="(?<Title>[^"]*)"[^>]*>\s*
+	<span\s+class="video-duration".*?>(?<Duration>[^<]*)</span>\s*
+	<img\s(?:(?!src).)*src="(?<ImageUrl>[^"]*)"]]></item>
+		<item key="nextPageRegEx"><![CDATA[title="Next\s*Page\s*"\s+href="(?<url>[^"]*page=\d{1,})">]]></item>
+		<item key="prevPageRegEx"><![CDATA[<a\stitle="Previous\spage"\shref="(?<url>[^"]*page=\d{1,})">Prev</a>]]></item>
+		<item key="fileUrlRegEx"><![CDATA[<source\s+src="(?<m0>[^"]*)"]]></item>
+		<item key="searchUrl"><![CDATA[http://www.redtube.com/?search={0}]]></item>
+		<item key="baseUrl"><![CDATA[http://www.redtube.com/channels]]></item>
+		<item key="cookies"><![CDATA[pp=1]]></item>
+	  </Configuration>
+	  <Categories>
+		<Category xsi:type="RssLink" name="Newest Videos">http://www.redtube.com/</Category>
+		<Category xsi:type="RssLink" name="Top Rated">http://www.redtube.com/top</Category>
+		<Category xsi:type="RssLink" name="Most Viewed">http://www.redtube.com/mostviewed</Category>
+		<Category xsi:type="RssLink" name="Most Favored">http://www.redtube.com/mostfavored</Category>
+	  </Categories>
+	</Site>
+	<Site name="xHamster" util="GenericSite" agecheck="true" enabled="true" lang="en">
+	  <Description>xHamster - just porn, no bullshit.</Description>
+	  <Configuration>
+		<item key="dynamicCategoriesRegEx"><![CDATA[<a\s+href='(?<url>http://xhamster.com/channels/[^']+)'>(?<title>[^<]+)</a>]]></item>
+		<item key="videoListRegEx"><![CDATA[<div\s+class='video'>\s*
+	<a\s+href='(?<VideoUrl>[^']+)'[^>]*>\s*
+	<img.*?src='(?<ImageUrl>[^']+)'[^>]*>\s*
+	(<img[^>]*>\s*)?
+	<b>(?<Duration>[^<]*)</b>\s*
+	<u[^>]*>(?<Title>.*?)</u>]]></item>
+		<item key="nextPageRegEx"><![CDATA[<a\shref='(?<url>[^']*)'[^>]*>\s*<div[^>]*>[^<]*</div>Next</a>]]></item>
+		<item key="prevPageRegEx"><![CDATA[<SPAN\sclass=navPrev><A\sHREF="(?<url>.+)">Prev</A></SPAN>]]></item>
+		<item key="fileUrlRegEx"><![CDATA[file:\s*'(?<m0>[^']*)'*]]></item>
+		<item key="searchUrl"><![CDATA[http://www.xhamster.com/search.php?q={0}]]></item>
+		<item key="baseUrl"><![CDATA[http://www.xhamster.com]]></item>
+	  </Configuration>
+	</Site>
+	<Site name="Tube8" util="GenericSite" agecheck="true" enabled="true" lang="en">
+	  <Description>A Huge selection of hardcore videos is what makes Tube8 the best porn tube site. The site contains 100% user-uploaded free porn.</Description>
+	  <Configuration>
+		<item key="videoListRegEx"><![CDATA[<div\sid="video_i\d+"[^>]*>.*?
+	<a\shref="(?<VideoUrl>[^"]+)"[^>]*>\s*
+	<img\s(?:(?!\ssrc).)*\ssrc="(?<ImageUrl>[^"]+)".*?/>\s*</a>\s*
+	.*?<a\shref="[^"]*"\stitle="(?<Title>[^"]+)">\s*
+	(?:(?!<strong>).)*<strong>(?<Duration>[^<]*)</strong>]]></item>
+		<item key="nextPageRegEx"><![CDATA[<link\s+rel="next"\s+href="(?<url>[^"]*)">]]></item>
+		<item key="fileUrlRegEx"><![CDATA[page_params.videoLink\s*=\s*"(?<m0>[^"]+)"]]></item>
+		<item key="searchUrl"><![CDATA[http://www.tube8.com/search.html?q={0}]]></item>
+		<item key="baseUrl"><![CDATA[http://www.tube8.com]]></item>
+		<item key="cookies"><![CDATA[t8disclaimer=1]]></item>
+	  </Configuration>
+	  <Categories>
+		<Category xsi:type="RssLink" name="Latest">http://www.tube8.com/latest.html</Category>
+		<Category xsi:type="RssLink" name="Top Rated">http://www.tube8.com/top.html</Category>
+		<Category xsi:type="RssLink" name="Most Viewed">http://www.tube8.com/mostviewed.html</Category>
+		<Category xsi:type="RssLink" name="Most Favorited">http://www.tube8.com/mostfavorited.html</Category>
+		<Category xsi:type="RssLink" name="Most Discussed">http://www.tube8.com/mostdiscussed.html</Category>
+		<Category xsi:type="RssLink" name="Most Voted">http://www.tube8.com/mostvoted.html</Category>
+		<Category xsi:type="RssLink" name="Amateur">http://www.tube8.com/cat/amateur/6/</Category>
+		<Category xsi:type="RssLink" name="Anal">http://www.tube8.com/cat/anal/13/</Category>
+		<Category xsi:type="RssLink" name="Asian">http://www.tube8.com/cat/asian/12/</Category>
+		<Category xsi:type="RssLink" name="Blowjob">http://www.tube8.com/cat/blowjob/7/</Category>
+		<Category xsi:type="RssLink" name="Ebony">http://www.tube8.com/cat/ebony/4/</Category>
+		<Category xsi:type="RssLink" name="Erotic">http://www.tube8.com/cat/erotic/11/</Category>
+		<Category xsi:type="RssLink" name="Fetish">http://www.tube8.com/cat/fetish/5/</Category>
+		<Category xsi:type="RssLink" name="Hardcore">http://www.tube8.com/cat/hardcore/1/</Category>
+		<Category xsi:type="RssLink" name="Indian">http://www.tube8.com/cat/indian/21/</Category>
+		<Category xsi:type="RssLink" name="Latina">http://www.tube8.com/cat/latina/14/</Category>
+		<Category xsi:type="RssLink" name="Lesbian">http://www.tube8.com/cat/lesbian/8/</Category>
+		<Category xsi:type="RssLink" name="Mature">http://www.tube8.com/cat/mature/2/</Category>
+		<Category xsi:type="RssLink" name="Strip">http://www.tube8.com/cat/strip/10/</Category>
+		<Category xsi:type="RssLink" name="Teen">http://www.tube8.com/cat/teen/3/</Category>
+	  </Categories>
+	</Site>
     <Site name="Empflix" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Description>Full Free Porn movies.</Description>
       <Configuration>

@@ -22,7 +22,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             Login,
             Profile,
             ReadyToPlay,
-            StartPlay,
             Playing
         }
 
@@ -97,7 +96,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             ProcessComplete.Finished = false;
             ProcessComplete.Success = false;
             Url = videoToPlay;
-            _currentState = State.StartPlay;
+            _currentState = State.Playing;
             return EventResult.Complete();
         }
 
@@ -151,29 +150,25 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     }
                     break;
                 case State.Profile:
-                    if (Url.Contains("/WiHome") || Url.Contains("/Kids") || Url.Contains("/ProfilesGate"))
+                    if (Url.Contains("/browse") || Url.Contains("/Kids") || Url.Contains("/ProfilesGate"))
                     {
                         Url = "https://www.netflix.com/SwitchProfile?tkn=" + _profile;
                         _currentState = State.ReadyToPlay;
                     }
                     break;
                 case State.ReadyToPlay:
-                    if (Url.Contains("/WiHome") || Url.Contains("/Kids"))
+                    if (Url.Contains("/browse") || Url.Contains("/Kids"))
                     {
                         ProcessComplete.Finished = true;
                         ProcessComplete.Success = true;
                     }
                     break;
-                case State.StartPlay:
                 case State.Playing:
-                    if (Url.Contains("movieid"))
-                    {
-                        if (_showLoading)
-                            HideLoading();
-                        _currentState = State.Playing;
-                        ProcessComplete.Finished = true;
-                        ProcessComplete.Success = true;
-                    }
+                    if (_showLoading)
+                        HideLoading();
+                    _currentState = State.Playing;
+                    ProcessComplete.Finished = true;
+                    ProcessComplete.Success = true;
                     break;
             }
             return EventResult.Complete();

@@ -9,3 +9,4 @@ bin
 *.mpe1
 *.log
 /Language/tx.exe
+/.nuget

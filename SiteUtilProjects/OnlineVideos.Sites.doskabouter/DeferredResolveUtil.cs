@@ -33,7 +33,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Enables getting the redirected url instead of the given url for hoster.")]
         protected bool getRedirectedFileUrlForHoster = false;
 
-        private SubtitleHandler sh = null;
+        protected SubtitleHandler sh = null;
         protected string lastPlaybackOptionUrl = null;
 
         public override void Initialize(SiteSettings siteSettings)

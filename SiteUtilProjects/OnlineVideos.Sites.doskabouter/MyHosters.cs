@@ -506,15 +506,17 @@ namespace OnlineVideos.Hoster
         public override string GetVideoUrl(string url)
         {
             CookieContainer cc = new CookieContainer();
-            if (url.Contains("embed"))
+            if (url.Contains("embed") || url.Contains(@"/f/"))
             {
                 string page = WebCache.Instance.GetWebData(url);
                 if (!string.IsNullOrEmpty(page))
                 {
-                    Match n = Regex.Match(page, @"'file=(?<url>[^']+)'");
+                    Match n = Regex.Match(page, @"file:\s'(?<url>[^']*)'");
                     if (n.Success)
                     {
-                        return n.Groups["url"].Value;
+                        HttpUrl httpurl = new HttpUrl(n.Groups["url"].Value);
+                        httpurl.UserAgent = @"Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko";
+                        return httpurl.ToString();
                     }
                 }
             }
@@ -785,8 +787,10 @@ namespace OnlineVideos.Hoster
                 string id = m.Groups["id"].Value;
 
                 if (!id.Contains("-"))
-                    id = "embed-" + id + "-640x318.html";
-                url = @"http://www.vidbull.com/" + id;
+                    id = "embed-" + id + "-640x360.html";
+                if (!id.EndsWith(".html"))
+                    id = id + ".html";
+                url = @"http://vidbull.com/" + id;
             };
 
             string webData = WebCache.Instance.GetWebData(url);

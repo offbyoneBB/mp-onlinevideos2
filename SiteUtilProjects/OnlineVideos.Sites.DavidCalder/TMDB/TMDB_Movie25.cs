@@ -23,7 +23,7 @@ namespace OnlineVideos.Sites.DavidCalder.TMDB
     {
       if (Regex.IsMatch(video.Title, @"\(\d{4}\)", RegexOptions.IgnoreCase))
       {
-        Match m0 = Regex.Match(video.Title, @"(?<title>[^(]*)\((?<year>[^\)]*)\)", RegexOptions.IgnoreCase);
+        Match m0 = Regex.Match(video.Title, @"\s*(?<title>[^(]*)\((?<year>[^\)]*)\)", RegexOptions.IgnoreCase);
         Title = m0.Groups["title"].Value; Year = m0.Groups["year"].Value;
         return SearchForMovie(Title, Year);
       }
