@@ -555,26 +555,23 @@
         <Category xsi:type="RssLink" name="NASA Goddard Shorts HD" thumb="http://svs.gsfc.nasa.gov/vis/iTunes/GoddardShortsHD_logo.jpg">http://svs.gsfc.nasa.gov/vis/iTunes/f0004.xml</Category>
       </Categories>
     </Site>
-    <Site name="spiegel.de" util="GenericSite" agecheck="false" enabled="true" lang="de">
-      <Description>Videos des deutschen Newsportals spiegel.de</Description>
-      <Configuration>
-        <item key="fileUrlRegEx">
-          <![CDATA[var\s+server\s*=\s*"(?<m0>[^"]+)";.*?
-spStartVideo5\([^']*'(?<m1>[^']+)']]>
-        </item>
-        <item key="fileUrlFormatString"><![CDATA[{0}{1}]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Politik und Wirtschaft">http://www.spiegel.de/video/politik_wirtschaft/index.rss</Category>
-        <Category xsi:type="RssLink" name="Panorama">http://www.spiegel.de/video/panorama/index.rss</Category>
-        <Category xsi:type="RssLink" name="Kino">http://www.spiegel.de/video/kino/index.rss</Category>
-        <Category xsi:type="RssLink" name="Kultur">http://www.spiegel.de/video/kultur/index.rss</Category>
-        <Category xsi:type="RssLink" name="Sport">http://www.spiegel.de/video/sport/index.rss</Category>
-        <Category xsi:type="RssLink" name="Wissen und Technik">http://www.spiegel.de/video/wissenschaft_technik/index.rss</Category>
-        <Category xsi:type="RssLink" name="Blogs">http://www.spiegel.de/video/blogs/index.rss</Category>
-        <Category xsi:type="RssLink" name="SpiegelTV Magazin">http://www.spiegel.de/video/spiegeltv/index.rss</Category>
-      </Categories>
-    </Site>
+	<Site name="spiegel.de" util="GenericSite" agecheck="false" enabled="true" lang="de">
+	  <Description>Videos des deutschen Newsportals spiegel.de</Description>
+	  <Configuration>
+		<item key="fileUrlRegEx"><![CDATA[var\s+server\s*=\s*"(?<m0>[^"]+)";.*?spStartVideo6\('spVideoElements',\s*\d+,\s*'(?<m1>.*?\.mp4)']]></item>
+		<item key="fileUrlFormatString"><![CDATA[{0}{1}]]></item>
+	  </Configuration>
+	  <Categories>
+		<Category xsi:type="RssLink" name="Politik und Wirtschaft">http://www.spiegel.de/video/politik_wirtschaft/index.rss</Category>
+		<Category xsi:type="RssLink" name="Panorama">http://www.spiegel.de/video/panorama/index.rss</Category>
+		<Category xsi:type="RssLink" name="Kino">http://www.spiegel.de/video/kino/index.rss</Category>
+		<Category xsi:type="RssLink" name="Kultur">http://www.spiegel.de/video/kultur/index.rss</Category>
+		<Category xsi:type="RssLink" name="Sport">http://www.spiegel.de/video/sport/index.rss</Category>
+		<Category xsi:type="RssLink" name="Wissen und Technik">http://www.spiegel.de/video/wissenschaft_technik/index.rss</Category>
+		<Category xsi:type="RssLink" name="Blogs">http://www.spiegel.de/video/blogs/index.rss</Category>
+		<Category xsi:type="RssLink" name="SpiegelTV Magazin">http://www.spiegel.de/video/spiegeltv/index.rss</Category>
+	  </Categories>
+	</Site>
     <Site name="blip.tv" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Website focused on making independent Web shows sustainable.</Description>
       <Categories>
