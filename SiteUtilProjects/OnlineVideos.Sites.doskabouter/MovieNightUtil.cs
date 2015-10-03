@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
-using OnlineVideos.Helpers;
 using HtmlAgilityPack;
 
 namespace OnlineVideos.Sites
@@ -118,6 +117,9 @@ namespace OnlineVideos.Sites
                 }
             }
 
+            if (video.PlaybackOptions.Count == 0)
+                video.PlaybackOptions = null;
+
             m = Regex.Match(data, @"kind:\s""subtitles"",\ssrclang:\s""(?<langcode>[^""]+)"",\slabel:\s""(?<langname>[^""]*)"",\ssrc:\s""(?<url>[^""]+)""\s}");
             Dictionary<string, string> subs = new Dictionary<string, string>();
             while (m.Success)
@@ -143,6 +145,8 @@ namespace OnlineVideos.Sites
             {
                 sh.SetSubtitleText(video, this.GetTrackingInfo);
             }
+            if (video.PlaybackOptions == null)
+                return bareUrl;
             return video.PlaybackOptions.Values.Last();
         }
 
