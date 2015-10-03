@@ -140,7 +140,7 @@ namespace OnlineVideos.Sites
 
             foreach (Category link in Settings.Categories)
             {
-                if (link is RssLink)
+                if (link is RssLink && !string.IsNullOrEmpty(((RssLink)link).Url))
                 {
                     Match m = Regex.Match(((RssLink)link).Url, USER_UPLOADS_FEED);
                     if (m.Success)
