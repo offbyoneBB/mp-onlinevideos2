@@ -155,6 +155,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             if (parentCategory.Type() == SkyGoCategoryData.CategoryType.LiveTv)
             {
                 var channels = Properties.Resources.SkyGo_LiveTvListingUrl.GetChannelsFromURL();
+                channels.LoadNowNext();
                 return channels;
             }
 
