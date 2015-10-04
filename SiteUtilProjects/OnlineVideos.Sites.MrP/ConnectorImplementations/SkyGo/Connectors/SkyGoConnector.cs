@@ -222,7 +222,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                 tries++;
             }
 
-            Thread.Sleep(3000);
+            Thread.Sleep(7000);
             TemporaryCursorHelper.MoveMouseTo(xPos, yPos);
             TemporaryCursorHelper.DoLeftMouseClick();
         }
