@@ -346,7 +346,7 @@ namespace OnlineVideos.Sites
         {
 
             string webData = GetWebData(url, cookies: cc, forceUTF8: true, referer: url, proxy: GetProxy());
-            Match m = Regex.Match(webData, @"<a\sclass=""myButton""\shref=""(?<url>[^""]*)""[^>]*>Click\sHere\sto\sPlay");
+            Match m = Regex.Match(webData, @"<a\sclass=""myButton\sp2""\shref=""(?<url>[^""]*)""[^>]*>Click\sHere\sto\sPlay");
             if (m.Success)
             {
                 url = m.Groups["url"].Value;
