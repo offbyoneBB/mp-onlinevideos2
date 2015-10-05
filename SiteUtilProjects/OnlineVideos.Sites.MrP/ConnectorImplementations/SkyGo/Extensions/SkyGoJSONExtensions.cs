@@ -182,12 +182,12 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
             {
                 var jsonObj = JObject.Parse(browserResponse);
                 var i = 0;
-                video.Title = string.Empty;
+                //video.Title = string.Empty;
 
                 foreach (var item in jsonObj["listings"][video.AssetId()].Children())
                 {
                     var head = "Now:";
-                    var title = "Now: ";
+                    var title = " Now: ";
                     if (i > 0)
                     {
                         head = "\r\nNext:";
@@ -197,7 +197,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
                     var time = 0L;
 
                     long.TryParse(item.GetValue("s"), out time);
-
+                    
                     video.Title += string.Format("{0} {1} ({2})", title, item.GetValue("t"), FromUnixTime(time).ToString("HH:mm"));
 
                     video.Description += string.Format("{0} {1} ({2}) {3}", head, item.GetValue("t"), FromUnixTime(time).ToString("HH:mm"), item.GetValue("d"));
