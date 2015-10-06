@@ -136,6 +136,9 @@ namespace OnlineVideos.Sites
                     string subData = GetWebData(subs[prefSub]);
                     if (subData.StartsWith(@"WEBVTT"))
                         subData = subData.Substring(8);
+                    // after new release:
+                    // subData = Helpers.SubtitleUtils.Webvtt2SRT(subData);
+
                     video.SubtitleText = subData;
                     break;
                 }
