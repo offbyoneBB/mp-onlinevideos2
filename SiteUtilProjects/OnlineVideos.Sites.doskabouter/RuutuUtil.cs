@@ -128,7 +128,7 @@ namespace OnlineVideos.Sites
             {
                 Category sub = new Category()
                 {
-                    Name = node.SelectSingleNode(@"./h2").InnerText,
+                    Name = node.SelectSingleNode(@"./h2").InnerText.Trim(),
                     ParentCategory = parentCat,
                     HasSubCategories = true,
                     SubCategories = new List<Category>()
@@ -193,7 +193,7 @@ namespace OnlineVideos.Sites
                 {
                     Category cat = new Category()
                         {
-                            Name = node.SelectSingleNode(".//h2[@class='header-title']").InnerText,
+                            Name = node.SelectSingleNode(".//h2[@class='header-title']").InnerText.Trim(),
                             ParentCategory = parentCategory,
                             Other = videos
                         };
