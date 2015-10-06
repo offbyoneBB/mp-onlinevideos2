@@ -274,7 +274,7 @@ namespace OnlineVideos.Sites
                     thisUrl = m3u8url + "playlist.m3u8";
                     data = GetWebData(thisUrl);
                     video.PlaybackOptions = new Dictionary<string, string>();
-                    Match m3 = Regex.Match(data, @"\#EXT-X-STREAM-INF:PROGRAM-ID=[^,]*,BANDWIDTH=[^,]*,RESOLUTION=(?<resolution>[^\s]*)\s*(?<url>[^\s]*)\s");
+                    Match m3 = Regex.Match(data, @"\#EXT-X-STREAM-INF:BANDWIDTH=[^,]*,RESOLUTION=(?<resolution>[^\s]*)\s*(?<url>[^\s]*)\s");
                     while (m3.Success)
                     {
                         string resolution = m3.Groups["resolution"].Value;
