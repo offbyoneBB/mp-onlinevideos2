@@ -294,7 +294,7 @@ namespace OnlineVideos.Sites
 
       if (myString[0] == "drnulastchance")
       {
-        string url = baseUrlDrNu + "/list/view/LastChance?limit=10";
+        string url = baseUrlDrNu + "/list/view/LastChance?limit=19";
         Log.Debug("DR NU url: " + url);
         string json = GetWebData(url);
         JObject contentData = JObject.Parse(json);
@@ -303,7 +303,7 @@ namespace OnlineVideos.Sites
 
       if (myString[0] == "drnumostviewed")
       {
-        string url = baseUrlDrNu + "/list/view/mostviewed?limit=10";
+        string url = baseUrlDrNu + "/list/view/mostviewed?limit=19";
         Log.Debug("DR NU url: " + url);
         string json = GetWebData(url);
         JObject contentData = JObject.Parse(json);
@@ -312,7 +312,7 @@ namespace OnlineVideos.Sites
 
       if (myString[0] == "drnuspot")
       {
-        string url = baseUrlDrNu + "/list/view/selectedlist?limit=10";
+        string url = baseUrlDrNu + "/list/view/selectedlist?limit=19";
         Log.Debug("DR NU url: " + url);
         string json = GetWebData(url);
         JObject contentData = JObject.Parse(json);
@@ -354,6 +354,7 @@ namespace OnlineVideos.Sites
 
     public override int DiscoverDynamicCategories()
     {
+      int res = base.DiscoverDynamicCategories();
 
       //Add category Live TV
       RssLink mainCategory = new RssLink()
@@ -393,11 +394,13 @@ namespace OnlineVideos.Sites
       Settings.Categories.Add(mainCategory);
 
       Settings.DynamicCategoriesDiscovered = true;
-      return Settings.Categories.Count;
+      //return Settings.Categories.Count;
+      return res;
     }
 
     public override int DiscoverSubCategories(Category parentCategory)
     {
+      int res = base.DiscoverSubCategories(parentCategory);
       parentCategory.SubCategories = new List<Category>();
       RssLink parentCat = parentCategory as RssLink;
       string[] myString = parentCategory.Other.ToString().Split(',');
@@ -481,7 +484,7 @@ namespace OnlineVideos.Sites
           ParentCategory = parentCategory,
           HasSubCategories = false,
           SubCategoriesDiscovered = false,
-          EstimatedVideoCount = 10,
+          EstimatedVideoCount = 19,
           Other = "drnulastchance,"
         };
         parentCategory.SubCategories.Add(subCategory);
@@ -493,7 +496,7 @@ namespace OnlineVideos.Sites
           ParentCategory = parentCategory,
           HasSubCategories = false,
           SubCategoriesDiscovered = false,
-          EstimatedVideoCount = 10,
+          EstimatedVideoCount = 19,
           Other = "drnumostviewed,"
         };
         parentCategory.SubCategories.Add(subCategory);
@@ -505,7 +508,7 @@ namespace OnlineVideos.Sites
           ParentCategory = parentCategory,
           HasSubCategories = false,
           SubCategoriesDiscovered = false,
-          EstimatedVideoCount = 10,
+          EstimatedVideoCount = 19,
           Other = "drnuspot,"
         };
         parentCategory.SubCategories.Add(subCategory);
@@ -542,7 +545,8 @@ namespace OnlineVideos.Sites
           parentCategory.SubCategoriesDiscovered = true;
         }
       }
-      return parentCategory.SubCategories.Count;
+      //return parentCategory.SubCategories.Count;
+      return res;
     }
 
 
