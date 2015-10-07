@@ -10,7 +10,7 @@ namespace OnlineVideos.Sites
 {
   public class DRTVUtil : SiteUtilBase
   {
-    private string baseUrlDrNu = "http://www.dr.dk/mu-online/api/1.1";
+    private string baseUrlDrNu = "http://www.dr.dk/mu-online/api/1.3";
     string bonanza_url = "http://www.dr.dk/Bonanza/index.htm";
     string bonanzaKategori_regEx = @"<p><a\shref=""(?<url>/Bonanza/kategori[^""]+)"">(?<title>[^<]+)</a></p>";
     string bonanzaSerie_regEx = @"<a\shref=""(?<url>[^""]+)""[^>]*>\s*
@@ -63,12 +63,12 @@ namespace OnlineVideos.Sites
         }
         return aUrl;
       }
-      else if (video.Other == "drlive")
+      else if ((string)video.Other.ToString() == "drlive")
       {
         string link = loadLiveAsset(video.VideoUrl);
         return link;
       }
-      else if (video.Other == "drnu")
+      else if ((string)video.Other == "drnu")
       {
         string link = loadAsset(video.VideoUrl);
         return link;
@@ -155,7 +155,6 @@ namespace OnlineVideos.Sites
               {
                 selectnext = false;
               }
-
             }
           }
         }
@@ -276,7 +275,7 @@ namespace OnlineVideos.Sites
 
       if (myString[0] == "search")
       {
-        string url = baseUrlDrNu + "/search/tv/programcards-with-asset/title/" + myString[1] + "?limit=75";
+        string url = baseUrlDrNu + "/search/tv/programcards-with-asset/title/" + myString[1] + "?orderby=Title&limit=75";
         Log.Debug("DR NU url: " + url);
         string json = GetWebData(url);
         JObject contentData = JObject.Parse(json);
@@ -313,6 +312,15 @@ namespace OnlineVideos.Sites
       if (myString[0] == "drnuspot")
       {
         string url = baseUrlDrNu + "/list/view/selectedlist?limit=19";
+        Log.Debug("DR NU url: " + url);
+        string json = GetWebData(url);
+        JObject contentData = JObject.Parse(json);
+        return getVideos(contentData);
+      }
+
+      if (myString[0] == "drnunews")
+      {
+        string url = baseUrlDrNu + "/list/view/news?limit=19";
         Log.Debug("DR NU url: " + url);
         string json = GetWebData(url);
         JObject contentData = JObject.Parse(json);
@@ -394,7 +402,6 @@ namespace OnlineVideos.Sites
       Settings.Categories.Add(mainCategory);
 
       Settings.DynamicCategoriesDiscovered = true;
-      //return Settings.Categories.Count;
       return res;
     }
 
@@ -430,7 +437,7 @@ namespace OnlineVideos.Sites
         {
           myString[1] = myString[1][0] + ".." + myString[1][myString[1].Length - 1];
         }
-        string url = baseUrlDrNu + "/search/tv/programcards-latest-episode-with-asset/series-title-starts-with/" + myString[1] + "?limit=50";
+        string url = baseUrlDrNu + "/search/tv/programcards-latest-episode-with-asset/series-title-starts-with/" + myString[1] + "?orderby=Title&limit=50";
         Log.Debug("DR NU url: " + url);
         string json = GetWebData(url);
         JObject contentData = JObject.Parse(json);
@@ -513,6 +520,18 @@ namespace OnlineVideos.Sites
         };
         parentCategory.SubCategories.Add(subCategory);
 
+        //Add static category news
+        subCategory = new RssLink()
+        {
+          Name = "Nyheder",
+          ParentCategory = parentCategory,
+          HasSubCategories = false,
+          SubCategoriesDiscovered = false,
+          EstimatedVideoCount = 19,
+          Other = "drnunews,"
+        };
+        parentCategory.SubCategories.Add(subCategory);
+
       }
 
       //DR Bonanza
@@ -545,7 +564,6 @@ namespace OnlineVideos.Sites
           parentCategory.SubCategoriesDiscovered = true;
         }
       }
-      //return parentCategory.SubCategories.Count;
       return res;
     }
 
