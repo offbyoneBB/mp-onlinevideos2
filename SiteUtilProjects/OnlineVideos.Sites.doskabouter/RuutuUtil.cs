@@ -67,34 +67,37 @@ namespace OnlineVideos.Sites
                         vid = vid2.ParentNode.ParentNode;
                     else
                         vid = vid2;
-                    VideoInfo video = CreateVideoInfo();
-
-                    video.Title = vid.SelectSingleNode(".//h4[@itemprop='name']").InnerText;
-                    video.Description = getDescription(vid);
                     var node2 = vid.SelectSingleNode(".//a[@href]");
-                    video.VideoUrl = FormatDecodeAbsolutifyUrl(baseUrl, node2.Attributes["href"].Value, "", UrlDecoding.None);
-                    video.Thumb = getImageUrl(vid);
-                    var airDateNode = vid.SelectSingleNode(@".//div[@class='list-item-prefix']");
-                    if (airDateNode != null)
-                        video.Airdate = Helpers.StringUtils.PlainTextFromHtml(airDateNode.InnerText);
-
-                    var kausiNode = vid.SelectSingleNode(@".//div[contains(@class,'field-name-field-season')]");
-                    if (kausiNode != null)
+                    if (node2 != null)
                     {
-                        string kausi = kausiNode.ChildNodes.Last().InnerText;
-                        if (!String.IsNullOrEmpty(kausi))
-                            video.Title += " kausi " + kausi;
-                    }
+                        VideoInfo video = CreateVideoInfo();
 
-                    var jaksoNode = vid.SelectSingleNode(@".//div[contains(@class,'field-name-field-episode')]");
-                    if (jaksoNode != null)
-                    {
-                        string jakso = jaksoNode.ChildNodes.Last().InnerText;
-                        if (!String.IsNullOrEmpty(jakso))
-                            video.Title += " jakso " + jakso;
+                        video.Title = vid.SelectSingleNode(".//h4[@itemprop='name']").InnerText;
+                        video.Description = getDescription(vid);
+                        video.VideoUrl = FormatDecodeAbsolutifyUrl(baseUrl, node2.Attributes["href"].Value, "", UrlDecoding.None);
+                        video.Thumb = getImageUrl(vid);
+                        var airDateNode = vid.SelectSingleNode(@".//div[@class='list-item-prefix']");
+                        if (airDateNode != null)
+                            video.Airdate = Helpers.StringUtils.PlainTextFromHtml(airDateNode.InnerText);
+
+                        var kausiNode = vid.SelectSingleNode(@".//div[contains(@class,'field-name-field-season')]");
+                        if (kausiNode != null)
+                        {
+                            string kausi = kausiNode.ChildNodes.Last().InnerText;
+                            if (!String.IsNullOrEmpty(kausi))
+                                video.Title += " kausi " + kausi;
+                        }
+
+                        var jaksoNode = vid.SelectSingleNode(@".//div[contains(@class,'field-name-field-episode')]");
+                        if (jaksoNode != null)
+                        {
+                            string jakso = jaksoNode.ChildNodes.Last().InnerText;
+                            if (!String.IsNullOrEmpty(jakso))
+                                video.Title += " jakso " + jakso;
+                        }
+                        video.Title = cleanup(video.Title);
+                        result.Add(video);
                     }
-                    video.Title = cleanup(video.Title);
-                    result.Add(video);
                 }
             }
             return result;
