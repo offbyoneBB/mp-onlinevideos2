@@ -81,8 +81,7 @@ namespace OnlineVideos.Sites
         {
             Uri uri = new Uri(url);
             foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
-                if (uri.Host.ToLower().Contains(hosterUtil.GetHosterUrl().ToLower()))
-                //if (hosterUtil.Matches(uri.Host)) enable after next release of onlinevideos
+                if (hosterUtil.Matches(uri.Host))
                 {
                     Dictionary<string, string> options = hosterUtil.GetPlaybackOptions(url);
                     if (options != null && options.Count > 0)

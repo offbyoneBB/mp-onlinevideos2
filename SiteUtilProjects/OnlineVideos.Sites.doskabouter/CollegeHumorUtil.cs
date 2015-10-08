@@ -50,8 +50,7 @@ namespace OnlineVideos.Sites
             //probably youtube
             JToken vid = jt["video"]["youtubeId"];
             foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
-                if (hosterUtil.GetHosterUrl().ToLower().Equals("youtube.com"))
-                //if (hosterUtil.Matches("youtube.com")) enable after next release of onlinevideos
+                if (hosterUtil.Matches("youtube.com"))
                 {
                     video.PlaybackOptions = hosterUtil.GetPlaybackOptions(@"http://youtube.com/" + vid.Value<string>());
                 }
