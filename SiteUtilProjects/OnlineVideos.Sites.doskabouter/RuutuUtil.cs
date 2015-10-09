@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web;
 using System.Linq;
+using System.Xml;
 using HtmlAgilityPack;
 
 namespace OnlineVideos.Sites
@@ -22,7 +22,28 @@ namespace OnlineVideos.Sites
         {
             if (video.VideoUrl.Contains("series"))
                 video.VideoUrl = WebCache.Instance.GetRedirectedUrl(video.VideoUrl);
-            return base.GetVideoUrl(video);
+            string data = GetWebData(GetFormattedVideoUrl(video));
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(data);
+            var vidUrl = doc.SelectSingleNode(@"//Clip/HTTPMediaFiles/HTTPMediaFile").InnerText;
+            var bitrates = doc.SelectNodes(@"//Clip/BitRateLabels/map");
+            var bitratesDict = new Dictionary<string, string>();
+
+            foreach (XmlNode bitrate in bitrates)
+                bitratesDict.Add(bitrate.Attributes["label"].Value, bitrate.Attributes["bitrate"].Value);
+
+            int p = vidUrl.IndexOf("_none");
+            int q = vidUrl.LastIndexOf('_', p - 1);
+            if (p >= 0 && q >= 0)
+            {
+                video.PlaybackOptions = new Dictionary<string, string>();
+                foreach (var bitrate in bitratesDict)
+                    video.PlaybackOptions.Add(bitrate.Key, vidUrl.Substring(0, q + 1) + bitrate.Value + vidUrl.Substring(p));
+
+            }
+            if (video.PlaybackOptions.Count == 0)
+                return vidUrl;
+            return video.PlaybackOptions.Values.First();
         }
         public override int DiscoverSubCategories(Category parentCategory)
         {
