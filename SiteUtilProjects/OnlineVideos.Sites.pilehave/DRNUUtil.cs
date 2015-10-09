@@ -220,6 +220,7 @@ namespace OnlineVideos.Sites
             Log.Debug("DR NU webDataUrl: " + webDataUrl);
             string strprogramcard = GetWebData(webDataUrl);
             JObject objprogramcard = JObject.Parse(strprogramcard);
+            string itemChannel = (string)objprogramcard["PrimaryChannelSlug"];
             string itemTitle = (string)objprogramcard["Title"];
             DateTime airDate = (DateTime)objprogramcard["PrimaryBroadcastStartTime"];
             img = (string)objprogramcard["PrimaryImageUri"];
@@ -252,6 +253,7 @@ namespace OnlineVideos.Sites
               video.Thumb = img;
               video.Other = "drnu";
               video.Airdate = airDate.ToString("dd. MMM. yyyy kl. HH:mm");
+              if (itemChannel.Length > 1) video.Airdate = video.Airdate + " (" + itemChannel.ToUpper() + ")";
               res.Add(video);
             }
           }
