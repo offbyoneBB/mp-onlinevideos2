@@ -70,8 +70,9 @@ namespace OnlineVideos.Sites
       }
       else if ((string)video.Other == "drnu")
       {
-        string link = loadAsset(video.VideoUrl);
-        return link;
+        Tuple<string, string> link = loadAsset(video.VideoUrl);
+        video.SubtitleText = link.Item2;
+        return link.Item1;
       }
       else
       {
@@ -88,8 +89,6 @@ namespace OnlineVideos.Sites
       string webDataUrl = baseUrlDrNu + "/channel/all-active-dr-tv-channels/";
       string strchannels = GetWebData(webDataUrl);
       JArray arrchannels = JArray.Parse(strchannels);
-      string[] parts = null;
-
       foreach (JObject channel in arrchannels)
       {
         try
@@ -100,16 +99,16 @@ namespace OnlineVideos.Sites
             video.Title = (string)channel["Title"];
             video.Thumb = (string)channel["PrimaryImageUri"];
             video.Other = "drlive";
-            Log.Debug("DR NU Title: " + video.Title);
+            Log.Debug("DR TV Title: " + video.Title);
             JArray streamingservers = (JArray)channel["StreamingServers"];
             foreach (JObject srv in streamingservers)
             {
               if ((string)srv["LinkType"] == "HLS")
               {
-                Log.Debug("DR NU HLS Target found");
+                Log.Debug("DR TV HLS Target found");
                 string server = (string)srv["Server"];
                 string url = (string)srv["Qualities"][0]["Streams"][0]["Stream"];
-                Log.Debug("DR NU link: " + server + "/" + url);
+                Log.Debug("DR TV link: " + server + "/" + url);
                 video.VideoUrl = server + "/" + url;
                 res.Add(video);
               }
@@ -125,11 +124,11 @@ namespace OnlineVideos.Sites
     }
 
     //loadLiveAsset is called from getVideos and fetches Live TV m3u8 playlist for HLS media
-    public string loadLiveAsset(string url)
+    public string loadLiveAsset(string webDataUrl)
     {
       string assetLink = null;
-      string m3u8 = GetWebData(url);
-      Log.Debug("DR NU m3u8: " + m3u8);
+      string m3u8 = GetWebData(webDataUrl);
+      Log.Debug("DR TV m3u8: " + m3u8);
       int curr_bandwidth = 0;
       int new_bandwidth = 0;
       bool selectnext = false;
@@ -137,7 +136,7 @@ namespace OnlineVideos.Sites
       string[] lines = m3u8.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
       foreach (string line in lines)
       {
-        Log.Debug("DR NU m3u8 line: " + line);
+        Log.Debug("DR TV m3u8 line: " + line);
         if (line.StartsWith("#EXT-"))
         {
           parts = line.Split(',');
@@ -167,10 +166,10 @@ namespace OnlineVideos.Sites
     }
 
     //loadAsset is called from getVideos and fetches m3u8 playlist for HLS media
-    public string loadAsset(string url, string target = "HLS")
+    public Tuple<string, string> loadAsset(string webDataUrl, string target = "HLS")
     {
-      string struri = GetWebData(url);
-      Log.Debug("DR NU struri: " + struri);
+      string struri = GetWebData(webDataUrl);
+      Log.Debug("DR TV struri: " + struri);
       string assetLink = null;
       string m3u8Link = null;
       JObject objuri = JObject.Parse(struri);
@@ -179,15 +178,15 @@ namespace OnlineVideos.Sites
       {
         if ((string)link["Target"] == target)
         {
-          Log.Debug("DR NU HLS Target found");
+          Log.Debug("DR TV HLS Target found");
           m3u8Link = (string)link["Uri"];
-          Log.Debug("DR NU Uri: " + m3u8Link);
+          Log.Debug("DR TV Uri: " + m3u8Link);
           string m3u8 = GetWebData(m3u8Link);
-          Log.Debug("DR NU m3u8: " + m3u8);
+          Log.Debug("DR TV m3u8: " + m3u8);
           string[] lines = m3u8.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
           foreach (string line in lines)
           {
-            Log.Debug("DR NU m3u8 line: " + line);
+            Log.Debug("DR TV m3u8 line: " + line);
             if (line.StartsWith("http://"))
             {
               assetLink = line;
@@ -196,7 +195,17 @@ namespace OnlineVideos.Sites
           }
         }
       }
-      return assetLink;
+
+      JArray subtitleLinks = (JArray)objuri["SubtitlesList"];
+      string subtitleText = "";
+      foreach (JObject link in subtitleLinks)
+      {
+        Log.Debug("DR TV subtitle found:" + link.ToString());
+        string webDataUrl2 = (string)link["Uri"];
+        Log.Debug("DR TV subtitle uri:" + webDataUrl2);
+        subtitleText = Helpers.SubtitleUtils.Webvtt2SRT(GetWebData(webDataUrl2));
+      }
+      return Tuple.Create(assetLink, subtitleText);
     }
 
 
@@ -206,7 +215,7 @@ namespace OnlineVideos.Sites
       if (contentData != null)
       {
         JArray slugs = (JArray)contentData["Items"];
-        Log.Debug("DR NU slugs count: " + slugs.Count);
+        Log.Debug("DR TV slugs count: " + slugs.Count);
         foreach (JObject slug in slugs)
         {
           try
@@ -217,7 +226,7 @@ namespace OnlineVideos.Sites
             string fduration = null;
             string img = null;
             string webDataUrl = baseUrlDrNu + "/programcard/" + itemslug;
-            Log.Debug("DR NU webDataUrl: " + webDataUrl);
+            Log.Debug("DR TV webDataUrl: " + webDataUrl);
             string strprogramcard = GetWebData(webDataUrl);
             JObject objprogramcard = JObject.Parse(strprogramcard);
             string itemChannel = (string)objprogramcard["PrimaryChannelSlug"];
@@ -225,12 +234,12 @@ namespace OnlineVideos.Sites
             DateTime airDate = (DateTime)objprogramcard["PrimaryBroadcastStartTime"];
             img = (string)objprogramcard["PrimaryImageUri"];
             string itemDescription = (string)objprogramcard["Description"];
-            Log.Debug("DR NU Description: " + itemDescription);
+            Log.Debug("DR TV Description: " + itemDescription);
             JObject assets = (JObject)objprogramcard["PrimaryAsset"];
 
             if (assets.Count > 0)
             {
-              Log.Debug("DR NU asset count: " + assets.Count);
+              Log.Debug("DR TV asset count: " + assets.Count);
               string kind = (string)assets["Kind"];
               string uri = (string)assets["Uri"];
 
@@ -241,7 +250,7 @@ namespace OnlineVideos.Sites
                 fduration = String.Format("{0:D2}:{1:D2}:{2:D2}", duration.Hours, duration.Minutes, duration.Seconds);
               }
 
-              Log.Debug("DR NU Uri: " + uri);
+              Log.Debug("DR TV Uri: " + uri);
             }
             if (link.Length > 0)
             {
@@ -278,7 +287,7 @@ namespace OnlineVideos.Sites
       if (myString[0] == "search")
       {
         string url = baseUrlDrNu + "/search/tv/programcards-with-asset/title/" + myString[1] + "?orderby=Title&limit=75";
-        Log.Debug("DR NU url: " + url);
+        Log.Debug("DR TV url: " + url);
         string json = GetWebData(url);
         JObject contentData = JObject.Parse(json);
         return getVideos(contentData);
@@ -287,7 +296,7 @@ namespace OnlineVideos.Sites
       if (myString[0] == "drnulist_card")
       {
         string url = baseUrlDrNu + "/list/" + myString[1] + "?limit=75";
-        Log.Debug("DR NU url: " + url);
+        Log.Debug("DR TV url: " + url);
         string json = GetWebData(url);
         JObject contentData = JObject.Parse(json);
         return getVideos(contentData);
@@ -296,7 +305,7 @@ namespace OnlineVideos.Sites
       if (myString[0] == "drnulastchance")
       {
         string url = baseUrlDrNu + "/list/view/LastChance?limit=19";
-        Log.Debug("DR NU url: " + url);
+        Log.Debug("DR TV url: " + url);
         string json = GetWebData(url);
         JObject contentData = JObject.Parse(json);
         return getVideos(contentData);
@@ -305,7 +314,7 @@ namespace OnlineVideos.Sites
       if (myString[0] == "drnumostviewed")
       {
         string url = baseUrlDrNu + "/list/view/mostviewed?limit=19";
-        Log.Debug("DR NU url: " + url);
+        Log.Debug("DR TV url: " + url);
         string json = GetWebData(url);
         JObject contentData = JObject.Parse(json);
         return getVideos(contentData);
@@ -314,7 +323,7 @@ namespace OnlineVideos.Sites
       if (myString[0] == "drnuspot")
       {
         string url = baseUrlDrNu + "/list/view/selectedlist?limit=19";
-        Log.Debug("DR NU url: " + url);
+        Log.Debug("DR TV url: " + url);
         string json = GetWebData(url);
         JObject contentData = JObject.Parse(json);
         return getVideos(contentData);
@@ -323,7 +332,7 @@ namespace OnlineVideos.Sites
       if (myString[0] == "drnunews")
       {
         string url = baseUrlDrNu + "/list/view/news?limit=19";
-        Log.Debug("DR NU url: " + url);
+        Log.Debug("DR TV url: " + url);
         string json = GetWebData(url);
         JObject contentData = JObject.Parse(json);
         return getVideos(contentData);
@@ -440,7 +449,7 @@ namespace OnlineVideos.Sites
           myString[1] = myString[1][0] + ".." + myString[1][myString[1].Length - 1];
         }
         string url = baseUrlDrNu + "/search/tv/programcards-latest-episode-with-asset/series-title-starts-with/" + myString[1] + "?orderby=Title&limit=50";
-        Log.Debug("DR NU url: " + url);
+        Log.Debug("DR TV url: " + url);
         string json = GetWebData(url);
         JObject contentData = JObject.Parse(json);
         if (contentData != null)
