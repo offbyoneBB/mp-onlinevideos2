@@ -10,10 +10,10 @@ The plug-in interface will unify the user experience from all the different webs
 
 #Supported Sites
 
-This short list gives a first impression of what you can expect inside OnlineVideos. The complete listing is available here.
+This short list gives a first impression of what you can expect inside OnlineVideos. The complete listing is available [here](http://onlinevideos.nocrosshair.de/).
 
     Global
-        YouTube, wwitv 
+        YouTube 
     German
         Das Erste, ZDF, Arte, 3sat, ORF, SF1, MyVideo.de 
     Spanish
@@ -21,9 +21,9 @@ This short list gives a first impression of what you can expect inside OnlineVid
     Swedish
         SVTPlay, Viasat, TV4 Play 
     Dutch
-        TVGemist, TVTutti 
+        TVGemist, NOS 
     English
-        iTunes Movie Trailers, GameTrailers, Break, VeryfunnyAds, NBA, Yahoo Music Videos, CNN, MSNBC, TEDTalks, NASA, BBC iPlayer 
+        iTunes Movie Trailers, GameTrailers, CNN, MSNBC, TEDTalks, NASA, BBC iPlayer 
     Danish
         dr.dk 
     Norwegian
