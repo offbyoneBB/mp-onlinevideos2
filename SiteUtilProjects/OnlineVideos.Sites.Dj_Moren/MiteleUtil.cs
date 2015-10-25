@@ -21,7 +21,7 @@ namespace OnlineVideos.Sites
     {
         internal String miteleBaseUrl = "http://www.mitele.es";
 
-        internal String seriesListRegex = "<a\\shref=\"(?<url>[^\"]*)\"\\stitle=\"(?<title>[^\"]*)\"\\sclass=\"ElementImageContainer\">\\s*<img\\swidth=\"195\"\\sheight=\"110\"\\salt=\"[^\"]*\"\\ssrc=\"(?<thumb>[^\"]*)\"\\s/>(?:(?!</a).)*</a>";
+        internal String seriesListRegex = "<a\\shref=\"(?<url>[^\"]*)\"\\stitle=\"(?<title>[^\"]*)\"\\sclass=\"ElementImageContainer\">\\s*<img\\swidth=\"[^\"]*\"\\sheight=\"[^\"]*\"\\salt=\"[^\"]*\"\\ssrc=\"(?<thumb>[^\"]*)\"\\s/>(?:(?!</a).)*</a>";
         internal String nextPageRegex = "<li\\sclass=\"next\"><a\\shref=\"javascript:void\\(0\\);\">Siguiente\\s&raquo;</a></li>";
         internal String nextPageProgramsARG = "pag=";
         internal String programsData = "";
