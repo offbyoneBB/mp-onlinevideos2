@@ -52,6 +52,11 @@ namespace OnlineVideos.Sites
 
         [Category("OnlineVideosConfiguration")]
         protected string videoUrlService;
+
+        [Category("OnlineVideosConfiguration")]
+        protected string nameLanguage;
+        [Category("OnlineVideosConfiguration")]
+        protected string descriptionLanguage;
         
         internal enum CategoryType
         {
@@ -87,19 +92,18 @@ namespace OnlineVideos.Sites
             List<VideoInfo> videoList = new List<VideoInfo>();
             String data = GetWebData(baseUrl + "get/playlist/" + (category as RssLink).Url + "/");
             JObject jsonEpisodios = JObject.Parse(data);
-            JArray episodios = (JArray)jsonEpisodios["videos"];
+            JArray episodios = (JArray)jsonEpisodios["web_media"];
             foreach (JToken episodio in episodios)
             {
                 VideoInfo video = new VideoInfo();
-                JObject customFields = JObject.Parse(episodio["customFields"].ToString());
-                video.Title = (String)customFields.SelectToken("name_c");
-                video.Description = (String)customFields.SelectToken("shortdescription_c");
-                video.Airdate = ConvertFromUnixTimestamp(double.Parse((String)episodio.SelectToken("publishedDate"))).ToString("dd-MM-yyyy HH:mm:ss");
-                TimeSpan ts = TimeSpan.FromMilliseconds(double.Parse(episodio.SelectToken("length").ToString()));
+                video.Title = (String)episodio.SelectToken(nameLanguage);
+                video.Description = (String)episodio.SelectToken(descriptionLanguage);
+                video.Airdate = (String)episodio.SelectToken("BROADCST_DATE");
+                TimeSpan ts = TimeSpan.FromMilliseconds(double.Parse(episodio.SelectToken("LENGTH").ToString()));
                 TimeSpan tsAux = TimeSpan.FromMilliseconds(ts.Milliseconds);
                 video.Length = ts.Subtract(tsAux).ToString();
-                video.Thumb = (String)episodio.SelectToken("thumbnailURL");
-                video.VideoUrl = baseUrl + "#/video/" + episodio.SelectToken("id").ToString();
+                video.Thumb = (String)episodio.SelectToken("THUMBNAIL_URL");
+                video.VideoUrl = baseUrl + "#/video/" + episodio.SelectToken("ID").ToString();
                 videoList.Add(video);
             }
             return videoList;
