@@ -318,7 +318,9 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
             else
             {
-                // Could also be on the frontpage: cats.AddRange(GetKidsHomeCategories(parentCategory));
+                RssLink browse = new RssLink() { Name = "Browse Kids Genres", HasSubCategories = true, ParentCategory = parentCategory };
+                browse.Other = (Func<List<Category>>)(() => GetKidsGenreListCategories(browse));
+                cats.Add(browse);
                 RssLink kids = new RssLink() { Name = "Kids", HasSubCategories = true, ParentCategory = parentCategory };
                 kids.Other = (Func<List<Category>>)(() => GetKidsHomeCategories(kids));
                 cats.Add(kids);
@@ -329,10 +331,27 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             return cats;
         }
 
+        private List<Category> GetKidsGenreListCategories(Category parentCategory)
+        {
+            List<Category> cats = new List<Category>();
+            string data = MyGetWebData(kidsUrl, referer: kidsUrl);
+            data = MyGetWebData(kidsUrl, referer: kidsUrl);
+            Regex rgx = new Regex(@"<li><a href=""http://www.netflix.com/KidsAltGenre\?agid=(?<url>[^""]*)"">(?<title>[^<]*)");
+            foreach (Match m in rgx.Matches(data))
+            {
+                RssLink cat = new RssLink() { Name = m.Groups["title"].Value, Url = m.Groups["url"].Value, ParentCategory = parentCategory, HasSubCategories = true  };
+                cat.Other = (Func<List<Category>>)(() => GetSubCategories(cat, "genres", 0));
+                cats.Add(cat);
+            }
+            parentCategory.SubCategoriesDiscovered = true;
+            return cats;
+        }
+
         private List<Category> GetKidsHomeCategories(Category parentCategory)
         {
             List<Category> cats = new List<Category>();
-            string data = MyGetWebData(kidsUrl);
+            string data = MyGetWebData(kidsUrl, referer: kidsUrl);
+            data = MyGetWebData(kidsUrl, referer: kidsUrl);
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(data);
 
