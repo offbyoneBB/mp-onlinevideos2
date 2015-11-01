@@ -56,8 +56,6 @@ namespace OnlineVideos.Hoster
                 foreach (Match match in rgx.Matches(data))
                 {
                     string vUrl = match.Groups["url"].Value;
-                    if (vUrl.Contains("/redirector"))
-                        vUrl = WebCache.Instance.GetRedirectedUrl(vUrl, url);
                     playbackOptions.Add(match.Groups["label"].Value, vUrl);
                 }
             }
