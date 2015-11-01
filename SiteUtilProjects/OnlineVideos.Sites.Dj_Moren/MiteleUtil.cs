@@ -265,7 +265,7 @@ namespace OnlineVideos.Sites
             Match dataConfigUrlMatch = regexMSPlayerDataConfig.Match(data);
             if (dataConfigUrlMatch.Success)
             {
-                String dataConfigUrl = dataConfigUrlMatch.Groups["dataConfigUrl"].Value;
+                String dataConfigUrl = miteleBaseUrl + dataConfigUrlMatch.Groups["dataConfigUrl"].Value;
                 String dataConfig = GetWebData(dataConfigUrl + "?c=5");
                 String mmcUrl = (String)JObject.Parse(dataConfig).SelectToken("services.mmc");
                 String mmc = GetWebData(mmcUrl);
