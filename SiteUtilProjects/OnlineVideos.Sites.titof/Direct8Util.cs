@@ -16,7 +16,12 @@ namespace OnlineVideos.Sites
 {
     public class Direct8Util : GenericSiteUtil
     {
-
+        /// <summary>
+        /// comment
+        /// </summary>
+        /// <param name="video"></param>
+        /// <param name="inPlaylist"></param>
+        /// <returns></returns>
         public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<string> listUrls = new List<string>();
