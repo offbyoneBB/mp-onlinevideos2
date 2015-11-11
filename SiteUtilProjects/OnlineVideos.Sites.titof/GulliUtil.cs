@@ -13,35 +13,36 @@ namespace OnlineVideos.Sites
 {
     public class GulliUtil : GenericSiteUtil
     {
+        private string _baseUrl = "http://replay.gulli.fr/";
 
         public override int DiscoverDynamicCategories()
         {           
             RssLink cat = new RssLink();
-            cat.Url = "http://replay.gulli.fr/nouveautes";
+            cat.Url = _baseUrl + "nouveautes";
             cat.Name = "Nouveautés";
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
 
             cat = new RssLink();
-            cat.Url = "http://replay.gulli.fr/AaZ";
+            cat.Url = _baseUrl + "AaZ";
             cat.Name = "De A à Z";
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
 
             cat = new RssLink();
-            cat.Url = "http://replay.gulli.fr/replay/dessins-animes";
+            cat.Url = _baseUrl + "replay/dessins-animes";
             cat.Name = "Dessins animés";
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
 
             cat = new RssLink();
-            cat.Url = "http://replay.gulli.fr/replay/emissions";
+            cat.Url = _baseUrl + "replay/emissions";
             cat.Name = "Emissions";
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
 
             cat = new RssLink();
-            cat.Url = "http://replay.gulli.fr/replay/series";
+            cat.Url = _baseUrl + "replay/series";
             cat.Name = "Séries";
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
@@ -88,58 +89,44 @@ namespace OnlineVideos.Sites
 
             string resultUrl =  videoFile;
 
-            string webData = GetWebData(resultUrl);
-            string rgxstring = @"(?<url>[\w.,?=\/-]*).m3u8";
-            Regex rgx = new Regex(rgxstring);
-            var tresult = rgx.Matches(webData);
-            List<string> tUrl = new List<string>();
-            foreach (Match match in tresult)
-            {
-                tUrl.Add( videoFile.Replace("playlist", match.Groups["url"].ToString()));
+            M3U.M3U.M3UPlaylist play = new M3U.M3U.M3UPlaylist();
+            play.Configuration.Depth = 1;
+            play.Read(resultUrl);
+            IEnumerable<OnlineVideos.Sites.M3U.M3U.M3UComponent> telem = from item in play.OrderBy("BRANDWITH")
+                                                                         select item;
 
-                //tUrl.Add(webData.Substring(webData.IndexOf(id), webData.IndexOf("m3u8") - webData.IndexOf(id))+"m3u8" match.Groups["url"]);
-            }
-
-            if (tUrl.Count==5)
+            if (telem.Count() > 4) 
             {
                 video.PlaybackOptions = new Dictionary<string, string>();
-                video.PlaybackOptions.Add("LOW RES", tUrl[0]);
-                video.PlaybackOptions.Add("SD", tUrl[3]);
+                video.PlaybackOptions.Add("LOW RES", telem.ToList()[0].Path);
+                video.PlaybackOptions.Add("SD", telem.ToList()[3].Path);
             }
-
-            return tUrl[0];
-            string nexturl = webData.Substring(webData.IndexOf(id), webData.IndexOf("m3u8") - webData.IndexOf(id))+"m3u8";
-            nexturl = videoFile.Replace("playlist.m3u8",nexturl);
-
-            //return nexturl;
-        }
-
-        //public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
-        //{
-            //List<string> tReturn = new List<string>();
-            //inPlaylist = true;
-            //string url = video.VideoUrl.Substring(video.VideoUrl.IndexOf("VOD"));
-            //string id = url.Replace("VOD",string.Empty );
-            //string videoFile = "http://httpg3.scdn.arkena.com/10624/id/id_Ipad.smil/playlist.m3u8";
-            //videoFile = videoFile.Replace("id",id); 
-
-            //string resultUrl =  videoFile;
+            return telem.First().Path;
 
             //string webData = GetWebData(resultUrl);
+            //string rgxstring = @"(?<url>[\w.,?=\/-]*).m3u8";
+            //Regex rgx = new Regex(rgxstring);
+            //var tresult = rgx.Matches(webData);
+            //List<string> tUrl = new List<string>();
+            //foreach (Match match in tresult)
+            //{
+            //    tUrl.Add( videoFile.Replace("playlist", match.Groups["url"].ToString()));
+
+            //    //tUrl.Add(webData.Substring(webData.IndexOf(id), webData.IndexOf("m3u8") - webData.IndexOf(id))+"m3u8" match.Groups["url"]);
+            //}
+
+            //if (tUrl.Count==5)
+            //{
+            //    video.PlaybackOptions = new Dictionary<string, string>();
+            //    video.PlaybackOptions.Add("LOW RES", tUrl[0]);
+            //    video.PlaybackOptions.Add("SD", tUrl[3]);
+            //}
+
+            //return tUrl[0];
             //string nexturl = webData.Substring(webData.IndexOf(id), webData.IndexOf("m3u8") - webData.IndexOf(id))+"m3u8";
             //nexturl = videoFile.Replace("playlist.m3u8",nexturl);
 
-            //webData = GetWebData(nexturl);
-            //Regex r = new Regex(id + @"(?<url>[\w_=-]*).ts");
-            //var tmatch = r.Matches(webData);
-
-            
-            //foreach (Match item in tmatch)
-            //{
-            //    tReturn.Add(videoFile.Replace("playlist.m3u8", item.Value));
-            //}
-
-            //return tReturn;
-        //}
+            //return nexturl;
+        }
     }
 }

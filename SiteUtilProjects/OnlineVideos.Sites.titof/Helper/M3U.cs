@@ -36,7 +36,7 @@ namespace OnlineVideos.Sites.M3U
                 return sReturn;
             }
 
-            internal static M3UElement[] ReadM3uElement(string content, string basepath)
+            internal static M3UElement[] ReadM3uElement(string content, string basepath, ReaderConfiguration config, int activeDepth)
             {
                 List<M3UElement> tReturn = new List<M3UElement>();
 
@@ -54,12 +54,12 @@ namespace OnlineVideos.Sites.M3U
 
                     if (sline.StartsWith(Constantes.M3U_INFO_MARKER) && (string.IsNullOrEmpty(snextline) || snextline.StartsWith(Constantes.M3U_INFO_MARKER)))
                     {
-                        tReturn.Add(M3UElement.Read(sline, basepath));
+                        tReturn.Add(M3UElement.Read(sline, basepath, config, activeDepth + 1));
 
                     }
                     else if (sline.StartsWith(Constantes.M3U8_INFO_MARKER) && (string.IsNullOrEmpty(snextline) || snextline.StartsWith(Constantes.M3U8_INFO_MARKER)))
                     {
-                        tReturn.Add(M3U8Element.Read(sline, basepath));
+                        tReturn.Add(M3U8Element.Read(sline, basepath, config, activeDepth + 1));
                     }
                     else
                     {
@@ -101,6 +101,8 @@ namespace OnlineVideos.Sites.M3U
             }
 
             public string Path { get; set; }
+
+            public int Depth { get; set; }
         }
 
         internal class M3UPlaylist : List<M3UElement>, IM3UComponent
@@ -112,6 +114,7 @@ namespace OnlineVideos.Sites.M3U
             public M3UPlaylist()
                 : base()
             {
+                Configuration = new ReaderConfiguration();
             }
 
             public void Read(string path)
@@ -130,9 +133,8 @@ namespace OnlineVideos.Sites.M3U
                     // content = new StreamReader(path);
                 }
 
-                this.AddRange(Helper.ReadM3uElement(sContent, basepath));
+                this.AddRange(Helper.ReadM3uElement(sContent, basepath, this.Configuration, 0));
             }
-
 
             public string Path { get; set; }
 
@@ -145,14 +147,17 @@ namespace OnlineVideos.Sites.M3U
 
                 return tReturn;
             }
+
+            public ReaderConfiguration Configuration { get; set; }
+
         } //EOC
 
         internal class M3U8Element : M3UElement
         {
             #region<<STATIC>>
-            internal static M3U8Element Read(string content, string basepath)
+            internal new static M3U8Element Read(string content, string basepath, ReaderConfiguration config, int activeDepth)
             {
-                M3U8Element oReturn = new M3U8Element();
+                M3U8Element oReturn = new M3U8Element(activeDepth);
 
                 string[] tContent = content.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
                 if (tContent.Length > 1)
@@ -175,12 +180,12 @@ namespace OnlineVideos.Sites.M3U
                 }
                 if (!string.IsNullOrEmpty(oReturn.Path))
                 {
-                    if (oReturn.Path.ToLower().Contains("m3u8"))
+                    if (oReturn.Path.ToLower().Contains("m3u8") && config.Depth > activeDepth)
                     {
                         string sChilds = Helper.GetWebData(oReturn.Path);
 
                         List<M3UComponent> childs = new List<M3UComponent>();
-                        childs.AddRange(Helper.ReadM3uElement(sChilds, basepath));
+                        childs.AddRange(Helper.ReadM3uElement(sChilds, basepath, config, activeDepth));
                         if (childs.Count > 0) oReturn.AddRange(childs);
                     }
                 }
@@ -198,14 +203,20 @@ namespace OnlineVideos.Sites.M3U
             {
             }
 
+            protected M3U8Element(int depth)
+                : base()
+            {
+                this.Depth = depth;
+            }
+
         } //EOC
 
         internal class M3UElement : M3UComponent
         {
             #region<<STATIC>>
-            internal static M3UElement Read(string content, string basepath)
+            internal static M3UElement Read(string content, string basepath, ReaderConfiguration config, int activeDepth)
             {
-                M3UElement oReturn = new M3UElement();
+                M3UElement oReturn = new M3UElement(activeDepth);
 
                 string[] tContent = content.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
                 if (tContent.Length > 1)
@@ -233,13 +244,13 @@ namespace OnlineVideos.Sites.M3U
                         oReturn.Options.Add("INFOS", tOptions[idx]);
                     }
                 }
-                if (oReturn.Path.ToLower().Contains("m3u"))
+                if (oReturn.Path.ToLower().Contains("m3u") && config.Depth > activeDepth)
                 {
                     string sChilds = Helper.GetWebData(oReturn.Path);
 
                     List<M3UComponent> childs = new List<M3UComponent>();
                     string sbasepath = Helper.GetBasePath(oReturn.Path);
-                    childs.AddRange(Helper.ReadM3uElement(sChilds, sbasepath));
+                    childs.AddRange(Helper.ReadM3uElement(sChilds, sbasepath, config, 0));
                     if (childs.Count > 0) oReturn.AddRange(childs);
 
                 }
@@ -257,9 +268,27 @@ namespace OnlineVideos.Sites.M3U
                 Options = new System.Collections.Hashtable();
             }
 
+            protected M3UElement(int depth)
+                : base()
+            {
+                this.Depth = depth;
+                Options = new System.Collections.Hashtable();
+            }
+
             public System.Collections.Hashtable Options { get; set; }
 
         } //EOC
 
+        internal class ReaderConfiguration
+        {
+            /// <summary>
+            /// Reading Depth.
+            /// 0 means full recursive reading
+            /// </summary>
+            internal int Depth { get; set; }
+        }
+
     }
+
+    
 }

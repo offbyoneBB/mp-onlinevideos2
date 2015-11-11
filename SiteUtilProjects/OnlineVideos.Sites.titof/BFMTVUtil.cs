@@ -95,34 +95,6 @@ namespace OnlineVideos.Sites
             }
 
             return tUrl[tUrl.Count - 1];
-            
-
-  
-  //for medium in jsonParser['video']['medias']:;
-  //  if medium['encoding_rate']>quality:;
-  //    quality=medium['encoding_rate'];
-  //    video_url=medium['video_url'];
-
-  //          string shls = (string)obj["MEDIA"]["VIDEOS"]["HLS"];
-
-  //          string webdata = GetWebData(shls);
-  //          string rgxstring = @"http:\/\/(?<url>[\w.,?=\/-]*)";
-  //          Regex rgx = new Regex(rgxstring);
-  //          var tresult = rgx.Matches(webdata);
-            //List<string> tUrl = new List<string>();
-            //foreach (Match match in tresult)
-            //{
-            //    tUrl.Add(@"http://" + match.Groups["url"]);
-            //}
-
-            //if (tUrl.Count > 2)
-            //{
-            //    video.PlaybackOptions = new Dictionary<string, string>();
-            //    video.PlaybackOptions.Add("SD", tUrl[tUrl.Count - 2]);
-            //    video.PlaybackOptions.Add("HD", tUrl[tUrl.Count - 1]);
-            //}
-
-            return video_url;
         }
 
         private string GetToken() 
