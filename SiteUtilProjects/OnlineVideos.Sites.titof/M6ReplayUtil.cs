@@ -72,11 +72,19 @@ namespace OnlineVideos.Sites
                 JToken program = property.Value;
                 if (genreId.Equals(program.Value<string>("idGnr")) || getGenresForId(genreId).Contains(program.Value<string>("idGnr")))
                 {
+                    string thumb = string.Empty;
+                    try
+                    {
+                        thumb = (string)program["img"]["vignette"];
+                        thumb = string.Format(imageUrlFormat, thumb);
+                    }
+                    catch { }
+                    
                     parentCategory.SubCategories.Add(new RssLink() {
                                                          ParentCategory = parentCategory,
                                                          Name = program.Value<string>("name"),
                                                          Description = program.Value<string>("desc"),
-                                                         Thumb = string.Format(imageUrlFormat, program["img"]["vignette"]),
+                                                         Thumb = thumb,
                                                          Other = programId,
                                                          HasSubCategories = false
                                                      });
@@ -100,11 +108,16 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> GetVideos(Category category)
         {
             List<VideoInfo> result = new List<VideoInfo>();
+            string data = GetWebData(string.Format(videoListUrlFormat, siteIdentifier, category.Other));
             JObject json = GetWebData<JObject>(string.Format(videoListUrlFormat, siteIdentifier, category.Other));
             if (json != null)
             {
+               // JArray sorted = new JArray( ((JArray)json).OrderBy(obj => obj["episode"]));
+
+                int idx = 0;
                 foreach (JProperty property in json.Properties())
                 {
+
                     JToken video = property.Value;
                     result.Add(new VideoInfo() {
                                    Title = video.Value<string>("clpName"),
@@ -113,6 +126,8 @@ namespace OnlineVideos.Sites
                                    Length = video.Value<string>("duration"),
                                    Other = property.Name
                                });
+                    idx++;
+                    if (idx > 100) break;
                 }
             }
             return result;
@@ -129,16 +144,16 @@ namespace OnlineVideos.Sites
                 XmlNode sd = xml.SelectSingleNode(@"//item/url_video_sd");
                 if (sd != null)
                 {
-                    url = new MPUrlSourceFilter.HttpUrl(sd.InnerText).ToString();
+                    url = sd.InnerText; //new MPUrlSourceFilter.HttpUrl(sd.InnerText).ToString();
                     video.PlaybackOptions.Add("SD", url);
-                    result = url;
+                    result = url ;
                 }
                 XmlNode hd = xml.SelectSingleNode(@"//item/url_video_hd");
                 if (hd != null)
                 {
-                    url = new MPUrlSourceFilter.HttpUrl(hd.InnerText).ToString();
+                    url = hd.InnerText;// new MPUrlSourceFilter.HttpUrl(hd.InnerText).ToString();
                     video.PlaybackOptions.Add("HD", url);
-                    result = url;
+                    result = url ;
                 }
             }
             return result;
