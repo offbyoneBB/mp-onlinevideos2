@@ -44,7 +44,7 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             //Download the Master TV Feed List from which we get unrestricted play URLs
-            //Note: These are always unmetered. 
+            //Note: These are always metered. 
             //TODO: Play F4M manifest files which will allow unmetered playback.
 
             new System.Threading.Thread(FeedSyncWorker) { IsBackground = true, Name = "TVFeedDownload" }.Start(iViewTVFeedURL);
@@ -283,6 +283,25 @@ namespace OnlineVideos.Sites
 
         #region API Helper
 
+        private static string SanitizeXml(string message)
+        {
+            // Invalid XML will stymie the XmlDocument.Load method, so we'll check for possible problems
+
+            System.Text.StringBuilder sanitized = new System.Text.StringBuilder(message);
+
+            for (int i = 0; i < sanitized.Length; ++i)
+            {
+                if (  sanitized[i] >= 0x00 && sanitized[i] <= 0x08 ||
+                      sanitized[i] >= 0x0B && sanitized[i] <= 0x0C ||
+                      sanitized[i] >= 0x0E && sanitized[i] <= 0x19    )
+                {
+                    sanitized.Remove(i, 1);
+                }
+            }
+
+            return sanitized.ToString();
+        }
+
         private string GetiViewWebData(string url)
         {
             return GetWebData(url: iViewURLBase + url, userAgent: iViewUserAgent);
@@ -334,7 +353,11 @@ namespace OnlineVideos.Sites
             Log.Debug("ABCiView2Util: FeedSync Worker Thread Begin");
             string feedData = GetWebData(o as String);
 
-            doc.LoadXml(feedData);
+            // TVFeed has been known to contain invalid characters.
+            // Need to convert to spaces
+
+            
+            doc.LoadXml(SanitizeXml(feedData));
             XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("a", "http://namespace.feedsync");
 
