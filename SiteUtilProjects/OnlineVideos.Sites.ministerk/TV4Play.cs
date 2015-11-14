@@ -162,7 +162,7 @@ namespace OnlineVideos.Sites
                     {
                         Other = (string)result["nid"],
                         Name = (string)result["name"],
-                        Thumb = string.Format(programImageUrl, HttpUtility.UrlEncode(webApiBaseUrl), HttpUtility.UrlEncode((string)result["program_image"])),
+                        Thumb = (string)result["program_image"],
                         Description = (string)result["description"],
                         ParentCategory = parentCategory,
                         HasSubCategories = true

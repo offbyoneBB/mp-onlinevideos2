@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using OnlineVideos.Helpers;
 using System.Threading;
 using System.Runtime.InteropServices;
+using System.Drawing;
 
 namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connectors
 {
@@ -33,6 +34,8 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         private bool _isSilverlightAppStorageEnabled = true;
         private Thread  _disableAppStorageThread;
         private Thread _playPressThread;
+        private bool _isLiveTv = false;
+
         /// <summary>
         /// Perform a log in to the sky go site
         /// </summary>
@@ -143,10 +146,10 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                     }
                     break;
                 case State.PlayPageLiveTv:
-                    if (Url.Contains("/detachedLiveTv.do"))
+                    if (Url.Contains("/detachedLiveTv.do") || Url.Contains("/live/"))
                     {
                         // After 4 seconds we'll assume the page has loaded and will click in the top corner
-                        var endDate = DateTime.Now.AddSeconds(4);
+                        /*var endDate = DateTime.Now.AddSeconds(4);
                         while (DateTime.Now < endDate)
                         {
                             Application.DoEvents();
@@ -156,7 +159,22 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
                         TemporaryCursorHelper.MoveMouseTo(50, 50);
                         Application.DoEvents();
                         TemporaryCursorHelper.DoLeftMouseClick();
-                        Application.DoEvents();
+                        Application.DoEvents();*/
+
+                        // The js code to wait for the video to appear
+                        var jsCode = "setTimeout('doMaximise()', 1000);";
+                        jsCode += "function doMaximise() {";
+                        jsCode += "if(  document.getElementById('silverlightWrapper') != null) {";
+                        jsCode += "    document.getElementById('silverlightWrapper').setAttribute('style', 'position: fixed; width: 100%; height: 100%; left: 0; top: 0; background: rgba(51,51,51,0.7); z-index: 50;');";
+                        jsCode += "}";
+                        jsCode += "else setTimeout('doMaximise()', 1000);";
+                        jsCode += "}";
+
+                        //InvokeScript(jsCode);
+
+                        _playPressThread = new Thread(new ParameterizedThreadStart(ClickFullScreen));
+                        _playPressThread.Start();
+
                         HideLoading();
                         Browser.FindForm().Activate();
                         Browser.FindForm().Focus();
@@ -171,6 +189,61 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
             return EventResult.Complete();
         }
 
+        
+        private void ClickFullScreen(object obj)
+        {
+            var tries = 0;
+            var found = false;
+            var xPos = 0;
+            var yPos = 0;
+
+            while (!found && tries < 20)
+            {
+                Thread.Sleep(200);
+                Browser.FindForm().BeginInvoke((MethodInvoker)delegate()
+                {
+                    if (Browser == null || Browser.Document == null)
+                    {
+                        return;
+                    }
+
+                    var element = Browser.Document.GetElementById("silverlightWrapperObject");
+                    if (element == null)
+                    {
+                        return;
+                    }
+
+                    found = true;
+                    var pos = GetOffset(element);
+                    xPos = pos.X + Browser.Document.Window.Position.X + element.OffsetRectangle.Width - 50;// +Browser.FindForm().Left;
+                    yPos = pos.Y + Browser.Document.Window.Position.Y + element.OffsetRectangle.Height - 10;// +Browser.FindForm().Top;
+
+                });
+                tries++;
+            }
+
+            Thread.Sleep(7000);
+            TemporaryCursorHelper.MoveMouseTo(xPos, yPos);
+            TemporaryCursorHelper.DoLeftMouseClick();
+        }
+
+        public Point GetOffset(HtmlElement el)
+        {
+            //get element pos
+            Point pos = new Point(el.OffsetRectangle.Left, el.OffsetRectangle.Top);
+
+            //get the parents pos
+            HtmlElement tempEl = el.OffsetParent;
+            while (tempEl != null)
+            {
+                pos.X += tempEl.OffsetRectangle.Left;
+                pos.Y += tempEl.OffsetRectangle.Top;
+                tempEl = tempEl.OffsetParent;
+            }
+
+            return pos;
+        }
+
         /// <summary>
         /// Play the video from the start
         /// </summary>
@@ -180,8 +253,20 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connec
         {
             ProcessComplete.Finished = false;
             ProcessComplete.Success = false;
-            _currentState = State.PlayPage;
-            Url = Properties.Resources.SkyGo_VideoPlayUrl(videoToPlay);
+            if (videoToPlay.StartsWith("LTV~")) _isLiveTv = true;
+            videoToPlay = videoToPlay.Replace("LTV~", string.Empty);
+
+            if (!_isLiveTv)
+            {
+                _currentState = State.PlayPage;
+                Url = Properties.Resources.SkyGo_VideoPlayUrl(videoToPlay);
+            }
+            else
+            {
+                _currentState = State.PlayPageLiveTv;
+                Url = Properties.Resources.SkyGo_LiveTvPlayUrl(videoToPlay);
+            }
+
             return EventResult.Complete();
         }
 

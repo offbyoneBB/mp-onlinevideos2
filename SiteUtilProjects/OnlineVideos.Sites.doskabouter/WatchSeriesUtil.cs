@@ -265,21 +265,13 @@ namespace OnlineVideos.Sites
             return getOnePageVideoList(currCategory, nextVideoListPageUrl);
         }
 
-        public override bool CanSearch
-        {
-            get
-            {
-                return true;
-            }
-        }
-
         public override List<SearchResultItem> Search(string query, string category = null)
         {
             List<SearchResultItem> cats = new List<SearchResultItem>();
 
             Regex r = new Regex(@"<tr><td\svalign=""top"">\s*<a\stitle=""[^""]*""\shref=""(?<url>[^""]*)"">\s*(?:<img\ssrc=""(?<thumb>[^""]*)"">\s*)?</a>\s*</td>\s*<td\svalign=""top"">\s*<a[^>]*><b>(?<title>[^<]*)</b></a>\s*<br>\s*<b>Description:</b>(?<description>[^<]*)</td>", defaultRegexOptions);
 
-            string webData = GetWebData(baseUrl + "/search/" + query, forceUTF8: true);
+            string webData = GetWebData(String.Format(searchUrl, query), forceUTF8: true);
             Match m = r.Match(webData);
             while (m.Success)
             {
@@ -346,7 +338,7 @@ namespace OnlineVideos.Sites
         {
 
             string webData = GetWebData(url, cookies: cc, forceUTF8: true, referer: url, proxy: GetProxy());
-            Match m = Regex.Match(webData, @"<a\sclass=""myButton""\shref=""(?<url>[^""]*)""[^>]*>Click\sHere\sto\sPlay");
+            Match m = Regex.Match(webData, @"<a\sclass=""myButton\sp2""\shref=""(?<url>[^""]*)""[^>]*>Click\sHere\sto\sPlay");
             if (m.Success)
             {
                 url = m.Groups["url"].Value;

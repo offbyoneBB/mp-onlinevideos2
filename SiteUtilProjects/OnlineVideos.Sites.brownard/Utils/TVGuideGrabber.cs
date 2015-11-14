@@ -40,7 +40,8 @@ namespace OnlineVideos.Sites.Utils
             if (string.IsNullOrEmpty(guide))
                 return false;
 
-            DateTime startTime = DateTime.Now;
+            TimeZoneInfo gmt = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+            DateTime guideTime = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.Local, gmt);
             //split into individual programmes
             string[] programmes = guide.Split("\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
             foreach (string programme in programmes)
@@ -48,14 +49,6 @@ namespace OnlineVideos.Sites.Utils
                 string[] programmeInfo = programme.Split('~');
                 if (programmeInfo.Length != 23) //not a valid line
                     continue;
-
-                if (nowNext != null) //if previous was current programme, we must be on next programme
-                {
-                    nowNext.NextTitle = programmeInfo[0];
-                    nowNext.NextStart = programmeInfo[20];
-                    nowNext.NextEnd = programmeInfo[21];
-                    break; //only get Now/Next
-                }
 
                 DateTime progDate = DateTime.Parse(programmeInfo[19], new CultureInfo("en-GB")); //uk date format
                 DateTime progStartTime = progDate.Add(TimeSpan.Parse(programmeInfo[20]));
@@ -65,17 +58,30 @@ namespace OnlineVideos.Sites.Utils
                 if (progEndTime < progStartTime)
                     progEndTime = progEndTime.AddDays(1);
 
+                if (nowNext != null) //if previous was current programme, we must be on next programme
+                {
+                    nowNext.NextTitle = programmeInfo[0];
+                    nowNext.NextStart = convertToLocalTime(progStartTime, gmt);
+                    nowNext.NextEnd = convertToLocalTime(progEndTime, gmt);
+                    break; //only get Now/Next
+                }
+
                 //if programme starts before current time and ends after current time it is currently playing
-                if (progEndTime > startTime && progStartTime <= startTime)
+                if (progEndTime > guideTime && progStartTime <= guideTime)
                 {
                     nowNext = new NowNextDetails();
                     nowNext.NowTitle = programmeInfo[0];
                     nowNext.NowDescription = programmeInfo[17];
-                    nowNext.NowStart = programmeInfo[20];
-                    nowNext.NowEnd = programmeInfo[21];
+                    nowNext.NowStart = convertToLocalTime(progStartTime, gmt);
+                    nowNext.NowEnd = convertToLocalTime(progEndTime, gmt);
                 }
             }
             return nowNext != null;
+        }
+
+        static string convertToLocalTime(DateTime dateTime, TimeZoneInfo sourceTimeZone)
+        {
+            return TimeZoneInfo.ConvertTime(dateTime, sourceTimeZone, TimeZoneInfo.Local).ToShortTimeString();
         }
     }
 

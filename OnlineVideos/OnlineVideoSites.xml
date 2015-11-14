@@ -151,15 +151,6 @@
         <item key="videoListRegExFormatString"><![CDATA[http://media.mtvnservices.com/mgid:arc:episode:southparkstudios.com:{0}]]></item>
       </Configuration>
     </Site>
-    <Site name="SouthParkNL" util="SouthPark" agecheck="false" enabled="true" lang="nl">
-      <Description>All episodes now available</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.southpark.nl/episodes]]></item>
-        <item key="dynamicCategoriesRegEx"><![CDATA[href="(?<url>http://www.southpark.nl/full-episodes/season[^"]+)">(?<title>[^<]+)<]]></item>
-        <item key="videoListRegEx"><![CDATA[<a\sclass="content_eppreview"\shref="(?<VideoUrl>[^"]*)"><img\ssrc="(?<ImageUrl>[^"]*)"[^>]*></a>\s*<div\sclass="content_epmoreinfo">\s*<h4><a\shref="[^>]*>Watch\sThis\sEpisode</a></h4>\s*<div>\s*<h5>(?<Title>[^<]*)</h5>\s*<h6>Original\sAir\sDate:\s(?<Airdate>[^<]*)</h6>\s*<p>(?<Description>[^<]*)</p>]]></item>
-        <item key="forceUTF8Encoding"><![CDATA[true]]></item>
-      </Configuration>
-    </Site>
     <Site name="SouthParkDE" util="SouthPark" agecheck="false" enabled="true" lang="de">
       <Description>Alle SouthPark Folgen komplett und auf Deutsch.</Description>
       <Configuration>
@@ -409,7 +400,7 @@
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[(?<!href="/pictures".*)<li>\s*<a\s*href="(?<url>[^"]*)"\sclass=""[^>]*>\s*<span>(?<title>[^<]*)</span>\s*</a>\s*</li>]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<!\sclass="to-affix.*)<li[^>]*><a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a></li>]]></item>
-        <item key="videoListRegEx"><![CDATA[<img\ssrc="[^"]*"\swidth="[^"]*"\sheight="[^"]*"\sclass="[^"]*"\salt="[^"]*"\sdata-src="(?<ImageUrl>[^"]*)"\sdata-src-retina="(?<ImageUrl1>[^"]*)">\s*<noscript>\s*<img[^>]*>\s*</noscript>\s*<span\sclass="play-btn"><span\sclass="caret"></span></span>\s*</a>\s*<div\sclass="caption">\s*(?:<span[^>]*>[^<]*</span>)?\s*<h3><a\shref="/(video|embed|post)/(?<VideoUrl>[^/]*)[^"]*"[^>]*>(?<Title>[^<]*)</a></h3>\s*</div>\s*</article]]></item>
+        <item key="videoListRegEx"><![CDATA[<img\ssrc="[^"]*"\swidth="[^"]*"\sheight="[^"]*"\sclass="[^"]*"\salt="[^"]*"\sdata-src="(?<ImageUrl>[^"]*)"\sdata-src-retina="(?<ImageUrl1>[^"]*)">\s*<noscript>\s*<img[^>]*>\s*</noscript>\s*<span\sclass="play-btn"><span\sclass="caret"></span></span>\s*</a>\s*<div\sclass="caption">\s*(?:<span[^>]*>[^<]*</span>)?\s*<h3[^>]*><a\shref="/(video|embed|post)/(?<VideoUrl>[^/]*)[^"]*"[^>]*>(?<Title>[^<]*)</a></h3>\s*</div>]]></item>
         <item key="videoListRegExFormatString"><![CDATA[http://www.collegehumor.com/moogaloop/video/{0}.json]]></item>
         <item key="nextPageRegEx"><![CDATA[<a\sclass="next"\shref="(?<url>[^"]*)"[^>]*>&raquo;</a>]]></item>
         <item key="baseUrl"><![CDATA[http://www.collegehumor.com/videos]]></item>
@@ -528,9 +519,9 @@
       <Categories>
         <Category xsi:type="Group" name="NASA Live TV" thumb="http://www.castfvg.it/zzz/nasa/nasa_tv_01.jpg">
           <Channels>
-            <Channel name="NASA TV" thumb="http://bombus.altervista.org/online_videos/NASATV.jpg">http://playlist.yahoo.com/makeplaylist.dll?id=1369080&amp;segment=149773</Channel>
-            <Channel name="NASA Digital Media" thumb="http://www.crabtreecompany.com/img/small/digital-nasa-small-1.jpg">http://www.nasa.gov/145590main_Digital_Media.asx</Channel>
-            <Channel name="NASA Edu" thumb="http://www.savetheplanetarium.org/starphotos/whirlpool.jpg">http://www.nasa.gov/145588main_Digital_Edu.asx</Channel>
+            <Channel name="NASA TV" thumb="http://bombus.altervista.org/online_videos/NASATV.jpg">http://nasatv-lh.akamaihd.net/i/NASA_101@319270/index_400_av-p.m3u8?sd=10&amp;rebase=on</Channel>
+            <Channel name="NASA Digital Media" thumb="http://www.crabtreecompany.com/img/small/digital-nasa-small-1.jpg">http://nasatv-lh.akamaihd.net/i/NASA_103@319271/index_400_av-p.m3u8?sd=10&amp;rebase=on</Channel>
+            <Channel name="NASA Edu" thumb="http://www.savetheplanetarium.org/starphotos/whirlpool.jpg">http://nasatv-lh.akamaihd.net/i/NASA_102@319272/index_400_av-p.m3u8?sd=10&amp;rebase=on</Channel>
           </Channels>
         </Category>
         <Category xsi:type="RssLink" name="Hidden Universe HD: NASA's Spitzer Space Telescope" thumb="http://www.spitzer.caltech.edu/Media/happenings/20070516/hd.jpg">http://www.nasa.gov/rss/NASAcast_vodcast.rss</Category>
@@ -555,26 +546,23 @@
         <Category xsi:type="RssLink" name="NASA Goddard Shorts HD" thumb="http://svs.gsfc.nasa.gov/vis/iTunes/GoddardShortsHD_logo.jpg">http://svs.gsfc.nasa.gov/vis/iTunes/f0004.xml</Category>
       </Categories>
     </Site>
-    <Site name="spiegel.de" util="GenericSite" agecheck="false" enabled="true" lang="de">
-      <Description>Videos des deutschen Newsportals spiegel.de</Description>
-      <Configuration>
-        <item key="fileUrlRegEx">
-          <![CDATA[var\s+server\s*=\s*"(?<m0>[^"]+)";.*?
-spStartVideo5\([^']*'(?<m1>[^']+)']]>
-        </item>
-        <item key="fileUrlFormatString"><![CDATA[{0}{1}]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Politik und Wirtschaft">http://www.spiegel.de/video/politik_wirtschaft/index.rss</Category>
-        <Category xsi:type="RssLink" name="Panorama">http://www.spiegel.de/video/panorama/index.rss</Category>
-        <Category xsi:type="RssLink" name="Kino">http://www.spiegel.de/video/kino/index.rss</Category>
-        <Category xsi:type="RssLink" name="Kultur">http://www.spiegel.de/video/kultur/index.rss</Category>
-        <Category xsi:type="RssLink" name="Sport">http://www.spiegel.de/video/sport/index.rss</Category>
-        <Category xsi:type="RssLink" name="Wissen und Technik">http://www.spiegel.de/video/wissenschaft_technik/index.rss</Category>
-        <Category xsi:type="RssLink" name="Blogs">http://www.spiegel.de/video/blogs/index.rss</Category>
-        <Category xsi:type="RssLink" name="SpiegelTV Magazin">http://www.spiegel.de/video/spiegeltv/index.rss</Category>
-      </Categories>
-    </Site>
+	<Site name="spiegel.de" util="GenericSite" agecheck="false" enabled="true" lang="de">
+	  <Description>Videos des deutschen Newsportals spiegel.de</Description>
+	  <Configuration>
+		<item key="fileUrlRegEx"><![CDATA[var\s+server\s*=\s*"(?<m0>[^"]+)";.*?spStartVideo6\('spVideoElements',\s*\d+,\s*'(?<m1>.*?\.mp4)']]></item>
+		<item key="fileUrlFormatString"><![CDATA[{0}{1}]]></item>
+	  </Configuration>
+	  <Categories>
+		<Category xsi:type="RssLink" name="Politik und Wirtschaft">http://www.spiegel.de/video/politik_wirtschaft/index.rss</Category>
+		<Category xsi:type="RssLink" name="Panorama">http://www.spiegel.de/video/panorama/index.rss</Category>
+		<Category xsi:type="RssLink" name="Kino">http://www.spiegel.de/video/kino/index.rss</Category>
+		<Category xsi:type="RssLink" name="Kultur">http://www.spiegel.de/video/kultur/index.rss</Category>
+		<Category xsi:type="RssLink" name="Sport">http://www.spiegel.de/video/sport/index.rss</Category>
+		<Category xsi:type="RssLink" name="Wissen und Technik">http://www.spiegel.de/video/wissenschaft_technik/index.rss</Category>
+		<Category xsi:type="RssLink" name="Blogs">http://www.spiegel.de/video/blogs/index.rss</Category>
+		<Category xsi:type="RssLink" name="SpiegelTV Magazin">http://www.spiegel.de/video/spiegeltv/index.rss</Category>
+	  </Categories>
+	</Site>
     <Site name="blip.tv" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Website focused on making independent Web shows sustainable.</Description>
       <Categories>
@@ -832,20 +820,6 @@ spStartVideo5\([^']*'(?<m1>[^']+)']]>
     </Site>
     <Site name="Yle Areena" util="Yle" agecheck="false" enabled="true" lang="fi">
       <Description>Yle Areena</Description>
-    </Site>
-    <Site name="wwitv" util="GenericSite" agecheck="false" enabled="true" lang="--">
-      <Description>World Wide Internet TV  - the ultimate guide to Live TV webcasts sorted by country or genre.</Description>
-      <Configuration>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\sclass="rb"\shref="(?<url>[^"]*)"[^>]*>(?<title>[^\s]*)\s*(?<description>[^\s]*)\s*</a>]]></item>
-        <item key="videoListRegEx"><![CDATA[<a\sclass="travel"\shref="(?<VideoUrl>[^"]+)">(?<Title>[^<]+)</a>\s*</td><td[^>]*><img\ssrc="../img/[^\.]+\.gif"\swidth="50"\sheight="24"></td>\s*<td[^>]*>(?:<center>)?\s*<a\s*class="[sqm]"[^>]*>(?<Duration>[^<]+)</a>\s*</td><td[^>]*><font[^>]*>(?<Description>[^>]*)</td></tr>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[(<a\sclass="s"\shref="(?<m0>[^"]*)">)|(<param\s+Name="initParams"\s+value="VideoSource=(?<m0>[^,]+),)]]></item>
-        <item key="searchUrl"><![CDATA[http://swwitv.com/search.php?zoom_query={0}]]></item>
-        <item key="baseUrl"><![CDATA[http://wwitv.com/menu_left.htm]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Genres">http://wwitv.com/portal.htm</Category>
-        <Category xsi:type="RssLink" name="Countries">http://wwitv.com/menu_left.htm</Category>
-      </Categories>
     </Site>
     <Site name="OnlineTV by on-tv.ru" util="OnTVRu" agecheck="false" enabled="true" lang="ru">
       <Categories>

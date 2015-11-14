@@ -21,7 +21,7 @@ namespace OnlineVideos.Sites
     {
         internal String miteleBaseUrl = "http://www.mitele.es";
 
-        internal String seriesListRegex = "<a\\shref=\"(?<url>[^\"]*)\"\\stitle=\"(?<title>[^\"]*)\"\\sclass=\"ElementImageContainer\">\\s*<img\\swidth=\"195\"\\sheight=\"110\"\\salt=\"[^\"]*\"\\ssrc=\"(?<thumb>[^\"]*)\"\\s/>(?:(?!</a).)*</a>";
+        internal String seriesListRegex = "<a\\shref=\"(?<url>[^\"]*)\"\\stitle=\"(?<title>[^\"]*)\"\\sclass=\"ElementImageContainer\">\\s*<img\\swidth=\"[^\"]*\"\\sheight=\"[^\"]*\"\\salt=\"[^\"]*\"\\ssrc=\"(?<thumb>[^\"]*)\"\\s/>(?:(?!</a).)*</a>";
         internal String nextPageRegex = "<li\\sclass=\"next\"><a\\shref=\"javascript:void\\(0\\);\">Siguiente\\s&raquo;</a></li>";
         internal String nextPageProgramsARG = "pag=";
         internal String programsData = "";
@@ -265,7 +265,7 @@ namespace OnlineVideos.Sites
             Match dataConfigUrlMatch = regexMSPlayerDataConfig.Match(data);
             if (dataConfigUrlMatch.Success)
             {
-                String dataConfigUrl = dataConfigUrlMatch.Groups["dataConfigUrl"].Value;
+                String dataConfigUrl = miteleBaseUrl + dataConfigUrlMatch.Groups["dataConfigUrl"].Value;
                 String dataConfig = GetWebData(dataConfigUrl + "?c=5");
                 String mmcUrl = (String)JObject.Parse(dataConfig).SelectToken("services.mmc");
                 String mmc = GetWebData(mmcUrl);
@@ -279,7 +279,12 @@ namespace OnlineVideos.Sites
                 String videoFile = GetWebDataFromPostMitele(finalUrl, "");
                 String m3u8 = (String)JObject.Parse(videoFile).SelectToken("file");
                 String master = GetWebData(m3u8);
-                videoURL = master.Substring(master.IndexOf("http://"));
+                int inicioURL = master.IndexOf("http://");
+                if (inicioURL == -1)
+                {
+                    inicioURL = master.IndexOf("https://");
+                }
+                videoURL = master.Substring(inicioURL);
             }
             return videoURL;
         }

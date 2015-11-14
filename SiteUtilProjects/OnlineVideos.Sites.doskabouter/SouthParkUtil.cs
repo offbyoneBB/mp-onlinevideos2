@@ -4,26 +4,21 @@ using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Xml;
 using RssToolkit.Rss;
-using OnlineVideos.Subtitles;
 
 namespace OnlineVideos.Sites
 {
     public class SouthParkUtil : GenericSiteUtil
     {
+        [Category("OnlineVideosUserConfiguration"), Description("Enables subtitles")]
+        bool enableSubtitles = false;
+
         Regex episodePlayerRegEx = new Regex(@"swfobject.embedSWF\(""(?<url>[^""]*)""", RegexOptions.Compiled);
 
-        [Category("OnlineVideosUserConfiguration"), Description("Select subtitle source, for example: TvSubtitles")]
-        protected string subtitleSource = "";
-        [Category("OnlineVideosUserConfiguration"), Description("Select subtitle language preferences (; separated and ISO 639-2), for example: eng;ger")]
-        protected string subtitleLanguages = "";
-
-        private SubtitleHandler sh = null;
         private DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
 
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
-            sh = new SubtitleHandler(subtitleSource, subtitleLanguages);
         }
 
         public override int DiscoverDynamicCategories()
@@ -63,12 +58,10 @@ namespace OnlineVideos.Sites
             }
         }
 
-        private enum SouthParkCountry { Unknown, World, Nl, De };
+        private enum SouthParkCountry { Unknown, World, De };
 
         public override List<String> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
-            sh.SetSubtitleText(video, this.GetTrackingInfo, true);
-
             List<string> result = new List<string>();
 
             string data = GetWebData(video.VideoUrl);
@@ -87,9 +80,7 @@ namespace OnlineVideos.Sites
                     spc = SouthParkCountry.World;
                 else if (video.VideoUrl.ToLower().Contains(".de") || video.VideoUrl.ToLower().Contains("de."))
                     spc = SouthParkCountry.De;
-                else if (video.VideoUrl.Contains("southpark.nl"))
-                    spc = SouthParkCountry.Nl;
-                if (spc == SouthParkCountry.World || spc == SouthParkCountry.Nl || spc == SouthParkCountry.De)
+                if (spc == SouthParkCountry.World || spc == SouthParkCountry.De)
                 {
                     playerUrl = System.Web.HttpUtility.UrlEncode(playerUrl);
                     playerUrl = new Uri(new Uri(baseUrl), @"/feeds/video-player/mrss/" + playerUrl).AbsoluteUri;
@@ -121,7 +112,6 @@ namespace OnlineVideos.Sites
                     }
                 }
             }
-            sh.WaitForSubtitleCompleted();
             return result;
         }
 
@@ -148,7 +138,6 @@ namespace OnlineVideos.Sites
                     case SouthParkCountry.World:
                     case SouthParkCountry.De: 
                         swfUrl = @"http://media.mtvnservices.com/player/prime/mediaplayerprime.1.11.3.swf"; break;
-                    //case SouthParkCountry.Nl: swfUrl = String.Empty; break;
                 }*/
                 string br = bitrate + "K " + videoType;
                 if (!res.ContainsKey(br))
@@ -169,12 +158,15 @@ namespace OnlineVideos.Sites
 
             }
             string subtitleText = null;
-            XmlNode sub = doc.SelectSingleNode("//transcript/typographic[@format='vtt' and @src]");
-            if (sub != null)
+            if (enableSubtitles)
             {
-                string url = sub.Attributes["src"].Value;
-                if (!String.IsNullOrEmpty(url))
-                    subtitleText = Regex.Replace(GetWebData(url), @"(WEBVTT\s+)", ""); // Removes 'WEBVTT' word
+                XmlNode sub = doc.SelectSingleNode("//transcript/typographic[@format='vtt' and @src]");
+                if (sub != null)
+                {
+                    string url = sub.Attributes["src"].Value;
+                    if (!String.IsNullOrEmpty(url))
+                        subtitleText = Helpers.SubtitleUtils.Webvtt2SRT(GetWebData(url));
+                }
             }
             return new Tuple<Dictionary<string, string>, string>(res, subtitleText);
         }

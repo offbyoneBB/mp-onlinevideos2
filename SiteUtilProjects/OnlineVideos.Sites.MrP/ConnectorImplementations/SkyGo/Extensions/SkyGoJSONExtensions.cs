@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extensions
 {
@@ -123,7 +124,7 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
 
                 video.Thumb = item.GetImage();
                 video.Title = item.GetValue("title");
-                video.Other = "Live/" + item.GetValue("id");
+                video.Other = "LTV~" + item.GetValue("epgChannelId");
                 result.Add(video);
 
             }
@@ -143,6 +144,81 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Extens
             if (item == null) return string.Empty;
 
             return item.ToString();
+        }
+
+        /// <summary>
+        /// Get the now/next information into the description of the video
+        /// </summary>
+        /// <param name="videos"></param>
+        public static void LoadNowNext(this List<VideoInfo> videos)
+        {
+            var pool = new List<Task>();
+            try
+            {
+                // Loop through all the videos
+                foreach (var video in videos)
+                {
+                    pool.Add(Task.Factory.StartNew(() => GetNowNext(video)));
+                }
+                var timeout = OnlineVideoSettings.Instance.UtilTimeout <= 0 ? 30000 : OnlineVideoSettings.Instance.UtilTimeout * 1000;
+                Task.WaitAll(pool.ToArray(), timeout);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+            }
+        }
+
+        /// <summary>
+        /// Load the now/next info on a separate thread
+        /// </summary>
+        /// <param name="video"></param>
+        private static void GetNowNext(VideoInfo video)
+        {
+            var browser = new SkyGoBrowserSession();
+            var browserResponse = browser.LoadAsStr(Properties.Resources.SkyGo_LiveTvGetNowNextUrl(video.AssetId()));
+
+            try
+            {
+                var jsonObj = JObject.Parse(browserResponse);
+                var i = 0;
+                //video.Title = string.Empty;
+
+                foreach (var item in jsonObj["listings"][video.AssetId()].Children())
+                {
+                    var head = "Now:";
+                    var title = " Now: ";
+                    if (i > 0)
+                    {
+                        head = "\r\nNext:";
+                        title = ", Next: ";
+                    }
+
+                    var time = 0L;
+
+                    long.TryParse(item.GetValue("s"), out time);
+                    
+                    video.Title += string.Format("{0} {1} ({2})", title, item.GetValue("t"), FromUnixTime(time).ToString("HH:mm"));
+
+                    video.Description += string.Format("{0} {1} ({2}) {3}", head, item.GetValue("t"), FromUnixTime(time).ToString("HH:mm"), item.GetValue("d"));
+                    i++;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+            }
+        }
+
+        /// <summary>
+        /// Convert from unix epoch
+        /// </summary>
+        /// <param name="unixTime"></param>
+        /// <returns></returns>
+        public static DateTime FromUnixTime(long unixTime)
+        {
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            return epoch.AddSeconds(unixTime);
         }
     }
 }

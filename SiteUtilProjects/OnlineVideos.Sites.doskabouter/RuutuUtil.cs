@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web;
 using System.Linq;
+using System.Xml;
 using HtmlAgilityPack;
 
 namespace OnlineVideos.Sites
@@ -22,7 +22,28 @@ namespace OnlineVideos.Sites
         {
             if (video.VideoUrl.Contains("series"))
                 video.VideoUrl = WebCache.Instance.GetRedirectedUrl(video.VideoUrl);
-            return base.GetVideoUrl(video);
+            string data = GetWebData(GetFormattedVideoUrl(video));
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(data);
+            var vidUrl = doc.SelectSingleNode(@"//Clip/HTTPMediaFiles/HTTPMediaFile").InnerText;
+            var bitrates = doc.SelectNodes(@"//Clip/BitRateLabels/map");
+            var bitratesDict = new Dictionary<string, string>();
+
+            foreach (XmlNode bitrate in bitrates)
+                bitratesDict.Add(bitrate.Attributes["label"].Value, bitrate.Attributes["bitrate"].Value);
+
+            int p = vidUrl.IndexOf("_none");
+            int q = vidUrl.LastIndexOf('_', p - 1);
+            if (p >= 0 && q >= 0)
+            {
+                video.PlaybackOptions = new Dictionary<string, string>();
+                foreach (var bitrate in bitratesDict)
+                    video.PlaybackOptions.Add(bitrate.Key, vidUrl.Substring(0, q + 1) + bitrate.Value + vidUrl.Substring(p));
+
+            }
+            if (video.PlaybackOptions.Count == 0)
+                return vidUrl;
+            return video.PlaybackOptions.Values.First();
         }
         public override int DiscoverSubCategories(Category parentCategory)
         {
@@ -67,34 +88,37 @@ namespace OnlineVideos.Sites
                         vid = vid2.ParentNode.ParentNode;
                     else
                         vid = vid2;
-                    VideoInfo video = CreateVideoInfo();
-
-                    video.Title = vid.SelectSingleNode(".//h4[@itemprop='name']").InnerText;
-                    video.Description = getDescription(vid);
                     var node2 = vid.SelectSingleNode(".//a[@href]");
-                    video.VideoUrl = FormatDecodeAbsolutifyUrl(baseUrl, node2.Attributes["href"].Value, "", UrlDecoding.None);
-                    video.Thumb = getImageUrl(vid);
-                    var airDateNode = vid.SelectSingleNode(@".//div[@class='list-item-prefix']");
-                    if (airDateNode != null)
-                        video.Airdate = Helpers.StringUtils.PlainTextFromHtml(airDateNode.InnerText);
-
-                    var kausiNode = vid.SelectSingleNode(@".//div[contains(@class,'field-name-field-season')]");
-                    if (kausiNode != null)
+                    if (node2 != null)
                     {
-                        string kausi = kausiNode.ChildNodes.Last().InnerText;
-                        if (!String.IsNullOrEmpty(kausi))
-                            video.Title += " kausi " + kausi;
-                    }
+                        VideoInfo video = CreateVideoInfo();
 
-                    var jaksoNode = vid.SelectSingleNode(@".//div[contains(@class,'field-name-field-episode')]");
-                    if (jaksoNode != null)
-                    {
-                        string jakso = jaksoNode.ChildNodes.Last().InnerText;
-                        if (!String.IsNullOrEmpty(jakso))
-                            video.Title += " jakso " + jakso;
+                        video.Title = vid.SelectSingleNode(".//h4[@itemprop='name']").InnerText;
+                        video.Description = getDescription(vid);
+                        video.VideoUrl = FormatDecodeAbsolutifyUrl(baseUrl, node2.Attributes["href"].Value, "", UrlDecoding.None);
+                        video.Thumb = getImageUrl(vid);
+                        var airDateNode = vid.SelectSingleNode(@".//div[@class='list-item-prefix']");
+                        if (airDateNode != null)
+                            video.Airdate = Helpers.StringUtils.PlainTextFromHtml(airDateNode.InnerText);
+
+                        var kausiNode = vid.SelectSingleNode(@".//div[contains(@class,'field-name-field-season')]");
+                        if (kausiNode != null)
+                        {
+                            string kausi = kausiNode.ChildNodes.Last().InnerText;
+                            if (!String.IsNullOrEmpty(kausi))
+                                video.Title += " kausi " + kausi;
+                        }
+
+                        var jaksoNode = vid.SelectSingleNode(@".//div[contains(@class,'field-name-field-episode')]");
+                        if (jaksoNode != null)
+                        {
+                            string jakso = jaksoNode.ChildNodes.Last().InnerText;
+                            if (!String.IsNullOrEmpty(jakso))
+                                video.Title += " jakso " + jakso;
+                        }
+                        video.Title = cleanup(video.Title);
+                        result.Add(video);
                     }
-                    video.Title = cleanup(video.Title);
-                    result.Add(video);
                 }
             }
             return result;
@@ -128,7 +152,7 @@ namespace OnlineVideos.Sites
             {
                 Category sub = new Category()
                 {
-                    Name = node.SelectSingleNode(@"./h2").InnerText,
+                    Name = node.SelectSingleNode(@"./h2").InnerText.Trim(),
                     ParentCategory = parentCat,
                     HasSubCategories = true,
                     SubCategories = new List<Category>()
@@ -193,7 +217,7 @@ namespace OnlineVideos.Sites
                 {
                     Category cat = new Category()
                         {
-                            Name = node.SelectSingleNode(".//h2[@class='header-title']").InnerText,
+                            Name = node.SelectSingleNode(".//h2[@class='header-title']").InnerText.Trim(),
                             ParentCategory = parentCategory,
                             Other = videos
                         };

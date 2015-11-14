@@ -44,15 +44,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BFMBusinessUtil.cs" />
+    <Compile Include="BFMTVUtil.cs" />
     <Compile Include="CanalPlusUtil.cs" />
     <Compile Include="AllocineUtil.cs" />
     <Compile Include="ClipzikUtil.cs" />
+    <Compile Include="Helper\M3U.cs" />
+    <Compile Include="IteleUtil.cs" />
     <Compile Include="NRJ12Util.cs" />
     <Compile Include="Direct8Util.cs" />
     <Compile Include="GulliUtil.cs" />
+    <Compile Include="SokrostreamUtil.cs" />
     <Compile Include="TMCUtil.cs" />
     <Compile Include="PluzzUtil.cs" />
     <Compile Include="TF1Util.cs" />
+    <Compile Include="TVClubUtil.cs" />
     <Compile Include="W9ReplayUtil.cs" />
     <Compile Include="M6ReplayUtil.cs" />
     <Compile Include="TaratataUtil.cs" />
@@ -66,7 +72,11 @@
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetName).dll "C:\ProgramData\Team MediaPortal\MP2-Client\OnlineVideos\SiteUtils"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

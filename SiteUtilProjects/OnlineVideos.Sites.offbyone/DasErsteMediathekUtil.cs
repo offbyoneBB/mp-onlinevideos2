@@ -179,12 +179,6 @@ namespace OnlineVideos.Sites
 						});
 					}
 				}
-
-				result.Add(new VideoInfo()
-				{
-					Title = "Das Erste",
-                    VideoUrl = "http://daserste_live-lh.akamaihd.net/z/daserste_de@91204/manifest.f4m?hdcore=2.11.4&g=" + Helpers.StringUtils.GetRandomLetters(12)
-				});
 			}
 			else if (myBaseUri.AbsoluteUri.Contains("sendungVerpasst"))
 			{
@@ -215,6 +209,10 @@ namespace OnlineVideos.Sites
 					}
 				}
 			}
+            else if (myBaseUri.AbsoluteUri.Contains("/Video?"))
+            {
+                return new List<VideoInfo>() { new VideoInfo() { Title = category.Name, VideoUrl = myBaseUri.AbsoluteUri, Description = category.Description, Thumb = category.Thumb } };
+            }
 			else
 			{
 				var mainDiv = baseDoc.DocumentNode.Descendants("div").LastOrDefault(div => div.GetAttributeValue("class", "").Contains("modMini")).ParentNode;
@@ -303,66 +301,62 @@ namespace OnlineVideos.Sites
 			return GetVideosFromDiv(mainDiv, myBaseUri).ConvertAll(v => v as SearchResultItem);
 		}
 
-		public override String GetVideoUrl(VideoInfo video)
-		{
-			if (video.VideoUrl.StartsWith("http://daserste_live-lh.akamaihd.net"))
-				return video.VideoUrl;
-			else
-			{
-				var baseDoc = GetWebData<HtmlDocument>(video.VideoUrl);
-				var mediaDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("data-ctrl-player", "") != "");
-				if (mediaDiv != null)
-				{
-					var configUrl = new Uri(new Uri(video.VideoUrl), JObject.Parse(HttpUtility.HtmlDecode(mediaDiv.GetAttributeValue("data-ctrl-player", ""))).Value<string>("mcUrl")).AbsoluteUri;
-					var mediaJson = GetWebData<JObject>(configUrl);
-					video.PlaybackOptions = new Dictionary<string, string>();
-					foreach (var media in mediaJson["_mediaArray"].SelectMany(m => m["_mediaStreamArray"]))
-					{
-						var quali = ((JValue)media["_quality"]).Type == JTokenType.Integer ? ((VideoQuality)media.Value<int>("_quality")).ToString() : "HD";
-						if (!media.Value<bool>("flashUrl"))
-						{
-							var url = media["_stream"] is JArray ? media["_stream"][0].Value<string>() : media.Value<string>("_stream");
-							if (!url.EndsWith(".smil"))
-							{
-								if (Uri.IsWellFormedUriString(url, UriKind.Absolute))
-								{
-									if (url.EndsWith("f4m"))
-                                        url += "?g=" + Helpers.StringUtils.GetRandomLetters(12) + "&hdcore=3.3.0";
-									video.PlaybackOptions[quali] = url;
-								}
-							}
-						}
-						else
-						{
-							if (mediaJson.Value<bool>("_isLive"))
-							{
-								var server = media.Value<string>("_server");
-								var stream = media.Value<string>("_stream");
-								string url = "";
-								if (string.IsNullOrEmpty(stream))
-								{
-									string guessedStream = server.Substring(server.LastIndexOf('/') + 1);
-									url = new MPUrlSourceFilter.RtmpUrl(server) { Live = true, LiveStream = true, Subscribe = guessedStream, PageUrl = video.VideoUrl }.ToString();
-								}
-								else if (stream.Contains('?'))
-								{
-									var tcUrl = server.TrimEnd('/') + stream.Substring(stream.IndexOf('?'));
-									var app = new Uri(server).AbsolutePath.Trim('/') + stream.Substring(stream.IndexOf('?'));
-									var playPath = stream;
-									url = new MPUrlSourceFilter.RtmpUrl(tcUrl) { App = app, PlayPath = playPath, Live = true, PageUrl = video.VideoUrl, Subscribe = playPath }.ToString();
-								}
-								else
-								{
-									url = new MPUrlSourceFilter.RtmpUrl(server + "/" + stream) { Live = true, LiveStream = true, Subscribe = stream, PageUrl = video.VideoUrl }.ToString();
-								}
-								if (!video.PlaybackOptions.ContainsKey(quali)) video.PlaybackOptions[quali] = url;
-							}
-						}
-					}
-				}
-			}
-			return video.PlaybackOptions.Select(p => p.Value).LastOrDefault();
-		}
+        public override String GetVideoUrl(VideoInfo video)
+        {
+            var baseDoc = GetWebData<HtmlDocument>(video.VideoUrl);
+            var mediaDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("data-ctrl-player", "") != "");
+            if (mediaDiv != null)
+            {
+                var configUrl = new Uri(new Uri(video.VideoUrl), JObject.Parse(HttpUtility.HtmlDecode(mediaDiv.GetAttributeValue("data-ctrl-player", ""))).Value<string>("mcUrl")).AbsoluteUri;
+                var mediaJson = GetWebData<JObject>(configUrl);
+                video.PlaybackOptions = new Dictionary<string, string>();
+                foreach (var media in mediaJson["_mediaArray"].SelectMany(m => m["_mediaStreamArray"]))
+                {
+                    var quali = ((JValue)media["_quality"]).Type == JTokenType.Integer ? ((VideoQuality)media.Value<int>("_quality")).ToString() : "HD";
+
+                    var url = media["_stream"] is JArray ? media["_stream"][0].Value<string>() : media.Value<string>("_stream");
+
+                    if (url.EndsWith(".smil")) url = GetStreamUrlFromSmil(url);
+
+                    if (Uri.IsWellFormedUriString(url, UriKind.Absolute))
+                    {
+                        if (url.EndsWith("f4m"))
+                            url += "?g=" + Helpers.StringUtils.GetRandomLetters(12) + "&hdcore=3.8.0";
+                        video.PlaybackOptions[quali] = url;
+                    }
+                    else if (mediaJson.Value<bool>("_isLive"))
+                    {
+                        var server = media.Value<string>("_server");
+                        var stream = media.Value<string>("_stream");
+                        url = "";
+                        if (string.IsNullOrEmpty(stream))
+                        {
+                            string guessedStream = server.Substring(server.LastIndexOf('/') + 1);
+                            url = new MPUrlSourceFilter.RtmpUrl(server) { Live = true, LiveStream = true, Subscribe = guessedStream, PageUrl = video.VideoUrl }.ToString();
+                        }
+                        else if (stream.Contains('?'))
+                        {
+                            var tcUrl = server.TrimEnd('/') + stream.Substring(stream.IndexOf('?'));
+                            var app = new Uri(server).AbsolutePath.Trim('/') + stream.Substring(stream.IndexOf('?'));
+                            var playPath = stream;
+                            url = new MPUrlSourceFilter.RtmpUrl(tcUrl) { App = app, PlayPath = playPath, Live = true, PageUrl = video.VideoUrl, Subscribe = playPath }.ToString();
+                        }
+                        else
+                        {
+                            url = new MPUrlSourceFilter.RtmpUrl(server + "/" + stream) { Live = true, LiveStream = true, Subscribe = stream, PageUrl = video.VideoUrl }.ToString();
+                        }
+                        if (!video.PlaybackOptions.ContainsKey(quali)) video.PlaybackOptions[quali] = url;
+                    }
+                }
+            }
+            return video.PlaybackOptions.Select(p => p.Value).LastOrDefault();
+        }
+
+        string GetStreamUrlFromSmil(string smilUrl)
+        {
+            var doc = GetWebData<System.Xml.Linq.XDocument>(smilUrl);
+            return doc.Descendants("meta").FirstOrDefault().Attribute("base").Value + doc.Descendants("video").FirstOrDefault().Attribute("src").Value;
+        }
 
     }
 }

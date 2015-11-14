@@ -27,8 +27,16 @@ namespace OnlineVideos.Hoster
 
             Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
             string data = GetWebData(url, referer: refUrl);
-            Regex rgx = new Regex(@"video_link:\s*'.*?oid=(?<oid>\d+).*?[^o]id=(?<id>\d+).*?hash=(?<hash>[0-9a-f]*)");
+            Regex rgx = new Regex(@"window.atob\(\\'(?<base64>.*)\\'\)");
             Match m = rgx.Match(data);
+            if (m.Success)
+            {
+                string base64 = m.Groups["base64"].Value;
+                byte[] bytes = Convert.FromBase64String(base64);
+                data = Encoding.UTF8.GetString(bytes);
+            }
+            rgx = new Regex(@"video_link:\s*'.*?oid=(?<oid>\d+).*?[^o]id=(?<id>\d+).*?hash=(?<hash>[0-9a-f]*)");
+            m = rgx.Match(data);
             if (m.Success)
             {
                 string format = @"https://api.vk.com/method/video.getEmbed?oid={0}&video_id={1}&embed_hash={2}&callback=callbackFunc";
@@ -37,10 +45,18 @@ namespace OnlineVideos.Hoster
             }
             else
             {
+                rgx = new Regex(@"<iframe.*src=""(?<url>[^""]*).*?</iframe");
+                m = rgx.Match(data);
+                if (m.Success)
+                {
+                    data = GetWebData(m.Groups["url"].Value, referer: url);
+                }
+
                 rgx = new Regex(@"{file:""(?<url>[^""]*).*?label:""(?<label>[^""]*).*?type:\s*?""mp4""");
                 foreach (Match match in rgx.Matches(data))
                 {
-                    playbackOptions.Add(match.Groups["label"].Value, match.Groups["url"].Value);
+                    string vUrl = match.Groups["url"].Value;
+                    playbackOptions.Add(match.Groups["label"].Value, vUrl);
                 }
             }
             string subUrl = "";
@@ -66,8 +82,10 @@ namespace OnlineVideos.Hoster
             {
                 try
                 {
-                    data = WebCache.Instance.GetWebData(subUrl);
-                    subtitleText = data.Replace("WEBVTT\r\n\r\n", "");
+                    subtitleText = WebCache.Instance.GetWebData(subUrl, forceUTF8: true);
+                    int index = subtitleText.IndexOf("WEBVTT\r\n\r\n");
+                    if (index >= 0)
+                        subtitleText = subtitleText.Substring(index).Replace("WEBVTT\r\n\r\n", "");
                 }
                 catch { }
             }

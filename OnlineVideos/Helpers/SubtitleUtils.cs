@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 
@@ -38,17 +40,32 @@ namespace OnlineVideos.Helpers
 
         public static string Webvtt2SRT(String webvttContent)
         {
-            String srtResult = webvttContent;
-            Int32 srtPartLineNumber = 0;
-            srtResult = Regex.Replace(srtResult, @"(WEBVTT\s+)(\d{2}:)", "$2"); // Removes 'WEBVTT' word
-            srtResult = Regex.Replace(srtResult, @"(\d{2}:\d{2}:\d{2})\.(\d{3}\s+)-->(\s+\d{2}:\d{2}:\d{2})\.(\d{3}\s*)", match =>
+            StringBuilder sb = new StringBuilder();
+
+            using (StringReader sr = new StringReader(webvttContent))
             {
-                srtPartLineNumber++;
-                return srtPartLineNumber.ToString() + Environment.NewLine +
-                Regex.Replace(match.Value, @"(\d{2}:\d{2}:\d{2})\.(\d{3}\s+)-->(\s+\d{2}:\d{2}:\d{2})\.(\d{3}\s*)", "$1,$2-->$3,$4");
-                // Writes '00:00:19.620' instead of '00:00:19,620'
-            }); // Writes Srt section numbers for each section
-            return Regex.Replace(srtResult, @"< *br */*>", "\r\n", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                string line;
+                bool lastIsEmpty = true;
+                int cueNumber = 0;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    if (!line.StartsWith("WEBVTT"))
+                    {
+                        if (line.Contains("-->"))
+                        {
+                            if (lastIsEmpty)
+                                sb.AppendLine((++cueNumber).ToString());
+                            line = Regex.Replace(line, @"(\d{2}:\d{2}:\d{2})\.(\d{3}\s+)-->(\s+\d{2}:\d{2}:\d{2})\.(\d{3}\s*)", "$1,$2-->$3,$4");// Writes '00:00:19,620' instead of '00:00:19.620'
+                        }
+                        else
+                            line = Regex.Replace(line, @"< *br */*>", "\r\n", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                        sb.AppendLine(line);
+                        lastIsEmpty = String.IsNullOrEmpty(line);
+                    }
+                }
+            }
+
+            return sb.ToString();
         }
 
         public static string SAMI2SRT(string SAMITxt)

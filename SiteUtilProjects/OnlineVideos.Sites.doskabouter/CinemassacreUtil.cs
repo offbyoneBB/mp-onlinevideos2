@@ -81,8 +81,7 @@ namespace OnlineVideos.Sites
         {
             Uri uri = new Uri(url);
             foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
-                if (uri.Host.ToLower().Contains(hosterUtil.GetHosterUrl().ToLower()))
-                //if (hosterUtil.Matches(uri.Host)) enable after next release of onlinevideos
+                if (hosterUtil.Matches(uri.Host))
                 {
                     Dictionary<string, string> options = hosterUtil.GetPlaybackOptions(url);
                     if (options != null && options.Count > 0)
@@ -274,7 +273,7 @@ namespace OnlineVideos.Sites
                     thisUrl = m3u8url + "playlist.m3u8";
                     data = GetWebData(thisUrl);
                     video.PlaybackOptions = new Dictionary<string, string>();
-                    Match m3 = Regex.Match(data, @"\#EXT-X-STREAM-INF:PROGRAM-ID=[^,]*,BANDWIDTH=[^,]*,RESOLUTION=(?<resolution>[^\s]*)\s*(?<url>[^\s]*)\s");
+                    Match m3 = Regex.Match(data, @"\#EXT-X-STREAM-INF:BANDWIDTH=[^,]*,RESOLUTION=(?<resolution>[^\s]*)\s*(?<url>[^\s]*)\s");
                     while (m3.Success)
                     {
                         string resolution = m3.Groups["resolution"].Value;

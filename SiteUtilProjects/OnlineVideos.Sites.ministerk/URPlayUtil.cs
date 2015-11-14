@@ -215,7 +215,7 @@ namespace OnlineVideos.Sites
                         var img = a.Descendants("img");
                         if (img != null && img.First() != null)
                         {
-                            video.Thumb = img.First().GetAttributeValue("src", "");
+                            video.Thumb = img.First().GetAttributeValue("data-src", "");
                             video.Title = img.First().GetAttributeValue("alt", "");
                         }
                         var dd = a.Descendants("dd");
@@ -251,7 +251,7 @@ namespace OnlineVideos.Sites
             var data = GetWebData(video.VideoUrl);
             var urlSD = string.Empty;
             var urlHD = string.Empty;
-            Regex rgx = new Regex(@"^urPlayer.init\((.*)\);", RegexOptions.Multiline);
+            Regex rgx = new Regex(@"urPlayer.init\((.*)\);", RegexOptions.Multiline);
             Match m = rgx.Match(data);
             video.PlaybackOptions = new Dictionary<string, string>();
             if (m != null)
