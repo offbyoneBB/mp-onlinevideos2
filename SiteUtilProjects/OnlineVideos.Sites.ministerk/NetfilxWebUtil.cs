@@ -39,6 +39,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         protected bool rememberLogin = true;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show loading spinner"), Description("Show the loading spinner in the Browser Player")]
         protected bool showLoadingSpinner = true;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable Netflix Info/Stat OSD"), Description("Enable info and statistics OSD. Toggle OSD with 0 when video is playing. Do not enable this if you need to enter 0 in parental control pin")]
+        protected bool enableNetflixOsd = true;
 
         protected const uint noOfItems = 48;
 
@@ -703,7 +705,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         string IBrowserSiteUtil.UserName
         {
-            get { return username + "¥" + ProfileToken + (showLoadingSpinner ? "SHOWLOADING" : "") + (rememberLogin ? "REMEMBERLOGIN" : ""); }
+            get { return username + "¥" + ProfileToken + (showLoadingSpinner ? "SHOWLOADING" : "") + (rememberLogin ? "REMEMBERLOGIN" : "") + (enableNetflixOsd ? "ENABLENETFLIXOSD" : ""); }
         }
 
         string IBrowserSiteUtil.Password
