@@ -108,7 +108,11 @@ namespace OnlineVideos.Hoster
 
                 string[] FmtUrlMap = Items["url_encoded_fmt_stream_map"].Split(',');
 				string[] FmtList = Items["fmt_list"].Split(',');
-                for (int i = 0; i < FmtList.Length; i++) qualities.Add(new KeyValuePair<string[], string>(FmtList[i].Split('/'), FmtUrlMap[i]));
+				for (int i = 0; i < FmtList.Length; i++)
+				  if (i < FmtUrlMap.Length)
+				  {
+					qualities.Add(new KeyValuePair<string[], string>(FmtList[i].Split('/'), FmtUrlMap[i]));
+				  }				
 				/*
 				string[] AdaptiveFmtUrlMap = Items["adaptive_fmts"].Split(',');
 				for (int i = 0; i < AdaptiveFmtUrlMap.Length; i++)

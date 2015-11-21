@@ -26,13 +26,13 @@ namespace OnlineVideos.Sites
         {
             Settings.Categories.Clear();
             RssLink cat = null;
-            //cat = new RssLink();
-            //cat.Url = channelCatalog.Replace("%chaine%", "la_1ere"); ;
-            //cat.Name = "La 1ère";
-            //cat.Other = "root";
-            //cat.Thumb = "http://www.francetelevisions.fr/sites/default/files/images/2015/07/08/F1.png";
-            //cat.HasSubCategories = true;
-            //Settings.Categories.Add(cat);
+            cat = new RssLink();
+            cat.Url = channelCatalog.Replace("%chaine%", "la_1ere_reunion%2Cla_1ere_guyane%2Cla_1ere_polynesie%2Cla_1ere_martinique%2Cla_1ere_mayotte%2Cla_1ere_nouvellecaledonie%2Cla_1ere_guadeloupe%2Cla_1ere_wallisetfutuna%2Cla_1ere_saintpierreetmiquelon"); ;
+            cat.Name = "La 1ère";
+            cat.Other = "root";
+            cat.Thumb = "http://www.francetelevisions.fr/sites/default/files/images/2015/07/08/F1.png";
+            cat.HasSubCategories = true;
+            Settings.Categories.Add(cat);
 
             cat = new RssLink();
             cat.Url = channelCatalog.Replace("%chaine%", "france2"); ;
@@ -234,27 +234,6 @@ namespace OnlineVideos.Sites
                 video.PlaybackOptions.Add("HD", telem.ToList()[telem.Count() - 1].Path);
             }
             return telem.Last().Path;
-
-
-            //string webdata = GetWebData(surl);
-            //string rgxstring = @"http:\/\/(?<url>[\w.,?=\/-]*)";
-            //Regex rgx = new Regex(rgxstring);
-            //var tresult= rgx.Matches(webdata);
-            //List<string> tUrl = new List<string>();
-            //foreach (Match match in tresult) 
-            //{
-            //    tUrl.Add( @"http://"+match.Groups["url"]);
-            //}
-
-            //if (tUrl.Count > 3)
-            //{
-            //    video.PlaybackOptions = new Dictionary<string, string>();
-            //    video.PlaybackOptions.Add("SD", tUrl[tUrl.Count - 3]);
-            //    video.PlaybackOptions.Add("HD", tUrl[tUrl.Count - 2]);
-            //    video.PlaybackOptions.Add("UHD", tUrl[tUrl.Count - 1]);
-            //}
-
-            //return tUrl[tUrl.Count -1];
         }
 
         private List<VideoInfo> GetVideo(string webData)
