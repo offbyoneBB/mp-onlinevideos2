@@ -351,55 +351,22 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private List<Category> GetKidsHomeCategories(Category parentCategory)
         {
             List<Category> cats = new List<Category>();
-            string data = MyGetWebData(kidsUrl, referer: kidsUrl);
-            data = MyGetWebData(kidsUrl, referer: kidsUrl);
-            HtmlDocument doc = new HtmlDocument();
-            doc.LoadHtml(data);
-
-            foreach (HtmlNode row in doc.DocumentNode.SelectNodes("//div[contains(@class,'mrow')]"))
+            string data = MyGetWebData(kidsUrl, forceUTF8: true);
+            //With image: @"<div class=""mrow"".*?href=""/kid/(?<type>[^/]*)/(?<url>[^""]*)"">(?<title>[^<]*).*?src=""(?<img>[^""]*)"
+            Regex rgx = new Regex(@"<div class=""mrow"".*?href=""/kid/(?<type>[^/]*)/(?<url>[^""]*)"">(?<title>[^<]*)");
+            foreach (Match m in rgx.Matches(data))
             {
-                try
+                RssLink cat = new RssLink() { Name = HttpUtility.HtmlDecode(m.Groups["title"].Value), Url = m.Groups["url"].Value, ParentCategory = parentCategory, HasSubCategories = true };
+                if (m.Groups["type"].Value == "category")
                 {
-                    RssLink cat = null;
-                    HtmlNode link = row.SelectSingleNode("div/h3/a");
-                    if (link != null)
-                    {
-                        string url = link.GetAttributeValue("href", "");
-                        url = HttpUtility.UrlDecode(url);
-                        string queryString = new System.Uri(url).Query;
-                        NameValueCollection queryDictionary = HttpUtility.ParseQueryString(queryString);
-                        if (url.Contains("similars"))
-                        {
-                            url = queryDictionary["d"];
-                            url = Regex.Replace(url, "[^0-9]", string.Empty);
-                            cat = new RssLink() { Name = link.InnerText.Trim(), Url = url, ParentCategory = parentCategory, HasSubCategories = true };
-                            cat.Other = (Func<List<Category>>)(() => GetSubCategories(cat, "similars", 0));
-                        }
-                        else if (url.Contains("agid"))
-                        {
-                            url = queryDictionary["agid"];
-                            cat = new RssLink() { Name = link.InnerText.Trim(), Url = url, ParentCategory = parentCategory, HasSubCategories = true };
-                            cat.Other = (Func<List<Category>>)(() => GetSubCategories(cat, "genres", 0));
-                        }
-                        if (cat != null)
-                        {
-                            // Some nice covers for the kids...
-                            try
-                            {
-                                HtmlNode img = row.SelectSingleNode(".//img[contains(@class,'boxShotImg')]");
-                                if (img != null)
-                                {
-                                    cat.Thumb = img.GetAttributeValue("src", "");
-                                    if (string.IsNullOrWhiteSpace(cat.Thumb))
-                                        cat.Thumb = img.GetAttributeValue("hsrc", "");
-                                }
-                            }
-                            catch { }
-                            cats.Add(cat);
-                        }
-                    }
+                    cat.Other = (Func<List<Category>>)(() => GetSubCategories(cat, "genres", 0));
+                    cats.Add(cat);
                 }
-                catch { }
+                else if (m.Groups["type"].Value == "similars")
+                {
+                    cat.Other = (Func<List<Category>>)(() => GetSubCategories(cat, "similars", 0));
+                    cats.Add(cat);
+                }
             }
             parentCategory.SubCategoriesDiscovered = true;
             return cats;
