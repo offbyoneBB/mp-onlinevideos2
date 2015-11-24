@@ -320,12 +320,12 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
             else
             {
+                RssLink kids = new RssLink() { Name = "Kids Home", HasSubCategories = true, ParentCategory = parentCategory };
+                kids.Other = (Func<List<Category>>)(() => GetKidsHomeCategories(kids));
+                cats.Add(kids);
                 RssLink browse = new RssLink() { Name = "Browse Kids Genres", HasSubCategories = true, ParentCategory = parentCategory };
                 browse.Other = (Func<List<Category>>)(() => GetKidsGenreListCategories(browse));
                 cats.Add(browse);
-                RssLink kids = new RssLink() { Name = "Kids", HasSubCategories = true, ParentCategory = parentCategory };
-                kids.Other = (Func<List<Category>>)(() => GetKidsHomeCategories(kids));
-                cats.Add(kids);
             }
 
             //Do not remember profile cats, need to be loaded every time
