@@ -50,7 +50,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         private string loginUrl = @"https://www.netflix.com/Login";
         private string homeUrl = @"https://www.netflix.com/";
-        private string kidsUrl = @"https://www.netflix.com/Kids";
+        private string kidsUrl = @"https://www.netflix.com/kid";
         private string playerUrl = @"http://www.netflix.com/watch/{0}";
         private string loginPostData = @"authURL={0}&email={1}&password={2}&RememberMe=on";
         private string switchProfileUrl = @"{0}/{1}/profiles/switch?switchProfileGuid={2}";
@@ -58,10 +58,10 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         #endregion
 
         #region GetWebData
-        private string MyGetWebData(string url, string postData = null, string referer = null, string contentType = null)
+        private string MyGetWebData(string url, string postData = null, string referer = null, string contentType = null, bool forceUTF8 = false)
         {
             //Never cache, problems with profiles sometimes
-            string data = HboNordic.HboWebCache.Instance.GetWebData(url, postData: postData, cookies: Cookies, referer: referer, contentType: contentType, cache: false);
+            string data = HboNordic.HboWebCache.Instance.GetWebData(url, postData: postData, cookies: Cookies, referer: referer, contentType: contentType, cache: false, forceUTF8: forceUTF8);
             //Side effects
             //AuthUrl
             Regex rgx = new Regex(@"""authURL"":""(?<authURL>[^""]*)");
@@ -336,12 +336,11 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private List<Category> GetKidsGenreListCategories(Category parentCategory)
         {
             List<Category> cats = new List<Category>();
-            string data = MyGetWebData(kidsUrl, referer: kidsUrl);
-            data = MyGetWebData(kidsUrl, referer: kidsUrl);
-            Regex rgx = new Regex(@"<li><a href=""http://www.netflix.com/KidsAltGenre\?agid=(?<url>[^""]*)"">(?<title>[^<]*)");
+            string data = MyGetWebData(kidsUrl, forceUTF8: true);
+            Regex rgx = new Regex(@"<li><a href=""/kid/category/(?<url>[^""]*)"">(?<title>[^<]*)");
             foreach (Match m in rgx.Matches(data))
             {
-                RssLink cat = new RssLink() { Name = m.Groups["title"].Value, Url = m.Groups["url"].Value, ParentCategory = parentCategory, HasSubCategories = true  };
+                RssLink cat = new RssLink() { Name = HttpUtility.HtmlDecode(m.Groups["title"].Value), Url = m.Groups["url"].Value, ParentCategory = parentCategory, HasSubCategories = true  };
                 cat.Other = (Func<List<Category>>)(() => GetSubCategories(cat, "genres", 0));
                 cats.Add(cat);
             }
