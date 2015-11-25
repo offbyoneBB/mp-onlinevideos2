@@ -671,9 +671,30 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             detailsCat.Other = (Func<List<Category>>)(() => GetDetailsCategories(detailsCat));
             cats.Add(detailsCat);
 
+            //Manage My List
+            RssLink myListCat = new RssLink() { Thumb = parentCategory.Thumb, HasSubCategories = true, ParentCategory = parentCategory, Url = id };
+            myListCat.Name = "Add/Remove from My List";
+            myListCat.Other = (Func<List<Category>>)(() => AddToMyListCategories(myListCat));
+            cats.Add(myListCat);
+            
 
             parentCategory.SubCategoriesDiscovered = true;
             return cats;
+        }
+
+        private List<Category> AddToMyListCategories(Category parentCategory)
+        {
+            bool inQ = (parentCategory.ParentCategory as NetflixCategory).InQueue;
+            string addRemove = inQ ? "remove" : "add";
+            string videoId = (parentCategory.ParentCategory as NetflixCategory).Url;
+            string title = parentCategory.ParentCategory.Name;
+            string data = MyGetWebData(ShaktiApi + "/" + BuildId + "/playlistop?fallbackEsn=NFCDSF-01-",
+                postData: @"{""operation"":""" + addRemove + @""",""videoId"":" + videoId + @",""trackId"":0,""authURL"":""" + latestAuthUrl + @"""}",
+                contentType: "application/json");
+            JObject json = (JObject)JsonConvert.DeserializeObject(data);
+            //Do something with the result json...
+            (parentCategory.ParentCategory as NetflixCategory).InQueue = !inQ;
+            throw new OnlineVideosException(title + (inQ ? " removed from" : " added to") + " My List");
         }
 
         #endregion
