@@ -390,6 +390,134 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             return cats;
         }
 
+        private List<Category> GetDetailsCategories(Category parentCategory)
+        {
+            List<Category> cats = new List<Category>();
+            string id = (parentCategory as RssLink).Url;
+            string data = MyGetWebData(ShaktiApi + "/" + BuildId + "/pathEvaluator?withSize=true&materialize=true&model=bale&esn=www",
+                postData: @"{""paths"":[[""videos""," + id + @",[""creators"",""cast"",""directors"",""tags"",""genres""],{""from"":0,""to"":49},[""id"",""name""]]],""authURL"":""" + latestAuthUrl + @"""}",
+                contentType: "application/json");
+            JObject json = (JObject)JsonConvert.DeserializeObject(data);
+
+            // Creators
+            Category creators = new Category() 
+            {
+                SubCategories = new List<Category>(),
+                HasSubCategories = true,
+                SubCategoriesDiscovered = true,
+                ParentCategory = parentCategory
+            };
+            foreach (JToken token in json["value"]["videos"][id]["creators"].Where(t => t.Values().Count() == 2))
+            {
+                JToken item = token.First();
+                string person = token.Values().Last().ToString();
+                RssLink cat = new RssLink() { ParentCategory = creators, Name = json["value"]["person"][person]["name"].Value<string>(), Url = person, HasSubCategories = true };
+                cat.Other = (Func<List<Category>>)(() => GetSubCategories(cat, "person", 0));
+                creators.SubCategories.Add(cat);
+            }
+            if (creators.SubCategories.Count > 0)
+            {
+                creators.Name = creators.SubCategories.Count > 1 ? "Creators" : "Creator";
+                creators.Description = String.Join(", ", creators.SubCategories.Select(i => i.Name));
+                cats.Add(creators);
+            }
+
+            // Directors
+            Category directors = new Category()
+            {
+                SubCategories = new List<Category>(),
+                HasSubCategories = true,
+                SubCategoriesDiscovered = true,
+                ParentCategory = parentCategory
+            };
+            foreach (JToken token in json["value"]["videos"][id]["directors"].Where(t => t.Values().Count() == 2))
+            {
+                JToken item = token.First();
+                string person = token.Values().Last().ToString();
+                RssLink cat = new RssLink() { ParentCategory = directors, Name = json["value"]["person"][person]["name"].Value<string>(), Url = person, HasSubCategories = true };
+                cat.Other = (Func<List<Category>>)(() => GetSubCategories(cat, "person", 0));
+                directors.SubCategories.Add(cat);
+            }
+            if (directors.SubCategories.Count > 0)
+            {
+                directors.Name = directors.SubCategories.Count > 1 ? "Directors" : "Director";
+                directors.Description = String.Join(", ", directors.SubCategories.Select(i => i.Name));
+                cats.Add(directors);
+            }
+
+            // Cast
+            Category cast = new Category()
+            {
+                Name = "Cast",
+                SubCategories = new List<Category>(),
+                HasSubCategories = true,
+                SubCategoriesDiscovered = true,
+                ParentCategory = parentCategory
+            };
+            foreach (JToken token in json["value"]["videos"][id]["cast"].Where(t => t.Values().Count() == 2))
+            {
+                JToken item = token.First();
+                string person = token.Values().Last().ToString();
+                RssLink cat = new RssLink() { ParentCategory = cast, Name = json["value"]["person"][person]["name"].Value<string>(), Url = person, HasSubCategories = true };
+                cat.Other = (Func<List<Category>>)(() => GetSubCategories(cat, "person", 0));
+                cast.SubCategories.Add(cat);
+            }
+            if (cast.SubCategories.Count > 0)
+            {
+                cast.Description = String.Join(", ", cast.SubCategories.Select(i => i.Name));
+                cats.Add(cast);
+            }
+
+            // Genres
+            Category genres = new Category()
+            {
+                SubCategories = new List<Category>(),
+                HasSubCategories = true,
+                SubCategoriesDiscovered = true,
+                ParentCategory = parentCategory
+            };
+            foreach (JToken token in json["value"]["videos"][id]["genres"].Where(t => t.Values().Count() == 2))
+            {
+                JToken item = token.First();
+                string genre = token.Values().Last().ToString();
+                RssLink cat = new RssLink() { ParentCategory = genres, Name = json["value"]["genres"][genre]["name"].Value<string>(), Url = genre, HasSubCategories = true };
+                cat.Other = (Func<List<Category>>)(() => GetSubCategories(cat, "genres", 0));
+                genres.SubCategories.Add(cat);
+            }
+            if (genres.SubCategories.Count > 0)
+            {
+                genres.Name = genres.SubCategories.Count > 1 ? "Genres" : "Genre";
+                genres.Description = String.Join(", ", genres.SubCategories.Select(i => i.Name));
+                cats.Add(genres);
+            }
+
+            // Tags
+            Category tags = new Category()
+            {
+                SubCategories = new List<Category>(),
+                HasSubCategories = true,
+                SubCategoriesDiscovered = true,
+                ParentCategory = parentCategory
+            };
+
+            foreach (JToken token in json["value"]["videos"][id]["tags"].Where(t => t.First().Values().Count() > 0 && t.First<JToken>()["size"].Value<int>() == 2))
+            {
+                JToken item = token.First<JToken>();
+                RssLink cat = new RssLink() { ParentCategory = tags, Name = item["name"].Value<string>(), Url = item["id"].Value<UInt32>().ToString(), HasSubCategories = true };
+                cat.Other = (Func<List<Category>>)(() => GetSubCategories(cat, "genres", 0));
+                tags.SubCategories.Add(cat);
+            }
+            if (tags.SubCategories.Count > 0)
+            {
+                tags.Name = tags.SubCategories.Count > 1 ? "Tags" : "Tag";
+                tags.Description = String.Join(", ", tags.SubCategories.Select(i => i.Name));
+                cats.Add(tags);
+            }
+
+            parentCategory.SubCategoriesDiscovered = true;
+            return cats;
+        }
+
         private List<Category> GetListCategories(Category parentCategory, string listType, uint startIndex)
         {
             List<Category> cats = new List<Category>();
@@ -516,6 +644,12 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             RssLink similarCat = new RssLink() { Name = "More like " + parentCategory.Name, HasSubCategories = true, ParentCategory = parentCategory, Url = id };
             similarCat.Other = (Func<List<Category>>)(() => GetSubCategories(similarCat, "similars", 0));
             cats.Add(similarCat);
+
+            //Details
+            RssLink detailsCat = new RssLink() { Name = "Details ", HasSubCategories = true, ParentCategory = parentCategory, Url = id };
+            detailsCat.Other = (Func<List<Category>>)(() => GetDetailsCategories(detailsCat));
+            cats.Add(detailsCat);
+
 
             parentCategory.SubCategoriesDiscovered = true;
             return cats;
