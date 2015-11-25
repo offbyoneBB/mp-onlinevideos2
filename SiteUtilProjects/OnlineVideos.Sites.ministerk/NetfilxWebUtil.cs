@@ -24,6 +24,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private class NetflixCategory : RssLink
         {
             internal bool InQueue { get; set; }
+            internal int Runtime { get; set; }
+            internal bool IsShow { get; set; }
         }
 
         #endregion
@@ -523,7 +525,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             List<Category> cats = new List<Category>();
 
             string data = MyGetWebData(ShaktiApi + "/" + BuildId + "/pathEvaluator?withSize=true&materialize=true&model=harris&fallbackEsn=SLW32",
-                postData: @"{""paths"":[[""lolomo"",""summary""],[""lolomo"",""" + listType + @""",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems - 1) + @"},[""summary"",""title"",""synopsis"",""queue""]],[""lolomo"",""" + listType + @""",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},""boxarts"",""_342x192"",""jpg""],[""lolomo"",""" + listType + @""",[""context"",""id"",""length"",""name"",""trackIds"",""requestId""]]],""authURL"":""" + latestAuthUrl + @"""}",
+                postData: @"{""paths"":[[""lolomo"",""summary""],[""lolomo"",""" + listType + @""",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems - 1) + @"},[""summary"",""title"",""synopsis"",""queue"",""userRating"",""runtime"",""releaseYear""]],[""lolomo"",""" + listType + @""",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},""boxarts"",""_342x192"",""jpg""],[""lolomo"",""" + listType + @""",[""context"",""id"",""length"",""name"",""trackIds"",""requestId""]]],""authURL"":""" + latestAuthUrl + @"""}",
                 contentType: "application/json");
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
             if (json["value"] != null && json["value"]["videos"] != null)
@@ -532,11 +534,20 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 foreach (JToken token in json["value"]["videos"].Where(t => t.Values().Count() > 1 && t.First()["title"] != null))
                 {
                     JToken item = token.First();
-                    NetflixCategory cat = new NetflixCategory() { ParentCategory = parentCategory, Name = item["title"].Value<string>(), Description = item["synopsis"].Value<string>(), HasSubCategories = true, InQueue = item["queue"]["inQueue"].Value<bool>() };
-                    cat.Thumb = item["boxarts"]["_342x192"]["jpg"]["url"].Value<string>();
                     JToken summary = item["summary"];
+                    JToken userRating = item["userRating"];
+                    NetflixCategory cat = new NetflixCategory() { ParentCategory = parentCategory, Name = item["title"].Value<string>(), HasSubCategories = true, InQueue = item["queue"]["inQueue"].Value<bool>(), IsShow = summary["type"].Value<string>() == "show" };
+                    cat.Description = item["synopsis"].Value<string>() + "\r\nYear: " + item["releaseYear"].Value<string>();
+                    if (!string.IsNullOrWhiteSpace(userRating["userRating"].ToString()))
+                        cat.Description += "\r\nUser Rating: " + userRating["userRating"].ToString();
+                    else if (!string.IsNullOrWhiteSpace(userRating["predicted"].ToString()))
+                        cat.Description += "\r\nPredicted Rating: " + userRating["predicted"].ToString();
+                    if (!string.IsNullOrWhiteSpace(userRating["average"].ToString()))
+                        cat.Description += "\r\nNetflix avg: " + userRating["average"].ToString();
+                    cat.Runtime = cat.IsShow ? 0 : item["runtime"].Value<int>();
+                    cat.Thumb = item["boxarts"]["_342x192"]["jpg"]["url"].Value<string>();
                     cat.Url = summary["id"].Value<UInt32>().ToString();
-                    cat.Other = (Func<List<Category>>)(() => GetTitleCategories(cat, summary["type"].Value<string>() == "show"));
+                    cat.Other = (Func<List<Category>>)(() => GetTitleCategories(cat));
                     cats.Add(cat);
                 }
 
@@ -581,7 +592,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
 
             data = MyGetWebData(ShaktiApi + "/" + BuildId + "/pathEvaluator?withSize=true&materialize=true&model=harris&fallbackEsn=SLW32",
-                postData: @"{""paths"":[[""" + categoryType + @"""," + id + @",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems - 1) + @"},[""summary"",""title"",""synopsis"",""queue""]],[""" + categoryType + @"""," + id + @",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems - 1) + @"},""boxarts"",""_342x192"",""jpg""]],""authURL"":""" + latestAuthUrl + @"""}",
+                postData: @"{""paths"":[[""" + categoryType + @"""," + id + @",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems - 1) + @"},[""summary"",""title"",""synopsis"",""queue"",""userRating"",""runtime"",""releaseYear""]],[""" + categoryType + @"""," + id + @",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems - 1) + @"},""boxarts"",""_342x192"",""jpg""]],""authURL"":""" + latestAuthUrl + @"""}",
                 contentType: "application/json");
             json = (JObject)JsonConvert.DeserializeObject(data);
             if (json["value"] != null && json["value"]["videos"] != null)
@@ -589,11 +600,20 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 foreach (JToken token in json["value"]["videos"].Where(t => t.Values().Count() > 1 && t.First()["title"] != null))
                 {
                     JToken item = token.First();
-                    NetflixCategory cat = new NetflixCategory() { ParentCategory = parentCategory, Name = item["title"].Value<string>(), Description = item["synopsis"].Value<string>(), HasSubCategories = true, InQueue = item["queue"]["inQueue"].Value<bool>() };
-                    cat.Thumb = item["boxarts"]["_342x192"]["jpg"]["url"].Value<string>();
                     JToken summary = item["summary"];
+                    JToken userRating = item["userRating"];
+                    NetflixCategory cat = new NetflixCategory() { ParentCategory = parentCategory, Name = item["title"].Value<string>(), HasSubCategories = true, InQueue = item["queue"]["inQueue"].Value<bool>(), IsShow = summary["type"].Value<string>() == "show" };
+                    cat.Description = item["synopsis"].Value<string>() + "\r\nYear: " + item["releaseYear"].Value<string>();
+                    if (!string.IsNullOrWhiteSpace(userRating["userRating"].ToString()))
+                        cat.Description += "\r\nUser Rating: " + userRating["userRating"].ToString();
+                    else if (!string.IsNullOrWhiteSpace(userRating["predicted"].ToString()))
+                        cat.Description += "\r\nPredicted Rating: " + userRating["predicted"].ToString();
+                    if (!string.IsNullOrWhiteSpace(userRating["average"].ToString()))
+                        cat.Description += "\r\nNetflix avg: " + userRating["average"].ToString();
+                    cat.Runtime = cat.IsShow ? 0 : item["runtime"].Value<int>();
+                    cat.Thumb = item["boxarts"]["_342x192"]["jpg"]["url"].Value<string>();
                     cat.Url = summary["id"].Value<UInt32>().ToString();
-                    cat.Other = (Func<List<Category>>)(() => GetTitleCategories(cat, summary["type"].Value<string>() == "show"));
+                    cat.Other = (Func<List<Category>>)(() => GetTitleCategories(cat));
                     cats.Add(cat);
                 }
                 if (cats.Count() >= noOfItems)
@@ -607,13 +627,13 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             return cats;
         }
 
-        private List<Category> GetTitleCategories(Category parentCategory, bool isShow)
+        private List<Category> GetTitleCategories(Category parentCategory)
         {
             List<Category> cats = new List<Category>();
             string id = (parentCategory as RssLink).Url;
-
+            bool isShow = (parentCategory as NetflixCategory).IsShow;
             //Play Now/Continue
-            RssLink playNowCat = new RssLink() { Name = "Play Now/Continue Watch", Thumb = parentCategory.Thumb, HasSubCategories = false, ParentCategory = parentCategory, Url = id };
+            RssLink playNowCat = new RssLink() { Name = "Play Now/Continue Watch", Description = parentCategory.Description, Thumb = parentCategory.Thumb, HasSubCategories = false, ParentCategory = parentCategory, Url = id };
             if (isShow)
                 playNowCat.Other = (Func<List<VideoInfo>>)(() => GetPlayNowShowVideos(playNowCat));
             else
@@ -632,21 +652,22 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 foreach (JToken token in json["value"]["seasons"].Where(t => t.Values().Count() > 1))
                 {
                     JToken item = token.First();
-                    RssLink cat = new RssLink() { HasSubCategories = false, ParentCategory = parentCategory };
+                    RssLink cat = new RssLink() { HasSubCategories = false, Thumb = parentCategory.Thumb, ParentCategory = parentCategory };
                     JToken summary = item["summary"];
                     cat.Url = summary["id"].Value<UInt32>().ToString();
                     cat.Name = summary["name"].Value<string>();
+                    cat.Description = parentCategory.Name + ", " + cat.Name; 
                     cat.Other = (Func<List<VideoInfo>>)(() => GetSeasonVideos(cat, summary["length"].Value<uint>()));
                     cats.Add(cat);
                 }
             }
             //Similar
-            RssLink similarCat = new RssLink() { Name = "More like " + parentCategory.Name, HasSubCategories = true, ParentCategory = parentCategory, Url = id };
+            RssLink similarCat = new RssLink() { Name = "More like " + parentCategory.Name, Description = "Titles similar to " + parentCategory.Name, Thumb = parentCategory.Thumb, HasSubCategories = true, ParentCategory = parentCategory, Url = id };
             similarCat.Other = (Func<List<Category>>)(() => GetSubCategories(similarCat, "similars", 0));
             cats.Add(similarCat);
 
             //Details
-            RssLink detailsCat = new RssLink() { Name = "Details ", HasSubCategories = true, ParentCategory = parentCategory, Url = id };
+            RssLink detailsCat = new RssLink() { Name = "Details ", Description = "Cast and Crew, Genres and Tags", Thumb = parentCategory.Thumb, HasSubCategories = true, ParentCategory = parentCategory, Url = id };
             detailsCat.Other = (Func<List<Category>>)(() => GetDetailsCategories(detailsCat));
             cats.Add(detailsCat);
 
@@ -689,6 +710,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 video.Description = item["synopsis"].Value<string>();
                 video.Thumb = item["interestingMoment"]["_260x146"]["jpg"]["url"].Value<string>();
                 video.VideoUrl = string.Format(playerUrl, summary["id"].Value<UInt32>());
+                video.Length = OnlineVideos.Helpers.TimeUtils.TimeFromSeconds(item["runtime"].Value<int>().ToString());
                 videos.Add(video);
             }
 
@@ -709,6 +731,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             uint s = summary["season"].Value<uint>();
             video.Title = s.ToString() + "x" + (e > 9 ? e.ToString() : ("0" + e.ToString())) + " " + item["title"].Value<string>();
             video.Description = item["synopsis"].Value<string>();
+            video.Length = OnlineVideos.Helpers.TimeUtils.TimeFromSeconds(item["runtime"].Value<int>().ToString());
             video.Thumb = item["interestingMoment"]["_260x146"]["jpg"]["url"].Value<string>();
             video.VideoUrl = string.Format(playerUrl, summary["id"].Value<UInt32>());
             return new List<VideoInfo>() { video };
@@ -720,6 +743,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             VideoInfo video = new VideoInfo();
             video.Title = category.ParentCategory.Name;
             video.Description = category.ParentCategory.Description;
+            video.Length = OnlineVideos.Helpers.TimeUtils.TimeFromSeconds((category.ParentCategory as NetflixCategory).Runtime.ToString());
             video.Thumb = category.Thumb;
             video.VideoUrl = string.Format(playerUrl, id);
             return new List<VideoInfo>() { video };
