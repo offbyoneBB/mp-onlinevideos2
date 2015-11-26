@@ -16,6 +16,8 @@ namespace OnlineVideos.Sites
             base._urlMenu="http://api.nextradiotv.com/bfmbusiness-iphone/3/{0}/getMainMenu";
             base._urlVideoList="http://api.nextradiotv.com/bfmbusiness-iphone/3/{0}/getVideosList?count=40&page=1&category={1}";
             base._urlVideo = "http://api.nextradiotv.com/bfmbusiness-iphone/3/{0}/getVideo?idVideo={1}&quality=2";
+
+            //api.nextradiotv.com/01net-android/3/
         }
     }
 }

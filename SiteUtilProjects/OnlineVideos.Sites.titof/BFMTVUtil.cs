@@ -23,19 +23,46 @@ namespace OnlineVideos.Sites
             JObject jResult = JObject.Parse(sContent);
             JArray tItems = (JArray)jResult["menu"]["right"];
 
-            foreach (JObject item in tItems) 
+            if (tItems != null) 
             {
-                if (((string)item["type"]) == "REPLAY") 
+                foreach (JObject item in tItems)
                 {
-                    RssLink cat = new RssLink();
-                    cat.Url = (string)item["category"];
-                    cat.Name = (string)item["title"];
-                    cat.Thumb = (string)item["image_url"];
-                    cat.Other = (string)item["category"];
-                    cat.HasSubCategories = false;
-                    Settings.Categories.Add(cat);
+                    if (((string)item["type"]) == "REPLAY")
+                    {
+                        RssLink cat = new RssLink();
+                        cat.Url = (string)item["category"];
+                        cat.Name = (string)item["title"];
+                        cat.Thumb = (string)item["image_url"];
+                        cat.Other = (string)item["category"];
+                        cat.HasSubCategories = false;
+                        Settings.Categories.Add(cat);
+                    }
                 }
             }
+
+            if (tItems == null)
+            {
+                tItems = (JArray)jResult["menu"]["left"];
+                foreach (JObject item in tItems)
+                {
+                    if (((string)item["type"]) == "ARTICLES")
+                    {
+                        RssLink cat = new RssLink();
+                        cat.Url = ((int)item["category"]).ToString();
+                        cat.Name = (string)item["title"];
+                        cat.Thumb = (string)item["image_url"];
+                        cat.Other = ((int)item["category"]).ToString();
+                        cat.HasSubCategories = false;
+                        Settings.Categories.Add(cat);
+                    }
+                }
+            }
+                
+
+            if (tItems == null)
+                return 0;
+
+            
 
             return Settings.Categories.Count ;
         }
