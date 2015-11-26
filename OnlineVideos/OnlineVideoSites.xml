@@ -1067,18 +1067,18 @@
       <Configuration>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\sclass="bigChar"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>\s*<p>(?<description>[^<]*)</p>\s*</div>'>\s*<a[^>]*>[^<]*</a>(\s*&nbsp;&nbsp;<img[^>]*>){0,2}\s*</td>(?:\s*<td>\s*<a\shref="[^"]*">(?<description>[^<]*)</a>)?]]></item>
         <item key="dynamicSubCategoriesNextPageRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*page=\d+)"\spage=\d{1,}>&rsaquo;\sNext]]></item>
-        <item key="videoListRegEx"><![CDATA[<tr>\s*<td>\s*<a\shref="(?<VideoUrl>[^"]*)"\stitle="[^"]*">(?<Title>[^<]*)</a>\s*</td>\s*<td>(?<Airdate>[^<]*)</td>\s*</tr>]]></item>
-        <item key="baseUrl"><![CDATA[http://kissanime.com/AnimeList]]></item>
-        <item key="genresRegex"><![CDATA[<a\shref="(?<url>/Genre[^"]*)"\stitle="(?<description>[^"]*)">(?<title>[^<]*)</a><br/>]]></item>
+        <item key="videoListRegEx"><![CDATA[<tr>\s*<td>\s*<a\s*href="(?<VideoUrl>[^"]*)"\s*title="[^"]*">(?<Title>[^<]*)</a>\s*</td>\s*<td>(?<Airdate>[^<]*)</td>\s*</tr>]]></item>
+        <item key="baseUrl"><![CDATA[https://kissanime.to/AnimeList]]></item>
+        <item key="genresRegex"><![CDATA[<a\shref="(?<url>/Genre[^"]*)"\stitle="(?<description>[^"]*)">(?<title>[^<]*)</a><br\s*/>]]></item>
         <item key="alphabetRegex"><![CDATA[(<a\shref="(?<url>\?[^"]*)">(?<title>[^<]*)</a>)|(<a\shref="(?<url>[^"]*)">(?<title>All)</a>)]]></item>
         <item key="fileUrlRegEx"><![CDATA[(?<=<select\sid="selectQuality">.*)<option\svalue="(?<m0>[^"]*)"\s*(?:selected)?>(?<n0>[^<]*)</option>]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" thumb="" desc="" name="Sort by alphabet">http://kissanime.com/AnimeList</Category>
-        <Category xsi:type="RssLink" thumb="" desc="" name="Sort by popularity">http://kissanime.com/AnimeList/MostPopular</Category>
-        <Category xsi:type="RssLink" thumb="" desc="" name="Latest update">http://kissanime.com/AnimeList/LatestUpdate</Category>
-        <Category xsi:type="RssLink" thumb="" desc="" name="New anime">http://kissanime.com/AnimeList/Newest</Category>
-        <Category xsi:type="RssLink" thumb="" desc="" name="Genres">http://kissanime.com/AnimeList/Newest</Category>
+        <Category xsi:type="RssLink" thumb="" desc="" name="Sort by alphabet">https://kissanime.to/AnimeList</Category>
+        <Category xsi:type="RssLink" thumb="" desc="" name="Sort by popularity">https://kissanime.to/AnimeList/MostPopular</Category>
+        <Category xsi:type="RssLink" thumb="" desc="" name="Latest update">https://kissanime.to/AnimeList/LatestUpdate</Category>
+        <Category xsi:type="RssLink" thumb="" desc="" name="New anime">https://kissanime.to/AnimeList/Newest</Category>
+        <Category xsi:type="RssLink" thumb="" desc="" name="Genres">https://kissanime.to/AnimeList/Newest</Category>
       </Categories>
     </Site>
     <Site name="League of Legends Streams" util="LeagueOfLegends" agecheck="false" enabled="true" lang="en">
@@ -1357,11 +1357,11 @@
       <Description>Uitzending Gemist is de videotheek van de publieke omroep op internet en biedt het totaalaanbod van beschikbare TV uitzendingen van de omroepen.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.npo.nl/]]></item>
-        <item key="videoListRegEx"><![CDATA[(<div\sclass='image-container'>\s*<a\shref="(?<VideoUrl>[^"]*)"><img\salt="[^"]*"\sclass="preview\sprogram-image"\s((data-images="[^"]*"\sdata-toggle="image-skimmer"\ssrc="(?<ImageUrl>[^"]*)")|(src="[^"]*"))\s/>\s*<div\sclass="overlay-icon"><span\sclass="npo-glyph\scamera"></span>[^<]*</div>\s*</a></div>\s*</div>\s*<div\sclass='span8'>\s*<a[^>]*><h4>(?<Title>[^<]*)<span\sclass='inactive'>[^<]*</span>\s*<span\sclass='av-icon'>\s*</span>\s*</h4>\s*<h5>(?<Airdate>[^<]*?)(?:&\#8226;(?<Duration>[^<]*))?</h5>\s*<p\sclass='without-title\svisible-for-desktop'>(?<Description>[^<]*)</p>\s*</a></div>)(?#videos of one series)
+        <item key="videoListRegEx"><![CDATA[(<div\sclass='span4\simage'>\s*<a\shref="(?<VideoUrl>[^"]*)"><div\sclass="meta-container"><div\sclass="meta\sfirst"><div\sclass="md-label\sno-text"><span\sclass="npo-glyph\striangle-right"></span></div></div></div>\s*<img\salt="[^"]*"\sclass="program-image"\s*((render_overlay="true")*|(data-images="[^"]*"\sdata-toggle="image-skimmer"))\ssrc="(?<ImageUrl>[^"]*)"\s/>\s*</a></div>\s*<div\sclass='span8\sitem-description'>\s*<h3><a[^>]*>(?<Title>[^<]*)</a></h3>\s*<div\sclass='tag\sw-g'>[^<]*</div>\s*<h4><span\sclass="inactive">Datum\suitzending:</span>(?<Airdate>[^<]*)</h4>\s*<p>(?<Description>[^<]*)</p>\s*</div>\s*</div>)(?#videos of one series)
         |
         (<div\sclass='image-container'>\s*<a\shref="(?<VideoUrl>[^"]*)"><img\salt="[^"]*"\sdata-images="[^"]*"\sdata-toggle="image-skimmer"\ssrc="(?<ImageUrl>[^"]*)"\s/>\s*<div\sclass="overlay-icon"><span\sclass="npo-glyph\scamera"></span>(?<Duration>[^<]*)</div>\s*</a></div>\s*<div\sclass='description'>(?<Description>[^<]*)<h4[^>]*>\s*<a[^>]*><div\sclass='default-title'>(?<Title>[^<]*)<span[^>]*>[^<]*</span>\s*</div>\s*<div\sclass='contextual-title'>[^<]*</div>\s*</a></h4>\s*<h5>(?<Airdate>[^<]*)</h5>)(?#videos of recent)
         |
-        (<div\sclass='image-container'>\s*<a\shref="(?<VideoUrl>[^"]*)"><img\salt="[^"]*"\sclass="preview\sprogram-image"\s((data-images="[^"]*"\sdata-toggle="image-skimmer"\ssrc="(?<ImageUrl>[^"]*)")|(src="[^"]*"))\s/>\s*<div\sclass="overlay-icon"><span\sclass="npo-glyph\scamera"></span></div>\s*</a></div>\s*</div>\s*<div\sclass='span8'>\s*<a[^>]*><h4>(?<Title>[^<]*)<span\sclass='inactive'>[^<]*</span>\s*<span\sclass='av-icon'>\s*</span>\s*</h4>\s*<h5>(?<Airdate>[^<]*?)(?:&\#8226;(?<Duration>[^<]*))?</h5>\s*<p\sclass='without-title\svisible-for-desktop'>(?<Description>[^<]*)</p>\s*</a></div>)(?#videos of op datum)
+        (<div\sclass='image-container'>\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*><img\salt="[^"]*"\sclass="preview\sprogram-image"\s((data-images="[^"]*"\sdata-toggle="image-skimmer"\ssrc="(?<ImageUrl>[^"]*)")|(src="[^"]*"))\s/>\s*<div\sclass="overlay-icon"><span\sclass="npo-glyph\scamera"></span></div>\s*</a></div>\s*</div>\s*<div\sclass='span8'>\s*<a[^>]*><h4>(?<Title>[^<]*)<span\sclass='inactive'>[^<]*</span>\s*<span\sclass='av-icon'>\s*</span>\s*</h4>\s*<h5>(?<Airdate>[^<]*?)(?:&\#8226;(?<Duration>[^<]*))?</h5>\s*<p\sclass='without-title\svisible-for-desktop'>(?<Description>[^<]*)</p>\s*</a></div>)(?#videos of op datum)
         ]]></item>
         <item key="searchUrl"><![CDATA[http://www.npo.nl/zoeken?utf8=%E2%9C%93&commit=Zoeken&q={0}]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<div\sclass='image-container'>\s*<a\shref="(?<url>[^"]*)"><img\salt="[^"]*"\sclass="show-image"\ssrc="(?<thumb>[^"]*)"\s/>\s*</a></div>\s*</div>\s*<div\sclass='span8'>\s*<a[^>]*><h4>(?<title>[^<]*)<span\sclass='inactive[^>]*>[^<]*</span>\s*<span\sclass='av-icon'></span>\s*</h4>\s*<h5><span\sclass="inactive">[^<]*</span>\s<a[^>]*>[^<]*</a></h5>\s*<p\sclass='without-title\svisible-for-desktop'>(?:<span>)?(?<description>[^<]*)<]]></item>

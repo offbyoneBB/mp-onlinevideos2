@@ -270,8 +270,6 @@ namespace OnlineVideos.Sites
 
                 foreach (JToken SearchItem in SearchItems)
                 {
-                    VideoInfo video = new VideoInfo();
-
                     SearchResults.Add(GetVideoInfoFromItem(SearchItem));
                 }
             }
@@ -281,6 +279,44 @@ namespace OnlineVideos.Sites
 
         #endregion
 
+        #region ContextMenu
+
+        public override List<ContextMenuEntry> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
+        {
+            List<ContextMenuEntry> result = new List<ContextMenuEntry>();
+            if (selectedItem != null)
+            {
+                result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.RelatedVideos, Action = ContextMenuEntry.UIAction.Execute });
+                result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.Recommendations, Action = ContextMenuEntry.UIAction.Execute });
+            }
+
+            return result;
+        }
+
+        public override ContextMenuExecutionResult ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, ContextMenuEntry choice)
+        {
+            ContextMenuExecutionResult result = new ContextMenuExecutionResult();
+            try
+            {
+                if (choice.DisplayText == Translation.Instance.RelatedVideos)
+                {
+                    result.ResultItems = GetRelatedVideos(selectedItem, "Episode").ConvertAll<SearchResultItem>(v => v as SearchResultItem);
+                }
+                else if (choice.DisplayText == Translation.Instance.Recommendations)
+                {
+                    result.ResultItems = GetRelatedVideos(selectedItem, "More Like This").ConvertAll<SearchResultItem>(v => v as SearchResultItem);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new OnlineVideosException(ex.Message);
+            }
+            
+            return result;
+        }
+
+        #endregion
+        
         #region API Helper
 
         private static string SanitizeXml(string message)
@@ -307,6 +343,38 @@ namespace OnlineVideos.Sites
             return GetWebData(url: iViewURLBase + url, userAgent: iViewUserAgent);
         }
 
+        private List<VideoInfo> GetRelatedVideos(VideoInfo video, string indexTitleSearch)
+        {
+            List<VideoInfo> RelatedVideos = new List<VideoInfo>();
+
+            // "/related/<episodeHouseNumber> gives a JSON file including
+            // index list containing two arrays, one with title like "2 Other Episodes"
+            // and one like "More Like This"
+
+            string webData = GetiViewWebData(@"/related/" + video.Other );
+            JObject contentData = (JObject)JObject.Parse(webData);
+
+            if (contentData != null)
+            {
+                JArray relatedItemsIndex = contentData["index"] as JArray;
+                if (relatedItemsIndex != null)
+                {
+                    foreach (JToken episodeArray in relatedItemsIndex)
+                    {
+                        if (episodeArray["title"].ToString().Contains(indexTitleSearch))
+                        {
+                            foreach (JToken episode in episodeArray["episodes"])
+                            {
+                                RelatedVideos.Add(GetVideoInfoFromItem(episode));
+                            }
+                        }
+                    }
+                }
+            }            
+            
+            return RelatedVideos;
+        }
+
         private VideoInfo GetVideoInfoFromItem(JToken item)
         {
             VideoInfo video = new VideoInfo();
@@ -328,7 +396,7 @@ namespace OnlineVideos.Sites
                 }
                 else
                 {
-                    video.Description = "Descriptions downloading...";
+                    video.Description = "<" + Translation.Instance.GettingVideoDetails + ">";
                 }
 
                 FeedSync.ReleaseMutex();

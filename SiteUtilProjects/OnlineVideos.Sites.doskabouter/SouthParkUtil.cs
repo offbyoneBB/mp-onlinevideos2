@@ -183,14 +183,38 @@ namespace OnlineVideos.Sites
             {
                 return options[chosenPlaybackOption];
             }
-            var enumerator = options.GetEnumerator();
-            enumerator.MoveNext();
-            return enumerator.Current.Value;
+            int bitRate = getBitrate(chosenPlaybackOption);
+            Log.Debug("playbackoption " + chosenPlaybackOption + " not found, searching for nearest from " + bitRate.ToString());
+
+            int nearestDiff = Int32.MaxValue;
+            string bestUrl = null;
+            foreach (var kv in options)
+            {
+                int diff = Math.Abs(bitRate - getBitrate(kv.Key));
+                if (diff < nearestDiff)
+                {
+                    Log.Debug("better: " + kv.Key);
+                    nearestDiff = diff;
+                    bestUrl = kv.Value;
+                }
+            }
+            return bestUrl;
         }
 
         public override ITrackingInfo GetTrackingInfo(VideoInfo video)
         {
             return (video.Other as VideoInfoOtherHelper).TI == null ? base.GetTrackingInfo(video) : (video.Other as VideoInfoOtherHelper).TI;
+        }
+
+        private int getBitrate(string playbackOption)
+        {
+            int p = 0;
+            while (p < playbackOption.Length && playbackOption[p] >= '0' && playbackOption[p] <= '9')
+                p++;
+            int bitRate;
+            if (Int32.TryParse(playbackOption.Substring(0, p), out bitRate))
+                return bitRate;
+            return 0;
         }
 
         private class VideoInfoOtherHelper

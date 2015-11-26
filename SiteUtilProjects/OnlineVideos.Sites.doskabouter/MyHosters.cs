@@ -645,6 +645,37 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class StreamIn : MyHosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "streamin.to";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            string webdata = WebCache.Instance.GetWebData(url);
+            string timeToWait = Regex.Match(webdata, @"<span\sid=""countdown_str"">[^>]*>(?<time>[^<]+)</span>").Groups["time"].Value;
+            if (Convert.ToInt32(timeToWait) < 10)
+            {
+                System.Threading.Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
+
+                webdata = GetFromPost(url, webdata, false, null, new[] { "imhuman=+" });
+
+                string file = Helpers.StringUtils.GetSubString(webdata, @"file: """, @"""");
+                string streamer = Helpers.StringUtils.GetSubString(webdata, @"streamer: """, @"""");
+                RtmpUrl rtmpUrl = new RtmpUrl(streamer)
+                {
+                    PlayPath = file
+                };
+                return rtmpUrl.ToString();
+            }
+
+            return String.Empty;
+
+        }
+    }
+
     public class TheFile : MyHosterBase
     {
         public override string GetHosterUrl()
