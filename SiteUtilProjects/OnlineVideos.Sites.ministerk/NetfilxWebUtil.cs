@@ -795,7 +795,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     JToken summary = item["summary"];
                     JToken userRating = item["userRating"];
                     NetflixCategory cat = new NetflixCategory() { ParentCategory = parentCategory, Name = item["title"].Value<string>(), HasSubCategories = true, InQueue = item["queue"]["inQueue"].Value<bool>(), IsShow = summary["type"].Value<string>() == "show" };
-                    cat.Description = item["synopsis"].Value<string>() + "\r\nYear: " + item["releaseYear"].Value<string>();
+                    cat.Description = item["synopsis"].Value<string>() + "\r\n " + item["releaseYear"].Value<string>();
                     if (!string.IsNullOrWhiteSpace(userRating["userRating"].ToString()))
                         cat.Description += "\r\n" + Translate("User rating") + ": " + userRating["userRating"].ToString();
                     else if (!string.IsNullOrWhiteSpace(userRating["predicted"].ToString()))
