@@ -25,6 +25,14 @@ namespace OnlineVideos.Sites
 
             cat = new RssLink()
             {
+                Url = "http://service.itele.fr/iphone/emissions?query=chroniques",
+                Name = "Chroniques",
+                HasSubCategories = false
+            };
+            Settings.Categories.Add(cat);
+
+            cat = new RssLink()
+            {
                 Url = _urlVideoList+"france",
                 Name = "France",
                 HasSubCategories = false
@@ -100,11 +108,13 @@ namespace OnlineVideos.Sites
             JObject tlist = JObject.Parse(sContent);
             string sArry = "news";
             if ((category as RssLink).Url.Contains("topnews")) { sArry = "topnews"; }
+            if ((category as RssLink).Url.Contains("emissions")) { sArry = "programs"; }
 
             foreach (JObject item in tlist[sArry])
             {
                 VideoInfo vid = new VideoInfo()
                 {
+                    Airdate = (string)item["date"], 
                     Other = (string)item["video"],
                     Title = (string)item["title"],
                     Description = (string)item["description"],
@@ -112,7 +122,9 @@ namespace OnlineVideos.Sites
                     VideoUrl = (string)item["video_urlhd"]
 
                 };
-                tVideos.Add(vid);
+
+                if ( !string.IsNullOrEmpty( vid.VideoUrl) )
+                    tVideos.Add(vid);
             }
 
             return tVideos;
@@ -128,8 +140,8 @@ namespace OnlineVideos.Sites
             if (telem.Count() > 2)
             {
                 video.PlaybackOptions = new Dictionary<string, string>();
-                video.PlaybackOptions.Add("SD", telem.ToList()[telem.Count() - 2].Path);
-                video.PlaybackOptions.Add("HD", telem.ToList()[telem.Count() - 1].Path );
+                video.PlaybackOptions.Add("HD", telem.ToList()[telem.Count() - 2].Path);
+                video.PlaybackOptions.Add("SD", telem.ToList()[telem.Count() - 1].Path);
             }
 
             return telem.Last().Path ;
