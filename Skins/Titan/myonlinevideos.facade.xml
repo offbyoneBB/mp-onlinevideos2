@@ -64,6 +64,7 @@
 					<textureNoFocus>-</textureNoFocus>
 	        <spinPosX>1828</spinPosX>
 	        <spinPosY>1000</spinPosY>
+					<playedColor>ffffcc00</playedColor>
 				</control>
 				<control>
 					<description>Thumbnail Panel</description>
