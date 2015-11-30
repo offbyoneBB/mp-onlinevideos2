@@ -368,9 +368,7 @@
     <Compile Include="SitesGroup.cs" />
     <Compile Include="SiteUserSettingsDialog.cs" />
     <Compile Include="SmsT9Filter.cs" />
-    <Compile Include="TraktPluginHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Trakt\TraktPluginHelper.cs" />
     <Compile Include="Translator.cs" />
   </ItemGroup>
   <ItemGroup>

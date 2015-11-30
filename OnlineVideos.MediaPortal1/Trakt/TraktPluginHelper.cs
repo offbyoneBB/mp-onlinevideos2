@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using OnlineVideos;
 using TraktPlugin;
 using MediaPortal.Configuration;
 
