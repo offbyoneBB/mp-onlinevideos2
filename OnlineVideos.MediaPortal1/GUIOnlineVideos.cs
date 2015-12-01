@@ -1951,6 +1951,7 @@ namespace OnlineVideos.MediaPortal1
                 OnlineVideosGuiListItem listItem = new OnlineVideosGuiListItem(videoInfo);
                 listItem.ItemId = GUI_facadeView.Count;
                 listItem.OnItemSelected += OnItemSelected;
+                listItem.IsPlayed = Trakt.TraktPluginHelper.IsWatched(SelectedSite.GetTrackingInfo(videoInfo));
                 GUI_facadeView.Add(listItem);
                 currentFacadeItems.Add(listItem);
 

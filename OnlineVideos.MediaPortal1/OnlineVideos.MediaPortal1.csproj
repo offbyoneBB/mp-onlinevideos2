@@ -98,6 +98,10 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="TraktPlugin, Version=5.6.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Trakt\TraktPlugin.dll</HintPath>
+    </Reference>
     <Reference Include="Utils">
       <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Utils.dll</HintPath>
       <Private>False</Private>
@@ -364,6 +368,7 @@
     <Compile Include="SitesGroup.cs" />
     <Compile Include="SiteUserSettingsDialog.cs" />
     <Compile Include="SmsT9Filter.cs" />
+    <Compile Include="Trakt\TraktPluginHelper.cs" />
     <Compile Include="Translator.cs" />
   </ItemGroup>
   <ItemGroup>

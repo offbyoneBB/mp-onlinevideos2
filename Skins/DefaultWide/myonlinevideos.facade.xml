@@ -34,6 +34,7 @@
           <PinIconHeight>32</PinIconHeight>
           <PinIconXOff>1050</PinIconXOff>
           <PinIconYOff>0</PinIconYOff>
+          <playedColor>ffffcc00</playedColor>
         </control>
         <control>
           <description>Thumbnail Panel</description>

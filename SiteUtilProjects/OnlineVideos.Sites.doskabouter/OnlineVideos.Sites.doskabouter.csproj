@@ -72,7 +72,6 @@
     <Compile Include="CollegeHumorUtil.cs" />
     <Compile Include="DeferredResolveUtil.cs" />
     <Compile Include="DeRedactieUtil.cs" />
-    <Compile Include="DrieVoor12Util.cs" />
     <Compile Include="EuroSportUtil.cs" />
     <Compile Include="EventCasterUtil.cs" />
     <Compile Include="FilmonUtil.cs" />
