@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace OnlineVideos.Sites
 {
@@ -34,32 +35,41 @@ namespace OnlineVideos.Sites
 
         string encodedHTML = resultUrl; //is a base64 encoded piece of javascript which contains the videos
 
-        Log.Info("encoded HTML: " + encodedHTML);
         Dictionary<String, String> videos = getVidList(encodedHTML);
 
         if (videos != null)
         {
-            video.PlaybackOptions = new System.Collections.Generic.Dictionary<string, string>();
+            if (videos.ContainsKey("embed"))
+            {
+                //youtube video {"embed":"youtube:dap5lEuS5uM","still":"http:\/\/static.dumpert.nl\/stills\/6650394_e53155f4.jpg"}
+                string youtubeId = videos["embed"].Split(':')[1];
+                video.PlaybackOptions = Hoster.HosterFactory.GetHoster("Youtube").GetPlaybackOptions("https://www.youtube.com/watch?v=" + youtubeId);
+                return (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0) ? "" : video.PlaybackOptions.First().Value;
+            }
+            else
+            {
+                video.PlaybackOptions = new System.Collections.Generic.Dictionary<string, string>();
 
-            //sort from high to low quality: 720p, tablet, flv, mobile
-            if (videos.ContainsKey("720p"))
-            {
-                video.PlaybackOptions.Add("720p", videos["720p"]);
-            }
-            if (videos.ContainsKey("tablet"))
-            {
-                video.PlaybackOptions.Add("High", videos["tablet"]);
-            }
-            if (videos.ContainsKey("flv"))
-            {
-                video.PlaybackOptions.Add("Medium", videos["flv"]);
-            }
-            if (videos.ContainsKey("mobile"))
-            {
-                video.PlaybackOptions.Add("Low", videos["mobile"]);
-            }
+                //sort from high to low quality: 720p, tablet, flv, mobile
+                if (videos.ContainsKey("720p"))
+                {
+                    video.PlaybackOptions.Add("720p", videos["720p"]);
+                }
+                if (videos.ContainsKey("tablet"))
+                {
+                    video.PlaybackOptions.Add("High", videos["tablet"]);
+                }
+                if (videos.ContainsKey("flv"))
+                {
+                    video.PlaybackOptions.Add("Medium", videos["flv"]);
+                }
+                if (videos.ContainsKey("mobile"))
+                {
+                    video.PlaybackOptions.Add("Low", videos["mobile"]);
+                }
 
-            return video.PlaybackOptions.First().Value;
+                return video.PlaybackOptions.First().Value;
+            }
         }
         else
             return String.Empty;
@@ -71,30 +81,8 @@ namespace OnlineVideos.Sites
 
         Log.Debug("DumpertUtil: base64encoded videoURLs: " + encodedHTML);
         byte[] data = Convert.FromBase64String(encodedHTML);
-        string decodedHTML = Encoding.UTF8.GetString(data);
-
-        //construct url from {"flv":"http:\/\/media.dumpert.nl\/flv\/85bba761_YTDL_1.mp4.flv"
-        Regex getVideos = new Regex("\"(?<type>[^\"]*)\":\"(?<url>[^\"]*)\"");
-        MatchCollection matches = getVideos.Matches(decodedHTML);
-
-        if (matches.Count > 0)
-        {
-            foreach (Match videosMatch in matches)
-            {
-                GroupCollection videosGroups = videosMatch.Groups;
-
-                string videoUrl = videosGroups["url"].Value.Replace("\\/", "/");
-                string videoType = videosGroups["type"].Value;
-                Log.Info("DumpertUtil: " + videoType  + " - " + videoUrl);
-                videos.Add(videoType, videoUrl);
-            }
-            videos.Remove("still"); //remove the still image from the videos list
-            return videos;
-        }
-        else
-        {
-            return null;
-        }
+        string videoJson = Encoding.UTF8.GetString(data);
+        return JsonConvert.DeserializeObject<Dictionary<string, string>>(videoJson);
     }
 
 
