@@ -95,11 +95,11 @@ namespace OnlineVideos.Sites
             IEnumerable<OnlineVideos.Sites.M3U.M3U.M3UComponent> telem = from item in play.OrderBy("BRANDWITH")
                                                                          select item;
 
-            if (telem.Count() > 4) 
+            if (telem.Count() >= 4) 
             {
                 video.PlaybackOptions = new Dictionary<string, string>();
                 video.PlaybackOptions.Add("LOW RES", telem.ToList()[0].Path);
-                video.PlaybackOptions.Add("SD", telem.ToList()[3].Path);
+                video.PlaybackOptions.Add("SD", telem.ToList()[2].Path);
             }
             return telem.First().Path;
 
