@@ -104,11 +104,11 @@ namespace OnlineVideos.Sites
         var cat = new RssLink();
         if (catName == "Newest Media")
         {
-          cat.Url = url + "?streamType=latest";
+          cat.Url = string.Format("{0}?streamType=latest", url);
         }
         else
         {
-          cat.Url = url + "?tags=" + catName;
+          cat.Url = string.Format("{0}?tags={1}&streamType=latest", url, catName);
         }
 
         cat.Name = catName;
