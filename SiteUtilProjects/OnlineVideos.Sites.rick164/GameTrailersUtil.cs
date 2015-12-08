@@ -16,9 +16,10 @@ namespace OnlineVideos.Sites
     {
       base.Initialize(siteSettings);
     }
+
     public override List<VideoInfo> GetVideos(Category category)
     {
-      var url = ((RssLink)category).Url;
+      var url = ((RssLink) category).Url;
       return GetVideoList(url);
     }
 
@@ -38,9 +39,10 @@ namespace OnlineVideos.Sites
             var videoInfo = CreateVideoInfo();
             videoInfo.VideoUrl = string.Format("http://www.gametrailers.com{0}", m.Groups["VideoUrl"].Value);
             videoInfo.Thumb = m.Groups["ImageUrl"].Value;
-            videoInfo.Airdate = m.Groups["Airdate"].Value.Replace(":00+00:00", string.Empty).Replace("T"," ");
+            videoInfo.Airdate = m.Groups["Airdate"].Value.Replace(":00+00:00", string.Empty).Replace("T", " ");
             videoInfo.Description = m.Groups["Description"].Value.Replace("&acirc;", "'");
-            videoInfo.Title = string.Format("{0} - {1}", m.Groups["Title"].Value.Replace("&acirc;", "'"), videoInfo.Description);
+            videoInfo.Title = string.Format("{0} - {1}", m.Groups["Title"].Value.Replace("&acirc;", "'"),
+              videoInfo.Description);
 
             videoList.Add(videoInfo);
             m = m.NextMatch();
@@ -60,7 +62,7 @@ namespace OnlineVideos.Sites
             if (mNext.Success)
             {
               Log.Debug("PAGE URL: " + mNext.Groups["url"].Value);
-              Log.Debug("VIDEO URL: "+ url);
+              Log.Debug("VIDEO URL: " + url);
               nextPageAvailable = true;
               nextPageUrl = mNext.Groups["url"].Value;
               if (!string.IsNullOrEmpty(nextPageRegExUrlFormatString))
@@ -122,7 +124,7 @@ namespace OnlineVideos.Sites
 
     public override string GetVideoUrl(VideoInfo video)
     {
-      var itemPlaylist = Regex.Match(GetWebData(video.VideoUrl) , playlistUrlRegEx);
+      var itemPlaylist = Regex.Match(GetWebData(video.VideoUrl), playlistUrlRegEx);
       var playlistUrl = "";
       while (itemPlaylist.Success)
       {
