@@ -43,8 +43,12 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         protected bool showLoadingSpinner = true;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable Netflix Info/Stat OSD"), Description("Enable info and statistics OSD. Toggle OSD with 0 when video is playing. Do not enable this if you need to enter 0 in parental control pin")]
         protected bool enableNetflixOsd = true;
-
-        protected const uint noOfItems = 100;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Number of Home categories"), Description("Change only if necessary. Number of categories in home. Default value 38 => results in 38+1-2=37 categories")]
+        protected int noOfCatsInHome = 38;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Number of categories per page in other listings"), Description("Change only if necessary. Number of items in listings. Default 100")]
+        protected uint noOfItems = 100;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable verbose logging"), Description("DEBUG only! Enable only if you have problems. Very verbose logging, generates a lot of data in log.")]
+        protected bool enableVerboseLog = false;
 
         protected Dictionary<string, string> i18n = null;
 
@@ -66,6 +70,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             //Never cache, problems with profiles sometimes
             string data = HboNordic.HboWebCache.Instance.GetWebData(url, postData: postData, cookies: Cookies, referer: referer, contentType: contentType, cache: false, forceUTF8: forceUTF8);
+            if (enableVerboseLog) Log.Debug(data);
             //Side effects
             //AuthUrl
             Regex rgx = new Regex(@"""authURL"":""(?<authURL>[^""]*)");
@@ -73,6 +78,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             if (m.Success)
             {
                 latestAuthUrl = m.Groups["authURL"].Value;
+                if (enableVerboseLog) Log.Debug("NETFLIX: new authURL");
             }
             if (i18n == null)
             {
@@ -503,22 +509,30 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             List<Category> cats = new List<Category>();
             string data = MyGetWebData(ShaktiApi + "/" + BuildId + "/pathEvaluator?withSize=true&materialize=true&model=bale&esn=www",
-                postData: @"{""paths"":[[""lolomo"",{""from"":0,""to"":38},[""summary"",""title"",""playListEvidence"",""bookmark"",""queue"",""displayName"",""context""]]],""authURL"":""" + latestAuthUrl + @"""}",
+                postData: @"{""paths"":[[""lolomo"",{""from"":0,""to"":" + noOfCatsInHome + @"},[""summary"",""title"",""playListEvidence"",""bookmark"",""queue"",""displayName"",""context""]]],""authURL"":""" + latestAuthUrl + @"""}",
                 contentType: "application/json");
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
             String lolmoGuid = json["value"]["lolomo"].Values().Last().ToString();
-            for (int i = 0; i < 39; i++)
+            if (enableVerboseLog) Log.Debug("lolmoGuid: {0}", lolmoGuid);
+            for (int i = 0; i < (noOfCatsInHome + 1); i++)
             {
                 JToken token = json["value"]["lolomos"][lolmoGuid][i.ToString()];
-                if (token.Values().Count() > 1)
+                if (token != null)
                 {
-                    JToken item = token.First();
-                    string list = token.Values().Last().ToString();
-                    if (json["value"]["lists"][list]["context"].Value<string>() != "queue" && json["value"]["lists"][list]["context"].Value<string>() != "continueWatching")
+                    if (enableVerboseLog) Log.Debug("token: {0}", token);
+                    if (token.Values().Count() > 1)
                     {
-                        RssLink cat = new RssLink() { ParentCategory = parentCategory, Name = json["value"]["lists"][list]["displayName"].Value<string>(), Url = "\"" + list + "\"", HasSubCategories = true };
-                        cat.Other = (Func<List<Category>>)(() => GetSubCategories(cat, "lists", 0));
-                        cats.Add(cat);
+                        JToken item = token.First();
+                        if (enableVerboseLog) Log.Debug("item: {0}", item);
+                        string list = token.Values().Last().ToString();
+                        if (enableVerboseLog) Log.Debug("list: {0}", list);
+                        if (enableVerboseLog) Log.Debug("context: {0}", json["value"]["lists"][list]["context"]);
+                        if (json["value"]["lists"][list]["context"].Value<string>() != "queue" && json["value"]["lists"][list]["context"].Value<string>() != "continueWatching")
+                        {
+                            RssLink cat = new RssLink() { ParentCategory = parentCategory, Name = json["value"]["lists"][list]["displayName"].Value<string>(), Url = "\"" + list + "\"", HasSubCategories = true };
+                            cat.Other = (Func<List<Category>>)(() => GetSubCategories(cat, "lists", 0));
+                            cats.Add(cat);
+                        }
                     }
                 }
             }
