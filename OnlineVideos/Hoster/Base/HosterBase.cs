@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Hoster
 {
@@ -66,7 +67,7 @@ namespace OnlineVideos.Hoster
 
         public bool Matches(string name)
         {
-            return name.ToLowerInvariant().Contains(GetHosterUrl().ToLowerInvariant());
+            return Regex.IsMatch(name.ToLowerInvariant(), @"\b" + GetHosterUrl().ToLowerInvariant() + @"\b");
         }
     }
 }
