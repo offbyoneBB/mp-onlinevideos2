@@ -10,3 +10,4 @@ bin
 *.log
 /Language/tx.exe
 /.nuget
+/UpgradeLog.htm

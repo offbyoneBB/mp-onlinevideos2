@@ -32,7 +32,7 @@ namespace OnlineVideos.CrossDomain
         internal void LoadAllSiteUtilDlls(string path)
         {
             var assemblies = new Dictionary<Assembly, DateTime>();
-            assemblies.Add(Assembly.GetExecutingAssembly(), Helpers.FileUtils.RetrieveLinkerTimestamp(new Uri(Assembly.GetExecutingAssembly().CodeBase).LocalPath));
+            assemblies.Add(Assembly.GetExecutingAssembly(), Helpers.FileUtils.RetrieveLinkerTimestamp(new Uri(Assembly.GetExecutingAssembly().EscapedCodeBase).LocalPath));
             if (Directory.Exists(path))
             {
                 foreach (string dll in Directory.GetFiles(path, "OnlineVideos.Sites.*.dll"))
