@@ -1375,8 +1375,8 @@
       <Configuration>
         <item key="baseUrl"><![CDATA[http://vod.tvp.pl/]]></item>
         <item key="videoListRegExFormatString"><![CDATA[http://www.tvp.pl/shared/cdn/tokenizer_v2.php?object_id={0}&sdt_version=sdt-v2]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li>\s*<a\shref="(?<url>/serwisy-informacyjne/[^"]*)">(?<title>[^<]*)</a>\s*</li>]]></item>
-        <item key="videoListRegEx"><![CDATA[<li>\s*<strong><a\shref="[^"]*?(?<VideoUrl>[\d]+)">(?<Title>[^<]*)</a></strong>\s*<span><a\shref="[^"]*">(?<Airdate>[^<]*)</a></span>\s*</li>]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<!browse\sdisabled.*)(?<=Informacje\si\spublicystyka.*)<li>\s*<a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>\s*</li>]]></item>
+        <item key="videoListRegEx"><![CDATA[<li>\s*<strong><a\sclass="ui-link"\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a></strong>\s*<span><a\sclass="ui-link"\shref="[^"]*">(?<Airdate>[^<]*)</a></span>]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Serwisy Informacyjne">http://vod.tvp.pl/</Category>

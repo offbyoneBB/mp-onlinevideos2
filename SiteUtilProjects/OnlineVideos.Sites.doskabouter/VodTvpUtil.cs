@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
@@ -19,6 +20,7 @@ namespace OnlineVideos.Sites
                 cat.HasSubCategories = true;
                 cat.Other = true;
             }
+
 
             foreach (Category cat in getCats(String.Format(categoryUrl, "1785454"), null))
                 Settings.Categories.Add(cat);
@@ -43,8 +45,14 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> GetVideos(Category category)
         {
-            if (true.Equals(category.Other))
-                return base.GetVideos(category);
+            if (true.Equals(category.Other)) //videos in serwisy informacyjne
+            {
+                string sav = videoListRegExFormatString;
+                videoListRegExFormatString = "{0}";
+                var res = base.GetVideos(category);
+                videoListRegExFormatString = sav;
+                return res;
+            }
             string webData = GetWebData(((RssLink)category).Url);
             JObject contentData = JObject.Parse(webData);
             if (contentData != null)
@@ -73,6 +81,15 @@ namespace OnlineVideos.Sites
         public override String GetVideoUrl(VideoInfo video)
         {
             string webData = GetWebData(video.VideoUrl);
+            if (!webData.StartsWith("{")) // videos in serwisy informacyjne
+            {
+                Match m = Regex.Match(webData, @"<iframe\s*src=""http://www\.tvp\.pl/sess/tvplayer\.php\?object_id=(?<id>[^&]*)&amp;autoplay=true""", defaultRegexOptions);
+                if (m.Success)
+                {
+                    string newUrl = String.Format(videoListRegExFormatString, m.Groups["id"].Value);
+                    webData = GetWebData(newUrl);
+                }
+            }
             JObject content = JObject.Parse(webData);
 
             if (content != null)
