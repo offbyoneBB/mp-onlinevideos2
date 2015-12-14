@@ -13,12 +13,12 @@ namespace OnlineVideos.MediaPortal2
     {
         public const string ONLINEVIDEOS_MIMETYPE = "video/online";
 
-		protected override void AddSourceFilter()
+        protected override void AddSourceFilter()
         {
             string sourceFilterName = GetSourceFilterName(_resourceAccessor.ResourcePathName);
             if (!string.IsNullOrEmpty(sourceFilterName))
             {
-				IBaseFilter sourceFilter = null;
+                IBaseFilter sourceFilter = null;
                 try
                 {
                     if (sourceFilterName == MPUrlSourceFilter.Downloader.FilterName)
@@ -60,7 +60,7 @@ namespace OnlineVideos.MediaPortal2
             }
             else
             {
-				base.AddSourceFilter();
+                base.AddSourceFilter();
             }
         }
 
@@ -88,7 +88,7 @@ namespace OnlineVideos.MediaPortal2
                 if (result != 0)
                     throw new OnlineVideosException("IsFilterReadyToConnectPins error: " + result);
             }
-        }        
+        }
 
         PlaylistItem GetOnlineVideosMediaItemFromPlayerContexts()
         {
@@ -96,8 +96,8 @@ namespace OnlineVideos.MediaPortal2
             for (int index = 0; index < playerContextManager.NumActivePlayerContexts; index++)
             {
                 IPlayerContext playerContext = playerContextManager.GetPlayerContext(index);
-                if (playerContext != null && 
-                    playerContext.CurrentMediaItem is PlaylistItem && 
+                if (playerContext != null &&
+                    playerContext.CurrentMediaItem is PlaylistItem &&
                     playerContext.CurrentMediaItem.GetResourceLocator().NativeResourcePath == _resourceLocator.NativeResourcePath)
                     return playerContext.CurrentMediaItem as PlaylistItem;
             }
@@ -122,7 +122,7 @@ namespace OnlineVideos.MediaPortal2
             switch (protocol)
             {
                 case "http":
-                    sourceFilterName = url.ToLower().Contains(".asf") ? 
+                    sourceFilterName = url.ToLower().Contains(".asf") ?
                         "WM ASF Reader" : MPUrlSourceFilter.Downloader.FilterName;
                     break;
                 case "rtmp":
