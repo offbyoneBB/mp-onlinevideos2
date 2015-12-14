@@ -1,11 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.MediaPortal2", "OnlineVideos.MediaPortal2\OnlineVideos.MediaPortal2.csproj", "{FA12B047-F5EC-4045-8D26-47C7B17B3B16}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F1199685-8F68-4B99-A47B-BC8CA1817732} = {F1199685-8F68-4B99-A47B-BC8CA1817732}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos", "OnlineVideos\OnlineVideos.csproj", "{E0D9D390-CDD6-4B98-86F3-6EB04A958882}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.WebAutomation.BrowserHost.MP2", "OnlineVideos.WebAutomation.BrowserHost\OnlineVideos.WebAutomation.BrowserHost.MP2.csproj", "{F1199685-8F68-4B99-A47B-BC8CA1817732}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +32,14 @@ Global
 		{E0D9D390-CDD6-4B98-86F3-6EB04A958882}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0D9D390-CDD6-4B98-86F3-6EB04A958882}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E0D9D390-CDD6-4B98-86F3-6EB04A958882}.Release|x86.ActiveCfg = Release|Any CPU
+		{F1199685-8F68-4B99-A47B-BC8CA1817732}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1199685-8F68-4B99-A47B-BC8CA1817732}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1199685-8F68-4B99-A47B-BC8CA1817732}.Debug|x86.ActiveCfg = Debug|x86
+		{F1199685-8F68-4B99-A47B-BC8CA1817732}.Debug|x86.Build.0 = Debug|x86
+		{F1199685-8F68-4B99-A47B-BC8CA1817732}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1199685-8F68-4B99-A47B-BC8CA1817732}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1199685-8F68-4B99-A47B-BC8CA1817732}.Release|x86.ActiveCfg = Release|x86
+		{F1199685-8F68-4B99-A47B-BC8CA1817732}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
