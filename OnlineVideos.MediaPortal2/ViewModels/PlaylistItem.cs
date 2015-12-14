@@ -30,7 +30,10 @@ namespace OnlineVideos.MediaPortal2
             else
             {
                 Aspects[ProviderResourceAspect.ASPECT_ID].SetAttribute(ProviderResourceAspect.ATTR_RESOURCE_ACCESSOR_PATH, RawUrlResourceProvider.ToProviderResourcePath(resolvedPlaybackUrl).Serialize());
-                Aspects[MediaAspect.ASPECT_ID].SetAttribute(MediaAspect.ATTR_MIME_TYPE, OnlineVideosPlayer.ONLINEVIDEOS_MIMETYPE);
+                Aspects[MediaAspect.ASPECT_ID].SetAttribute(MediaAspect.ATTR_MIME_TYPE,
+                    videoInfo.SiteSettings.Player == PlayerType.Browser
+                        ? WebBrowserVideoPlayer.ONLINEVIDEOSBROWSER_MIMETYPE
+                        : OnlineVideosPlayer.ONLINEVIDEOS_MIMETYPE);
             }
 
             Aspects[MediaAspect.ASPECT_ID].SetAttribute(MediaAspect.ATTR_TITLE, videoInfo.Title);

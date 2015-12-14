@@ -72,6 +72,7 @@ namespace OnlineVideos.MediaPortal2
         public Category Category { get; protected set; }
         public string SiteName { get; protected set; }
         public string SiteUtilName { get; protected set; }
+        public SiteSettings SiteSettings { get; protected set; }
         public bool IsDetailsVideo { get; protected set; }
 
         public VideoViewModel(string title, string thumbImage)
@@ -81,13 +82,14 @@ namespace OnlineVideos.MediaPortal2
             _thumbnailImageProperty = new WProperty(typeof(string), thumbImage);
         }
 
-        public VideoViewModel(VideoInfo videoInfo, Category category, string siteName, string utilName, bool isDetailsVideo)
+        public VideoViewModel(VideoInfo videoInfo, Category category, SiteSettings siteSettings, bool isDetailsVideo)
             : base(Consts.KEY_NAME, isDetailsVideo ? ((DetailVideoInfo)videoInfo).Title2 : videoInfo.Title)
         {
+            SiteSettings = siteSettings;
             VideoInfo = videoInfo;
             Category = category;
-            SiteName = siteName;
-            SiteUtilName = utilName;
+            SiteName = siteSettings.Name;
+            SiteUtilName = siteSettings.UtilName;
             IsDetailsVideo = isDetailsVideo;
 
             _titleProperty = new WProperty(typeof(string), videoInfo.Title);
@@ -348,7 +350,7 @@ namespace OnlineVideos.MediaPortal2
                                     if (success2)
                                     {
                                         ovMainModel.VideosList.Clear();
-                                        videos.ForEach(r => { r.CleanDescriptionAndTitle(); ovMainModel.VideosList.Add(new VideoViewModel(r, Category, SiteName, SiteUtilName, false)); });
+                                        videos.ForEach(r => { r.CleanDescriptionAndTitle(); ovMainModel.VideosList.Add(new VideoViewModel(r, Category, SiteSettings, false)); });
                                         if (site.HasNextPage) ovMainModel.VideosList.Add(new VideoViewModel(Translation.Instance.NextPage, "NextPage.png"));
                                         ovMainModel.VideosList.FireChange();
                                         ImageDownloader.GetImages<VideoInfo>(videos);
@@ -441,7 +443,7 @@ namespace OnlineVideos.MediaPortal2
                 urls = new List<string>(new string[] { saveItems.CurrentItem.Url });
             }
             // show selection dialog for playback options
-            VideoViewModel tempVi = new VideoViewModel(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, saveItems.CurrentItem.Util.Settings.Name, saveItems.CurrentItem.Util.Settings.UtilName, false);
+            VideoViewModel tempVi = new VideoViewModel(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, saveItems.CurrentItem.Util.Settings, false);
             tempVi.ChoosePlaybackOptions(urls[0], (url) => { SaveVideo_Step3(saveItems, url, enque); }, enque == null); // skip dialog when downloading an item of a queue
         }
 

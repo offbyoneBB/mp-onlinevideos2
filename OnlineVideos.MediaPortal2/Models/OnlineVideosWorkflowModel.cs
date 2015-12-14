@@ -206,7 +206,7 @@ namespace OnlineVideos.MediaPortal2
                         {
                             VideosList.Remove(videoModel);
                             int selectNr = VideosList.Count;
-                            nextPageVideos.ForEach(r => { r.CleanDescriptionAndTitle(); VideosList.Add(new VideoViewModel(r, SelectedCategory != null ? SelectedCategory.Category : null, SelectedSite.Name, SelectedSite.Site.Settings.UtilName, false) { Selected = VideosList.Count == selectNr }); });
+                            nextPageVideos.ForEach(r => { r.CleanDescriptionAndTitle(); VideosList.Add(new VideoViewModel(r, SelectedCategory != null ? SelectedCategory.Category : null, SelectedSite.Site.Settings, false) { Selected = VideosList.Count == selectNr }); });
                             if (SelectedSite.Site.HasNextPage) VideosList.Add(new VideoViewModel(Translation.Instance.NextPage, "NextPage.png"));
                             VideosList.FireChange();
                             ImageDownloader.GetImages<VideoInfo>(nextPageVideos);
@@ -342,7 +342,7 @@ namespace OnlineVideos.MediaPortal2
         {
             SelectedCategory = category;
             VideosList = new ItemsList();
-            videos.ForEach(r => { r.CleanDescriptionAndTitle(); VideosList.Add(new VideoViewModel(r, SelectedCategory != null ? SelectedCategory.Category : null, SelectedSite.Name, SelectedSite.Site.Settings.UtilName, false)); });
+            videos.ForEach(r => { r.CleanDescriptionAndTitle(); VideosList.Add(new VideoViewModel(r, SelectedCategory != null ? SelectedCategory.Category : null, SelectedSite.Site.Settings, false)); });
 
             if (SelectedSite.Site.HasNextPage) VideosList.Add(new VideoViewModel(Translation.Instance.NextPage, "NextPage.png"));
 
@@ -354,7 +354,7 @@ namespace OnlineVideos.MediaPortal2
         void ShowDetails(List<DetailVideoInfo> choices)
         {
             DetailsVideosList = new List<VideoViewModel>();
-            choices.ForEach(r => { r.CleanDescriptionAndTitle(); DetailsVideosList.Add(new VideoViewModel(r, SelectedCategory != null ? SelectedCategory.Category : null, SelectedSite.Name, SelectedSite.Site.Settings.UtilName, true)); });
+            choices.ForEach(r => { r.CleanDescriptionAndTitle(); DetailsVideosList.Add(new VideoViewModel(r, SelectedCategory != null ? SelectedCategory.Category : null, SelectedSite.Site.Settings, true)); });
             ImageDownloader.GetImages<DetailVideoInfo>(choices);
             IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
             workflowManager.NavigatePushAsync(Guids.WorkflowStateDetails, new NavigationContextConfig() { NavigationContextDisplayLabel = SelectedVideo.Title });
