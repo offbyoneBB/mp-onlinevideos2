@@ -846,7 +846,9 @@ namespace OnlineVideos.Hoster
                     {
                         res = srDecrypt.ReadToEnd();
                         int p = res.IndexOf('\0');
-                        return res.Substring(0, p - 1);
+                        if (p >= 0)
+                            return res.Substring(0, p - 1);
+                        return String.Empty;
                     }
                 }
             }
