@@ -32,6 +32,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private bool _showLoading = true;
         private bool _rememberLogin = false;
         private bool _enableNetflixOsd = false;
+        private bool _disableLogging = false;
 
         private State _currentState = State.None;
         private bool _isPlayingOrPausing = false;
@@ -75,6 +76,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
             _rememberLogin = username.Contains("REMEMBERLOGIN");
             username = username.Replace("REMEMBERLOGIN", string.Empty);
+            _disableLogging = username.Contains("DISABLELOGGING");
+            username = username.Replace("DISABLELOGGING", string.Empty);
             _showLoading = username.Contains("SHOWLOADING");
             username = username.Replace("SHOWLOADING", string.Empty);
             _enableNetflixOsd = username.Contains("ENABLENETFLIXOSD");
@@ -128,6 +131,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         public override Entities.EventResult BrowserDocumentComplete()
         {
             string jsCode;
+            if (!_disableLogging) MessageHandler.Info("Netflix. Url: {0}, State: {1}", Url, _currentState.ToString());
             switch (_currentState)
             {
                 case State.Login:
@@ -170,7 +174,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     {
                         InvokeScript("document.querySelector('a[data-reactid*=" + _profile + "]').click();");
                     }
-                    if (Url.Contains("/browse") || Url.Contains("/kid"))
+                    if (Url.Contains("/browse") || Url.ToLower().Contains("/kid"))
                     {
                         ProcessComplete.Finished = true;
                         ProcessComplete.Success = true;

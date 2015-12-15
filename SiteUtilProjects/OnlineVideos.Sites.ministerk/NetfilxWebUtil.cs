@@ -49,6 +49,9 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         protected uint noOfItems = 100;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable verbose logging"), Description("DEBUG only! Enable only if you have problems. Very verbose logging, generates a lot of data in log.")]
         protected bool enableVerboseLog = false;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Disable browser logging"), Description("Change only if necessary/nothing else helps. If browser player fails. Change back if it does not help!")]
+        protected bool disableLogging = false;
+        //
 
         protected Dictionary<string, string> i18n = null;
 
@@ -545,7 +548,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             List<Category> cats = new List<Category>();
             string data = MyGetWebData(kidsUrl, forceUTF8: true);
-            Regex rgx = new Regex(@"<li><a href=""/kid/category/(?<url>[^""]*)"">(?<title>[^<]*)");
+            Regex rgx = new Regex(@"<li><a href=""/[kK]ids{0,1}/category/(?<url>[^""]*)"">(?<title>[^<]*)");
             foreach (Match m in rgx.Matches(data))
             {
                 RssLink cat = new RssLink() { Name = HttpUtility.HtmlDecode(m.Groups["title"].Value), Url = m.Groups["url"].Value, ParentCategory = parentCategory, HasSubCategories = true  };
@@ -560,8 +563,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             List<Category> cats = new List<Category>();
             string data = MyGetWebData(kidsUrl, forceUTF8: true);
-            //With image: @"<div class=""mrow"".*?href=""/kid/(?<type>[^/]*)/(?<url>[^""]*)"">(?<title>[^<]*).*?src=""(?<img>[^""]*)"
-            Regex rgx = new Regex(@"<div class=""mrow"".*?href=""/kid/(?<type>[^/]*)/(?<url>[^""]*)"">(?<title>[^<]*)");
+            Regex rgx = new Regex(@"<div class=""mrow"".*?href=""/[kK]ids{0,1}/(?<type>[^/]*)/(?<url>[^""]*)"">(?<title>[^<]*)");
             foreach (Match m in rgx.Matches(data))
             {
                 RssLink cat = new RssLink() { Name = HttpUtility.HtmlDecode(m.Groups["title"].Value), Url = m.Groups["url"].Value, ParentCategory = parentCategory, HasSubCategories = true };
@@ -1056,7 +1058,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         string IBrowserSiteUtil.UserName
         {
-            get { return username + "¥" + ProfileToken + (showLoadingSpinner ? "SHOWLOADING" : "") + (rememberLogin ? "REMEMBERLOGIN" : "") + (enableNetflixOsd ? "ENABLENETFLIXOSD" : ""); }
+            get { return username + "¥" + ProfileToken + (showLoadingSpinner ? "SHOWLOADING" : "") + (rememberLogin ? "REMEMBERLOGIN" : "") + (enableNetflixOsd ? "ENABLENETFLIXOSD" : "") + (disableLogging ? "DISABLELOGGING" : ""); }
         }
 
         string IBrowserSiteUtil.Password
