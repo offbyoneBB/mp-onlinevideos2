@@ -6,6 +6,7 @@ using MediaPortal.Common;
 using MediaPortal.Common.SystemResolver;
 using MediaPortal.Common.ResourceAccess;
 using MediaPortal.Common.Services.ResourceAccess.RawUrlResourceProvider;
+using OnlineVideos.Sites;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -20,6 +21,7 @@ namespace OnlineVideos.MediaPortal2
             })
         {
             SiteName = videoInfo.SiteName;
+            Util = OnlineVideoSettings.Instance.SiteUtilsList[SiteName];
 
             Aspects[ProviderResourceAspect.ASPECT_ID].SetAttribute(ProviderResourceAspect.ATTR_SYSTEM_ID, ServiceRegistration.Get<ISystemResolver>().LocalSystemId);
             if (videoInfo.SiteUtilName == "DownloadedVideo")
@@ -47,5 +49,6 @@ namespace OnlineVideos.MediaPortal2
         }
 
         public string SiteName { get; private set; }
+        public SiteUtilBase Util { get; private set; }
     }
 }

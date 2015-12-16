@@ -126,7 +126,7 @@ namespace OnlineVideos.MediaPortal2
             _browserProcess.StartInfo.RedirectStandardError = true;
             _browserProcess.EnableRaisingEvents = true;
             //_browserProcess.StartInfo.FileName = "plugins\\Windows\\OnlineVideos\\OnlineVideos.Sites.WebAutomation.BrowserHost.exe";
-            var dir = OnlineVideoSettings.Instance.ConfigDir;
+            var dir = OnlineVideoSettings.Instance.DllsDir;
 
             _browserProcess.StartInfo.FileName = Path.Combine(OnlineVideoSettings.Instance.DllsDir, "OnlineVideos.WebAutomation.BrowserHost.exe");
             _browserProcess.StartInfo.Arguments = string.Format("\"{0} \" \"{1}\" \"{2}\" \"{3}\" \"{4}\"",
