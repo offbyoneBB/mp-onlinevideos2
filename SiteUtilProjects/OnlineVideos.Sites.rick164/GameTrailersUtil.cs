@@ -37,12 +37,11 @@ namespace OnlineVideos.Sites
           while (m.Success)
           {
             var videoInfo = CreateVideoInfo();
+            videoInfo.Title = string.Format("{0} - {1}", m.Groups["Title"].Value.Replace("&acirc;", "'"), m.Groups["Title2"].Value.Replace("&acirc;", "'"));
             videoInfo.VideoUrl = string.Format("http://www.gametrailers.com{0}", m.Groups["VideoUrl"].Value);
             videoInfo.Thumb = m.Groups["ImageUrl"].Value;
-            videoInfo.Airdate = m.Groups["Airdate"].Value.Replace(":00+00:00", string.Empty).Replace("T", " ");
+            videoInfo.Airdate = m.Groups["Airdate"].Value.Replace(":00+00:00", string.Empty).Replace("+00:00", string.Empty).Replace("T", " ");
             videoInfo.Description = m.Groups["Description"].Value.Replace("&acirc;", "'");
-            videoInfo.Title = string.Format("{0} - {1}", m.Groups["Title"].Value.Replace("&acirc;", "'"),
-              videoInfo.Description);
 
             videoList.Add(videoInfo);
             m = m.NextMatch();
@@ -106,11 +105,11 @@ namespace OnlineVideos.Sites
         var cat = new RssLink();
         if (catName == "Newest Media")
         {
-          cat.Url = string.Format("{0}?streamType=latest", url);
+          cat.Url = string.Format("{0}", url);
         }
         else
         {
-          cat.Url = string.Format("{0}?tags={1}&streamType=latest", url, catName);
+          cat.Url = string.Format("{0}?tags={1}", url, catName);
         }
 
         cat.Name = catName;
