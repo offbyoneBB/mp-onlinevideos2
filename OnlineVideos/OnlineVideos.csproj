@@ -1101,4 +1101,7 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\Build\Version.targets" />
+  <Target Name="AfterBuild">
+	<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)NuGetPackage\Content\" />
+  </Target>
 </Project>
