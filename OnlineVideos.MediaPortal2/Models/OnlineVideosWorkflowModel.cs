@@ -561,11 +561,11 @@ namespace OnlineVideos.MediaPortal2
         public void EnterModelContext(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
         {
 			_messageQueue.Start();
-			// when entering OV model context and no siteutils have been loaded yet - run Automatic Update 
-			// todo : let the user configure if he wants to run the AutoUpdate or be asked, configure x hours before doing/asking again
+			// when entering OV model context and no siteutils have been loaded yet run automatic update (if configured)
 			if (!OnlineVideoSettings.Instance.IsSiteUtilsListBuilt())
 			{
-				if (_settingsWatcher.Settings.LastAutomaticUpdate.AddHours(4) < DateTime.Now &&
+                if (_settingsWatcher.Settings.AutomaticUpdate &&
+                    _settingsWatcher.Settings.LastAutomaticUpdate.AddHours(_settingsWatcher.Settings.AutomaticUpdateInterval) < DateTime.Now &&
 					OnlineVideos.Sites.Updater.VersionCompatible)
 				{
 					IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();

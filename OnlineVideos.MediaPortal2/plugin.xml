@@ -106,6 +106,16 @@
   <!-- Contents of '/Plugins/OnlineVideos' section -->
   <Register Location="/Configuration/Settings/Plugins/OnlineVideos">
     <ConfigSetting
+        Id="OnlineVideosAutomaticUpdate"
+        Text="Automatic Update"
+        HelpText="Enable automatic update of your sites?"
+        ClassName="OnlineVideos.MediaPortal2.Configuration.AutomaticUpdate"/>
+    <ConfigSetting
+        Id="OnlineVideosAutomaticUpdateInterval"
+        Text="Automatic Update Interval"
+        HelpText="After how many hours should another update be performed?"
+        ClassName="OnlineVideos.MediaPortal2.Configuration.AutomaticUpdateInterval"/>
+    <ConfigSetting
         Id="OnlineVideosUseAgeConfirmation"
         Text="Use Age Confirmation"
         HelpText="Require a pin for adult sites?"
