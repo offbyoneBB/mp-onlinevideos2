@@ -194,7 +194,8 @@ namespace OnlineVideos.MediaPortal2
 
         public void Play(List<string> urls)
         {
-            Helpers.UriUtils.RemoveInvalidUrls(urls);
+            if (SiteSettings.Player != PlayerType.Browser)
+                Helpers.UriUtils.RemoveInvalidUrls(urls);
             if (urls != null && urls.Count > 0)
             {
                 // if there is already an OnlineVideo playing stop it first, 2 streams at the same time might saturate the connection or not be allowed by the server

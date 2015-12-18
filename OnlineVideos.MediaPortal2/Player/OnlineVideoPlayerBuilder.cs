@@ -49,7 +49,11 @@ namespace OnlineVideos.MediaPortal2
             {
                 var player = new WebBrowserVideoPlayer();
                 player.Initialise(playlistItem.Util);
-                player.Init(playlistItem);
+                if (!player.Init(playlistItem))
+                {
+                    player.Dispose();
+                    return null;
+                }
                 return player;
             }
 
