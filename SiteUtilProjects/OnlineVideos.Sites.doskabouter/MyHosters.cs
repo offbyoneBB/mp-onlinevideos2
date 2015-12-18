@@ -848,6 +848,9 @@ namespace OnlineVideos.Hoster
                         int p = res.IndexOf('\0');
                         if (p >= 0)
                             return res.Substring(0, p - 1);
+                        m = Regex.Match(webData, @"<span[^>]*>(?<text>[^<]*)</span>");
+                        if (m.Success)
+                            throw new OnlineVideosException(m.Groups["text"].Value);
                         return String.Empty;
                     }
                 }
