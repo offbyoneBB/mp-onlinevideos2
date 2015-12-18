@@ -173,7 +173,7 @@ namespace OnlineVideos.Sites
             }
             if (type == UgType.Series)
             {
-                nextPageAvailable = res.Count >= 8 && data.Contains(@"<span>Meer afleveringen</span>");
+                nextPageAvailable = data.Contains(@"<span>Meer afleveringen</span>");
                 if (nextPageAvailable)
                     nextPageUrl = baseVideoListUrl + "/search?media_type=broadcast&start_date=&end_date=&start=" + (pageNr * 8 - 8).ToString() + "&rows=8";
                 else
@@ -293,7 +293,13 @@ namespace OnlineVideos.Sites
             if (m.Success)
                 webData = m.Groups["res"].Value;
             JObject contentData = (JObject)JObject.Parse(webData);
-            return contentData.Value<string>("url");
+            var url = contentData.Value<string>("url");
+            if (!String.IsNullOrEmpty(url))
+                return url;
+            var error = contentData.Value<string>("errorstring");
+            if (!String.IsNullOrEmpty(error))
+                throw new OnlineVideosException(error);
+            return String.Empty;
         }
     }
 
