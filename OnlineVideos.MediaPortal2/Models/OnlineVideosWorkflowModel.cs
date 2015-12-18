@@ -246,7 +246,7 @@ namespace OnlineVideos.MediaPortal2
 						{
 							if (success)
 							{
-                                if (playItem.Util.Settings.Player != PlayerType.Browser)
+                                if (SelectedSite.Site.Settings.Player != PlayerType.Browser)
 								    Helpers.UriUtils.RemoveInvalidUrls(urls);
 								// if no valid urls were returned show error msg
 								if (urls == null || urls.Count == 0)
@@ -277,7 +277,7 @@ namespace OnlineVideos.MediaPortal2
                 {
 					if (success)
 					{
-                        if (playItem.Util.Settings.Player != PlayerType.Browser)
+                        if (SelectedSite.Site.Settings.Player != PlayerType.Browser)
 						    Helpers.UriUtils.RemoveInvalidUrls(urls);
 						// if no valid urls were returned show error msg
 						if (urls == null || urls.Count == 0)
