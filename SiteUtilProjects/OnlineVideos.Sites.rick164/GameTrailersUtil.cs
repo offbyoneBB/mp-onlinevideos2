@@ -57,17 +57,41 @@ namespace OnlineVideos.Sites
           try
           {
             // Check for next page link
+            // Workaround as GT no longer reliably lists page navivation counts
             var mNext = regEx_NextPage.Match(data);
             if (mNext.Success)
             {
-              Log.Debug("PAGE URL: " + mNext.Groups["url"].Value);
+              if (string.IsNullOrEmpty(nextPageUrl))
+              {
+                nextPageAvailable = true;
+
+                var uriBuilder = new UriBuilder(url);
+                var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+                query["page"] = "1";
+                uriBuilder.Query = query.ToString();
+                nextPageUrl = ApplyUrlDecoding(uriBuilder.ToString(), nextPageRegExUrlDecoding);
+              }
+              else
+              {
+                Uri myUri = new Uri(nextPageUrl);
+                string strPageCount = HttpUtility.ParseQueryString(myUri.Query).Get("page");
+                Int32 pageCount;
+                bool isInteger = Int32.TryParse(strPageCount, out pageCount);
+
+                if (isInteger)
+                {
+                  nextPageAvailable = true;
+                  pageCount++;
+                  var uriBuilder = new UriBuilder(url);
+                  var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+                  query["page"] = pageCount.ToString();
+                  uriBuilder.Query = query.ToString();
+                  nextPageUrl = ApplyUrlDecoding(uriBuilder.ToString(), nextPageRegExUrlDecoding);
+                }
+              }
+
+              Log.Debug("PAGE URL: " + nextPageUrl);
               Log.Debug("VIDEO URL: " + url);
-              nextPageAvailable = true;
-              nextPageUrl = mNext.Groups["url"].Value;
-              if (!string.IsNullOrEmpty(nextPageRegExUrlFormatString))
-                nextPageUrl = string.Format(nextPageRegExUrlFormatString, nextPageUrl);
-              nextPageUrl = ApplyUrlDecoding(nextPageUrl, nextPageRegExUrlDecoding);
-              nextPageUrl = string.Format("{0}&page={1}", url, nextPageUrl);
             }
           }
           catch (Exception eNextPageRetrieval)
