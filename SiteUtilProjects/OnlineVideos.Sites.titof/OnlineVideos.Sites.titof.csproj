@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="D17Util.cs" />
     <Compile Include="RmcSportUtil.cs" />
     <Compile Include="BFMBusinessUtil.cs" />
     <Compile Include="BFMTVUtil.cs" />
