@@ -20,6 +20,7 @@ namespace OnlineVideos.Sites
     public override List<VideoInfo> GetVideos(Category category)
     {
       var url = ((RssLink) category).Url;
+      nextPageUrl = string.Empty;
       return GetVideoList(url);
     }
 
