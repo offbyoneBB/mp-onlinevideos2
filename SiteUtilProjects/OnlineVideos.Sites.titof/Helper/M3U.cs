@@ -107,8 +107,11 @@ namespace OnlineVideos.Sites.M3U
                 if (splitterPos < 0) return;
                 string key = optionLine.Substring(0, splitterPos);
                 object value = optionLine.Substring(splitterPos + 1);
-
-                if (Constantes.INT_OPTIONS.Contains(key))
+                if (key == "#EXT-X-MEDIA") 
+                {
+                
+                }
+                else if (Constantes.INT_OPTIONS.Contains(key))
                 {
                     value = int.Parse(value.ToString());
                 }
@@ -162,6 +165,9 @@ namespace OnlineVideos.Sites.M3U
             /// </summary>
             public System.Collections.Hashtable Options { get; set; }
 
+            /// <summary>
+            /// Depth in playlist
+            /// </summary>
             public int Depth { get; set; }
 
             public override string ToString()
