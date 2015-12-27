@@ -1,22 +1,22 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
-using System.Web;
-using System.Net;
-using System.Xml;
 using System.Text.RegularExpressions;
-using System.Collections;
-using System.ComponentModel;
 
 namespace OnlineVideos.Sites
 {
     public class GulliUtil : GenericSiteUtil
     {
+        #region Fields
+
         private string _baseUrl = "http://replay.gulli.fr/";
 
+        #endregion Fields
+
+        #region Methods
+
         public override int DiscoverDynamicCategories()
-        {           
+        {
             RssLink cat = new RssLink();
             cat.Url = _baseUrl + "nouveautes";
             cat.Name = "Nouveautés";
@@ -46,7 +46,7 @@ namespace OnlineVideos.Sites
             cat.Name = "Séries";
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
-        
+
             Settings.DynamicCategoriesDiscovered = true;
 
             return 1;
@@ -64,18 +64,18 @@ namespace OnlineVideos.Sites
             Match m = r.Match(webData);
             while (m.Success)
             {
-                VideoInfo video = new VideoInfo() 
+                VideoInfo video = new VideoInfo()
                 {
                     VideoUrl = m.Groups["url"].Value,
                     Title = m.Groups["title"].Value,
                     Thumb = m.Groups["thumb"].Value,
                     Description = m.Groups["description"].Value.Trim() + "\n" + m.Groups["description2"].Value.Trim()
                 };
-                
+
                 listVideos.Add(video);
                 m = m.NextMatch();
             }
-           
+
             return listVideos;
         }
 
@@ -87,7 +87,7 @@ namespace OnlineVideos.Sites
             string videoFile = "http://httpg3.scdn.arkena.com/10624/id/id_Ipad.smil/playlist.m3u8";
             videoFile = videoFile.Replace("id", id);
 
-            string resultUrl =  videoFile;
+            string resultUrl = videoFile;
 
             M3U.M3U.M3UPlaylist play = new M3U.M3U.M3UPlaylist();
             play.Configuration.Depth = 1;
@@ -95,7 +95,7 @@ namespace OnlineVideos.Sites
             IEnumerable<OnlineVideos.Sites.M3U.M3U.M3UComponent> telem = from item in play.OrderBy("BRANDWITH")
                                                                          select item;
 
-            if (telem.Count() >= 4) 
+            if (telem.Count() >= 4)
             {
                 video.PlaybackOptions = new Dictionary<string, string>();
                 video.PlaybackOptions.Add("LOW RES", telem.ToList()[0].Path);
@@ -128,5 +128,7 @@ namespace OnlineVideos.Sites
 
             //return nexturl;
         }
+
+        #endregion Methods
     }
 }

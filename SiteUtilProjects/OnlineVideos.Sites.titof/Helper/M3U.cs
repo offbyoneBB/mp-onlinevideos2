@@ -338,7 +338,7 @@ namespace OnlineVideos.Sites.M3U
         /// <summary>
         /// M3U or M3U8 Playlist
         /// </summary>
-        internal class M3UPlaylist : List<M3UElement>, IM3UComponent
+        internal class M3UPlaylist : List<M3UElement>, IM3UComponent,IDisposable
         {
 
             #region <<DECLARATION>>
@@ -358,6 +358,10 @@ namespace OnlineVideos.Sites.M3U
 
             ~M3UPlaylist()
             {
+                this.Dispose();
+            }
+            public void Dispose()
+            {
                 if (_watcher != null)
                 {
                     try
@@ -367,6 +371,9 @@ namespace OnlineVideos.Sites.M3U
                     }
                     catch { }
                 }
+
+                if (Options != null)
+                { Options = null; }
             }
             #endregion <<CTR>>
 

@@ -18,7 +18,7 @@
     <OutputPath>..\..\Build\SiteUtilDlls\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="D17Util.cs" />
+    <Compile Include="IPTVUtil.cs" />
     <Compile Include="RmcSportUtil.cs" />
     <Compile Include="BFMBusinessUtil.cs" />
     <Compile Include="BFMTVUtil.cs" />

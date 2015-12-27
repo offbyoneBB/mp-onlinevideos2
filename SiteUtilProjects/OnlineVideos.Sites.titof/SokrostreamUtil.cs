@@ -98,7 +98,7 @@ namespace OnlineVideos.Sites
         {
             string sUrl = video.VideoUrl;
             string sContent = GetWebData(sUrl+"/5");
-            string content2 = GetWebData("http://hqq.tv/player/embed_player.php?vid=5ADYD8S6YSN4");
+            string content2 = GetWebData("http://ok.ru/videoembed/39040911942");
         
 
             //JObject obj = JObject.Parse(sContent);
