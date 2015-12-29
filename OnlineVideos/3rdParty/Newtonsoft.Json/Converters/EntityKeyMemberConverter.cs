@@ -25,11 +25,11 @@
 
 #if !(SILVERLIGHT || NET20 || NETFX_CORE || PORTABLE)
 using System;
-using Newtonsoft.Json.Serialization;
 using System.Globalization;
-using Newtonsoft.Json.Utilities;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Serialization;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Converters
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Converters
 {
   internal interface IEntityKeyMember
   {

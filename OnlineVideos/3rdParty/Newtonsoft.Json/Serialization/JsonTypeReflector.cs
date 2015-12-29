@@ -25,23 +25,22 @@
 
 using System;
 using System.ComponentModel;
-using System.Globalization;
+using System.Linq;
 using System.Reflection;
-#if !(NETFX_CORE || PORTABLE)
+using System.Runtime.Serialization;
 using System.Security.Permissions;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
+#if !(NETFX_CORE || PORTABLE)
 #endif
-using Newtonsoft.Json.Utilities;
 #if NETFX_CORE || PORTABLE
 using ICustomAttributeProvider = Newtonsoft.Json.Utilities.CustomAttributeProvider;
 #endif
 #if NET20
 using Newtonsoft.Json.Utilities.LinqBridge;
 #else
-using System.Linq;
 #endif
-using System.Runtime.Serialization;
 
-namespace Newtonsoft.Json.Serialization
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Serialization
 {
 #if !SILVERLIGHT && !PocketPC && !NET20 && !NETFX_CORE
   internal interface IMetadataTypeAttribute

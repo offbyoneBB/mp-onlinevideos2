@@ -4,11 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using Newtonsoft.Json.Utilities;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Converters
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Converters
 {
   /// <summary>
   /// Converts an ExpandoObject to and from JSON.

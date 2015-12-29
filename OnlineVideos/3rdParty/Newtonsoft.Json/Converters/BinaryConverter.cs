@@ -25,12 +25,12 @@
 
 #if !(SILVERLIGHT || NETFX_CORE || PORTABLE)
 using System;
+using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Globalization;
-using Newtonsoft.Json.Utilities;
-using System.Collections.Generic;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Converters
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Converters
 {
 #if !NET20
   internal interface IBinary

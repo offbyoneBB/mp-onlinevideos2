@@ -1,10 +1,9 @@
 ﻿using System;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites.Pondman.IMDb.Json {
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
-    
-    public class IMDbResponse {
+  public class IMDbResponse {
 
         [JsonProperty("data")]
         public JObject Data { get; set; }

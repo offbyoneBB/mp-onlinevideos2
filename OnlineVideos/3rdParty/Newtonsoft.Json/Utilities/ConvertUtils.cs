@@ -23,23 +23,23 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Globalization;
-using System.ComponentModel;
-using Newtonsoft.Json.Serialization;
-using System.Reflection;
 #if NET20
 using Newtonsoft.Json.Utilities.LinqBridge;
 #endif
-
-#if !(SILVERLIGHT || NETFX_CORE || PORTABLE)
+using System;
+using System.ComponentModel;
 using System.Data.SqlTypes;
+using System.Globalization;
+using System.Reflection;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Serialization;
+#if !(SILVERLIGHT || NETFX_CORE || PORTABLE)
+
 #endif
 #if NETFX_CORE
 using IConvertible = Newtonsoft.Json.Utilities.Convertible;
 #endif
 
-namespace Newtonsoft.Json.Utilities
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Utilities
 {
   internal class Convertible
   {

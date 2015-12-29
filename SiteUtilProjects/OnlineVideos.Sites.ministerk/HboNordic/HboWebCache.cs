@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites.HboNordic
 {
@@ -83,13 +84,13 @@ namespace OnlineVideos.Sites.HboNordic
             {
                 return (T)(object)webData;
             }
-            else if (typeof(T) == typeof(Newtonsoft.Json.Linq.JToken))
+            else if (typeof(T) == typeof(JToken))
             {
-                return (T)(object)Newtonsoft.Json.Linq.JToken.Parse(webData);
+                return (T)(object)JToken.Parse(webData);
             }
-            else if (typeof(T) == typeof(Newtonsoft.Json.Linq.JObject))
+            else if (typeof(T) == typeof(JObject))
             {
-                return (T)(object)Newtonsoft.Json.Linq.JObject.Parse(webData);
+                return (T)(object)JObject.Parse(webData);
             }
             else if (typeof(T) == typeof(RssToolkit.Rss.RssDocument))
             {

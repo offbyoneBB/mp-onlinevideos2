@@ -1,8 +1,8 @@
-﻿namespace OnlineVideos.Sites.Pondman.IMDb.Json
+﻿using OnlineVideos._3rdParty.Newtonsoft.Json;
+
+namespace OnlineVideos.Sites.Pondman.IMDb.Json
 {
-    using Newtonsoft.Json;
-    
-    public class IMDbCertificate {
+  public class IMDbCertificate {
 
         [JsonProperty("attr")]
         public string ID { get; set; }

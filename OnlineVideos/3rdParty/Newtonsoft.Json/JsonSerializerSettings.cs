@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Runtime.Serialization.Formatters;
-using Newtonsoft.Json.Serialization;
 using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Serialization;
 
-namespace Newtonsoft.Json
+namespace OnlineVideos._3rdParty.Newtonsoft.Json
 {
   /// <summary>
   /// Specifies the settings on a <see cref="JsonSerializer"/> object.

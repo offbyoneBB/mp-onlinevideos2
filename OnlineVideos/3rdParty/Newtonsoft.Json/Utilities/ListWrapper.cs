@@ -26,7 +26,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Newtonsoft.Json.Utilities
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Utilities
 {
   internal interface IWrappedList : IList
   {

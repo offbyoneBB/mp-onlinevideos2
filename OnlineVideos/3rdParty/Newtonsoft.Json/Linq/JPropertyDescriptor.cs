@@ -26,9 +26,9 @@
 #if !(SILVERLIGHT || NETFX_CORE || PORTABLE)
 using System;
 using System.ComponentModel;
-using Newtonsoft.Json.Utilities;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Linq
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Linq
 {
   /// <summary>
   /// Represents a view of a <see cref="JProperty"/>.

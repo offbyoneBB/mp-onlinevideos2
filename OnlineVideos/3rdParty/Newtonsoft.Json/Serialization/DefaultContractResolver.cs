@@ -23,37 +23,36 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Collections;
 #if !(NET35 || NET20 || SILVERLIGHT || WINDOWS_PHONE || PORTABLE)
-using System.Collections.Concurrent;
 #endif
-using System.Collections.Generic;
-using System.ComponentModel;
 #if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE)
-using System.Dynamic;
 #endif
-using System.Globalization;
-using System.Reflection;
-using System.Runtime.Serialization;
 #if !(NETFX_CORE || PORTABLE)
-using System.Security.Permissions;
 #endif
-using System.Xml.Serialization;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Utilities;
-using Newtonsoft.Json.Linq;
-using System.Runtime.CompilerServices;
 #if NETFX_CORE || PORTABLE
 using ICustomAttributeProvider = Newtonsoft.Json.Utilities.CustomAttributeProvider;
 #endif
+using System;
+using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Dynamic;
+using System.Globalization;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Converters;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Linq;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 #if NET20
 using Newtonsoft.Json.Utilities.LinqBridge;
 #else
-using System.Linq;
+
 #endif
 
-namespace Newtonsoft.Json.Serialization
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Serialization
 {
   internal struct ResolverContractKey : IEquatable<ResolverContractKey>
   {

@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.IO;
 
-namespace Newtonsoft.Json.Linq
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Linq
 {
   /// <summary>
   /// Represents a raw JSON string.

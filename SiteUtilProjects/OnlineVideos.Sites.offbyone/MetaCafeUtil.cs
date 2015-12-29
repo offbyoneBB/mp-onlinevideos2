@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Web;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
@@ -48,7 +49,7 @@ namespace OnlineVideos.Sites
                     }
                     string id = Regex.Match(dataPage, @"id=""flashVars""\s+name=""flashvars""\s+value=""([^""]+)""").Groups[1].Value;
 					string mediaData = System.Web.HttpUtility.ParseQueryString(id)["mediaData"];
-					var json = Newtonsoft.Json.Linq.JObject.Parse(mediaData);
+					var json = JObject.Parse(mediaData);
 					string url = json.First.First["mediaURL"].ToString();
 					List<string> parameters = new List<string>();
 					foreach (var item in json.First.First["access"])

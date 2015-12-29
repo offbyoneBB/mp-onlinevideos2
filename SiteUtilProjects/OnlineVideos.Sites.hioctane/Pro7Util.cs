@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml.Linq;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
@@ -81,7 +83,7 @@ namespace OnlineVideos.Sites
             else
             {
                 string jsonData = Regex.Match(webData, @"SIMVideoPlayer.extract\(""json"",\s*""(?<json>.*?)""\s*\);", RegexOptions.Singleline).Groups["json"].Value;
-                var json = Newtonsoft.Json.JsonConvert.DeserializeObject<Newtonsoft.Json.Linq.JObject>(Regex.Unescape(jsonData));
+                var json = JsonConvert.DeserializeObject<JObject>(Regex.Unescape(jsonData));
                 
                 // try http mp4 file from id
                 string clipId = json["categoryList"][0]["clipList"][0].Value<string>("id");
@@ -98,12 +100,12 @@ namespace OnlineVideos.Sites
                 }
                 if (string.IsNullOrEmpty(url))
                 {
-                    var dl = json.Descendants().Where(j => j.Type == Newtonsoft.Json.Linq.JTokenType.Property && ((Newtonsoft.Json.Linq.JProperty)j).Name == "downloadFilename");
+                    var dl = json.Descendants().Where(j => j.Type == JTokenType.Property && ((JProperty)j).Name == "downloadFilename");
 
                     foreach (var prop in dl)
                     {
-                        string filename = (prop as Newtonsoft.Json.Linq.JProperty).Value.ToString();
-                        string geo = (prop.Parent as Newtonsoft.Json.Linq.JObject).Value<string>("geoblocking");
+                        string filename = (prop as JProperty).Value.ToString();
+                        string geo = (prop.Parent as JObject).Value<string>("geoblocking");
                         string geoblock = string.Empty;
                         if (string.IsNullOrEmpty(geo))
                             geoblock = "geo_d_at_ch/";

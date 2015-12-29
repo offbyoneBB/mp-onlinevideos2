@@ -24,15 +24,11 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using Newtonsoft.Json.Utilities;
-using Newtonsoft.Json.Linq;
 using System.Globalization;
+using System.IO;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Bson
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Bson
 {
   /// <summary>
   /// Represents a writer that provides a fast, non-cached, forward-only way of generating Json data.

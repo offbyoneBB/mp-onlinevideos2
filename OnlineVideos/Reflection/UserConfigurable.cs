@@ -6,6 +6,7 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using OnlineVideos.Reflection;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Linq;
 
 namespace OnlineVideos
 {
@@ -200,8 +201,8 @@ namespace OnlineVideos
         /// <typeparam name="T">The type you want the returned data to be. Supported are:
         /// <list type="bullet">
         /// <item><description><see cref="String"/></description></item>
-        /// <item><description><see cref="Newtonsoft.Json.Linq.JToken"/></description></item>
-        /// <item><description><see cref="Newtonsoft.Json.Linq.JObject"/></description></item>
+        /// <item><description><see cref="JToken"/></description></item>
+        /// <item><description><see cref="JObject"/></description></item>
         /// <item><description><see cref="RssToolkit.Rss.RssDocument"/></description></item>
         /// <item><description><see cref="XmlDocument"/></description></item>
         /// <item><description><see cref="System.Xml.Linq.XDocument"/></description></item>

@@ -23,7 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace Newtonsoft.Json
+namespace OnlineVideos._3rdParty.Newtonsoft.Json
 {
   /// <summary>
   /// Specifies how object creation is handled by the <see cref="JsonSerializer"/>.

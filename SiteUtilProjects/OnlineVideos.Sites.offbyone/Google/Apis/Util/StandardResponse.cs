@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 using Google.Apis.Requests;
-using Newtonsoft.Json;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
 
 namespace Google.Apis.Util
 {

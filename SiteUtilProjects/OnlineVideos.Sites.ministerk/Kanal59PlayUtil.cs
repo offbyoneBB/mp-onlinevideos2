@@ -5,10 +5,10 @@ using System.Linq;
 using System.Web;
 using System.Xml;
 using System.Net;
-using Newtonsoft.Json;
 using HtmlAgilityPack;
-using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {

@@ -27,10 +27,10 @@
 using System;
 using System.Globalization;
 using System.Runtime.Serialization;
-using Newtonsoft.Json.Utilities;
-using Newtonsoft.Json.Linq;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Linq;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Serialization
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Serialization
 {
   internal class JsonFormatterConverter : IFormatterConverter
   {

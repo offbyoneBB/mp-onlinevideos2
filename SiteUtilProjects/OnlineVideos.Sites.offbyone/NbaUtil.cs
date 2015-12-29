@@ -7,6 +7,7 @@ using System.Net;
 using System.Xml;
 using System.Text;
 using System.Text.RegularExpressions;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
@@ -40,11 +41,11 @@ namespace OnlineVideos.Sites
             string json = Regex.Match(js, @"var\snbaChannelConfig=(?<json>[^\;]+)").Groups["json"].Value;
 
             List<Category> categories = new List<Category>();
-            foreach (var jsonToken in Newtonsoft.Json.Linq.JObject.Parse(json))
+            foreach (var jsonToken in JObject.Parse(json))
             {
                 string name = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(jsonToken.Key.Replace("/", ": "));
                 Category mainCategory = new Category() { Name = name, HasSubCategories = true, SubCategoriesDiscovered = true, SubCategories = new List<Category>() };
-                SetLogoAndName(teamLogos, mainCategory, jsonToken.Value as Newtonsoft.Json.Linq.JArray);          
+                SetLogoAndName(teamLogos, mainCategory, jsonToken.Value as JArray);          
                 foreach (var subJo in jsonToken.Value)
                 {
                     RssLink subCategory = new RssLink() { Name = subJo.Value<string>("display"), ParentCategory = mainCategory, Url = subJo.Value<string>("search_string") };
@@ -73,7 +74,7 @@ namespace OnlineVideos.Sites
             string data = GetWebData(inUrl);
             string json = Regex.Match(data, "<textarea id=\"jsCode\">(?<json>.+)</textarea>", RegexOptions.Singleline).Groups["json"].Value;
 
-            Newtonsoft.Json.Linq.JObject jsonData = Newtonsoft.Json.Linq.JObject.Parse(json);
+            JObject jsonData = JObject.Parse(json);
             int NumVideosTotal = jsonData["metaResults"].Value<int>("advvideo");            
             pagesInCategory = NumVideosTotal / itemsPerPage;
             foreach (var jo in jsonData["results"][0])
@@ -118,7 +119,7 @@ namespace OnlineVideos.Sites
             return teamLogos;
         }
 
-        void SetLogoAndName(Dictionary<string, string> teamLogos, Category category, Newtonsoft.Json.Linq.JArray jsonValue)
+        void SetLogoAndName(Dictionary<string, string> teamLogos, Category category, JArray jsonValue)
         {
             try
             {

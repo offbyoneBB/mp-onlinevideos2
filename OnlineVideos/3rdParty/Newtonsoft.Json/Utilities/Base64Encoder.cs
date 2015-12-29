@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Newtonsoft.Json.Utilities
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Utilities
 {
   internal class Base64Encoder
   {

@@ -23,15 +23,9 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System;
-using System.Collections;
-using System.Globalization;
 using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
 
-namespace Newtonsoft.Json.Utilities
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Utilities
 {
   internal static class JavaScriptUtils
   {

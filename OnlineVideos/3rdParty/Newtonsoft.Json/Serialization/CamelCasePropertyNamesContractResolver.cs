@@ -23,10 +23,9 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Globalization;
-using Newtonsoft.Json.Utilities;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Serialization
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Serialization
 {
   /// <summary>
   /// Resolves member mappings for a type, camel casing property names.

@@ -7,11 +7,11 @@ using System.ComponentModel;
 using HtmlAgilityPack;
 using System.Web;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
 using OnlineVideos.Sites.Utils;
 using System.Collections.Specialized;
 using OnlineVideos.Helpers;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites.BrowserUtilConnectors
 {

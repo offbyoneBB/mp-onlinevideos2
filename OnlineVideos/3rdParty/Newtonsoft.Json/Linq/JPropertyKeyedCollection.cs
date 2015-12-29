@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Newtonsoft.Json.Linq
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Linq
 {
   internal class JPropertyKeyedCollection : Collection<JToken>
   {

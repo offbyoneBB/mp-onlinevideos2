@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using OnlineVideos.MPUrlSourceFilter;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {

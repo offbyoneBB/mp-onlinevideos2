@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
 
 namespace Google.Apis.Auth
 {
@@ -29,13 +30,13 @@ namespace Google.Apis.Auth
             /// <summary>
             /// a space-delimited list of the permissions the application requests or <c>null</c>.
             /// </summary>
-            [Newtonsoft.Json.JsonPropertyAttribute("scope")]
+            [JsonProperty("scope")]
             public string Scope { get; set; }
 
             /// <summary>
             /// The email address of the user for which the application is requesting delegated access.
             /// </summary>
-            [Newtonsoft.Json.JsonPropertyAttribute("prn")]
+            [JsonProperty("prn")]
             public string Prn { get; set; }
         }
     }

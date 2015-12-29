@@ -23,8 +23,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Ionic.Zlib;
-using Newtonsoft.Json;
-
 using Google.Apis.Discovery;
 using Google.Apis.Http;
 using Google.Apis.Json;
@@ -32,6 +30,7 @@ using Google.Apis.Logging;
 using Google.Apis.Requests;
 using Google.Apis.Util;
 using Google.Apis.Testing;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
 
 namespace Google.Apis.Services
 {

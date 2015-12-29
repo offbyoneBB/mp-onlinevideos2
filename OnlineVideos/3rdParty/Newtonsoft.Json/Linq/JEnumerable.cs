@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 #if NET20
 using Newtonsoft.Json.Utilities.LinqBridge;
 #else
-using System.Linq;
 #endif
-using Newtonsoft.Json.Utilities;
-using System.Collections;
 
-namespace Newtonsoft.Json.Linq
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Linq
 {
   /// <summary>
   /// Represents a collection of <see cref="JToken"/> objects.

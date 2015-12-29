@@ -1,9 +1,9 @@
 ﻿using System;
-using Newtonsoft.Json.Bson;
 using System.Globalization;
-using Newtonsoft.Json.Utilities;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Bson;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Converters
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Converters
 {
   /// <summary>
   /// Converts a <see cref="BsonObjectId"/> to and from JSON and BSON.

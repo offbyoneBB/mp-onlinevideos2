@@ -27,14 +27,13 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Runtime.Serialization.Formatters;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json.Utilities;
 using System.Runtime.Serialization;
-using ErrorEventArgs=Newtonsoft.Json.Serialization.ErrorEventArgs;
+using System.Runtime.Serialization.Formatters;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Serialization;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
+using ErrorEventArgs=OnlineVideos._3rdParty.Newtonsoft.Json.Serialization.ErrorEventArgs;
 
-namespace Newtonsoft.Json
+namespace OnlineVideos._3rdParty.Newtonsoft.Json
 {
   /// <summary>
   /// Serializes and deserializes objects into and from the JSON format.

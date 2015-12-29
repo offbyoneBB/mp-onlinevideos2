@@ -25,7 +25,7 @@
 
 using System;
 
-namespace Newtonsoft.Json.Schema
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Schema
 {
   /// <summary>
   /// The value types allowed by the <see cref="JsonSchema"/>.

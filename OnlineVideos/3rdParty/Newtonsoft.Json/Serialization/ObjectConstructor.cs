@@ -23,7 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-namespace Newtonsoft.Json.Serialization
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Serialization
 {
   /// <summary>
   /// Represents a method that constructs an object.

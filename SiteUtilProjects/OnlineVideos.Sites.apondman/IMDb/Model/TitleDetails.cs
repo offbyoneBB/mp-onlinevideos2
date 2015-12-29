@@ -5,9 +5,8 @@ using System.Linq;
 namespace OnlineVideos.Sites.Pondman.IMDb.Model
 {
     using HtmlAgilityPack;
-    using Newtonsoft.Json;
 
-    /// <summary>
+  /// <summary>
     /// IMDb Title
     /// </summary>
     public class TitleDetails : TitleBase, IVideoDetails

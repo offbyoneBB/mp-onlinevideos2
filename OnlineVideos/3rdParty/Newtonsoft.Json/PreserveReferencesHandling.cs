@@ -24,10 +24,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Newtonsoft.Json
+namespace OnlineVideos._3rdParty.Newtonsoft.Json
 {
   /// <summary>
   /// Specifies reference handling options for the <see cref="JsonSerializer"/>.

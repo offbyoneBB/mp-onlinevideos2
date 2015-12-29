@@ -26,9 +26,9 @@
 #if !(SILVERLIGHT || NETFX_CORE || PORTABLE)
 using System;
 using System.Data;
-using Newtonsoft.Json.Serialization;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Serialization;
 
-namespace Newtonsoft.Json.Converters
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Converters
 {
   /// <summary>
   /// Converts a <see cref="DataTable"/> to and from JSON.

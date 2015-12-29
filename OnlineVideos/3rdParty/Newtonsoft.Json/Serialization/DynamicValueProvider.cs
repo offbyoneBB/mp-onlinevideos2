@@ -25,16 +25,14 @@
 
 #if !(SILVERLIGHT || PORTABLE)
 using System;
-using System.Collections.Generic;
+using System.Globalization;
+using System.Reflection;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 #if NET20
 using Newtonsoft.Json.Utilities.LinqBridge;
 #endif
-using System.Text;
-using System.Reflection;
-using Newtonsoft.Json.Utilities;
-using System.Globalization;
 
-namespace Newtonsoft.Json.Serialization
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Serialization
 {
   /// <summary>
   /// Get and set values for a <see cref="MemberInfo"/> using dynamic methods.

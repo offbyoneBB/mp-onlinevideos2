@@ -1,8 +1,8 @@
-﻿namespace OnlineVideos.Sites.Pondman.IMDb.Json
+﻿using OnlineVideos._3rdParty.Newtonsoft.Json;
+
+namespace OnlineVideos.Sites.Pondman.IMDb.Json
 {
-    using Newtonsoft.Json;
-    
-    public class IMDbRankedObject<T>
+  public class IMDbRankedObject<T>
     {
         [JsonProperty("object")]
         public T Object { get; set; }

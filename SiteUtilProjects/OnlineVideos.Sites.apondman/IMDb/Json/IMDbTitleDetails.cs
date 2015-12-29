@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 using System;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
 
 namespace OnlineVideos.Sites.Pondman.IMDb.Json {
-    
-    using Newtonsoft.Json;
-
-    public class IMDbTitleDetails : IMDbTitle {
+  public class IMDbTitleDetails : IMDbTitle {
 
         public IMDbTitleDetails()
         {

@@ -24,9 +24,8 @@
 #endregion
 
 using System;
-using Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Converters
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Converters
 {
   /// <summary>
   /// Create a custom object

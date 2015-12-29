@@ -25,11 +25,11 @@
 
 using System;
 using System.Globalization;
-using System.Runtime.Serialization.Formatters;
-using Newtonsoft.Json.Utilities;
 using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Serialization
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Serialization
 {
   internal class JsonSerializerProxy : JsonSerializer
   {

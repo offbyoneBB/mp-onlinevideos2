@@ -25,7 +25,7 @@
 
 using System;
 
-namespace Newtonsoft.Json
+namespace OnlineVideos._3rdParty.Newtonsoft.Json
 {
   /// <summary>
   /// Specifies default value handling options for the <see cref="JsonSerializer"/>.

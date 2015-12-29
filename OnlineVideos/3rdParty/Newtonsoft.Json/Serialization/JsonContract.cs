@@ -26,12 +26,13 @@
 using System;
 using System.Reflection;
 using System.Runtime.Serialization;
-using Newtonsoft.Json.Utilities;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
+
 #if NETFX_CORE
 using IConvertible = Newtonsoft.Json.Utilities.Convertible;
 #endif
 
-namespace Newtonsoft.Json.Serialization
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Serialization
 {
   internal enum JsonContractType
   {

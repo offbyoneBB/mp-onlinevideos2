@@ -26,7 +26,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Newtonsoft.Json.Schema
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Schema
 {
   /// <summary>
   /// Returns detailed information about the schema exception.

@@ -6,7 +6,8 @@ using System.Web;
 using System.Xml;
 using System.Text.RegularExpressions;
 using System.Net;
-using Newtonsoft.Json;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
@@ -126,7 +127,7 @@ namespace OnlineVideos.Sites
             if (parentCategory.ParentCategory == null)
             {
                 string jsonstr = GetWebData((parentCategory as RssLink).Url);
-                Newtonsoft.Json.Linq.JArray jsonArray = (Newtonsoft.Json.Linq.JArray)JsonConvert.DeserializeObject(jsonstr);
+                JArray jsonArray = (JArray)JsonConvert.DeserializeObject(jsonstr);
                 List<Category> cats = new List<Category>();
                 Category cat = new RssLink()
                 {
@@ -152,8 +153,8 @@ namespace OnlineVideos.Sites
             }
             else if (parentCategory.ParentCategory.ParentCategory == null)
             {
-                var json = GetWebData<Newtonsoft.Json.Linq.JObject>((parentCategory as RssLink).Url);
-                Newtonsoft.Json.Linq.JArray results = (Newtonsoft.Json.Linq.JArray)json["results"];
+                var json = GetWebData<JObject>((parentCategory as RssLink).Url);
+                JArray results = (JArray)json["results"];
                 List<Category> cats = new List<Category>();
                 Category cat = null;
                 foreach (var result in results)
@@ -221,10 +222,10 @@ namespace OnlineVideos.Sites
             login();
             currentVideoUrl = (category as RssLink).Url;
             List<VideoInfo> videos = new List<VideoInfo>();
-            Newtonsoft.Json.Linq.JObject json = new Newtonsoft.Json.Linq.JObject();
+            JObject json = new JObject();
             try
             {
-                json = GetWebData<Newtonsoft.Json.Linq.JObject>((category as RssLink).Url);
+                json = GetWebData<JObject>((category as RssLink).Url);
             }
             catch(Exception e)
             {
@@ -232,7 +233,7 @@ namespace OnlineVideos.Sites
                 Log.Error(e);
                 throw new OnlineVideosException("Error getting videos, try again!",false);
             }
-            Newtonsoft.Json.Linq.JArray results = (Newtonsoft.Json.Linq.JArray)json["results"];
+            JArray results = (JArray)json["results"];
             foreach (var result in results)
             {
                 if ((!tryFilterDrm || !(bool)result["is_drm_protected"]) && (isPremium || int.Parse(((string)result["availability"]["availability_group_free"]).Replace("+",string.Empty)) > 0))

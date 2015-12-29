@@ -1,4 +1,4 @@
-﻿namespace Newtonsoft.Json
+﻿namespace OnlineVideos._3rdParty.Newtonsoft.Json
 {
   /// <summary>
   /// Provides an interface to enable a class to return line and position information.

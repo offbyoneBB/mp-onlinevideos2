@@ -10,8 +10,6 @@ using OnlineVideos.Helpers;
 using System.Diagnostics;
 using OnlineVideos.Sites.Utils;
 using System.Xml;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
 using System.Net;
 
 namespace OnlineVideos.Sites.BrowserUtilConnectors

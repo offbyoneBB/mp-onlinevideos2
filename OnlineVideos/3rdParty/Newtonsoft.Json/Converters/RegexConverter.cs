@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Text.RegularExpressions;
-using Newtonsoft.Json.Bson;
 using System.Globalization;
+using System.Text.RegularExpressions;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Bson;
 
-namespace Newtonsoft.Json.Converters
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Converters
 {
   /// <summary>
   /// Converts a <see cref="Regex"/> to and from JSON and BSON.

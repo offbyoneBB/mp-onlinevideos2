@@ -25,16 +25,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Linq;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 #if NET20
 using Newtonsoft.Json.Utilities.LinqBridge;
 #else
-using System.Linq;
 #endif
-using System.Globalization;
-using Newtonsoft.Json.Utilities;
-using Newtonsoft.Json.Linq;
 
-namespace Newtonsoft.Json.Schema
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Schema
 {
   internal class JsonSchemaBuilder
   {

@@ -25,17 +25,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
 #if NET20
 using Newtonsoft.Json.Utilities.LinqBridge;
 #else
-using System.Linq;
 #endif
-using Newtonsoft.Json.Serialization;
 
-namespace Newtonsoft.Json.Utilities
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Utilities
 {
   internal static class StringUtils
   {

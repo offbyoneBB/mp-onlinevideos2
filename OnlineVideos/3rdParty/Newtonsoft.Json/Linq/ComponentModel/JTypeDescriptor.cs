@@ -27,9 +27,9 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Newtonsoft.Json.Utilities;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Linq.ComponentModel
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Linq.ComponentModel
 {
   /// <summary>
   /// Represents a view of a <see cref="JObject"/>.

@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
 
 namespace OnlineVideos.Sites.Pondman.IMDb.Json
 {
-    using Newtonsoft.Json;
-
-    public class IMDbVideo
+  public class IMDbVideo
     {
         [JsonProperty("id")]
         public string ID { get; set; }

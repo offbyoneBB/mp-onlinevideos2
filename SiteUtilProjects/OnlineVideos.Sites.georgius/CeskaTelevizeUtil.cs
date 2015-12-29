@@ -7,6 +7,8 @@ using System.Web;
 using System.Xml;
 using System.Net;
 using System.IO;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites.georgius
 {
@@ -344,10 +346,10 @@ namespace OnlineVideos.Sites.georgius
                 if (end >= 0)
                 {
                     String postData = baseWebData.Substring(start + CeskaTelevizeUtil.showEpisodePostStart.Length, end - start - CeskaTelevizeUtil.showEpisodePostStart.Length);
-                    Newtonsoft.Json.Linq.JContainer playlistData = (Newtonsoft.Json.Linq.JContainer)Newtonsoft.Json.JsonConvert.DeserializeObject(postData);
+                    JContainer playlistData = (JContainer)JsonConvert.DeserializeObject(postData);
 
                     StringBuilder builder = new StringBuilder();
-                    foreach (Newtonsoft.Json.Linq.JProperty child in playlistData.Children())
+                    foreach (JProperty child in playlistData.Children())
                     {
                         builder.AppendFormat("&playlist[0][{0}]={1}", child.Name, child.Value.ToString());
                     }
@@ -355,10 +357,10 @@ namespace OnlineVideos.Sites.georgius
 
                     String serializedDataForPost = HttpUtility.UrlEncode(builder.ToString()).Replace("%3d", "=").Replace("%26", "&");
                     String playlistSerializedUrl = CeskaTelevizeUtil.GetWebDataFromPost("http://www.ceskatelevize.cz/ivysilani/ajax/get-client-playlist", serializedDataForPost, container, video.VideoUrl);
-                    Newtonsoft.Json.Linq.JContainer playlistJson = (Newtonsoft.Json.Linq.JContainer)Newtonsoft.Json.JsonConvert.DeserializeObject(playlistSerializedUrl);
+                    JContainer playlistJson = (JContainer)JsonConvert.DeserializeObject(playlistSerializedUrl);
 
                     String videoDataUrl = String.Empty;
-                    foreach (Newtonsoft.Json.Linq.JProperty child in playlistJson.Children())
+                    foreach (JProperty child in playlistJson.Children())
                     {
                         if (child.Name == "url")
                         {
@@ -367,9 +369,9 @@ namespace OnlineVideos.Sites.georgius
                     }
 
                     String videoConfigurationSerialized = GetWebData(videoDataUrl);
-                    Newtonsoft.Json.Linq.JContainer videoConfiguration = (Newtonsoft.Json.Linq.JContainer)Newtonsoft.Json.JsonConvert.DeserializeObject(videoConfigurationSerialized);
+                    JContainer videoConfiguration = (JContainer)JsonConvert.DeserializeObject(videoConfigurationSerialized);
 
-                    String qualityUrl = (String)((Newtonsoft.Json.Linq.JValue)((Newtonsoft.Json.Linq.JProperty)((Newtonsoft.Json.Linq.JArray)videoConfiguration["playlist"])[0]["streamUrls"].First).Value).Value;
+                    String qualityUrl = (String)((JValue)((JProperty)((JArray)videoConfiguration["playlist"])[0]["streamUrls"].First).Value).Value;
                     String qualityData = GetWebData(qualityUrl);
 
                     String[] lines = qualityData.Split(new Char[] { '\n' });
