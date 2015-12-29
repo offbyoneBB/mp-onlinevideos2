@@ -1,8 +1,8 @@
-﻿namespace OnlineVideos.Sites.Pondman.IMDb.Json
+﻿using OnlineVideos._3rdParty.Newtonsoft.Json;
+
+namespace OnlineVideos.Sites.Pondman.IMDb.Json
 {
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
-    using System;
+  using System;
 
     public class IMDbList
     {

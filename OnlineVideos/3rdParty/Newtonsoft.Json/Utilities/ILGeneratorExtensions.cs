@@ -25,10 +25,10 @@
 
 #if !(SILVERLIGHT || PORTABLE)
 using System;
-using System.Reflection.Emit;
 using System.Reflection;
+using System.Reflection.Emit;
 
-namespace Newtonsoft.Json.Utilities
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Utilities
 {
   internal static class ILGeneratorExtensions
   {

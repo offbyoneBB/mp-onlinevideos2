@@ -7,8 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
@@ -92,11 +91,11 @@ namespace OnlineVideos.Sites
         {
             if (IsApiUrl((parentCategory as RssLink).Url))
             {
-                var json = GetWebData<Newtonsoft.Json.Linq.JObject>((parentCategory as RssLink).Url);
+                var json = GetWebData<JObject>((parentCategory as RssLink).Url);
                 parentCategory.SubCategories = new List<Category>();
                 if (json["response"]["myvideo"].Value<string>("method") == "myvideo.base.list_categories")
                 {
-                    foreach (Newtonsoft.Json.Linq.JProperty cat in json["response"]["myvideo"]["category_list"]["category"])
+                    foreach (JProperty cat in json["response"]["myvideo"]["category_list"]["category"])
                     {
                         parentCategory.SubCategories.Add(new RssLink()
                         {
@@ -110,7 +109,7 @@ namespace OnlineVideos.Sites
                 }
                 if (json["response"]["myvideo"].Value<string>("method") == "myvideo.base.list_charts")
                 {
-                    foreach (Newtonsoft.Json.Linq.JProperty cat in json["response"]["myvideo"]["chart_list"])
+                    foreach (JProperty cat in json["response"]["myvideo"]["chart_list"])
                     {
                         parentCategory.SubCategories.Add(new RssLink()
                         {
@@ -290,7 +289,7 @@ namespace OnlineVideos.Sites
         List<VideoInfo> GetVideosFromApiUrl(string url, RssLink category = null)
         {
             List<VideoInfo> loVideoList = new List<VideoInfo>();
-            var json = GetWebData<Newtonsoft.Json.Linq.JObject>(url);
+            var json = GetWebData<JObject>(url);
             Uri uri = new Uri(url);
             var query = HttpUtility.ParseQueryString(uri.Query);
             int page = -1;
@@ -305,7 +304,7 @@ namespace OnlineVideos.Sites
                 query.Set("page", (page+1).ToString());
                 nextPageUrl = uri.GetLeftPart(UriPartial.Path) + "?" + query.ToString();
             }
-            foreach (Newtonsoft.Json.Linq.JProperty video in json["response"]["myvideo"]["movie_list"]["movie"])
+            foreach (JProperty video in json["response"]["myvideo"]["movie_list"]["movie"])
             {
                 loVideoList.Add(new VideoInfo()
                 {

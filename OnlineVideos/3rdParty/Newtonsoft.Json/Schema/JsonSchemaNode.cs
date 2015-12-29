@@ -26,13 +26,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 #if NET20
 using Newtonsoft.Json.Utilities.LinqBridge;
 #else
-using System.Linq;
+
 #endif
 
-namespace Newtonsoft.Json.Schema
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Schema
 {
   internal class JsonSchemaNode
   {

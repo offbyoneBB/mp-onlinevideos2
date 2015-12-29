@@ -25,12 +25,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Utilities;
 using System.Globalization;
+using System.IO;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Linq;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Schema
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Schema
 {
   /// <summary>
   /// An in-memory representation of a JSON Schema.

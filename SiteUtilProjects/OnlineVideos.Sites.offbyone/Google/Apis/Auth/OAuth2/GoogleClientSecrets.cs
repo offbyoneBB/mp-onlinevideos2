@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.IO;
 
 using Google.Apis.Json;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
 
 namespace Google.Apis.Auth.OAuth2
 {
@@ -28,11 +29,11 @@ namespace Google.Apis.Auth.OAuth2
     public sealed class GoogleClientSecrets
     {
         /// <summary>Gets or sets the details for installed applications.</summary>
-        [Newtonsoft.Json.JsonProperty("installed")]
+        [JsonProperty("installed")]
         private ClientSecrets Installed { get; set; }
 
         /// <summary>Gets or sets the details for web applications.</summary>
-        [Newtonsoft.Json.JsonProperty("web")]
+        [JsonProperty("web")]
         private ClientSecrets Web { get; set; }
 
         /// <summary>Gets the client secrets which contains the client identifier and client secret. </summary>

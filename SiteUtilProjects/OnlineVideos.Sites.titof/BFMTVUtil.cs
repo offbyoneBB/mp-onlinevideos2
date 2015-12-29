@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
@@ -126,7 +126,7 @@ namespace OnlineVideos.Sites
         private string GetToken()
         {
             string sContent = GetWebData(_urlToken);
-            Newtonsoft.Json.Linq.JObject jsonParser = Newtonsoft.Json.Linq.JObject.Parse(sContent);
+            JObject jsonParser = JObject.Parse(sContent);
             return (string)jsonParser["session"]["token"];
         }
 

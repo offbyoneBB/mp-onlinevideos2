@@ -24,9 +24,9 @@
 #endregion
 
 using System;
-using Newtonsoft.Json.Utilities;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Bson
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Bson
 {
   /// <summary>
   /// Represents a BSON Oid (object id).

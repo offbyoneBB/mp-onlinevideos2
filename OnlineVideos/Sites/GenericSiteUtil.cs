@@ -8,6 +8,7 @@ using System.Xml;
 using System.Linq;
 using RssToolkit.Rss;
 using OnlineVideos.Hoster;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
 
 namespace OnlineVideos.Sites
 {
@@ -381,7 +382,7 @@ namespace OnlineVideos.Sites
                 {
                     try
                     {
-                        string deJSONified = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(foundUrl);
+                        string deJSONified = JsonConvert.DeserializeObject<string>(foundUrl);
                         if (!string.IsNullOrEmpty(deJSONified)) foundUrl = deJSONified;
                     }
                     catch { }

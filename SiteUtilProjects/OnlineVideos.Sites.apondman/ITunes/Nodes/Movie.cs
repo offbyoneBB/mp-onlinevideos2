@@ -5,14 +5,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Web;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using OnlineVideos.Sites.Pondman.ITunes;
 using OnlineVideos.Sites.Pondman.ITunes.DTO;
 using OnlineVideos.Sites.Pondman.Interfaces;
 using HtmlAgilityPack;
 using OnlineVideos.Sites.Pondman.Nodes;
 using System.Globalization;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
 
 namespace OnlineVideos.Sites.Pondman.ITunes.Nodes {
 	public class Movie : ExternalContentNodeBase, IVideoDetails

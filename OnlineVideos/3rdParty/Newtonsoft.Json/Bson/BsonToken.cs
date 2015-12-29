@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Newtonsoft.Json.Bson
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Bson
 {
   internal abstract class BsonToken
   {

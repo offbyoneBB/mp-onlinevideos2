@@ -1,8 +1,8 @@
-﻿namespace OnlineVideos.Sites.Pondman.IMDb.Json
-{
-    using Newtonsoft.Json;
+﻿using OnlineVideos._3rdParty.Newtonsoft.Json;
 
-    public class IMDbCash
+namespace OnlineVideos.Sites.Pondman.IMDb.Json
+{
+  public class IMDbCash
     {
         [JsonProperty("amount")]
         public int Amount { get; set; }

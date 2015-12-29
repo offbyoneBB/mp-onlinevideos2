@@ -3,9 +3,8 @@ using System.Collections.Generic;
 #if NET20
 using Newtonsoft.Json.Utilities.LinqBridge;
 #endif
-using Newtonsoft.Json.Serialization;
 
-namespace Newtonsoft.Json.Utilities
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Utilities
 {
   internal class ThreadSafeStore<TKey, TValue>
   {

@@ -7,8 +7,8 @@ using System.Text;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
-using Newtonsoft.Json;
 using System.Text.RegularExpressions;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
 
 namespace OnlineVideos.Sites.DavidCalder
 {

@@ -25,12 +25,8 @@
 
 #if !(NET35 || NET20 || WINDOWS_PHONE || PORTABLE)
 using System;
-using System.Collections.Generic;
-using System.Reflection;
-using Newtonsoft.Json.Utilities;
-using System.Collections;
 
-namespace Newtonsoft.Json.Serialization
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Serialization
 {
   /// <summary>
   /// Contract details for a <see cref="Type"/> used by the <see cref="JsonSerializer"/>.

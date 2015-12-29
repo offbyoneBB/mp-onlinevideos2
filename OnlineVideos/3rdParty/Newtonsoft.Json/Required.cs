@@ -1,4 +1,4 @@
-namespace Newtonsoft.Json
+namespace OnlineVideos._3rdParty.Newtonsoft.Json
 {
   /// <summary>
   /// Indicating whether a property is required.

@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
 using System.Collections.Specialized;
 using System.Net;
 using OnlineVideos.Sites.Utils;
 using System.Xml;
 using OnlineVideos.Sites.HboNordic;
 using System.Web;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {

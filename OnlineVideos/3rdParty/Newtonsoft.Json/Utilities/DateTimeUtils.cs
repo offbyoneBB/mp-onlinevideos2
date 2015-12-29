@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Xml;
 using System.Globalization;
+using System.Xml;
 
-namespace Newtonsoft.Json.Utilities
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Utilities
 {
   internal static class DateTimeUtils
   {

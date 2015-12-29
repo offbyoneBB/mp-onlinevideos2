@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Web;
 using OnlineVideos.Hoster;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
 
 namespace OnlineVideos.Sites
 {
@@ -109,7 +110,7 @@ namespace OnlineVideos.Sites
                     thisUrl = matchFileUrl2.Groups["m0"].Value;
                     try
                     {
-                        string deJSONified = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(thisUrl);
+                        string deJSONified = JsonConvert.DeserializeObject<string>(thisUrl);
                         if (!string.IsNullOrEmpty(deJSONified)) thisUrl = deJSONified;
                     }
                     catch { }

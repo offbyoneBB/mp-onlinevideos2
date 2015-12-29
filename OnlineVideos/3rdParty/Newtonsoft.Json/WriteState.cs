@@ -1,6 +1,6 @@
 using System;
 
-namespace Newtonsoft.Json
+namespace OnlineVideos._3rdParty.Newtonsoft.Json
 {
   /// <summary>
   /// Specifies the state of the <see cref="JsonWriter"/>.

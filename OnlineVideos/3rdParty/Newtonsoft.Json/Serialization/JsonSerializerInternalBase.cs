@@ -25,11 +25,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Runtime.CompilerServices;
-using Newtonsoft.Json.Utilities;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Serialization
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Serialization
 {
   internal abstract class JsonSerializerInternalBase
   {

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Net;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using HtmlAgilityPack;
 using System.Text.RegularExpressions;
 using System.Web;

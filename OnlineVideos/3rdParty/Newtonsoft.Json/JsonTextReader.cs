@@ -24,15 +24,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
-using System.IO;
-using System.Xml;
 using System.Globalization;
-using Newtonsoft.Json.Utilities;
+using System.IO;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json
+namespace OnlineVideos._3rdParty.Newtonsoft.Json
 {
   internal enum ReadType
   {

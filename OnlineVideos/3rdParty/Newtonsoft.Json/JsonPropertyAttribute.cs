@@ -1,6 +1,6 @@
 using System;
 
-namespace Newtonsoft.Json
+namespace OnlineVideos._3rdParty.Newtonsoft.Json
 {
   /// <summary>
   /// Instructs the <see cref="JsonSerializer"/> to always serialize the member with the specified name.

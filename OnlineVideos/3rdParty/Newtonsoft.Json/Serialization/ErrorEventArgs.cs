@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Newtonsoft.Json.Serialization
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Serialization
 {
   /// <summary>
   /// Provides data for the Error event.

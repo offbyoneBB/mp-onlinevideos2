@@ -24,13 +24,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Collections.ObjectModel;
-using Newtonsoft.Json.Utilities;
 using System.Globalization;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Serialization
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Serialization
 {
   /// <summary>
   /// A collection of <see cref="JsonProperty"/> objects.

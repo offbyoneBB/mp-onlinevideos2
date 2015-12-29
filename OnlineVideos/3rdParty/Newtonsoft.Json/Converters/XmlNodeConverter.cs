@@ -24,21 +24,22 @@
 #endregion
 
 #if (!(SILVERLIGHT || PORTABLE) || WINDOWS_PHONE)
+#if !NET20
+#endif
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Xml;
-#if !NET20
 using System.Xml.Linq;
-#endif
-using Newtonsoft.Json.Utilities;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 #if NET20
 using Newtonsoft.Json.Utilities.LinqBridge;
 #else
-using System.Linq;
+
 #endif
 
-namespace Newtonsoft.Json.Converters
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Converters
 {
   #region XmlNodeWrappers
 #if !SILVERLIGHT && !NETFX_CORE

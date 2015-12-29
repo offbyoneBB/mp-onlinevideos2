@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations
 {
@@ -37,9 +38,9 @@ namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations
             return GetWebData(url, (string)null, cc, null, null, false, false, userAgent);
         }
 
-        public Newtonsoft.Json.Linq.JObject LoadAsJSON(string url)
+        public JObject LoadAsJSON(string url)
         {
-            return GetWebData<Newtonsoft.Json.Linq.JObject>(url, null, cc, null, null, false, false, userAgent );
+            return GetWebData<JObject>(url, null, cc, null, null, false, false, userAgent );
         }
 
         protected T GetWebData<T>(string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)

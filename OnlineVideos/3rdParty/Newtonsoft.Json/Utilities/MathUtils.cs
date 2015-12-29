@@ -24,10 +24,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Newtonsoft.Json.Utilities
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Utilities
 {
   internal class MathUtils
   {

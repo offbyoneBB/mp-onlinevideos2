@@ -24,10 +24,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters;
 using System.Text;
@@ -38,11 +39,9 @@ using ICustomAttributeProvider = Newtonsoft.Json.Utilities.CustomAttributeProvid
 #if NET20
 using Newtonsoft.Json.Utilities.LinqBridge;
 #else
-using System.Linq;
 #endif
-using Newtonsoft.Json.Serialization;
 
-namespace Newtonsoft.Json.Utilities
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Utilities
 {
 #if NETFX_CORE || PORTABLE
   internal enum MemberTypes

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json.Utilities;
 using System.Reflection;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Converters
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Converters
 {
   /// <summary>
   /// Converts a <see cref="KeyValuePair{TKey,TValue}"/> to and from JSON.

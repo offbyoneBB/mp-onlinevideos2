@@ -26,12 +26,11 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 using System.IO;
-using Newtonsoft.Json.Utilities;
-using Newtonsoft.Json.Linq;
+using System.Text;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Bson
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Bson
 {
   /// <summary>
   /// Represents a reader that provides fast, non-cached, forward-only access to serialized Json data.

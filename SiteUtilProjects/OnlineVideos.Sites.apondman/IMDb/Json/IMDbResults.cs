@@ -5,10 +5,7 @@ using System.Text;
 
 namespace OnlineVideos.Sites.Pondman.IMDb.Json
 {
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
-    
-    public class IMDbResults
+  public class IMDbResults
     {
          
     }

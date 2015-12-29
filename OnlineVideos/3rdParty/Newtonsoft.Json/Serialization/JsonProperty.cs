@@ -24,11 +24,12 @@
 #endregion
 
 using System;
+
 #if NET20
 using Newtonsoft.Json.Utilities.LinqBridge;
 #endif
 
-namespace Newtonsoft.Json.Serialization
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Serialization
 {
   /// <summary>
   /// Maps a JSON property to a .NET member or constructor parameter.

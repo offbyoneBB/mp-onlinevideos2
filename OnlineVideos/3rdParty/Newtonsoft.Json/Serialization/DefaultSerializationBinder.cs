@@ -24,12 +24,12 @@
 #endregion
 
 using System;
-using System.Runtime.Serialization;
-using System.Reflection;
 using System.Globalization;
-using Newtonsoft.Json.Utilities;
+using System.Reflection;
+using System.Runtime.Serialization;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Utilities;
 
-namespace Newtonsoft.Json.Serialization
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Serialization
 {
   /// <summary>
   /// The default serialization binder used when resolving and loading classes from type names.

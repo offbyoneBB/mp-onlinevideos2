@@ -24,12 +24,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json.Utilities;
-using Newtonsoft.Json.Schema;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Schema;
 
-namespace Newtonsoft.Json
+namespace OnlineVideos._3rdParty.Newtonsoft.Json
 {
   /// <summary>
   /// Converts an object to and from JSON.

@@ -8,6 +8,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
 using OnlineVideos.Hoster;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Hoster
 {
@@ -83,7 +84,7 @@ namespace OnlineVideos.Hoster
                         else if (m.Groups["json"].Success)
                         {
 							Items = new NameValueCollection();
-                            foreach (var z in Newtonsoft.Json.Linq.JObject.Parse(m.Groups["json"].Value))
+                            foreach (var z in JObject.Parse(m.Groups["json"].Value))
                             {
                                 Items.Add(z.Key, z.Value.ToString());
                             }
@@ -151,7 +152,7 @@ namespace OnlineVideos.Hoster
 						string playerUrl = "";
 						var jsPlayerMatch = Regex.Match(contents, "\"assets\":.+?\"js\":\\s*(\"[^\"]+\")");
 						if (jsPlayerMatch.Success)
-							playerUrl = Newtonsoft.Json.Linq.JToken.Parse(jsPlayerMatch.Groups[1].Value).ToString();
+							playerUrl = JToken.Parse(jsPlayerMatch.Groups[1].Value).ToString();
 						signature = DecryptSignature(playerUrl, urlOptions.Get("s"));
 					}
 					string finalUrl = urlOptions.Get("url");

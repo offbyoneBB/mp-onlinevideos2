@@ -3,12 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
+using OnlineVideos._3rdParty.Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites.Pondman.IMDb {
 
     using HtmlAgilityPack;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
     using OnlineVideos.Sites.Pondman.IMDb.Model;
     using System.Web;
     using System.Globalization;
@@ -673,7 +673,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 			if (match.Success)
 			{
 				string jsonText = match.Groups["json"].Value;
-				return Newtonsoft.Json.JsonConvert.DeserializeObject<JObject>(jsonText);
+				return JsonConvert.DeserializeObject<JObject>(jsonText);
 			}
 			return null;
 		}

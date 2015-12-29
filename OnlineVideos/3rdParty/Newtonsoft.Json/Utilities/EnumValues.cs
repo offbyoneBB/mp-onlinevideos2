@@ -25,7 +25,7 @@
 
 using System.Collections.ObjectModel;
 
-namespace Newtonsoft.Json.Utilities
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Utilities
 {
   internal class EnumValues<T> : KeyedCollection<string, EnumValue<T>> where T : struct
   {

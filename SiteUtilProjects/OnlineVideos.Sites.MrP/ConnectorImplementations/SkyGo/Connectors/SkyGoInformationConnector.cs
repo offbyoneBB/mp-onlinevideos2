@@ -9,7 +9,6 @@ using HtmlAgilityPack;
 using OnlineVideos.Sites.WebAutomation.Extensions;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites.WebAutomation.ConnectorImplementations.SkyGo.Connectors
 {

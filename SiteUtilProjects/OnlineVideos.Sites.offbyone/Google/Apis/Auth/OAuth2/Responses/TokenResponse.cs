@@ -17,6 +17,7 @@ limitations under the License.
 using System;
 
 using Google.Apis.Util;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
 
 namespace Google.Apis.Auth.OAuth2.Responses
 {
@@ -27,17 +28,17 @@ namespace Google.Apis.Auth.OAuth2.Responses
     public class TokenResponse
     {
         /// <summary>Gets or sets the access token issued by the authorization server.</summary>
-        [Newtonsoft.Json.JsonPropertyAttribute("access_token")]
+        [JsonProperty("access_token")]
         public string AccessToken { get; set; }
 
         /// <summary>
         /// Gets or sets the token type as specified in http://tools.ietf.org/html/rfc6749#section-7.1.
         /// </summary>
-        [Newtonsoft.Json.JsonPropertyAttribute("token_type")]
+        [JsonProperty("token_type")]
         public string TokenType { get; set; }
 
         /// <summary>Gets or sets the lifetime in seconds of the access token.</summary>
-        [Newtonsoft.Json.JsonPropertyAttribute("expires_in")]
+        [JsonProperty("expires_in")]
         public Nullable<long> ExpiresInSeconds { get; set; }
 
         /// <summary>
@@ -45,13 +46,13 @@ namespace Google.Apis.Auth.OAuth2.Responses
         /// For example, the value "3600" denotes that the access token will expire in one hour from the time the 
         /// response was generated.
         /// </summary>
-        [Newtonsoft.Json.JsonPropertyAttribute("refresh_token")]
+        [JsonProperty("refresh_token")]
         public string RefreshToken { get; set; }
 
         /// <summary>
         /// Gets or sets the scope of the access token as specified in http://tools.ietf.org/html/rfc6749#section-3.3.
         /// </summary>
-        [Newtonsoft.Json.JsonPropertyAttribute("scope")]
+        [JsonProperty("scope")]
         public string Scope { get; set; }
 
         /// <summary>The date and time that this token was issued. <remarks>

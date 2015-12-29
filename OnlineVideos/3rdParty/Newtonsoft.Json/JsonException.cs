@@ -24,11 +24,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Text;
 
-namespace Newtonsoft.Json
+namespace OnlineVideos._3rdParty.Newtonsoft.Json
 {
   /// <summary>
   /// The exception thrown when an error occurs during Json serialization or deserialization.

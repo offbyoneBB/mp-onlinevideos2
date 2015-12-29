@@ -5,7 +5,7 @@ using System.Text;
 using System.Globalization;
 using System.Net;
 using System.IO;
-using Newtonsoft.Json;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
 
 namespace Google.GData.Client {
     /// <summary>

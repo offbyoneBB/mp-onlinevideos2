@@ -17,10 +17,8 @@ limitations under the License.
 using System;
 using System.Globalization;
 using System.IO;
-
-using Newtonsoft.Json;
-
 using Google.Apis.Util;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
 
 namespace Google.Apis.Json
 {
@@ -34,7 +32,7 @@ namespace Google.Apis.Json
             get { return false; }
         }
 
-        public override object ReadJson(Newtonsoft.Json.JsonReader reader, Type objectType, object existingValue,
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
             JsonSerializer serializer)
         {
             throw new NotImplementedException("Unnecessary because CanRead is false.");

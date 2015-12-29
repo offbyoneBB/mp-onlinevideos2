@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Newtonsoft.Json
+namespace OnlineVideos._3rdParty.Newtonsoft.Json
 {
   /// <summary>
   /// Instructs the <see cref="JsonSerializer"/> to use the specified constructor when deserializing that object.

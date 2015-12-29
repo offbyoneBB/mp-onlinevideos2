@@ -25,12 +25,9 @@
 
 #if !PocketPC && !SILVERLIGHT
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 
-namespace Newtonsoft.Json.Linq.ComponentModel
+namespace OnlineVideos._3rdParty.Newtonsoft.Json.Linq.ComponentModel
 {
   internal class JTypeDescriptionProvider : TypeDescriptionProvider
   {

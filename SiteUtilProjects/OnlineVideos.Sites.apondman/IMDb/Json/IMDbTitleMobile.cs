@@ -1,9 +1,10 @@
-﻿namespace OnlineVideos.Sites.Pondman.IMDb.Json
+﻿using OnlineVideos._3rdParty.Newtonsoft.Json;
+
+namespace OnlineVideos.Sites.Pondman.IMDb.Json
 {
     using System;
-    using Newtonsoft.Json;
 
-    // todo: needs better name!
+  // todo: needs better name!
     public class IMDbTitleMobile
     {
         [JsonProperty("header")]

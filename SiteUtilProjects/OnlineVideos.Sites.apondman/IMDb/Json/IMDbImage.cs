@@ -1,5 +1,5 @@
 ﻿using System;
-using Newtonsoft.Json;
+using OnlineVideos._3rdParty.Newtonsoft.Json;
 
 namespace OnlineVideos.Sites.Pondman.IMDb.Json {
     
