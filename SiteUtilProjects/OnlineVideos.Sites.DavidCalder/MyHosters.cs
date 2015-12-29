@@ -190,7 +190,7 @@ namespace OnlineVideos.Sites.DavidCalder
     {
         public override string GetHosterUrl()
         {
-            return "vshare.net";
+            return "vshare.eu";
         }
 
         public override string GetVideoUrl(string url)

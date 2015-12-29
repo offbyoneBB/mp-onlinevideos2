@@ -38,7 +38,7 @@ namespace OnlineVideos.Sites.DavidCalder
                     parent.sh.WaitForSubtitleCompleted();
                     parent.lastPlaybackOptionUrl = PlaybackOptions[url];
                 }
-                Match n = Regex.Match(data, @"<div\sid=""showvideo""><IFRAME\sSRC=""(?<url>[^""]*)""");
+                Match n = Regex.Match(data, @"<IFRAME\sid=""showvideo""\ssrc=""(?<url>[^""]*)""");
                 if (n.Success)
                 {
                     if (n.Groups["url"].Value.Contains("/tz.php?url=external.php?url="))
