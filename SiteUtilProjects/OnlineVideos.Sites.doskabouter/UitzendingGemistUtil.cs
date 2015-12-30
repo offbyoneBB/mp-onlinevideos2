@@ -4,7 +4,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Web;
 using Newtonsoft.Json.Linq;
 using HtmlAgilityPack;
 
@@ -197,31 +196,10 @@ namespace OnlineVideos.Sites
             if (p >= 0)
             {
                 string id = video.VideoUrl.Substring(p + 1);
-                string webData = GetWebData(@"http://ida.omroep.nl/npoplayer/i.js?s=" + HttpUtility.UrlEncode(video.VideoUrl));
-
-
-                Match m = Regex.Match(webData, @"token\s*=\s*""(?<token>[^""]*)""", defaultRegexOptions);
-                if (m.Success)
+                string newToken = Doskabouter.Helpers.NPOHelper.GetToken(video.VideoUrl);
+                if (!String.IsNullOrEmpty(newToken))
                 {
-                    int first = -1;
-                    int second = -1;
-                    string token = m.Groups["token"].Value;
-                    for (int i = 5; i < token.Length - 4; i++)
-                        if (Char.IsDigit(token[i]))
-                        {
-                            if (first == -1)
-                                first = i;
-                            else
-                                if (second == -1)
-                                    second = i;
-                        }
-                    if (first == -1) first = 12;
-                    if (second == -1) second = 13;
-                    char[] newToken = token.ToCharArray();
-                    newToken[first] = token[second];
-                    newToken[second] = token[first];
-
-                    webData = GetWebData(String.Format(fileUrlFormatString, id) + new String(newToken));
+                    string webData = GetWebData(String.Format(fileUrlFormatString, id) + newToken);
                     JObject contentData = (JObject)JObject.Parse(webData);
                     JArray items = contentData["streams"] as JArray;
                     List<KeyValuePair<string, string>> playbackOptions = new List<KeyValuePair<string, string>>();
@@ -229,7 +207,7 @@ namespace OnlineVideos.Sites
                     {
                         string s = item.Value<string>();
 
-                        m = Regex.Match(s, @"/ida/(?<quality>[^/]*)/");
+                        Match m = Regex.Match(s, @"/ida/(?<quality>[^/]*)/");
                         if (m.Success)
                         {
                             string quality = m.Groups["quality"].Value;

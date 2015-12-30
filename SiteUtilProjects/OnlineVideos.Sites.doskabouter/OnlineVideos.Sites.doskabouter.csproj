@@ -77,6 +77,7 @@
     <Compile Include="FilmonUtil.cs" />
     <Compile Include="GameKingsUtil.cs" />
     <Compile Include="GamersNetUtil.cs" />
+    <Compile Include="Helpers\NPOHelper.cs" />
     <Compile Include="Hoster\Archiv.cs" />
     <Compile Include="Hoster\EcoStream.cs" />
     <Compile Include="Hoster\OvFile.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="MuzuTV.cs" />
     <Compile Include="NickelodeonNLUtil.cs" />
     <Compile Include="NicoNicoUtil.cs" />
+    <Compile Include="NPOLiveUtil.cs" />
     <Compile Include="PowerUnlimitedUtil.cs" />
     <Compile Include="RedBull.cs" />
     <Compile Include="RockPalastUtil.cs" />
