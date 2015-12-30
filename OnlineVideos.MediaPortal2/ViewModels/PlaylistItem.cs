@@ -6,6 +6,7 @@ using MediaPortal.Common;
 using MediaPortal.Common.SystemResolver;
 using MediaPortal.Common.ResourceAccess;
 using MediaPortal.Common.Services.ResourceAccess.RawUrlResourceProvider;
+using OnlineVideos.MediaPortal2.ResourceAccess;
 using OnlineVideos.Sites;
 
 namespace OnlineVideos.MediaPortal2
@@ -31,9 +32,19 @@ namespace OnlineVideos.MediaPortal2
             }
             else
             {
-                Aspects[ProviderResourceAspect.ASPECT_ID].SetAttribute(ProviderResourceAspect.ATTR_RESOURCE_ACCESSOR_PATH, RawUrlResourceProvider.ToProviderResourcePath(resolvedPlaybackUrl).Serialize());
+                Uri uri;
+                // Test if the resolved "url" is a real Uri (Sites can provide any content here)
+                var isUriSource = Uri.TryCreate(resolvedPlaybackUrl, UriKind.Absolute, out uri);
+
+                Aspects[ProviderResourceAspect.ASPECT_ID].SetAttribute(
+                    ProviderResourceAspect.ATTR_RESOURCE_ACCESSOR_PATH,
+                    isUriSource
+                        ? RawUrlResourceProvider.ToProviderResourcePath(resolvedPlaybackUrl).Serialize()
+                        : RawTokenResourceProvider.ToProviderResourcePath(resolvedPlaybackUrl).Serialize());
+
+                var isBrowser = videoInfo.SiteSettings.Player == PlayerType.Browser;
                 Aspects[MediaAspect.ASPECT_ID].SetAttribute(MediaAspect.ATTR_MIME_TYPE,
-                    videoInfo.SiteSettings.Player == PlayerType.Browser
+                    isBrowser
                         ? WebBrowserVideoPlayer.ONLINEVIDEOSBROWSER_MIMETYPE
                         : OnlineVideosPlayer.ONLINEVIDEOS_MIMETYPE);
             }

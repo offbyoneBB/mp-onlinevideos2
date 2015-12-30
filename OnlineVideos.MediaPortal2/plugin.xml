@@ -41,6 +41,11 @@
     <Model Id="C8EA3B4B-E484-469B-AE3E-56A8E9EF9F04" Name="OnlineVideosSiteUpdateWorkflowModel" ClassName="OnlineVideos.MediaPortal2.SiteUpdateWorkflowModels"/>
     <Model Id="C43F4CD9-418A-4DFB-A0BD-DF24704B5BD6" Name="OnlineVideosSearchContributorModel" ClassName="OnlineVideos.MediaPortal2.SearchAction"/>
   </Register>
+  
+  <!-- The ResourceProvider to access abitrary token based media. -->
+  <Register Location="/ResourceProviders">
+    <Instance Id="RawTokenResourceProvider" ClassName="OnlineVideos.MediaPortal2.ResourceAccess.RawTokenResourceProvider"/>
+  </Register>
 
   <Register Location="/Workflow/States">
     <WorkflowState Id="F9D7500D-EC5C-4FEF-8FAE-E4DED8A22CE0"

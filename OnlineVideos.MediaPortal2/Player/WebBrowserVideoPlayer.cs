@@ -17,6 +17,7 @@ using MediaPortal.UI.Presentation.Players;
 using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.UI.SkinEngine.InputManagement;
 using OnlineVideos.Helpers;
+using OnlineVideos.MediaPortal2.ResourceAccess;
 using OnlineVideos.Sites;
 using OnlineVideos.Sites.Proxy.WebBrowserPlayerService;
 using OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation;
@@ -97,10 +98,18 @@ namespace OnlineVideos.MediaPortal2
             try
             {
                 ra = mediaItem.GetResourceLocator().CreateAccessor();
-                RawUrlResourceAccessor rra = ra as RawUrlResourceAccessor;
-                if (rra == null)
-                    return false;
-                _fileOrUrl = rra.URL;
+                RawUrlResourceAccessor rua = ra as RawUrlResourceAccessor;
+                if (rua != null)
+                {
+                    _fileOrUrl = rua.URL;
+                }
+                else
+                {
+                    RawTokenResourceAccessor rra = ra as RawTokenResourceAccessor;
+                    if (rra == null)
+                        return false;
+                    _fileOrUrl = rra.Token;
+                }
                 Play();
                 return true;
             }

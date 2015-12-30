@@ -96,6 +96,8 @@
     <Compile Include="Models\SiteManagementWorkflowModel.cs" />
     <Compile Include="Player\OnlineVideoPlayerBuilder.cs" />
     <Compile Include="Player\WebBrowserVideoPlayer.cs" />
+    <Compile Include="ResourceAccess\RawTokenResourceAccessor.cs" />
+    <Compile Include="ResourceAccess\RawTokenResourceProvider.cs" />
     <Compile Include="ViewModels\CategoryViewModel.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="LogDelegator.cs" />
