@@ -81,6 +81,7 @@
   <string name="OnlineVideos.LayoutIcons">Layout: Icons</string>
   <string name="OnlineVideos.LayoutBigIcons">Layout: Big Icons</string>
   <!--M-->
+  <string name="OnlineVideos.Main.Help">This plugin creates a simple and consistent way to browse and play videos hosted on various websites.</string>
   <string name="OnlineVideos.ManageSites">Manage Sites</string>
   <string name="OnlineVideos.MaxResults">Max Results</string>
   <!--N-->
