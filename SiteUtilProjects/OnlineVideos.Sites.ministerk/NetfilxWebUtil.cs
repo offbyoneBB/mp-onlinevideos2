@@ -44,9 +44,11 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable Netflix Info/Stat OSD"), Description("Enable info and statistics OSD. Toggle OSD with 0 when video is playing. Do not enable this if you need to enter 0 in parental control pin")]
         protected bool enableNetflixOsd = true;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Number of Home categories"), Description("Change only if necessary. Number of categories in home. Default value 38 => results in 38+1-2=37 categories")]
-        protected int noOfCatsInHome = 38;
+        protected int noOfCatsInHome = 20;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Number of categories per page in other listings"), Description("Change only if necessary. Number of items in listings. Default 100")]
         protected uint noOfItems = 100;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Use alternative profile picker"), Description("Use this if you have problems selecting profile in browser player")]
+        protected bool useAlternativeProfilePicker = false;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable verbose logging"), Description("DEBUG only! Enable only if you have problems. Very verbose logging, generates a lot of data in log.")]
         protected bool enableVerboseLog = false;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Disable browser logging"), Description("Change only if necessary/nothing else helps. If browser player fails. Change back if it does not help!")]
@@ -1058,7 +1060,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         string IBrowserSiteUtil.UserName
         {
-            get { return username + "¥" + ProfileToken + (showLoadingSpinner ? "SHOWLOADING" : "") + (rememberLogin ? "REMEMBERLOGIN" : "") + (enableNetflixOsd ? "ENABLENETFLIXOSD" : "") + (disableLogging ? "DISABLELOGGING" : ""); }
+            get { return username + "¥" + ProfileToken + (showLoadingSpinner ? "SHOWLOADING" : "") + (useAlternativeProfilePicker ? "PROFILEPICKER" : "") + (rememberLogin ? "REMEMBERLOGIN" : "") + (enableNetflixOsd ? "ENABLENETFLIXOSD" : "") + (disableLogging ? "DISABLELOGGING" : ""); }
         }
 
         string IBrowserSiteUtil.Password

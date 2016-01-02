@@ -32,6 +32,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private bool _showLoading = true;
         private bool _rememberLogin = false;
         private bool _enableNetflixOsd = false;
+        private bool _useAlternativeProfilePicker = false;
         private bool _disableLogging = false;
 
         private State _currentState = State.None;
@@ -82,6 +83,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             username = username.Replace("SHOWLOADING", string.Empty);
             _enableNetflixOsd = username.Contains("ENABLENETFLIXOSD");
             username = username.Replace("ENABLENETFLIXOSD", string.Empty);
+            _useAlternativeProfilePicker = username.Contains("PROFILEPICKER");
+            username = username.Replace("PROFILEPICKER", string.Empty);
             
             if (_showLoading)
                 ShowLoading();
@@ -147,13 +150,13 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                         {
                             jsCode += "document.getElementById('RememberMe').checked = false; ";
                         }
-                        jsCode += "document.getElementById('login-form-contBtn').click();";
+                        jsCode += "setTimeout(\"document.getElementById('login-form-contBtn').click()\", 500);";
                         InvokeScript(jsCode);
-                        _currentState = State.ProfilesGate;
+                        //_currentState = State.ProfilesGate;
                     }
                     else
                     {
-                        Url = "https://www.netflix.com/ProfilesGate";
+                        Url = "https://www.netflix.com";
                         _currentState = State.SelectProfile;
                     }
                     break;
@@ -164,21 +167,33 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 case State.SelectProfile:
                     if (Url.Contains("/ProfilesGate"))
                     {
-                        InvokeScript("document.querySelector('a[data-reactid*=" + _profile + "]').click();");
+                        if (!_useAlternativeProfilePicker)
+                            Url = "https://www.netflix.com/SwitchProfile?tkn=" + _profile;
+                        else
+                            InvokeScript("setTimeout(\"document.querySelector('a[data-reactid*=" + _profile + "]').click()\", 500);");
                         _currentState = State.ReadyToPlay;
+                    } else
+                    {
+                        Url = "https://www.netflix.com/ProfilesGate";
                     }
                     break;
                 case State.ReadyToPlay:
                     //Sometimes the profiles gate loads again
                     if (Url.Contains("/ProfilesGate"))
                     {
-                        InvokeScript("document.querySelector('a[data-reactid*=" + _profile + "]').click();");
+                        if (!_useAlternativeProfilePicker)
+                            Url = "https://www.netflix.com/SwitchProfile?tkn=" + _profile;
+                        else
+                            InvokeScript("setTimeout(\"document.querySelector('a[data-reactid*=" + _profile + "]').click()\", 500);");
+                        _currentState = State.ReadyToPlay;
                     }
                     if (Url.Contains("/browse") || Url.ToLower().Contains("/kid"))
                     {
                         ProcessComplete.Finished = true;
                         ProcessComplete.Success = true;
                     }
+                    else
+                        Url = "http://www.netflix.com/";
                     break;
                 case State.Playing:
                     if (_showLoading)
