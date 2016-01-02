@@ -347,6 +347,47 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class MovDivX : MyHosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "movdivx.com";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            string webData = WebCache.Instance.GetWebData(url);
+            webData = GetFromPost(url, webData);
+            if (!string.IsNullOrEmpty(webData))
+            {
+                string packed = null;
+                int i = webData.LastIndexOf(@"return p}");
+                if (i >= 0)
+                {
+                    int j = webData.IndexOf(@"</script>", i);
+                    if (j >= 0)
+                        packed = webData.Substring(i + 9, j - i - 9);
+                }
+                if (!String.IsNullOrEmpty(packed))
+                {
+                    packed = packed.Replace(@"\'", @"'");
+                    string unpacked = Helpers.StringUtils.UnPack(packed);
+                    return Helpers.StringUtils.GetSubString(unpacked, @"name=""src""value=""", @"""");
+                }
+                return String.Empty;
+            }
+
+            Match m = Regex.Match(webData, @"var\slnk1\s=\s'(?<url>[^']*)'");
+            if (m.Success)
+            {
+                HttpUrl httpUrl = new HttpUrl(m.Groups["url"].Value);
+                httpUrl.UserAgent = OnlineVideoSettings.Instance.UserAgent;
+                return httpUrl.ToString();
+            }
+            return String.Empty;
+        }
+    }
+
     public class MySpace : HosterBase
     {
         public override string GetHosterUrl()
