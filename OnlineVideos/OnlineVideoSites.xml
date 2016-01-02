@@ -1318,6 +1318,16 @@
         <item key="forceUTF8Encoding"><![CDATA[True]]></item>
       </Configuration>
     </Site>
+    <Site name="Telewizjada" util="Telewizjada" agecheck="false" enabled="true" lang="pl">
+      <Description>Telewizja na żywo</Description>
+      <Configuration>
+        <item key="videoListRegEx"><![CDATA[{"id":5,"priority":4,"name":"2014tvtvn","displayName":"(?<Title>[^"]*)","description":"(?<Description>[^"]*)","categoryID":1,"url":"(?<VideoUrl>[^"]*)","multibitrate":0,"project":"tw","thumb":"\\/media\\/stream\\/img\\/tvn\.png","embeddedThumb":"\\/media\\/stream\\/img\\/tvn_thumb\.png","bigThumb":"(?<ImageUrl>[^"]*)","date":"2016-01-02\s10:00:57","enabled":1,"epgUrl":"http:\\/\\/www\.telemagazyn\.pl\\/rss\\/24,stacja,st,krss\.xml","online":1,"isAdult":0,"viewcount":0,"publisher":""}]]></item>
+        <item key="baseUrl"><![CDATA[http://www.telewizjada.net/]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="videos">http://www.telewizjada.net/get_channels.php</Category>
+      </Categories>
+    </Site>
     <Site name="ToonsTv" util="ToonsTv" agecheck="false" enabled="true" lang="en">
       <Description>ToonsTV - The Home of Angry Birds Toons and Much More!</Description>
       <Configuration>
