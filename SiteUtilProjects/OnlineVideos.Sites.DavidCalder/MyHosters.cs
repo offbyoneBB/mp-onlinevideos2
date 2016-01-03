@@ -303,9 +303,9 @@ namespace OnlineVideos.Sites.DavidCalder
                     return n.Groups["url"].Value;
 
                         //<p id="content">File was deleted</p>
-                Match noFile = Regex.Match(data, @"<p\sid=""content"">(?<msg>[^<]*)</p>");
+                Match noFile = Regex.Match(data, @"<span[^>]*>(?<msg>[^<]*)</span>");
                 if (noFile.Success)
-                    Log.Info("Hoster Result : " + noFile.Groups["msg"].Value);
+                    throw new OnlineVideosException(noFile.Groups["msg"].Value);
 
             }
             return url;

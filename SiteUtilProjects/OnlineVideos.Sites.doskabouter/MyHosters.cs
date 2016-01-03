@@ -838,9 +838,14 @@ namespace OnlineVideos.Hoster
         public override string GetVideoUrl(string url)
         {
             string webData = WebCache.Instance.GetWebData(url);
+            Match nofile = Regex.Match(webData, @"<b[^>]*>>(?<url>[^<]*)</b>");
             string tmp = Helpers.StringUtils.GetSubString(webData, @"$(""#playeriframe"").attr({src : """, @"""");
             webData = WebCache.Instance.GetWebData(@"http://veehd.com" + tmp);
-            return HttpUtility.UrlDecode(Helpers.StringUtils.GetSubString(webData, @"""url"":""", @""""));
+            string res = HttpUtility.UrlDecode(Helpers.StringUtils.GetSubString(webData, @"""url"":""", @""""));
+            if (String.IsNullOrEmpty(res) && nofile.Success)
+                throw new OnlineVideosException(nofile.Groups["url"].Value);
+
+            return res;
         }
     }
 
