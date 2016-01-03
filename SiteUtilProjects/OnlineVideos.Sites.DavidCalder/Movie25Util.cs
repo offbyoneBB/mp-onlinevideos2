@@ -43,12 +43,23 @@ namespace OnlineVideos.Sites.DavidCalder
                 Match n = Regex.Match(data, @"<IFRAME\sid=""showvideo""\ssrc=""(?<url>[^""]*)""");
                 if (n.Success)
                 {
-                    if (n.Groups["url"].Value.Contains("/tz.php?url=external.php?url="))
+                    string url2 = n.Groups["url"].Value;
+                    if (url2.Contains("/tz.php?url=external.php?url="))
                     {
-                        string newurl = n.Groups["url"].Value.Replace(@"/tz.php?url=external.php?url=", "");
+                        string newurl = url2.Replace(@"/tz.php?url=external.php?url=", "");
                         byte[] tmp = Convert.FromBase64String(newurl);
                         string i = Encoding.ASCII.GetString(tmp);
                         return GetVideoUrl(i);
+                    }
+                    if (url2.Contains("/tz.php?url="))
+                    {
+
+                        int p = url2.IndexOf("url=");
+                        if (p > 0)
+                        {
+                            string newurl = url2.Substring(p + 4);
+                            return GetVideoUrl(newurl);
+                        }
                     }
                     return GetVideoUrl(n.Groups["url"].Value);
                 }
@@ -115,7 +126,7 @@ namespace OnlineVideos.Sites.DavidCalder
         {
             List<DetailVideoInfo> DetailedVideos = new List<DetailVideoInfo>();
             DetailedVideos.Add(new TMDBVideoInfo(video) { Title2 = "Full Movie", parent = this });
-            if (video.Other.GetType() == typeof(TMDbVideoDetails))
+            if (video.Other != null && video.Other.GetType() == typeof(TMDbVideoDetails))
             {
                 TMDbVideoDetails videoDetail = (TMDbVideoDetails)video.Other;
 
