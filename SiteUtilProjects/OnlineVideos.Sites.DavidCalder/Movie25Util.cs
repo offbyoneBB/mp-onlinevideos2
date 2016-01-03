@@ -17,14 +17,16 @@ namespace OnlineVideos.Sites.DavidCalder
 
         public class TMDBVideoInfo : DetailVideoInfo
         {
-            public TMDBVideoInfo() : base()
+            public TMDBVideoInfo()
+                : base()
             {
                 Title2 = string.Empty;
             }
 
             public List<TMDbVideoDetails> VidoesChoices { get; set; }
 
-            public TMDBVideoInfo(VideoInfo video) : base(video)
+            public TMDBVideoInfo(VideoInfo video)
+                : base(video)
             {
             }
 
@@ -58,9 +60,9 @@ namespace OnlineVideos.Sites.DavidCalder
         {
             base.DiscoverDynamicCategories();
             {
-                int i = Settings.Categories.Count -1;
+                int i = Settings.Categories.Count - 1;
                 do
-                {   
+                {
                     RssLink cat = (RssLink)Settings.Categories[i];
                     if (cat.Name == "Movies" || cat.Name == "TV Shows")
                         Settings.Categories.Remove(cat);
@@ -112,7 +114,7 @@ namespace OnlineVideos.Sites.DavidCalder
         public List<DetailVideoInfo> GetVideoChoices(VideoInfo video)
         {
             List<DetailVideoInfo> DetailedVideos = new List<DetailVideoInfo>();
-            DetailedVideos.Add(new TMDBVideoInfo(video) { Title2 = "Full Movie", parent=this });
+            DetailedVideos.Add(new TMDBVideoInfo(video) { Title2 = "Full Movie", parent = this });
             if (video.Other.GetType() == typeof(TMDbVideoDetails))
             {
                 TMDbVideoDetails videoDetail = (TMDbVideoDetails)video.Other;
