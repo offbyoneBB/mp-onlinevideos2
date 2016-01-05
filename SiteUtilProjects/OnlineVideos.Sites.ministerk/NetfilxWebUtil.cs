@@ -43,7 +43,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         protected bool showLoadingSpinner = true;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable Netflix Info/Stat OSD"), Description("Enable info and statistics OSD. Toggle OSD with 0 when video is playing. Do not enable this if you need to enter 0 in parental control pin")]
         protected bool enableNetflixOsd = true;
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Number of Home categories"), Description("Change only if necessary. Number of categories in home. Default value 38 => results in 38+1-2=37 categories")]
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Number of Home categories"), Description("Change only if necessary. Number of categories in home. Default value 20 => (often) result in 20+1-2=19 categories")]
         protected int noOfCatsInHome = 20;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Number of categories per page in other listings"), Description("Change only if necessary. Number of items in listings. Default 100")]
         protected uint noOfItems = 100;
@@ -530,6 +530,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                         JToken item = token.First();
                         if (enableVerboseLog) Log.Debug("item: {0}", item);
                         string list = token.Values().Last().ToString();
+                        if (json["value"]["lists"][list] == null)
+                            break;
                         if (enableVerboseLog) Log.Debug("list: {0}", list);
                         if (enableVerboseLog) Log.Debug("context: {0}", json["value"]["lists"][list]["context"]);
                         if (json["value"]["lists"][list]["context"].Value<string>() != "queue" && json["value"]["lists"][list]["context"].Value<string>() != "continueWatching")

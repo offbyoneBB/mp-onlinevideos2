@@ -64,6 +64,7 @@
       <Link>Properties\Version.cs</Link>
     </Compile>
     <Compile Include="BrowserUtilConnectors\HboNordicConnector.cs" />
+    <Compile Include="BrowserUtilConnectors\KatsomoConnector.cs" />
     <Compile Include="BrowserUtilConnectors\NetflixConnector.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorNo.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorFi.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="Hoster\Videomega.cs" />
     <Compile Include="Hoster\VkPass.cs" />
     <Compile Include="Hoster\vk.cs" />
+    <Compile Include="KatsomoWebUtil.cs" />
     <Compile Include="YleUtil.cs" />
     <Compile Include="NetfilxWebUtil.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -120,7 +122,9 @@
   <ItemGroup>
     <None Include="Resources\HboNordic.js" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\Katsomo.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
