@@ -290,6 +290,9 @@ namespace OnlineVideos.Sites.DavidCalder
                         match = match.NextMatch();
                     }
 
+                    string timeToWait = Regex.Match(data, @"<span\sid=""countdown_str"">[^>]*>(?<time>[^<]+)</span>").Groups["time"].Value;
+                    if (Convert.ToInt32(timeToWait) < 10)
+                        System.Threading.Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
                     postData = postData.Replace("op=search&op=download1&", "op=download1&usr_login=&");
                     postData = postData.Insert(postData.IndexOf("&hash="), "&referer=" + "http://played.to/player/6.6/jwplayer.flash.swf");
                     postData += "&imhuman=Proceed+to+video";
