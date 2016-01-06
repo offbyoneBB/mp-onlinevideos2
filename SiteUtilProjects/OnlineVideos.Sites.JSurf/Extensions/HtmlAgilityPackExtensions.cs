@@ -123,6 +123,17 @@ namespace OnlineVideos.Sites.JSurf.Extensions
         }
 
         /// <summary>
+        /// Get the innertext of the node, or an empty string if null. Result will be cleared from newlines and trimmed by spaces.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public static string GetInnerTextTrim(this HtmlNode node)
+        {
+            string result = GetInnerText(node);
+            return result.Replace("\n", string.Empty).Trim();
+        }
+
+        /// <summary>
         /// Navigate down a path using the position of child elements
         /// </summary>
         /// <param name="node"></param>
