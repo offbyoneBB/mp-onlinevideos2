@@ -8,28 +8,35 @@
         <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
 
         <!-- Header -->
-      <!--ResourceWrapper x:Key="Header_Text" EnableBindings="True" Resource="{Binding Source={StaticResource OnlineVideosModel}, Path=SelectedSite.Name, Mode=OneTime}"/-->
+        <!--ResourceWrapper x:Key="Header_Text" EnableBindings="True" Resource="{Binding Source={StaticResource OnlineVideosModel}, Path=SelectedSite.Name, Mode=OneTime}"/-->
 
         <!-- Contents -->
         <ControlTemplate x:Key="Contents_Template">
             <DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}" LastChildFill="true">
 
-              <ListView x:Name="videolist" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center" 
+                <ListView x:Name="videolist" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center" 
                         Style="{ThemeResource ovsVideosListViewStyle}" Margin="-60, -8,-40,-8"
                         ItemsSource="{Binding Path=VideosList}"/>
 
-              <StackPanel Orientation="Vertical" DockPanel.Dock="Bottom" VerticalAlignment="Bottom" Margin="-20,625,0,-625" >
-                <StackPanel Orientation="Horizontal"> 
-                  <Label Content="{Binding Path=SelectedSite.Name}" Color="{ThemeResource TextColor}"/>
-                  <Label Content=" • " Color="{ThemeResource TextColor}"/>
-                  <Label Content="{Binding Path=SelectedCategory.Name}" Color="{ThemeResource TextColor}"/>
+                <StackPanel Orientation="Vertical" DockPanel.Dock="Bottom" VerticalAlignment="Bottom" Margin="-20,625,0,-250">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{Binding Path=SelectedSite.Name}" Color="{ThemeResource TextColor}"/>
+                        <Label Content=" • " Color="{ThemeResource TextColor}"/>
+                        <Label Content="{Binding Path=SelectedCategory.Name}" Color="{ThemeResource TextColor}"/>
+                        <Label DataContext="{Binding ElementName=videolist,Path=CurrentItem}" Content="{Binding Path=Airdate}" Margin="40,0,0,0" Color="{ThemeResource TextColor}"/>
+                        <Label DataContext="{Binding ElementName=videolist,Path=CurrentItem}" Content="{Binding Path=Length}" Margin="40,0,0,0" Color="{ThemeResource TextColor}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Height="140">
+                        <Label Color="{ThemeResource TextColor}" Opacity="0.6"
+                        VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                        DataContext="{Binding ElementName=videolist,Path=CurrentItem}"
+                        Content="{Binding Path=Title}" />
+                        <Label Color="{ThemeResource TextColor}" Opacity="0.6" Height="120"
+                        VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Wrap="True" Scroll="Auto" ScrollDelay="5" ScrollSpeed="10"
+                        DataContext="{Binding ElementName=videolist,Path=CurrentItem}"
+                        Content="{Binding Path=Description}" />
+                    </StackPanel>
                 </StackPanel>
-                <Label Color="{ThemeResource TextColor}" Opacity="0.6"
-                       VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Wrap="True" Scroll="Auto"
-                       DataContext="{Binding ElementName=videolist,Path=CurrentItem}"
-                       Content="{Binding Path=Title}" />
-
-              </StackPanel>           
             </DockPanel>
         </ControlTemplate>
     </Include.Resources>
