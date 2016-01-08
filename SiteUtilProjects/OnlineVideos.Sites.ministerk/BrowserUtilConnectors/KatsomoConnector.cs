@@ -9,20 +9,24 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 {
     public class KatsomoConnector : BrowserUtilConnector
     {
+        private bool isPausing = false;
+        private bool showLoading = true;
+
         public override Entities.EventResult PerformLogin(string username, string password)
         {
-            ShowLoading();
+            showLoading = username.Contains("SHOWLOADING");
+            if (showLoading)
+                ShowLoading();
             Url = "about:blank";
             ProcessComplete.Finished = false;
             ProcessComplete.Success = false;
             return EventResult.Complete();
         }
 
-        private string theUrl = "dummy";
         public override Entities.EventResult PlayVideo(string videoToPlay)
         {
-            ShowLoading();
-            theUrl = videoToPlay;
+            if (showLoading)
+                ShowLoading();
             Url = videoToPlay;
             ProcessComplete.Finished = false;
             ProcessComplete.Success = false;
@@ -31,6 +35,12 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         public override void OnAction(string actionEnumName)
         {
+            MessageHandler.Info("KatsomoConnector. actionEnumName: {0}", actionEnumName);
+            //Adding remote 0 (with my remote red button did not work...)
+            if (actionEnumName == "ACTION_SHOW_GUI" || actionEnumName == "REMOTE_0" || actionEnumName == "ACTION_REMOTE_RED_BUTTON")
+            {
+                InvokeScriptAndMoveCursor("myToggleZoom();");
+            }
             if (actionEnumName == "ACTION_MOVE_LEFT")
             {
                 InvokeScriptAndMoveCursor("myBack();");
@@ -52,7 +62,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             return PlayPause();
         }
 
-        private bool isPausing = false;
         private Entities.EventResult PlayPause()
         {
             if (isPausing)
@@ -74,18 +83,20 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         public override Entities.EventResult BrowserDocumentComplete()
         {
-
+            MessageHandler.Info("KatsomoConnector - Url: {0}", Url);
             if (Url != "about:blank")
             {
                 System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
                 timer.Tick += (object sender, EventArgs e) =>
                 {
-                    HideLoading();
                     timer.Stop();
                     timer.Dispose();
-                    InvokeScript(Properties.Resources.Katsomo + "setTimeout(\"myZoom()\", 500);");
+                    InvokeScript(Properties.Resources.Katsomo);
+                    InvokeScript("setTimeout(\"myZoom()\", 500);");
+                    if (showLoading)
+                        HideLoading();
                 };
-                timer.Interval = 3500;
+                timer.Interval = 4500;
                 timer.Start();
             }
             ProcessComplete.Finished = true;

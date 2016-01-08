@@ -8,6 +8,19 @@
     document.getElementById('video0_desktop-player').style.height = (window.innerHeight) + 'px';
 }
 
+function myToggleZoom() {
+    if (document.getElementById('video0_desktop-player').style.position == 'fixed') {
+        document.getElementById('video0_desktop-player').style.height = '';
+        document.getElementById('video0_desktop-player').style.width = '';
+        document.getElementById('video0_desktop-player').style.top = '';
+        document.getElementById('video0_desktop-player').style.left = '';
+        document.getElementById('video0_desktop-player').style.position = '';
+        document.getElementById('video0_desktop-player').style.zIndex = '';
+        document.getElementById('katsomo-navi').style.zIndex = '';
+    } else {
+        myZoom();
+    }
+}
 function myPause() {
     document.getElementsByTagName('object')[0].content.MainPlayer.Pause();
 }
@@ -32,3 +45,4 @@ function myForward() {
         document.getElementsByTagName('object')[0].content.MainPlayer.RelativePosition += 30;
     }
 }
+
