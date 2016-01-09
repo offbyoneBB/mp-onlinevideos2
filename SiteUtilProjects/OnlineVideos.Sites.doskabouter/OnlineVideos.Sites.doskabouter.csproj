@@ -109,7 +109,6 @@
     <Compile Include="Hoster\Xtream.cs" />
     <Compile Include="iLiveToUtil.cs" />
     <Compile Include="IplaUtil.cs" />
-    <Compile Include="Katsomo.cs" />
     <Compile Include="KhanAcademyUtil.cs" />
     <Compile Include="KijkUtil.cs" />
     <Compile Include="KissAnimeUtil.cs" />
