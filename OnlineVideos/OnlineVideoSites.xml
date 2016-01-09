@@ -835,6 +835,9 @@
     <Site name="Yle Areena" util="Yle" agecheck="false" enabled="true" lang="fi">
       <Description>Yle Areena</Description>
     </Site>
+    <Site name="Katsomo.fi" util="KatsomoWeb" agecheck="false" enabled="true" lang="fi" player="Browser">
+      <Description>MTV Katsomo on netti-tv, joka tuo katseltavaksesi suosikkiohjelmiesi uusimmat jaksot ilmaiseksi heti samaan aikaan kuin ne näytetään televisiokanavalla. Voit katsella MTV3:n, Subin ja AVA:n ohjelmia silloin kuin sinulle parhaiten sopii, ajankohdasta riippumatta tietokoneelta, puhelimesta, tabletista, MediaPortalista ja Samsung Smart TV:stä.</Description>
+    </Site>
     <Site name="OnlineTV by on-tv.ru" util="OnTVRu" agecheck="false" enabled="true" lang="ru">
       <Categories>
         <Category xsi:type="RssLink" name="Top 50">http://on-tv.ru</Category>
