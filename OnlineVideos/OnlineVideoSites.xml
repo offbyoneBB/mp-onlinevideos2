@@ -1281,7 +1281,9 @@
       <Categories>
         <Category xsi:type="RssLink" name="Ohjelmat">http://www.ruutu.fi/ohjelmat</Category>
         <Category xsi:type="RssLink" name="Urheilu">http://www.ruutu.fi/urheilu</Category>
+        <Category xsi:type="RssLink" name="Uutiset">http://www.ruutu.fi/ohjelmat/uutiset</Category>
         <Category xsi:type="RssLink" name="Lapset">http://www.ruutu.fi/lapset</Category>
+        <Category xsi:type="RssLink" name="Kaikki ohjelmat">http://www.ruutu.fi/ohjelmat/kaikki</Category>
       </Categories>
     </Site>
     <Site name="SBS.au" util="SBSau" agecheck="false" enabled="true" lang="en">

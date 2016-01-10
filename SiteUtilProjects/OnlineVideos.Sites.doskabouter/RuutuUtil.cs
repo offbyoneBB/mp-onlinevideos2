@@ -32,9 +32,11 @@ namespace OnlineVideos.Sites
         public override int DiscoverSubCategories(Category parentCategory)
         {
             var doc = getDocument(parentCategory);
+            if (parentCategory.Name == "Kaikki ohjelmat")
+                return AddKaikki(doc, parentCategory);
             if (parentCategory.Name == "Ohjelmat")
                 return AddOhjelmat(doc, parentCategory);
-            if (RuType.Ohjelmat.Equals(parentCategory.Other) || parentCategory.Name == "Urheilu")
+            if (RuType.Ohjelmat.Equals(parentCategory.Other) || parentCategory.Name == "Urheilu" || parentCategory.Name == "Uutiset")
                 return DiscoverSubs(parentCategory, doc);
             if (parentCategory.Name == "Lapset")
                 return DiscoverLapsetSubs(parentCategory, doc);
@@ -108,6 +110,47 @@ namespace OnlineVideos.Sites
             return result;
         }
 
+        private int AddKaikki(HtmlDocument doc, Category parentCategory)
+        {
+            var nodes = doc.DocumentNode.SelectNodes(@"//div[@class='list']");
+            parentCategory.SubCategories = new List<Category>();
+            foreach (var node in nodes)
+            {
+                RssLink sub = new RssLink()
+                {
+                    Name = node.SelectSingleNode(@".//h2").InnerText,
+                    ParentCategory = parentCategory,
+                    HasSubCategories = true,
+                };
+                sub.SubCategories = GetKaikkiSubcats(node, sub);
+                parentCategory.SubCategories.Add(sub);
+
+            }
+            parentCategory.SubCategoriesDiscovered = true;
+            return parentCategory.SubCategories.Count;
+        }
+
+        public List<Category> GetKaikkiSubcats(HtmlNode parentNode, Category parentCat)
+        {
+            List<Category> res = new List<Category>();
+            var nodes = parentNode.SelectNodes(@".//div[@data-content-id]/a[@href]");
+            foreach (var node in nodes)
+            {
+                var cat = new RssLink()
+                {
+                    Name = node.SelectSingleNode(@".//div").InnerText,
+                    ParentCategory = parentCat,
+                    HasSubCategories = true,
+                    Url = FormatDecodeAbsolutifyUrl(baseUrl, node.Attributes["href"].Value, "", UrlDecoding.None),
+                    Other = RuType.Ohjelmat
+                };
+                res.Add(cat);
+            }
+
+            parentCat.SubCategoriesDiscovered = true;
+            return res;
+        }
+
         private int DiscoverLapsetSubs(Category parentCategory, HtmlDocument doc)
         {
             var nodes = doc.DocumentNode.SelectNodes(@"//a[@href][.//h3[@class='thumbnail-title']]");
@@ -118,7 +161,7 @@ namespace OnlineVideos.Sites
                     Name = node.SelectSingleNode(@".//h3").InnerText,
                     ParentCategory = parentCategory,
                     HasSubCategories = true,
-                    Thumb = htmlValue(node.SelectSingleNode(@".//img[@data-img_src_1]").Attributes["data-img_src_1"]),
+                    Thumb = htmlValue(node.SelectSingleNode(@".//img[@data-src]").Attributes["data-src"]),
                     SubCategories = new List<Category>(),
                     Url = FormatDecodeAbsolutifyUrl(baseUrl, node.Attributes["href"].Value, "", UrlDecoding.None),
                     Other = RuType.LapsetSeries
