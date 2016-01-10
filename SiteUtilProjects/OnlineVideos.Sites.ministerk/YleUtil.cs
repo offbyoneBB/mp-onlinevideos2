@@ -338,16 +338,18 @@ namespace OnlineVideos.Sites
                 {
                     string title = item["title"][ApiLanguage] == null ? item["title"][ApiOtherLanguage].Value<string>() : item["title"][ApiLanguage].Value<string>();
                     string id = item["id"].Value<string>();
+                    string seriesId = item["seriesId"] != null ? item["seriesId"].Value<string>() : "";
                     string type = item["type"].Value<string>();
-                    bool hasSubCats = type == cApiContentTypeTvSeries;
+                    bool hasSubCats = !string.IsNullOrEmpty(seriesId);
                     string image = (item["imageId"] != null) ? string.Format(cUrlImageFormat, item["imageId"].Value<string>()) : string.Empty;
                     uint clipCount = 0;
                     uint programCount = 0;
                     uint? estimatedVideoCount = null;
                     if (hasSubCats)
                     {
-                        clipCount = (item["clipCount"] != null) ? item["clipCount"].Value<uint>() : 0;
-                        programCount = (item["programCount"] != null) ? item["programCount"].Value<uint>() : 0;
+
+                        clipCount = (item["clipCount"] != null && item["clipCount"].Type != JTokenType.Null) ? item["clipCount"].Value<uint>() : 0;
+                        programCount = (item["programCount"] != null && item["programCount"].Type != JTokenType.Null) ? item["programCount"].Value<uint>() : 0;
                         estimatedVideoCount = clipCount + programCount;
                     }
                     RssLink category = new RssLink()
@@ -368,11 +370,11 @@ namespace OnlineVideos.Sites
                             category.SubCategories.Add(new RssLink()
                             {
                                 Name = dictionary[cApiProgram],
-                                Url = id,
+                                Url = seriesId,
                                 ParentCategory = category,
                                 EstimatedVideoCount = programCount,
                                 HasSubCategories = false,
-                                Other = type,
+                                Other = cApiContentTypeTvSeries,
                                 Thumb = image
                             });
                         }
@@ -381,11 +383,11 @@ namespace OnlineVideos.Sites
                             category.SubCategories.Add(new RssLink()
                             {
                                 Name = dictionary[cApiClip],
-                                Url = id,
+                                Url = seriesId,
                                 ParentCategory = category,
                                 EstimatedVideoCount = clipCount,
                                 HasSubCategories = false,
-                                Other = type,
+                                Other = cApiContentTypeTvSeries,
                                 Thumb = image
                             });
                         }
