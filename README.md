@@ -5,8 +5,8 @@ OnlineVideos is a plug-in for the open-source media center application [MediaPor
 The plug-in interface will unify the user experience from all the different websites into one simple structure. Every site will span a hierarchical tree of categories, each showing a set of videos with descriptions and thumbnails. Support for searching, filtering, bookmarking favorites and downloading is included as well.
 
 #Screenshots
-![Screenshot SmallIcons][ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg]
-![Screenshot LargeIcons](ScreenShots/Screenshot_B3W_Videos_LargeIcons.jpg)
+![Screenshot SmallIcons](http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg)
+![Screenshot LargeIcons](http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_LargeIcons.jpg)
 
 #Supported Sites
 
