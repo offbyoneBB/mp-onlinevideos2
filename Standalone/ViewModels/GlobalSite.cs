@@ -27,6 +27,7 @@ namespace Standalone.ViewModels
         public bool IsAdult { get { return Model.IsAdult; } }
         public string Owner { get; protected set; }
         public string Language { get; protected set; }
+        public string Description { get { return Model.Description; } }
     }
 
     public static class GlobalSiteList
