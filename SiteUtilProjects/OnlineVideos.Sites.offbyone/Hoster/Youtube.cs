@@ -195,73 +195,101 @@ namespace OnlineVideos.Hoster
             else return String.Empty;
         }
 
-		/// <summary>
-		/// Turn the encrypted s parameter into a valid signature
-		/// </summary>
+		/// <summary>/// Turn the encrypted s parameter into a valid signature</summary>
 		/// <param name="s">s Parameter value of the URL parameters</param>
-		/// <returns></returns>
-		string DecryptSignature(string javascriptUrl, string s)
+		/// <returns>Decrypted string for the s parameter</returns>
+        string DecryptSignature(string javascriptUrl, string s)
         {
-			if (string.IsNullOrEmpty(s)) return string.Empty;
+            if (string.IsNullOrEmpty(s)) return string.Empty;
 
-			// try decryption by executing the Javascript from Youtube
-			if (!string.IsNullOrEmpty(javascriptUrl))
-			{
-				try
-				{
-					if (javascriptUrl.StartsWith("//"))
-						javascriptUrl = "http:" + javascriptUrl;
-                    /*
-                    var match = Regex.Match(javascriptUrl, @".*?-(?<id>[a-zA-Z0-9_-]+)(?:/watch_as3|/html5player)?\.(?<ext>[a-z]+)$");
-                    if (!match.Success)
-                        throw new Exception(string.Format("Cannot identify player {0}", javascriptUrl));
-                    var player_type = match.Groups["ext"];
-                    var player_id = match.Groups["id"];
-                    */
-					string jsContent = WebCache.Instance.GetWebData(javascriptUrl);
+            // try decryption by executing the Javascript from Youtube
+            if (!string.IsNullOrEmpty(javascriptUrl))
+            {
+                if (javascriptUrl.StartsWith("//"))
+                    javascriptUrl = "http:" + javascriptUrl;
 
-					string signatureMethodName = Regex.Match(jsContent, @"\.sig\|\|([a-zA-Z0-9$]+)\(").Groups[1].Value;
-                    
-                    Jurassic.ScriptEngine engine;
-                    if (!cachedJavascript.TryGetValue(jsContent, out engine))
-                    {
-                        engine = new Jurassic.ScriptEngine();
-                        
-                        // define globals that are used in the script
-                        engine.Global["window"] = engine.Global;
-                        engine.Global["document"] = engine.Global;
-                        engine.Global["navigator"] = engine.Global;
-                        
-                        // this regexp is not valid for .net but js : https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/RegExp
-                        var fixedJs = jsContent.Replace("[^]", ".");
+                /*
+                var match = Regex.Match(javascriptUrl, @".*?-(?<id>[a-zA-Z0-9_-]+)(?:/watch_as3|/html5player)?\.(?<ext>[a-z]+)$");
+                if (!match.Success)
+                    throw new Exception(string.Format("Cannot identify player {0}", javascriptUrl));
+                var player_type = match.Groups["ext"];
+                var player_id = match.Groups["id"];
+                */
 
-                        // cut out the global function(){...} surrounding everything, so our method is defined global in Jurassic
-                        fixedJs = fixedJs.Substring(fixedJs.IndexOf('{') + 1);
-                        fixedJs = fixedJs.Substring(0, fixedJs.LastIndexOf('}'));
-                        
-                        // due to js nature - all methods called in our target function must be defined before, so for performance cut off where our function ends
-                        var method = Regex.Match(fixedJs, "(function\\s+" + signatureMethodName + @".*?)function [a-zA-Z]+\(\)").Groups[1];
-                        fixedJs = fixedJs.Substring(0, method.Index + method.Length);
+                string jsContent = WebCache.Instance.GetWebData(javascriptUrl);
 
-                        engine.Execute(fixedJs);
-                        cachedJavascript.Add(jsContent, engine);
-                    }
-					string decrypted = engine.CallGlobalFunction(signatureMethodName, s).ToString();
-                    if (!string.IsNullOrEmpty(decrypted))
-                        return decrypted;
-                    else
-                        Log.Info("Javascript decryption function returned nothing!");
-				}
-				catch (Exception ex)
-				{
-					Log.Info("Signature decryption by executing the Javascript failed: {0}", ex.Message);
-				}
-			}
+                var decrypted = DecryptWithCustomParser(jsContent, s);
+
+                if (!string.IsNullOrEmpty(decrypted))
+                    return decrypted;
+                else
+                    Log.Info("Javascript decryption function returned nothing!");
+            }
             else
             {
                 Log.Info("No Javascript url for decrpyting signature!");
             }
             return string.Empty;
-		}
+        }
+
+        private string DecryptWithCustomParser(string jsContent, string s)
+        {
+            try
+            {
+                // Try to get the functions out of the java script
+                var javaScriptParser = new OnlineVideos.JavaScript.JavaScriptParser(jsContent);
+                var functions = javaScriptParser.Parse();
+
+                // Running the functions on the signature to "decrypt" it
+                var functionExecuter = new OnlineVideos.JavaScript.FunctionExecuter(functions);
+                return functionExecuter.Execute(s);
+            }
+            catch (Exception ex)
+            {
+                Log.Info("Signature decryption with custom parser failed: {0}", ex.Message);
+            }
+            return string.Empty;
+        }
+
+        /*
+        private string DecryptWithJurassicEngine(string jsContent, string s)
+        {
+            try
+            {
+                string signatureMethodName = Regex.Match(jsContent, @"\.sig\|\|([a-zA-Z0-9$]+)\(").Groups[1].Value;
+
+                Jurassic.ScriptEngine engine;
+                if (!cachedJavascript.TryGetValue(jsContent, out engine))
+                {
+                    engine = new Jurassic.ScriptEngine();
+
+                    // define globals that are used in the script
+                    engine.Global["window"] = engine.Global;
+                    engine.Global["document"] = engine.Global;
+                    engine.Global["navigator"] = engine.Global;
+
+                    // this regexp is not valid for .net but js : https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/RegExp
+                    var fixedJs = jsContent.Replace("[^]", ".");
+
+                    // cut out the global function(){...} surrounding everything, so our method is defined global in Jurassic
+                    fixedJs = fixedJs.Substring(fixedJs.IndexOf('{') + 1);
+                    fixedJs = fixedJs.Substring(0, fixedJs.LastIndexOf('}'));
+
+                    // due to js nature - all methods called in our target function must be defined before, so for performance cut off where our function ends
+                    var method = Regex.Match(fixedJs, "(function\\s+" + signatureMethodName + @".*?)function [a-zA-Z]+\(\)").Groups[1];
+                    fixedJs = fixedJs.Substring(0, method.Index + method.Length);
+
+                    engine.Execute(fixedJs);
+                    cachedJavascript.Add(jsContent, engine);
+                }
+                return engine.CallGlobalFunction(signatureMethodName, s).ToString();
+            }
+            catch (Exception ex)
+            {
+                Log.Info("Signature decryption by executing the Javascript failed: {0}", ex.Message);
+            }
+            return string.Empty;
+        }
+        */
     }
 }

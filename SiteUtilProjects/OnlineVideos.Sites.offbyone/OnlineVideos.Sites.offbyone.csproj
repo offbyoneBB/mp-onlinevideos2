@@ -307,6 +307,9 @@
     <Compile Include="HeiseVideoUtil.cs" />
     <Compile Include="Hoster\Youtube.cs" />
     <Compile Include="Hoster\LiveVideo.cs" />
+    <Compile Include="JavaScript\FunctionData.cs" />
+    <Compile Include="JavaScript\FunctionExecuter.cs" />
+    <Compile Include="JavaScript\JavaScriptParser.cs" />
     <Compile Include="KinoDeUtil.cs" />
     <Compile Include="MetaCafeUtil.cs" />
     <Compile Include="MsnbcUtil.cs" />
