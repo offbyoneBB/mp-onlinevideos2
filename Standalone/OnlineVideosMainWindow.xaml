@@ -35,6 +35,7 @@
         <CommandBinding Command="MediaCommands.Stop" CanExecute="Stop_CanExecute" Executed="Stop_Executed"/>
         <CommandBinding Command="NavigationCommands.Zoom" CanExecute="Stop_CanExecute" Executed="ToggleFullscreen"/>
         <CommandBinding Command="Help" Executed="HelpExecuted"/>
+        <CommandBinding Command="Properties" CanExecute="Settings_CanExecute" Executed="Settings_Executed"/>
         <CommandBinding Command="MediaCommands.MuteVolume" Executed="Mute_Executed"/>
         <CommandBinding Command="MediaCommands.IncreaseVolume" Executed="VolumeUp_Executed"/>
         <CommandBinding Command="MediaCommands.DecreaseVolume" Executed="VolumeDown_Executed"/>
@@ -95,6 +96,9 @@
                 <ToggleButton Height="34" VerticalAlignment="Center" ToolTip="Add Sites from global list" Margin="5 0 5 0" Command="NavigateJournal">
                     <Image Source="Images/GlobalSites.png"/>
                 </ToggleButton>
+                <Button Height="34" Command="Properties" ToolTip="Settings" Margin="0 0 5 0">
+                    <Image Source="Images/Settings.png"/>
+                </Button>
                 <Button Height="34" Command="Help" ToolTip="Help" Margin="0 0 5 0">
                     <Image Source="Images/Help.png"/>
                 </Button>

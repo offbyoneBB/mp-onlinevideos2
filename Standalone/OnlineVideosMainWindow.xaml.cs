@@ -103,9 +103,12 @@ namespace Standalone
                 .Start();
 
             OnlineVideoSettings.Instance.LoadSites();
+
 			// force autoupdate when no dlls or icons or banners are found -> fresh install
 			bool forceUpdate = System.IO.Directory.GetFiles(OnlineVideoSettings.Instance.DllsDir, "OnlineVideos.Sites.*.dll").Length == 0 || System.IO.Directory.GetFiles(OnlineVideoSettings.Instance.ThumbsDir, "*.png", System.IO.SearchOption.AllDirectories).Length == 0;
-			if (forceUpdate || (DateTime.Now - Settings.Instance.LastAutoUpdate > TimeSpan.FromHours(1) && MessageBox.Show(Translation.Instance.PerformAutomaticUpdate, Translation.Instance.AutomaticUpdate, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes) == MessageBoxResult.Yes))
+            bool shouldUpdate = DateTime.Now - Settings.Instance.LastAutoUpdate > TimeSpan.FromHours(1);
+			if (forceUpdate || 
+                (shouldUpdate && (Settings.Instance.AutomaticUpdate == true || (Settings.Instance.AutomaticUpdate == null && MessageBox.Show(Translation.Instance.PerformAutomaticUpdate, Translation.Instance.AutomaticUpdate, MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes) == MessageBoxResult.Yes))))
             {
 				Title = "OnlineVideos - " + Translation.Instance.AutomaticUpdate + " ...";
                 waitCursor.Visibility = System.Windows.Visibility.Visible;
@@ -129,17 +132,22 @@ namespace Standalone
                         waitCursor.tbxCenter.Text = "";
                         waitCursor.Visibility = System.Windows.Visibility.Hidden;
                         ReactToResult(resultInfo, Translation.Instance.AutomaticUpdate);
-                        OnlineVideoSettings.Instance.BuildSiteUtilsList();
-						listViewMain.ItemsSource = ViewModels.SiteList.GetSitesView(this);
-                        SelectAndFocusItem();
+                        AfterWindowLoaded();
+                        
                     }, false);
             }
             else
             {
-                OnlineVideoSettings.Instance.BuildSiteUtilsList();
-				listViewMain.ItemsSource = ViewModels.SiteList.GetSitesView(this);
-                SelectAndFocusItem();
+                AfterWindowLoaded();             
             }
+        }
+
+        private void AfterWindowLoaded()
+        {
+            if (Settings.Instance.StartMaximized) WindowState = System.Windows.WindowState.Maximized;
+            OnlineVideoSettings.Instance.BuildSiteUtilsList();
+            listViewMain.ItemsSource = ViewModels.SiteList.GetSitesView(this);
+            SelectAndFocusItem();
         }
 
         protected void HandleItemMouseEnter(object sender, MouseEventArgs e)
@@ -1115,6 +1123,21 @@ namespace Standalone
                 return false;
             }
             return true;
+        }
+
+        private void Settings_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = !Gui2UtilConnector.Instance.IsBusy && SelectedSite == null;
+        }
+
+        private void Settings_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            var p = listViewMain.PointToScreen(new Point(20, 10));
+            var dlg = new SettingsWindow() { Width = listViewMain.ActualWidth - 40, Height = listViewMain.ActualHeight - 20, Owner = this, Left = p.X, Top = p.Y };
+            if (dlg.ShowDialog() == true)
+            {
+                Settings.Instance.Save();
+            }
         }
 
 		private void Search_CanExecute(object sender, CanExecuteRoutedEventArgs e)

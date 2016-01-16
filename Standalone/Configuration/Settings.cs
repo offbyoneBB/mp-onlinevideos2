@@ -52,5 +52,11 @@ namespace Standalone.Configuration
 
 		[DataMember]
 		public DateTime LastAutoUpdate { get; set; }
+
+        [DataMember]
+        public bool StartMaximized { get; set; }
+
+        [DataMember]
+        public bool? AutomaticUpdate { get; set; }
 	}
 }
