@@ -30,7 +30,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         {
             string culture = Properties.Resources.Culture.ToString();
             long day = DateTime.Now.Ticks / TimeSpan.TicksPerDay;
-            
+
             if (day > _lastLogin || culture != _lastCulture)
             {
                 forceLogin = true;
@@ -43,11 +43,36 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
                 _lastCulture = culture;
                 var loginDoc = Load(Properties.Resources.AmazonLoginUrl);
                 var formElements = new FormElementCollection(loginDoc);
-                string postUrl = loginDoc.GetElementbyId("ap_signin_form").Attributes["action"].Value;
-                formElements["email"] = username;
-                formElements["password"] = password;
-                formElements["create"] = "0";
-                Thread.Sleep(1500);
+                // There can appear different login pages, using other names for form / controls
+                var loginForm = loginDoc.GetElementbyId("ap_signin_form") ?? loginDoc.DocumentNode.SelectNodes("//*[@name='signIn']").FirstOrDefault();
+                if (loginForm == null)
+                {
+                    Log.Error("AmazonBrowserSession: Failed to get login form!");
+                    return;
+                }
+                // Copy over all input elements
+                foreach (var inputElement in loginForm.SelectNodes("//input"))
+                {
+                    var name = inputElement.Attributes["name"];
+                    var value = inputElement.Attributes["value"];
+                    if (name != null && value != null)
+                        formElements[name.Value] = value.Value;
+                }
+                if (formElements.ContainsKey("email"))
+                {
+                    formElements["email"] = username;
+                    formElements["password"] = password;
+                    formElements["create"] = "0";
+                }
+                else
+                {
+                    // 2nd variant of login form
+                    formElements["ap_email"] = username;
+                    formElements["ap_password"] = password;
+                }
+
+                string postUrl = loginForm.Attributes["action"].Value;
+                Thread.Sleep(500);
                 string login = GetWebData(postUrl, formElements.AssemblePostPayload(), cc, null, null, false, false, userAgent);
                 // TODO add login check
                 _isLoggedIn = true;
