@@ -102,6 +102,9 @@ namespace Standalone
                 Dispatcher)
                 .Start();
 
+            // delete old thumbs in a background thread
+            System.Threading.ThreadPool.QueueUserWorkItem((o) => ImageDownloader.DeleteOldThumbs(30, r => { return true; }));
+
             OnlineVideoSettings.Instance.LoadSites();
 
 			// force autoupdate when no dlls or icons or banners are found -> fresh install
