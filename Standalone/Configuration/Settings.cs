@@ -67,5 +67,8 @@ namespace Standalone.Configuration
 
         [DataMember]
         public float ItemsZoom { get; set; }
+
+        [DataMember]
+        public bool StayOnTopPlayingFullscreen { get; set; }
 	}
 }

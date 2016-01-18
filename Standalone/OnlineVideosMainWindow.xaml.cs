@@ -1364,6 +1364,7 @@ namespace Standalone
                 if (IsPaused) OSD.Visibility = System.Windows.Visibility.Visible;
                 focusedElementBeforeFullscreen = Keyboard.FocusedElement;
                 Keyboard.Focus(mediaPlayer); // set Keyboard focus to the mediaPlayer
+                if (Settings.Instance.StayOnTopPlayingFullscreen) Topmost = true;
             }
             else
             {
@@ -1376,6 +1377,7 @@ namespace Standalone
                 this.WindowStyle = WindowStyle.SingleBorderWindow;
                 OSD.Visibility = System.Windows.Visibility.Hidden;
                 Keyboard.Focus(focusedElementBeforeFullscreen); // set Keyboard focus back
+                if (Settings.Instance.StayOnTopPlayingFullscreen) Topmost = false;
             }
             IsFullScreen = !IsFullScreen;
         }
