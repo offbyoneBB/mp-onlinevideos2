@@ -75,7 +75,7 @@ namespace OnlineVideos.Sites
                     else
                         vid = vid2;
                     var node2 = vid.SelectSingleNode(".//a[@href]");
-                    if (node2 != null)
+                    if (node2 != null && vid.SelectSingleNode(".//h4[@itemprop='name']") != null)
                     {
                         VideoInfo video = CreateVideoInfo();
 
@@ -174,12 +174,12 @@ namespace OnlineVideos.Sites
 
         private int AddOhjelmat(HtmlDocument doc, Category parentCat)
         {
-            var nodes = doc.DocumentNode.SelectNodes(@"//section[h2[@class='header-title']]");
+            var nodes = doc.DocumentNode.SelectNodes(@"//section[div/h2[@class='header-title']]");
             foreach (var node in nodes)
             {
                 Category sub = new Category()
                 {
-                    Name = node.SelectSingleNode(@"./h2").InnerText.Trim(),
+                    Name = node.SelectSingleNode(@".//h2/a/text()").InnerText.Trim(),
                     ParentCategory = parentCat,
                     HasSubCategories = true,
                     SubCategories = new List<Category>()
@@ -236,7 +236,7 @@ namespace OnlineVideos.Sites
         private int DiscoverSubs(Category parentCategory, HtmlDocument doc)
         {
             parentCategory.SubCategories = new List<Category>();
-            var nodes = doc.DocumentNode.SelectNodes(@"//section[h2[@class='header-title']]");
+            var nodes = doc.DocumentNode.SelectNodes(@"//section[div/h2[@class='header-title']]");
             foreach (var node in nodes)
             {
                 var videos = myParse2(node);
@@ -244,10 +244,14 @@ namespace OnlineVideos.Sites
                 {
                     Category cat = new Category()
                         {
-                            Name = node.SelectSingleNode(".//h2[@class='header-title']").InnerText.Trim(),
                             ParentCategory = parentCategory,
                             Other = videos
                         };
+                    if (node.SelectSingleNode(".//h2[@class='header-title']/a/text()") != null)
+                        cat.Name = node.SelectSingleNode(".//h2[@class='header-title']/a/text()").InnerText.Trim();
+                    else
+                        cat.Name = node.SelectSingleNode(".//h2[@class='header-title']").InnerText.Trim();
+
                     parentCategory.SubCategories.Add(cat);
                 }
             }
