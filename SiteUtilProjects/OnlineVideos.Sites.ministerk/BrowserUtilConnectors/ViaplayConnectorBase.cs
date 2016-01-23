@@ -23,7 +23,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             Login,
             PostLogin,
             StartPlaying,
-            WaitForPlay,
             Playing
         }
 
@@ -49,6 +48,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         public override EventResult PlayVideo(string videoToPlay)
         {
+            MessageHandler.Info("videoToPlay: {0}", videoToPlay);
             ProcessComplete.Finished = false;
             ProcessComplete.Success = false;
             _videoToPlay = videoToPlay;
@@ -60,6 +60,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         public override EventResult BrowserDocumentComplete()
         {
+            MessageHandler.Info("Url: {0}, State: {1}", Url, _currentState);
             switch (_currentState)
             {
                 case State.Login:
@@ -75,15 +76,12 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     }
                     break;
                 case State.PostLogin:
-                        _currentState = State.None;
-                        ProcessComplete.Finished = true;
-                        ProcessComplete.Success = true;
-                        break;
-                case State.StartPlaying:
-                    InvokeScript(Properties.Resources.ViaplayPlayMovieJs + "__url = '"+ _videoToPlay + "'; setTimeout(\"myPlay()\", 1000);");
-                    _currentState = State.WaitForPlay;
+                    _currentState = State.None;
+                    ProcessComplete.Finished = true;
+                    ProcessComplete.Success = true;
                     break;
-                case State.WaitForPlay:
+                case State.StartPlaying:
+                    InvokeScript(Properties.Resources.ViaplayPlayMovieJs + "__url = '" + _videoToPlay + "'; setTimeout(\"myPlay()\", 1000);");
                     if (Url.Contains("/player"))
                     {
                         ProcessComplete.Finished = true;
