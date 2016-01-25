@@ -8,6 +8,9 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
 using OnlineVideos.Hoster;
+using OnlineVideos.JavaScript;
+using System.Text;
+using Jurassic;
 
 namespace OnlineVideos.Hoster
 {
@@ -69,7 +72,7 @@ namespace OnlineVideos.Hoster
 					if (contents == null) contents = "";
 				}
                 Items = System.Web.HttpUtility.ParseQueryString(contents);
-                if (Items.Count == 0 || Items["status"] == "fail")
+                if (Items.Count == 0 || Items["status"] == "fail" || Items["use_cipher_signature"] == "True")
                 {
 					ItemsAPI = Items;
                     contents = WebCache.Instance.GetWebData(string.Format("http://www.youtube.com/watch?v={0}&has_verified=1", videoId), proxy: proxy);
@@ -237,12 +240,25 @@ namespace OnlineVideos.Hoster
             try
             {
                 // Try to get the functions out of the java script
-                var javaScriptParser = new OnlineVideos.JavaScript.JavaScriptParser(jsContent);
-                var functions = javaScriptParser.Parse();
+                JavaScriptParser javaScriptParser = new JavaScriptParser(jsContent);
+                FunctionData functionData = javaScriptParser.Parse();
 
-                // Running the functions on the signature to "decrypt" it
-                var functionExecuter = new OnlineVideos.JavaScript.FunctionExecuter(functions);
-                return functionExecuter.Execute(s);
+                StringBuilder stringBuilder = new StringBuilder();
+
+                foreach (var functionBody in functionData.Bodies)
+                {
+                    stringBuilder.Append(functionBody);
+                }
+
+                ScriptEngine engine = new ScriptEngine();
+
+                engine.Global["window"] = engine.Global;
+                engine.Global["document"] = engine.Global;
+                engine.Global["navigator"] = engine.Global;
+
+                engine.Execute(stringBuilder.ToString());
+
+                return engine.CallGlobalFunction(functionData.StartFunctionName, s).ToString();
             }
             catch (Exception ex)
             {
