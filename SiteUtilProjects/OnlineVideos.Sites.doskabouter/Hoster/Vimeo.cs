@@ -40,23 +40,19 @@ namespace OnlineVideos.Hoster
             string page = WebCache.Instance.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
-                Match n = Regex.Match(page, @"data-config-url=""(?<url>[^""]*)""");
+                Match n = Regex.Match(page, @"\(""GET"",""(?<url>[^""]+)""");
                 if (n.Success)
                 {
                     page = WebCache.Instance.GetWebData(HttpUtility.HtmlDecode(n.Groups["url"].Value));
                     JToken jt = JObject.Parse(page) as JToken;
                     JToken video = jt["video"];
                     JToken request = jt["request"];
-                    JObject files = request["files"]["h264"] as JObject;
+                    var files = request["files"]["progressive"] as JArray;
 
-                    string sig = request.Value<string>("signature");
-                    string timestamp = request.Value<string>("timestamp");
-                    string id = video.Value<string>("id");
-
-                    foreach (KeyValuePair<string, JToken> item in files)
+                    foreach (JToken item in files)
                     {
-                        string quality = item.Key;
-                        string vidUrl = item.Value.Value<string>("url");
+                        string quality = item.Value<string>("quality");
+                        string vidUrl = item.Value<string>("url");
                         result.Add(quality, vidUrl);
                     }
 
