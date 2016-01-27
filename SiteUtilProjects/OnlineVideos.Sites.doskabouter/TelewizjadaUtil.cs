@@ -38,7 +38,8 @@ namespace OnlineVideos.Sites
             CookieContainer cc = new CookieContainer();
             string postData = "url=" + HttpUtility.UrlEncode(video.VideoUrl);
             string webData = GetWebData(@"http://www.telewizjada.net/set_cookie.php", postData, cc);
-            string webData2 = GetWebData(@"http://www.telewizjada.net/get_channel_url.php", "cid=" + video.Other.ToString(), cc);
+            var jData = GetWebData<JObject>(@"http://www.telewizjada.net/get_channel_url.php", "cid=" + video.Other.ToString(), cc);
+            var webData2 = jData.Value<string>("url");
             string m3u = GetWebData(webData2, null, cc);
             Match m = Regex.Match(m3u, @"(?<ch>chu.*)");
             if (m.Success)
