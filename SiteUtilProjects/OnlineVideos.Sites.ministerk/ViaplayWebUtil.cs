@@ -794,31 +794,34 @@ namespace OnlineVideos.Sites
                         string srtFormat = "{0}\r\n{1} --> {2}\r\n{3}\r\n\r\n";
                         string sami = sub["href"].Value<string>();
                         sami = MyGetWebStringData(sami);
-                        Regex rgx = new Regex(@"<SYNC START=(?<time>\d+)[^>]>[^<]*<P[^>]*>(?<text>[^(?:\n|\r)]*)");
+
+                        Regex rgx = new Regex(@"<SYNC START=(?<time>[^>]+)>[^<]*?<P[^>]*>(?<text>.*)", RegexOptions.Multiline);
                         MatchCollection matches = rgx.Matches(sami);
                         if (matches != null && matches.Count > 0)
                         {
                             string subtitle = "";
                             int id = 1;
-                            for (int x = 0; x < matches.Count - 1; x++)
+                            for (int x = 0; x < (matches.Count - 1); x++)
                             {
-                                string text = HttpUtility.HtmlDecode(matches[x].Groups["text"].Value).Trim();
-                                if (string.IsNullOrEmpty(text))
+                                string text = HttpUtility.HtmlDecode(matches[x].Groups["text"].Value);
+                                if (string.IsNullOrWhiteSpace(text))
                                     continue;
+                                text = text.Replace("<br>", "\r\n");
+                                HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument();
+                                htmlDoc.LoadHtml(text);
+                                text = htmlDoc.DocumentNode.InnerText;
                                 int time = 0;
+                                int time2 = 0;
                                 if (!int.TryParse(matches[x].Groups["time"].Value, out time))
                                     continue;
-                                if (x >= matches.Count)
+                                x++;
+                                if (!int.TryParse(matches[x].Groups["time"].Value, out time2))
                                     continue;
-                                int time2 = 0;
-                                string tm = matches[x + 1].Groups["time"].Value;
-                                if (!int.TryParse(tm, out time2))
-                                    continue;
-                                System.TimeSpan ts = TimeSpan.FromMilliseconds(time * 10);
+                                System.TimeSpan ts = TimeSpan.FromMilliseconds(time);
                                 string startTime = new DateTime(ts.Ticks).ToString("HH:mm:ss,fff");
-                                ts = TimeSpan.FromMilliseconds(time2 * 10);
+                                ts = TimeSpan.FromMilliseconds(time2);
                                 string endTime = new DateTime(ts.Ticks).ToString("HH:mm:ss,fff");
-                                subtitle += string.Format(srtFormat, id, startTime, endTime, text.Replace("<br>", "\r\n"));
+                                subtitle += string.Format(srtFormat, id, startTime, endTime, text);
                                 id++;
                             }
                             video.SubtitleText = subtitle;
