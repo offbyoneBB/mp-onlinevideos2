@@ -1,21 +1,13 @@
 ﻿
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using OnlineVideos.Helpers;
 using OnlineVideos.Sites.WebAutomation.BrowserHost.Factories;
 using System.IO;
 using System.Diagnostics;
 using System.Configuration;
-using OnlineVideos.Sites;
-using System.ServiceModel;
 using System.Threading;
-using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
 using OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation;
 using OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers;
 using OnlineVideos.Sites.WebAutomation.BrowserHost.RemoteHandling;
@@ -28,9 +20,9 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         /// Which was the last of the 2 events fired between play/pause.  We'll use this to handle the media key as that's a single play/pause button.
         /// </summary>
         private enum PlayPauseToggle
-        { 
-            Play, 
-            Pause 
+        {
+            Play,
+            Pause
         }
 
         public bool ForceClose { get; private set; }
@@ -91,19 +83,19 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 var configValue = ConfigurationManager.AppSettings["DebugMode"];
                 if (!string.IsNullOrEmpty(configValue) && configValue.ToUpper() == "TRUE")
                     _debugMode = true;
-                
+
                 configValue = ConfigurationManager.AppSettings["BrowserHostWaitTimeout"];
-                var tmpVal = 0;
+                int tmpVal;
                 if (!string.IsNullOrEmpty(configValue) && Int32.TryParse(configValue, out tmpVal))
                     _connectorTimeout = tmpVal;
-                
+
             }
             catch (Exception ex)
             {
                 _logger.Error(ex);
             }
         }
-        
+
         /// <summary>
         /// The form is loaded - let's navigate to the video
         /// </summary>
@@ -119,13 +111,13 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 SetCurrentScreen();
 
                 ForceClose = false;
-                this.Activate();
-                this.Focus();
+                Activate();
+                Focus();
                 _logger.Debug("AppDomain Root {0}", AppDomain.CurrentDomain.BaseDirectory);
                 _logger.Debug("Current Directory {0}", Directory.GetCurrentDirectory());
                 _logger.Debug(string.Format("Browser Host started with connector type: {0}, video info: {1}", _connectorType, _videoInfo));
                 WebBrowserPlayerCallbackService.LogInfo(string.Format("Browser Host started with connector type: {0}, video info: {1}", _connectorType, _videoInfo));
-                
+
                 // Set up remote handling
                 _remoteProcessing.ActionReceived += RemoteProcessing_OnNewAction;
                 _remoteProcessing.InitHandlers();
@@ -150,7 +142,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                     _logger.Debug("Playing Video");
                     _connector.PlayVideo(_videoInfo);
                     result = _connector.WaitForComplete(ForceQuitting, _connectorTimeout);
-                    _logger.Debug("Playing WaitforComplete " + result.ToString());
+                    _logger.Debug("Playing WaitforComplete " + result);
                     if (!result)
                         ForceQuit();
                 }
@@ -158,12 +150,12 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 {
                     _logger.Error("Log in failed");
                     ForceQuit();
-                }                
+                }
             }
             catch (Exception ex)
             {
                 _logger.Error(ex);
-                Console.Error.WriteLine(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
+                Console.Error.WriteLine("{0}\r\n{1}", ex.Message, ex.StackTrace);
                 Console.Error.Flush();
                 WebBrowserPlayerCallbackService.LogError(ex);
                 ForceQuit();
@@ -199,7 +191,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         {
             HandleKeyPress(e.KeyValue);
         }
-                
+
         /// <summary>
         /// Used to pass messages to remotes. Pre-filter to only messages we're likely to be interested in
         /// </summary>
@@ -210,10 +202,10 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             {
                 if (_remoteProcessing.ProcessWndProc(msg)) return;
             }
-            catch  (Exception ex)
+            catch (Exception ex)
             {
                 _logger.Error(ex);
-                Console.Error.WriteLine(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
+                Console.Error.WriteLine("{0}\r\n{1}", ex.Message, ex.StackTrace);
                 Console.Error.Flush();
                 WebBrowserPlayerCallbackService.LogError(ex);
             }
@@ -231,7 +223,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             _lastKeyPressed = keyPressed;
             _lastKeyPressedTime = DateTime.Now;
 
-            _logger.Debug(string.Format("HandleKeyPress to be processed {0} {1}", keyPressed, ((Keys)keyPressed).ToString()));
+            _logger.Debug(string.Format("HandleKeyPress to be processed {0} {1}", keyPressed, (Keys)keyPressed));
 
             // Always force close when escape is pressed
             if (keyPressed == (int)Keys.Escape)
@@ -242,7 +234,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
 
             _remoteProcessing.ProcessKeyPress(keyPressed);
         }
-        
+
         /// <summary>
         /// Remote processing event handler
         /// </summary>
@@ -250,7 +242,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         void RemoteProcessing_OnNewAction(string action)
         {
             if (InvokeRequired)
-                BeginInvoke((MethodInvoker)delegate() { OnNewAction(action); });
+                BeginInvoke((MethodInvoker)delegate { OnNewAction(action); });
             else
                 OnNewAction(action);
         }
@@ -260,19 +252,20 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         /// We'll make play/pause a toggle, just so we can ensure we support media buttons properly
         /// </summary>
         /// <param name="action"></param>
+        /// <param name="overrideCheck"></param>
         void OnNewAction(string action, bool overrideCheck = false)
         {
             // Ignore duplicate actions within 300ms (apparently the Netflix connector has duplicate actions, I suspect it's because the Netflix connector is sending space key and this is doing the play/pause and firing an action :-( )
             if (!overrideCheck && _lastActionTime.AddMilliseconds(300) > DateTime.Now)
                 return;
-            
+
             _lastActionTime = DateTime.Now;
             _logger.Debug(string.Format("OnNewAction received {0}", action));
 
             switch (action)
             {
                 case "ACTION_PLAY":
-                case"ACTION_MUSIC_PLAY":
+                case "ACTION_MUSIC_PLAY":
                     if (_lastPlayPauseState == PlayPauseToggle.Play)
                         OnNewAction("ACTION_PAUSE", true);
                     else
@@ -335,8 +328,8 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         private void tmrKeepOnTop_Tick(object sender, EventArgs e)
         {
             ProcessHelper.SetForeground(Process.GetCurrentProcess().MainWindowHandle);
-            this.Activate();
-            this.Focus();
+            Activate();
+            Focus();
         }
 
         /// <summary>
@@ -346,9 +339,9 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         {
             if (!_debugMode) Cursor.Hide();
             if (_debugMode) tmrKeepOnTop.Enabled = false;
-            this.WindowState = _debugMode ? FormWindowState.Normal : FormWindowState.Maximized;
-            this.FormBorderStyle = _debugMode ? FormBorderStyle.Sizable : FormBorderStyle.FixedDialog;
-            this.ControlBox = _debugMode;            
+            WindowState = _debugMode ? FormWindowState.Normal : FormWindowState.Maximized;
+            FormBorderStyle = _debugMode ? FormBorderStyle.Sizable : FormBorderStyle.FixedDialog;
+            ControlBox = _debugMode;
         }
 
         /// <summary>
@@ -356,16 +349,16 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         /// </summary>
         private void SetCurrentScreen()
         {
-            if (CurrentScreen >= Screen.AllScreens.Count())
+            if (CurrentScreen >= Screen.AllScreens.Length)
                 CurrentScreen = 0;
 
-            if (Screen.AllScreens.Count() > 1)
+            if (Screen.AllScreens.Length > 1)
             {
-                if (!_debugMode) this.WindowState = FormWindowState.Normal;
-                this.Location = Screen.AllScreens[CurrentScreen].Bounds.Location;
-                if (!_debugMode) this.WindowState = FormWindowState.Maximized;
+                if (!_debugMode) WindowState = FormWindowState.Normal;
+                Location = Screen.AllScreens[CurrentScreen].Bounds.Location;
+                if (!_debugMode) WindowState = FormWindowState.Maximized;
             }
-        }    
+        }
 
     }
 }

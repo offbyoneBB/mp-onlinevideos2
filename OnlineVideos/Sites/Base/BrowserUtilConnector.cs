@@ -1,10 +1,6 @@
 ﻿using OnlineVideos.Sites.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using System.IO;
 using OnlineVideos.Helpers;
 using OnlineVideos.Properties;
 using System.Drawing;
@@ -37,7 +33,7 @@ namespace OnlineVideos.Sites
         /// <summary>
         /// Error Handler
         /// </summary>
-        public ILog MessageHandler {get; private set;}
+        public ILog MessageHandler { get; private set; }
 
         /// <summary>
         /// Perform a login to the target website
@@ -90,24 +86,25 @@ namespace OnlineVideos.Sites
         /// Fired when the browser host is closing
         /// </summary>
         public virtual void OnClosing()
-        { 
+        {
         }
 
         /// <summary>
         /// Allow implementations to handle actions which aren't handled by the browserhost
         /// Unfortunately, because of dependencies, we need to pass in the name of the action enumeration rather than the enum itself
         /// </summary>
-        /// <param name="action"></param>
+        /// <param name="actionEnumName"></param>
         public virtual void OnAction(string actionEnumName)
-        { 
-        
+        {
+
         }
 
         /// <summary>
         /// Constructor - attach to the web browser supplied
         /// </summary>
         /// <param name="browser"></param>
-        public void Initialise (WebBrowser browser, ILog messageHandler)
+        /// <param name="messageHandler"></param>
+        public void Initialise(WebBrowser browser, ILog messageHandler)
         {
             ProcessComplete = new AsyncWaitResult();
             Browser = browser;
@@ -122,12 +119,12 @@ namespace OnlineVideos.Sites
         /// <param name="e"></param>
         private void Browser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
-           try
+            try
             {
                 var result = BrowserDocumentComplete();
 
                 if (result.Result != EventResultType.Complete)
-                    throw new ApplicationException("Error processing " +  this.GetType().ToString() + " : " + result.ErrorMessage);
+                    throw new ApplicationException("Error processing " + GetType() + " : " + result.ErrorMessage);
             }
             catch (Exception ex)
             {
@@ -138,7 +135,7 @@ namespace OnlineVideos.Sites
         /// <summary>
         /// Log an error, detach the event handler and redirect to blank page
         /// </summary>
-        /// <param name="error"></param>
+        /// <param name="ex"></param>
         private void RedirectOnError(Exception ex)
         {
             Browser.DocumentCompleted -= Browser_DocumentCompleted;
@@ -180,7 +177,7 @@ namespace OnlineVideos.Sites
             while (!ProcessComplete.Finished && DateTime.Now < end && forceQuit != null && !forceQuit())
             {
                 // Must use DoEvents otherwise the browser control doesn't work....
-                System.Windows.Forms.Application.DoEvents();
+                Application.DoEvents();
             }
 
             var ended = DateTime.Now;
