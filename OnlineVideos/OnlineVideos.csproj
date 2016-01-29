@@ -1002,6 +1002,7 @@
     <Compile Include="Sites\BrightCoveUtil.cs" />
     <Compile Include="Sites\Base\BrowserUtilConnector.cs" />
     <Compile Include="Sites\Interfaces\IBrowserSiteUtil.cs" />
+    <Compile Include="Sites\Interfaces\IBrowserVersionEmulation.cs" />
     <Compile Include="Sites\Interfaces\IChoice.cs" />
     <Compile Include="IFavoritesDatabase.cs" />
     <Compile Include="Sites\Interfaces\IFilter.cs" />

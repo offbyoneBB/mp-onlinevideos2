@@ -12,6 +12,8 @@
       <PluginFiles Include="$(TargetDir)plugin.xml" />
       <APIFiles Include="$(TargetDir)OnlineVideos.dll" />
       <APIFiles Include="$(TargetDir)OnlineVideos.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
+      <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\iexplore.exe*" />
+      <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\iexplore.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
       <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\OnlineVideos.WebAutomation.BrowserHost.exe*" />
       <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\OnlineVideos.WebAutomation.BrowserHost.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
       <LanguageFiles Include="$(ProjectDir)Language\*.*" />

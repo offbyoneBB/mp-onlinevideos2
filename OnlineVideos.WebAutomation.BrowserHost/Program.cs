@@ -20,14 +20,19 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 Application.SetCompatibleTextRenderingDefault(false);
                 ProcessHelper.PreventMonitorPowerdown();
 
-                // Process requires path to MediaPortal, Video Id, Web Automation Type, Username, Password
+                // Process requires path to MediaPortal, Video Id, Web Automation Type, Username, Password, [EmulationVersion]
                 if (args.Length < 5) return;
 
                 Directory.SetCurrentDirectory(args[0]);
 
                 var result = args[2];
+
+                int emulationLevel;
+                if (args.Length < 6 || !int.TryParse(args[5], out emulationLevel) || emulationLevel < 7000 || emulationLevel > 12001)
+                    emulationLevel = 10000; // Default: use IE10 compatibility mode
+
+                IERegistryVersion.SetIEVersion(emulationLevel);
                 var host = new BrowserHost();
-                IERegistryVersion.SetIEVersion();
                 Application.Run(host.PlayVideo(result, args[1], args[3], args[4]));
                 IERegistryVersion.RemoveIEVersion();
             }

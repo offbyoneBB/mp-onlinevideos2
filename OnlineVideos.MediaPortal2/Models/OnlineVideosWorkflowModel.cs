@@ -505,7 +505,7 @@ namespace OnlineVideos.MediaPortal2
                 if (oldContext.Predecessor == newContext)
                 {
                     CategoriesList = new ItemsList();
-                    if (SelectedCategory.Category.ParentCategory != null)
+                    if (SelectedCategory != null && SelectedCategory.Category.ParentCategory != null)
                     {
                         SelectedCategory.Category.ParentCategory.SubCategories.ForEach(c => CategoriesList.Add(new CategoryViewModel(c)));
                         ImageDownloader.GetImages<Category>(SelectedCategory.Category.ParentCategory.SubCategories);

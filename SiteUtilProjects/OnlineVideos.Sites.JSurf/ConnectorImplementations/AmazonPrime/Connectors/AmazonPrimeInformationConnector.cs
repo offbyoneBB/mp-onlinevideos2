@@ -156,48 +156,46 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         
         public List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
-            if (((AmazonPrimeSiteUtil)_siteUtil).AmznPlayerType == AmazonPrimeSiteUtil.AmazonPlayerType.Browser)
-            {
-                _siteUtil.Settings.Player = PlayerType.Browser;
-                return new List<string>() { video.Other.ToString() };
-            }
+            // Only browser players are supported anymore (since mid of 2015)
+             _siteUtil.Settings.Player = PlayerType.Browser;
+             return new List<string> { video.Other.ToString() };
 
-            _siteUtil.Settings.Player = PlayerType.Internal;
+            //_siteUtil.Settings.Player = PlayerType.Internal;
 
-            video.PlaybackOptions = getPlaybackOptions(video);
-            var videoQuality = ((AmazonPrimeSiteUtil)_siteUtil).StreamVideoQuality;
+            //video.PlaybackOptions = getPlaybackOptions(video);
+            //var videoQuality = ((AmazonPrimeSiteUtil)_siteUtil).StreamVideoQuality;
 
-            List<String> urls = new List<String>();
-            if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
-            {
-                if (video.PlaybackOptions.Count == 1)
-                {
-                    // nothing to chose from, only one options available
-                    return new List<string>() { video.PlaybackOptions.First().Value };
-                }
-                else
-                {
-                    KeyValuePair<string, string> foundQuality = default(KeyValuePair<string, string>);
-                    switch (videoQuality)
-                    {
-                        case OnlineVideos.Sites.JSurf.AmazonPrimeSiteUtil.VideoQuality.Low:		//use first available option
-                           foundQuality = video.PlaybackOptions.First(); break;
-                        case OnlineVideos.Sites.JSurf.AmazonPrimeSiteUtil.VideoQuality.Medium:	// 480p 2000kpbs
-                           foundQuality = video.PlaybackOptions.LastOrDefault(q => q.Key.Contains("2000")); break;
-                        case OnlineVideos.Sites.JSurf.AmazonPrimeSiteUtil.VideoQuality.High:		// 720p 2500kbps
-                           foundQuality = video.PlaybackOptions.LastOrDefault(q => q.Key.Contains("2500")); break;
-                        case OnlineVideos.Sites.JSurf.AmazonPrimeSiteUtil.VideoQuality.HD:		// 720p 4000kbps
-                           foundQuality = video.PlaybackOptions.LastOrDefault(q => q.Key.Contains("4000")); break;
-                        case OnlineVideos.Sites.JSurf.AmazonPrimeSiteUtil.VideoQuality.FullHD:	//use highest available quality
-                           foundQuality = video.PlaybackOptions.Last(); break;
-                    }
-                    // fallback when no match was found -> use highest choice
-                    if (string.IsNullOrEmpty(foundQuality.Key)) foundQuality = video.PlaybackOptions.Last();
-                    if (inPlaylist) video.PlaybackOptions = null;
-                    return new List<string>() { foundQuality.Value };
-                }
-            }
-            return null;
+            //List<String> urls = new List<String>();
+            //if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
+            //{
+            //    if (video.PlaybackOptions.Count == 1)
+            //    {
+            //        // nothing to chose from, only one options available
+            //        return new List<string>() { video.PlaybackOptions.First().Value };
+            //    }
+            //    else
+            //    {
+            //        KeyValuePair<string, string> foundQuality = default(KeyValuePair<string, string>);
+            //        switch (videoQuality)
+            //        {
+            //            case OnlineVideos.Sites.JSurf.AmazonPrimeSiteUtil.VideoQuality.Low:		//use first available option
+            //               foundQuality = video.PlaybackOptions.First(); break;
+            //            case OnlineVideos.Sites.JSurf.AmazonPrimeSiteUtil.VideoQuality.Medium:	// 480p 2000kpbs
+            //               foundQuality = video.PlaybackOptions.LastOrDefault(q => q.Key.Contains("2000")); break;
+            //            case OnlineVideos.Sites.JSurf.AmazonPrimeSiteUtil.VideoQuality.High:		// 720p 2500kbps
+            //               foundQuality = video.PlaybackOptions.LastOrDefault(q => q.Key.Contains("2500")); break;
+            //            case OnlineVideos.Sites.JSurf.AmazonPrimeSiteUtil.VideoQuality.HD:		// 720p 4000kbps
+            //               foundQuality = video.PlaybackOptions.LastOrDefault(q => q.Key.Contains("4000")); break;
+            //            case OnlineVideos.Sites.JSurf.AmazonPrimeSiteUtil.VideoQuality.FullHD:	//use highest available quality
+            //               foundQuality = video.PlaybackOptions.Last(); break;
+            //        }
+            //        // fallback when no match was found -> use highest choice
+            //        if (string.IsNullOrEmpty(foundQuality.Key)) foundQuality = video.PlaybackOptions.Last();
+            //        if (inPlaylist) video.PlaybackOptions = null;
+            //        return new List<string>() { foundQuality.Value };
+            //    }
+            //}
+            //return null;
         }
 
         public Dictionary<string, string> getPlaybackOptions(VideoInfo video)

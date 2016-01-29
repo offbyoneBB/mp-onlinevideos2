@@ -19,6 +19,7 @@ using MediaPortal.UI.SkinEngine.InputManagement;
 using OnlineVideos.Helpers;
 using OnlineVideos.MediaPortal2.ResourceAccess;
 using OnlineVideos.Sites;
+using OnlineVideos.Sites.Interfaces;
 using OnlineVideos.Sites.Proxy.WebBrowserPlayerService;
 using OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation;
 
@@ -30,14 +31,18 @@ namespace OnlineVideos.MediaPortal2
     public class WebBrowserVideoPlayer : IPlayer, IPlayerEvents
     {
         public const string ONLINEVIDEOSBROWSER_MIMETYPE = "video/onlinebrowser";
+        protected const string HOST_PROCESS_NAME = "OnlineVideos.WebAutomation.BrowserHost";
+        protected const string HOST_PROCESS_NAME_IE = "iexplore";
 
-        private IntPtr _mpWindowHandle = IntPtr.Zero;
+        protected string _processPath;
+
         private bool _mpWindowHidden;
         private Process _browserProcess;
         private string _automationType;
         private string _username;
         private string _password;
         private string _lastError;
+        private int _emulationLevel;
         private WebBrowserPlayerCallbackServiceProxy _callbackServiceProxy;
         private readonly WebBrowserPlayerCallback _callback = new WebBrowserPlayerCallback();
         private WebBrowserPlayerServiceProxy _serviceProxy;
@@ -62,6 +67,7 @@ namespace OnlineVideos.MediaPortal2
         /// <param name="util"></param>
         public void Initialise(SiteUtilBase util)
         {
+            bool useIE = false;
             var browserConfig = util as IBrowserSiteUtil;
             if (browserConfig != null)
             {
@@ -69,16 +75,44 @@ namespace OnlineVideos.MediaPortal2
                 _username = browserConfig.UserName;
                 _password = browserConfig.Password;
             }
+            var emulationSite = util as IBrowserVersionEmulation;
+            if (emulationSite != null)
+            {
+                _emulationLevel = emulationSite.EmulatedVersion;
+                useIE = _emulationLevel > 10000;
+            }
+
             _lastError = string.Empty;
 
             _callback.OnBrowserClosing += _callback_OnBrowserHostClosing;
             _callback.OnBrowserKeyPress += _callback_OnBrowserKeyPress;
             _callback.OnBrowserWndProc += _callback_OnBrowserWndProc;
 
+            var processName = useIE ? HOST_PROCESS_NAME_IE : HOST_PROCESS_NAME;
+            _processPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), processName + ".exe");
+
+            GetRunningProcess(processName);
+        }
+
+        private void GetRunningProcess(string processName)
+        {
             // Wire up to an existing browser process if one exists
-            var processes = Process.GetProcessesByName("OnlineVideos.WebAutomation.BrowserHost");
-            if (processes.Any())
-                _browserProcess = processes[0];
+            var processes = Process.GetProcessesByName(processName);
+            foreach (var process in processes)
+            {
+                try
+                {
+                    // We need to check for the actual location of the running process to make sure
+                    // that this is really our process.
+                    // Accessing MainModule will fail for x64 processes (from our x86 process)!
+                    if (string.Equals(process.MainModule.FileName, _processPath, StringComparison.OrdinalIgnoreCase))
+                    {
+                        _browserProcess = process;
+                        return;
+                    }
+                }
+                catch { }
+            }
         }
 
         /// <summary>
@@ -136,7 +170,7 @@ namespace OnlineVideos.MediaPortal2
 
             if (_browserProcess != null)
             {
-                //ReinitialiseService();
+                ReinitialiseService();
                 ProcessHelper.SetForeground(_browserProcess.MainWindowHandle);
                 return true;
             }
@@ -148,16 +182,16 @@ namespace OnlineVideos.MediaPortal2
             _browserProcess.StartInfo.UseShellExecute = false;
             _browserProcess.StartInfo.RedirectStandardError = true;
             _browserProcess.EnableRaisingEvents = true;
-            //_browserProcess.StartInfo.FileName = "plugins\\Windows\\OnlineVideos\\OnlineVideos.Sites.WebAutomation.BrowserHost.exe";
             var dir = OnlineVideoSettings.Instance.DllsDir;
 
-            _browserProcess.StartInfo.FileName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "OnlineVideos.WebAutomation.BrowserHost.exe");
-            _browserProcess.StartInfo.Arguments = string.Format("\"{0} \" \"{1}\" \"{2}\" \"{3}\" \"{4}\"",
+            _browserProcess.StartInfo.FileName = _processPath;
+            _browserProcess.StartInfo.Arguments = string.Format("\"{0} \" \"{1}\" \"{2}\" \"{3}\" \"{4}\" {5}",
                                             dir,
                                             _fileOrUrl,
                                             _automationType,
                                             string.IsNullOrEmpty(_username) ? "_" : _username,
-                                            string.IsNullOrEmpty(_password) ? "_" : _password);
+                                            string.IsNullOrEmpty(_password) ? "_" : _password,
+                                            _emulationLevel);
             _browserProcess.StartInfo.WindowStyle = ProcessWindowStyle.Normal; // ProcessWindowStyle.Maximized;
 
             // Restart MP or Restore MP Window if needed
@@ -190,7 +224,11 @@ namespace OnlineVideos.MediaPortal2
             { Key.PlayPause, "ACTION_PLAY" },
             { Key.Pause, "ACTION_PAUSE" },
             { Key.Stop, "ACTION_STOP" },
-            { Key.Info, "ACTION_CONTEXT_MENU" }
+            { Key.Info, "ACTION_CONTEXT_MENU" },
+            { Key.Left, "ACTION_MOVE_LEFT" },
+            { Key.Right, "ACTION_MOVE_RIGHT" },
+            { Key.Previous, "ACTION_PREV_ITEM" },
+            { Key.Next, "ACTION_NEXT_ITEM" },
         };
 
         //TODO: no result yet
@@ -201,17 +239,16 @@ namespace OnlineVideos.MediaPortal2
         private void InstanceOnKeyPressed(ref Key key)
         {
             // Forward the key on to the browser process 
-            if (_browserProcess != null)
-            {
-                string action;
-                if (!KEY_MAPPINGS.TryGetValue(key, out action))
-                    return;
+            if (_browserProcess == null)
+                return;
 
+            string action;
+            if (KEY_MAPPINGS.TryGetValue(key, out action))
+            {
                 try
                 {
                     if (_serviceProxy == null) ReinitialiseService();
                     _serviceProxy.OnNewAction(action);
-                    key = Key.None; // Handled
                 }
                 catch (Exception ex)
                 {
@@ -220,6 +257,8 @@ namespace OnlineVideos.MediaPortal2
                     _serviceProxy.OnNewAction(action);
                 }
             }
+            // While player is active prevent any other key handling inside MP2, just forward the matching actions to WebBrowserPlayer
+            key = Key.None; // Handled
         }
 
         /// <summary>
@@ -263,7 +302,7 @@ namespace OnlineVideos.MediaPortal2
 
             if (suspend) //suspend and hide MediaPortal
             {
-                InputManager.Instance.KeyPressed += InstanceOnKeyPressed;
+                InputManager.Instance.KeyPreview += InstanceOnKeyPressed;
 
                 // Minimise MePo to tray - this is preferrable 
                 ToggleMinimise(true);
@@ -272,7 +311,7 @@ namespace OnlineVideos.MediaPortal2
             }
             else //resume Mediaportal
             {
-                InputManager.Instance.KeyPressed -= InstanceOnKeyPressed;
+                InputManager.Instance.KeyPreview -= InstanceOnKeyPressed;
 
                 // Resume Mediaportal rendering
                 ToggleMinimise(false);

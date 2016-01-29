@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos", "OnlineVideo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.WebAutomation.BrowserHost.MP2", "OnlineVideos.WebAutomation.BrowserHost\OnlineVideos.WebAutomation.BrowserHost.MP2.csproj", "{F1199685-8F68-4B99-A47B-BC8CA1817732}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.JSurf", "SiteUtilProjects\OnlineVideos.Sites.JSurf\OnlineVideos.Sites.JSurf.csproj", "{75F69467-7062-45CB-909A-7D9A5D7E4958}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,12 @@ Global
 		{F1199685-8F68-4B99-A47B-BC8CA1817732}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F1199685-8F68-4B99-A47B-BC8CA1817732}.Release|x86.ActiveCfg = Release|x86
 		{F1199685-8F68-4B99-A47B-BC8CA1817732}.Release|x86.Build.0 = Release|x86
+		{75F69467-7062-45CB-909A-7D9A5D7E4958}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75F69467-7062-45CB-909A-7D9A5D7E4958}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75F69467-7062-45CB-909A-7D9A5D7E4958}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{75F69467-7062-45CB-909A-7D9A5D7E4958}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75F69467-7062-45CB-909A-7D9A5D7E4958}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75F69467-7062-45CB-909A-7D9A5D7E4958}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
