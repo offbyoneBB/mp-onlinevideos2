@@ -1116,17 +1116,6 @@
         <Category xsi:type="RssLink" name="Joezny" thumb="http://www.luckymedia.nl/luckytv/wp-content/themes/luckytv/timthumb.php?src=http://www.luckymedia.nl/luckytv/wp-content/uploads/joezjny.jpg&amp;w=400&amp;h=226&amp;zc=1&amp;q=90">http://www.luckymedia.nl/luckytv/category/joezjny/</Category>
       </Categories>
     </Site>
-    <Site name="MuzuTV" util="MuzuTV" agecheck="false" enabled="true" lang="en">
-      <Description>Watch official music videos, documentaries, TV shows, interviews, behind the scenes, tutorials and loads of exclusive and rare footage.</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.muzu.tv/]]></item>
-        <item key="videoListRegEx"><![CDATA[(?#videos of new releases)(<li\sclass="[^"]*"\s(?:data-type="videos"\s)?data-id="(?<VideoUrl>[^"]*)">\s*<a[^>]*>\s*<img\salt="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"/>\s*<div\sclass="[^"]*">\s*<div\sclass="[^"]*">(?<Description>[^<]*)</div>\s*<div\sclass="[^"]*">(?<Title>[^<]*)</div>\s*<div\sclass="[^"]*">(?<Airdate>[^<]*)</div>\s*</div>\s*</a>\s*</li>)|
-        (?#videos of one playlist)(<li\sid="[^"]*"\sclass="allowedPlay\splaylistQItem"\sdata-id="(?<VideoUrl>[^"]*)">\s*<a\shref="\#"\sclass="itemImage"><img\salt="[^"]*"\s*src="(?<ImageUrl>[^"]*)"\swidth="[^"]*"></a>\s*<div\sclass="removeVideo"><a[^>]*></a></div>\s*<div\sclass="jukebox-track-name">\s*<h2><span\sclass="trackNumber"></span>(?<Title>[^<]*)</h2>\s*<span\sclass="artistTitle">(?<Description>[^<]*)</span>\s*</div>\s*</li>)]]></item>
-        <item key="videoListRegExFormatString"><![CDATA[http://player.muzu.tv/player/requestVideo?viewhash=ur4uJCOszp6vEJnIEXLUmxWMo&ai={0}]]></item>
-        <item key="nextPageRegEx"><![CDATA[<li\sid="next">\s*<a\shref="(?<url>[^"]*)">Next</a>\s*</li>]]></item>
-        <item key="forceUTF8Encoding"><![CDATA[True]]></item>
-      </Configuration>
-    </Site>
     <Site name="Nickelodeon.nl" util="NickelodeonNL" agecheck="false" enabled="true" lang="nl">
       <Description>Nickelodeon.nl is de leukste website voor kinderen met veel online videos van Spongebob, Dora, Big Time Rush en Pinguins van Madagascar.</Description>
       <Configuration>

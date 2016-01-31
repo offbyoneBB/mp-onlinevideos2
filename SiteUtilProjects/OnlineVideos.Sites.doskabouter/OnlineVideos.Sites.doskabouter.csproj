@@ -115,7 +115,6 @@
     <Compile Include="LeagueOfLegendsUtil.cs" />
     <Compile Include="LiveLeakUtil.cs" />
     <Compile Include="MovieNightUtil.cs" />
-    <Compile Include="MuzuTV.cs" />
     <Compile Include="NickelodeonNLUtil.cs" />
     <Compile Include="NicoNicoUtil.cs" />
     <Compile Include="NPOLiveUtil.cs" />
