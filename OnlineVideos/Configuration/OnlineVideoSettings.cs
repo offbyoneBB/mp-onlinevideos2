@@ -40,28 +40,39 @@ namespace OnlineVideos
         public bool FavoritesFirst = false;
 
         public String HttpPreferredNetworkInterface = OnlineVideoSettings.NetworkInterfaceSystemDefault;
-        public int HttpOpenConnectionTimeout = 20000;           // ms
-        public int HttpOpenConnectionSleepTime = 0;             // ms
-        public int HttpTotalReopenConnectionTimeout = 60000;    // ms
+        public int HttpOpenConnectionTimeout = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpOpenConnectionTimeout;                     // ms
+        public int HttpOpenConnectionSleepTime = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpOpenConnectionSleepTime;                 // ms
+        public int HttpTotalReopenConnectionTimeout = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpTotalReopenConnectionTimeout;       // ms
+
+        public Boolean HttpServerAuthenticate = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpServerAuthenticate;
+        public String HttpServerUserName = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpServerUserName;
+        public String HttpServerPassword = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpServerPassword;
+
+        public Boolean HttpProxyServerAuthenticate = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpProxyServerAuthenticate;
+        public String HttpProxyServer = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpProxyServer;
+        public int HttpProxyServerPort = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpProxyServerPort;
+        public String HttpProxyServerUserName = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpProxyServerUserName;
+        public String HttpProxyServerPassword = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpProxyServerPassword;
+        public OnlineVideos.MPUrlSourceFilter.ProxyServerType HttpProxyServerType = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpProxyServerType;
 
         public String RtmpPreferredNetworkInterface = OnlineVideoSettings.NetworkInterfaceSystemDefault;
-        public int RtmpOpenConnectionTimeout = 20000;           // ms
-        public int RtmpOpenConnectionSleepTime = 0;             // ms
-        public int RtmpTotalReopenConnectionTimeout = 60000;    // ms
+        public int RtmpOpenConnectionTimeout = OnlineVideos.MPUrlSourceFilter.RtmpUrl.DefaultRtmpOpenConnectionTimeout;                     // ms
+        public int RtmpOpenConnectionSleepTime = OnlineVideos.MPUrlSourceFilter.RtmpUrl.DefaultRtmpOpenConnectionSleepTime;                 // ms
+        public int RtmpTotalReopenConnectionTimeout = OnlineVideos.MPUrlSourceFilter.RtmpUrl.DefaultRtmpTotalReopenConnectionTimeout;       // ms
 
         public String RtspPreferredNetworkInterface = OnlineVideoSettings.NetworkInterfaceSystemDefault;
-        public int RtspOpenConnectionTimeout = 20000;           // ms
-        public int RtspOpenConnectionSleepTime = 0;             // ms
-        public int RtspTotalReopenConnectionTimeout = 60000;    // ms
+        public int RtspOpenConnectionTimeout = OnlineVideos.MPUrlSourceFilter.RtspUrl.DefaultRtspOpenConnectionTimeout;                     // ms
+        public int RtspOpenConnectionSleepTime = OnlineVideos.MPUrlSourceFilter.RtspUrl.DefaultRtspOpenConnectionSleepTime;                 // ms
+        public int RtspTotalReopenConnectionTimeout = OnlineVideos.MPUrlSourceFilter.RtspUrl.DefaultRtspTotalReopenConnectionTimeout;       // ms
 
-        public int RtspClientPortMin = 50000;
-        public int RtspClientPortMax = 65535;
+        public int RtspClientPortMin = OnlineVideos.MPUrlSourceFilter.RtspUrl.DefaultRtspClientPortMin;
+        public int RtspClientPortMax = OnlineVideos.MPUrlSourceFilter.RtspUrl.DefaultRtspClientPortMax;
 
         public String UdpRtpPreferredNetworkInterface = OnlineVideoSettings.NetworkInterfaceSystemDefault;
-        public int UdpRtpOpenConnectionTimeout = 2000;          // ms
-        public int UdpRtpOpenConnectionSleepTime = 0;           // ms
-        public int UdpRtpTotalReopenConnectionTimeout = 60000;  // ms
-        public int UdpRtpReceiveDataCheckInterval = 500;        // ms
+        public int UdpRtpOpenConnectionTimeout = OnlineVideos.MPUrlSourceFilter.UdpRtpUrl.DefaultUdpOpenConnectionTimeout;                  // ms
+        public int UdpRtpOpenConnectionSleepTime = OnlineVideos.MPUrlSourceFilter.UdpRtpUrl.DefaultUdpOpenConnectionSleepTime;              // ms
+        public int UdpRtpTotalReopenConnectionTimeout = OnlineVideos.MPUrlSourceFilter.UdpRtpUrl.DefaultUdpTotalReopenConnectionTimeout;    // ms
+        public int UdpRtpReceiveDataCheckInterval = OnlineVideos.MPUrlSourceFilter.UdpRtpUrl.DefaultUdpReceiveDataCheckInterval;            // ms
 
         public static readonly String NetworkInterfaceSystemDefault = "System default";
 

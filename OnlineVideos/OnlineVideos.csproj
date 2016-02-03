@@ -470,6 +470,7 @@
     <Compile Include="MPUrlSourceFilter\AfhsManifestUrl.cs" />
     <Compile Include="MPUrlSourceFilter\Http\HttpHeader.cs" />
     <Compile Include="MPUrlSourceFilter\Http\HttpHeaderCollection.cs" />
+    <Compile Include="MPUrlSourceFilter\ProxyServerType.cs" />
     <Compile Include="MPUrlSourceFilter\UserSettings\ExpandableUserSettingObjectConverter.cs" />
     <Compile Include="MPUrlSourceFilter\Downloader.cs" />
     <Compile Include="MPUrlSourceFilter\HttpUrl.cs" />
@@ -1102,6 +1103,6 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\Build\Version.targets" />
   <Target Name="AfterBuild">
-	<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)NuGetPackage\Content\" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)NuGetPackage\Content\" />
   </Target>
 </Project>

@@ -102,6 +102,17 @@ namespace OnlineVideos.MediaPortal1
         const string CFG_FILTER_V2_HTTP_OPEN_CONNECTION_SLEEP_TIME = "filterv2httpopenconnectionsleeptime";
         const string CFG_FILTER_V2_HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT = "filterv2httptotalreopenconnectiontimeout";
 
+        const string CFG_FILTER_V2_HTTP_SERVER_AUTHENTICATE = "filterv2httpserverauthenticate";
+        const string CFG_FILTER_V2_HTTP_SERVER_USER_NAME = "filterv2httpserverusername";
+        const string CFG_FILTER_V2_HTTP_SERVER_PASSWORD = "filterv2httpserverpassword";
+
+        const string CFG_FILTER_V2_HTTP_PROXY_SERVER_AUTHENTICATE = "filterv2httpproxyserverauthenticate";
+        const string CFG_FILTER_V2_HTTP_PROXY_SERVER = "filterv2httpproxyserver";
+        const string CFG_FILTER_V2_HTTP_PROXY_SERVER_PORT = "filterv2httpproxyserverport";
+        const string CFG_FILTER_V2_HTTP_PROXY_SERVER_USER_NAME = "filterv2httpproxyserverusername";
+        const string CFG_FILTER_V2_HTTP_PROXY_SERVER_PASSWORD = "filterv2httpproxyserverpassword";
+        const string CFG_FILTER_V2_HTTP_PROXY_SERVER_TYPE = "filterv2httpproxyservertype";
+
         const string CFG_FILTER_V2_RTMP_PREFERRED_NETWORK_INTERFACE = "filterv2rtmpinterface";
         const string CFG_FILTER_V2_RTMP_OPEN_CONNECTION_TIMEOUT = "filterv2rtmpopenconnectiontimeout";
         const string CFG_FILTER_V2_RTMP_OPEN_CONNECTION_SLEEP_TIME = "filterv2rtmpopenconnectionsleeptime";
@@ -301,6 +312,17 @@ namespace OnlineVideos.MediaPortal1
                     ovsconf.HttpOpenConnectionSleepTime = settings.GetValueAsInt(CFG_SECTION, CFG_FILTER_V2_HTTP_OPEN_CONNECTION_SLEEP_TIME, ovsconf.HttpOpenConnectionSleepTime);
                     ovsconf.HttpTotalReopenConnectionTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_FILTER_V2_HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT, ovsconf.HttpTotalReopenConnectionTimeout);
 
+                    ovsconf.HttpServerAuthenticate = settings.GetValueAsBool(CFG_SECTION, CFG_FILTER_V2_HTTP_SERVER_AUTHENTICATE, ovsconf.HttpServerAuthenticate);
+                    ovsconf.HttpServerUserName = settings.GetValueAsString(CFG_SECTION, CFG_FILTER_V2_HTTP_SERVER_USER_NAME, ovsconf.HttpServerUserName);
+                    ovsconf.HttpServerPassword = settings.GetValueAsString(CFG_SECTION, CFG_FILTER_V2_HTTP_SERVER_PASSWORD, ovsconf.HttpServerPassword);
+
+                    ovsconf.HttpProxyServerAuthenticate = settings.GetValueAsBool(CFG_SECTION, CFG_FILTER_V2_HTTP_PROXY_SERVER_AUTHENTICATE, ovsconf.HttpProxyServerAuthenticate);
+                    ovsconf.HttpProxyServer = settings.GetValueAsString(CFG_SECTION, CFG_FILTER_V2_HTTP_PROXY_SERVER, ovsconf.HttpProxyServer);
+                    ovsconf.HttpProxyServerPort = settings.GetValueAsInt(CFG_SECTION, CFG_FILTER_V2_HTTP_PROXY_SERVER_PORT, ovsconf.HttpProxyServerPort);
+                    ovsconf.HttpProxyServerUserName = settings.GetValueAsString(CFG_SECTION, CFG_FILTER_V2_HTTP_PROXY_SERVER_USER_NAME, ovsconf.HttpProxyServerUserName);
+                    ovsconf.HttpProxyServerPassword = settings.GetValueAsString(CFG_SECTION, CFG_FILTER_V2_HTTP_PROXY_SERVER_PASSWORD, ovsconf.HttpProxyServerPassword);
+                    ovsconf.HttpProxyServerType = (OnlineVideos.MPUrlSourceFilter.ProxyServerType)settings.GetValueAsInt(CFG_SECTION, CFG_FILTER_V2_HTTP_PROXY_SERVER_TYPE, (int)ovsconf.HttpProxyServerType);
+
                     ovsconf.RtmpPreferredNetworkInterface = settings.GetValueAsString(CFG_SECTION, CFG_FILTER_V2_RTMP_PREFERRED_NETWORK_INTERFACE, OnlineVideoSettings.NetworkInterfaceSystemDefault);
                     ovsconf.RtmpOpenConnectionTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_FILTER_V2_RTMP_OPEN_CONNECTION_TIMEOUT, ovsconf.RtmpOpenConnectionTimeout);
                     ovsconf.RtmpOpenConnectionSleepTime = settings.GetValueAsInt(CFG_SECTION, CFG_FILTER_V2_RTMP_OPEN_CONNECTION_SLEEP_TIME, ovsconf.RtmpOpenConnectionSleepTime);
@@ -396,6 +418,17 @@ namespace OnlineVideos.MediaPortal1
                         settings.SetValue(CFG_SECTION, CFG_FILTER_V2_HTTP_OPEN_CONNECTION_TIMEOUT, ovsconf.HttpOpenConnectionTimeout);
                         settings.SetValue(CFG_SECTION, CFG_FILTER_V2_HTTP_OPEN_CONNECTION_SLEEP_TIME, ovsconf.HttpOpenConnectionSleepTime);
                         settings.SetValue(CFG_SECTION, CFG_FILTER_V2_HTTP_TOTAL_REOPEN_CONNECTION_TIMEOUT, ovsconf.HttpTotalReopenConnectionTimeout);
+
+                        settings.SetValueAsBool(CFG_SECTION, CFG_FILTER_V2_HTTP_SERVER_AUTHENTICATE, ovsconf.HttpServerAuthenticate);
+                        settings.SetValue(CFG_SECTION, CFG_FILTER_V2_HTTP_SERVER_USER_NAME, ovsconf.HttpServerUserName);
+                        settings.SetValue(CFG_SECTION, CFG_FILTER_V2_HTTP_SERVER_PASSWORD, ovsconf.HttpServerPassword);
+
+                        settings.SetValueAsBool(CFG_SECTION, CFG_FILTER_V2_HTTP_PROXY_SERVER_AUTHENTICATE, ovsconf.HttpProxyServerAuthenticate);
+                        settings.SetValue(CFG_SECTION, CFG_FILTER_V2_HTTP_PROXY_SERVER, ovsconf.HttpProxyServer);
+                        settings.SetValue(CFG_SECTION, CFG_FILTER_V2_HTTP_PROXY_SERVER_PORT, ovsconf.HttpProxyServerPort);
+                        settings.SetValue(CFG_SECTION, CFG_FILTER_V2_HTTP_PROXY_SERVER_USER_NAME, ovsconf.HttpProxyServerUserName);
+                        settings.SetValue(CFG_SECTION, CFG_FILTER_V2_HTTP_PROXY_SERVER_PASSWORD, ovsconf.HttpProxyServerPassword);
+                        settings.SetValue(CFG_SECTION, CFG_FILTER_V2_HTTP_PROXY_SERVER_TYPE, (int)ovsconf.HttpProxyServerType);
 
                         settings.SetValue(CFG_SECTION, CFG_FILTER_V2_RTMP_PREFERRED_NETWORK_INTERFACE, ovsconf.RtmpPreferredNetworkInterface);
                         settings.SetValue(CFG_SECTION, CFG_FILTER_V2_RTMP_OPEN_CONNECTION_TIMEOUT, ovsconf.RtmpOpenConnectionTimeout);
