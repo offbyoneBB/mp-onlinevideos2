@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
 using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.Common;
-using MediaPortal.Common.Logging;
 using MediaPortal.Common.MediaManagement;
 using MediaPortal.Common.ResourceAccess;
 using MediaPortal.Common.Services.ResourceAccess.RawUrlResourceProvider;
@@ -22,6 +20,7 @@ using OnlineVideos.Sites;
 using OnlineVideos.Sites.Interfaces;
 using OnlineVideos.Sites.Proxy.WebBrowserPlayerService;
 using OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation;
+using Timer = System.Timers.Timer;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -56,6 +55,8 @@ namespace OnlineVideos.MediaPortal2
         protected PlayerEventDlgt _playbackStateChanged = null;
         protected PlayerEventDlgt _playbackError = null;
 
+        protected Timer _activationTimer;
+
         public bool GoFullscreen { get; set; }
         public string SubtitleFile { get; set; }
         public string PlaybackUrl { get; set; }
@@ -87,6 +88,11 @@ namespace OnlineVideos.MediaPortal2
             _callback.OnBrowserClosing += _callback_OnBrowserHostClosing;
             _callback.OnBrowserKeyPress += _callback_OnBrowserKeyPress;
             _callback.OnBrowserWndProc += _callback_OnBrowserWndProc;
+
+            _activationTimer = new Timer(500);
+            _activationTimer.AutoReset = true;
+            _activationTimer.Elapsed += AfterRemoteAction;
+            _activationTimer.Start();
 
             var processName = useIE ? HOST_PROCESS_NAME_IE : HOST_PROCESS_NAME;
             _processPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), processName + ".exe");
@@ -205,6 +211,7 @@ namespace OnlineVideos.MediaPortal2
                 {
                     ReinitialiseService();
                     SuspendMP(true);
+                    ActivateWindow();
                     ProcessHelper.SetForeground(_browserProcess.MainWindowHandle);
                     Redirect(_browserProcess.StandardError);
                 }
@@ -329,10 +336,19 @@ namespace OnlineVideos.MediaPortal2
         /// <param name="shouldMinimise"></param>
         private void ToggleMinimise(bool shouldMinimise)
         {
-            if (shouldMinimise)
-                ServiceRegistration.Get<IScreenControl>().Minimize();
-            else
-                ServiceRegistration.Get<IScreenControl>().Restore();
+            ServiceRegistration.Get<IScreenControl>().DisableTopMost = shouldMinimise;
+        }
+
+        private void ActivateWindow()
+        {
+            var form = ServiceRegistration.Get<IScreenControl>() as Form;
+            if (form != null)
+                form.Activate();
+        }
+
+        private void AfterRemoteAction(object sender, EventArgs e)
+        {
+            ActivateWindow();
         }
 
         /// <summary>
@@ -441,6 +457,12 @@ namespace OnlineVideos.MediaPortal2
 
         public void Stop()
         {
+            if (_activationTimer != null)
+            {
+                _activationTimer.Dispose();
+                _activationTimer = null;
+            }
+
             State = PlayerState.Ended;
             FireEnded();
         }

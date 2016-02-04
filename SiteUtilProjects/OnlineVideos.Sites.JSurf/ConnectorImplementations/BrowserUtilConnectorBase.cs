@@ -1,12 +1,4 @@
-﻿using OnlineVideos.Sites;
-using OnlineVideos.Sites.JSurf.Properties;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Text;
+﻿using System.Reflection;
 using System.Windows.Forms;
 
 namespace OnlineVideos.Sites.JSurf.ConnectorImplementations
@@ -14,10 +6,8 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations
     /// <summary>
     /// Base connector which will show a loading dialog
     /// </summary>
-    public abstract class BrowserUtilConnectorBase: BrowserUtilConnector
+    public abstract class BrowserUtilConnectorBase : BrowserUtilConnector
     {
-       
-
         protected abstract Sites.Entities.EventResult PerformActualLogin(string username, string password);
 
         /// <summary>
@@ -35,6 +25,5 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations
             ShowLoading();
             return PerformActualLogin(username, password);
         }
-
     }
 }

@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connectors
@@ -17,13 +12,12 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         private string _userAgent = "Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko";
 
         public AmazonBrowserSession()
-            : base()
         {
             Log.Info("New Browser session");
             _isLoggedIn = false;
             _lastLogin = 0;
             _lastCulture = "";
-            userAgent = _userAgent;
+            UserAgent = _userAgent;
         }
 
         public void Login(string username, string password, bool forceLogin = false)
@@ -73,7 +67,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
 
                 string postUrl = loginForm.Attributes["action"].Value;
                 Thread.Sleep(500);
-                string login = GetWebData(postUrl, formElements.AssemblePostPayload(), cc, null, null, false, false, userAgent);
+                string login = GetWebData(postUrl, formElements.AssemblePostPayload(), _cc, null, null, false, false, UserAgent);
                 // TODO add login check
                 _isLoggedIn = true;
                 _lastLogin = day;
