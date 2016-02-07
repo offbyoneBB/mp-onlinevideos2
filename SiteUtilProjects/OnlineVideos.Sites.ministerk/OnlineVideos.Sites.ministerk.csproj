@@ -89,7 +89,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SweflixUtil.cs" />
     <Compile Include="ViaplayWebUtil.cs" />
     <Compile Include="Kanal59PlayUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
