@@ -225,7 +225,7 @@ namespace OnlineVideos.Sites.JSurf
         private void BuildVideos(IList<VideoInfo> videosToPopulate, Category parentCategory)
         {
             var results = _connector.LoadVideos(parentCategory);
-            results.OrderBy(x => x.Title).ToList().ForEach(videosToPopulate.Add);
+            results/*.OrderBy(x => x.Title).ToList()*/.ForEach(videosToPopulate.Add);
         }
 
         public override bool CanSearch { get { return _connector.CanSearch; } }
