@@ -115,7 +115,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
                     }
                     else if (parentCategory.Other.ToString() == "W")
                     {
-                        result.Add(new Category { HasSubCategories = true, Name = "TV Watchlist", SubCategoriesDiscovered = false, Other = "WT", Thumb = Resources.AmazonMovieIcon });
+                        result.Add(new Category { HasSubCategories = true, Name = "TV Watchlist", SubCategoriesDiscovered = false, Other = "WT", Thumb = Resources.AmazonTvIcon });
                         result.Add(new Category { HasSubCategories = true, Name = "Movies Watchlist", SubCategoriesDiscovered = false, Other = "WM", Thumb = Resources.AmazonMovieIcon });
                     }
                     else if (parentCategory.Other.ToString() == "WM")

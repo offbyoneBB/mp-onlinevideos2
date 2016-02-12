@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using OnlineVideos.Sites.Entities;
 using System.Windows.Forms;
 using OnlineVideos.Helpers;
@@ -28,6 +29,16 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         private bool _isPlayOrPausing;
         private int _playPausePos = -1;
         private int _playPauseHeight = -1;
+        private Timer _timer;
+
+        protected void ExecuteDelayed(int delayMs, Action action)
+        {
+            if (_timer != null)
+                _timer.Dispose();
+            _timer = new Timer {Interval = delayMs};
+            _timer.Tick += (sender, args) => { action(); };
+            _timer.Start();
+        }
 
         /// <summary>
         /// Do the login
@@ -141,7 +152,8 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
                                         // Browser.FindForm().Controls.Add(_blankPanel);
                                         _blankPanel.BringToFront();*/
 
-                    HideLoading();
+                    // Delay the hiding of loading indicator a bit to avoid flashing up of web page
+                    ExecuteDelayed(2000, HideLoading);
 
                     ProcessComplete.Finished = true;
                     ProcessComplete.Success = true;
