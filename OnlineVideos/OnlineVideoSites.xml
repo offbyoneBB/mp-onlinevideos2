@@ -1048,7 +1048,7 @@
         <item key="videoListRegEx"><![CDATA[<tr>\s*<td>\s*<a\s*href="(?<VideoUrl>[^"]*)"\s*title="[^"]*">(?<Title>[^<]*)</a>\s*</td>\s*<td>(?<Airdate>[^<]*)</td>\s*</tr>]]></item>
         <item key="baseUrl"><![CDATA[https://kissanime.to/AnimeList]]></item>
         <item key="genresRegex"><![CDATA[<a\shref="(?<url>/Genre[^"]*)"\stitle="(?<description>[^"]*)">(?<title>[^<]*)</a><br\s*/>]]></item>
-        <item key="alphabetRegex"><![CDATA[(<a\shref="(?<url>\?[^"]*)">(?<title>[^<]*)</a>)|(<a\shref="(?<url>[^"]*)">(?<title>All)</a>)]]></item>
+        <item key="alphabetRegex"><![CDATA[(<a\s*href="(?<url>\?[^"]*)">(?<title>[^<]*)</a>)|(<a\s*href="(?<url>[^"]*)">(?<title>All)</a>)]]></item>
         <item key="fileUrlRegEx"><![CDATA[(?<=<select\sid="selectQuality">.*)<option\svalue="(?<m0>[^"]*)"\s*(?:selected)?>(?<n0>[^<]*)</option>]]></item>
       </Configuration>
       <Categories>
