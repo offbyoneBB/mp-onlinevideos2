@@ -943,14 +943,15 @@ namespace OnlineVideos.Hoster
                 postData += m.Groups["m0"].Value + "=" + m.Groups["m1"].Value;
                 m = m.NextMatch();
             }
-            if (String.IsNullOrEmpty(postData))
-                return null;
+            //if (String.IsNullOrEmpty(postData))
+            //return null;
 
             string timeToWait = Regex.Match(webData, @"<span\sid=""countdown_str"">[^>]*>(?<time>[^<]+)</span>").Groups["time"].Value;
-            if (Convert.ToInt32(timeToWait) < 10)
+            if (!String.IsNullOrEmpty(timeToWait) && Convert.ToInt32(timeToWait) < 10)
                 Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
 
-            webData = WebCache.Instance.GetWebData(url, postData);
+            if (!String.IsNullOrEmpty(postData))
+                webData = WebCache.Instance.GetWebData(url, postData);
             string packed = Helpers.StringUtils.GetSubString(webData, @"return p}", @"</script>");
             packed = packed.Replace(@"\'", @"'");
             string unpacked = Helpers.StringUtils.UnPack(packed);
