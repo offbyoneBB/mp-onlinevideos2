@@ -121,7 +121,7 @@
     <ProjectReference Include="..\OnlineVideos\OnlineVideos.csproj">
       <Project>{e0d9d390-cdd6-4b98-86f3-6eb04a958882}</Project>
       <Name>OnlineVideos</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

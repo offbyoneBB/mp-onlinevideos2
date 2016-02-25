@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using OnlineVideos.Sites.Entities;
 using System.Windows.Forms;
 using OnlineVideos.Helpers;
@@ -29,16 +28,6 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         private bool _isPlayOrPausing;
         private int _playPausePos = -1;
         private int _playPauseHeight = -1;
-        private Timer _timer;
-
-        protected void ExecuteDelayed(int delayMs, Action action)
-        {
-            if (_timer != null)
-                _timer.Dispose();
-            _timer = new Timer {Interval = delayMs};
-            _timer.Tick += (sender, args) => { action(); };
-            _timer.Start();
-        }
 
         /// <summary>
         /// Do the login
@@ -105,11 +94,11 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
                 case State.LoggingIn:
                     if (Url.EndsWith("nav_signin_btn"))
                     {
-                        var jsCode = "document.getElementById('ap_email').value = '" + _username + "';";
-                        jsCode += "document.getElementById('ap_signin_existing_radio').checked='checked';";
-                        jsCode += "setElementAvailability('ap_password', true);";
-                        jsCode += "document.getElementById('ap_password').value = '" + _password + "';";
-                        jsCode += "document.getElementById('ap_signin_form').submit();";
+                        var jsCode = @"document.getElementById('ap_email').value = '" + _username + @"';
+                                    var r=document.getElementById('ap_signin_existing_radio'); if (r)r.checked='checked';
+                                    document.getElementById('ap_password').value = '" + _password + @"';
+                                    var fm=document.getElementById('ap_signin_form')||document.forms['signIn'];
+                                    if(fm)fm.submit();";
                         InvokeScript(jsCode);
                         _currentState = State.LoginResult;
                     }
@@ -152,8 +141,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
                                         // Browser.FindForm().Controls.Add(_blankPanel);
                                         _blankPanel.BringToFront();*/
 
-                    // Delay the hiding of loading indicator a bit to avoid flashing up of web page
-                    ExecuteDelayed(2000, HideLoading);
+                    HideLoading();
 
                     ProcessComplete.Finished = true;
                     ProcessComplete.Success = true;
