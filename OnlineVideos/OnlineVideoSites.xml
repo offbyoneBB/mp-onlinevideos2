@@ -1230,7 +1230,7 @@
         <item key="hashValueLive"><![CDATA[da46116ed5e11a378272c1baab78c5d3d57eb895]]></item>
         <item key="requestUrlLive"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerKey=AQ~~,AAAApYJ7UqE~,xqr_zXk0I-zzNndy8NlHogrCb5QdyZRf]]></item>
         <item key="baseUrl"><![CDATA[http://www.redbull.tv/]]></item>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass='navigation__item'>\s*<img\salt="[^"]*"\sclass="channel-image"\ssrc="(?<thumb>[^"]*)"\s/>\s*<a\sclass="[^"]*"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass='navigation__item'>\s*<img\sclass="channel-image"\salt="[^"]*"\ssrc="(?<thumb>[^"]*)"\s/>\s*<a\sclass="[^"]*"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>]]></item>
         <item key="dynamicSubCategoriesSportsRegEx"><![CDATA[<li\sclass='navigation__sub-item\sswiper-slide'>\s*<a\sclass="[^"]*"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>\s*</li>]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[(<div\sclass='grid__unit'>\s*<article\sclass='teaser\steaser--show\saspect-ratio\saspect-ratio--2x3'>\s*<a\sclass="aspect-ratio__inner"\shref="(?<url>[^"]*)"\stitle="(?<title>[^"]*)"><div\sclass="responsive-image\s"><picture\sclass="[^"]*"\sdata-id="[^"]*"><source\sclass="[^"]*"\s(?:(?:media="[^"]*"\s)|(?:data-))srcset="(?<thumb>[^"]*)")|((?#for live)<a\sclass="button\sbutton--primary"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>)]]></item>
         <item key="dynamicSubCategoriesNextPageRegEx"><![CDATA[href="(?<url>[^"]*)">More\sshows</a>]]></item>
