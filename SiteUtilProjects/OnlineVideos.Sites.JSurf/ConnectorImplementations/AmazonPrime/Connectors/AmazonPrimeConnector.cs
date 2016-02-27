@@ -173,15 +173,15 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         {
             if (_currentState == State.PlayPage1 && !_isPlayOrPausing)
             {
-                if (actionEnumName == "ACTION_MOVE_LEFT")
+                if (actionEnumName == Constants.ACTION_MOVE_LEFT)
                     SendKeyToControl("{LEFT}");
-                if (actionEnumName == "ACTION_MOVE_RIGHT")
+                if (actionEnumName == Constants.ACTION_MOVE_RIGHT)
                     SendKeyToControl("{RIGHT}");
                 // Jump to beginning of clip
-                if (actionEnumName == "ACTION_PREV_ITEM")
+                if (actionEnumName == Constants.ACTION_PREV_ITEM)
                     InvokeScript("amzn.webGlobalVideoPlayer._mainPlayer.seek(0)");
                 // Jump to next episode, more complicated than it could be, because jquery "click()" does not seem work
-                if (actionEnumName == "ACTION_NEXT_ITEM")
+                if (actionEnumName == Constants.ACTION_NEXT_ITEM)
                     InvokeScript("$('.episode-list .selected-episode').next().find('a.episode-list-link').each(function() { location.href = $(this).attr('href'); });");
             }
         }

@@ -227,15 +227,15 @@ namespace OnlineVideos.MediaPortal2
 
         private readonly Dictionary<Key, string> KEY_MAPPINGS = new Dictionary<Key, string>
         {
-            { Key.Play, "ACTION_PLAY" },
-            { Key.PlayPause, "ACTION_PLAY" },
-            { Key.Pause, "ACTION_PAUSE" },
-            { Key.Stop, "ACTION_STOP" },
-            { Key.Info, "ACTION_CONTEXT_MENU" },
-            { Key.Left, "ACTION_MOVE_LEFT" },
-            { Key.Right, "ACTION_MOVE_RIGHT" },
-            { Key.Previous, "ACTION_PREV_ITEM" },
-            { Key.Next, "ACTION_NEXT_ITEM" },
+            { Key.Play, OnlineVideos.Constants.ACTION_PLAY },
+            { Key.PlayPause, OnlineVideos.Constants.ACTION_PLAY },
+            { Key.Pause, OnlineVideos.Constants.ACTION_PAUSE },
+            { Key.Stop, OnlineVideos.Constants.ACTION_STOP },
+            { Key.Info, OnlineVideos.Constants.ACTION_CONTEXT_MENU },
+            { Key.Left, OnlineVideos.Constants.ACTION_MOVE_LEFT },
+            { Key.Right, OnlineVideos.Constants.ACTION_MOVE_RIGHT },
+            { Key.Previous, OnlineVideos.Constants.ACTION_PREV_ITEM },
+            { Key.Next, OnlineVideos.Constants.ACTION_NEXT_ITEM },
         };
 
         //TODO: no result yet

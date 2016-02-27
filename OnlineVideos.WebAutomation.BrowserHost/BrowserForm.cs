@@ -1,6 +1,5 @@
 ﻿
 using System;
-using System.Linq;
 using System.Windows.Forms;
 using OnlineVideos.Helpers;
 using OnlineVideos.Sites.WebAutomation.BrowserHost.Factories;
@@ -25,23 +24,42 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             Pause
         }
 
+        /// <summary>
+        /// Defines different window modes the browser form can enter.
+        /// </summary>
+        public enum ScreenMode
+        {
+            /// <summary>
+            /// Fullscreeen mode, no borders, TopMost.
+            /// </summary>
+            Fullscreen,
+            /// <summary>
+            /// Windowed mode, no borders, TopMost.
+            /// </summary>
+            Windowed,
+            /// <summary>
+            /// Debug mode only, will use resizable window, without TopMost.
+            /// </summary>
+            Debug
+        }
+
         public bool ForceClose { get; private set; }
 
-        private string _connectorType;
-        private string _videoInfo;
-        private string _userName;
-        private string _password;
+        private readonly string _connectorType;
+        private readonly string _videoInfo;
+        private readonly string _userName;
+        private readonly string _password;
         private BrowserUtilConnector _connector;
-        private bool _debugMode = false; // Allow for the form to be resized/lose focus in debug mode
+        private readonly bool _debugMode = false; // Allow for the form to be resized/lose focus in debug mode
 
         private int _lastKeyPressed;
         private DateTime _lastKeyPressedTime;
 
         private PlayPauseToggle _lastPlayPauseState = PlayPauseToggle.Play;
         private DateTime _lastActionTime;
-        private static ILog _logger = new DebugLogger();
-        private RemoteProcessing _remoteProcessing = new RemoteProcessing(_logger);
-        private int _connectorTimeout = 20;
+        private static readonly ILog _logger = new DebugLogger();
+        private readonly RemoteProcessing _remoteProcessing = new RemoteProcessing(_logger);
+        private readonly int _connectorTimeout = 20;
 
         /// <summary>
         /// Store/retrieve the current screen the web player is showing on - this is stored in the user config
@@ -80,13 +98,10 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 _password = password;
                 _debugMode = false;
 
-                var configValue = ConfigurationManager.AppSettings["DebugMode"];
-                if (!string.IsNullOrEmpty(configValue) && configValue.ToUpper() == "TRUE")
-                    _debugMode = true;
+                bool.TryParse(ConfigurationManager.AppSettings["DebugMode"], out _debugMode);
 
-                configValue = ConfigurationManager.AppSettings["BrowserHostWaitTimeout"];
                 int tmpVal;
-                if (!string.IsNullOrEmpty(configValue) && Int32.TryParse(configValue, out tmpVal))
+                if (Int32.TryParse(ConfigurationManager.AppSettings["BrowserHostWaitTimeout"], out tmpVal))
                     _connectorTimeout = tmpVal;
 
             }
@@ -107,7 +122,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             {
 
                 _logger.Debug("Setting current screen");
-                SetScreenState();
+                SetScreenState(_debugMode ? ScreenMode.Debug : ScreenMode.Fullscreen);
                 SetCurrentScreen();
 
                 ForceClose = false;
@@ -264,30 +279,30 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
 
             switch (action)
             {
-                case "ACTION_PLAY":
-                case "ACTION_MUSIC_PLAY":
+                case Constants.ACTION_PLAY:
+                case Constants.ACTION_MUSIC_PLAY:
                     if (_lastPlayPauseState == PlayPauseToggle.Play)
-                        OnNewAction("ACTION_PAUSE", true);
+                        OnNewAction(Constants.ACTION_PAUSE, true);
                     else
                     {
                         _connector.Play();
                         _lastPlayPauseState = PlayPauseToggle.Play;
                     }
                     break;
-                case "ACTION_PAUSE":
+                case Constants.ACTION_PAUSE:
                     if (_lastPlayPauseState == PlayPauseToggle.Pause)
-                        OnNewAction("ACTION_PLAY", true);
+                        OnNewAction(Constants.ACTION_PLAY, true);
                     else
                     {
                         _connector.Pause();
                         _lastPlayPauseState = PlayPauseToggle.Pause;
                     }
                     break;
-                case "ACTION_STOP":
-                case "ACTION_PREVIOUS_MENU":
+                case Constants.ACTION_STOP:
+                case Constants.ACTION_PREVIOUS_MENU:
                     ForceQuit();
                     break;
-                case "ACTION_CONTEXT_MENU": // Change the screen we're on using the context menu button
+                case Constants.ACTION_CONTEXT_MENU: // Change the screen we're on using the context menu button
                     CurrentScreen++;
                     SetCurrentScreen();
                     break;
@@ -335,13 +350,25 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         /// <summary>
         /// Set the screen state depending on which mode it's in
         /// </summary>
-        private void SetScreenState()
+        private void SetScreenState(ScreenMode screenMode)
         {
-            if (!_debugMode) Cursor.Hide();
-            if (_debugMode) tmrKeepOnTop.Enabled = false;
-            WindowState = _debugMode ? FormWindowState.Normal : FormWindowState.Maximized;
-            FormBorderStyle = _debugMode ? FormBorderStyle.Sizable : FormBorderStyle.FixedDialog;
-            ControlBox = _debugMode;
+            switch (screenMode)
+            {
+                case ScreenMode.Debug:
+                    WindowState = FormWindowState.Normal;
+                    FormBorderStyle = FormBorderStyle.Sizable;
+                    tmrKeepOnTop.Enabled = false;
+                    break;
+                case ScreenMode.Fullscreen:
+                    WindowState = FormWindowState.Maximized;
+                    FormBorderStyle = FormBorderStyle.FixedDialog;
+                    break;
+                case ScreenMode.Windowed:
+                    WindowState = FormWindowState.Normal;
+                    FormBorderStyle = FormBorderStyle.FixedDialog;
+                    break;
+            }
+            ControlBox = screenMode == ScreenMode.Debug;
         }
 
         /// <summary>
