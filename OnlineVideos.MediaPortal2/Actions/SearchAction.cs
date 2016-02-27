@@ -1,5 +1,4 @@
-﻿using System;
-using MediaPortal.Common;
+﻿using MediaPortal.Common;
 using MediaPortal.Common.Localization;
 using MediaPortal.UI.Presentation.Workflow;
 

@@ -10,6 +10,7 @@ using MediaPortal.Common;
 using MediaPortal.Common.MediaManagement;
 using MediaPortal.Common.ResourceAccess;
 using MediaPortal.Common.Services.ResourceAccess.RawUrlResourceProvider;
+using MediaPortal.UiComponents.Media.Models;
 using MediaPortal.UI.Control.InputManager;
 using MediaPortal.UI.Presentation.Players;
 using MediaPortal.UI.Presentation.Screens;
@@ -20,6 +21,7 @@ using OnlineVideos.Sites;
 using OnlineVideos.Sites.Interfaces;
 using OnlineVideos.Sites.Proxy.WebBrowserPlayerService;
 using OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation;
+using SharpDX;
 using Timer = System.Timers.Timer;
 
 namespace OnlineVideos.MediaPortal2
@@ -27,7 +29,7 @@ namespace OnlineVideos.MediaPortal2
     /// <summary>
     /// Player which automates a web browser - will minimise MediaPortal and shell to the WebBrowserHost when play is requested
     /// </summary>
-    public class WebBrowserVideoPlayer : IPlayer, IPlayerEvents
+    public class WebBrowserVideoPlayer : IPlayer, IPlayerEvents, IUIContributorPlayer
     {
         public const string ONLINEVIDEOSBROWSER_MIMETYPE = "video/onlinebrowser";
         protected const string HOST_PROCESS_NAME = "OnlineVideos.WebAutomation.BrowserHost";
@@ -236,6 +238,8 @@ namespace OnlineVideos.MediaPortal2
             { Key.Right, OnlineVideos.Constants.ACTION_MOVE_RIGHT },
             { Key.Previous, OnlineVideos.Constants.ACTION_PREV_ITEM },
             { Key.Next, OnlineVideos.Constants.ACTION_NEXT_ITEM },
+            { Key.F7, OnlineVideos.Constants.ACTION_WINDOWED },
+            { Key.F8, OnlineVideos.Constants.ACTION_FULLSCREEN },
         };
 
         //TODO: no result yet
@@ -252,6 +256,7 @@ namespace OnlineVideos.MediaPortal2
             string action;
             if (KEY_MAPPINGS.TryGetValue(key, out action))
             {
+                ProcessActionArguments(ref action);
                 try
                 {
                     if (_serviceProxy == null) ReinitialiseService();
@@ -266,6 +271,19 @@ namespace OnlineVideos.MediaPortal2
             }
             // While player is active prevent any other key handling inside MP2, just forward the matching actions to WebBrowserPlayer
             key = Key.None; // Handled
+        }
+
+        private void ProcessActionArguments(ref string action)
+        {
+            if (action == OnlineVideos.Constants.ACTION_WINDOWED)
+            {
+                // TODO: Use position of placeholder control from GUI
+                int left = (int)TargetBounds.Left;
+                int top = (int)TargetBounds.Top;
+                int width = (int)TargetBounds.Width;
+                int height = (int) TargetBounds.Height;
+                action = string.Format("{0}{1},{2},{3},{4}", OnlineVideos.Constants.ACTION_WINDOWED, left, top, width, height);
+            }
         }
 
         /// <summary>
@@ -529,5 +547,35 @@ namespace OnlineVideos.MediaPortal2
         }
 
         #endregion
+
+        public Type UIContributorType
+        {
+            get { return typeof(WebBrowserPlayerUIContributor); }
+        }
+
+        public RectangleF TargetBounds { get; set; }
+    }
+
+    public class WebBrowserPlayerUIContributor : BaseVideoPlayerUIContributor
+    {
+        public const string SCREEN_FS = "FullscreenContentOV";
+        public const string SCREEN_CP = "CurrentlyPlayingOV";
+
+        public override bool BackgroundDisabled
+        {
+            get { return false; }
+        }
+
+        public override string Screen
+        {
+            get
+            {
+                if (_mediaWorkflowStateType == MediaWorkflowStateType.CurrentlyPlaying)
+                    return SCREEN_CP;
+                if (_mediaWorkflowStateType == MediaWorkflowStateType.FullscreenContent)
+                    return SCREEN_FS;
+                return null;
+            }
+        }
     }
 }

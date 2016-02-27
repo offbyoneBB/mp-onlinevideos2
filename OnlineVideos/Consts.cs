@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace OnlineVideos
+﻿namespace OnlineVideos
 {
     public class Constants
     {
@@ -21,7 +16,12 @@ namespace OnlineVideos
         public const string ACTION_PREVIOUS_MENU = "ACTION_PREVIOUS_MENU";
         public const string ACTION_CONTEXT_MENU = "ACTION_CONTEXT_MENU";
 
-        public const string ACTION_TOGGLE_FULLSCREEN = "ACTION_TOGGLE_FULLSCREEN";
+        public const string ACTION_FULLSCREEN = "ACTION_FULLSCREEN";
 
+        /// <summary>
+        /// When sent as action the target window position and size will be added in the message.
+        /// Like ACTION_WINDOWED_0,0,640,480 (x, y, witdh, height)
+        /// </summary>
+        public const string ACTION_WINDOWED = "ACTION_WINDOWED_";
     }
 }

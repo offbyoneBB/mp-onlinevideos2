@@ -6,6 +6,7 @@ using OnlineVideos.Sites.WebAutomation.BrowserHost.Factories;
 using System.IO;
 using System.Diagnostics;
 using System.Configuration;
+using System.Drawing;
 using System.Threading;
 using OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation;
 using OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers;
@@ -277,6 +278,29 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             _lastActionTime = DateTime.Now;
             _logger.Debug(string.Format("OnNewAction received {0}", action));
 
+            // Special case, command contains size arguments
+            if (action.StartsWith(Constants.ACTION_WINDOWED))
+            {
+                SetScreenState(ScreenMode.Windowed);
+                var sizeArgs = action.Replace(Constants.ACTION_WINDOWED, "").Split(',');
+                if (sizeArgs.Length == 4)
+                {
+                    int left;
+                    int top;
+                    int width;
+                    int height;
+                    if (int.TryParse(sizeArgs[0], out left) &&
+                        int.TryParse(sizeArgs[1], out top) &&
+                        int.TryParse(sizeArgs[2], out width) &&
+                        int.TryParse(sizeArgs[3], out height))
+                    {
+                        Size = new Size(width, height);
+                        Location = new Point(left, top);
+                        _logger.Debug("ACTION_WINDOWED: Position: {0}, Size: {1}", Location, Size);
+                    }
+                }
+                return;
+            }
             switch (action)
             {
                 case Constants.ACTION_PLAY:
@@ -305,6 +329,9 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 case Constants.ACTION_CONTEXT_MENU: // Change the screen we're on using the context menu button
                     CurrentScreen++;
                     SetCurrentScreen();
+                    break;
+                case Constants.ACTION_FULLSCREEN:
+                    SetScreenState(ScreenMode.Fullscreen);
                     break;
                 default:
                     // fire the action on the connector also
@@ -361,11 +388,13 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                     break;
                 case ScreenMode.Fullscreen:
                     WindowState = FormWindowState.Maximized;
-                    FormBorderStyle = FormBorderStyle.FixedDialog;
+                    FormBorderStyle = FormBorderStyle.None;
+                    tmrKeepOnTop.Enabled = true;
                     break;
                 case ScreenMode.Windowed:
                     WindowState = FormWindowState.Normal;
-                    FormBorderStyle = FormBorderStyle.FixedDialog;
+                    FormBorderStyle = FormBorderStyle.None;
+                    tmrKeepOnTop.Enabled = true;
                     break;
             }
             ControlBox = screenMode == ScreenMode.Debug;
