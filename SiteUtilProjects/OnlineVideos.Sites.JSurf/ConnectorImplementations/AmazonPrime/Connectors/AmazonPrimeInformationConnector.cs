@@ -58,9 +58,9 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
 
             if (parentCategory == null)
             {
+                result.Add(new Category { HasSubCategories = true, Name = "Watchlist", SubCategoriesDiscovered = false, Other = "W", Thumb = Resources.AmazonTvIcon });
                 result.Add(new Category { HasSubCategories = true, Name = "Movies", SubCategoriesDiscovered = false, Other = "M", Thumb = Resources.AmazonMovieIcon });
                 result.Add(new Category { HasSubCategories = true, Name = "Tv", SubCategoriesDiscovered = false, Other = "T", Thumb = Resources.AmazonTvIcon });
-                result.Add(new Category { HasSubCategories = true, Name = "Watchlist", SubCategoriesDiscovered = false, Other = "W", Thumb = Resources.AmazonTvIcon });
             }
             else
             {
