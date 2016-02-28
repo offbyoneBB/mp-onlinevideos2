@@ -238,8 +238,10 @@ namespace OnlineVideos.MediaPortal2
             { Key.Right, OnlineVideos.Constants.ACTION_MOVE_RIGHT },
             { Key.Previous, OnlineVideos.Constants.ACTION_PREV_ITEM },
             { Key.Next, OnlineVideos.Constants.ACTION_NEXT_ITEM },
-            { Key.F7, OnlineVideos.Constants.ACTION_WINDOWED },
-            { Key.F8, OnlineVideos.Constants.ACTION_FULLSCREEN },
+            { Key.Escape, OnlineVideos.Constants.ACTION_WINDOWED },
+            { Key.Back, OnlineVideos.Constants.ACTION_WINDOWED },
+            { Key.Fullscreen, OnlineVideos.Constants.ACTION_FULLSCREEN },
+            { Key.Red, OnlineVideos.Constants.ACTION_FULLSCREEN },
         };
 
         //TODO: no result yet
@@ -277,11 +279,10 @@ namespace OnlineVideos.MediaPortal2
         {
             if (action == OnlineVideos.Constants.ACTION_WINDOWED)
             {
-                // TODO: Use position of placeholder control from GUI
                 int left = (int)TargetBounds.Left;
                 int top = (int)TargetBounds.Top;
                 int width = (int)TargetBounds.Width;
-                int height = (int) TargetBounds.Height;
+                int height = (int)TargetBounds.Height;
                 action = string.Format("{0}{1},{2},{3},{4}", OnlineVideos.Constants.ACTION_WINDOWED, left, top, width, height);
             }
         }
@@ -374,18 +375,28 @@ namespace OnlineVideos.MediaPortal2
         /// </summary>
         public void Dispose()
         {
+            Shutdown();
+        }
+
+        private void Shutdown()
+        {
             // Clean up the service proxy
-            if (_serviceProxy != null)
+            try
             {
-                if (_serviceProxy.State == CommunicationState.Opened) _serviceProxy.Close();
-                _serviceProxy.Dispose();
+                if (_serviceProxy != null)
+                {
+                    if (_serviceProxy.State == CommunicationState.Opened) _serviceProxy.Close();
+                    _serviceProxy.Dispose();
+                }
+                // Clean up the callback service proxy
+                if (_callbackServiceProxy != null)
+                {
+                    if (_callbackServiceProxy.State == CommunicationState.Opened) _callbackServiceProxy.Close();
+                    _callbackServiceProxy.Dispose();
+                }
             }
-            // Clean up the callback service proxy
-            if (_callbackServiceProxy != null)
-            {
-                if (_callbackServiceProxy.State == CommunicationState.Opened) _callbackServiceProxy.Close();
-                _callbackServiceProxy.Dispose();
-            }
+            catch { }
+
             if (_mpWindowHidden)
                 SuspendMP(false);
             KillBrowserProcess();
@@ -480,7 +491,7 @@ namespace OnlineVideos.MediaPortal2
                 _activationTimer.Dispose();
                 _activationTimer = null;
             }
-
+            Shutdown();
             State = PlayerState.Ended;
             FireEnded();
         }
