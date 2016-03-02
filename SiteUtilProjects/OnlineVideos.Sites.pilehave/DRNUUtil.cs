@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Web;
 using Newtonsoft.Json.Linq;
-using System.Globalization;
 using System.Linq;
 
 namespace OnlineVideos.Sites
@@ -263,7 +262,7 @@ namespace OnlineVideos.Sites
               video.Thumb = img;
               video.Other = "drnu";
               video.Airdate = airDate.ToString("dd. MMM. yyyy kl. HH:mm");
-              if (itemChannel.Length > 1) video.Airdate = video.Airdate + " (" + itemChannel.ToUpper() + ")";
+              if (itemChannel.Length > 1) video.Airdate = video.Airdate + " (" + itemChannel.ToUpper().Replace("-"," ") + ")";
               res.Add(video);
             }
           }
