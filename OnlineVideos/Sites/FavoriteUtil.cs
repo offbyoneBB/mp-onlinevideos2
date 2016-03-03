@@ -34,24 +34,24 @@ namespace OnlineVideos.Sites
                     if (SiteCategory != null)
                     {
                         if (!SiteCategory.SubCategoriesDiscovered) Site.DiscoverSubCategories(SiteCategory);
-                        Category foundCat = SiteCategory.SubCategories.FirstOrDefault(c => c.Name == hierarchy[i]);
+                        Category foundCat = SiteCategory.SubCategories.FirstOrDefault(c => c.Name.Trim() == hierarchy[i]);
                         // nextpage until found or no more
                         while (foundCat == null && SiteCategory.SubCategories.Last() is NextPageCategory)
                         {
                             Site.DiscoverNextPageCategories(SiteCategory.SubCategories.Last() as NextPageCategory);
-                            foundCat = SiteCategory.SubCategories.FirstOrDefault(c => c.Name == hierarchy[i]);
+                            foundCat = SiteCategory.SubCategories.FirstOrDefault(c => c.Name.Trim() == hierarchy[i]);
                         }
                         SiteCategory = foundCat;
                     }
                     else
                     {
                         if (!Site.Settings.DynamicCategoriesDiscovered) Site.DiscoverDynamicCategories();
-                        Category foundCat = Site.Settings.Categories.FirstOrDefault(c => c.Name == hierarchy[i]);
+                        Category foundCat = Site.Settings.Categories.FirstOrDefault(c => c.Name.Trim() == hierarchy[i]);
                         // nextpage until found or no more
                         while (foundCat == null && Site.Settings.Categories.Last() is NextPageCategory)
                         {
                             Site.DiscoverNextPageCategories(Site.Settings.Categories.Last() as NextPageCategory);
-                            foundCat = Site.Settings.Categories.FirstOrDefault(c => c.Name == hierarchy[i]);
+                            foundCat = Site.Settings.Categories.FirstOrDefault(c => c.Name.Trim() == hierarchy[i]);
                         }
                         SiteCategory = foundCat;
                     }
