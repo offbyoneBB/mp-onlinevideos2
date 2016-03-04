@@ -222,7 +222,7 @@ namespace OnlineVideos.Sites
                     {
                         TrackingInfo tInfo = new TrackingInfo()
                         {
-                            Regex = Regex.Match(video.Title, @"(?<Title>.+)\s+Seas\.\s*?(?<Season>\d+)\s+Ep\.\s*?(?<Episode>\d+)", RegexOptions.IgnoreCase),
+                            Regex = Regex.Match(video.Title, @"(?<Title>.+?)\s+(?:-)?\s*Seas(?:\.|on)\s*?(?<Season>\d+)\s+(?:-)?\s*Ep(?:\.|isode)\s*?(?<Episode>\d+)", RegexOptions.IgnoreCase),
                             VideoKind = VideoKind.TvSeries
                         };
 
