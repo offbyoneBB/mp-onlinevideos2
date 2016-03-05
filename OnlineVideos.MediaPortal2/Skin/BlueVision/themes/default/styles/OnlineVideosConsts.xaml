@@ -33,7 +33,7 @@
 
     <!-- Site styles 1080p -->
     <ResourceWrapper x:Key="ovsSiteItemWidth1080">178</ResourceWrapper>
-    <ResourceWrapper x:Key="ovsSiteItemHeight1080">148</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsSiteItemHeight1080">156</ResourceWrapper>
     <ResourceWrapper x:Key="ovsSiteItemMargin1080">7</ResourceWrapper>
     <ResourceWrapper x:Key="ovsSiteItemContainerMargin1080">6</ResourceWrapper>
     <ResourceWrapper x:Key="ovsSiteItemThumbMargin1080">8</ResourceWrapper>
@@ -42,20 +42,20 @@
     <ResourceWrapper x:Key="ovsSitePageLabelHeight1080">75</ResourceWrapper>
     <ResourceWrapper x:Key="ovsSitePageLabelMargin1080">100,0,100,5</ResourceWrapper>
 
-    <ResourceWrapper x:Key="ovsCategoryItemWidth1080">257</ResourceWrapper>
-    <ResourceWrapper x:Key="ovsCategoryItemHeight1080">162</ResourceWrapper>
-    <ResourceWrapper x:Key="ovsCategoryItemContainerMargin1080">5</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsCategoryItemWidth1080">262.5</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsCategoryItemHeight1080">176.5</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsCategoryItemContainerMargin1080">3</ResourceWrapper>
 
-    <ResourceWrapper x:Key="ovsVideoItemWidth1080">256</ResourceWrapper>
-    <ResourceWrapper x:Key="ovsVideoItemHeight1080">160</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsVideoItemWidth1080">262.5</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsVideoItemHeight1080">176.5</ResourceWrapper>
     <ResourceWrapper x:Key="ovsVideoItemThumbMaxHeight1080">148</ResourceWrapper>
-    <ResourceWrapper x:Key="ovsVideoItemContainerMargin1080">5</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsVideoItemContainerMargin1080">3</ResourceWrapper>
 
     <ResourceWrapper x:Key="ovsSiteStateRadius1080">30</ResourceWrapper>
     <ResourceWrapper x:Key="ovsReportLabelWidth1080">200</ResourceWrapper>
 
     <ResourceWrapper x:Key="ovsSitesPanelMargin1080">20,20,20,0</ResourceWrapper>
     <ResourceWrapper x:Key="ovsCategoriesPanelMargin1080">10</ResourceWrapper>
-    <ResourceWrapper x:Key="ovsVideosPanelMargin1080">25,23,0,23</ResourceWrapper>
+    <ResourceWrapper x:Key="ovsVideosPanelMargin1080">10</ResourceWrapper>
 
 </ResourceDictionary>
