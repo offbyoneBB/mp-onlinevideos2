@@ -117,6 +117,11 @@ namespace OnlineVideos
 
         public string GetWebData(string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
         {
+            return GetWebData(new Uri(url), postData, cookies, referer, proxy, forceUTF8, allowUnsafeHeader, userAgent, encoding, headers, cache);
+        }
+
+        public string GetWebData(Uri uri, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
+        {
             // do not use the cache when doing a POST
             if (postData != null) cache = false;
             // set a few headers if none were given
@@ -133,19 +138,19 @@ namespace OnlineVideos
                 // build a CRC of the url and all headers + proxy + cookies for caching
                 string requestCRC = Helpers.EncryptionUtils.CalculateCRC32(
                     string.Format("{0}{1}{2}{3}",
-                    url,
+                    uri.ToString(),
                     headers != null ? string.Join("&", (from item in headers.AllKeys select string.Format("{0}={1}", item, headers[item])).ToArray()) : "",
-                    proxy != null ? proxy.GetProxy(new Uri(url)).AbsoluteUri : "",
-                    cookies != null ? cookies.GetCookieHeader(new Uri(url)) : ""));
+                    proxy != null ? proxy.GetProxy(uri).AbsoluteUri : "",
+                    cookies != null ? cookies.GetCookieHeader(uri) : ""));
 
                 // try cache first
                 string cachedData = cache ? WebCache.Instance[requestCRC] : null;
-                Log.Debug("GetWebData-{2}{1}: '{0}'", url, cachedData != null ? " (cached)" : "", postData != null ? "POST" : "GET");
+                Log.Debug("GetWebData-{2}{1}: '{0}'", uri.ToString(), cachedData != null ? " (cached)" : "", postData != null ? "POST" : "GET");
                 if (cachedData != null) return cachedData;
 
                 // build the request
                 if (allowUnsafeHeader) Helpers.DotNetFrameworkHelper.SetAllowUnsafeHeaderParsing(true);
-                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+                HttpWebRequest request = WebRequest.Create(uri) as HttpWebRequest;
                 if (request == null) return "";
                 request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate; // turn on automatic decompression of both formats (adds header "AcceptEncoding: gzip,deflate" to the request)
                 if (cookies != null) request.CookieContainer = cookies; // set cookies if given
