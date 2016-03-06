@@ -1,23 +1,17 @@
-﻿using HtmlAgilityPack;
-using System;
-using System.Collections.Specialized;
-using System.IO;
-using System.Linq;
+﻿using System.Collections.Specialized;
 using System.Net;
 using System.Text;
-using System.Threading;
-using System.Windows.Forms;
 
 namespace OnlineVideos.Sites.JSurf.ConnectorImplementations
 {
     public abstract class BrowserSessionBase
     {
-        protected CookieContainer cc = new CookieContainer();
-        protected string userAgent { get; set; } 
+        protected CookieContainer _cc = new CookieContainer();
+        protected string UserAgent { get; set; }
 
-        public BrowserSessionBase()
+        protected BrowserSessionBase()
         {
-            userAgent = null;
+            UserAgent = null;
         }
 
         /// <summary>
@@ -26,7 +20,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations
         public HtmlAgilityPack.HtmlDocument Load(string url)
         {
             var agilityDoc = new HtmlAgilityPack.HtmlDocument();
-            string webData = GetWebData(url, (string)null, cc);
+            string webData = GetWebData(url, null, _cc);
             agilityDoc.LoadHtml(webData);
             //Log.Info(url+" The doc:" + agilityDoc.DocumentNode.InnerHtml);
             return agilityDoc;
@@ -34,12 +28,12 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations
 
         public string LoadAsStr(string url)
         {
-            return GetWebData(url, (string)null, cc, null, null, false, false, userAgent);
+            return GetWebData(url, null, _cc, null, null, false, false, UserAgent);
         }
 
         public Newtonsoft.Json.Linq.JObject LoadAsJSON(string url)
         {
-            return GetWebData<Newtonsoft.Json.Linq.JObject>(url, null, cc, null, null, false, false, userAgent );
+            return GetWebData<Newtonsoft.Json.Linq.JObject>(url, null, _cc, null, null, false, false, UserAgent);
         }
 
         protected T GetWebData<T>(string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)

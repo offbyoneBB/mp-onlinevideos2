@@ -81,6 +81,7 @@
   <string name="OnlineVideos.LayoutIcons">Ansicht: Symbole klein</string>
   <string name="OnlineVideos.LayoutBigIcons">Ansicht: Symbole groß</string>
   <!--M-->
+  <string name="OnlineVideos.Main.Help">Diese Erweiterung bietet eine einheitliche Oberfläche, um Videos verschiedenster Websites zu durchsuchen und abzuspielen.</string>
   <string name="OnlineVideos.ManageSites">Sites verwalten</string>
   <string name="OnlineVideos.MaxResults">Max. Ergebnisse</string>
   <!--N-->

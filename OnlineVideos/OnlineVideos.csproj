@@ -223,6 +223,7 @@
     <Compile Include="3rdParty\BouncyCastle\util\Strings.cs" />
     <Compile Include="Configuration\OnlineVideoSettings.cs" />
     <Compile Include="Configuration\SiteSettings.cs" />
+    <Compile Include="Consts.cs" />
     <Compile Include="CrossDomain\OnlineVideosAppDomain.cs" />
     <Compile Include="CrossDomain\PluginLoader.cs" />
     <Compile Include="CrossDomain\CrossDomanSingletonBase.cs" />
@@ -1002,6 +1003,7 @@
     <Compile Include="Sites\BrightCoveUtil.cs" />
     <Compile Include="Sites\Base\BrowserUtilConnector.cs" />
     <Compile Include="Sites\Interfaces\IBrowserSiteUtil.cs" />
+    <Compile Include="Sites\Interfaces\IBrowserVersionEmulation.cs" />
     <Compile Include="Sites\Interfaces\IChoice.cs" />
     <Compile Include="IFavoritesDatabase.cs" />
     <Compile Include="Sites\Interfaces\IFilter.cs" />

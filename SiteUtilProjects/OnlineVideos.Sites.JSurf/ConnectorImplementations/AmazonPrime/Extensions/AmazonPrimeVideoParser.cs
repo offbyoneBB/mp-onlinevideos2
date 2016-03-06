@@ -68,18 +68,30 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                 {
                     // TV Series, load all videos
                     var episodeList = episodeContainer.GetNodesByClass("episode-list-link");
-                    var usesAltLayout = false;
+                    int layoutType = 0;
 
                     if (episodeList == null)
                     {
-                        usesAltLayout = true;
+                        layoutType = 1;
                         episodeList = episodeContainer.GetNodesByClass("episode-list-item-inner");
                     }
-
+                    if (episodeList == null)
+                    {
+                        layoutType = 2;
+                        episodeList = episodeContainer.GetNodesByClass("dv-episode-container");
+                    }
+                    if (episodeList == null)
+                    {
+                        Log.Error("Could not load episode list!");
+                        return results;
+                    }
                     foreach (var item in episodeList)
                     {
                         var video = new VideoInfo();
-                        var titleNode = usesAltLayout ? item.GetNodeByClass("dv-extender").NavigatePath(new[] { 0, 0 }) : item.GetNodeByClass("episode-title");
+                        var titleNode =
+                            layoutType == 0 ? item.GetNodeByClass("dv-extender").NavigatePath(new[] { 0, 0 }) :
+                            layoutType == 1 ? item.GetNodeByClass("episode-title") :
+                            item.GetNodeByClass("dv-el-title");
 
                         var seen = "";
                         /*if (item.GetNodeByClass("progress-bar") == null)
@@ -88,24 +100,54 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                         }*/
                         video.Title = Regex.Replace(titleNode.GetInnerTextTrim(), @"^\d+", m => m.Value.PadLeft(2, '0')) + seen;
 
-                        video.Description = titleNode.NextSibling.GetInnerTextTrim();
-                        video.Airdate = item.GetNodeByClass("release-date").GetInnerTextTrim();
-
-                        var imageUrlNode = item.GetNodeByClass("episode-list-image");
-                        if (imageUrlNode != null)
+                        string videoUrl = null;
+                        HtmlNode imageUrlNode = null;
+                        if (layoutType == 2)
                         {
-                            video.Thumb = imageUrlNode.Attributes["src"].Value;
+                            var synopsis = item.GetNodeByClass("dv-el-synopsis-content");
+                            if (synopsis != null)
+                            {
+                                video.Description = synopsis.FirstChild.NextSibling.GetInnerTextTrim();
+                            }
+                            // <div class="dv-el-packshot-image" style="background-image: url(http://ecx.images-amazon.com/images/I/....jpg);"></div>
+                            imageUrlNode = item.GetNodeByClass("dv-el-packshot-image");
+                            if (imageUrlNode != null)
+                            {
+                                var re = new Regex("\\((.*?)\\)");
+                                var htmlAttribute = imageUrlNode.GetAttributeValue("style", null);
+                                if (htmlAttribute != null)
+                                {
+                                    var match = re.Match(htmlAttribute);
+                                    if (match.Groups.Count == 2)
+                                        video.ThumbnailImage = match.Groups[1].Value;
+                                }
+                            }
+                            video.Length = item.GetNodeByClass("dv-el-runtime").GetInnerTextTrim();
+                            var urlNode = item.GetNodeByClass("dv-playback-container");
+                            if (urlNode != null)
+                                videoUrl = urlNode.GetAttributeValue("data-asin", null);
                         }
                         else
                         {
-                            imageUrlNode = doc.GetElementbyId("dv-dp-left-content").GetNodeByClass("dp-meta-icon-container");
-                            video.Thumb = imageUrlNode == null ? string.Empty : imageUrlNode.SelectSingleNode(".//img").Attributes["src"].Value;
+                            video.Description = titleNode.NextSibling.GetInnerTextTrim();
+                            video.Airdate = item.GetNodeByClass("release-date").GetInnerTextTrim();
+                            imageUrlNode = item.GetNodeByClass("episode-list-image");
+                            video.Length = item.GetNodeByClass("runtime").GetInnerTextTrim();
+                            videoUrl = layoutType == 0 ? titleNode.GetAttribute("href") : item.GetAttribute("href");
+                            videoUrl = videoUrl.Substring(videoUrl.IndexOf("/product/") + 9);
+                            videoUrl = videoUrl.Substring(0, videoUrl.IndexOf("/"));
+
+                            if (imageUrlNode != null)
+                            {
+                                video.Thumb = imageUrlNode.Attributes["src"].Value;
+                            }
+                            else
+                            {
+                                imageUrlNode = doc.GetElementbyId("dv-dp-left-content").GetNodeByClass("dp-meta-icon-container");
+                                video.Thumb = imageUrlNode == null ? string.Empty : imageUrlNode.SelectSingleNode(".//img").Attributes["src"].Value;
+                            }
                         }
-                        var videoUrl = usesAltLayout ? titleNode.GetAttribute("href") : item.GetAttribute("href");
-                        videoUrl = videoUrl.Substring(videoUrl.IndexOf("/product/") + 9);
-                        videoUrl = videoUrl.Substring(0, videoUrl.IndexOf("/"));
                         video.Other = videoUrl;
-                        video.Length = item.GetNodeByClass("runtime").GetInnerTextTrim();
                         video.CleanDescriptionAndTitle();
                         results.Add(video);
                     }

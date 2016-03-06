@@ -25,6 +25,8 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("Request type")]
         protected RequestType requestType = RequestType.ViewerExperienceRequest;
 
+        protected AMFObject lastResponse = null;
+
         public override string GetVideoUrl(VideoInfo video)
         {
             string webdata = GetWebData<string>(video.VideoUrl);
@@ -100,8 +102,8 @@ namespace OnlineVideos.Sites
             AMFSerializer ser = new AMFSerializer();
             byte[] data = ser.Serialize(ViewerExperienceRequest, "com.brightcove.experience.ExperienceRuntimeFacade.getDataForExperience", hashValue);
 
-            AMFObject response = AMFObject.GetResponse(requestUrl, data);
-            return response.GetArray("programmedContent").GetObject("videoPlayer").GetObject("mediaDTO").GetArray("renditions");
+            lastResponse = AMFObject.GetResponse(requestUrl, data);
+            return lastResponse.GetArray("programmedContent").GetObject("videoPlayer").GetObject("mediaDTO").GetArray("renditions");
         }
 
         protected AMFArray GetResultsFromFindByMediaId(Match m)
@@ -113,8 +115,8 @@ namespace OnlineVideos.Sites
             values[2] = Convert.ToDouble(m.Groups["mediaId"].Value);
             values[3] = Convert.ToDouble(array4);
             byte[] data = ser.Serialize2("com.brightcove.player.runtime.PlayerMediaFacade.findMediaById", values);
-            AMFObject obj = AMFObject.GetResponse(requestUrl, data);
-            return obj.GetArray("renditions");
+            lastResponse = AMFObject.GetResponse(requestUrl, data);
+            return lastResponse.GetArray("renditions");
         }
 
         protected string FillPlaybackOptions(VideoInfo video, AMFArray renditions)

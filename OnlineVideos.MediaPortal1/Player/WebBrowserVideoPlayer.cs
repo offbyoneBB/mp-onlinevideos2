@@ -106,8 +106,8 @@ namespace OnlineVideos.MediaPortal1.Player
                                             dir,
                                             strFile,
                                             _automationType,
-                                            (string.IsNullOrEmpty(_username) ? "_" : _username),
-                                            (string.IsNullOrEmpty(_password) ? "_" : _password));
+                                            EncryptionUtils.SymEncryptLocalPC(string.IsNullOrEmpty(_username) ? "_" : _username),
+                                            EncryptionUtils.SymEncryptLocalPC(string.IsNullOrEmpty(_password) ? "_" : _password));
             _browserProcess.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;
             
             // Restart MP or Restore MP Window if needed
