@@ -712,7 +712,7 @@
       <Description>Videos from Swedish TV4 Play online offer. Log in for premium content.</Description>
     </Site>
     <Site name="Dplay.se" util="Dplay" agecheck="false" enabled="true" lang="sv">
-      <Description>Gratis och premium innehåll från Dplay.se. Dplay är en streamingtjänst som samlar det bästa innehållet från några av Sveriges – och världens – största tv-kanaler. Dplay erbjuder program från bland annat Kanal 5, Discovery Channel och Eurosport. Det betyder innehåll i världsklass i kategorier som underhållning, dokumentärer och sport. Alla svenska program visas gratis men för att se utländska serier, direktsänd sport eller livesända kanaler behöver du ett Premiumabonnemang.</Description>
+      <Description>Gratis och premiuminnehåll från Dplay.se. Dplay är en streamingtjänst som samlar det bästa innehållet från några av Sveriges – och världens – största tv-kanaler. Dplay erbjuder program från bland annat Kanal 5, Discovery Channel och Eurosport. Det betyder innehåll i världsklass i kategorier som underhållning, dokumentärer och sport. Alla svenska program visas gratis men för att se utländska serier, direktsänd sport eller livesända kanaler behöver du ett Premiumabonnemang.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.dplay.se/]]></item>
         <item key="programUrl"><![CDATA[program/]]></item>
