@@ -197,8 +197,8 @@ namespace OnlineVideos.MediaPortal2
                                             dir,
                                             _fileOrUrl,
                                             _automationType,
-                                            string.IsNullOrEmpty(_username) ? "_" : _username,
-                                            string.IsNullOrEmpty(_password) ? "_" : _password,
+                                            EncryptionUtils.SymEncryptLocalPC(string.IsNullOrEmpty(_username) ? "_" : _username),
+                                            EncryptionUtils.SymEncryptLocalPC(string.IsNullOrEmpty(_password) ? "_" : _password),
                                             _emulationLevel);
             _browserProcess.StartInfo.WindowStyle = ProcessWindowStyle.Normal; // ProcessWindowStyle.Maximized;
 

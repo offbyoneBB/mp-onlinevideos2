@@ -33,7 +33,9 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
 
                 IERegistryVersion.SetIEVersion(emulationLevel);
                 var host = new BrowserHost();
-                Application.Run(host.PlayVideo(result, args[1], args[3], args[4]));
+                var username = EncryptionUtils.SymDecryptLocalPC(args[3]);
+                var password = EncryptionUtils.SymDecryptLocalPC(args[4]);
+                Application.Run(host.PlayVideo(result, args[1], username, password));
                 IERegistryVersion.RemoveIEVersion();
             }
             catch (Exception ex)
