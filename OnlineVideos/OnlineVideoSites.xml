@@ -711,25 +711,61 @@
     <Site name="TV4Play" util="TV4Play" agecheck="false" enabled="true" lang="sv">
       <Description>Videos from Swedish TV4 Play online offer. Log in for premium content.</Description>
     </Site>
-    <Site name="Kanal5Play" util="Kanal59Play" agecheck="false" enabled="true" lang="sv">
-      <Description>The free online play content from Swedish Kanal 5.</Description>
+    <Site name="Dplay.se" util="Dplay" agecheck="false" enabled="true" lang="sv">
+      <Description>Gratis och premium innehåll från Dplay.se. Dplay är en streamingtjänst som samlar det bästa innehållet från några av Sveriges – och världens – största tv-kanaler. Dplay erbjuder program från bland annat Kanal 5, Discovery Channel och Eurosport. Det betyder innehåll i världsklass i kategorier som underhållning, dokumentärer och sport. Alla svenska program visas gratis men för att se utländska serier, direktsänd sport eller livesända kanaler behöver du ett Premiumabonnemang.</Description>
       <Configuration>
-        <item key="apiBaseUrl"><![CDATA[http://www.kanal5play.se/api]]></item>
-        <item key="swfPlayer"><![CDATA[http://www.kanal5play.se/flash/K5StandardPlayer.swf]]></item>
+        <item key="baseUrl"><![CDATA[http://www.dplay.se/]]></item>
+        <item key="programUrl"><![CDATA[program/]]></item>
+        <item key="programCategoryName"><![CDATA[Program A-Ö]]></item>
+        <item key="sportUrl"><![CDATA[sport/]]></item>
+        <item key="sportCategoryName"><![CDATA[Sport]]></item>
+        <item key="channelUrl"><![CDATA[kanaler/]]></item>
+        <item key="channelCategoryName"><![CDATA[Kanaler]]></item>
+        <item key="secureUrl"><![CDATA[https://secure.dplay.se/]]></item>
+        <item key="realmCode"><![CDATA[DPLAYSE]]></item>
+        <item key="geoUrl"><![CDATA[http://geo.dplay.se/geo.js]]></item>
+        <item key="hardCodeGeo"><![CDATA[%7B%22countryCode%22%3A%22SE%22%7D]]></item>
+        <item key="cookieDomain"><![CDATA[.dplay.se]]></item>
+        <item key="srtSelector"><![CDATA[subtitles_sv_srt]]></item>
+        <item key="needsPremium"><![CDATA[false]]></item>
       </Configuration>
     </Site>
-    <Site name="Kanal9Play" util="Kanal59Play" agecheck="false" enabled="true" lang="sv">
-      <Description>The free online play content from Swedish Kanal 9.</Description>
+    <Site name="Dplay.dk" util="Dplay" agecheck="false" enabled="true" lang="da">
+      <Description>Dplay, gratis og premium-indhold. En streamingtjeneste fra Discovery Networks Denmark ApS. Dplay tilbyder et stort udvalg af indhold fra kanalerne: Kanal 4, Kanal 5, 6’eren, Canal 9, Eurosport, Eurosport DK, Discovery Channel, TLC og Animal Planet.</Description>
       <Configuration>
-        <item key="apiBaseUrl"><![CDATA[http://www.kanal9play.se/api]]></item>
-        <item key="swfPlayer"><![CDATA[http://www.kanal9play.se/flash/K9StandardPlayer.swf]]></item>
+        <item key="baseUrl"><![CDATA[http://www.dplay.dk/]]></item>
+        <item key="programUrl"><![CDATA[programmer/]]></item>
+        <item key="programCategoryName"><![CDATA[Programmer Alfabetisk]]></item>
+        <item key="sportUrl"><![CDATA[sport/]]></item>
+        <item key="sportCategoryName"><![CDATA[Sport]]></item>
+        <item key="channelUrl"><![CDATA[kanaler/]]></item>
+        <item key="channelCategoryName"><![CDATA[Kanaler]]></item>
+        <item key="secureUrl"><![CDATA[https://secure.dplay.dk/]]></item>
+        <item key="realmCode"><![CDATA[DPLAYDK]]></item>
+        <item key="geoUrl"><![CDATA[http://geo.dplay.dk/geo.js]]></item>
+        <item key="hardCodeGeo"><![CDATA[%7B%22countryCode%22%3A%22DK%22%7D]]></item>
+        <item key="cookieDomain"><![CDATA[.dplay.dk]]></item>
+        <item key="srtSelector"><![CDATA[subtitles_da_srt]]></item>
+        <item key="needsPremium"><![CDATA[false]]></item>
       </Configuration>
     </Site>
-    <Site name="Kanal11Play" util="Kanal59Play" agecheck="false" enabled="true" lang="sv">
-      <Description>The free online play content from Swedish Kanal 11.</Description>
+    <Site name="Dplay.no" util="Dplay" agecheck="false" enabled="true" lang="no">
+      <Description>Dplay er en abonnementsbasert underholdningstjeneste som gir deg tilgang til et stort utvalg av Discovery Networks Norways programmer på Internett. I tillegg får du tilgang til alle Discovery Networks Norways kanaler slik som TVNorge, FEM, MAX, VOX, Discovery Channel, TLC og Animal Planet.</Description>
       <Configuration>
-        <item key="apiBaseUrl"><![CDATA[http://www.kanal11play.se/api]]></item>
-        <item key="swfPlayer"><![CDATA[http://www.kanal11play.se/flash/K11StandardPlayer.swf]]></item>
+        <item key="baseUrl"><![CDATA[http://www.dplay.no/]]></item>
+        <item key="programUrl"><![CDATA[programmer/]]></item>
+        <item key="programCategoryName"><![CDATA[Programmer A-Å]]></item>
+        <item key="sportUrl"><![CDATA[sport/]]></item>
+        <item key="sportCategoryName"><![CDATA[Sport]]></item>
+        <item key="channelUrl"><![CDATA[kanaler/]]></item>
+        <item key="channelCategoryName"><![CDATA[Kanaler]]></item>
+        <item key="secureUrl"><![CDATA[https://secure.dplay.no/]]></item>
+        <item key="realmCode"><![CDATA[DPLAYNO]]></item>
+        <item key="geoUrl"><![CDATA[http://geo.dplay.no/geo.js]]></item>
+        <item key="hardCodeGeo"><![CDATA[%7B%22countryCode%22%3A%22NO%22%7D]]></item>
+        <item key="cookieDomain"><![CDATA[.dplay.no]]></item>
+        <item key="srtSelector"><![CDATA[subtitles_no_srt]]></item>
+        <item key="needsPremium"><![CDATA[true]]></item>
       </Configuration>
     </Site>
     <Site name="Viasat" util="Viasat" agecheck="false" enabled="true" lang="sv">
