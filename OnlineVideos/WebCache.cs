@@ -18,7 +18,7 @@ namespace OnlineVideos
         }
 
         #region Singleton
-        WebCache() 
+        WebCache()
         {
             // only use cache if a timeout > 0 was set
             if (OnlineVideoSettings.Instance.CacheTimeout > 0)
@@ -35,7 +35,7 @@ namespace OnlineVideos
 
         public string this[string url]
         {
-            get 
+            get
             {
                 if (OnlineVideoSettings.Instance.CacheTimeout > 0) // only use cache if a timeout > 0 was set
                 {
@@ -45,12 +45,12 @@ namespace OnlineVideos
                         if (cache.TryGetValue(url, out result))
                         {
                             return result.Data;
-                        }                        
+                        }
                     }
                 }
                 return null;
             }
-            set 
+            set
             {
                 if (OnlineVideoSettings.Instance.CacheTimeout > 0) // only use cache if a timeout > 0 was set
                 {
@@ -72,7 +72,7 @@ namespace OnlineVideos
                     if ((DateTime.Now - cache[key].LastUpdated).TotalMinutes >= OnlineVideoSettings.Instance.CacheTimeout)
                         outdatedKeys.Add(key);
 
-                foreach(string key in outdatedKeys) cache.Remove(key);
+                foreach (string key in outdatedKeys) cache.Remove(key);
             }
         }
 
