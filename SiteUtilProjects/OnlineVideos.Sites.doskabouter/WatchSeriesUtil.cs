@@ -147,7 +147,7 @@ namespace OnlineVideos.Sites
             while (m != null && m.Success)
             {
                 RssLink cat = new RssLink();
-                cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value);
+                cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value).Trim();
                 cat.Url = m.Groups["url"].Value;
                 if (!String.IsNullOrEmpty(cat.Url) && !Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute))
                     cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
@@ -222,7 +222,7 @@ namespace OnlineVideos.Sites
                     {
                         TrackingInfo tInfo = new TrackingInfo()
                         {
-                            Regex = Regex.Match(video.Title, @"(?<Title>.+)\s+Seas\.\s*?(?<Season>\d+)\s+Ep\.\s*?(?<Episode>\d+)", RegexOptions.IgnoreCase),
+                            Regex = Regex.Match(video.Title, @"(?<Title>.+?)\s+(?:-)?\s*Seas(?:\.|on)\s*?(?<Season>\d+)\s+(?:-)?\s*Ep(?:\.|isode)\s*?(?<Episode>\d+)", RegexOptions.IgnoreCase),
                             VideoKind = VideoKind.TvSeries
                         };
 

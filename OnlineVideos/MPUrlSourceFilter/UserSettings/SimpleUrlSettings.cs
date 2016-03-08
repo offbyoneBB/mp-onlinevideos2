@@ -178,6 +178,8 @@ namespace OnlineVideos.MPUrlSourceFilter.UserSettings
                     return (T)(object)parameters[name];
                 else if (typeof(T) == typeof(int))
                     return (T)(object)int.Parse(parameters[name]);
+                else if (typeof(T) == typeof(Boolean))
+                    return (T)(object)Boolean.Parse(parameters[name]);
                 else
                     throw new Exception(string.Format("Unsupported type <{0}> for conversion!", typeof(T).FullName));
             }

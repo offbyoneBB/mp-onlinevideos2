@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using OnlineVideos.Sites;
 using System.IO;
 using System.Reflection;
 using OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation;
-using OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers;
 
 namespace OnlineVideos.Sites.WebAutomation.BrowserHost.Factories
 {
@@ -66,7 +62,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.Factories
             {
                 WebBrowserPlayerCallbackService.LogInfo(string.Format("Looking for BrowserUtilConnector in {0} (Version: {1})",
                     assembly.GetName().Name,
-                    assembly.GetName().Version.ToString()));
+                    assembly.GetName().Version));
                 try
                 {
                     Type[] typeArray = assembly.GetExportedTypes();

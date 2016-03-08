@@ -347,6 +347,47 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class MovDivX : MyHosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "movdivx.com";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            string webData = WebCache.Instance.GetWebData(url);
+            webData = GetFromPost(url, webData);
+            if (!string.IsNullOrEmpty(webData))
+            {
+                string packed = null;
+                int i = webData.LastIndexOf(@"return p}");
+                if (i >= 0)
+                {
+                    int j = webData.IndexOf(@"</script>", i);
+                    if (j >= 0)
+                        packed = webData.Substring(i + 9, j - i - 9);
+                }
+                if (!String.IsNullOrEmpty(packed))
+                {
+                    packed = packed.Replace(@"\'", @"'");
+                    string unpacked = Helpers.StringUtils.UnPack(packed);
+                    return Helpers.StringUtils.GetSubString(unpacked, @"name=""src""value=""", @"""");
+                }
+                return String.Empty;
+            }
+
+            Match m = Regex.Match(webData, @"var\slnk1\s=\s'(?<url>[^']*)'");
+            if (m.Success)
+            {
+                HttpUrl httpUrl = new HttpUrl(m.Groups["url"].Value);
+                httpUrl.UserAgent = OnlineVideoSettings.Instance.UserAgent;
+                return httpUrl.ToString();
+            }
+            return String.Empty;
+        }
+    }
+
     public class MySpace : HosterBase
     {
         public override string GetHosterUrl()
@@ -656,22 +697,20 @@ namespace OnlineVideos.Hoster
         {
             string webdata = WebCache.Instance.GetWebData(url);
             string timeToWait = Regex.Match(webdata, @"<span\sid=""countdown_str"">[^>]*>(?<time>[^<]+)</span>").Groups["time"].Value;
-            if (Convert.ToInt32(timeToWait) < 10)
+            if (String.IsNullOrEmpty(timeToWait) && webdata.Length < 50)
+                throw new OnlineVideosException(webdata);
+            int time;
+            if (Int32.TryParse(timeToWait, out time) && time < 10)
+                System.Threading.Thread.Sleep(time * 1001);
+            webdata = GetFromPost(url, webdata, false, null, new[] { "imhuman=+" });
+
+            string file = Helpers.StringUtils.GetSubString(webdata, @"file: """, @"""");
+            string streamer = Helpers.StringUtils.GetSubString(webdata, @"streamer: """, @"""");
+            RtmpUrl rtmpUrl = new RtmpUrl(streamer)
             {
-                System.Threading.Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
-
-                webdata = GetFromPost(url, webdata, false, null, new[] { "imhuman=+" });
-
-                string file = Helpers.StringUtils.GetSubString(webdata, @"file: """, @"""");
-                string streamer = Helpers.StringUtils.GetSubString(webdata, @"streamer: """, @"""");
-                RtmpUrl rtmpUrl = new RtmpUrl(streamer)
-                {
-                    PlayPath = file
-                };
-                return rtmpUrl.ToString();
-            }
-
-            return String.Empty;
+                PlayPath = file
+            };
+            return rtmpUrl.ToString();
 
         }
     }
@@ -797,9 +836,14 @@ namespace OnlineVideos.Hoster
         public override string GetVideoUrl(string url)
         {
             string webData = WebCache.Instance.GetWebData(url);
+            Match nofile = Regex.Match(webData, @"<b[^>]*>>(?<url>[^<]*)</b>");
             string tmp = Helpers.StringUtils.GetSubString(webData, @"$(""#playeriframe"").attr({src : """, @"""");
             webData = WebCache.Instance.GetWebData(@"http://veehd.com" + tmp);
-            return HttpUtility.UrlDecode(Helpers.StringUtils.GetSubString(webData, @"""url"":""", @""""));
+            string res = HttpUtility.UrlDecode(Helpers.StringUtils.GetSubString(webData, @"""url"":""", @""""));
+            if (String.IsNullOrEmpty(res) && nofile.Success)
+                throw new OnlineVideosException(nofile.Groups["url"].Value);
+
+            return res;
         }
     }
 
@@ -846,7 +890,12 @@ namespace OnlineVideos.Hoster
                     {
                         res = srDecrypt.ReadToEnd();
                         int p = res.IndexOf('\0');
-                        return res.Substring(0, p - 1);
+                        if (p >= 0)
+                            return res.Substring(0, p - 1);
+                        m = Regex.Match(webData, @"<span[^>]*>(?<text>[^<]*)</span>");
+                        if (m.Success)
+                            throw new OnlineVideosException(m.Groups["text"].Value);
+                        return String.Empty;
                     }
                 }
             }
@@ -892,14 +941,15 @@ namespace OnlineVideos.Hoster
                 postData += m.Groups["m0"].Value + "=" + m.Groups["m1"].Value;
                 m = m.NextMatch();
             }
-            if (String.IsNullOrEmpty(postData))
-                return null;
+            //if (String.IsNullOrEmpty(postData))
+            //return null;
 
             string timeToWait = Regex.Match(webData, @"<span\sid=""countdown_str"">[^>]*>(?<time>[^<]+)</span>").Groups["time"].Value;
-            if (Convert.ToInt32(timeToWait) < 10)
+            if (!String.IsNullOrEmpty(timeToWait) && Convert.ToInt32(timeToWait) < 10)
                 Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
 
-            webData = WebCache.Instance.GetWebData(url, postData);
+            if (!String.IsNullOrEmpty(postData))
+                webData = WebCache.Instance.GetWebData(url, postData);
             string packed = Helpers.StringUtils.GetSubString(webData, @"return p}", @"</script>");
             packed = packed.Replace(@"\'", @"'");
             string unpacked = Helpers.StringUtils.UnPack(packed);

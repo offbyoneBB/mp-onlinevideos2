@@ -1,48 +1,55 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
-using System.Web;
-using System.Net;
-using System.Xml;
-using System.Text.RegularExpressions;
-using System.Collections;
-using System.ComponentModel;
-using System.Security.Cryptography;
-using System.Text;
-using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
     public class Direct8Util : GenericSiteUtil
     {
-        string _baseurl = "http://lab.canal-plus.pro/web/app_prod.php/api/replay/{0}";
+        #region Fields
+
         internal string _siteindex = "1";
         internal string _sitekey = "d8";
+        private string _baseurl = "http://lab.canal-plus.pro/web/app_prod.php/api/replay/{0}";
+
+        #endregion Fields
+
+        #region Methods
 
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
-            string sContent = GetWebData(string.Format(_baseurl,_siteindex) );
+
+            RssLink dir = new RssLink();
+            dir.Name = "Le Direct";
+            dir.Url = "http://hls-live-m5-l3.canal-plus.com/live/hls/d8-clair-hd-and/and-hd-clair/index.m3u8";
+
+            dir.HasSubCategories = false;
+            Settings.Categories.Add(dir);
+
+            
+
+            string sContent = GetWebData(string.Format(_baseurl, _siteindex));
             JArray tList = JArray.Parse(sContent);
 
-            foreach (JObject obj in tList) 
+            foreach (JObject obj in tList)
             {
                 RssLink cat1 = new RssLink();
                 cat1.Name = obj.Value<string>("title");
                 cat1.Url = string.Format(_baseurl, _siteindex) + "/" + cat1.Name;
-                
+
                 cat1.HasSubCategories = false;
                 JArray prog = obj.Value<JArray>("programs");
-                if (prog != null) 
+                if (prog != null)
                 {
                     cat1.HasSubCategories = true;
                     cat1.SubCategories = new List<Category>();
-                    foreach (JObject sub in prog) 
+                    foreach (JObject sub in prog)
                     {
                         RssLink cat = new RssLink();
                         cat.Name = sub.Value<string>("title");
-                        cat.Url = string.Format ("http://lab.canal-plus.pro/web/app_prod.php/api/pfv/list/{0}/", _siteindex ) + sub.Value<string>("videos_recent");
+                        cat.Url = string.Format("http://lab.canal-plus.pro/web/app_prod.php/api/pfv/list/{0}/", _siteindex) + sub.Value<string>("videos_recent");
                         cat.HasSubCategories = true;
                         cat.SubCategories = new List<Category>();
 
@@ -66,13 +73,11 @@ namespace OnlineVideos.Sites
 
                         cat1.SubCategories.Add(cat);
                     }
-
                 }
                 Settings.Categories.Add(cat1);
             }
 
-
-            return Settings.Categories.Count ;
+            return Settings.Categories.Count;
         }
 
         public override List<VideoInfo> GetVideos(Category category)
@@ -81,10 +86,10 @@ namespace OnlineVideos.Sites
             string sUrl = (category as RssLink).Url;
             string sContent = GetWebData((category as RssLink).Url);
 
-            JArray tArray = JArray.Parse(sContent );
-            foreach (JObject obj in tArray) 
+            JArray tArray = JArray.Parse(sContent);
+            foreach (JObject obj in tArray)
             {
-                try 
+                try
                 {
                     VideoInfo vid = new VideoInfo()
                     {
@@ -104,8 +109,8 @@ namespace OnlineVideos.Sites
 
         public override string GetVideoUrl(VideoInfo video)
         {
-            string sUrl= "http://service.canal-plus.com/video/rest/getvideos/{0}/{1}?format=json";
-            sUrl = string.Format(sUrl, _sitekey ,video.VideoUrl);
+            string sUrl = "http://service.canal-plus.com/video/rest/getvideos/{0}/{1}?format=json";
+            sUrl = string.Format(sUrl, _sitekey, video.VideoUrl);
             string sContent = GetWebData(sUrl);
             JObject obj = JObject.Parse(sContent);
 
@@ -117,10 +122,10 @@ namespace OnlineVideos.Sites
             IEnumerable<OnlineVideos.Sites.M3U.M3U.M3UComponent> telem = from item in play.OrderBy("BRANDWITH")
                                                                          select item;
 
-            if (telem.Count() > 2) 
+            if (telem.Count() > 2)
             {
                 video.PlaybackOptions = new Dictionary<string, string>();
-                video.PlaybackOptions.Add("SD", telem.ToList()[telem.Count() - 2].Path );
+                video.PlaybackOptions.Add("SD", telem.ToList()[telem.Count() - 2].Path);
                 video.PlaybackOptions.Add("HD", telem.ToList()[telem.Count() - 1].Path);
             }
             return telem.Last().Path;
@@ -145,22 +150,6 @@ namespace OnlineVideos.Sites
             //return tUrl[tUrl.Count - 1];
         }
 
-        //public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
-        //{
-        //    List<string> listUrls = new List<string>();
-        //    string webData = GetWebData(video.VideoUrl);
-        //    string url = Regex.Match(webData, @"<script\stype=""text/javascript""\ssrc=""http://direct8\.hexaglobe\.com/player(?<url>[^""]*)""></script>").Groups["url"].Value;
-        //    webData = GetWebData(@"http://direct8.hexaglobe.com/player" + url, referer: video.VideoUrl);
-        //    string baseUrl = Regex.Match(webData, @"baseUrl:.*?'(?<url>[^']*)'").Groups["url"].Value;
-        //    Match m = Regex.Match(webData, @"url\s:\s'(?<url>[^']*)'");
-        //    while (m.Success)
-        //    {
-        //        listUrls.Add(baseUrl + m.Groups["url"].Value);
-        //        m = m.NextMatch();
-        //    }
-
-        //    return listUrls;
-        //}
-
+        #endregion Methods
     }
 }

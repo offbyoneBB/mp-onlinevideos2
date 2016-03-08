@@ -11,6 +11,11 @@ namespace Standalone.Configuration
 	{
 		const string FileName = "OnlineVideoSettings.xml";
 
+        protected void Init()
+        {
+            if (ItemsZoom < 0.1) ItemsZoom = 1.0f;
+        }
+
 		public static void Load(string writeableBaseDir)
 		{
 			string filePath = Path.Combine(writeableBaseDir, FileName);
@@ -34,6 +39,7 @@ namespace Standalone.Configuration
 				Instance = new Settings();
 			}
 			Instance.FilePath = filePath;
+            Instance.Init();
 		}
 
 		public void Save()
@@ -52,5 +58,17 @@ namespace Standalone.Configuration
 
 		[DataMember]
 		public DateTime LastAutoUpdate { get; set; }
+
+        [DataMember]
+        public bool StartMaximized { get; set; }
+
+        [DataMember]
+        public bool? AutomaticUpdate { get; set; }
+
+        [DataMember]
+        public float ItemsZoom { get; set; }
+
+        [DataMember]
+        public bool StayOnTopPlayingFullscreen { get; set; }
 	}
 }

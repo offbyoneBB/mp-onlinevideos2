@@ -33,7 +33,8 @@
             SortOrder="a"
             SourceStates="7F702D9C-F2DD-42da-9ED8-0BA92F07787F"
             TargetState="F9D7500D-EC5C-4FEF-8FAE-E4DED8A22CE0"
-            DisplayTitle="OnlineVideos"/>
+            DisplayTitle="OnlineVideos"
+            HelpText="[OnlineVideos.Main.Help]"/>
 
         <WorkflowContributorAction Id="C1AD49D6-28F3-493E-94B8-886E90A119DA"
             Name="OnlineVideos->Search"

@@ -24,9 +24,16 @@ namespace OnlineVideos.MPUrlSourceFilter
         private int openConnectionTimeout = HttpUrl.DefaultHttpOpenConnectionTimeout;
         private int openConnectionSleepTime = HttpUrl.DefaultHttpOpenConnectionSleepTime;
         private int totalReopenConnectionTimeout = HttpUrl.DefaultHttpTotalReopenConnectionTimeout;
-        private bool seekingSupported = HttpUrl.DefaultHttpSeekingSupported;
-        private bool seekingSupportDetection = HttpUrl.DefaultHttpSeekingSupportDetection;
         private HttpHeaderCollection customHeaders;
+
+        private String serverUserName = HttpUrl.DefaultHttpServerUserName;
+        private String serverPassword = HttpUrl.DefaultHttpServerPassword;
+
+        private String proxyServer = HttpUrl.DefaultHttpProxyServer;
+        private int proxyServerPort = HttpUrl.DefaultHttpProxyServerPort;
+        private String proxyServerUserName = HttpUrl.DefaultHttpProxyServerUserName;
+        private String proxyServerPassword = HttpUrl.DefaultHttpProxyServerPassword;
+        private ProxyServerType proxyServerType = HttpUrl.DefaultHttpProxyServerType;
 
         #endregion
 
@@ -62,10 +69,10 @@ namespace OnlineVideos.MPUrlSourceFilter
             this.cookies = new CookieCollection();
             this.customHeaders = new HttpHeaderCollection();
 
-            this.Referer = String.Empty;
-            this.UserAgent = String.Empty;
             this.Version = null;
             this.IgnoreContentLength = false;
+            this.ServerAuthenticate = false;
+            this.ProxyServerAuthenticate = false;
         }
 
         #endregion
@@ -221,6 +228,144 @@ namespace OnlineVideos.MPUrlSourceFilter
             get { return this.customHeaders; }
         }
 
+        /// <summary>
+        /// Specifies if filter has to authenticate against remote server.
+        /// </summary>
+        public Boolean ServerAuthenticate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the remote server user name.
+        /// </summary>
+        public String ServerUserName
+        {
+            get { return this.serverUserName; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("ServerUserName");
+                }
+
+                this.serverUserName = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the remote server password.
+        /// </summary>
+        public String ServerPassword
+        {
+            get { return this.serverPassword; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("ServerPassword");
+                }
+
+                this.serverPassword = value;
+            }
+        }
+
+        /// <summary>
+        /// Specifies if filter has to authenticate against proxy server.
+        /// </summary>
+        public Boolean ProxyServerAuthenticate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the proxy server.
+        /// </summary>
+        public String ProxyServer
+        {
+            get { return this.proxyServer; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("ProxyServer");
+                }
+
+                this.proxyServer = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the proxy server port.
+        /// </summary>
+        public int ProxyServerPort
+        {
+            get { return this.proxyServerPort; }
+            set
+            {
+                if ((value < 0) || (value > 65535))
+                {
+                    throw new ArgumentOutOfRangeException("ProxyServerPort", value, "Must be greater than or equal to zero and lower than 65536.");
+                }
+
+                this.proxyServerPort = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the proxy server user name.
+        /// </summary>
+        public String ProxyServerUserName
+        {
+            get { return this.proxyServerUserName; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("ProxyServerUserName");
+                }
+
+                this.proxyServerUserName = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the proxy server password.
+        /// </summary>
+        public String ProxyServerPassword
+        {
+            get { return this.proxyServerPassword; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("ProxyServerPassword");
+                }
+
+                this.proxyServerPassword = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the proxy server type.
+        /// </summary>
+        public ProxyServerType ProxyServerType
+        {
+            get { return this.proxyServerType; }
+            set
+            {
+                switch (value)
+                {
+                    case ProxyServerType.None:
+                    case ProxyServerType.HTTP:
+                    case ProxyServerType.HTTP_1_0:
+                    case ProxyServerType.SOCKS4:
+                    case ProxyServerType.SOCKS5:
+                    case ProxyServerType.SOCKS4A:
+                    case ProxyServerType.SOCKS5_HOSTNAME:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("ProxyServerType", value, "The proxy server type value is unknown.");
+                }
+
+                this.proxyServerType = value;
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -290,6 +435,23 @@ namespace OnlineVideos.MPUrlSourceFilter
                 }
             }
 
+            if (this.ServerAuthenticate)
+            {
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpServerAuthenticate, "1"));
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpServerUserName, this.ServerUserName));
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpServerPassword, this.ServerPassword));
+            }
+
+            if (this.ProxyServerAuthenticate)
+            {
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpProxyServerAuthenticate, "1"));
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpProxyServer, this.ProxyServer));
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpProxyServerPort, this.ProxyServerPort.ToString()));
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpProxyServerUserName, this.ProxyServerUserName));
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpProxyServerPassword, this.ProxyServerPassword));
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpProxyServerType, ((int)this.ProxyServerType).ToString()));
+            }
+
             // return formatted connection string
             return base.ToFilterString() + ParameterCollection.ParameterSeparator + parameters.FilterParameters;
         }
@@ -302,6 +464,8 @@ namespace OnlineVideos.MPUrlSourceFilter
         #endregion
 
         #region Constants
+
+        /* parameters */
 
         /// <summary>
         /// Specifies open connection timeout in milliseconds.
@@ -384,59 +548,150 @@ namespace OnlineVideos.MPUrlSourceFilter
         protected static readonly String ParameterHttpHeaderFormatValue = "HttpHeaderValue{0:D8}";
 
         /// <summary>
+        /// Specifies if filter has to authenticate against remote server.
+        /// </summary>
+        protected static readonly String ParameterHttpServerAuthenticate = "HttpServerAuthenticate";
+
+        /// <summary>
+        /// Specifies the value of remote server user name to authenticate.
+        /// </summary>
+        protected static readonly String ParameterHttpServerUserName = "HttpServerUserName";
+
+        /// <summary>
+        /// Specifies the value of remote server password to authenticate.
+        /// </summary>
+        protected static readonly String ParameterHttpServerPassword = "HttpServerPassword";
+
+        /// <summary>
+        /// Specifies if filter has to authenticate against proxy server.
+        /// </summary>
+        protected static readonly String ParameterHttpProxyServerAuthenticate = "HttpProxyServerAuthenticate";
+
+        /// <summary>
+        /// Specifies the value of proxy server.
+        /// </summary>
+        protected static readonly String ParameterHttpProxyServer = "HttpProxyServer";
+
+        /// <summary>
+        /// Specifies the value of proxy server port.
+        /// </summary>
+        protected static readonly String ParameterHttpProxyServerPort = "HttpProxyServerPort";
+
+        /// <summary>
+        /// Specifies the value of remote server user name to authenticate.
+        /// </summary>
+        protected static readonly String ParameterHttpProxyServerUserName = "HttpProxyServerUserName";
+
+        /// <summary>
+        /// Specifies the value of remote server password to authenticate.
+        /// </summary>
+        protected static readonly String ParameterHttpProxyServerPassword = "HttpProxyServerPassword";
+
+        /// <summary>
+        /// Specifies the value of proxy server type.
+        /// </summary>
+        protected static readonly String ParameterHttpProxyServerType = "HttpProxyServerType";
+
+        /* default values */
+
         /// Default value for <see cref="ParameterHttpOpenConnectionTimeout"/>.
         /// </summary>
-        public static readonly int DefaultHttpOpenConnectionTimeout = 20000;
+        public const int DefaultHttpOpenConnectionTimeout = 20000;
 
         /// <summary>
         /// Default value for <see cref="ParameterHttpOpenConnectionSleepTime"/>.
         /// </summary>
-        public static readonly int DefaultHttpOpenConnectionSleepTime = 0;
+        public const int DefaultHttpOpenConnectionSleepTime = 0;
 
         /// <summary>
         /// Default value for <see cref="ParameterHttpTotalReopenConnectionTimeout"/>.
         /// </summary>
-        public static readonly int DefaultHttpTotalReopenConnectionTimeout = 60000;
+        public const int DefaultHttpTotalReopenConnectionTimeout = 60000;
 
         /// <summary>
         /// Default value for <see cref="ParameterHttpReferer"/>.
         /// </summary>
-        public static readonly String DefaultHttpReferer = String.Empty;
+        public const String DefaultHttpReferer = "";
 
         /// <summary>
         /// Default value for <see cref="ParameterHttpUserAgent"/>.
         /// </summary>
-        public static readonly String DefaultHttpUserAgent = String.Empty;
+        public const String DefaultHttpUserAgent = "";
 
         /// <summary>
         /// Default value for <see cref="ParameterHttpCookie"/>.
         /// </summary>
-        public static readonly String DefaultHttpCookie = String.Empty;
+        public const String DefaultHttpCookie = "";
 
         /// <summary>
         /// Default value for <see cref="ParameterHttpVersion"/>.
         /// </summary>
-        public static readonly Version DefaultHttpVersion = null;
+        public const Version DefaultHttpVersion = null;
 
         /// <summary>
         /// Default value for <see cref="ParameterHttpIgnoreContentLength"/>.
         /// </summary>
-        public static readonly Boolean DefaultHttpIgnoreContentLength = false;
+        public const Boolean DefaultHttpIgnoreContentLength = false;
 
         /// <summary>
         /// Default value for <see cref="ParameterHttpSeekingSupported"/>.
         /// </summary>
-        public static readonly Boolean DefaultHttpSeekingSupported = false;
+        public const Boolean DefaultHttpSeekingSupported = false;
 
         /// <summary>
         /// Default value for <see cref="ParameterHttpSeekingSupportDetection"/>.
         /// </summary>
-        public static readonly Boolean DefaultHttpSeekingSupportDetection = true;
+        public const Boolean DefaultHttpSeekingSupportDetection = true;
 
         /// <summary>
         /// Default value for <see cref="ParameterHttpHeadersCount"/>.
         /// </summary>
-        public static readonly int DefaultHttpHeadersCount = 0;
+        public const int DefaultHttpHeadersCount = 0;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpServerAuthenticate"/>.
+        /// </summary>
+        public const Boolean DefaultHttpServerAuthenticate = false;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpServerUserName"/>.
+        /// </summary>
+        public const String DefaultHttpServerUserName = "";
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpServerPassword"/>.
+        /// </summary>
+        public const String DefaultHttpServerPassword = "";
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpProxyServerAuthenticate"/>.
+        /// </summary>
+        public const Boolean DefaultHttpProxyServerAuthenticate = false;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpProxyServer"/>.
+        /// </summary>
+        public const String DefaultHttpProxyServer = "";
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpProxyServerPort"/>.
+        /// </summary>
+        public const int DefaultHttpProxyServerPort = 1080;
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpProxyServerUserName"/>.
+        /// </summary>
+        public const String DefaultHttpProxyServerUserName = "";
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpProxyServerPassword"/>.
+        /// </summary>
+        public const String DefaultHttpProxyServerPassword = "";
+
+        /// <summary>
+        /// Default value for <see cref="ParameterHttpProxyServerType"/>.
+        /// </summary>
+        public const ProxyServerType DefaultHttpProxyServerType = ProxyServerType.HTTP;
 
         #endregion
     }

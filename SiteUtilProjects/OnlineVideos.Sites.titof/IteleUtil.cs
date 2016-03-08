@@ -1,15 +1,18 @@
 ﻿using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace OnlineVideos.Sites
 {
-    public class IteleUtil: GenericSiteUtil 
+    public class IteleUtil : GenericSiteUtil
     {
+        #region Fields
 
         internal string _urlVideoList = "http://service.itele.fr/iphone/categorie_news?query=";
+
+        #endregion Fields
+
+        #region Methods
 
         public override int DiscoverDynamicCategories()
         {
@@ -19,7 +22,7 @@ namespace OnlineVideos.Sites
             {
                 Url = "http://service.itele.fr/iphone/topnews",
                 Name = "A la une",
-                HasSubCategories= false
+                HasSubCategories = false
             };
             Settings.Categories.Add(cat);
 
@@ -33,7 +36,7 @@ namespace OnlineVideos.Sites
 
             cat = new RssLink()
             {
-                Url = _urlVideoList+"france",
+                Url = _urlVideoList + "france",
                 Name = "France",
                 HasSubCategories = false
             };
@@ -41,7 +44,7 @@ namespace OnlineVideos.Sites
 
             cat = new RssLink()
             {
-                Url = _urlVideoList+"monde",
+                Url = _urlVideoList + "monde",
                 Name = "Monde",
                 HasSubCategories = false
             };
@@ -49,7 +52,7 @@ namespace OnlineVideos.Sites
 
             cat = new RssLink()
             {
-                Url = _urlVideoList+"politique",
+                Url = _urlVideoList + "politique",
                 Name = "Politique",
                 HasSubCategories = false
             };
@@ -57,7 +60,7 @@ namespace OnlineVideos.Sites
 
             cat = new RssLink()
             {
-                Url = _urlVideoList+"justice",
+                Url = _urlVideoList + "justice",
                 Name = "Justice",
                 HasSubCategories = false
             };
@@ -65,7 +68,7 @@ namespace OnlineVideos.Sites
 
             cat = new RssLink()
             {
-                Url = _urlVideoList+"economie",
+                Url = _urlVideoList + "economie",
                 Name = "Economie",
                 HasSubCategories = false
             };
@@ -73,7 +76,7 @@ namespace OnlineVideos.Sites
 
             cat = new RssLink()
             {
-                Url = _urlVideoList+"sport",
+                Url = _urlVideoList + "sport",
                 Name = "Sport",
                 HasSubCategories = false
             };
@@ -81,7 +84,7 @@ namespace OnlineVideos.Sites
 
             cat = new RssLink()
             {
-                Url = _urlVideoList+"culture",
+                Url = _urlVideoList + "culture",
                 Name = "Culture",
                 HasSubCategories = false
             };
@@ -89,12 +92,11 @@ namespace OnlineVideos.Sites
 
             cat = new RssLink()
             {
-                Url = _urlVideoList+"insolite",
+                Url = _urlVideoList + "insolite",
                 Name = "Insolite",
                 HasSubCategories = false
             };
             Settings.Categories.Add(cat);
-
 
             return Settings.Categories.Count;
         }
@@ -114,16 +116,15 @@ namespace OnlineVideos.Sites
             {
                 VideoInfo vid = new VideoInfo()
                 {
-                    Airdate = (string)item["date"], 
+                    Airdate = (string)item["date"],
                     Other = (string)item["video"],
                     Title = (string)item["title"],
                     Description = (string)item["description"],
                     Thumb = (string)item["preview"],
                     VideoUrl = (string)item["video_urlhd"]
-
                 };
 
-                if ( !string.IsNullOrEmpty( vid.VideoUrl) )
+                if (!string.IsNullOrEmpty(vid.VideoUrl))
                     tVideos.Add(vid);
             }
 
@@ -135,7 +136,7 @@ namespace OnlineVideos.Sites
             M3U.M3U.M3UPlaylist play = new M3U.M3U.M3UPlaylist();
             play.Read(video.VideoUrl);
             IEnumerable<OnlineVideos.Sites.M3U.M3U.M3UComponent> telem = from item in play.OrderBy("BRANDWITH")
-                                                                  select item;
+                                                                         select item;
 
             if (telem.Count() > 2)
             {
@@ -144,8 +145,9 @@ namespace OnlineVideos.Sites
                 video.PlaybackOptions.Add("SD", telem.ToList()[telem.Count() - 1].Path);
             }
 
-            return telem.Last().Path ;
+            return telem.Last().Path;
         }
 
+        #endregion Methods
     }
 }

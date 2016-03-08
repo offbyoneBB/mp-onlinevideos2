@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*" Name="OnlineVideos Standalone" Language="1033" Version="2.0.0.0" Manufacturer="offbyone" UpgradeCode="91c44233-766d-45e6-a51e-0cc26fae85dc">
+	<Product Id="*" Name="OnlineVideos Standalone" Language="1033" Version="2.1.0.0" Manufacturer="offbyone" UpgradeCode="91c44233-766d-45e6-a51e-0cc26fae85dc">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x86" />
 
 		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION"/>
@@ -59,6 +59,8 @@
               <File Id="MPUrlSource_Protocol_Afhs_Decryption_Default_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Afhs_Decryption_Default.dll" DiskId="1" Vital="yes"/>
               <File Id="MPUrlSource_Protocol_Http_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Http.dll" DiskId="1" Vital="yes"/>
               <File Id="MPUrlSource_Protocol_M3U8_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Protocol_M3U8_Decryption_Aes128_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8_Decryption_Aes128.dll" DiskId="1" Vital="yes"/>
+              <File Id="MPUrlSource_Protocol_M3U8_Decryption_None_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_M3U8_Decryption_None.dll" DiskId="1" Vital="yes"/>
               <File Id="MPUrlSource_Protocol_Mshs_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Mshs.dll" DiskId="1" Vital="yes"/>
               <File Id="MPUrlSource_Protocol_Rtmp_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtmp.dll" DiskId="1" Vital="yes"/>
               <File Id="MPUrlSource_Protocol_Rtsp_dll" Source="$(var.Standalone.TargetDir)MPUrlSourceSplitter\MPUrlSourceSplitter_Protocol_Rtsp.dll" DiskId="1" Vital="yes"/>

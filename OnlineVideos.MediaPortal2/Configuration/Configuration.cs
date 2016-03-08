@@ -7,6 +7,10 @@ namespace OnlineVideos.MediaPortal2.Configuration
     public class Settings
     {
         [Setting(SettingScope.User, true)]
+        public bool AutomaticUpdate { get; set; }
+        [Setting(SettingScope.User, 4)]
+        public int AutomaticUpdateInterval { get; set; }
+        [Setting(SettingScope.User, true)]
         public bool UseAgeConfirmation { get; set; }
         [Setting(SettingScope.User, "123")]
         public string AgeConfirmationPin { get; set; }
@@ -14,18 +18,52 @@ namespace OnlineVideos.MediaPortal2.Configuration
         public int UtilTimeout { get; set; }
         [Setting(SettingScope.User, 30)]
         public int CacheTimeout { get; set; }
-		[Setting(SettingScope.User, "")]
-		public string DownloadFolder { get; set; }
-		[Setting(SettingScope.Global)]
-		public DateTime LastAutomaticUpdate { get; set; }
+        [Setting(SettingScope.User, "")]
+        public string DownloadFolder { get; set; }
+        [Setting(SettingScope.Global)]
+        public DateTime LastAutomaticUpdate { get; set; }
 
-		public void SetValuesToApi()
-		{
-			OnlineVideoSettings.Instance.UseAgeConfirmation = UseAgeConfirmation;
-			OnlineVideoSettings.Instance.CacheTimeout = CacheTimeout;
-			OnlineVideoSettings.Instance.UtilTimeout = UtilTimeout;
-			OnlineVideoSettings.Instance.DownloadDir = DownloadFolder;
-		}
+        public void SetValuesToApi()
+        {
+            OnlineVideoSettings.Instance.UseAgeConfirmation = UseAgeConfirmation;
+            OnlineVideoSettings.Instance.CacheTimeout = CacheTimeout;
+            OnlineVideoSettings.Instance.UtilTimeout = UtilTimeout;
+            OnlineVideoSettings.Instance.DownloadDir = DownloadFolder;
+        }
+    }
+
+    public class AutomaticUpdate : YesNo
+    {
+        public override void Load()
+        {
+            _yes = SettingsManager.Load<Settings>().AutomaticUpdate;
+        }
+
+        public override void Save()
+        {
+            Settings settings = SettingsManager.Load<Settings>();
+            settings.AutomaticUpdate = _yes;
+            SettingsManager.Save(settings);
+        }
+    }
+
+    public class AutomaticUpdateInterval : LimitedNumberSelect
+    {
+        public override void Load()
+        {
+            _type = NumberType.Integer;
+            _step = 1;
+            _lowerLimit = 1;
+            _upperLimit = 96;
+            _value = SettingsManager.Load<Settings>().AutomaticUpdateInterval;
+        }
+
+        public override void Save()
+        {
+            Settings settings = SettingsManager.Load<Settings>();
+            settings.AutomaticUpdateInterval = (int)_value;
+            SettingsManager.Save(settings);
+        }
     }
 
     public class UseAgeConfirmation : YesNo
@@ -101,28 +139,28 @@ namespace OnlineVideos.MediaPortal2.Configuration
         }
     }
 
-	public class DownloadFolder : PathEntry
-	{
-		public DownloadFolder()
-		{
-			_pathSelectionType = PathSelectionType.Folder;
-		}
+    public class DownloadFolder : PathEntry
+    {
+        public DownloadFolder()
+        {
+            _pathSelectionType = PathSelectionType.Folder;
+        }
 
-		public override void Load()
-		{
-			_path = SettingsManager.Load<Settings>().DownloadFolder;
-		}
+        public override void Load()
+        {
+            _path = SettingsManager.Load<Settings>().DownloadFolder;
+        }
 
-		public override void Save()
-		{
-			Settings settings = SettingsManager.Load<Settings>();
-			settings.DownloadFolder = _path;
-			SettingsManager.Save(settings);
-		}
-	}
+        public override void Save()
+        {
+            Settings settings = SettingsManager.Load<Settings>();
+            settings.DownloadFolder = _path;
+            SettingsManager.Save(settings);
+        }
+    }
 
-	public class SiteManagement : CustomConfigSetting
-	{
-	}
-    
+    public class SiteManagement : CustomConfigSetting
+    {
+    }
+
 }

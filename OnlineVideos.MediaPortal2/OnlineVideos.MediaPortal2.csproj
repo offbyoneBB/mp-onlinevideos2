@@ -13,6 +13,7 @@
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>5077e0fb</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -37,39 +38,43 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DirectShowWrapper">
-      <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\VideoPlayers\DirectShowWrapper.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\Release\Plugins\VideoPlayers\DirectShowWrapper.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Media, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\Media\Media.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Media">
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\Release\Plugins\Media\Media.dll</HintPath>
     </Reference>
     <Reference Include="MediaPortal.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\MediaPortal.Common.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\Release\MediaPortal.Common.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MediaPortal.UI">
-      <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\MediaPortal.UI.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\Release\MediaPortal.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="MediaPortal.Utilities, Version=2.0.0.1510, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\Release\MediaPortal.Utilities.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX">
-      <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\SkinEngine\SharpDX.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\Release\Plugins\SkinEngine\SharpDX.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="SkinEngine">
-      <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\SkinEngine\SkinEngine.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\Release\Plugins\SkinEngine\SkinEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="VideoPlayers">
-      <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\VideoPlayers\VideoPlayers.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\Release\Plugins\VideoPlayers\VideoPlayers.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -87,14 +92,19 @@
     <Compile Include="BackgroundTask.cs" />
     <Compile Include="CommandContainer.cs" />
     <Compile Include="Configuration\Configuration.cs" />
+    <Compile Include="Controls\OverlayPanel.cs" />
     <Compile Include="DynamicWorkflow.cs" />
     <Compile Include="Models\SiteUpdateWorkflowModels.cs" />
     <Compile Include="Configuration\UserSiteSettingsStore.cs" />
     <Compile Include="Models\SiteManagementWorkflowModel.cs" />
+    <Compile Include="Player\OnlineVideoPlayerBuilder.cs" />
+    <Compile Include="Player\WebBrowserVideoPlayer.cs" />
+    <Compile Include="ResourceAccess\RawTokenResourceAccessor.cs" />
+    <Compile Include="ResourceAccess\RawTokenResourceProvider.cs" />
     <Compile Include="ViewModels\CategoryViewModel.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="LogDelegator.cs" />
-    <Compile Include="OnlineVideosPlayer.cs" />
+    <Compile Include="Player\OnlineVideosPlayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\OnlineVideosWorkflowModel.cs" />
     <Compile Include="Actions\SearchAction.cs" />
@@ -199,13 +209,33 @@
     <Content Include="Skin\BlueVision\themes\default\styles\OnlineVideosConsts.xaml" />
     <Content Include="Skin\BlueVision\themes\default\styles\OnlineVideosStyles.xaml" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\BlueVision\screens\FullScreenContentOV.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\BlueVision\screens\CurrentlyPlayingOV.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\default\screens\CurrentlyPlayingOV.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\default\screens\FullScreenContentOV.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="build.targets" />
-  <Import Project="..\packages\MediaPortal.UrlSourceSplitter.2.1.12.5638\build\MediaPortal.UrlSourceSplitter.targets" Condition="Exists('..\packages\MediaPortal.UrlSourceSplitter.2.1.12.5638\build\MediaPortal.UrlSourceSplitter.targets')" />
+  <Import Project="..\packages\MediaPortal.UrlSourceSplitter.2.2.5.5752\build\MediaPortal.UrlSourceSplitter.targets" Condition="Exists('..\packages\MediaPortal.UrlSourceSplitter.2.2.5.5752\build\MediaPortal.UrlSourceSplitter.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
-      <ErrorText>Dieses Projekt verweist auf mindestens ein NuGet-Paket, das auf diesem Computer fehlt. Aktivieren Sie die Wiederherstellung von NuGet-Paketen, um die fehlende Datei herunterzuladen. Weitere Informationen finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=322105". Die fehlende Datei ist "{0}".</ErrorText>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\MediaPortal.UrlSourceSplitter.2.1.12.5638\build\MediaPortal.UrlSourceSplitter.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MediaPortal.UrlSourceSplitter.2.1.12.5638\build\MediaPortal.UrlSourceSplitter.targets'))" />
+    <Error Condition="!Exists('..\packages\MediaPortal.UrlSourceSplitter.2.2.5.5752\build\MediaPortal.UrlSourceSplitter.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MediaPortal.UrlSourceSplitter.2.2.5.5752\build\MediaPortal.UrlSourceSplitter.targets'))" />
   </Target>
 </Project>

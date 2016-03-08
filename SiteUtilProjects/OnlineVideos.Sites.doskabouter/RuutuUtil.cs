@@ -25,32 +25,18 @@ namespace OnlineVideos.Sites
             string data = GetWebData(GetFormattedVideoUrl(video));
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(data);
-            var vidUrl = doc.SelectSingleNode(@"//Clip/HTTPMediaFiles/HTTPMediaFile").InnerText;
-            var bitrates = doc.SelectNodes(@"//Clip/BitRateLabels/map");
-            var bitratesDict = new Dictionary<string, string>();
-
-            foreach (XmlNode bitrate in bitrates)
-                bitratesDict.Add(bitrate.Attributes["label"].Value, bitrate.Attributes["bitrate"].Value);
-
-            int p = vidUrl.IndexOf("_none");
-            int q = vidUrl.LastIndexOf('_', p - 1);
-            if (p >= 0 && q >= 0)
-            {
-                video.PlaybackOptions = new Dictionary<string, string>();
-                foreach (var bitrate in bitratesDict)
-                    video.PlaybackOptions.Add(bitrate.Key, vidUrl.Substring(0, q + 1) + bitrate.Value + vidUrl.Substring(p));
-
-            }
-            if (video.PlaybackOptions.Count == 0)
-                return vidUrl;
-            return video.PlaybackOptions.Values.First();
+            var vidUrl = doc.SelectSingleNode(@"//Clip/SourceFile").InnerText;
+            return vidUrl;
         }
+
         public override int DiscoverSubCategories(Category parentCategory)
         {
             var doc = getDocument(parentCategory);
+            if (parentCategory.Name == "Kaikki ohjelmat")
+                return AddKaikki(doc, parentCategory);
             if (parentCategory.Name == "Ohjelmat")
                 return AddOhjelmat(doc, parentCategory);
-            if (RuType.Ohjelmat.Equals(parentCategory.Other) || parentCategory.Name == "Urheilu")
+            if (RuType.Ohjelmat.Equals(parentCategory.Other) || parentCategory.Name == "Urheilu" || parentCategory.Name == "Uutiset")
                 return DiscoverSubs(parentCategory, doc);
             if (parentCategory.Name == "Lapset")
                 return DiscoverLapsetSubs(parentCategory, doc);
@@ -89,7 +75,7 @@ namespace OnlineVideos.Sites
                     else
                         vid = vid2;
                     var node2 = vid.SelectSingleNode(".//a[@href]");
-                    if (node2 != null)
+                    if (node2 != null && vid.SelectSingleNode(".//h4[@itemprop='name']") != null)
                     {
                         VideoInfo video = CreateVideoInfo();
 
@@ -124,6 +110,47 @@ namespace OnlineVideos.Sites
             return result;
         }
 
+        private int AddKaikki(HtmlDocument doc, Category parentCategory)
+        {
+            var nodes = doc.DocumentNode.SelectNodes(@"//div[@class='list']");
+            parentCategory.SubCategories = new List<Category>();
+            foreach (var node in nodes)
+            {
+                RssLink sub = new RssLink()
+                {
+                    Name = node.SelectSingleNode(@".//h2").InnerText,
+                    ParentCategory = parentCategory,
+                    HasSubCategories = true,
+                };
+                sub.SubCategories = GetKaikkiSubcats(node, sub);
+                parentCategory.SubCategories.Add(sub);
+
+            }
+            parentCategory.SubCategoriesDiscovered = true;
+            return parentCategory.SubCategories.Count;
+        }
+
+        public List<Category> GetKaikkiSubcats(HtmlNode parentNode, Category parentCat)
+        {
+            List<Category> res = new List<Category>();
+            var nodes = parentNode.SelectNodes(@".//div[@data-content-id]/a[@href]");
+            foreach (var node in nodes)
+            {
+                var cat = new RssLink()
+                {
+                    Name = node.SelectSingleNode(@".//div").InnerText,
+                    ParentCategory = parentCat,
+                    HasSubCategories = true,
+                    Url = FormatDecodeAbsolutifyUrl(baseUrl, node.Attributes["href"].Value, "", UrlDecoding.None),
+                    Other = RuType.Ohjelmat
+                };
+                res.Add(cat);
+            }
+
+            parentCat.SubCategoriesDiscovered = true;
+            return res;
+        }
+
         private int DiscoverLapsetSubs(Category parentCategory, HtmlDocument doc)
         {
             var nodes = doc.DocumentNode.SelectNodes(@"//a[@href][.//h3[@class='thumbnail-title']]");
@@ -134,7 +161,7 @@ namespace OnlineVideos.Sites
                     Name = node.SelectSingleNode(@".//h3").InnerText,
                     ParentCategory = parentCategory,
                     HasSubCategories = true,
-                    Thumb = htmlValue(node.SelectSingleNode(@".//img[@data-img_src_1]").Attributes["data-img_src_1"]),
+                    Thumb = htmlValue(node.SelectSingleNode(@".//img[@data-src]").Attributes["data-src"]),
                     SubCategories = new List<Category>(),
                     Url = FormatDecodeAbsolutifyUrl(baseUrl, node.Attributes["href"].Value, "", UrlDecoding.None),
                     Other = RuType.LapsetSeries
@@ -147,12 +174,12 @@ namespace OnlineVideos.Sites
 
         private int AddOhjelmat(HtmlDocument doc, Category parentCat)
         {
-            var nodes = doc.DocumentNode.SelectNodes(@"//section[h2[@class='header-title']]");
+            var nodes = doc.DocumentNode.SelectNodes(@"//section[div/h2[@class='header-title']]");
             foreach (var node in nodes)
             {
                 Category sub = new Category()
                 {
-                    Name = node.SelectSingleNode(@"./h2").InnerText.Trim(),
+                    Name = node.SelectSingleNode(@".//h2/a/text()").InnerText.Trim(),
                     ParentCategory = parentCat,
                     HasSubCategories = true,
                     SubCategories = new List<Category>()
@@ -209,7 +236,7 @@ namespace OnlineVideos.Sites
         private int DiscoverSubs(Category parentCategory, HtmlDocument doc)
         {
             parentCategory.SubCategories = new List<Category>();
-            var nodes = doc.DocumentNode.SelectNodes(@"//section[h2[@class='header-title']]");
+            var nodes = doc.DocumentNode.SelectNodes(@"//section[div/h2[@class='header-title']]");
             foreach (var node in nodes)
             {
                 var videos = myParse2(node);
@@ -217,10 +244,14 @@ namespace OnlineVideos.Sites
                 {
                     Category cat = new Category()
                         {
-                            Name = node.SelectSingleNode(".//h2[@class='header-title']").InnerText.Trim(),
                             ParentCategory = parentCategory,
                             Other = videos
                         };
+                    if (node.SelectSingleNode(".//h2[@class='header-title']/a/text()") != null)
+                        cat.Name = node.SelectSingleNode(".//h2[@class='header-title']/a/text()").InnerText.Trim();
+                    else
+                        cat.Name = node.SelectSingleNode(".//h2[@class='header-title']").InnerText.Trim();
+
                     parentCategory.SubCategories.Add(cat);
                 }
             }

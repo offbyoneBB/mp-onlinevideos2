@@ -223,6 +223,7 @@
     <Compile Include="3rdParty\BouncyCastle\util\Strings.cs" />
     <Compile Include="Configuration\OnlineVideoSettings.cs" />
     <Compile Include="Configuration\SiteSettings.cs" />
+    <Compile Include="Consts.cs" />
     <Compile Include="CrossDomain\OnlineVideosAppDomain.cs" />
     <Compile Include="CrossDomain\PluginLoader.cs" />
     <Compile Include="CrossDomain\CrossDomanSingletonBase.cs" />
@@ -470,6 +471,7 @@
     <Compile Include="MPUrlSourceFilter\AfhsManifestUrl.cs" />
     <Compile Include="MPUrlSourceFilter\Http\HttpHeader.cs" />
     <Compile Include="MPUrlSourceFilter\Http\HttpHeaderCollection.cs" />
+    <Compile Include="MPUrlSourceFilter\ProxyServerType.cs" />
     <Compile Include="MPUrlSourceFilter\UserSettings\ExpandableUserSettingObjectConverter.cs" />
     <Compile Include="MPUrlSourceFilter\Downloader.cs" />
     <Compile Include="MPUrlSourceFilter\HttpUrl.cs" />
@@ -1001,6 +1003,7 @@
     <Compile Include="Sites\BrightCoveUtil.cs" />
     <Compile Include="Sites\Base\BrowserUtilConnector.cs" />
     <Compile Include="Sites\Interfaces\IBrowserSiteUtil.cs" />
+    <Compile Include="Sites\Interfaces\IBrowserVersionEmulation.cs" />
     <Compile Include="Sites\Interfaces\IChoice.cs" />
     <Compile Include="IFavoritesDatabase.cs" />
     <Compile Include="Sites\Interfaces\IFilter.cs" />
@@ -1101,4 +1104,7 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\Build\Version.targets" />
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)NuGetPackage\Content\" />
+  </Target>
 </Project>

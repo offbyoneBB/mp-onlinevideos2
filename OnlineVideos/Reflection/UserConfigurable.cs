@@ -158,7 +158,29 @@ namespace OnlineVideos
                         }
                         else
                         {
-                            field.SetValue(this, Convert.ChangeType(value, field.FieldType));
+                            try
+                            {
+                                field.SetValue(this, Convert.ChangeType(value, field.FieldType));
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Warn("{0} - could not set User Configuration Value: {1}. Trying method with constructor. Error: {2}", ToString(), field.Name, ex.Message);
+
+                                try
+                                {
+                                    System.Diagnostics.Debugger.Launch();
+
+                                    ConstructorInfo constructor = field.FieldType.GetConstructor(new Type[] { typeof(String) });
+                                    if (constructor != null)
+                                    {
+                                        field.SetValue(this, constructor.Invoke(new Object[] { value }));
+                                    }
+                                }
+                                catch (Exception ex2)
+                                {
+                                    Log.Warn("{0} - could not set User Configuration Value: {1} with creating object. Error: {2}", ToString(), field.Name, ex2.Message);
+                                }
+                            }
                         }
                     }
                 }

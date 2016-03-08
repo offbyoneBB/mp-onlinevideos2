@@ -1,26 +1,22 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
-using System.Web;
-using System.Net;
-using System.Xml;
-using System.Text.RegularExpressions;
-using System.Collections;
-using System.ComponentModel;
-using System.Security.Cryptography;
-using System.Text;
-using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
     public class PluzzUtil : GenericSiteUtil
     {
-        
-        string channelCatalog = "http://pluzz.webservices.francetelevisions.fr/pluzz/liste/type/replay/nb/100/chaine/%chaine%/";
-        string showInfo       = "http://webservices.francetelevisions.fr/tools/getInfosOeuvre/v2/?idDiffusion=%s&catalogue=Pluzz";
-        string imgURL = "http://refonte.webservices.francetelevisions.fr/";
+        #region Fields
 
+        private string channelCatalog = "http://pluzz.webservices.francetelevisions.fr/pluzz/liste/type/replay/nb/100/chaine/%chaine%/";
+        private string imgURL = "http://refonte.webservices.francetelevisions.fr/";
+        private string showInfo = "http://webservices.francetelevisions.fr/tools/getInfosOeuvre/v2/?idDiffusion=%s&catalogue=Pluzz";
+
+        #endregion Fields
+
+        #region Methods
 
         public override int DiscoverDynamicCategories()
         {
@@ -104,7 +100,6 @@ namespace OnlineVideos.Sites
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
 
-            
             cat = new RssLink();
             cat.Url = "http://pluzz.webservices.francetelevisions.fr/pluzz/liste/type/replay/nb/100/rubrique/info/";
             cat.Name = "Info";
@@ -118,7 +113,7 @@ namespace OnlineVideos.Sites
             cat.Other = cat.Url;
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
-            
+
             cat = new RssLink();
             cat.Url = "http://pluzz.webservices.francetelevisions.fr/pluzz/liste/type/replay/nb/100/rubrique/magazine/";
             cat.Name = "Magazine";
@@ -126,18 +121,16 @@ namespace OnlineVideos.Sites
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
 
-
-        
             Settings.DynamicCategoriesDiscovered = true;
 
-        //http://pluzz.webservices.francetelevisions.fr/pluzz/liste/type/replay/nb/100/rubrique/jeunesse/
+            //http://pluzz.webservices.francetelevisions.fr/pluzz/liste/type/replay/nb/100/rubrique/jeunesse/
             return Settings.Categories.Count;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
             RssLink parent = parentCategory as RssLink;
-            if (parentCategory.Other.ToString () == "root") 
+            if (parentCategory.Other.ToString() == "root")
             {
                 parent.SubCategories = new List<Category>();
 
@@ -149,7 +142,7 @@ namespace OnlineVideos.Sites
                 parentCategory.SubCategories.Add(cat);
 
                 cat = new Category();
-                cat.Other = parent.Url  + "rubrique/documentaire/";
+                cat.Other = parent.Url + "rubrique/documentaire/";
                 cat.Name = "Documentaire";
                 cat.HasSubCategories = false;
                 parentCategory.SubCategories.Add(cat);
@@ -159,7 +152,6 @@ namespace OnlineVideos.Sites
                 cat.Name = "Série & Fiction";
                 cat.HasSubCategories = false;
                 parentCategory.SubCategories.Add(cat);
-
 
                 cat = new Category();
                 cat.Other = parent.Url + "rubrique/magazine/";
@@ -174,7 +166,7 @@ namespace OnlineVideos.Sites
                 cat.HasSubCategories = false;
                 Settings.Categories.Add(cat);
                 parentCategory.SubCategories.Add(cat);
-                
+
                 cat = new Category();
                 cat.Other = parent.Url + "rubrique/jeunesse/";
                 cat.Name = "Jeunesse";
@@ -200,13 +192,12 @@ namespace OnlineVideos.Sites
                 parentCategory.SubCategories.Add(cat);
             }
 
-
             return parentCategory.SubCategories.Count;
         }
 
         public override List<VideoInfo> GetVideos(Category category)
         {
-            string webData = GetWebData(category.Other.ToString() );
+            string webData = GetWebData(category.Other.ToString());
             if (string.IsNullOrEmpty(webData)) return new List<VideoInfo>();
             List<VideoInfo> tlist = GetVideo(webData);
             return tlist;
@@ -214,7 +205,7 @@ namespace OnlineVideos.Sites
 
         public override string GetVideoUrl(VideoInfo video)
         {
-            string moreinfo = GetWebData(showInfo.Replace("%s" ,video.Other.ToString()));
+            string moreinfo = GetWebData(showInfo.Replace("%s", video.Other.ToString()));
             JObject obj1 = JObject.Parse(moreinfo);
             JArray tarr = (JArray)obj1["videos"];
 
@@ -243,9 +234,9 @@ namespace OnlineVideos.Sites
             JObject obj = JObject.Parse(webData);
 
             JArray wbdata = (JArray)obj["reponse"]["emissions"];
-            foreach (JObject item in wbdata) 
+            foreach (JObject item in wbdata)
             {
-                try 
+                try
                 {
                     string siddiff = (string)item["id_diffusion"];
 
@@ -264,14 +255,14 @@ namespace OnlineVideos.Sites
                         Other = siddiff,
                         StartTime = (string)item["date_diffusion"],
                         Description = (string)item["accroche_programme"]
-                        
                     };
-                    tReturn.Add(nfo); 
+                    tReturn.Add(nfo);
                 }
                 catch { }
             }
             return tReturn;
         }
-   
+
+        #endregion Methods
     }
 }

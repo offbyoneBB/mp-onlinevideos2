@@ -711,25 +711,61 @@
     <Site name="TV4Play" util="TV4Play" agecheck="false" enabled="true" lang="sv">
       <Description>Videos from Swedish TV4 Play online offer. Log in for premium content.</Description>
     </Site>
-    <Site name="Kanal5Play" util="Kanal59Play" agecheck="false" enabled="true" lang="sv">
-      <Description>The free online play content from Swedish Kanal 5.</Description>
+    <Site name="Dplay.se" util="Dplay" agecheck="false" enabled="true" lang="sv">
+      <Description>Gratis och premiuminnehåll från Dplay.se. Dplay är en streamingtjänst som samlar det bästa innehållet från några av Sveriges – och världens – största tv-kanaler. Dplay erbjuder program från bland annat Kanal 5, Discovery Channel och Eurosport. Det betyder innehåll i världsklass i kategorier som underhållning, dokumentärer och sport. Alla svenska program visas gratis men för att se utländska serier, direktsänd sport eller livesända kanaler behöver du ett Premiumabonnemang.</Description>
       <Configuration>
-        <item key="apiBaseUrl"><![CDATA[http://www.kanal5play.se/api]]></item>
-        <item key="swfPlayer"><![CDATA[http://www.kanal5play.se/flash/K5StandardPlayer.swf]]></item>
+        <item key="baseUrl"><![CDATA[http://www.dplay.se/]]></item>
+        <item key="programUrl"><![CDATA[program/]]></item>
+        <item key="programCategoryName"><![CDATA[Program A-Ö]]></item>
+        <item key="sportUrl"><![CDATA[sport/]]></item>
+        <item key="sportCategoryName"><![CDATA[Sport]]></item>
+        <item key="channelUrl"><![CDATA[kanaler/]]></item>
+        <item key="channelCategoryName"><![CDATA[Kanaler]]></item>
+        <item key="secureUrl"><![CDATA[https://secure.dplay.se/]]></item>
+        <item key="realmCode"><![CDATA[DPLAYSE]]></item>
+        <item key="geoUrl"><![CDATA[http://geo.dplay.se/geo.js]]></item>
+        <item key="hardCodeGeo"><![CDATA[%7B%22countryCode%22%3A%22SE%22%7D]]></item>
+        <item key="cookieDomain"><![CDATA[.dplay.se]]></item>
+        <item key="srtSelector"><![CDATA[subtitles_sv_srt]]></item>
+        <item key="needsPremium"><![CDATA[false]]></item>
       </Configuration>
     </Site>
-    <Site name="Kanal9Play" util="Kanal59Play" agecheck="false" enabled="true" lang="sv">
-      <Description>The free online play content from Swedish Kanal 9.</Description>
+    <Site name="Dplay.dk" util="Dplay" agecheck="false" enabled="true" lang="da">
+      <Description>Dplay, gratis og premium-indhold. En streamingtjeneste fra Discovery Networks Denmark ApS. Dplay tilbyder et stort udvalg af indhold fra kanalerne: Kanal 4, Kanal 5, 6’eren, Canal 9, Eurosport, Eurosport DK, Discovery Channel, TLC og Animal Planet.</Description>
       <Configuration>
-        <item key="apiBaseUrl"><![CDATA[http://www.kanal9play.se/api]]></item>
-        <item key="swfPlayer"><![CDATA[http://www.kanal9play.se/flash/K9StandardPlayer.swf]]></item>
+        <item key="baseUrl"><![CDATA[http://www.dplay.dk/]]></item>
+        <item key="programUrl"><![CDATA[programmer/]]></item>
+        <item key="programCategoryName"><![CDATA[Programmer Alfabetisk]]></item>
+        <item key="sportUrl"><![CDATA[sport/]]></item>
+        <item key="sportCategoryName"><![CDATA[Sport]]></item>
+        <item key="channelUrl"><![CDATA[kanaler/]]></item>
+        <item key="channelCategoryName"><![CDATA[Kanaler]]></item>
+        <item key="secureUrl"><![CDATA[https://secure.dplay.dk/]]></item>
+        <item key="realmCode"><![CDATA[DPLAYDK]]></item>
+        <item key="geoUrl"><![CDATA[http://geo.dplay.dk/geo.js]]></item>
+        <item key="hardCodeGeo"><![CDATA[%7B%22countryCode%22%3A%22DK%22%7D]]></item>
+        <item key="cookieDomain"><![CDATA[.dplay.dk]]></item>
+        <item key="srtSelector"><![CDATA[subtitles_da_srt]]></item>
+        <item key="needsPremium"><![CDATA[false]]></item>
       </Configuration>
     </Site>
-    <Site name="Kanal11Play" util="Kanal59Play" agecheck="false" enabled="true" lang="sv">
-      <Description>The free online play content from Swedish Kanal 11.</Description>
+    <Site name="Dplay.no" util="Dplay" agecheck="false" enabled="true" lang="no">
+      <Description>Dplay er en abonnementsbasert underholdningstjeneste som gir deg tilgang til et stort utvalg av Discovery Networks Norways programmer på Internett. I tillegg får du tilgang til alle Discovery Networks Norways kanaler slik som TVNorge, FEM, MAX, VOX, Discovery Channel, TLC og Animal Planet.</Description>
       <Configuration>
-        <item key="apiBaseUrl"><![CDATA[http://www.kanal11play.se/api]]></item>
-        <item key="swfPlayer"><![CDATA[http://www.kanal11play.se/flash/K11StandardPlayer.swf]]></item>
+        <item key="baseUrl"><![CDATA[http://www.dplay.no/]]></item>
+        <item key="programUrl"><![CDATA[programmer/]]></item>
+        <item key="programCategoryName"><![CDATA[Programmer A-Å]]></item>
+        <item key="sportUrl"><![CDATA[sport/]]></item>
+        <item key="sportCategoryName"><![CDATA[Sport]]></item>
+        <item key="channelUrl"><![CDATA[kanaler/]]></item>
+        <item key="channelCategoryName"><![CDATA[Kanaler]]></item>
+        <item key="secureUrl"><![CDATA[https://secure.dplay.no/]]></item>
+        <item key="realmCode"><![CDATA[DPLAYNO]]></item>
+        <item key="geoUrl"><![CDATA[http://geo.dplay.no/geo.js]]></item>
+        <item key="hardCodeGeo"><![CDATA[%7B%22countryCode%22%3A%22NO%22%7D]]></item>
+        <item key="cookieDomain"><![CDATA[.dplay.no]]></item>
+        <item key="srtSelector"><![CDATA[subtitles_no_srt]]></item>
+        <item key="needsPremium"><![CDATA[true]]></item>
       </Configuration>
     </Site>
     <Site name="Viasat" util="Viasat" agecheck="false" enabled="true" lang="sv">
@@ -835,6 +871,9 @@
     <Site name="Yle Areena" util="Yle" agecheck="false" enabled="true" lang="fi">
       <Description>Yle Areena</Description>
     </Site>
+    <Site name="Katsomo.fi" util="KatsomoWeb" agecheck="false" enabled="true" lang="fi" player="Browser">
+      <Description>MTV Katsomo on netti-tv, joka tuo katseltavaksesi suosikkiohjelmiesi uusimmat jaksot ilmaiseksi heti samaan aikaan kuin ne näytetään televisiokanavalla. Voit katsella MTV3:n, Subin ja AVA:n ohjelmia silloin kuin sinulle parhaiten sopii, ajankohdasta riippumatta tietokoneelta, puhelimesta, tabletista, MediaPortalista ja Samsung Smart TV:stä.</Description>
+    </Site>
     <Site name="OnlineTV by on-tv.ru" util="OnTVRu" agecheck="false" enabled="true" lang="ru">
       <Categories>
         <Category xsi:type="RssLink" name="Top 50">http://on-tv.ru</Category>
@@ -855,13 +894,6 @@
         <item key="videoListRegEx"><![CDATA[<a\sclass="thumb"\shref="(?<VideoUrl>[^"]*)"[^<]*<img[^>]*>\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^<]*</a>\s*<[^<]*</a>\s*<div\sclass="description">\s*<h4><[^>]*>(?<Title>[^<]*)</a></h4>\s*]]></item>
         <item key="fileUrlRegEx"><![CDATA[<textarea\sid="clip-embed"\sreadonly="readonly"\sstyle="display:none;"><div><embed\ssrc="(?<m0>[^"]*)"]]></item>
         <item key="resolveHoster"><![CDATA[FromUrl]]></item>
-      </Configuration>
-    </Site>
-    <Site name="BigPondVideo" util="BigPondVideo" agecheck="false" enabled="true" lang="en">
-      <Description>Watch videos online with BigPond Video. For the very latest music, games, news, sports and travel videos, tune in to BigPond Video.</Description>
-      <Configuration>
-        <item key="dynamicCategoryUrlFormatString"><![CDATA[http://bigpondvideo.com/App/AmfPhp/gatewayJson.php?service=Player&serviceMethod=getClipListByTargetLevel&params={{"platformId":"1","siteId":"1","targetLevel":"{0}"}}&requestId=1]]></item>
-        <item key="baseUrl"><![CDATA[http://bigpondvideo.com/App/AmfPhp/gatewayJson.php?service=Player&serviceMethod=getWidgetSetting&params={"widgetId":"968","initOnLoad":true,"environment":"bptv","targetDiv":"widget","domainURL":"http://bigpondvideo.com/","uniqueUserId":"","playerVersion":"3"}&requestId=0]]></item>
       </Configuration>
     </Site>
     <Site name="CBC.ca" util="CBC" agecheck="false" enabled="true" lang="en">
@@ -1007,21 +1039,6 @@
         <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://getmedia.redefine.pl/action/2.0/vod/list/?login=common_user&passwdmd5=&ver=281&cuid=-8939960&category={0}]]></item>
       </Configuration>
     </Site>
-    <Site name="Katsomo" util="Katsomo" agecheck="false" enabled="true" lang="fi" player="Internal">
-      <Description>MTV3:n, Subin ja Avan sarjat sekä MTV3 MAX, Max Sport 1 ja Max Sport 2 urheilu Katsomossa - katso TV-ohjelmia silloin kun haluat!</Description>
-      <Configuration>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\sclass="program-link">\s*<li>(?<title>[^<]*)</li>\s*</a>]]></item>
-        <item key="baseUrl"><![CDATA[http://m.katsomo.fi/katsomo/]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\sclass="program">\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*>\s*<div\sclass="thumbnail-container">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*><div\sclass="age-rating-module">\s*<span\sclass="age-rating">\s*</span>\s*</div></div><div\sclass="program-info">\s*<p\sclass="program-name">(?<Title>[^<]*)</p>(?:\s*<p\sclass="timestamp">(?<Airdate>[^<]*)</p>)?]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<source\stype="video/mp4"\ssrc="(?<m0>[^"]*)"/>]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Uutiset">http://m.katsomo.fi/?treeId=33001</Category>
-        <Category xsi:type="RssLink" name="Urheilu">http://m.katsomo.fi/?treeId=33002</Category>
-        <Category xsi:type="RssLink" name="Lapset">http://m.katsomo.fi/?treeId=33003</Category>
-        <Category xsi:type="RssLink" name="Kaikki ohjelmat">http://m.katsomo.fi/katsomo/programs</Category>
-      </Categories>
-    </Site>
     <Site name="Khan Academy" util="KhanAcademy" agecheck="false" enabled="true" lang="en">
       <Description>Khan Academy is on a mission to provide a free world-class education to anyone anywhere. With over 2,600 videos covering everything from arithmetic to physics, finance, and history and 200 practice exercises, we're helping students learn whatever they want, whenever they want, at their own pace.</Description>
       <Configuration>
@@ -1060,7 +1077,7 @@
         <item key="videoListRegEx"><![CDATA[<tr>\s*<td>\s*<a\s*href="(?<VideoUrl>[^"]*)"\s*title="[^"]*">(?<Title>[^<]*)</a>\s*</td>\s*<td>(?<Airdate>[^<]*)</td>\s*</tr>]]></item>
         <item key="baseUrl"><![CDATA[https://kissanime.to/AnimeList]]></item>
         <item key="genresRegex"><![CDATA[<a\shref="(?<url>/Genre[^"]*)"\stitle="(?<description>[^"]*)">(?<title>[^<]*)</a><br\s*/>]]></item>
-        <item key="alphabetRegex"><![CDATA[(<a\shref="(?<url>\?[^"]*)">(?<title>[^<]*)</a>)|(<a\shref="(?<url>[^"]*)">(?<title>All)</a>)]]></item>
+        <item key="alphabetRegex"><![CDATA[(<a\s*href="(?<url>\?[^"]*)">(?<title>[^<]*)</a>)|(<a\s*href="(?<url>[^"]*)">(?<title>All)</a>)]]></item>
         <item key="fileUrlRegEx"><![CDATA[(?<=<select\sid="selectQuality">.*)<option\svalue="(?<m0>[^"]*)"\s*(?:selected)?>(?<n0>[^<]*)</option>]]></item>
       </Configuration>
       <Categories>
@@ -1081,6 +1098,34 @@
         <Category xsi:type="RssLink" name="Video">http://www.leagueoflegendsstreams.com/home/stream.php</Category>
       </Categories>
     </Site>
+    <Site name="liveLEAK" util="LiveLeak" agecheck="false" enabled="true" lang="en">
+      <Description>Redefining The Media</Description>
+      <Configuration>
+        <item key="videoListRegEx"><![CDATA[(?<!</ul>\s<!--<ul\sclass="item_list">.*)(?<=<ul\sclass="item_list">.*)<img\sclass="thumbnail_image"\ssrc="(?<ImageUrl>[^"]*)"\s(?:(?!<img\sclass=).)*<img\sclass=(?:(?!<div\sclass="item_info_column">).)*<div\sclass="item_info_column">\s*<h2><a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a></h2>(?:(?!Leaked:).)*Leaked:(?<Airdate>[^i]*)in (?:(?!<!--item_info).)*<!--item_info_column-->]]></item>
+        <item key="nextPageRegEx"><![CDATA[(?<!title="Go\sto\snext\spage".*)(?<=ul\sclass="pagenav".*)<li><a\shref='(?<url>[^']*)'\s><img\ssrc=[^\s]*\stitle="Go\sto\snext\spage"]]></item>
+        <item key="fileUrlRegEx"><![CDATA[(file:\s"(?<m0>[^"]*)")|(<iframe\swidth="[^"]*"\sheight="[^"]*"\ssrc="(?<m0>[^"]*)"[^>]*></iframe>)]]></item>
+        <item key="forceUTF8Encoding"><![CDATA[true]]></item>
+        <item key="searchUrl"><![CDATA[http://www.liveleak.com/browse?q={0}/]]></item>
+        <item key="baseUrl"><![CDATA[http://www.liveleak.com/]]></item>
+        <item key="resolveHoster"><![CDATA[FromUrl]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/u/u/ll2/logo.gif" desc="Featured Items" name="Home">http://www.liveleak.com/</Category>
+        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/u/u/ll2/logo.gif" desc="Newest Leaks" name="Recent Items">http://www.liveleak.com/browse</Category>
+        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/s/s/10/media10/2011/Apr/17/9c62d8706ec5_channel_thumbnail_1303021014.jpg?d5e8cc8eccfb6039332f41f6249e92b06c91b4db65f5e99818bad69e4c45dfd721dc&amp;ec_rate=300" desc="Liveleak's official News Channe" name="News &amp; Politics">http://www.liveleak.com/c/news</Category>
+        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/s/s/10/media10/2011/Apr/16/a23d0244223a_channel_thumbnail_1303021660.png?d5e8cc8eccfb6039332f41f6249e92b06c91b4db65f5e99818bad69e4c45dfd72fd5&amp;ec_rate=300" desc="Liveleak's official YourSay channel!" name="Yoursay">http://www.liveleak.com/c/yoursay</Category>
+        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/s/s/18/media18/2011/Apr/27/3ea46fc9f9ec_channel_thumbnail_1303919638.png?d5e8cc8eccfb6039332f41f6249e92b06c91b4db65f5e99818bad69e4c45dfd42ea7&amp;ec_rate=300" desc="This channel contains hand picked items that deserve your attention" name="Must See">http://www.liveleak.com/c/must_see</Category>
+        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/s/s/10/media10/2011/Apr/17/656ede5f1c3a_channel_thumbnail_1303022118.png?d5e8cc8eccfb6039332f41f6249e92b06c91b4db65f5e99818bad69e4c45dfd42ca3&amp;ec_rate=300" desc="Liveleak's official Iraq channel" name="Iraq">http://www.liveleak.com/c/iraq</Category>
+        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/s/s/10/media10/2011/Apr/17/3825dc2aafe2_channel_thumbnail_1303022168.png?d5e8cc8eccfb6039332f41f6249e92b06c91b4db65f5e99818bad69e4c45dfd42da1&amp;ec_rate=300" desc="Liveleak's official Afghanistan channel" name="Afghanistan">http://www.liveleak.com/c/afghanistan</Category>
+        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/u/u/thumbs/2011/Jun/29/d9f4bb4260bb_thumb_1.jpg" desc="The 2011 Libyan civil war is an ongoing armed conflict in the North African state of Libya being fought between those seeking to depose Muammar Gaddafi and hold democratic elections, and pro Gaddafi forces." name="2011 Libyan civil war">http://www.liveleak.com/c/2011_Libyan_civil_war</Category>
+        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/s/s/10/media10/2011/Apr/16/ef0d91aaa07f_channel_thumbnail_1303021678.png?d5e8cc8eccfb6039332f41f6249e92b06c91b4db65f5e99818bad69e4c45dfd42aab&amp;ec_rate=300" desc="Liveleak's official entertainment channel!" name="Entertainment">http://www.liveleak.com/c/entertainment</Category>
+        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/s/s/10/media10/2011/Apr/16/f03bcd1854e0_channel_thumbnail_1303021680.png?d5e8cc8eccfb6039332f41f6249e92b06c91b4db65f5e99818bad69e4c45dfd428a6&amp;ec_rate=300" desc="Liveleak's official Liveleaks channel!" name="LiveLeaks">http://www.liveleak.com/c/liveleaks</Category>
+        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/u/u/ll2/logo.gif" desc="Today's top items based on number of views" name="Top Items (Today)">http://www.liveleak.com/browse?rank_by=day</Category>
+        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/u/u/ll2/logo.gif" desc="This week's items based on number of views" name="Top Items (This Week)">http://www.liveleak.com/browse?rank_by=week</Category>
+        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/u/u/ll2/logo.gif" desc="This month's top items based on number of views" name="Top Items (This Month)">http://www.liveleak.com/browse?rank_by=month</Category>
+        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/u/u/ll2/logo.gif" desc="Top items ever based on number of views" name="Top Items (All time)">http://www.liveleak.com/browse?rank_by=all_time</Category>
+      </Categories>
+    </Site>
     <Site name="LuckyTV" util="GenericSite" agecheck="false" enabled="true" lang="nl">
       <Description>LuckyTV. Uw dagelijkse mediarevolte na De Wereld Draait Door. Bekijk hier de laatste Lucky of bezoek het ontzagwekkende LuckyTV videoarchief:  honderden filmpjes uit DWDD, De Staat van Verwarring, Vara Laat, Jensen en meer. LuckyTV. Wir leben Fernsehen.</Description>
       <Configuration>
@@ -1099,17 +1144,6 @@
         <Category xsi:type="RssLink" name="Jensen" thumb="http://www.luckymedia.nl/luckytv/wp-content/themes/luckytv/timthumb.php?src=http://www.luckymedia.nl/luckytv/wp-content/uploads/jensen.jpg&amp;w=400&amp;h=226&amp;zc=1&amp;q=90">http://www.luckymedia.nl/luckytv/category/jensen/</Category>
         <Category xsi:type="RssLink" name="Joezny" thumb="http://www.luckymedia.nl/luckytv/wp-content/themes/luckytv/timthumb.php?src=http://www.luckymedia.nl/luckytv/wp-content/uploads/joezjny.jpg&amp;w=400&amp;h=226&amp;zc=1&amp;q=90">http://www.luckymedia.nl/luckytv/category/joezjny/</Category>
       </Categories>
-    </Site>
-    <Site name="MuzuTV" util="MuzuTV" agecheck="false" enabled="true" lang="en">
-      <Description>Watch official music videos, documentaries, TV shows, interviews, behind the scenes, tutorials and loads of exclusive and rare footage.</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.muzu.tv/]]></item>
-        <item key="videoListRegEx"><![CDATA[(?#videos of new releases)(<li\sclass="[^"]*"\s(?:data-type="videos"\s)?data-id="(?<VideoUrl>[^"]*)">\s*<a[^>]*>\s*<img\salt="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"/>\s*<div\sclass="[^"]*">\s*<div\sclass="[^"]*">(?<Description>[^<]*)</div>\s*<div\sclass="[^"]*">(?<Title>[^<]*)</div>\s*<div\sclass="[^"]*">(?<Airdate>[^<]*)</div>\s*</div>\s*</a>\s*</li>)|
-        (?#videos of one playlist)(<li\sid="[^"]*"\sclass="allowedPlay\splaylistQItem"\sdata-id="(?<VideoUrl>[^"]*)">\s*<a\shref="\#"\sclass="itemImage"><img\salt="[^"]*"\s*src="(?<ImageUrl>[^"]*)"\swidth="[^"]*"></a>\s*<div\sclass="removeVideo"><a[^>]*></a></div>\s*<div\sclass="jukebox-track-name">\s*<h2><span\sclass="trackNumber"></span>(?<Title>[^<]*)</h2>\s*<span\sclass="artistTitle">(?<Description>[^<]*)</span>\s*</div>\s*</li>)]]></item>
-        <item key="videoListRegExFormatString"><![CDATA[http://player.muzu.tv/player/requestVideo?viewhash=ur4uJCOszp6vEJnIEXLUmxWMo&ai={0}]]></item>
-        <item key="nextPageRegEx"><![CDATA[<li\sid="next">\s*<a\shref="(?<url>[^"]*)">Next</a>\s*</li>]]></item>
-        <item key="forceUTF8Encoding"><![CDATA[True]]></item>
-      </Configuration>
     </Site>
     <Site name="Nickelodeon.nl" util="NickelodeonNL" agecheck="false" enabled="true" lang="nl">
       <Description>Nickelodeon.nl is de leukste website voor kinderen met veel online videos van Spongebob, Dora, Big Time Rush en Pinguins van Madagascar.</Description>
@@ -1144,7 +1178,7 @@
     <Site name="Nos" util="GenericSite" agecheck="false" enabled="true" lang="nl">
       <Description>Nieuws, Sport en Evenementen op Radio, TV en Internet</Description>
       <Configuration>
-        <item key="videoListRegEx"><![CDATA[(<li\sclass="list-featured__item\s"><a\shref="(?<VideoUrl>[^"]*)"\s*class="link-block"><figure\sclass="list-featured__img"><img\s*src="(?<ImageUrl>[^"]*)"\s*alt=""\s*class="media-full"\s*/><span\sclass="img-icon-play\sbadge--larger\spos-bl\sshow-from--tablet-small"></span></figure><div\sclass="list-featured__wrap"><span\sclass="list-featured__title\slink-hover">(?<Title>[^<]*)</span><div\sclass="list-featured__meta\smeta"><span\sclass="icon-time\sico-space-right"></span><time\sdatetime="[^"]*">(?<Airdate>[^<]*)</time></div></div></a></li>)(?#videos nieuws_sport)|(<li\sclass="broadcast-player__playlist__item"><a\shref="(?<VideoUrl>[^"]*)"\sclass="link-hover\sbroadcast-link\s*"><span\sclass="broadcast-link__play\simg-icon-play"></span><span\sclass="broadcast-link__name\s">(?<Title>[^<]*)</span><time\sclass="broadcast-link__date"\sdatetime="(?<Airdate>[^"]*)"><span\sclass="broadcast-link__icon\sicon-time\sico-space-right"></span>(?<Time>[^<]*)</time></a></li>)(?#videos uitzendingen)]]></item>
+        <item key="videoListRegEx"><![CDATA[(<li\sclass="list-featured__item\s"><a\shref="(?<VideoUrl>[^"]*)"\s*class="link-block"><figure\sclass="list-featured__img"><img\s*src="(?<ImageUrl>[^"]*)"\s*alt=""\s*class="media-full"\s*/><span\sclass="img-icon-play\sbadge--larger\spos-bl\sshow-from--tablet-small"></span></figure><div\sclass="list-featured__wrap"><span\sclass="list-featured__title\slink-hover">(?<Title>[^<]*)</span><div\sclass="list-featured__meta\smeta"><span\sclass="icon-time\sico-space-right"></span><time\sdatetime="[^"]*">(?<Airdate>[^<]*)</time></div></div></a></li>)(?#videos nieuws_sport)|(<li\sclass="broadcast-player__playlist__item"><a\shref="(?<VideoUrl>[^"]*)"\sclass="link-hover\sbroadcast-link\s*"\s*><span\sclass="broadcast-link__play\simg-icon-play"></span><span\sclass="broadcast-link__name\s">(?<Title>[^<]*)</span><time\sclass="broadcast-link__date"\sdatetime="(?<Airdate>[^"]*)"><span\sclass="broadcast-link__icon\sicon-time\sico-space-right"></span>(?<Time>[^<]*)</time></a></li>)(?#videos uitzendingen)]]></item>
         <item key="fileUrlRegEx"><![CDATA[<source\ssrc="(?<m0>[^"]*)"\stype="[^"]*"\sdata-label="(?<n0>[^"]*)"\s*/>]]></item>
         <item key="baseUrl"><![CDATA[http://nos.nl]]></item>
       </Configuration>
@@ -1183,6 +1217,26 @@
         </Category>
       </Categories>
     </Site>
+    <Site name="NPO Livestreams" util="NPOLive" agecheck="false" enabled="true" lang="nl">
+      <Description>Livestreams van de NPO</Description>
+      <Categories>
+        <Category xsi:type="Group" name="Live">
+          <Channels>
+            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/263/logo/regular_logo-npo1.png" name="Nederland 1">http://livestreams.omroep.nl/live/npo/tvlive/ned1/ned1.isml/ned1.m3u8</Channel>
+            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/264/logo/regular_logo-npo2.png" name="Nederland 2">http://livestreams.omroep.nl/live/npo/tvlive/ned2/ned2.isml/ned2.m3u8</Channel>
+            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/265/logo/regular_npo3-logo.png" name="Nederland 3">http://livestreams.omroep.nl/live/npo/tvlive/ned3/ned3.isml/ned3.m3u8</Channel>
+            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/279/logo/regular_logonieuws.png" name="NPO Nieuws">http://livestreams.omroep.nl/live/npo/thematv/journaal24/journaal24.isml/journaal24.m3u8</Channel>
+            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/280/logo/regular_logocultura.png" name="NPO Cultura">http://livestreams.omroep.nl/live/npo/thematv/cultura24/cultura24.isml/cultura24.m3u8</Channel>
+            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/281/logo/regular_logo-101.png" name="NPO 101">http://livestreams.omroep.nl/live/npo/thematv/101tv/101tv.isml/101tv.m3u8</Channel>
+            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/282/logo/regular_logopolitiek.png" name="NPO Politiek">http://livestreams.omroep.nl/live/npo/thematv/politiek24/politiek24.isml/politiek24.m3u8</Channel>
+            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/283/logo/regular_logobest.png" name="NPO Best">http://livestreams.omroep.nl/live/npo/thematv/best24/best24.isml/best24.m3u8</Channel>
+            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/284/logo/regular_logodoc.png" name="NPO Doc">http://livestreams.omroep.nl/live/npo/thematv/hollanddoc24/hollanddoc24.isml/hollanddoc24.m3u8</Channel>
+            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/288/logo/regular_logozappxtra.png" name="NPO Zapp Xtra">http://livestreams.omroep.nl/live/npo/thematv/zappelin24/zappelin24.isml/zappelin24.m3u8</Channel>
+            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/290/logo/regular_logohumor.png" name="NPO Humor tv">http://livestreams.omroep.nl/live/npo/thematv/humor24/humor24.isml/humor24.m3u8</Channel>
+          </Channels>
+        </Category>
+      </Categories>
+    </Site>
     <Site name="Power Unlimited" util="PowerUnlimited" agecheck="false" enabled="true" lang="nl">
       <Description>Power Unlimited | PU TV, nieuws, reviews en previews van games voor de PC, Xbox360, PlayStation 3, PlayStation Vita, 3DS en Wii U.</Description>
       <Configuration>
@@ -1200,20 +1254,9 @@
     <Site name="Red Bull TV" util="RedBull" agecheck="false" enabled="true" lang="en">
       <Description>Red Bull TV - Watch sports, music and entertainment TV online. Free.</Description>
       <Configuration>
-        <item key="videoListRegExLive"><![CDATA[<tr\sclass="[^"]*">\s*<td\sclass="status"><span[^>]*>@Cat@</span></td>\s*<td\sclass="date"><span\sclass="localtime-date-only-med">(?<Airdate1>[^<]*)</span></td>\s*<td\sclass="time"><span\sclass="localtime-time-only">(?<Airdate>[^<]*)</span>\s-\s<span\sclass="localtime-time-only\stz-abbr">(?<AirdateEnd>[^<]*)</span></td>\s*<td\sclass="program">\s*<h3><a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)<span>(?<Title2>[^<]*)</span></a></h3>\s*</td>\s*<td\sclass="description">(?<Description>[^<]*)<]]></item>
-        <item key="fileUrlRegExLive"><![CDATA[data-player-key="(?<playerKey>[^"]*)"\sdata-player-id="(?<contentId>[^"]*)">]]></item>
-        <item key="hashValueLive"><![CDATA[da46116ed5e11a378272c1baab78c5d3d57eb895]]></item>
-        <item key="requestUrlLive"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerKey=AQ~~,AAAApYJ7UqE~,xqr_zXk0I-zzNndy8NlHogrCb5QdyZRf]]></item>
         <item key="baseUrl"><![CDATA[http://www.redbull.tv/]]></item>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass='navigation__item'>\s*<img\salt="[^"]*"\sclass="channel-image"\ssrc="(?<thumb>[^"]*)"\s/>\s*<a\sclass="[^"]*"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>]]></item>
-        <item key="dynamicSubCategoriesSportsRegEx"><![CDATA[<li\sclass='navigation__sub-item\sswiper-slide'>\s*<a\sclass="[^"]*"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>\s*</li>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[(<div\sclass='grid__unit'>\s*<article\sclass='teaser\steaser--show\saspect-ratio\saspect-ratio--2x3'>\s*<a\sclass="aspect-ratio__inner"\shref="(?<url>[^"]*)"\stitle="(?<title>[^"]*)"><div\sclass="responsive-image\s"><picture\sclass="[^"]*"\sdata-id="[^"]*"><source\sclass="[^"]*"\s(?:(?:media="[^"]*"\s)|(?:data-))srcset="(?<thumb>[^"]*)")|((?#for live)<a\sclass="button\sbutton--primary"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>)]]></item>
-        <item key="dynamicSubCategoriesNextPageRegEx"><![CDATA[href="(?<url>[^"]*)">More\sshows</a>]]></item>
-        <item key="videoListRegEx"><![CDATA[(<a\sclass="teaser__link"\shref="(?<VideoUrl>[^"]*)"><div\sclass='teaser__image'>\s*<div\sclass='aspect-ratio\saspect-ratio[^']*'>\s*<div\sclass="responsive-image\saspect-ratio__inner"><picture\sclass="[^"]*"\sdata-id="[^"]*"><source\sclass="[^"]*"\s(?:(?:media="[^"]*"\s)|(?:data-))srcset="(?<ImageUrl>[^"]*)"[^>]*>(?:<source[^>]*>)*<img[^>]*></picture>(?:</div>\s*)*<span\sclass='teaser__label\scategory-label\scategory-label[^']*'>[^<]*</span>\s*<div\sclass='teaser__overlay'>\s*<h2\sclass='h3\steaser__title\steaser__title--popup'>(?<Title>[^<]*)</h2>\s*<h3\sclass='h4\steaser__subtitle'>[^<]*</h3>\s*<p\sclass='teaser__description\steaser__description--popup\stext--small'>(?<Description>[^<]*)</p>\s*</div>)
-        |
-        ((?#for live_replays)
-        <a\sclass="teaser__link"\shref="(?<VideoUrl>[^"]*)"><div\sclass='teaser__image'>\s*<div\sclass='aspect-ratio\saspect-ratio[^']*'>\s*<div\sclass="responsive-image\saspect-ratio__inner"><picture\sclass="[^"]*"\sdata-id="[^"]*"><source\sclass="[^"]*"\s(?:(?:media="[^"]*"\s)|(?:data-))srcset="(?<ImageUrl>[^"]*)"[^>]*>(?:<source[^>]*>)*<img[^>]*></picture>(?:</div>\s*)*(?:<span\sclass='teaser__label\scategory-label\scategory-label[^']*'>[^<]*</span>)?\s*<div\sclass='teaser__overlay\steaser__overlay--event'>\s*<div\sclass='teaser__meta\steaser__meta--dimmed\steaser__meta--event'>\s*<div\sclass='vcenter\svcenter--hcenter'>\s*<div\sclass='vcenter__wrap'>\s*<div\sclass='vcenter__inner'>\s*<div\sclass='date-mark'>\s*<div\sclass='date-mark__inner'>\s*<span\sclass='date-mark__data\sdate-mark__month'>(?<Month>[^<]*)</span>\s*<span\sclass='date-mark__data\sdate-mark__date'>(?<Date>[^<]*)</span>\s*</div>\s*</div>\s*</div>\s*</div>\s*</div>\s*</div>\s*<h2\sclass='h3\steaser__title\steaser__title--popup'>(?<Title>[^<]*)</h2>\s*<h3\sclass='h4\steaser__subtitle'>(?<Description>[^<]*)</h3>\s*</div>)]]></item>
-        <item key="nextPageRegEx"><![CDATA[(href="(?<url>[^"]*)">More\svideos</a>)|((?#for live)data-show-more-container="\.grid\.past-events"\sdata-show-more="true"\shref="(?<url>[^"]*)">More\sevents</a>)]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass='navigation__item'>\s*<img\sclass="channel-image"\salt="[^"]*"\ssrc="(?<thumb>[^"]*)"\s/>\s*<a\sclass="[^"]*"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li\sclass='navigation__sub-item\sswiper-slide'>\s*<a\sclass="[^"]*"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>\s*</li>]]></item>
         <item key="fileUrlRegEx"><![CDATA[videoPlayer=(?<contentRefId>[^"]*)"]]></item>
         <item key="hashValue"><![CDATA[63cfaa5119fd8e383eadf26f1118f24d87251f76]]></item>
         <item key="requestType"><![CDATA[ViewerExperienceRequest]]></item>
@@ -1273,7 +1316,9 @@
       <Categories>
         <Category xsi:type="RssLink" name="Ohjelmat">http://www.ruutu.fi/ohjelmat</Category>
         <Category xsi:type="RssLink" name="Urheilu">http://www.ruutu.fi/urheilu</Category>
+        <Category xsi:type="RssLink" name="Uutiset">http://www.ruutu.fi/ohjelmat/uutiset</Category>
         <Category xsi:type="RssLink" name="Lapset">http://www.ruutu.fi/lapset</Category>
+        <Category xsi:type="RssLink" name="Kaikki ohjelmat">http://www.ruutu.fi/ohjelmat/kaikki</Category>
       </Categories>
     </Site>
     <Site name="SBS.au" util="SBSau" agecheck="false" enabled="true" lang="en">
@@ -1297,6 +1342,16 @@
         <item key="baseUrl"><![CDATA[http://www.telegraaf.nl/tv/]]></item>
         <item key="forceUTF8Encoding"><![CDATA[True]]></item>
       </Configuration>
+    </Site>
+    <Site name="Telewizjada" util="Telewizjada" agecheck="false" enabled="true" lang="pl">
+      <Description>Telewizja na żywo</Description>
+      <Configuration>
+        <item key="videoListRegEx"><![CDATA[{"id":5,"priority":4,"name":"2014tvtvn","displayName":"(?<Title>[^"]*)","description":"(?<Description>[^"]*)","categoryID":1,"url":"(?<VideoUrl>[^"]*)","multibitrate":0,"project":"tw","thumb":"\\/media\\/stream\\/img\\/tvn\.png","embeddedThumb":"\\/media\\/stream\\/img\\/tvn_thumb\.png","bigThumb":"(?<ImageUrl>[^"]*)","date":"2016-01-02\s10:00:57","enabled":1,"epgUrl":"http:\\/\\/www\.telemagazyn\.pl\\/rss\\/24,stacja,st,krss\.xml","online":1,"isAdult":0,"viewcount":0,"publisher":""}]]></item>
+        <item key="baseUrl"><![CDATA[http://www.telewizjada.net/]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="videos">http://www.telewizjada.net/get_channels.php</Category>
+      </Categories>
     </Site>
     <Site name="ToonsTv" util="ToonsTv" agecheck="false" enabled="true" lang="en">
       <Description>ToonsTV - The Home of Angry Birds Toons and Much More!</Description>
@@ -1351,7 +1406,7 @@
         |
         (<div\sclass='image-container'>\s*<a\shref="(?<VideoUrl>[^"]*)"><img\salt="[^"]*"\sclass="program-image"\sdata-images="[^"]*"\sdata-toggle="image-skimmer"\ssrc="(?<ImageUrl>[^"]*)"\s/>\s*<div\sclass="overlay-icon"><span\sclass="npo-glyph\scamera"></span>(?<Duration>[^<]*)</div>\s*</a></div>\s*<div\sclass='description'>(?<Description>[^<]*)<h4[^>]*>\s*<a[^>]*><div\sclass='default-title'>(?<Title>[^<]*)<span[^>]*>[^<]*</span>\s*</div>\s*<div\sclass='contextual-title'>[^<]*</div>\s*</a></h4>\s*<h5>(?<Airdate>[^<]*)</h5>)(?#videos of recent)
         |
-        (<div\sclass='image-container'>\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*><img\salt="[^"]*"\sclass="preview\sprogram-image"\s((data-images="[^"]*"\sdata-toggle="image-skimmer"\ssrc="(?<ImageUrl>[^"]*)")|(src="[^"]*"))\s/>\s*<div\sclass="overlay-icon"><span\sclass="npo-glyph\scamera"></span>(?<Duration>[^<]*)</div>\s*</a></div>\s*</div>\s*<div\sclass='span8'>\s*<a[^>]*><h4>(?<Title>[^<]*)<span\sclass='inactive'>[^<]*</span>\s*<span\sclass='av-icon'>\s*</span>\s*</h4>\s*<h5>(?<Airdate>[^<]*?)(?:&\#8226;(?<Duration>[^<]*))?</h5>\s*<p\sclass='without-title\svisible-for-desktop'>(?<Description>[^<]*)</p>\s*</a></div>)(?#videos of op datum)
+        (<div\sclass='image-container'>\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*><img\salt="[^"]*"\sclass="program-image"\s((data-images="[^"]*"\sdata-toggle="image-skimmer"\ssrc="(?<ImageUrl>[^"]*)")|(src="[^"]*"))\s/>\s*<div\sclass="overlay-icon"><span\sclass="npo-glyph\scamera"></span>(?<Duration>[^<]*)</div>\s*</a></div>\s*</div>\s*<div\sclass='span8'>\s*<a[^>]*><h4>(?<Title>[^<]*)<span\sclass='inactive'>[^<]*</span>\s*<span\sclass='av-icon'>\s*</span>\s*</h4>\s*<h5>(?<Airdate>[^<]*?)(?:&\#8226;(?<Duration>[^<]*))?</h5>\s*<p\sclass='without-title\svisible-for-desktop'>(?<Description>[^<]*)</p>\s*</a></div>)(?#videos of op datum)
         ]]></item>
         <item key="searchUrl"><![CDATA[http://www.npo.nl/zoeken?utf8=%E2%9C%93&commit=Zoeken&q={0}]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<div\sclass='image-container'>\s*<a\shref="(?<url>[^"]*)"><img\salt="[^"]*"\sclass="show-image"\ssrc="(?<thumb>[^"]*)"\s/>\s*</a></div>\s*</div>\s*<div\sclass='span8'>\s*<a[^>]*><h4>(?<title>[^<]*)<span\sclass='inactive[^>]*>[^<]*</span>\s*<span\sclass='av-icon'></span>\s*</h4>\s*<h5><span\sclass="inactive">[^<]*</span>\s<a[^>]*>[^<]*</a></h5>\s*<p\sclass='without-title\svisible-for-desktop'>(?:<span>)?(?<description>[^<]*)<]]></item>
@@ -1375,8 +1430,8 @@
       <Configuration>
         <item key="baseUrl"><![CDATA[http://vod.tvp.pl/]]></item>
         <item key="videoListRegExFormatString"><![CDATA[http://www.tvp.pl/shared/cdn/tokenizer_v2.php?object_id={0}&sdt_version=sdt-v2]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li>\s*<a\shref="(?<url>/serwisy-informacyjne/[^"]*)">(?<title>[^<]*)</a>\s*</li>]]></item>
-        <item key="videoListRegEx"><![CDATA[<li>\s*<strong><a\shref="[^"]*?(?<VideoUrl>[\d]+)">(?<Title>[^<]*)</a></strong>\s*<span><a\shref="[^"]*">(?<Airdate>[^<]*)</a></span>\s*</li>]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<!browse\sdisabled.*)(?<=Informacje\si\spublicystyka.*)<li>\s*<a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>\s*</li>]]></item>
+        <item key="videoListRegEx"><![CDATA[<li>\s*<strong><a\sclass="ui-link"\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a></strong>\s*<span><a\sclass="ui-link"\shref="[^"]*">(?<Airdate>[^<]*)</a></span>]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Serwisy Informacyjne">http://vod.tvp.pl/</Category>
@@ -1737,13 +1792,13 @@
 			  <item key="webAutomationType"><![CDATA[_4oD]]></item>
 		  </Configuration>
 	  </Site>
-	  <Site name="Amazon Prime Uk" util="WebAutomationSite" agecheck="false" enabled="true" player="Browser" lang="en">
+	  <Site name="Amazon Prime Uk" util="AmazonPrimeSite" agecheck="false" enabled="true" player="Browser" lang="en">
 		  <Description>Amazon Prime allows unlimited streaming of 15,000 titles!  Requires a user name/password.</Description>
 		  <Configuration>
 			  <item key="webAutomationType"><![CDATA[AmazonPrime]]></item>
 		  </Configuration>
 	  </Site>
-	  <Site name="Amazon Prime De" util="WebAutomationSite" agecheck="false" enabled="true" lang="de">
+	  <Site name="Amazon Prime De" util="AmazonPrimeSite" agecheck="false" enabled="true" lang="de">
 		  <Description>Amazon Prime allows unlimited streaming of 15,000 titles!  Requires a user name/password.</Description>
 		  <Configuration>
 			  <item key="webAutomationType"><![CDATA[AmazonPrimeDe]]></item>

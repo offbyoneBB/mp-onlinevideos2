@@ -1,0 +1,59 @@
+﻿<Window x:Class="Standalone.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:cfg="clr-namespace:Standalone.Configuration"
+        Title="Settings" WindowStartupLocation="Manual" ShowInTaskbar="False"
+        Background="{StaticResource TransparentBackgroundColor}" 
+        AllowsTransparency="True" Margin="10" BorderThickness="2" BorderBrush="Black" Width="400" Height="300"
+        WindowStyle="None" ResizeMode="NoResize" FontSize="14" KeyDown="HandleKeyDown">
+
+    <Window.CommandBindings>
+        <CommandBinding Command="Close" Executed="CloseCommandHandler"/>
+    </Window.CommandBindings>
+    
+    <DockPanel LastChildFill="True">
+        <Label DockPanel.Dock="Top" x:Name="lblHeading" Content="OnlineVideos Settings" FontWeight="Bold" HorizontalAlignment="Center" />
+        <Button DockPanel.Dock="Bottom" Command="Close" Width="80" Height="30" HorizontalAlignment="Right" Content="OK" Margin="0 5 5 5"/>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <GroupBox Margin="10 0 10 0" Padding="5">
+                <GroupBox.Header>
+                    <TextBlock Text="Startup" FontWeight="Bold"/>
+                </GroupBox.Header>
+                <StackPanel>
+                    <WrapPanel Margin="5">
+                        <TextBlock Width="150" Text="Maximize Window" />
+                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding Source={x:Static cfg:Settings.Instance}, Path=StartMaximized}" />
+                    </WrapPanel>
+                    <WrapPanel Margin="5">
+                        <TextBlock Width="150" Text="{Binding Converter={StaticResource TranslationConverter}, ConverterParameter='AutomaticUpdate'}"/>
+                        <CheckBox VerticalAlignment="Center" IsThreeState="True" IsChecked="{Binding Source={x:Static cfg:Settings.Instance}, Path=AutomaticUpdate}" />
+                    </WrapPanel>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Margin="10 0 10 0" Padding="5">
+                <GroupBox.Header>
+                    <TextBlock Text="Theme" FontWeight="Bold"/>
+                </GroupBox.Header>
+                <StackPanel>
+                    <WrapPanel Margin="5">
+                        <TextBlock Width="150" Text="Item Size" />
+                        <Slider Width="170" Minimum="0.5" Maximum="3.0" TickFrequency="0.1" TickPlacement="BottomRight" Value="{Binding Source={x:Static cfg:Settings.Instance}, Path=ItemsZoom}"/>
+                    </WrapPanel>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Margin="10 0 10 0" Padding="5">
+                <GroupBox.Header>
+                    <TextBlock Text="Playback" FontWeight="Bold"/>
+                </GroupBox.Header>
+                <StackPanel>
+                    <WrapPanel Margin="5">
+                        <TextBlock Width="150" Text="Stay on Top" />
+                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding Source={x:Static cfg:Settings.Instance}, Path=StayOnTopPlayingFullscreen}" />
+                    </WrapPanel>                    
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

@@ -16,9 +16,11 @@ namespace OnlineVideos.Sites
     {
       base.Initialize(siteSettings);
     }
+
     public override List<VideoInfo> GetVideos(Category category)
     {
-      var url = ((RssLink)category).Url;
+      var url = ((RssLink) category).Url;
+      nextPageUrl = string.Empty;
       return GetVideoList(url);
     }
 
@@ -36,11 +38,11 @@ namespace OnlineVideos.Sites
           while (m.Success)
           {
             var videoInfo = CreateVideoInfo();
+            videoInfo.Title = string.Format("{0} - {1}", m.Groups["Title"].Value.Replace("&acirc;", "'"), m.Groups["Title2"].Value.Replace("&acirc;", "'"));
             videoInfo.VideoUrl = string.Format("http://www.gametrailers.com{0}", m.Groups["VideoUrl"].Value);
             videoInfo.Thumb = m.Groups["ImageUrl"].Value;
-            videoInfo.Airdate = m.Groups["Airdate"].Value.Replace(":00+00:00", string.Empty).Replace("T"," ");
+            videoInfo.Airdate = m.Groups["Airdate"].Value.Replace(":00+00:00", string.Empty).Replace("+00:00", string.Empty).Replace("T", " ");
             videoInfo.Description = m.Groups["Description"].Value.Replace("&acirc;", "'");
-            videoInfo.Title = string.Format("{0} - {1}", m.Groups["Title"].Value.Replace("&acirc;", "'"), videoInfo.Description);
 
             videoList.Add(videoInfo);
             m = m.NextMatch();
@@ -56,17 +58,41 @@ namespace OnlineVideos.Sites
           try
           {
             // Check for next page link
+            // Workaround as GT no longer reliably lists page navivation counts
             var mNext = regEx_NextPage.Match(data);
             if (mNext.Success)
             {
-              Log.Debug("PAGE URL: " + mNext.Groups["url"].Value);
-              Log.Debug("VIDEO URL: "+ url);
-              nextPageAvailable = true;
-              nextPageUrl = mNext.Groups["url"].Value;
-              if (!string.IsNullOrEmpty(nextPageRegExUrlFormatString))
-                nextPageUrl = string.Format(nextPageRegExUrlFormatString, nextPageUrl);
-              nextPageUrl = ApplyUrlDecoding(nextPageUrl, nextPageRegExUrlDecoding);
-              nextPageUrl = string.Format("{0}&page={1}", url, nextPageUrl);
+              if (string.IsNullOrEmpty(nextPageUrl))
+              {
+                nextPageAvailable = true;
+
+                var uriBuilder = new UriBuilder(url);
+                var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+                query["page"] = "1";
+                uriBuilder.Query = query.ToString();
+                nextPageUrl = ApplyUrlDecoding(uriBuilder.ToString(), nextPageRegExUrlDecoding);
+              }
+              else
+              {
+                Uri myUri = new Uri(nextPageUrl);
+                string strPageCount = HttpUtility.ParseQueryString(myUri.Query).Get("page");
+                Int32 pageCount;
+                bool isInteger = Int32.TryParse(strPageCount, out pageCount);
+
+                if (isInteger)
+                {
+                  nextPageAvailable = true;
+                  pageCount++;
+                  var uriBuilder = new UriBuilder(url);
+                  var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+                  query["page"] = pageCount.ToString();
+                  uriBuilder.Query = query.ToString();
+                  nextPageUrl = ApplyUrlDecoding(uriBuilder.ToString(), nextPageRegExUrlDecoding);
+                }
+              }
+
+              Log.Debug("PAGE URL: " + nextPageUrl);
+              Log.Debug("VIDEO URL: " + url);
             }
           }
           catch (Exception eNextPageRetrieval)
@@ -104,11 +130,11 @@ namespace OnlineVideos.Sites
         var cat = new RssLink();
         if (catName == "Newest Media")
         {
-          cat.Url = string.Format("{0}?streamType=latest", url);
+          cat.Url = string.Format("{0}", url);
         }
         else
         {
-          cat.Url = string.Format("{0}?tags={1}&streamType=latest", url, catName);
+          cat.Url = string.Format("{0}?tags={1}", url, catName);
         }
 
         cat.Name = catName;
@@ -122,7 +148,7 @@ namespace OnlineVideos.Sites
 
     public override string GetVideoUrl(VideoInfo video)
     {
-      var itemPlaylist = Regex.Match(GetWebData(video.VideoUrl) , playlistUrlRegEx);
+      var itemPlaylist = Regex.Match(GetWebData(video.VideoUrl), playlistUrlRegEx);
       var playlistUrl = "";
       while (itemPlaylist.Success)
       {

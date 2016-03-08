@@ -2,6 +2,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ovs="clr-namespace:OnlineVideos;assembly=OnlineVideos"
+        xmlns:cfg="clr-namespace:Standalone.Configuration"
     xmlns:ovsDL="clr-namespace:OnlineVideos.Downloading;assembly=OnlineVideos"
     xmlns:DirectShowControls="clr-namespace:WPFMediaKit.DirectShow.Controls"
     xmlns:local="clr-namespace:Standalone" x:Name="mainWindow"
@@ -35,6 +36,7 @@
         <CommandBinding Command="MediaCommands.Stop" CanExecute="Stop_CanExecute" Executed="Stop_Executed"/>
         <CommandBinding Command="NavigationCommands.Zoom" CanExecute="Stop_CanExecute" Executed="ToggleFullscreen"/>
         <CommandBinding Command="Help" Executed="HelpExecuted"/>
+        <CommandBinding Command="Properties" CanExecute="Settings_CanExecute" Executed="Settings_Executed"/>
         <CommandBinding Command="MediaCommands.MuteVolume" Executed="Mute_Executed"/>
         <CommandBinding Command="MediaCommands.IncreaseVolume" Executed="VolumeUp_Executed"/>
         <CommandBinding Command="MediaCommands.DecreaseVolume" Executed="VolumeDown_Executed"/>
@@ -95,6 +97,9 @@
                 <ToggleButton Height="34" VerticalAlignment="Center" ToolTip="Add Sites from global list" Margin="5 0 5 0" Command="NavigateJournal">
                     <Image Source="Images/GlobalSites.png"/>
                 </ToggleButton>
+                <Button Height="34" Command="Properties" ToolTip="Settings" Margin="0 0 5 0">
+                    <Image Source="Images/Settings.png"/>
+                </Button>
                 <Button Height="34" Command="Help" ToolTip="Help" Margin="0 0 5 0">
                     <Image Source="Images/Help.png"/>
                 </Button>
@@ -173,11 +178,14 @@
             </Grid>
             <Border Grid.Column="1" BorderThickness="1 0 0 0" BorderBrush="Black" Padding="5">
                 <StackPanel>
+                    <StackPanel.LayoutTransform>
+                        <ScaleTransform ScaleX="{Binding Source={x:Static cfg:Settings.Instance}, Path=ItemsZoom}" ScaleY="{Binding Source={x:Static cfg:Settings.Instance}, Path=ItemsZoom}" />
+                    </StackPanel.LayoutTransform>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="0.5*"/>
                             <ColumnDefinition Width="0.5*"/>
-                        </Grid.ColumnDefinitions>
+                        </Grid.ColumnDefinitions>                        
                         <WrapPanel Margin="0 0 0 5">
                             <TextBlock Text="{Binding Converter={StaticResource TranslationConverter}, ConverterParameter='Runtime', StringFormat=\{0\}:}" Padding="0 0 5 0" Visibility="{Binding ElementName=txtLength, Path=Text, Converter={StaticResource NullVisibilityConverter}}" />
                             <TextBlock x:Name="txtLength" Text="{Binding ElementName=listViewMain, Path=SelectedItem.Length}"/>
@@ -188,7 +196,7 @@
                         </WrapPanel>
                     </Grid>
                     <Grid>
-                        <TextBlock TextWrapping="Wrap" Text="{Binding ElementName=listViewMain, Path=SelectedItem.Description}"/>
+                        <TextBlock TextWrapping="Wrap" Text="{Binding ElementName=listViewMain, Path=SelectedItem.Description}" />
                     </Grid>
                 </StackPanel>
             </Border>

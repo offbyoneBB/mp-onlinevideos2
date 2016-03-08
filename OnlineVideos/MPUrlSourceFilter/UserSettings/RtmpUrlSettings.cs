@@ -148,9 +148,9 @@ namespace OnlineVideos.MPUrlSourceFilter.UserSettings
         {
             base.Apply(rtmpUrl);
 
-            rtmpUrl.OpenConnectionSleepTime = OpenConnectionSleepTime;
-            rtmpUrl.OpenConnectionTimeout = OpenConnectionTimeout;
-            rtmpUrl.TotalReopenConnectionTimeout = TotalReopenConnectionTimeout;
+            rtmpUrl.OpenConnectionSleepTime = this.OpenConnectionSleepTime;
+            rtmpUrl.OpenConnectionTimeout = this.OpenConnectionTimeout;
+            rtmpUrl.TotalReopenConnectionTimeout = this.TotalReopenConnectionTimeout;
         }
 
         #endregion

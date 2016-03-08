@@ -67,7 +67,6 @@
     <Compile Include="..\..\Build\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
-    <Compile Include="BigPondVideoUtil.cs" />
     <Compile Include="BrassBandTubeUtil.cs" />
     <Compile Include="CollegeHumorUtil.cs" />
     <Compile Include="DeferredResolveUtil.cs" />
@@ -77,6 +76,7 @@
     <Compile Include="FilmonUtil.cs" />
     <Compile Include="GameKingsUtil.cs" />
     <Compile Include="GamersNetUtil.cs" />
+    <Compile Include="Helpers\NPOHelper.cs" />
     <Compile Include="Hoster\Archiv.cs" />
     <Compile Include="Hoster\EcoStream.cs" />
     <Compile Include="Hoster\OvFile.cs" />
@@ -108,15 +108,15 @@
     <Compile Include="Hoster\Xtream.cs" />
     <Compile Include="iLiveToUtil.cs" />
     <Compile Include="IplaUtil.cs" />
-    <Compile Include="Katsomo.cs" />
     <Compile Include="KhanAcademyUtil.cs" />
     <Compile Include="KijkUtil.cs" />
     <Compile Include="KissAnimeUtil.cs" />
     <Compile Include="LeagueOfLegendsUtil.cs" />
+    <Compile Include="LiveLeakUtil.cs" />
     <Compile Include="MovieNightUtil.cs" />
-    <Compile Include="MuzuTV.cs" />
     <Compile Include="NickelodeonNLUtil.cs" />
     <Compile Include="NicoNicoUtil.cs" />
+    <Compile Include="NPOLiveUtil.cs" />
     <Compile Include="PowerUnlimitedUtil.cs" />
     <Compile Include="RedBull.cs" />
     <Compile Include="RockPalastUtil.cs" />
@@ -126,6 +126,7 @@
     <Compile Include="SBSauUtil.cs" />
     <Compile Include="SubtitleHandler.cs" />
     <Compile Include="TelegraafTVUtil.cs" />
+    <Compile Include="TelewizjadaUtil.cs" />
     <Compile Include="ToonsTv.cs" />
     <Compile Include="TubePlusUtil.cs" />
     <Compile Include="TV3NZOnDemandUtil.cs" />

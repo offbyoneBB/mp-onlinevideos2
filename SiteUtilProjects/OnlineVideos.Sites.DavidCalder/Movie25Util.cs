@@ -17,14 +17,16 @@ namespace OnlineVideos.Sites.DavidCalder
 
         public class TMDBVideoInfo : DetailVideoInfo
         {
-            public TMDBVideoInfo() : base()
+            public TMDBVideoInfo()
+                : base()
             {
                 Title2 = string.Empty;
             }
 
             public List<TMDbVideoDetails> VidoesChoices { get; set; }
 
-            public TMDBVideoInfo(VideoInfo video) : base(video)
+            public TMDBVideoInfo(VideoInfo video)
+                : base(video)
             {
             }
 
@@ -38,15 +40,26 @@ namespace OnlineVideos.Sites.DavidCalder
                     parent.sh.WaitForSubtitleCompleted();
                     parent.lastPlaybackOptionUrl = PlaybackOptions[url];
                 }
-                Match n = Regex.Match(data, @"<div\sid=""showvideo""><IFRAME\sSRC=""(?<url>[^""]*)""");
+                Match n = Regex.Match(data, @"<IFRAME\sid=""showvideo""\ssrc=""(?<url>[^""]*)""");
                 if (n.Success)
                 {
-                    if (n.Groups["url"].Value.Contains("/tz.php?url=external.php?url="))
+                    string url2 = n.Groups["url"].Value;
+                    if (url2.Contains("/tz.php?url=external.php?url="))
                     {
-                        string newurl = n.Groups["url"].Value.Replace(@"/tz.php?url=external.php?url=", "");
+                        string newurl = url2.Replace(@"/tz.php?url=external.php?url=", "");
                         byte[] tmp = Convert.FromBase64String(newurl);
                         string i = Encoding.ASCII.GetString(tmp);
                         return GetVideoUrl(i);
+                    }
+                    if (url2.Contains("/tz.php?url="))
+                    {
+
+                        int p = url2.IndexOf("url=");
+                        if (p > 0)
+                        {
+                            string newurl = url2.Substring(p + 4);
+                            return GetVideoUrl(newurl);
+                        }
                     }
                     return GetVideoUrl(n.Groups["url"].Value);
                 }
@@ -58,9 +71,9 @@ namespace OnlineVideos.Sites.DavidCalder
         {
             base.DiscoverDynamicCategories();
             {
-                int i = Settings.Categories.Count -1;
+                int i = Settings.Categories.Count - 1;
                 do
-                {   
+                {
                     RssLink cat = (RssLink)Settings.Categories[i];
                     if (cat.Name == "Movies" || cat.Name == "TV Shows")
                         Settings.Categories.Remove(cat);
@@ -112,8 +125,8 @@ namespace OnlineVideos.Sites.DavidCalder
         public List<DetailVideoInfo> GetVideoChoices(VideoInfo video)
         {
             List<DetailVideoInfo> DetailedVideos = new List<DetailVideoInfo>();
-            DetailedVideos.Add(new TMDBVideoInfo(video) { Title2 = "Full Movie", parent=this });
-            if (video.Other.GetType() == typeof(TMDbVideoDetails))
+            DetailedVideos.Add(new TMDBVideoInfo(video) { Title2 = "Full Movie", parent = this });
+            if (video.Other != null && video.Other.GetType() == typeof(TMDbVideoDetails))
             {
                 TMDbVideoDetails videoDetail = (TMDbVideoDetails)video.Other;
 

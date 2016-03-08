@@ -68,6 +68,10 @@ namespace OnlineVideos.Helpers
                 s = new FileStream(filePath, FileMode.Open, FileAccess.Read);
                 s.Read(b, 0, 2048);
             }
+            catch (Exception e)
+            {
+                Log.Error("Couldn't retrieve Linker Timestamp: {0}", e.ToString());
+            }
             finally
             {
                 if (s != null)

@@ -64,21 +64,25 @@
       <Link>Properties\Version.cs</Link>
     </Compile>
     <Compile Include="BrowserUtilConnectors\HboNordicConnector.cs" />
+    <Compile Include="BrowserUtilConnectors\KatsomoConnector.cs" />
     <Compile Include="BrowserUtilConnectors\NetflixConnector.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorNo.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorFi.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorDa.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorBase.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorSv.cs" />
+    <Compile Include="DplayUtil.cs" />
     <Compile Include="DreamfilmHDUtil.cs" />
     <Compile Include="HboNordicWebUtil.cs" />
     <Compile Include="HboNordic\HboWebCache.cs" />
     <Compile Include="Hoster\Buggerdugger.cs" />
     <Compile Include="Hoster\IReferer.cs" />
     <Compile Include="Hoster\MailRu.cs" />
+    <Compile Include="Hoster\SVTPlay.cs" />
     <Compile Include="Hoster\Videomega.cs" />
     <Compile Include="Hoster\VkPass.cs" />
     <Compile Include="Hoster\vk.cs" />
+    <Compile Include="KatsomoWebUtil.cs" />
     <Compile Include="YleUtil.cs" />
     <Compile Include="NetfilxWebUtil.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -86,9 +90,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SweflixUtil.cs" />
     <Compile Include="ViaplayWebUtil.cs" />
-    <Compile Include="Kanal59PlayUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SVTPlayUtil.cs" />
     <Compile Include="TV4Play.cs" />
@@ -119,7 +121,9 @@
   <ItemGroup>
     <None Include="Resources\HboNordic.js" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\Katsomo.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

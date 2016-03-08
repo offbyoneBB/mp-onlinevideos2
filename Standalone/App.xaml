@@ -2,6 +2,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Standalone"
+    xmlns:cfg="clr-namespace:Standalone.Configuration"
     StartupUri="OnlineVideosMainWindow.xaml">
     <Application.Resources>
         <local:ThumbnailConverter x:Key="ThumbnailConverter"/>
@@ -57,6 +58,9 @@
                         <RotateTransform x:Name="frameRotate" CenterX="50" CenterY="50" Angle="0" />
                     </TransformGroup>
                 </Grid.RenderTransform>
+                <Grid.LayoutTransform>
+                    <ScaleTransform ScaleX="{Binding Source={x:Static cfg:Settings.Instance}, Path=ItemsZoom}" ScaleY="{Binding Source={x:Static cfg:Settings.Instance}, Path=ItemsZoom}" />
+                </Grid.LayoutTransform>
             </Grid>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}" Value="True">                                        
@@ -87,6 +91,9 @@
                         <ScaleTransform x:Name="frameScale" ScaleX="1" ScaleY="1" CenterX="90" CenterY="30" />
                     </TransformGroup>
                 </Border.RenderTransform>
+                <Border.LayoutTransform>
+                    <ScaleTransform ScaleX="{Binding Source={x:Static cfg:Settings.Instance}, Path=ItemsZoom}" ScaleY="{Binding Source={x:Static cfg:Settings.Instance}, Path=ItemsZoom}" />
+                </Border.LayoutTransform>
             </Border>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}" Value="True">
@@ -122,6 +129,9 @@
                         <ScaleTransform x:Name="frameScale" ScaleX="1" ScaleY="1" CenterX="70" CenterY="60" />
                     </TransformGroup>
                 </Border.RenderTransform>
+                <Border.LayoutTransform>
+                    <ScaleTransform ScaleX="{Binding Source={x:Static cfg:Settings.Instance}, Path=ItemsZoom}" ScaleY="{Binding Source={x:Static cfg:Settings.Instance}, Path=ItemsZoom}" />
+                </Border.LayoutTransform>
             </Border>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}" Value="True">
