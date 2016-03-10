@@ -44,7 +44,7 @@
     <Compile Include="..\..\Build\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
-    <Content Include="ApetitTv.cs" />
+    <Compile Include="ApetitTv.cs" />
     <Content Include="AutosalonUtil.cs" />
     <Content Include="BarrandovTvUtil.cs" />
     <Compile Include="CeskaTelevizeUtil.cs" />
