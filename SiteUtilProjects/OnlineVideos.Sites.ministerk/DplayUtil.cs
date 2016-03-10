@@ -11,7 +11,7 @@ using System.Web;
 
 namespace OnlineVideos.Sites
 {
-    public class DplayUtil : SiteUtilBase
+    public class DplayUtil : SiteUtilBase, IBrowserSiteUtil
     {
         [Category("OnlineVideosConfiguration"), Description("Base Url")]
         protected string baseUrl;
@@ -314,18 +314,30 @@ namespace OnlineVideos.Sites
 
         public override string GetVideoUrl(VideoInfo video)
         {
+            Settings.Player = PlayerType.Internal;
+            //Workaround, cookies can exire fast. Force new login...
+            cc = null;
+            //End workaround...
             string url = string.Format("{0}secure/api/v2/user/authorization/stream/{1}?stream_type=hds", secureUrl, video.VideoUrl);
-            JObject json = GetWebData<JObject>(url, cookies: Cookies);
+            JObject json = GetWebData<JObject>(url, cookies: Cookies, cache: false);
             if (json["type"].Value<string>() == "drm")
-                throw new OnlineVideosException("This video is DRM protected.");
+            {
+                Settings.Player = PlayerType.Browser;
+                url = string.Format("{0}api/v2/ajax/videos?video_id={1}&page=0&items=500", baseUrl, video.VideoUrl);
+                json = GetWebData<JObject>(url, cookies: Cookies, cache: false);
+                if (json["data"] != null && json["data"].Count() > 0 && json["data"].First()[srtSelector] != null)
+                    return json["data"].First()["url"].Value<string>();
+                else
+                    throw new OnlineVideosException("Unable to play video");
+            }
             url = json["hds"].Value<string>();
             if (url.EndsWith("master.f4m"))
             {
                 //Need to use HLS... Why?
                 url = string.Format("{0}secure/api/v2/user/authorization/stream/{1}?stream_type=hls", secureUrl, video.VideoUrl);
-                json = GetWebData<JObject>(url, cookies: Cookies);
+                json = GetWebData<JObject>(url, cookies: Cookies, cache: false);
                 url = json["hls"].Value<string>();
-                string data = GetWebData<string>(url, cookies: Cookies);
+                string data = GetWebData<string>(url, cookies: Cookies, cache: false);
                 Regex rgx = new Regex(@"(?<url>.*.m3u8)");
                 foreach (Match m in rgx.Matches(data))
                 {
@@ -340,7 +352,7 @@ namespace OnlineVideos.Sites
             try
             {
                 string subUrl = string.Format("{0}api/v2/ajax/videos?video_id={1}&page=0&items=500", baseUrl, video.VideoUrl);
-                json = GetWebData<JObject>(subUrl, cookies: Cookies);
+                json = GetWebData<JObject>(subUrl, cookies: Cookies, cache: false);
                 if (json["data"] != null && json["data"].Count() > 0 && json["data"].First()[srtSelector] != null)
                     video.SubtitleUrl = json["data"].First()[srtSelector].Value<string>();
             }
@@ -371,6 +383,21 @@ namespace OnlineVideos.Sites
             return results;
         }
 
+
+        string IBrowserSiteUtil.ConnectorEntityTypeName
+        {
+            get { return "OnlineVideos.Sites.BrowserUtilConnectors.DplayConnector"; }
+        }
+
+        string IBrowserSiteUtil.UserName
+        {
+            get { return username + "¥" + secureUrl + "login/"; }
+        }
+
+        string IBrowserSiteUtil.Password
+        {
+            get { return password; }
+        }
     }
 }
 

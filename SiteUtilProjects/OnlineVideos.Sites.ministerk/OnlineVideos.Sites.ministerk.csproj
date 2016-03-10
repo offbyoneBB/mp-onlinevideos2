@@ -63,6 +63,7 @@
     <Compile Include="..\..\Build\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
+    <Compile Include="BrowserUtilConnectors\DplayConnector.cs" />
     <Compile Include="BrowserUtilConnectors\HboNordicConnector.cs" />
     <Compile Include="BrowserUtilConnectors\KatsomoConnector.cs" />
     <Compile Include="BrowserUtilConnectors\NetflixConnector.cs" />
