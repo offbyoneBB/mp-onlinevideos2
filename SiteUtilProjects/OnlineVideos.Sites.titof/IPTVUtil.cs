@@ -68,7 +68,8 @@ namespace OnlineVideos.Sites
                         var item = pl[pl.Count - idx];
                         if (item.Options!=null && item.Options.ContainsKey("RESOLUTION"))
                             sName = "RESOLUTION " + item.Options["RESOLUTION"].ToString();
-                        video.PlaybackOptions.Add (sName, item.Path);
+                        if (!video.PlaybackOptions.ContainsKey(sName))
+                            video.PlaybackOptions.Add (sName, item.Path);
                     }                    
 
                     string url = pl[pl.Count -1].Path;
