@@ -77,12 +77,17 @@ namespace OnlineVideos.Sites
 
             foreach (JObject item in tlist["videos"])
             {
+                int duration = 0;
+                duration = (int)item["video_duration_ms"];
+                if (duration > 0) duration = duration / 1000;
+
                 VideoInfo vid = new VideoInfo()
                 {
                     Other = (string)item["video"],
                     Title = (string)item["title"],
                     Description = (string)item["description"],
-                    Thumb = (string)item["image_small"]
+                    Thumb = (string)item["image_small"],
+                    Length = duration.ToString()
                 };
                 tVideos.Add(vid);
             }

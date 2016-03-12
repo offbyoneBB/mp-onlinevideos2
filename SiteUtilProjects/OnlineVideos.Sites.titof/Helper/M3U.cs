@@ -94,10 +94,24 @@ namespace OnlineVideos.Sites.M3U
 
             internal static void ConvertRelative2Absolute(string basepath, M3UComponent component)
             {
-                if (basepath.StartsWith("http") && !component.Path.StartsWith("http"))
+                string spath = component.Path;
+                bool isAbsolute= false;
+                if (spath.ToLower().Contains("http://")
+                    || spath.ToLower().Contains("rtp://")
+                    || spath.ToLower().Contains("rtsp://")
+                    || spath.ToLower().Contains("rtmp://")
+                    || spath.ToLower().Contains("mms://")
+                    || spath.ToLower().Contains("udp://")
+                    )
+                {
+                    isAbsolute = true;
+                }
+
+                if (basepath.StartsWith("http") && !isAbsolute)
                 {
                     component.Path = basepath + "/" + component.Path;
                 }
+                
             }
 
             internal static void ReadOptions(string optionLine, System.Collections.Hashtable Options, char splitterChar = ':')
