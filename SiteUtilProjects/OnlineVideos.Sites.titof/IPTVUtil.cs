@@ -38,8 +38,8 @@ namespace OnlineVideos.Sites
                         }
                         else 
                         {
-                            OnlineVideos.Sites.Helper.TvLogoDB.LogoChannel[] tChan = OnlineVideos.Sites.Helper.TvLogoDB.LogoChannel.GetChannel(vid.Title);
-                            if (tChan.Length > 0) vid.Thumb = tChan[0].LogoWide;
+                            //OnlineVideos.Sites.Helper.TvLogoDB.LogoChannel[] tChan = OnlineVideos.Sites.Helper.TvLogoDB.LogoChannel.GetChannel(vid.Title);
+                            //if (tChan.Length > 0) vid.Thumb = tChan[0].LogoWide;
                         }
                         listVideos.Add(vid);
                     }
