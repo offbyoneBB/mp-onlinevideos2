@@ -854,13 +854,32 @@ namespace OnlineVideos.Sites
                 data = MyGetWebData(url);
                 url = data["_links"]["viaplay:playlist"]["href"].Value<string>();
                 string m3u8 = MyGetWebStringData(url);
-                Regex rgx = new Regex(@"RESOLUTION=(?<res>\d+x\d+).*?[\r|\n]*(?<url>.*?m3u8)");
-                foreach (Match m in rgx.Matches(m3u8))
+                if (!m3u8.Contains("#EXT-X-VERSION:4")) //Not supported, use Browser
                 {
-                    video.PlaybackOptions.Add(m.Groups["res"].Value, Regex.Replace(url, @"([^/]*)?\?", delegate(Match match)
+
+                    Regex rgx = new Regex(@"RESOLUTION=(?<res>\d+x\d+).*?[\r|\n]+(?<url>.*?m3u8)");
+                    foreach (Match m in rgx.Matches(m3u8))
                     {
-                        return m.Groups["url"].Value + "?";
-                    }));
+                        string newUrl = m.Groups["url"].Value;
+                        string res = m.Groups["res"].Value;
+                        int resCount = 2;
+                        while (video.PlaybackOptions.ContainsKey(res))
+                        {
+                            res = m.Groups["res"].Value + " " + resCount;
+                            resCount++;
+                        }
+                        if (newUrl.StartsWith("http"))
+                        {
+                            video.PlaybackOptions.Add(res, newUrl);
+                        }
+                        else
+                        {
+                            video.PlaybackOptions.Add(res, Regex.Replace(url, @"([^/]*)?\?", delegate(Match match)
+                            {
+                                return m.Groups["url"].Value + "?";
+                            }));
+                        }
+                    }
                 }
                 if (video.PlaybackOptions.Count < 1)
                 {
