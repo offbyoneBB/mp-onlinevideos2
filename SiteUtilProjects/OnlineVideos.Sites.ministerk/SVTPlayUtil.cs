@@ -88,16 +88,16 @@ namespace OnlineVideos.Sites
         {
             List<Category> cats = new List<Category>();
             HtmlNode htmlNode = GetWebData<HtmlDocument>("http://www.svtplay.se/program").DocumentNode;
-            HtmlNode ul = htmlNode.SelectSingleNode("//ul[contains(@class,'play_categories-link-grid')]");
-            foreach (HtmlNode li in ul.SelectNodes("li"))
+            HtmlNode div = htmlNode.SelectSingleNode("//div[contains(@class,'play_promotion-grid')]");
+            foreach (HtmlNode article in div.SelectNodes("article"))
             {
                 RssLink cat = new RssLink();
-                cat.Url = li.SelectSingleNode(".//a").GetAttributeValue("href", "");
-                cat.Thumb = li.SelectSingleNode(".//img").GetAttributeValue("src", "");
-                cat.Name = HttpUtility.HtmlDecode(li.SelectSingleNode(".//span").InnerText.Trim());
+                cat.Url = article.SelectSingleNode(".//a").GetAttributeValue("href", "");
+                cat.Thumb = article.SelectSingleNode(".//img").GetAttributeValue("src", "");
+                cat.Name = HttpUtility.HtmlDecode(article.SelectSingleNode(".//h2").InnerText.Trim());
                 cat.ParentCategory = parentCategory;
                 cat.HasSubCategories = true;
-                if (!cat.Url.Contains("/oppetarkiv"))
+                if (!cat.Url.Contains("oppetarkiv"))
                     cat.Other = (Func<List<Category>>)(() => GetGenreSubCategories(cat));
                 else
                 {
@@ -173,19 +173,19 @@ namespace OnlineVideos.Sites
             program.Other = (Func<List<Category>>)(() => GetGenreProgramAOListingCategories(program));
             cats.Add(program);
 
-            RssLink popular = new RssLink() { Name = "Populäraste", Url = "http://www.svtplay.se/ajax" + url + "/populara?sida={0}", HasSubCategories = false, ParentCategory = parentCategory };
+            RssLink popular = new RssLink() { Name = "Populäraste", Url = "http://www.svtplay.se/ajax/" + url + "/populara?sida={0}", HasSubCategories = false, ParentCategory = parentCategory };
             cats.Add(popular);
 
-            RssLink senaste = new RssLink() { Name = "Senaste", Url = "http://www.svtplay.se/ajax" + url + "/senaste?sida={0}", HasSubCategories = false, ParentCategory = parentCategory };
+            RssLink senaste = new RssLink() { Name = "Senaste", Url = "http://www.svtplay.se/ajax/" + url + "/senaste?sida={0}", HasSubCategories = false, ParentCategory = parentCategory };
             cats.Add(senaste);
 
-            RssLink sista = new RssLink() { Name = "Sista chansen", Url = "http://www.svtplay.se/ajax" + url + "/sista-chansen?sida={0}", HasSubCategories = false, ParentCategory = parentCategory };
+            RssLink sista = new RssLink() { Name = "Sista chansen", Url = "http://www.svtplay.se/ajax/" + url + "/sista-chansen?sida={0}", HasSubCategories = false, ParentCategory = parentCategory };
             cats.Add(sista);
 
-            RssLink klipp = new RssLink() { Name = "Klipp", Url = "http://www.svtplay.se/ajax" + url + "/klipp?sida={0}", HasSubCategories = false, ParentCategory = parentCategory };
+            RssLink klipp = new RssLink() { Name = "Klipp", Url = "http://www.svtplay.se/ajax/" + url + "/klipp?sida={0}", HasSubCategories = false, ParentCategory = parentCategory };
             cats.Add(klipp);
 
-            RssLink live = new RssLink() { Name = "Live", Url = "http://www.svtplay.se/ajax" + url + "/live?sida={0}", HasSubCategories = false, ParentCategory = parentCategory };
+            RssLink live = new RssLink() { Name = "Live", Url = "http://www.svtplay.se/ajax/" + url + "/live?sida={0}", HasSubCategories = false, ParentCategory = parentCategory };
             cats.Add(live);
 
             return cats;
@@ -215,7 +215,7 @@ namespace OnlineVideos.Sites
         private List<Category> GetGenreProgramAOListingCategories(Category parentCategory)
         {
             List<Category> categories = new List<Category>();
-            HtmlNode htmlNode = GetWebData<HtmlDocument>("http://www.svtplay.se" + (parentCategory as RssLink).Url + "?tab=titlar").DocumentNode;
+            HtmlNode htmlNode = GetWebData<HtmlDocument>("http://www.svtplay.se/" + (parentCategory as RssLink).Url + "?tab=titlar").DocumentNode;
             HtmlNode div = htmlNode.SelectSingleNode("//div[@id = 'playJs-alphabetic-list']");
 
             foreach (HtmlNode article in div.Descendants("article"))
@@ -327,7 +327,7 @@ namespace OnlineVideos.Sites
         {
             List<Category> categories = new List<Category>();
             HtmlNode htmlNode = GetWebData<HtmlDocument>("http://www.svtplay.se/program").DocumentNode;
-            IEnumerable<HtmlNode> alphabetList = htmlNode.Descendants("li").Where(d => d.GetAttributeValue("class", "").StartsWith("play_alphabetic-list"));
+            IEnumerable<HtmlNode> alphabetList = htmlNode.Descendants("div").Where(d => d.GetAttributeValue("class", "").StartsWith("play_alphabetic-list"));
             foreach (HtmlNode alphaLi in alphabetList)
             {
                 HtmlNodeCollection programs = alphaLi.SelectNodes("ul/li");
