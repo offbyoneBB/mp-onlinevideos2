@@ -97,7 +97,12 @@ namespace OnlineVideos.Sites
                 cat.Name = HttpUtility.HtmlDecode(article.SelectSingleNode(".//h2").InnerText.Trim());
                 cat.ParentCategory = parentCategory;
                 cat.HasSubCategories = true;
-                if (!cat.Url.Contains("oppetarkiv"))
+                if (cat.Url.StartsWith("genre/"))
+                {
+                    cat.Url = cat.Url.Replace("genre/", "");
+                    cat.Other = (Func<List<Category>>)(() => GetTagCategories(cat));
+                }
+                else if (!cat.Url.Contains("oppetarkiv"))
                     cat.Other = (Func<List<Category>>)(() => GetGenreSubCategories(cat));
                 else
                 {
@@ -274,7 +279,10 @@ namespace OnlineVideos.Sites
                     if (prog["description"] != null)
                         cat.Description = prog["description"].Value<string>();
                     if (prog["thumbnailLarge"] != null)
+                    {
                         cat.Thumb = prog["thumbnailLarge"].Value<string>();
+                        cat.Thumb = cat.Thumb.StartsWith("//") ? ("http:" + cat.Thumb) : cat.Thumb;
+                    }
                     cat.Other = (Func<List<Category>>)(() => GetProgramCategories(cat));
                     categories.Add(cat);
                 }
@@ -291,7 +299,10 @@ namespace OnlineVideos.Sites
                     if (prog["description"] != null)
                         video.Description = prog["description"].Value<string>();
                     if (prog["thumbnailLarge"] != null)
+                    {
                         video.Thumb = prog["thumbnailLarge"].Value<string>();
+                        video.Thumb = video.Thumb.StartsWith("//") ? ("http:" + video.Thumb) : video.Thumb;
+                    }
                     programs.Add(video);
                 }
             }
@@ -313,7 +324,10 @@ namespace OnlineVideos.Sites
                 if (clip["description"] != null)
                     video.Description = clip["description"].Value<string>();
                 if (clip["thumbnailLarge"] != null)
+                {
                     video.Thumb = clip["thumbnailLarge"].Value<string>();
+                    video.Thumb = video.Thumb.StartsWith("//") ? ("http:" + video.Thumb) : video.Thumb;
+                }
                 clips.Add(video);
             }
             clipsCat.Other = clips;
