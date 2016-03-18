@@ -97,9 +97,9 @@ namespace OnlineVideos.Sites
                 cat.Name = HttpUtility.HtmlDecode(article.SelectSingleNode(".//h2").InnerText.Trim());
                 cat.ParentCategory = parentCategory;
                 cat.HasSubCategories = true;
-                if (cat.Url.StartsWith("genre/"))
+                if (cat.Url.Contains("genre/"))
                 {
-                    cat.Url = cat.Url.Replace("genre/", "");
+                    cat.Url = cat.Url.Replace("genre/", "").Replace("/","");
                     cat.Other = (Func<List<Category>>)(() => GetTagCategories(cat));
                 }
                 else if (!cat.Url.Contains("oppetarkiv"))
