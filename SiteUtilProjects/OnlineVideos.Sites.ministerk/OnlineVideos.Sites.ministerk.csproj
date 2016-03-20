@@ -80,11 +80,14 @@
     <Compile Include="Hoster\Buggerdugger.cs" />
     <Compile Include="Hoster\IReferer.cs" />
     <Compile Include="Hoster\MailRu.cs" />
+    <Compile Include="Hoster\Openload.cs" />
     <Compile Include="Hoster\SVTPlay.cs" />
+    <Compile Include="Hoster\VidAg.cs" />
     <Compile Include="Hoster\Videomega.cs" />
     <Compile Include="Hoster\VkPass.cs" />
     <Compile Include="Hoster\vk.cs" />
     <Compile Include="KatsomoWebUtil.cs" />
+    <Compile Include="SwefilmUtil.cs" />
     <Compile Include="YleUtil.cs" />
     <Compile Include="NetfilxWebUtil.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -125,6 +128,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Katsomo.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\AADecode.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
