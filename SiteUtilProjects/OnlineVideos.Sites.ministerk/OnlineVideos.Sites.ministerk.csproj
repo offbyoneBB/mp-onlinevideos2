@@ -88,6 +88,7 @@
     <Compile Include="Hoster\vk.cs" />
     <Compile Include="KatsomoWebUtil.cs" />
     <Compile Include="SwefilmUtil.cs" />
+    <Compile Include="SweflixUtil.cs" />
     <Compile Include="YleUtil.cs" />
     <Compile Include="NetfilxWebUtil.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
