@@ -3652,7 +3652,7 @@ public class Script
                     <Description>Global Id of the extension package - it will be downloaded when no file is set.</Description>
                   </SectionParam>
                   <SectionParam Name="Extension Version">
-                    <Value>2.2.9.5882</Value>
+                    <Value>2.2.10.5911</Value>
                     <ValueType>String</ValueType>
                     <Description>Minimum Version of the extension package - older versions will be updated (only used when downloading via Id).</Description>
                   </SectionParam>
@@ -3846,7 +3846,7 @@ public class Script
 BrowserPlayer changes to support MediaPortal2</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=10&amp;cf_id=68</OnlineLocation>
-    <ReleaseDate>2016-03-06T15:00:00</ReleaseDate>
+    <ReleaseDate>2016-03-26T15:00:00</ReleaseDate>
     <Tags>online,videos,youtube,netflix</Tags>
     <Location>..\MPEI\[Name][Version].mpe1</Location>
     <Params>
