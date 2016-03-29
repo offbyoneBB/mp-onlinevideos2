@@ -23,8 +23,8 @@ namespace OnlineVideos.Sites
                 VideoInfo v = new VideoInfo()
                 {
                     Title = channel.Value<string>("displayName"),
-                    VideoUrl = channel.Value<string>("url"),
-                    Thumb = FormatDecodeAbsolutifyUrl(baseUrl, channel.Value<string>("bigThumb"), "{0}", UrlDecoding.None),
+                    VideoUrl = @"http://www.telewizjada.net/get_mainchannel.php",
+                    Thumb = FormatDecodeAbsolutifyUrl(baseUrl, channel.Value<string>("thumb"), "{0}", UrlDecoding.None),
                     Other = channel.Value<string>("id")
                 };
                 if (enableAdult || channel.Value<int>("isAdult") == 0)
@@ -35,10 +35,12 @@ namespace OnlineVideos.Sites
 
         public override string GetVideoUrl(VideoInfo video)
         {
+            string cid = "cid=" + video.Other.ToString();
+            var p1 = GetWebData<JObject>(video.VideoUrl, cid);
             CookieContainer cc = new CookieContainer();
-            string postData = "url=" + HttpUtility.UrlEncode(video.VideoUrl);
+            string postData = "url=" + HttpUtility.UrlEncode(p1.Value<string>("url"));
             string webData = GetWebData(@"http://www.telewizjada.net/set_cookie.php", postData, cc);
-            var jData = GetWebData<JObject>(@"http://www.telewizjada.net/get_channel_url.php", "cid=" + video.Other.ToString(), cc);
+            var jData = GetWebData<JObject>(@"http://www.telewizjada.net/get_channel_url.php", cid, cc);
             var webData2 = jData.Value<string>("url");
             string m3u = GetWebData(webData2, null, cc);
             Match m = Regex.Match(m3u, @"(?<ch>chu.*)");
