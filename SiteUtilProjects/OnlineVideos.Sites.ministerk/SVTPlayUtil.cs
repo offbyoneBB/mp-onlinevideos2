@@ -99,7 +99,7 @@ namespace OnlineVideos.Sites
                 cat.HasSubCategories = true;
                 if (cat.Url.Contains("genre/"))
                 {
-                    cat.Url = cat.Url.Replace("genre/", "").Replace("/","");
+                    cat.Url = cat.Url.Replace("genre/", "").Replace("/", "");
                     cat.Other = (Func<List<Category>>)(() => GetTagCategories(cat));
                 }
                 else if (!cat.Url.Contains("oppetarkiv"))
@@ -226,9 +226,25 @@ namespace OnlineVideos.Sites
             foreach (HtmlNode article in div.Descendants("article"))
             {
                 RssLink subCat = DiscoverCategoryFromArticle(article);
-                subCat.HasSubCategories = true;
                 subCat.ParentCategory = parentCategory;
-                subCat.Other = (Func<List<Category>>)(() => GetProgramCategories(subCat));
+                if (subCat.Url.StartsWith("/video"))
+                {
+                    subCat.HasSubCategories = false;
+                    List<VideoInfo> videos = new List<VideoInfo>();
+                    VideoInfo video = new VideoInfo();
+                    video.Title = subCat.Name;
+                    video.Description = subCat.Description;
+                    video.VideoUrl = "http://www.svtplay.se" + subCat.Url;
+                    video.Thumb = subCat.Thumb;
+                    videos.Add(video);
+                    subCat.Other = videos;
+                   
+                }
+                else
+                {
+                    subCat.HasSubCategories = true;
+                    subCat.Other = (Func<List<Category>>)(() => GetProgramCategories(subCat));
+                }
                 categories.Add(subCat);
             }
             if (SplitByLetter) categories = SplitByLetterCategories(categories);
@@ -363,10 +379,10 @@ namespace OnlineVideos.Sites
         private List<Category> GetProgramCategories(Category parentCategory)
         {
             List<Category> cats = new List<Category>();
-            RssLink programs = new RssLink() { Name = "Hela program", ParentCategory = parentCategory, HasSubCategories = false, Url = "http://www.svtplay.se/" + (parentCategory as RssLink).Url + "/hela-program?embed=true&sida={0}" };
+            RssLink programs = new RssLink() { Name = "Hela program", ParentCategory = parentCategory, HasSubCategories = false, Url = "http://www.svtplay.se" + (parentCategory as RssLink).Url + "/hela-program?embed=true&sida={0}" };
             if (GetVideos(programs).Count > 0)
                 cats.Add(programs);
-            RssLink clips = new RssLink() { Name = "Klipp", ParentCategory = parentCategory, HasSubCategories = false, Url = "http://www.svtplay.se/" + (parentCategory as RssLink).Url + "/klipp?embed=true&sida={0}" };
+            RssLink clips = new RssLink() { Name = "Klipp", ParentCategory = parentCategory, HasSubCategories = false, Url = "http://www.svtplay.se" + (parentCategory as RssLink).Url + "/klipp?embed=true&sida={0}" };
             if (GetVideos(clips).Count > 0)
                 cats.Add(clips);
             return cats;
@@ -404,18 +420,18 @@ namespace OnlineVideos.Sites
             foreach (HtmlNode article in htmlNode.Descendants("article"))
             {
                 VideoInfo video = new VideoInfo();
-                video.Length = HttpUtility.HtmlDecode(article.GetAttributeValue("data-length", ""));
-                video.Airdate = HttpUtility.HtmlDecode(article.GetAttributeValue("data-broadcasted", ""));
-                video.Description = HttpUtility.HtmlDecode(article.GetAttributeValue("data-description", ""));
-                HtmlNode titleTextSpan = article.SelectSingleNode(".//span[contains(@class,'play_videolist-element__title-text')]");
-                HtmlNode titleSubTextSpan = article.SelectSingleNode(".//span[contains(@class,'play_videolist-element__subtext')]");
+               // video.Length = HttpUtility.HtmlDecode(article.GetAttributeValue("data-length", ""));
+               // video.Airdate = HttpUtility.HtmlDecode(article.GetAttributeValue("data-broadcasted", ""));
+               // video.Description = HttpUtility.HtmlDecode(article.GetAttributeValue("data-description", ""));
+                HtmlNode titleTextSpan = article.SelectSingleNode(".//h3");
+                HtmlNode titleSubTextSpan = article.SelectSingleNode(".//p[contains(@class,'play_videolist-element__subtext')]");
                 string title = titleTextSpan != null ? titleTextSpan.InnerText : "";
                 string subText = titleSubTextSpan != null ? titleSubTextSpan.InnerText : "";
                 title += " " + subText;
                 title = Regex.Replace(title, "\\s", " ");
                 title = Regex.Replace(title, "\\s+", " ");
                 title = HttpUtility.HtmlDecode(title);
-                title = title.Replace("Längd: " + video.Length, "");
+                //title = title.Replace("Längd: " + video.Length, "");
                 video.Title = title;
                 HtmlNode img = article.SelectSingleNode(".//img[contains(@class,'thumbnail-image')]");
                 if (img != null)
@@ -516,32 +532,32 @@ namespace OnlineVideos.Sites
         {
             get
             {
-                return true;
+                return false;
             }
         }
 
         public override List<SearchResultItem> Search(string query, string category = null)
         {
             List<SearchResultItem> results = new List<SearchResultItem>();
-            string[] subcats = { "search-categories", "search-titles", "" };
+            string[] subcats = { "lp_clust", "lp_title" };
             HtmlNode htmlNode = GetWebData<HtmlDocument>("http://www.svtplay.se/sok?q=" + HttpUtility.UrlEncode(query)).DocumentNode;
-            foreach (HtmlNode section in htmlNode.Descendants("section").Where(n => n.GetAttributeValue("class", "").Contains("play_js-hovered-list")))
+            foreach (HtmlNode section in htmlNode.Descendants("section").Where(n => n.GetAttributeValue("class", "").Contains("play_grid")))
             {
-                HtmlNode div = section.SelectSingleNode("div");
+                //HtmlNode div = section.SelectSingleNode("div");
                 RssLink cat = new RssLink();
-                cat.Name = div.SelectSingleNode("div/h1").InnerText.Trim();
+                cat.Name = section.SelectSingleNode(".//h2").InnerText.Trim();
                 bool isOppetArkiv = cat.Name.ToLower().Contains("oppetarkiv");
-                cat.HasSubCategories = subcats.Any(c => c == div.GetAttributeValue("id", ""));
+                cat.HasSubCategories = subcats.Any(c => c.Contains(section.GetAttributeValue("class", "")));
                 if (cat.HasSubCategories)
                 {
                     cat.SubCategories = new List<Category>();
-                    string id = div.GetAttributeValue("id", "");
+                    string classS = section.GetAttributeValue("id", "");
                     foreach (HtmlNode article in section.Descendants("article"))
                     {
                         RssLink subCat = DiscoverCategoryFromArticle(article);
                         subCat.HasSubCategories = true;
                         subCat.ParentCategory = cat;
-                        if (id == "search-categories")
+                        if (classS.Contains("lp_clust"))
                         {
                             if (subCat.Url.StartsWith("/genre/"))
                             {
@@ -551,7 +567,7 @@ namespace OnlineVideos.Sites
                             else
                                 subCat.Other = (Func<List<Category>>)(() => GetGenreSubCategories(subCat));
                         }
-                        else if (id == "search-titles")
+                        else if (classS.Contains("lp_title"))
                             subCat.Other = (Func<List<Category>>)(() => GetProgramCategories(subCat));
                         cat.SubCategories.Add(subCat);
                     }
