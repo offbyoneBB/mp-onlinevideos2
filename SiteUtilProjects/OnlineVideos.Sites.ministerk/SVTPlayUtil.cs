@@ -532,60 +532,147 @@ namespace OnlineVideos.Sites
         {
             get
             {
-                return false;
+                return true;
             }
         }
 
         public override List<SearchResultItem> Search(string query, string category = null)
         {
             List<SearchResultItem> results = new List<SearchResultItem>();
-            string[] subcats = { "lp_clust", "lp_title" };
-            HtmlNode htmlNode = GetWebData<HtmlDocument>("http://www.svtplay.se/sok?q=" + HttpUtility.UrlEncode(query)).DocumentNode;
-            foreach (HtmlNode section in htmlNode.Descendants("section").Where(n => n.GetAttributeValue("class", "").Contains("play_grid")))
+            string data = GetWebData<string>("http://www.svtplay.se/sok?q=" + HttpUtility.UrlEncode(query));
+            Regex rgx = new Regex(@"root\[""__svtplay""\] = (?<json>{.*?""plugins"":{}})");
+            Match m = rgx.Match(data);
+            if (m.Success)
             {
-                //HtmlNode div = section.SelectSingleNode("div");
-                RssLink cat = new RssLink();
-                cat.Name = section.SelectSingleNode(".//h2").InnerText.Trim();
-                bool isOppetArkiv = cat.Name.ToLower().Contains("oppetarkiv");
-                cat.HasSubCategories = subcats.Any(c => c.Contains(section.GetAttributeValue("class", "")));
-                if (cat.HasSubCategories)
+                JObject json = JObject.Parse(m.Groups["json"].Value);
+                JToken searchStore = json["context"]["dispatcher"]["stores"]["SearchStore"];
+                JToken categories = searchStore["categories"];
+                JToken titles = searchStore["titles"];
+                JToken episodes = searchStore["episodes"];
+                JToken clips = searchStore["clips"];
+                JToken live = searchStore["live"];
+                JToken openArchive = searchStore["openArchive"];
+
+                if (categories != null && categories.Value<JArray>().Count() > 0)
                 {
-                    cat.SubCategories = new List<Category>();
-                    string classS = section.GetAttributeValue("id", "");
-                    foreach (HtmlNode article in section.Descendants("article"))
+                    Category genrer = new Category() { Name = "Genrer", HasSubCategories = true, SubCategoriesDiscovered = true, SubCategories = new List<Category>()};
+                    foreach (JToken cat in categories.Value<JArray>())
                     {
-                        RssLink subCat = DiscoverCategoryFromArticle(article);
+                        RssLink subCat = new RssLink();
                         subCat.HasSubCategories = true;
-                        subCat.ParentCategory = cat;
-                        if (classS.Contains("lp_clust"))
+                        subCat.ParentCategory = genrer;
+                        subCat.Name = cat["name"].Value<string>();
+                        subCat.Thumb = cat["posterImageUrl"].Value<string>();
+                        if (subCat.Thumb.StartsWith("/"))
+                            subCat.Thumb = "http://www.svtplay.se" + subCat.Thumb;
+                        if (cat["isTag"].Value<bool>())
                         {
-                            if (subCat.Url.StartsWith("/genre/"))
-                            {
-                                subCat.Url = subCat.Url.Replace("/genre/", "");
-                                subCat.Other = (Func<List<Category>>)(() => GetTagCategories(subCat));
-                            }
-                            else
-                                subCat.Other = (Func<List<Category>>)(() => GetGenreSubCategories(subCat));
+                            subCat.Url = cat["urlPart"].Value<string>();
+                            subCat.Other = (Func<List<Category>>)(() => GetTagCategories(subCat));
                         }
-                        else if (classS.Contains("lp_title"))
-                            subCat.Other = (Func<List<Category>>)(() => GetProgramCategories(subCat));
-                        cat.SubCategories.Add(subCat);
+                        else
+                        {
+                            subCat.Url = cat["url"].Value<string>();
+                            subCat.Other = (Func<List<Category>>)(() => GetGenreSubCategories(subCat));
+                        }
+                        genrer.SubCategories.Add(subCat);
                     }
-                    cat.SubCategoriesDiscovered = cat.SubCategories.Count > 0;
+                    results.Add(genrer);
                 }
-                else
+                if (titles != null && titles.Value<JArray>().Count() > 0)
                 {
-                    List<VideoInfo> videos = GetVideos(section);
-                    if (isOppetArkiv) videos.ForEach(v => v.VideoUrl = v.VideoUrl.Replace("//www.svtplay.se", ""));
-                    if (isOppetArkiv) cat.Name = "Öppet arkiv";
-                    cat.Other = videos;
-                    cat.EstimatedVideoCount = (uint)videos.Count;
+                    Category program = new Category() { Name = "Program", HasSubCategories = true, SubCategoriesDiscovered = true, SubCategories = new List<Category>() };
+                    foreach (JToken cat in titles.Value<JArray>())
+                    {
+                        RssLink subCat = new RssLink();
+                        subCat.HasSubCategories = true;
+                        subCat.ParentCategory = program;
+                        subCat.Name = cat["programTitle"].Value<string>();
+                        subCat.Description = cat["description"].Value<string>();
+                        subCat.Url = cat["contentUrl"].Value<string>();
+                        subCat.Thumb = "http:" + cat["imageMedium"].Value<string>();
+                        subCat.Other = (Func<List<Category>>)(() => GetProgramCategories(subCat));
+                        program.SubCategories.Add(subCat);
+                    }
+                    results.Add(program);
                 }
-                results.Add(cat);
+                if (episodes != null && episodes.Value<JArray>().Count() > 0)
+                {
+                    Category avsnitt = new Category() { Name = "Avsnitt", HasSubCategories = false };
+                    List<VideoInfo> videos = new List<VideoInfo>();
+                    foreach (JToken ep in episodes.Value<JArray>())
+                    {
+                        VideoInfo video = new VideoInfo();
+                        string title = ep["programTitle"] != null ? ep["programTitle"].Value<string>() : "";
+                        title += (ep["season"] != null && ep["season"].Value<int>() > 0 ? (" Säsong " + ep["season"].Value<int>() + " - ") : " ");
+                        title += ep["title"] != null ? ep["title"].Value<string>() : "";
+                        video.VideoUrl = "http://www.svtplay.se" + ep["contentUrl"].Value<string>();
+                        video.Thumb = "http:" + ep["imageMedium"].Value<string>();
+                        video.Title = title.Trim();
+                        video.Description = ep["description"] != null ? ep["description"].Value<string>() : "";
+                        videos.Add(video);
+                    }
+                    avsnitt.Other = videos;
+                    results.Add(avsnitt);
+                }
+                if (live != null && live.Value<JArray>().Count() > 0)
+                {
+                    Category livesandningar = new Category() { Name = "Livesändningar", HasSubCategories = false };
+                    List<VideoInfo> videos = new List<VideoInfo>();
+                    foreach (JToken l in live.Value<JArray>())
+                    {
+                        VideoInfo video = new VideoInfo();
+                        string title = l["programTitle"] != null ? l["programTitle"].Value<string>() : "";
+                        title += " ";
+                        title += l["title"] != null ? l["title"].Value<string>() : "";
+                        video.VideoUrl = "http://www.svtplay.se" + l["contentUrl"].Value<string>();
+                        video.Thumb = "http:" + l["imageMedium"].Value<string>();
+                        video.Title = title.Trim();
+                        video.Description = l["description"] != null ? l["description"].Value<string>() : "";
+                        videos.Add(video);
+                    }
+                    livesandningar.Other = videos;
+                    results.Add(livesandningar);
+                }
+                if (clips != null && clips.Value<JArray>().Count() > 0)
+                {
+                    Category klipp = new Category() { Name = "Klipp", HasSubCategories = false };
+                    List<VideoInfo> videos = new List<VideoInfo>();
+                    foreach (JToken clip in clips.Value<JArray>())
+                    {
+                        VideoInfo video = new VideoInfo();
+                        string title = clip["title"] != null ? clip["title"].Value<string>() : "";
+                        video.VideoUrl = "http://www.svtplay.se" + clip["contentUrl"].Value<string>();
+                        video.Thumb = "http:" + clip["imageMedium"].Value<string>();
+                        video.Title = title.Trim();
+                        video.Description = clip["description"] != null ? clip["description"].Value<string>() : "";
+                        videos.Add(video);
+                    }
+                    klipp.Other = videos;
+                    results.Add(klipp);
+                }
+                if (openArchive != null && openArchive.Value<JArray>().Count() > 0)
+                {
+                    Category oppetArkiv = new Category() { Name = "Öppet arkiv", HasSubCategories = false };
+                    List<VideoInfo> videos = new List<VideoInfo>();
+                    foreach (JToken oa in openArchive.Value<JArray>())
+                    {
+                        VideoInfo video = new VideoInfo();
+                        string title = oa["programTitle"] != null ? oa["programTitle"].Value<string>() : "";
+                        title += " ";
+                        title += oa["title"] != null ? oa["title"].Value<string>() : "";
+                        video.VideoUrl = "http:" + oa["contentUrl"].Value<string>();
+                        video.Thumb = "http:" + oa["imageMedium"].Value<string>();
+                        video.Title = title.Trim();
+                        video.Description = oa["description"] != null ? oa["description"].Value<string>() : "";
+                        videos.Add(video);
+                    }
+                    oppetArkiv.Other = videos;
+                    results.Add(oppetArkiv);
+                }
             }
             return results;
         }
-
         #endregion
 
         #region LatestVideos
