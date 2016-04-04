@@ -245,6 +245,15 @@ namespace OnlineVideos.Sites
 
         #endregion
 
+        #region GetFileNameForDownload
+
+        public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
+        {
+            return Helpers.FileUtils.GetSaveFilename(video.Title) + ".mp4";
+        }
+
+        #endregion
+
         #region Tracking
 
         public override ITrackingInfo GetTrackingInfo(VideoInfo video)
