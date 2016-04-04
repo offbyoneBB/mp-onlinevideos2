@@ -865,6 +865,9 @@
     <Site name="HBO Nordic - Suomi" util="HboNordicWeb" agecheck="false" enabled="true" lang="fi" player="Browser">
       <Description>HBO Nordic - The Home of Series</Description>
     </Site>
+    <Site name="Draken Film" util="DrakenFilm" agecheck="false" enabled="true" lang="sv">
+      <Description>På Göteborg Film Festivals filmtjänst Draken Film ser du filmhistoriens främsta klassiker och nya festivalfavoriter från vår tids mest spännande filmskapare. Hundratals handplockade filmer från hela världen - nya premiärer varje vecka.</Description>
+    </Site>
     <Site name="Netflix" util="NetfilxWeb" agecheck="false" enabled="true" lang="--" player="Browser">
       <Description>Watch Netflix in OnlineVideos</Description>
     </Site>

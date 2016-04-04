@@ -74,6 +74,7 @@
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorBase.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorSv.cs" />
     <Compile Include="DplayUtil.cs" />
+    <Compile Include="DrakenFilmUtil.cs" />
     <Compile Include="DreamfilmHDUtil.cs" />
     <Compile Include="HboNordicWebUtil.cs" />
     <Compile Include="HboNordic\HboWebCache.cs" />
