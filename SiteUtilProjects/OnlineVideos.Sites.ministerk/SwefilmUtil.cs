@@ -216,7 +216,7 @@ namespace OnlineVideos.Sites
             }
             foreach (KeyValuePair<string, SerializableDictionary<string, string>> episodes in urlsDictionary)
             {
-                foreach (KeyValuePair<string, string> cdn in episodes.Value /*.Where(c => !c.Key.ToLower().StartsWith("flash"))*/)
+                foreach (KeyValuePair<string, string> cdn in episodes.Value)
                 {
 
                     string cdnInfo = cdn.Key;
@@ -231,9 +231,8 @@ namespace OnlineVideos.Sites
                     {
                         desc = category.Name + " " + title;
                     }
-                    bool isOriginal = cdnInfo.ToLower().StartsWith("original");
-                    cdnInfo = " [" + cdnInfo.Replace(":","") + ( isOriginal ? " - SLOW" : "" ) + "]";
-                    videos.Add(new VideoInfo() { Title = title + cdnInfo, VideoUrl = cdn.Value, Description = desc + (isOriginal ? ("\r\n" + cdn.Key + " Original CDN starts very slow, please set a high timeout in OV settings") : ""), Other = cdn.Key });
+                    cdnInfo = " [" + cdnInfo.Replace(":","") + "]";
+                    videos.Add(new VideoInfo() { Title = title + cdnInfo, VideoUrl = cdn.Value, Description = desc , Other = cdn.Key });
                 }
             }
             return videos;
@@ -260,42 +259,32 @@ namespace OnlineVideos.Sites
                     base64 = Encoding.ASCII.GetString(Convert.FromBase64String(base64));
                     base64 = Encoding.ASCII.GetString(Convert.FromBase64String(base64));
                     base64 = Encoding.ASCII.GetString(Convert.FromBase64String(base64));
-                    if (cdn.ToLower().StartsWith("original"))
-                    {
-                        rgx = new Regex(@"src=""(?<url>[^""]*)");
-                        m = rgx.Match(base64);
-                        if (m.Success)
-                        {
-                            string orgCdnUrl = m.Groups["url"].Value;
-                            Hoster.HosterBase host = Hoster.HosterFactory.GetAllHosters().FirstOrDefault(h => orgCdnUrl.ToLowerInvariant().Contains(h.GetHosterUrl().ToLowerInvariant()));
-                            if (host == null)
-                                return "";
-                            return host.GetVideoUrl(orgCdnUrl);
-                        }
-                    }
-                    else if (cdn.ToLower().StartsWith("global") || cdn.ToLower().StartsWith("fast"))
-                    {
-                        rgx = new Regex(@"<source.+?src='(?<url>[^']*)[^>]*?type=""video");
-                        m = rgx.Match(base64);
-                        if (m.Success)
-                        {
-                            return m.Groups["url"].Value;
-                        }
-                    }
-                    else if (cdn.ToLower().StartsWith("flash"))
-                    {
-                        rgx = new Regex(@"iframe.*?src=""(?<url>[^""]*)");
-                        m = rgx.Match(base64);
-                        if (m.Success)
-                        {
-                            string flashCdnUrl = m.Groups["url"].Value;
-                            Hoster.HosterBase host = Hoster.HosterFactory.GetAllHosters().FirstOrDefault(h => flashCdnUrl.ToLowerInvariant().Contains(h.GetHosterUrl().ToLowerInvariant()));
-                            if (host == null)
-                                return "";
-                            return host.GetVideoUrl(flashCdnUrl);
 
-
-                        }
+                    rgx = new Regex(@"<source.+?src='(?<url>[^']*)[^>]*?type=""video");
+                    m = rgx.Match(base64);
+                    if (m.Success)
+                    {
+                        return m.Groups["url"].Value;
+                    }
+                    rgx = new Regex(@"iframe.*?src=""(?<url>[^""]*)");
+                    m = rgx.Match(base64);
+                    if (m.Success)
+                    {
+                        string flashCdnUrl = m.Groups["url"].Value;
+                        Hoster.HosterBase host = Hoster.HosterFactory.GetAllHosters().FirstOrDefault(h => flashCdnUrl.ToLowerInvariant().Contains(h.GetHosterUrl().ToLowerInvariant()));
+                        if (host == null)
+                            return "";
+                        return host.GetVideoUrl(flashCdnUrl);
+                    }
+                    rgx = new Regex(@"src=""(?<url>[^""]*)");
+                    m = rgx.Match(base64);
+                    if (m.Success)
+                    {
+                        string orgCdnUrl = m.Groups["url"].Value;
+                        Hoster.HosterBase host = Hoster.HosterFactory.GetAllHosters().FirstOrDefault(h => orgCdnUrl.ToLowerInvariant().Contains(h.GetHosterUrl().ToLowerInvariant()));
+                        if (host == null)
+                            return "";
+                        return host.GetVideoUrl(orgCdnUrl);
                     }
                 }
             }
