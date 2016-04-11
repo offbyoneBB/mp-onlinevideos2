@@ -19,12 +19,13 @@ namespace OnlineVideos.Hoster
         {
             string data = GetWebData<string>(url);
             url = "";
-            Regex rgx = new Regex(@">eval(?<js>.*)?</script>", RegexOptions.Singleline);
+            Regex rgx = new Regex(@">eval(?<js>.*?)</script>", RegexOptions.Singleline);
             Match m = rgx.Match(data);
             if (m.Success)
             {
                 ScriptEngine engine = new ScriptEngine();
-                engine.Execute("var player = " + m.Groups["js"].Value + ";");
+                string js = m.Groups["js"].Value;
+                engine.Execute("var player = " + js + ";");
                 engine.Execute("function getPlayer() { return player; };");
                 data = engine.CallGlobalFunction("getPlayer").ToString();
                 rgx = new Regex(@"file:[^""]*""(?<url>.[^""]*)[^}]*label");
