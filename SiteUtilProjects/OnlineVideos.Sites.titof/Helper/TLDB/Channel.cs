@@ -12,6 +12,7 @@ namespace OnlineVideos.Sites.Helper.TvLogoDB
         public static LogoChannel[] GetChannel(string channel)
         {
             List<LogoChannel> oReturn = new List<LogoChannel>();
+
             try 
             {
                 string request = "http://www.thelogodb.com/api/json/v1/2112/tvchannel.php?s=" + channel.ToLower().Trim().Replace(" ", "_");
