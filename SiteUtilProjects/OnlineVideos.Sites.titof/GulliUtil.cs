@@ -12,6 +12,7 @@ namespace OnlineVideos.Sites
         private string _baseUrl = "http://replay.gulli.fr/";
         private Category _currentCategory = null;
         private int _currentPage = 1;
+
         #endregion Fields
 
         #region Methods
@@ -19,7 +20,7 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             RssLink cat = new RssLink();
-            cat.Url = _baseUrl +"dessins-animes";
+            cat.Url = _baseUrl + "dessins-animes";
             cat.Name = "Dessins-animés";
             cat.Thumb = @"http://replay.gulli.fr/bundles/jeunesseintegrationreplay/images/header/logo-gulli.png";
             cat.Other = 1;
@@ -27,7 +28,7 @@ namespace OnlineVideos.Sites
             Settings.Categories.Add(cat);
 
             cat = new RssLink();
-            cat.Url = _baseUrl + "series" ;
+            cat.Url = _baseUrl + "series";
             cat.Name = "Séries & films";
             cat.Thumb = @"http://replay.gulli.fr/bundles/jeunesseintegrationreplay/images/header/logo-gulli.png";
             cat.Other = 1;
@@ -87,7 +88,7 @@ namespace OnlineVideos.Sites
             _currentCategory = null;
             _currentPage = 1;
 
-            if (1== ((int)category.Other))
+            if (1 == ((int)category.Other))
             {
                 GetVideos_Method1(listVideos, webData);
             }
@@ -103,7 +104,7 @@ namespace OnlineVideos.Sites
                 _currentCategory = null;
                 _currentPage = 1;
             }
-                
+
             return listVideos;
         }
 
@@ -113,7 +114,7 @@ namespace OnlineVideos.Sites
         {
             List<VideoInfo> listVideos = new List<VideoInfo>();
 
-            if (null != _currentCategory) 
+            if (null != _currentCategory)
             {
                 _currentPage++;
                 string webData = GetWebData((_currentCategory as RssLink).Url + "/" + _currentPage);
@@ -127,7 +128,6 @@ namespace OnlineVideos.Sites
 
                 if (listVideos.Count > 0)
                 {
-                 
                 }
                 else
                 {
@@ -146,7 +146,6 @@ namespace OnlineVideos.Sites
             Regex r = new Regex(strRegex,
                  RegexOptions.IgnoreCase);
             Match m = r.Match(webData);
-
 
             while (m.Success)
             {
@@ -181,7 +180,6 @@ namespace OnlineVideos.Sites
             Regex r = new Regex(strRegex,
                  RegexOptions.IgnoreCase);
             Match m = r.Match(webData);
-
 
             while (m.Success)
             {
@@ -232,7 +230,6 @@ namespace OnlineVideos.Sites
                 video.PlaybackOptions.Add("SD", telem.ToList()[2].Path);
             }
             return telem.Last().Path;
-
         }
 
         #endregion Methods

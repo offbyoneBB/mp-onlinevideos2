@@ -478,6 +478,10 @@ namespace OnlineVideos.Sites.M3U
                 //Analysing Stream
                 string[] contentStreams = fullcontent.Where((x, idx) => idx > contentPosition).ToArray();
                 Helper.ReadM3uElement(this, contentStreams, basepath, this.Configuration, 0);
+
+                fullcontent = null;
+                contentStreams = null;
+
             }
 
         } //EOC
