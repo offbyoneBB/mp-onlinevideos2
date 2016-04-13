@@ -18,32 +18,58 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             RssLink cat = new RssLink();
-            cat.Url = _baseUrl + "nouveautes";
-            cat.Name = "Nouveautés";
+            cat.Url = _baseUrl +"dessins-animes";
+            cat.Name = "Dessins-animés";
+            cat.Thumb = @"http://replay.gulli.fr/bundles/jeunesseintegrationreplay/images/header/logo-gulli.png";
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
 
             cat = new RssLink();
-            cat.Url = _baseUrl + "AaZ";
-            cat.Name = "De A à Z";
+            cat.Url = _baseUrl + "series" ;
+            cat.Name = "Séries & films";
+            cat.Thumb = @"http://replay.gulli.fr/bundles/jeunesseintegrationreplay/images/header/logo-gulli.png";
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
 
             cat = new RssLink();
-            cat.Url = _baseUrl + "replay/dessins-animes";
-            cat.Name = "Dessins animés";
-            cat.HasSubCategories = false;
-            Settings.Categories.Add(cat);
-
-            cat = new RssLink();
-            cat.Url = _baseUrl + "replay/emissions";
+            cat.Url = _baseUrl + "emissions";
             cat.Name = "Emissions";
+            cat.Thumb = @"http://replay.gulli.fr/bundles/jeunesseintegrationreplay/images/header/logo-gulli.png";
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
 
             cat = new RssLink();
-            cat.Url = _baseUrl + "replay/series";
-            cat.Name = "Séries";
+            cat.Url = _baseUrl + "derniere_chance";
+            cat.Name = "Dernière chance";
+            cat.Thumb = @"http://replay.gulli.fr/bundles/jeunesseintegrationreplay/images/header/logo-gulli.png";
+            cat.HasSubCategories = false;
+            Settings.Categories.Add(cat);
+
+            cat = new RssLink();
+            cat.Url = _baseUrl + "all/plus-vus";
+            cat.Name = "Le top Gulli Replay";
+            cat.Thumb = @"http://replay.gulli.fr/bundles/jeunesseintegrationreplay/images/header/logo-gulli.png";
+            cat.HasSubCategories = false;
+            Settings.Categories.Add(cat);
+
+            cat = new RssLink();
+            cat.Url = _baseUrl + "all/month";
+            cat.Name = "Par date - Moins d'un mois";
+            cat.Thumb = @"http://replay.gulli.fr/bundles/jeunesseintegrationreplay/images/header/logo-gulli.png";
+            cat.HasSubCategories = false;
+            Settings.Categories.Add(cat);
+
+            cat = new RssLink();
+            cat.Url = _baseUrl + "all/week";
+            cat.Name = "Par date - Moins d'une semaine";
+            cat.Thumb = @"http://replay.gulli.fr/bundles/jeunesseintegrationreplay/images/header/logo-gulli.png";
+            cat.HasSubCategories = false;
+            Settings.Categories.Add(cat);
+
+            cat = new RssLink();
+            cat.Url = _baseUrl + "all/day";
+            cat.Name = "Par date - Moins d'un jour";
+            cat.Thumb = @"http://replay.gulli.fr/bundles/jeunesseintegrationreplay/images/header/logo-gulli.png";
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
 
@@ -58,20 +84,35 @@ namespace OnlineVideos.Sites
             string url = (category as RssLink).Url;
             string webData = GetWebData((category as RssLink).Url);
 
-            Regex r = new Regex(@"href=""(?<url>[^""]*)""></a><span\sclass=""play_video""></span>\s*<img\ssrc=""(?<thumb>[^""]*)""\swidth=""120""\sheight=""90""\salt=""""\s/>\s*</div>\s*<p>\s*<strong>(?<title>[^<]*)</strong>\s*<span>(?<description>[^<]*)<br/>(?<description2>[^<]*)</span>\s*</p>",
-                    RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
 
+            string strRegex = @"<li class=""col-md-4"">\s*<a class=""clearfix"" href=""(?<url>[^""""]*)"">\s*<span class=""wrap-img"">\s*<img src=""(?<thumb>[^""""]*)""\sclass=""img-responsive"">\s*</span>\s*<span class=""bloc"">\s*<span class=""title"">(?<title>[^<]*)</span>\s*<span class=""saison"">(?<saison>[^<]*)</span>\s*<span class=""episode_title"">(?<episode_title>[^<]*)</span>";
+
+            Regex r = new Regex(strRegex,
+                 RegexOptions.IgnoreCase);
             Match m = r.Match(webData);
+
+
             while (m.Success)
             {
                 VideoInfo video = new VideoInfo()
                 {
                     VideoUrl = m.Groups["url"].Value,
-                    Title = m.Groups["title"].Value,
+                    Title = m.Groups["title"].Value.Replace("."," ") ,
                     Thumb = m.Groups["thumb"].Value,
-                    Description = m.Groups["description"].Value.Trim() + "\n" + m.Groups["description2"].Value.Trim()
+                    Description = m.Groups["episode_title"].Value + "\r\n" + m.Groups["saison"].Value.Trim() 
                 };
-
+                if (video.Title.Contains(" - ")) 
+                {
+                    video.Title = video.Title.Substring(0, video.Title.IndexOf(" - "));
+                }
+                if (!string.IsNullOrEmpty(video.Thumb))
+                {
+                    video.Thumb = "http:" + video.Thumb;
+                }
+                else 
+                {
+                    video.Thumb = @"http://replay.gulli.fr/bundles/jeunesseintegrationreplay/images/header/logo-gulli-replay.png";
+                }
                 listVideos.Add(video);
                 m = m.NextMatch();
             }

@@ -374,6 +374,7 @@ namespace OnlineVideos.Sites.M3U
             {
                 this.Dispose();
             }
+
             public void Dispose()
             {
                 if (_watcher != null)
@@ -388,6 +389,7 @@ namespace OnlineVideos.Sites.M3U
 
                 if (Options != null)
                 { Options = null; }
+
             }
             #endregion <<CTR>>
 
@@ -395,7 +397,7 @@ namespace OnlineVideos.Sites.M3U
             /// Absolute Path of the Element
             /// </summary>
             public string Path { get; set; }
-
+            
             /// <summary>
             /// Options
             /// </summary>
@@ -444,6 +446,16 @@ namespace OnlineVideos.Sites.M3U
             /// Reader Configuration
             /// </summary>
             public ReaderConfiguration Configuration { get; set; }
+
+            /// <summary>
+            /// Is Playlist "HTTP_Live_Streaming"
+            /// </summary>
+            /// <returns></returns>
+            public bool IsHLS()
+            {
+                if (this.Options == null) return false;
+                return this.Options.ContainsKey("#EXT-X-MEDIA-SEQUENCE");
+            }
 
             private void AnalyzeContent(string basepath, string content)
             {

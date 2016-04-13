@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Net;
 
 namespace OnlineVideos.Sites
 {
@@ -29,17 +31,37 @@ namespace OnlineVideos.Sites
                         VideoInfo vid = new VideoInfo()
                         {
                             VideoUrl = flux.Path,
-                            Title = flux.Options["INFOS"].ToString()
+                            Title = flux.Options["INFOS"].ToString(),
+                            Airdate= System.DateTime.Now.ToString()
                         };
                         string th = System.IO.Path.Combine (new string[] {OnlineVideos.OnlineVideoSettings.Instance.ThumbsDir, "Icons",vid.Title+".png"} );
                         if (System.IO.File.Exists(th))
                         {
                             vid.Thumb = th;
                         }
-                        else 
+                        else
                         {
-                            //OnlineVideos.Sites.Helper.TvLogoDB.LogoChannel[] tChan = OnlineVideos.Sites.Helper.TvLogoDB.LogoChannel.GetChannel(vid.Title);
-                            //if (tChan.Length > 0) vid.Thumb = tChan[0].LogoWide;
+                            try 
+                            {
+                                OnlineVideos.Sites.Helper.TvLogoDB.LogoChannel[] tChan = OnlineVideos.Sites.Helper.TvLogoDB.LogoChannel.GetChannel(vid.Title);
+                                if (tChan.Length > 0)
+                                {
+                                    if (!string.IsNullOrEmpty(tChan[0].LogoWide))
+                                    {
+                                        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(tChan[0].LogoWide + "/medium");
+                                        HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+
+                                        using (StreamReader sr = new StreamReader(resp.GetResponseStream()))
+                                        {
+                                            System.Drawing.Image bmp = System.Drawing.Bitmap.FromStream((System.IO.Stream)sr.BaseStream);
+                                            sr.Close();
+                                            bmp.Save(th);
+                                        }
+                                        vid.Thumb = th;
+                                    }
+                                }
+                            }
+                            catch { }
                         }
                         listVideos.Add(vid);
                     }
@@ -55,7 +77,7 @@ namespace OnlineVideos.Sites
             {
                 M3U.M3U.M3UPlaylist pl = new M3U.M3U.M3UPlaylist();
                 pl.Read(video.VideoUrl);
-                if (pl.Options.ContainsKey("#EXT-X-MEDIA-SEQUENCE")) 
+                if (pl.IsHLS() ) 
                 {
                     return video.VideoUrl;
                 }
