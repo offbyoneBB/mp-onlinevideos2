@@ -256,7 +256,7 @@ namespace OnlineVideos.MediaPortal2
                 return;
 
             string action;
-            if (KEY_MAPPINGS.TryGetValue(key, out action))
+            if (KEY_MAPPINGS.TryGetValue(key, out action) || IsPassThrough(key, out action))
             {
                 ProcessActionArguments(ref action);
                 try
@@ -273,6 +273,20 @@ namespace OnlineVideos.MediaPortal2
             }
             // While player is active prevent any other key handling inside MP2, just forward the matching actions to WebBrowserPlayer
             key = Key.None; // Handled
+        }
+
+        /// <summary>
+        /// Handles key presses that should be simply forwarded to client (especially number keys).
+        /// </summary>
+        private bool IsPassThrough(Key key, out string action)
+        {
+            action = null;
+            if (key.IsPrintableKey && key.RawCode.HasValue && key.RawCode.Value >= '0' && key.RawCode.Value <= '9')
+            {
+                action = key.RawCode.Value.ToString();
+                return true;
+            }
+            return false;
         }
 
         private void ProcessActionArguments(ref string action)

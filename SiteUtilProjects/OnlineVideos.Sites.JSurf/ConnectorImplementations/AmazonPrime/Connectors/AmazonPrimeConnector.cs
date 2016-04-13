@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 using OnlineVideos.Sites.Entities;
 using System.Windows.Forms;
 using OnlineVideos.Helpers;
@@ -28,6 +29,9 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         private bool _isPlayOrPausing;
         private int _playPausePos = -1;
         private int _playPauseHeight = -1;
+
+        // Keys (or Actions) which are directly forwarded to browser
+        private string[] _passThroughKeys = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
         /// <summary>
         /// Do the login
@@ -173,6 +177,8 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         {
             if (_currentState == State.PlayPage1 && !_isPlayOrPausing)
             {
+                if (_passThroughKeys.Contains(actionEnumName))
+                    SendKeyToControl(actionEnumName);
                 if (actionEnumName == Constants.ACTION_MOVE_LEFT)
                     SendKeyToControl("{LEFT}");
                 if (actionEnumName == Constants.ACTION_MOVE_RIGHT)
