@@ -81,6 +81,7 @@
   <string name="LayoutIcons">Layout: Ikoner</string>
   <string name="LayoutBigIcons">Layout: Stora ikoner</string>
   <!--M-->
+  <string name="Main.Help">Denna plugin ger dig ett enkelt och konsekvent sätt att bläddra bland och spela upp videor från diverse webbplatser. </string>
   <string name="ManageSites">Hantera websidor</string>
   <string name="MaxResults">Högsta antal träffar</string>
   <!--N-->

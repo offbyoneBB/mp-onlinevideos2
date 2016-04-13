@@ -61,6 +61,27 @@ namespace OnlineVideos.Sites.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /* AADecode - Decode encoded-as-aaencode JavaScript program.
+        /// * 
+        /// * Copyright (C) 2010 @cat_in_136
+        /// * 
+        /// * This software is released under the MIT License.
+        /// * http://opensource.org/licenses/mit-license.php
+        /// */
+        ///var AADecode = {
+        ///    decode: function (text) {
+        ///        var evalPreamble = &quot;(\uFF9F\u0414\uFF9F) [&apos;_&apos;] ( (\uFF9F\u0414\uFF9F) [&apos;_&apos;] (&quot;;
+        ///        var decodePreamble = &quot;( (\uFF9F\u0414\uFF9F) [&apos;_&apos;] (&quot;;
+        ///        var evalPostamble = &quot;) (\uFF9F\u0398\uFF9F)) (&apos;_&apos;);&quot;;
+        ///        var decodePostamble = &quot; [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string AADecode {
+            get {
+                return ResourceManager.GetString("AADecode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to function __deleteAllCookiesAndStorage(rurl) {
         ///    sessionStorage.clear();
         ///    localStorage.clear();

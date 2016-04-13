@@ -34,7 +34,8 @@ namespace OnlineVideos.Sites.DavidCalder
 
             public override string GetPlaybackOptionUrl(string url)
             {
-                string data = WebCache.Instance.GetWebData(PlaybackOptions[url]);
+                string hosterUrl = WebCache.Instance.GetWebData(PlaybackOptions[url]);
+                string data = WebCache.Instance.GetWebData(hosterUrl);
                 if (parent != null)
                 {
                     parent.sh.WaitForSubtitleCompleted();

@@ -152,6 +152,10 @@ namespace OnlineVideos.Sites.HboNordic
                 request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate; // turn on automatic decompression of both formats (adds header "AcceptEncoding: gzip,deflate" to the request)
                 if (cookies != null) request.CookieContainer = cookies; // set cookies if given
                 if (proxy != null) request.Proxy = proxy; // send the request over a proxy if given
+                if (postData != null)
+                    contentType = string.IsNullOrEmpty(contentType) ? "application/x-www-form-urlencoded" : contentType;
+                if (!string.IsNullOrEmpty(contentType))
+                    ((WebRequest)request).ContentType = contentType;
                 if (headers != null) // set user defined headers
                 {
                     foreach (var headerName in headers.AllKeys)
@@ -175,17 +179,12 @@ namespace OnlineVideos.Sites.HboNordic
                 }
                 if (postData != null)
                 {
-                    contentType = string.IsNullOrEmpty(contentType) ? "application/x-www-form-urlencoded" : contentType;
                     byte[] data = encoding != null ? encoding.GetBytes(postData) : Encoding.UTF8.GetBytes(postData);
                     request.ContentLength = data.Length;
                     request.ProtocolVersion = HttpVersion.Version10;
                     Stream requestStream = request.GetRequestStream();
                     requestStream.Write(data, 0, data.Length);
                     requestStream.Close();
-                }
-                if (!string.IsNullOrEmpty(contentType))
-                {
-                    request.ContentType = contentType;
                 }
                 // request the data
                 try

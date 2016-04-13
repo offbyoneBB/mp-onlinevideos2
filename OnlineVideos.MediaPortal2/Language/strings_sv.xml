@@ -81,6 +81,7 @@
   <string name="OnlineVideos.LayoutIcons">Layout: Ikoner</string>
   <string name="OnlineVideos.LayoutBigIcons">Layout: Stora ikoner</string>
   <!--M-->
+  <string name="OnlineVideos.Main.Help">Denna plugin ger dig ett enkelt och konsekvent sätt att bläddra bland och spela upp videor från diverse webbplatser. </string>
   <string name="OnlineVideos.ManageSites">Hantera websidor</string>
   <string name="OnlineVideos.MaxResults">Högsta antal träffar</string>
   <!--N-->
