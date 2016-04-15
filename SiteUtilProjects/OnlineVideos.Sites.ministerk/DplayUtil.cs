@@ -225,21 +225,21 @@ namespace OnlineVideos.Sites
             HasNextPage = false;
             List<VideoInfo> videos = new List<VideoInfo>();
             HtmlDocument doc = GetWebData<HtmlDocument>(currentUrl, cookies: Cookies);
-            HtmlNodeCollection channelNodes = doc.DocumentNode.SelectNodes("//div[@class='channel-logo']");
+            HtmlNodeCollection channelNodes = doc.DocumentNode.SelectNodes("//div[contains(@class,'block-type-1')]");
             foreach (HtmlNode channel in channelNodes)
             {
-                HtmlNode a = channel.SelectSingleNode("a");
-                if (a != null)
+                HtmlNode img = channel.SelectSingleNode(".//img[@class='logo']");
+                if (img != null && !img.GetAttributeValue("src", "").ToLower().Contains("dplay-logo"))
                 {
-                    HtmlNode img = a.SelectSingleNode("img");
-                    if (img != null)
-                    {
-                        VideoInfo video = new VideoInfo();
-                        video.VideoUrl = a.GetAttributeValue("data-page-loader", "");
-                        video.Thumb = img.GetAttributeValue("src", "");
-                        video.Title = img.GetAttributeValue("alt", "");
-                        videos.Add(video);
-                    }
+                    VideoInfo video = new VideoInfo();
+                    video.VideoUrl = channel.SelectSingleNode(".//a[contains(@class,'channel-item')]").GetAttributeValue("data-page-loader", "");
+                    video.Thumb = img.GetAttributeValue("src", "");
+                    HtmlNode h2 = channel.SelectSingleNode(".//h2");
+                    if (h2 != null)
+                        video.Title = h2.InnerText;
+                    else
+                        video.Title = img.GetAttributeValue("alt", "").Replace("logo","").Trim();
+                    videos.Add(video);
                 }
             }
             return videos;
