@@ -64,7 +64,6 @@
       <Link>Properties\Version.cs</Link>
     </Compile>
     <Compile Include="BrowserUtilConnectors\DplayConnector.cs" />
-    <Compile Include="BrowserUtilConnectors\HboNordicConnector.cs" />
     <Compile Include="BrowserUtilConnectors\KatsomoConnector.cs" />
     <Compile Include="BrowserUtilConnectors\NetflixConnector.cs" />
     <Compile Include="BrowserUtilConnectors\TV4PlayConnector.cs" />
@@ -76,7 +75,6 @@
     <Compile Include="DplayUtil.cs" />
     <Compile Include="DrakenFilmUtil.cs" />
     <Compile Include="DreamfilmHDUtil.cs" />
-    <Compile Include="HboNordicWebUtil.cs" />
     <Compile Include="HboNordic\HboWebCache.cs" />
     <Compile Include="Hoster\Buggerdugger.cs" />
     <Compile Include="Hoster\IReferer.cs" />

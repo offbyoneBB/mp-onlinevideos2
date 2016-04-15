@@ -853,18 +853,6 @@
     <Site name="Viaplay.fi" util="ViaplayWeb" agecheck="false" enabled="true" lang="fi" player="Browser">
       <Description>Tv-ohjelmat, urheilua ja elokuvat netissä  - Viaplay.fi</Description>
     </Site>
-    <Site name="HBO Nordic - Svenska" util="HboNordicWeb" agecheck="false" enabled="true" lang="sv" player="Browser">
-      <Description>HBO Nordic - The Home of Series</Description>
-    </Site>
-    <Site name="HBO Nordic - Norsk" util="HboNordicWeb" agecheck="false" enabled="true" lang="no" player="Browser">
-      <Description>HBO Nordic - The Home of Series</Description>
-    </Site>
-    <Site name="HBO Nordic - Dansk" util="HboNordicWeb" agecheck="false" enabled="true" lang="da" player="Browser">
-      <Description>HBO Nordic - The Home of Series</Description>
-    </Site>
-    <Site name="HBO Nordic - Suomi" util="HboNordicWeb" agecheck="false" enabled="true" lang="fi" player="Browser">
-      <Description>HBO Nordic - The Home of Series</Description>
-    </Site>
     <Site name="Draken Film" util="DrakenFilm" agecheck="false" enabled="true" lang="sv">
       <Description>På Göteborg Film Festivals filmtjänst Draken Film ser du filmhistoriens främsta klassiker och nya festivalfavoriter från vår tids mest spännande filmskapare. Hundratals handplockade filmer från hela världen - nya premiärer varje vecka.</Description>
     </Site>
