@@ -10,6 +10,8 @@ namespace OnlineVideos.Sites
         #region Fields
 
         private string _baseUrl = "http://replay.gulli.fr/";
+        private Category _currentCategory = null;
+        private int _currentPage = 1;
 
         #endregion Fields
 
@@ -18,32 +20,58 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             RssLink cat = new RssLink();
-            cat.Url = _baseUrl + "nouveautes";
-            cat.Name = "Nouveautés";
+            cat.Url = _baseUrl + "dessins-animes";
+            cat.Name = "Dessins-animés";
+            cat.Thumb = @"http://replay.gulli.fr/bundles/jeunesseintegrationreplay/images/header/logo-gulli.png";
+            cat.Other = 1;
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
 
             cat = new RssLink();
-            cat.Url = _baseUrl + "AaZ";
-            cat.Name = "De A à Z";
+            cat.Url = _baseUrl + "series";
+            cat.Name = "Séries & films";
+            cat.Thumb = @"http://replay.gulli.fr/bundles/jeunesseintegrationreplay/images/header/logo-gulli.png";
+            cat.Other = 1;
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
 
             cat = new RssLink();
-            cat.Url = _baseUrl + "replay/dessins-animes";
-            cat.Name = "Dessins animés";
-            cat.HasSubCategories = false;
-            Settings.Categories.Add(cat);
-
-            cat = new RssLink();
-            cat.Url = _baseUrl + "replay/emissions";
+            cat.Url = _baseUrl + "emissions";
             cat.Name = "Emissions";
+            cat.Thumb = @"http://replay.gulli.fr/bundles/jeunesseintegrationreplay/images/header/logo-gulli.png";
+            cat.Other = 1;
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
 
             cat = new RssLink();
-            cat.Url = _baseUrl + "replay/series";
-            cat.Name = "Séries";
+            cat.Url = _baseUrl + "derniere_chance";
+            cat.Name = "Dernière chance";
+            cat.Thumb = @"http://replay.gulli.fr/bundles/jeunesseintegrationreplay/images/header/logo-gulli.png";
+            cat.Other = 2;
+            cat.HasSubCategories = false;
+            Settings.Categories.Add(cat);
+
+            cat = new RssLink();
+            cat.Url = _baseUrl + "all/month";
+            cat.Name = "Par date - Moins d'un mois";
+            cat.Thumb = @"http://replay.gulli.fr/bundles/jeunesseintegrationreplay/images/header/logo-gulli.png";
+            cat.Other = 2;
+            cat.HasSubCategories = false;
+            Settings.Categories.Add(cat);
+
+            cat = new RssLink();
+            cat.Url = _baseUrl + "all/week";
+            cat.Name = "Par date - Moins d'une semaine";
+            cat.Thumb = @"http://replay.gulli.fr/bundles/jeunesseintegrationreplay/images/header/logo-gulli.png";
+            cat.Other = 2;
+            cat.HasSubCategories = false;
+            Settings.Categories.Add(cat);
+
+            cat = new RssLink();
+            cat.Url = _baseUrl + "all/day";
+            cat.Name = "Par date - Moins d'un jour";
+            cat.Thumb = @"http://replay.gulli.fr/bundles/jeunesseintegrationreplay/images/header/logo-gulli.png";
+            cat.Other = 2;
             cat.HasSubCategories = false;
             Settings.Categories.Add(cat);
 
@@ -57,26 +85,126 @@ namespace OnlineVideos.Sites
             List<VideoInfo> listVideos = new List<VideoInfo>();
             string url = (category as RssLink).Url;
             string webData = GetWebData((category as RssLink).Url);
+            _currentCategory = null;
+            _currentPage = 1;
 
-            Regex r = new Regex(@"href=""(?<url>[^""]*)""></a><span\sclass=""play_video""></span>\s*<img\ssrc=""(?<thumb>[^""]*)""\swidth=""120""\sheight=""90""\salt=""""\s/>\s*</div>\s*<p>\s*<strong>(?<title>[^<]*)</strong>\s*<span>(?<description>[^<]*)<br/>(?<description2>[^<]*)</span>\s*</p>",
-                    RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
+            if (1 == ((int)category.Other))
+            {
+                GetVideos_Method1(listVideos, webData);
+            }
+            else
+                GetVideos_Method2(listVideos, webData);
 
+            if (listVideos.Count > 0)
+            {
+                _currentCategory = category;
+            }
+            else
+            {
+                _currentCategory = null;
+                _currentPage = 1;
+            }
+
+            return listVideos;
+        }
+
+        public override bool HasNextPage { get { return true; } }
+
+        public override List<VideoInfo> GetNextPageVideos()
+        {
+            List<VideoInfo> listVideos = new List<VideoInfo>();
+
+            if (null != _currentCategory)
+            {
+                _currentPage++;
+                string webData = GetWebData((_currentCategory as RssLink).Url + "/" + _currentPage);
+
+                if (1 == ((int)_currentCategory.Other))
+                {
+                    GetVideos_Method1(listVideos, webData);
+                }
+                else
+                    GetVideos_Method2(listVideos, webData);
+
+                if (listVideos.Count > 0)
+                {
+                }
+                else
+                {
+                    _currentCategory = null;
+                    _currentPage = 1;
+                }
+            }
+
+            return listVideos;
+        }
+
+        private static void GetVideos_Method1(List<VideoInfo> listVideos, string webData)
+        {
+            string strRegex = @"<li class=""col-md-4"">\s*<a class=""clearfix"" href=""(?<url>[^""""]*)"">\s*<span class=""wrap-img"">\s*<img src=""(?<thumb>[^""""]*)""\sclass=""img-responsive"">\s*</span>\s*<span class=""bloc"">\s*<span class=""title"">(?<title>[^<]*)</span>\s*<span class=""saison"">(?<saison>[^<]*)</span>\s*<span class=""episode_title"">(?<episode_title>[^<]*)</span>";
+
+            Regex r = new Regex(strRegex,
+                 RegexOptions.IgnoreCase);
             Match m = r.Match(webData);
+
             while (m.Success)
             {
                 VideoInfo video = new VideoInfo()
                 {
                     VideoUrl = m.Groups["url"].Value,
-                    Title = m.Groups["title"].Value,
+                    Title = m.Groups["title"].Value.Replace(".", " "),
                     Thumb = m.Groups["thumb"].Value,
-                    Description = m.Groups["description"].Value.Trim() + "\n" + m.Groups["description2"].Value.Trim()
+                    Description = m.Groups["episode_title"].Value + "\r\n" + m.Groups["saison"].Value.Trim()
                 };
-
+                if (video.Title.Contains(" - "))
+                {
+                    video.Title = video.Title.Substring(0, video.Title.IndexOf(" - "));
+                }
+                if (!string.IsNullOrEmpty(video.Thumb))
+                {
+                    video.Thumb = "http:" + video.Thumb;
+                }
+                else
+                {
+                    video.Thumb = @"http://replay.gulli.fr/bundles/jeunesseintegrationreplay/images/header/logo-gulli-replay.png";
+                }
                 listVideos.Add(video);
                 m = m.NextMatch();
             }
+        }
 
-            return listVideos;
+        private static void GetVideos_Method2(List<VideoInfo> listVideos, string webData)
+        {
+            string strRegex = @"<li class=""col-md-4"">\s*<a class=""clearfix"" href=""(?<url>[^""""]*)"">\s*<span class=""wrap-img"">\s*<img class=""img-responsive"" src=""(?<thumb>[^""""]*)""/>\s*</span>\s*<span class=""bloc"">\s*<span class=""title"">(?<title>[^""""]*)</span>\s*<span class=""saison"">(?<saison>[^""""]*)</span>\s*<span class=""episode_title"">(?<episode_title>[^""""]*)</span>";
+
+            Regex r = new Regex(strRegex,
+                 RegexOptions.IgnoreCase);
+            Match m = r.Match(webData);
+
+            while (m.Success)
+            {
+                VideoInfo video = new VideoInfo()
+                {
+                    VideoUrl = m.Groups["url"].Value,
+                    Title = m.Groups["title"].Value.Replace(".", " "),
+                    Thumb = m.Groups["thumb"].Value,
+                    Description = m.Groups["episode_title"].Value + "\r\n" + m.Groups["saison"].Value.Trim()
+                };
+                if (video.Title.Contains(" - "))
+                {
+                    video.Title = video.Title.Substring(0, video.Title.IndexOf(" - "));
+                }
+                if (!string.IsNullOrEmpty(video.Thumb))
+                {
+                    video.Thumb = "http:" + video.Thumb;
+                }
+                else
+                {
+                    video.Thumb = @"http://replay.gulli.fr/bundles/jeunesseintegrationreplay/images/header/logo-gulli-replay.png";
+                }
+                listVideos.Add(video);
+                m = m.NextMatch();
+            }
         }
 
         public override string GetVideoUrl(VideoInfo video)
@@ -101,32 +229,7 @@ namespace OnlineVideos.Sites
                 video.PlaybackOptions.Add("LOW RES", telem.ToList()[0].Path);
                 video.PlaybackOptions.Add("SD", telem.ToList()[2].Path);
             }
-            return telem.First().Path;
-
-            //string webData = GetWebData(resultUrl);
-            //string rgxstring = @"(?<url>[\w.,?=\/-]*).m3u8";
-            //Regex rgx = new Regex(rgxstring);
-            //var tresult = rgx.Matches(webData);
-            //List<string> tUrl = new List<string>();
-            //foreach (Match match in tresult)
-            //{
-            //    tUrl.Add( videoFile.Replace("playlist", match.Groups["url"].ToString()));
-
-            //    //tUrl.Add(webData.Substring(webData.IndexOf(id), webData.IndexOf("m3u8") - webData.IndexOf(id))+"m3u8" match.Groups["url"]);
-            //}
-
-            //if (tUrl.Count==5)
-            //{
-            //    video.PlaybackOptions = new Dictionary<string, string>();
-            //    video.PlaybackOptions.Add("LOW RES", tUrl[0]);
-            //    video.PlaybackOptions.Add("SD", tUrl[3]);
-            //}
-
-            //return tUrl[0];
-            //string nexturl = webData.Substring(webData.IndexOf(id), webData.IndexOf("m3u8") - webData.IndexOf(id))+"m3u8";
-            //nexturl = videoFile.Replace("playlist.m3u8",nexturl);
-
-            //return nexturl;
+            return telem.Last().Path;
         }
 
         #endregion Methods
