@@ -34,37 +34,21 @@ namespace OnlineVideos.Sites.DavidCalder
 
             public override string GetPlaybackOptionUrl(string url)
             {
-                string hosterUrl = WebCache.Instance.GetWebData(PlaybackOptions[url]);
-                string data = WebCache.Instance.GetWebData(hosterUrl);
+                string hosterUrl = PlaybackOptions[url];
+
                 if (parent != null)
                 {
                     parent.sh.WaitForSubtitleCompleted();
                     parent.lastPlaybackOptionUrl = PlaybackOptions[url];
                 }
-                Match n = Regex.Match(data, @"<IFRAME\sid=""showvideo""\ssrc=""(?<url>[^""]*)""");
-                if (n.Success)
-                {
-                    string url2 = n.Groups["url"].Value;
-                    if (url2.Contains("/tz.php?url=external.php?url="))
-                    {
-                        string newurl = url2.Replace(@"/tz.php?url=external.php?url=", "");
-                        byte[] tmp = Convert.FromBase64String(newurl);
-                        string i = Encoding.ASCII.GetString(tmp);
-                        return GetVideoUrl(i);
-                    }
-                    if (url2.Contains("/tz.php?url="))
-                    {
+                string[] parts = hosterUrl.Split(new[] { "url=" }, StringSplitOptions.None);
 
-                        int p = url2.IndexOf("url=");
-                        if (p > 0)
-                        {
-                            string newurl = url2.Substring(p + 4);
-                            return GetVideoUrl(newurl);
-                        }
-                    }
-                    return GetVideoUrl(n.Groups["url"].Value);
+                if (parts.Length == 2)
+                {
+                    byte[] tmp = Convert.FromBase64String(parts[1]);
+                    hosterUrl = Encoding.ASCII.GetString(tmp);              
                 }
-                return GetVideoUrl(url);
+                return GetVideoUrl(hosterUrl);
             }
         }
 

@@ -20,36 +20,39 @@ namespace OnlineVideos.Sites.DavidCalder
         public override string GetVideoUrl(string url)
         {
             CookieContainer cc = new CookieContainer();
-            string postData = String.Empty;
-            string[] parts = url.Split(new[] { "/" }, StringSplitOptions.None);
-            string Referer = "http://uploadc.com/player/6.6/jwplayer.flash.swf";
-
             string data = WebCache.Instance.GetWebData(url, cookies: cc);
+            //<input id='ipcount'   style="margin: 0pt; font-weight: bold; padding: 10px;"type="submit" name="method_free" value="Continue">
+            url = url.Replace(".com", ".ch");
             if (!string.IsNullOrEmpty(data))
             {
-                Match match = Regex.Match(data, @"<input\stype=""hidden""\sname=""(?<name>[^""]+)""\svalue=""(?<value>[^""]+)"">");
-
-                while (match.Success)
+                Match match = Regex.Match(data, @"<input\s*type=""hidden""\s*name=""(?<name>[^""]*)""(.*?)value=""(?<value>[^""]*)""\s*>");
+                if (match.Success)
                 {
-                    if (!String.IsNullOrEmpty(postData))
-                        postData += "&";
-                    postData += match.Groups["name"].Value + "=" + match.Groups["value"].Value;
-                    match = match.NextMatch();
+                    string postData = String.Empty;
+                    while (match.Success)
+                    {
+                        if (!String.IsNullOrEmpty(postData))
+                            postData += "&";
+                        postData += match.Groups["name"].Value + "=" + match.Groups["value"].Value;
+                        match = match.NextMatch();
+                    }
+                    postData += "&method_free = Continue";
+                    data = WebCache.Instance.GetWebData(url, postData, cc, url);
                 }
-                data = WebCache.Instance.GetWebData(url, postData, cc, url);
-                System.Threading.Thread.Sleep(Convert.ToInt32(3) * 1001);
-                data = WebCache.Instance.GetWebData(url, postData, cc, url);
 
-                Match n1 = Regex.Match(data, @"""sources""\s:\s\[\s*{\s*""file""\s:\s""(?<url>[^""]+)"",\s*""default""\s:\strue,\s*""label""\s:\s""720""\s*}\s*\]");
-                if (n1.Success)
-                    return WebCache.Instance.GetRedirectedUrl(n1.Groups["url"].Value, Referer);
+                Match match1 = Regex.Match(data, @"s1.addVariable\('file','(?<url>[^']*)'\)");
+                if (match1.Success)
+                {
+                    return match1.Groups["url"].Value;
+                }
 
-                Match n = Regex.Match(data, @"s1.addVariable\('file','(?<url>[^']*)'\)");
-                if (n.Success)
-
-                    return n.Groups["url"].Value;
+                //<p id="content">File was deleted</p>
+                Match noFile = Regex.Match(data, @"<p\sid=""content"">(?<msg>[^<]*)</p>");
+                if (noFile.Success)
+                    throw new OnlineVideosException(noFile.Groups["msg"].Value.ToUpperInvariant());
+                
             }
-            return String.Empty;
+            return url;
         }
     }
 
@@ -110,7 +113,7 @@ namespace OnlineVideos.Sites.DavidCalder
                 //<p id="content">File was deleted</p>
                 Match noFile = Regex.Match(data, @"<p\sid=""content"">(?<msg>[^<]*)</p>");
                 if (noFile.Success)
-                    Log.Info("Hoster Result : " + noFile.Groups["msg"].Value);
+                    throw new OnlineVideosException(noFile.Groups["msg"].Value.ToUpperInvariant());
             }
             return url;
         }
@@ -154,7 +157,7 @@ namespace OnlineVideos.Sites.DavidCalder
                 //<p id="content">File was deleted</p>
                 Match noFile = Regex.Match(data, @"<p\sid=""content"">(?<msg>[^<]*)</p>");
                 if (noFile.Success)
-                    Log.Info("Hoster Result : " + noFile.Groups["msg"].Value);
+                    throw new OnlineVideosException(noFile.Groups["msg"].Value.ToUpperInvariant());
             }
             return String.Empty;
         }
@@ -214,7 +217,7 @@ namespace OnlineVideos.Sites.DavidCalder
                 postData += "&referer=&method_free=Continue";
 
                 data = WebCache.Instance.GetWebData(url, postData, cc, url);
-                System.Threading.Thread.Sleep(Convert.ToInt32(3) * 1001);
+                System.Threading.Thread.Sleep(Convert.ToInt32(5) * 1001);
                 data = WebCache.Instance.GetWebData(url, postData, cc, url);
 
                 Match n = Regex.Match(data, @"config:{file:'(?<url>[^']+)','provider':'http'}");
@@ -308,7 +311,7 @@ namespace OnlineVideos.Sites.DavidCalder
                         //<p id="content">File was deleted</p>
                 Match noFile = Regex.Match(data, @"<span[^>]*>(?<msg>[^<]*)</span>");
                 if (noFile.Success)
-                    throw new OnlineVideosException(noFile.Groups["msg"].Value);
+                    throw new OnlineVideosException(noFile.Groups["msg"].Value.ToUpperInvariant());
 
             }
             return url;
