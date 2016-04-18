@@ -895,7 +895,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
             //Do something with the result json...
             (parentCategory.ParentCategory as NetflixCategory).InQueue = !inQ;
-            throw new OnlineVideosException("OK: " + (inQ ? Translate("My List Remove") : Translate("My List Add")));
+            throw new OnlineVideosException((inQ ? Translate("My List Remove") : Translate("My List Add")) + ": OK");
         }
 
         #endregion
@@ -1030,7 +1030,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 //Do something with the result json...
                 (selectedCategory as NetflixCategory).InQueue = !inQ;
                 result.RefreshCurrentItems = true;
-                result.ExecutionResultMessage = title + " - OK: " + (inQ ? Translate("My List Remove") : Translate("My List Add"));
+                result.ExecutionResultMessage = title + " - " + (inQ ? Translate("My List Remove") : Translate("My List Add")) + ": OK";
                 return result;
             }
             return base.ExecuteContextMenuEntry(selectedCategory, selectedItem, choice);
