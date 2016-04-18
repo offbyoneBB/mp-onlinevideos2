@@ -107,6 +107,13 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     else
                         i18n.Add("Home", "Home");
 
+                    rgx = new Regex(@"""navitem.characters"":""(?<val>[^""]*)");
+                    m = rgx.Match(data);
+                    if (m.Success)
+                        i18n.Add("Characters", m.Groups["val"].Value.Trim());
+                    else
+                        i18n.Add("Characters", "Characters");
+
                     rgx = new Regex(@"""billboard.actions.continueWatching"":""(?<val>[^""]*)");
                     m = rgx.Match(data);
                     if (m.Success)
@@ -474,11 +481,18 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             home.Other = (Func<List<Category>>)(() => GetHomeCategories(home));
             cats.Add(home);
 
+            if (IsKidsProfile)
+            {
+                RssLink characters = new RssLink() { Name = Translate("Characters"), HasSubCategories = true, ParentCategory = parentCategory };
+                characters.Other = (Func<List<Category>>)(() => GetCharactersCategories(characters));
+                cats.Add(characters);
+            }
 
             //My List
             RssLink myList = new RssLink() { Name = Translate("My List"), HasSubCategories = true, ParentCategory = parentCategory };
             myList.Other = (Func<List<Category>>)(() => GetListCategories(myList, "mylist", 0));
             cats.Add(myList);
+
             //continueWatching
             RssLink continueWatching = new RssLink() { Name = Translate("Continue Watching"), HasSubCategories = true, ParentCategory = parentCategory };
             continueWatching.Other = (Func<List<Category>>)(() => GetListCategories(continueWatching, "continueWatching", 0));
@@ -529,6 +543,35 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
 
             parentCategory.SubCategoriesDiscovered = true;
+            return cats;
+        }
+
+        private List<Category> GetCharactersCategories(RssLink parentCategory)
+        {
+            List<Category> cats = new List<Category>();
+            string data = MyGetWebData(ShaktiApi + "/" + BuildId + "/pathEvaluator?withSize=true&materialize=true&esn=www",
+                postData: @"{""paths"":[[""kidslolomo"",{""from"":0,""to"":50},[""context""]]],""authURL"":""" + latestAuthUrl + @"""}",
+                contentType: "application/json");
+            JObject json = (JObject)JsonConvert.DeserializeObject(data);
+            JProperty prop = json["value"]["lists"].Values<JProperty>().FirstOrDefault(p => !p.Name.Contains("size") && p.Value["context"].Value<string>() == "character");
+            string lolmoGuid = prop.Name;
+            data = MyGetWebData(ShaktiApi + "/" + BuildId + "/pathEvaluator?withSize=true&materialize=true&esn=www",
+               postData: @"{""paths"":[[""lists"",""" + lolmoGuid + @""",{""from"":0,""to"":100},""summary""],[""lists"",""" + lolmoGuid + @""",{""from"":0,""to"":100},""artwork"",""character_square"",""png"",""_400x400""]],""authURL"":""" + latestAuthUrl + @"""}",
+               contentType: "application/json");
+            json = (JObject)JsonConvert.DeserializeObject(data);
+            for (int i = 0; i <= 100 ; i++)
+            {
+                JToken token = json["value"]["lists"][lolmoGuid][i.ToString()];
+                if (token != null && token.Values().Count() == 2)
+                {
+                    string characterId = token.Values().Last().ToString();
+                    JToken character = json["value"]["characters"][characterId];
+                    RssLink cat = new RssLink() { ParentCategory = parentCategory, Name = character["summary"]["name"].Value<string>(), Thumb = character["artwork"]["character_square"]["png"]["_400x400"]["url"].Value<string>(), Url = characterId + @",""gallery""", HasSubCategories = true };
+                    cat.Other = (Func<List<Category>>)(() => GetSubCategories(cat, "characters", 0));
+                    cats.Add(cat);
+                }
+            }
+            parentCategory.SubCategoriesDiscovered = cats.Count > 0;
             return cats;
         }
 
