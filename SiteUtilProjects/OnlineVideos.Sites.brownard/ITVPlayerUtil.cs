@@ -8,19 +8,12 @@ using System.Net;
 using System.IO;
 using System.Xml;
 using OnlineVideos.Sites.Utils;
+using System.Web;
 
 namespace OnlineVideos.Sites
 {
     public class ITVPlayerUtil : SiteUtilBase
     {
-        #region Category Type
-        enum CategoryType
-        {
-            AtoZ,
-            Default
-        }
-        #endregion
-
         #region Site Config
         [Category("OnlineVideosUserConfiguration"), Description("Proxy to use for WebRequests (must be in the UK). Define like this: 83.84.85.86:8116")]
         string proxy = null;
@@ -45,9 +38,6 @@ namespace OnlineVideos.Sites
         #endregion
 
         #region Consts
-        const string BASE_URL = "https://www.itv.com";
-        const string ATOZ_VIDEOS_URL = "http://www.itv.com/_app/Dynamic/CatchUpData.ashx?ViewType=1&Filter={0}&moduleID=115107";
-
         const string SOAP_TEMPLATE = @"<?xml version='1.0' encoding='utf-8'?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
     <SOAP-ENV:Body>
@@ -80,16 +70,28 @@ namespace OnlineVideos.Sites
         #endregion
 
         #region Regex
-        //Shows
-        static readonly Regex showsRegex = new Regex(@"<img src='(.*?)'>[\s\n]*</a>[\s\n]*<div.*?>[\s\n]*<a href=""(.*?)"">(.*?)</a>[\s\n]*.*?[\s\n]*<div.*>[\s\n]*<span.*?>(\d+)");
-        static readonly Regex showsVideoRegex = new Regex(@"<a href=""(.*?)""><img.*?src=""(.*?)"".*?title=""(.*?)"".*[\s\n]*<a.*?>[\s\n]*<div.*?>[\s\n]*.*?<span.*?>(.*?)</span>.*?<br />[\s\n]*<div.*?>Series (<div.*?>){3}(.*?)</div>.*[\s\n]*<div.*?>Episode (<div.*?>){3}(.*?)</div>.*[\s\n]*</div>[\s\n]*(<div.*?>){3}(.*?)</div>.*?(<div.*?>){3}(.*?)</div>");
-        static readonly Regex singleShowsVideoRegex = new Regex(@"<h1 class=""title episode-title"".*?>[\s\n]*(.*?)</h1>[\s\n]*(<div.*?>){3}<span.*?>(.*?)</span>.*?<div.*?>.*?</div>(<div.*?>){2}(.*?)</div>(.|\n)*?name=""poster"" value=""(.*?)""(.|\n)*?<div class=""description"">[\s\n]*(.*?)</div>");
-        //AtoZ
-        static readonly Regex atozVideoRegex = new Regex(@"<div class=""listItem.*?<a href=""http://.*?&amp;Filter=(\d+).*?<img.*? src=""([^""]*)"".*?<a.*?>([^<]*).*?<p class=""date"">([^<]*).*?<p class=""progDesc"">([^<]*).*?<li>\s*Duration:([^<]*)", RegexOptions.Singleline);
+        //Shows        
+        static readonly Regex noEpisodesRegex = new Regex(@"No episodes available");
+        static readonly Regex showRegex = new Regex(@"<a href=""([^""]*)""[^>]*?data-content-type=""programme""(.*?)</a>", RegexOptions.Singleline);
+        static readonly Regex showCountRegex = new Regex(@"<p[^>]*>\s*(\d+)[^<]*</p>");
+
+        static readonly Regex showsVideoRegex = new Regex(@"<a href=""([^""]*)""[^>]*?data-content-type=""episode""(.*?)</a>", RegexOptions.Singleline);
+        static readonly Regex showsVideoTimeRegex = new Regex(@"<time[^>]*>(.*?)</time>", RegexOptions.Singleline);
+        static readonly Regex showsVideoSummaryRegex = new Regex(@"<p [^>]*>(.*?)</p>", RegexOptions.Singleline);
+
+        static readonly Regex titleRegex = new Regex(@"<h3[^>]*>([^<]*)</h3>");
+        static readonly Regex imageRegex = new Regex(@"<source srcset=""([^""]*)""");
+
+        static readonly Regex singleVideoTitleRegex = new Regex(@"<h1 id=""programme-title""[^>]*>(.*?)</h1>");
+        static readonly Regex singleVideoEpisodeInfoRegex = new Regex(@"<h2 class=""episode-info__episode-title"">(.*?)</h2>", RegexOptions.Singleline);
+        static readonly Regex singleVideoSummaryRegex = new Regex(@"<p class=""episode-info__synopsis theme__subtle"">(.*?)</p>", RegexOptions.Singleline);
+        static readonly Regex singleVideoTimeRegex = new Regex(@"<time[^>]*><span[^>]*>[^<]*</span><span[^>]*>(.*?)</time>");
+        static readonly Regex singleVideoImageRegex = new Regex(@"background-image: url\('(.*?)'\)");
+
         //Search
         static readonly Regex searchRegex = new Regex(@"<div class=""search-wrapper"">.*?<div class=""search-result-image"">[\s\n]*(<a.*?><img.*?src=""(.*?)"")?.*?<h4 class=""programme-title""><a href=""(.*?)"">(.*?)</a>.*?<div class=""programme-description"">[\s\n]*(.*?)</div>", RegexOptions.Singleline);
         //ProductionId
-        static readonly Regex productionIdRegex = new Regex(@"""productionId"":""(.*?)""");
+        static readonly Regex productionIdRegex = new Regex(@"data-video-id=""(.*?)""");
         #endregion
 
         #region SiteUtil Overrides
@@ -115,8 +117,6 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            if ((parentCategory as RssLink).Url.StartsWith("http://www.itv.com/_data"))
-                return getAtoZList(parentCategory);
             return getShowsList(parentCategory);
         }
 
@@ -125,38 +125,14 @@ namespace OnlineVideos.Sites
             Group group = category as Group;
             if (group != null)
                 return getLiveStreams(group);
-
-            switch (category.Other as CategoryType?)
-            {
-                case CategoryType.AtoZ:
-                    return getAtoZVids(category);
-                default:
-                    return getShowsVids(category);
-            }
+            return getShowsVids(category);
         }
 
         public override string GetVideoUrl(VideoInfo video)
         {
-            //Direct stream
-            if (video.VideoUrl.StartsWith("http://") || video.VideoUrl.StartsWith("rtmp://") || video.VideoUrl.StartsWith("rtmpe://"))
-                return video.VideoUrl;
-            
             bool isLiveStream = video.VideoUrl.StartsWith("sim");
-            if (isLiveStream)
-            {
-                string liveUrl = getLiveUrl(video, getPlaylistDocument(video.VideoUrl, false));
-                if (!string.IsNullOrEmpty(liveUrl))
-                    return liveUrl;
-            }
-
-            bool isProductionId = false;
-            string url = video.VideoUrl;
-            if (url.StartsWith("/itvplayer"))
-            {
-                isProductionId = true;
-                url = getProductionId(url);
-            }
-            return populateUrlsFromXml(video, getPlaylistDocument(url, isProductionId), isLiveStream);
+            string url = isLiveStream ? video.VideoUrl : getProductionId(video.VideoUrl);
+            return populateUrlsFromXml(video, getPlaylistDocument(url, !isLiveStream), isLiveStream);
         }
         #endregion
 
@@ -165,7 +141,7 @@ namespace OnlineVideos.Sites
         {
             get
             {
-                return true;
+                return false;
             }
         }
 
@@ -192,18 +168,28 @@ namespace OnlineVideos.Sites
         {
             string html = GetWebData((parentCategory as RssLink).Url);
             List<Category> subCats = new List<Category>();
-            foreach (Match match in showsRegex.Matches(html))
+            foreach (Match match in showRegex.Matches(html))
             {
+                string showHtml = match.Groups[2].Value;
+                Match m;
+                if ((m = noEpisodesRegex.Match(showHtml)).Success)
+                    continue;
+
                 RssLink cat = new RssLink();
                 cat.ParentCategory = parentCategory;
-                cat.Url = match.Groups[2].Value;
-                cat.Name = cleanString(match.Groups[3].Value);
-                string thumb = match.Groups[1].Value;
-                if (!string.IsNullOrEmpty(thumbReplaceRegExPattern))
-                    thumb = Regex.Replace(thumb, thumbReplaceRegExPattern, thumbReplaceString);
-                cat.Thumb = thumb;
-                cat.EstimatedVideoCount = uint.Parse(match.Groups[4].Value);
-                cat.Other = CategoryType.Default;
+                cat.Url = match.Groups[1].Value;
+
+                if ((m = titleRegex.Match(showHtml)).Success)
+                    cat.Name = cleanString(m.Groups[1].Value);
+                if ((m = imageRegex.Match(showHtml)).Success)
+                {
+                    string thumb = HttpUtility.HtmlDecode(m.Groups[1].Value);
+                    if (!string.IsNullOrEmpty(thumbReplaceRegExPattern))
+                        thumb = Regex.Replace(thumb, thumbReplaceRegExPattern, thumbReplaceString);
+                    cat.Thumb = thumb;
+                }
+                if ((m = showCountRegex.Match(showHtml)).Success)
+                    cat.EstimatedVideoCount = uint.Parse(m.Groups[1].Value);
                 subCats.Add(cat);
             }
             parentCategory.SubCategories = subCats;
@@ -213,89 +199,57 @@ namespace OnlineVideos.Sites
 
         List<VideoInfo> getShowsVids(Category category)
         {
-            string html = GetWebData(BASE_URL + (category as RssLink).Url);
+            string html = GetWebData((category as RssLink).Url);
             List<VideoInfo> vids = new List<VideoInfo>();
             foreach (Match match in showsVideoRegex.Matches(html))
             {
                 VideoInfo vid = new VideoInfo();
                 vid.VideoUrl = match.Groups[1].Value;
-                string thumb = match.Groups[2].Value;
-                if (!string.IsNullOrEmpty(thumbReplaceRegExPattern))
-                    thumb = Regex.Replace(thumb, thumbReplaceRegExPattern, thumbReplaceString);
-                vid.Thumb = thumb;
-                vid.Title = string.Format("Series {0} Episode {1}", match.Groups[6].Value, match.Groups[8].Value);
-                vid.Airdate = match.Groups[4].Value;
-                vid.Description = cleanString(match.Groups[10].Value);
-                vid.Length = match.Groups[12].Value;
+
+                string videoHtml = match.Groups[2].Value;
+                Match m;
+                if ((m = titleRegex.Match(videoHtml)).Success)
+                    vid.Title = cleanString(m.Groups[1].Value);
+                if ((m = imageRegex.Match(html)).Success)
+                {
+                    string thumb = HttpUtility.HtmlDecode(m.Groups[1].Value);
+                    if (!string.IsNullOrEmpty(thumbReplaceRegExPattern))
+                        thumb = Regex.Replace(thumb, thumbReplaceRegExPattern, thumbReplaceString);
+                    vid.Thumb = thumb;
+                }
+                if ((m = showsVideoTimeRegex.Match(videoHtml)).Success)
+                    vid.Airdate = cleanString(m.Groups[1].Value);
+                if ((m = showsVideoSummaryRegex.Match(videoHtml)).Success)
+                    vid.Description = cleanString(m.Groups[1].Value);
                 vids.Add(vid);
             }
 
             if (vids.Count < 1)
             {
                 //Single episode
-                Match match = singleShowsVideoRegex.Match(html);
-                if (match.Success)
-                {
-                    VideoInfo vid = new VideoInfo();
-                    vid.Title = cleanString(match.Groups[1].Value);
-                    vid.Airdate = match.Groups[3].Value;
-                    vid.Length = match.Groups[5].Value;
-                    vid.Thumb = match.Groups[7].Value;
-                    vid.Description = cleanString(match.Groups[9].Value);
-                    vid.VideoUrl = (category as RssLink).Url;
-                    vids.Add(vid);
-                }
-            }
-
-            return vids;
-        }
-        #endregion
-
-        #region AtoZ
-        int getAtoZList(Category parentCategory)
-        {
-            XmlDocument doc = GetWebData<XmlDocument>((parentCategory as RssLink).Url);
-            List<Category> subCats = new List<Category>();
-            foreach (XmlNode node in doc.SelectNodes("//ITVCatchUpProgramme"))
-            {
-                RssLink cat = new RssLink();
-                cat.ParentCategory = parentCategory;
-                cat.Url = node.SelectSingleNode("ProgrammeId").InnerText;
-                cat.Name = cleanString(node.SelectSingleNode("ProgrammeTitle").InnerText);
-                cat.Thumb = node.SelectSingleNode("ProgrammeMediaUrl").InnerText;
-                cat.Other = CategoryType.AtoZ;
-                subCats.Add(cat);
-            }
-            parentCategory.SubCategories = subCats;
-            parentCategory.SubCategoriesDiscovered = true;
-            return subCats.Count;
-        }
-
-        List<VideoInfo> getAtoZVids(Category category)
-        {
-            string html = GetWebData(string.Format(ATOZ_VIDEOS_URL, (category as RssLink).Url));
-            List<VideoInfo> vids = new List<VideoInfo>();
-            foreach (Match match in atozVideoRegex.Matches(html))
-            {
                 VideoInfo vid = new VideoInfo();
-                vid.VideoUrl = match.Groups[1].Value;
-                vid.Thumb = match.Groups[2].Value;
-                vid.Length = match.Groups[6].Value.Trim();
-
-                string title = cleanString(match.Groups[3].Value);
-                if (title == category.Name && !string.IsNullOrEmpty(match.Groups[4].Value))
+                Match m;
+                if ((m = singleVideoTitleRegex.Match(html)).Success)
+                    vid.Title = cleanString(m.Groups[1].Value);
+                if ((m = singleVideoImageRegex.Match(html)).Success)
                 {
-                    vid.Title = cleanString(match.Groups[4].Value);
-                    vid.Description = cleanString(match.Groups[5].Value);
+                    string thumb = m.Groups[1].Value;
+                    if (!string.IsNullOrEmpty(thumbReplaceRegExPattern))
+                        thumb = Regex.Replace(thumb, thumbReplaceRegExPattern, thumbReplaceString);
+                    vid.Thumb = thumb;
                 }
-                else
-                {
-                    vid.Title = title;
-                    //Sub-title and description
-                    vid.Description = cleanString(string.Format("{0}\r\n{1}", match.Groups[4], match.Groups[5]));
-                }
+                if ((m = singleVideoTimeRegex.Match(html)).Success)
+                    vid.Airdate = cleanString(m.Groups[1].Value);
+                string description = "";
+                if ((m = singleVideoEpisodeInfoRegex.Match(html)).Success)
+                    description = string.Format("{0} - ", cleanString(m.Groups[1].Value));
+                if ((m = singleVideoSummaryRegex.Match(html)).Success)
+                    description += cleanString(m.Groups[1].Value);
+                vid.Description = description;
+                vid.VideoUrl = (category as RssLink).Url;
                 vids.Add(vid);
             }
+
             return vids;
         }
         #endregion
@@ -328,32 +282,6 @@ namespace OnlineVideos.Sites
         #endregion
 
         #region Playlist Methods
-        string getLiveUrl(VideoInfo video, XmlDocument streamPlaylist)
-        {
-            if (streamPlaylist == null)
-            {
-                Log.Warn("ITVPlayer: Stream playlist is null");
-                return "";
-            }
-
-            XmlNode videoEntry = streamPlaylist.SelectSingleNode("//VideoEntries/Video");
-            if (videoEntry == null)
-            {
-                Log.Warn("ITVPlayer: Could not find video entry");
-                return "";
-            }
-
-            XmlNode node;
-            node = videoEntry.SelectSingleNode("./ManifestFile/URL");
-            if (node != null)
-            {
-                Log.Debug("Found url - {0}", node.InnerText);
-                video.PlaybackOptions = new Dictionary<string, string>();
-                video.PlaybackOptions.Add("live", node.InnerText);
-                return node.InnerText;
-            }
-            return "";
-        }
 
         string populateUrlsFromXml(VideoInfo video, XmlDocument streamPlaylist, bool live)
         {
@@ -399,7 +327,7 @@ namespace OnlineVideos.Sites
                     string url = new MPUrlSourceFilter.RtmpUrl(rtmpUrl)
                     {
                         PlayPath = mediaFile.InnerText,
-                        SwfUrl = "http://www.itv.com/mediaplayer/ITVMediaPlayer.swf?v=12.18.4",
+                        SwfUrl = "http://mediaplayer.itv.com/2.18.5%2Bbuild.ad408a9c67/ITVMediaPlayer.swf",
                         SwfVerify = true,
                         Live = live
                     }.ToString();
@@ -423,7 +351,7 @@ namespace OnlineVideos.Sites
 
         string getProductionId(string url)
         {
-            string html = GetWebData(BASE_URL + url);
+            string html = GetWebData(url);
             Match m = productionIdRegex.Match(html);
             string productionId;
             if (m.Success)
@@ -500,13 +428,14 @@ namespace OnlineVideos.Sites
         #endregion
 
         #region Utils
-        string cleanString(string s)
+        static string cleanString(string s)
         {
             s = stripTags(s);
-            return s.Replace("&amp;", "&").Replace("&pound;", "£").Replace("&#039;", "'").Trim();
+            s = s.Replace("&amp;", "&").Replace("&pound;", "£").Replace("&#039;", "'");
+            return Regex.Replace(s, @"\s\s+", " ").Trim();
         }
 
-        string stripTags(string s)
+        static string stripTags(string s)
         {
             return Regex.Replace(s, "<[^>]*>", "");
         }
