@@ -131,30 +131,42 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         }
 
 
+        private bool activateLoginTimer = true;
         public override Entities.EventResult BrowserDocumentComplete()
         {
-            string jsCode;
             if (!_disableLogging) MessageHandler.Info("Netflix. Url: {0}, State: {1}", Url, _currentState.ToString());
             switch (_currentState)
             {
                 case State.Login:
-                    if (Url.Contains("/Login?"))
+                    if (Url.Contains("/Login") && Url != @"https://www.netflix.com/Login")
                     {
-                        jsCode = "document.getElementById('email').value = '" + _username + "'; ";
-                        jsCode += "document.getElementById('password').value = '" + _password + "'; ";
-                        if (_rememberLogin)
+                        if (activateLoginTimer)
                         {
-                            jsCode += "document.getElementById('RememberMe').checked = true; ";
+                            activateLoginTimer = false;
+                            System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+                            timer.Tick += (object sender, EventArgs e) =>
+                            {
+                                string jsCode = "document.getElementsByName('email')[0].value = '" + _username + "'; ";
+                                jsCode += "document.getElementsByName('password')[0].value = '" + _password + "'; ";
+                                if (_rememberLogin)
+                                {
+                                    jsCode += "document.getElementsByName('rememberMeCheckbox')[0].checked = true; ";
+                                }
+                                else
+                                {
+                                    jsCode += "document.getElementsByName('rememberMeCheckbox')[0].checked = false; ";
+                                }
+                                jsCode += "document.getElementsByTagName('form')[0].submit();";
+                                InvokeScript(jsCode);
+                                timer.Stop();
+                                timer.Dispose();
+                            };
+
+                            timer.Interval = 1000;
+                            timer.Start();
                         }
-                        else
-                        {
-                            jsCode += "document.getElementById('RememberMe').checked = false; ";
-                        }
-                        jsCode += "setTimeout(\"document.getElementById('login-form-contBtn').click()\", 500);";
-                        InvokeScript(jsCode);
-                        //_currentState = State.ProfilesGate;
                     }
-                    else
+                    else if (!Url.Contains("/Login"))
                     {
                         Url = "https://www.netflix.com";
                         _currentState = State.SelectProfile;

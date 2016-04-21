@@ -64,7 +64,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private string loginUrl = @"https://www.netflix.com/Login";
         private string homeUrl = @"https://www.netflix.com/";
         private string playerUrl = @"http://www.netflix.com/watch/{0}";
-        private string loginPostData = @"authURL={0}&email={1}&password={2}&RememberMe=on";
+        private string loginPostData = @"authURL={0}&email={1}&password={2}&rememberMeCheckbox=true&flow=websiteSignUp&mode=login&action=loginAction&withFields=email%2Cpassword%2CrememberMe%2CnextPage&nextPage=";
         private string switchProfileUrl = @"{0}/{1}/profiles/switch?switchProfileGuid={2}";
 
         #endregion
@@ -322,7 +322,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     Settings.DynamicCategoriesDiscovered = false;
                     Settings.Categories.Clear();
                     profiles = null;
-                    throw new OnlineVideosException("Error loading profiles. Please try again");
+                    throw new OnlineVideosException("Error logging in or loading profiles. Please try again");
                 }
             }
         }
@@ -400,19 +400,21 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 if (_cc == null)
                 {
                     _cc = new CookieContainer();
-                    string url = WebCache.Instance.GetRedirectedUrl(loginUrl).Replace("entrytrap", "Login");
+                    string url = WebCache.Instance.GetRedirectedUrl(loginUrl);
                     // No caching in this case.
-                    var htmlDoc = GetWebData<HtmlDocument>(url, cookies: _cc, cache: false);
-                    HtmlNode form = htmlDoc.DocumentNode.SelectSingleNode("//form[@id = 'login-form']");
-                    HtmlNode authInput = form.SelectSingleNode("//input[@name = 'authURL']");
-                    string authUrl = authInput != null ? authInput.GetAttributeValue("value", "") : "";
-                    var data = GetWebData<HtmlDocument>(url, string.Format(loginPostData, HttpUtility.UrlEncode(authUrl), HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password)), _cc, cache: false);
-                    if (!(data.DocumentNode.SelectSingleNode("//form[@id = 'login-form']") == null))
+                    string data = GetWebData<string>(url, cookies: _cc, cache: false);
+                    Regex rgx = new Regex(@"""authURL"":""(?<authURL>[^""]*)");
+                    Match m = rgx.Match(data);
+                    if (m.Success)
+                    {
+                        latestAuthUrl = m.Groups["authURL"].Value;
+                        if (enableVerboseLog) Log.Debug("NETFLIX: new authURL");
+                        data = GetWebData<string>(url, string.Format(loginPostData, HttpUtility.UrlEncode(latestAuthUrl), HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password)), _cc, cache: false);
+                    }
+                    else
                     {
                         _cc = null;
-                        Settings.DynamicCategoriesDiscovered = false;
-                        Settings.Categories.Clear();
-                        throw new OnlineVideosException("Email and password does not match, or error in login process. Please try again.");
+                        throw new OnlineVideosException("Unknown Error: Could not login, no authUrl");
                     }
 
                 }
