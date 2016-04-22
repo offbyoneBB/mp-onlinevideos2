@@ -39,7 +39,7 @@ namespace OnlineVideos.Sites
             string data = HboWebCache.Instance.GetWebData("https://www.drakenfilm.se/user", cookies: cc, postData: postData, cache: false);
             Regex rgx = new Regex(@"""giffToken"":""(?<token>[^""]*)");
             Match match = rgx.Match(data);
-            if (!match.Success)
+            if (!match.Success || !data.Contains("Logga ut"))
             {
                 cc = null;
                 throw new OnlineVideosException("Kontrollera dina inloggningsuppgifter");
@@ -165,7 +165,7 @@ namespace OnlineVideos.Sites
             string data = HboWebCache.Instance.GetWebData(video.VideoUrl, cookies: cc, cache: false);
             Regex rgx = new Regex(@"""giffToken"":""(?<token>[^""]*)");
             Match match = rgx.Match(data);
-            if (!match.Success)
+            if (!match.Success || cc == null || !data.Contains("Logga ut"))
             {
                 token = login();
                 data = HboWebCache.Instance.GetWebData(video.VideoUrl, cookies: cc, cache: false);
