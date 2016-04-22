@@ -148,15 +148,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                             {
                                 string jsCode = "document.getElementsByName('email')[0].value = '" + _username + "'; ";
                                 jsCode += "document.getElementsByName('password')[0].value = '" + _password + "'; ";
-                                if (_rememberLogin)
-                                {
-                                    jsCode += "document.getElementsByName('rememberMeCheckbox')[0].checked = true; ";
-                                }
-                                else
-                                {
-                                    jsCode += "document.getElementsByName('rememberMeCheckbox')[0].checked = false; ";
-                                }
-                                jsCode += "document.getElementsByTagName('form')[0].submit();";
+                                jsCode += "if (document.getElementById('login-form-contBtn')) { document.getElementById('login-form-contBtn').click(); } else { document.getElementsByTagName('form')[0].submit();}";
                                 InvokeScript(jsCode);
                                 timer.Stop();
                                 timer.Dispose();

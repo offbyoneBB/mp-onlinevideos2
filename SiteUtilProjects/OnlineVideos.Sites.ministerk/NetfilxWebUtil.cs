@@ -84,6 +84,16 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 latestAuthUrl = m.Groups["authURL"].Value;
                 if (enableVerboseLog) Log.Debug("NETFLIX: new authURL");
             }
+            else
+            {
+                rgx = new Regex(@"name=""authURL""\s*?value=""(?<authURL>[^""]*)");
+                m = rgx.Match(data);
+                if (m.Success)
+                {
+                    latestAuthUrl = m.Groups["authURL"].Value;
+                    if (enableVerboseLog) Log.Debug("NETFLIX: new authURL");
+                }
+            }
             if (i18n == null)
             {
                 rgx = new Regex(@"""header.browse"":""(?<val>[^""]*)");
@@ -400,23 +410,34 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 if (_cc == null)
                 {
                     _cc = new CookieContainer();
-                    string url = WebCache.Instance.GetRedirectedUrl(loginUrl);
+                    string url = WebCache.Instance.GetRedirectedUrl(loginUrl).Replace("entrytrap", "Login");
                     // No caching in this case.
                     string data = GetWebData<string>(url, cookies: _cc, cache: false);
+
                     Regex rgx = new Regex(@"""authURL"":""(?<authURL>[^""]*)");
                     Match m = rgx.Match(data);
                     if (m.Success)
                     {
                         latestAuthUrl = m.Groups["authURL"].Value;
                         if (enableVerboseLog) Log.Debug("NETFLIX: new authURL");
-                        data = GetWebData<string>(url, string.Format(loginPostData, HttpUtility.UrlEncode(latestAuthUrl), HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password)), _cc, cache: false);
                     }
                     else
                     {
-                        _cc = null;
-                        throw new OnlineVideosException("Unknown Error: Could not login, no authUrl");
-                    }
+                        rgx = new Regex(@"name=""authURL""\s*?value=""(?<authURL>[^""]*)");
+                        m = rgx.Match(data);
+                        if (m.Success)
+                        {
+                            latestAuthUrl = m.Groups["authURL"].Value;
+                            if (enableVerboseLog) Log.Debug("NETFLIX: new authURL");
+                        }
+                        else
+                        {
+                            _cc = null;
+                            throw new OnlineVideosException("Unknown Error: Could not login, no authUrl");
+                        }
 
+                    }
+                    data = GetWebData<string>(url, string.Format(loginPostData, HttpUtility.UrlEncode(latestAuthUrl), HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password)), _cc, cache: false);
                 }
                 return _cc;
             }
