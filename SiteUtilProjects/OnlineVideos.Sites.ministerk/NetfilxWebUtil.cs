@@ -138,6 +138,12 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     else
                         i18n.Add("Subgenres", "Subgenres");
 
+                    rgx = new Regex(@"""tab.trailers.only"":""(?<val>[^""]*)");
+                    m = rgx.Match(data);
+                    if (m.Success)
+                        i18n.Add("Trailers", m.Groups["val"].Value.Trim());
+                    else
+                        i18n.Add("Trailers", "Trailers");
 
                     rgx = new Regex(@"""tab.show.details"":""(?<val>[^""]*)");
                     m = rgx.Match(data);
@@ -885,6 +891,35 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     cats.Add(cat);
                 }
             }
+
+            //Trailers
+
+            Category trailers = new Category() { Name = Translate("Trailers"), HasSubCategories = false, ParentCategory = parentCategory };
+            string trailerData = MyGetWebData(ShaktiApi + "/" + BuildId + "/pathEvaluator?withSize=true&materialize=true&model=harris&fallbackEsn=SLW32", 
+                postData: @"{""paths"":[[""videos""," + id + @",""trailers"",{""from"":0,""to"":25},[""summary"",""title"",""runtime"",""synopsis""]],[""videos""," + id + @",""trailers"",{""from"":0,""to"":25},""interestingMoment"",""_260x146"",""jpg""]],""authURL"":""" + latestAuthUrl + @"""}",
+                contentType: "application/json");
+            JObject trailerJson = (JObject)JsonConvert.DeserializeObject(trailerData);
+            List<VideoInfo> videos = new List<VideoInfo>();
+            for (int i = 0; i <= 25; i++)
+            {
+                JToken token = trailerJson["value"]["videos"][id]["trailers"][i.ToString()];
+                if (token != null && token.Values().Count() == 2)
+                {
+                    string trailerId = token.Values().Last().ToString();
+                    JToken trailer = trailerJson["value"]["videos"][trailerId];
+                    VideoInfo video = new VideoInfo() { Title = trailer["title"].Value<string>(), Thumb = trailer["interestingMoment"]["_260x146"]["jpg"]["url"].Value<string>(), VideoUrl = string.Format(playerUrl, trailerId) };
+                    video.Description =  trailer["synopsis"] != null ? trailer["synopsis"].Value<string>() : "";
+                    video.Length = trailer["runtime"] != null ? OnlineVideos.Helpers.TimeUtils.TimeFromSeconds(trailer["runtime"].Value<int>().ToString()) : "";
+                    videos.Add(video);
+                }
+            }
+            if (videos.Count > 0)
+            {
+                trailers.Thumb = videos.First().Thumb;
+                trailers.Other = (Func<List<VideoInfo>>)(() => GetTraileVideos(trailers, videos));
+                cats.Add(trailers);
+            }
+
             //Similar
             RssLink similarCat = new RssLink() { Name = Translate("More like this"), Thumb = parentCategory.Thumb, HasSubCategories = true, ParentCategory = parentCategory, Url = id };
             similarCat.Other = (Func<List<Category>>)(() => GetSubCategories(similarCat, "similars", 0));
@@ -933,6 +968,11 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             {
                 videos = method.Invoke();
             }
+            return videos;
+        }
+
+        private List<VideoInfo> GetTraileVideos(Category trailers, List<VideoInfo> videos)
+        {
             return videos;
         }
 
