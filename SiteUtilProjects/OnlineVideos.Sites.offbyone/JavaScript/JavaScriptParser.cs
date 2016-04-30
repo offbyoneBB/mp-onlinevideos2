@@ -106,6 +106,11 @@ namespace OnlineVideos.JavaScript
         {
             string[] returnList = new string[3];
 
+            if (signatureMethodName.StartsWith("$"))
+            {
+                signatureMethodName = @"\" + signatureMethodName;
+            }
+
             string pattern = @"\s?" + signatureMethodName + @"=function\((?<parameter>[^)]+)\)\s?\{\s?(?<body>[^}]+)\s?\}";
             Match match = Regex.Match(jsContent, pattern);
 
