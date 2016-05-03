@@ -201,13 +201,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     else
                         i18n.Add("More like this", "More like this");
 
-                    rgx = new Regex(@"""billboard.actions.watchNow"":""(?<val>[^""]*)");
-                    m = rgx.Match(data);
-                    if (m.Success)
-                        i18n.Add("Watch Now", m.Groups["val"].Value.Trim());
-                    else
-                        i18n.Add("Watch Now", "Watch Now");
-
                     rgx = new Regex(@"""billboard.actions.play"":""(?<val>[^""]*)");
                     m = rgx.Match(data);
                     if (m.Success)
@@ -863,7 +856,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             string id = (parentCategory as RssLink).Url;
             bool isShow = (parentCategory as NetflixCategory).IsShow;
             //Play Now/Continue
-            RssLink playNowCat = new RssLink() { Name = Translate("Watch Now") + "/" + Translate("Play"), Description = parentCategory.Description, Thumb = parentCategory.Thumb, HasSubCategories = false, ParentCategory = parentCategory, Url = id };
+            RssLink playNowCat = new RssLink() { Name = Translate("Continue Watching") + "/" + Translate("Play"), Description = parentCategory.Description, Thumb = parentCategory.Thumb, HasSubCategories = false, ParentCategory = parentCategory, Url = id };
             if (isShow)
                 playNowCat.Other = (Func<List<VideoInfo>>)(() => GetPlayNowShowVideos(playNowCat));
             else
