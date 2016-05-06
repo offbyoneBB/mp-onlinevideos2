@@ -112,5 +112,11 @@ namespace OnlineVideos.Sites.DavidCalder
       }
       return res;
     }
-  }
+
+        public override List<SearchResultItem> Search(string query, string category = null)
+        {
+            query = query.Replace(" ", "+");
+            return base.Search(query, category);
+        }
+    }
 }

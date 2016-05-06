@@ -20,6 +20,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             None,
             Login,
+            LoginPassword,
             ProfilesGate,
             SelectProfile,
             ReadyToPlay,
@@ -71,7 +72,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
         }
 
- 
+
         public override Entities.EventResult PerformLogin(string username, string password)
         {
 
@@ -85,7 +86,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             username = username.Replace("ENABLENETFLIXOSD", string.Empty);
             _useAlternativeProfilePicker = username.Contains("PROFILEPICKER");
             username = username.Replace("PROFILEPICKER", string.Empty);
-            
+
             if (_showLoading)
                 ShowLoading();
             string[] userProfile = username.Split('¥');
@@ -132,6 +133,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
 
         private bool activateLoginTimer = true;
+        private bool activatePasswordTimer = true;
         public override Entities.EventResult BrowserDocumentComplete()
         {
             if (!_disableLogging) MessageHandler.Info("Netflix. Url: {0}, State: {1}", Url, _currentState.ToString());
@@ -147,13 +149,46 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                             timer.Tick += (object sender, EventArgs e) =>
                             {
                                 string jsCode = "document.getElementsByName('email')[0].value = '" + _username + "'; ";
-                                jsCode += "document.getElementsByName('password')[0].value = '" + _password + "'; ";
-                                jsCode += "if (document.getElementById('login-form-contBtn')) { document.getElementById('login-form-contBtn').click(); } else { document.getElementsByTagName('form')[0].submit();}";
+                                if (Browser.Document.Body.OuterHtml.Contains(@"""password"""))
+                                {
+                                    jsCode += "document.getElementsByName('password')[0].value = '" + _password + "'; ";
+                                    jsCode += "if (document.getElementById('login-form-contBtn')) { document.getElementById('login-form-contBtn').click(); } else { document.getElementsByTagName('form')[0].submit();}";
+                                }
+                                else
+                                {
+                                    jsCode += "document.getElementsByTagName('form')[0].submit(); ";
+                                    _currentState = State.LoginPassword;
+                                }
                                 InvokeScript(jsCode);
                                 timer.Stop();
                                 timer.Dispose();
                             };
 
+                            timer.Interval = 1000;
+                            timer.Start();
+                        }
+                    }
+                    else if (!Url.Contains("/Login"))
+                    {
+                        Url = "https://www.netflix.com";
+                        _currentState = State.SelectProfile;
+                    }
+                    break;
+                case State.LoginPassword:
+                    if (Url == @"https://www.netflix.com/Login")
+                    {
+                        if (activatePasswordTimer)
+                        {
+                            activatePasswordTimer = false;
+                            System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+                            timer.Tick += (object sender, EventArgs e) =>
+                            {
+                                string jsCode = "document.getElementsByName('password')[0].value = '" + _password + "'; ";
+                                jsCode += "document.getElementsByTagName('form')[0].submit(); ";
+                                InvokeScript(jsCode);
+                                timer.Stop();
+                                timer.Dispose();
+                            };
                             timer.Interval = 1000;
                             timer.Start();
                         }
@@ -176,7 +211,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                         else
                             InvokeScript("setTimeout(\"document.querySelector('a[data-reactid*=" + _profile + "]').click()\", 500);");
                         _currentState = State.ReadyToPlay;
-                    } else
+                    }
+                    else
                     {
                         Url = "https://www.netflix.com/ProfilesGate";
                     }
