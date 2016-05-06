@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using HtmlAgilityPack;
@@ -17,6 +18,10 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Preferred Format"), Description("Prefer this format when there are more than one for the desired quality.")]
         VideoQuality preferredQuality = VideoQuality.H264_std;
 
+        //TODO: Remove after release ov next version (2.1.1) of onlinevideos
+        [Category("OnlineVideosUserConfiguration"), Description("Proxy to use for WebRequests. Define like this: 83.84.85.86:8116")]
+        string proxy = null;
+
         private enum UgType { None, MostViewed, Recent, Omroepen, Genres, AtoZ, Type1, Series };
         private Regex regEx_AtoZ;
 
@@ -25,6 +30,20 @@ namespace OnlineVideos.Sites
         private string baseVideoListUrl = null;
 
         string matchaz = @"<li\sclass='a-z-scrubber-item'><a\shref=""(?<url>[^""]*)""(?:\sclass=""active"")?>(?<title>[^<]*)</a></li>";
+
+        private WebProxy webProxy = null;
+        private Regex regex_Az;
+        #region singleton
+        public WebProxy GetProxy()
+        {
+            //TODO: change after release ov next version (2.1.1) of onlinevideos
+            /*if (webProxy == null && !String.IsNullOrEmpty(httpSettings.ProxyServer))
+                webProxy = new WebProxy(httpSettings.ProxyServer, httpSettings.ProxyServerPort);*/
+            if (webProxy == null && !String.IsNullOrEmpty(proxy))
+                webProxy = new WebProxy(proxy);
+            return webProxy;
+        }
+        #endregion
 
         public override int DiscoverDynamicCategories()
         {
@@ -196,10 +215,10 @@ namespace OnlineVideos.Sites
             if (p >= 0)
             {
                 string id = video.VideoUrl.Substring(p + 1);
-                string newToken = Doskabouter.Helpers.NPOHelper.GetToken(video.VideoUrl);
+                string newToken = Doskabouter.Helpers.NPOHelper.GetToken(video.VideoUrl, GetProxy());
                 if (!String.IsNullOrEmpty(newToken))
                 {
-                    string webData = GetWebData(String.Format(fileUrlFormatString, id) + newToken);
+                    string webData = GetWebData(String.Format(fileUrlFormatString, id) + newToken, proxy: GetProxy());
                     JObject contentData = (JObject)JObject.Parse(webData);
                     JArray items = contentData["streams"] as JArray;
                     List<KeyValuePair<string, string>> playbackOptions = new List<KeyValuePair<string, string>>();
@@ -256,17 +275,19 @@ namespace OnlineVideos.Sites
 
         public override VideoInfo CreateVideoInfo()
         {
-            return new UZGVideoInfo();
+            return new UZGVideoInfo() { proxy = GetProxy() };
         }
 
     }
 
     public class UZGVideoInfo : VideoInfo
     {
+        public WebProxy proxy;
+
         public override string GetPlaybackOptionUrl(string option)
         {
             string s = base.GetPlaybackOptionUrl(option);
-            string webData = WebCache.Instance.GetWebData(s);
+            string webData = WebCache.Instance.GetWebData(s, proxy: proxy);
             Match m = Regex.Match(webData, @"\((?<res>.*)\)");
             if (m.Success)
                 webData = m.Groups["res"].Value;
