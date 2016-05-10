@@ -1382,7 +1382,7 @@
         <item key="videoUrlRegEx"><![CDATA[http://tweakers\.net/video/(?<m0>[^/]*)/]]></item>
         <item key="videoUrlFormatString"><![CDATA[http://tweakers.net/video/s1playlist/{0}/620/349/playlist.xspf]]></item>
         <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\stitle="Volgende\spagina">&raquo;</a>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<location\ss1:label="(?<n0>[^"]*)"\ss1:height="[^"]*">(?<m0>[^<]+)</location>]]></item>
+        <item key="fileUrlRegEx"><![CDATA["label":"(?<n0>[^"]*)","height":[^,]*,"width":[^,]*,"sources":\[{"type":"video\\/mp4","src":(?<m0>[^}]+)}]]></item>
         <item key="baseUrl"><![CDATA[http://tweakers.net/]]></item>
       </Configuration>
       <Categories>
