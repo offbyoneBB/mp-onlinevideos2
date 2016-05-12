@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using OnlineVideos.Sites;
+﻿using OnlineVideos.Helpers;
 using OnlineVideos.Sites.Entities;
-using System.Windows.Forms;
-using OnlineVideos.Helpers;
-using OnlineVideos.Sites.Properties;
-using System.Drawing;
-using System.Threading;
+using System;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace OnlineVideos.Sites.BrowserUtilConnectors
 {
@@ -20,7 +13,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             None,
             Login,
-            LoginPassword,
             ProfilesGate,
             SelectProfile,
             ReadyToPlay,
@@ -31,7 +23,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private string _password;
         private string _profile;
         private bool _showLoading = true;
-        private bool _rememberLogin = false;
         private bool _enableNetflixOsd = false;
         private bool _useAlternativeProfilePicker = false;
         private bool _disableLogging = false;
@@ -50,7 +41,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         public override void OnClosing()
         {
-            //Process.GetProcessesByName("OnlineVideos.WebAutomation.BrowserHost").First().Kill();
             Process.GetCurrentProcess().Kill();
         }
         public override void OnAction(string actionEnumName)
@@ -76,8 +66,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         public override Entities.EventResult PerformLogin(string username, string password)
         {
 
-            _rememberLogin = username.Contains("REMEMBERLOGIN");
-            username = username.Replace("REMEMBERLOGIN", string.Empty);
             _disableLogging = username.Contains("DISABLELOGGING");
             username = username.Replace("DISABLELOGGING", string.Empty);
             _showLoading = username.Contains("SHOWLOADING");
@@ -134,6 +122,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         private bool activateLoginTimer = true;
         private bool activatePasswordTimer = true;
+        private bool usernamePosted = false;
         public override Entities.EventResult BrowserDocumentComplete()
         {
             if (!_disableLogging) MessageHandler.Info("Netflix. Url: {0}, State: {1}", Url, _currentState.ToString());
@@ -149,17 +138,10 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                             timer.Tick += (object sender, EventArgs e) =>
                             {
                                 string jsCode = "document.getElementsByName('email')[0].value = '" + _username + "'; ";
-                                if (Browser.Document.Body.OuterHtml.Contains(@"""password"""))
-                                {
-                                    jsCode += "document.getElementsByName('password')[0].value = '" + _password + "'; ";
-                                    jsCode += "if (document.getElementById('login-form-contBtn')) { document.getElementById('login-form-contBtn').click(); } else { document.getElementsByTagName('form')[0].submit();}";
-                                }
-                                else
-                                {
-                                    jsCode += "document.getElementsByTagName('form')[0].submit(); ";
-                                    _currentState = State.LoginPassword;
-                                }
+                                jsCode += "document.getElementsByName('password')[0].value = '" + _password + "'; ";
+                                jsCode += "if (document.getElementById('login-form-contBtn')) { document.getElementById('login-form-contBtn').click(); } else { document.getElementsByTagName('form')[0].submit();}";
                                 InvokeScript(jsCode);
+                                usernamePosted = true;
                                 timer.Stop();
                                 timer.Dispose();
                             };
@@ -168,30 +150,20 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                             timer.Start();
                         }
                     }
-                    else if (!Url.Contains("/Login"))
+                    else if (Url.Contains("/Login") && usernamePosted && activatePasswordTimer)
                     {
-                        Url = "https://www.netflix.com";
-                        _currentState = State.SelectProfile;
-                    }
-                    break;
-                case State.LoginPassword:
-                    if (Url == @"https://www.netflix.com/Login")
-                    {
-                        if (activatePasswordTimer)
+                        activatePasswordTimer = false;
+                        System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+                        timer.Tick += (object sender, EventArgs e) =>
                         {
-                            activatePasswordTimer = false;
-                            System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
-                            timer.Tick += (object sender, EventArgs e) =>
-                            {
-                                string jsCode = "document.getElementsByName('password')[0].value = '" + _password + "'; ";
-                                jsCode += "document.getElementsByTagName('form')[0].submit(); ";
-                                InvokeScript(jsCode);
-                                timer.Stop();
-                                timer.Dispose();
-                            };
-                            timer.Interval = 1000;
-                            timer.Start();
-                        }
+                            string jsCode = "document.getElementsByName('password')[0].value = '" + _password + "'; ";
+                            jsCode += "document.getElementsByTagName('form')[0].submit(); ";
+                            InvokeScript(jsCode);
+                            timer.Stop();
+                            timer.Dispose();
+                        };
+                        timer.Interval = 1000;
+                        timer.Start();
                     }
                     else if (!Url.Contains("/Login"))
                     {

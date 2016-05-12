@@ -75,7 +75,7 @@
     <Compile Include="DplayUtil.cs" />
     <Compile Include="DrakenFilmUtil.cs" />
     <Compile Include="DreamfilmHDUtil.cs" />
-    <Compile Include="HboNordic\HboWebCache.cs" />
+    <Compile Include="Utils\ExtendedWebCache.cs" />
     <Compile Include="Hoster\Buggerdugger.cs" />
     <Compile Include="Hoster\IReferer.cs" />
     <Compile Include="Hoster\MailRu.cs" />
@@ -124,14 +124,12 @@
     <None Include="Resources\ViaplayPlayMovie.js" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\HboNordic.js" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Katsomo.js" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\AADecode.js" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

@@ -1,6 +1,6 @@
 ﻿using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
-using OnlineVideos.Sites.HboNordic;
+using OnlineVideos.Sites.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -32,11 +32,11 @@ namespace OnlineVideos.Sites
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(username))
                 throw new OnlineVideosException("Kontrollera dina inloggningsuppgifter");
             cc = new CookieContainer();
-            HtmlDocument doc = HboWebCache.Instance.GetWebData<HtmlDocument>("https://www.drakenfilm.se/user", cookies: cc, cache: false);
+            HtmlDocument doc = ExtendedWebCache.Instance.GetWebData<HtmlDocument>("https://www.drakenfilm.se/user", cookies: cc, cache: false);
             string postDataFormat = "name={0}&pass={1}&form_build_id={2}&form_id=user_login&op=Logga+in";
             string formBuildId = doc.DocumentNode.SelectSingleNode("//input[@name='form_build_id']").GetAttributeValue("value", "");
             string postData = string.Format(postDataFormat, HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password), formBuildId);
-            string data = HboWebCache.Instance.GetWebData("https://www.drakenfilm.se/user", cookies: cc, postData: postData, cache: false);
+            string data = ExtendedWebCache.Instance.GetWebData("https://www.drakenfilm.se/user", cookies: cc, postData: postData, cache: false);
             Regex rgx = new Regex(@"""giffToken"":""(?<token>[^""]*)");
             Match match = rgx.Match(data);
             if (!match.Success || !data.Contains("Logga ut"))
@@ -80,7 +80,7 @@ namespace OnlineVideos.Sites
         public override int DiscoverSubCategories(Category parentCategory)
         {
             string type = (parentCategory as RssLink).Url;
-            HtmlDocument doc = HboWebCache.Instance.GetWebData<HtmlDocument>("https://www.drakenfilm.se/site/type/film");
+            HtmlDocument doc = ExtendedWebCache.Instance.GetWebData<HtmlDocument>("https://www.drakenfilm.se/site/type/film");
             List<Category> cats = new List<Category>();
             foreach (HtmlNode item in doc.DocumentNode.SelectNodes("//ul[contains(@id,'-" + type + "')]/li/a"))
             {
@@ -112,7 +112,7 @@ namespace OnlineVideos.Sites
         private int currentPage = 0;
         private List<VideoInfo> GetVideos(string url)
         {
-            string data = HboWebCache.Instance.GetWebData(url);
+            string data = ExtendedWebCache.Instance.GetWebData(url);
             List<VideoInfo> videos = new List<VideoInfo>();
             Regex rgx = new Regex(@"foaf:Image"" src=""(?<thumb>[^""]*).*?<h4>(?<title>[^<]*).*?field__item even"">(?<description>[^<]*).*?<a href=""(?<url>/film/[^""]*)", RegexOptions.Singleline);
             foreach (Match m in rgx.Matches(data))
@@ -139,7 +139,7 @@ namespace OnlineVideos.Sites
             HasNextPage = false;
             if (category.Name == "A-Ö")
             {
-                string data = HboWebCache.Instance.GetWebData(currentUrl);
+                string data = ExtendedWebCache.Instance.GetWebData(currentUrl);
                 Regex rgx = new Regex(@"href=""(?<url>/film/[^""]*).*?>(?<title>[^<]*)");
                 foreach (Match m in rgx.Matches(data))
                 {
@@ -162,13 +162,13 @@ namespace OnlineVideos.Sites
         public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             string token;
-            string data = HboWebCache.Instance.GetWebData(video.VideoUrl, cookies: cc, cache: false);
+            string data = ExtendedWebCache.Instance.GetWebData(video.VideoUrl, cookies: cc, cache: false);
             Regex rgx = new Regex(@"""giffToken"":""(?<token>[^""]*)");
             Match match = rgx.Match(data);
             if (!match.Success || cc == null || !data.Contains("Logga ut"))
             {
                 token = login();
-                data = HboWebCache.Instance.GetWebData(video.VideoUrl, cookies: cc, cache: false);
+                data = ExtendedWebCache.Instance.GetWebData(video.VideoUrl, cookies: cc, cache: false);
             }
             else
             {
@@ -186,7 +186,7 @@ namespace OnlineVideos.Sites
             {
                 video.Other = new TrackingInfo() { VideoKind = VideoKind.Movie, ID_IMDB = match.Groups["imdb"].Value };
             }
-            data = HboWebCache.Instance.GetWebData(string.Format(playerHandlerUrl, id, token), cookies: cc, cache: false);
+            data = ExtendedWebCache.Instance.GetWebData(string.Format(playerHandlerUrl, id, token), cookies: cc, cache: false);
             rgx = new Regex(@"""(?<url>http[^""]*?m3u8)");
             match = rgx.Match(data);
             if (!match.Success)
@@ -196,9 +196,9 @@ namespace OnlineVideos.Sites
             NameValueCollection headers = new NameValueCollection();
             headers.Add("Authorization", "Token " + token);
             string qticketUrl = @"http://zmey.drakenfilm.se/qtickets?format=json";
-            JObject json = HboWebCache.Instance.GetWebData<JObject>(qticketUrl, postData: data, headers: headers, contentType: "application/json", cookies: cc, cache: false);
+            JObject json = ExtendedWebCache.Instance.GetWebData<JObject>(qticketUrl, postData: data, headers: headers, contentType: "application/json", cookies: cc, cache: false);
             string m3u8 = json["urls"].First()["url"].Value<string>();
-            m3u8 = HboWebCache.Instance.GetWebData(m3u8, cookies: cc, cache: false);
+            m3u8 = ExtendedWebCache.Instance.GetWebData(m3u8, cookies: cc, cache: false);
             rgx = new Regex(@"BANDWIDTH=(?<bandwidth>\d+)000.*?(?<url>http[^\n]*)", RegexOptions.Singleline);
             Dictionary<string, string> pbo = new Dictionary<string, string>();
             foreach (Match m in rgx.Matches(m3u8))

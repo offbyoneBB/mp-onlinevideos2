@@ -68,39 +68,21 @@ namespace OnlineVideos.Sites.Properties {
         /// * This software is released under the MIT License.
         /// * http://opensource.org/licenses/mit-license.php
         /// */
+        ///
+        ///function decode(text)
+        ///{
+        ///    return AADecode.decode(text);
+        ///}
+        ///
         ///var AADecode = {
         ///    decode: function (text) {
         ///        var evalPreamble = &quot;(\uFF9F\u0414\uFF9F) [&apos;_&apos;] ( (\uFF9F\u0414\uFF9F) [&apos;_&apos;] (&quot;;
         ///        var decodePreamble = &quot;( (\uFF9F\u0414\uFF9F) [&apos;_&apos;] (&quot;;
-        ///        var evalPostamble = &quot;) (\uFF9F\u0398\uFF9F)) (&apos;_&apos;);&quot;;
-        ///        var decodePostamble = &quot; [rest of string was truncated]&quot;;.
+        ///        var evalPostamble  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string AADecode {
             get {
                 return ResourceManager.GetString("AADecode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to function __deleteAllCookiesAndStorage(rurl) {
-        ///    sessionStorage.clear();
-        ///    localStorage.clear();
-        ///    var cookies = document.cookie.split(&quot;;&quot;);
-        ///    for (var i = 0; i &lt; cookies.length; i++) {
-        ///        var cookie = cookies[i];
-        ///        var eqPos = cookie.indexOf(&quot;=&quot;);
-        ///        var name = eqPos &gt; -1 ? cookie.substr(0, eqPos) : cookie;
-        ///        document.cookie = name + &quot;=;expires=Thu, 01 Jan 1970 00:00:00 GMT&quot;;
-        ///    }
-        ///    window.location.href = rurl;
-        ///}
-        ///
-        ///function __login(u, p, rurl) {
-        ///    var linput = [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string HboNordicJs {
-            get {
-                return ResourceManager.GetString("HboNordicJs", resourceCulture);
             }
         }
         
