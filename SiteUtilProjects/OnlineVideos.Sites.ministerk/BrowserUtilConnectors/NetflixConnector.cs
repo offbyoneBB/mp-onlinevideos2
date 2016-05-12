@@ -45,8 +45,13 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         }
         public override void OnAction(string actionEnumName)
         {
+            if (!_disableLogging) MessageHandler.Info("Netflix. Input: {0}", actionEnumName);
             if (_currentState == State.Playing && !_isPlayingOrPausing)
             {
+                if (actionEnumName == "ACTION_SELECT_ITEM")
+                {
+                    PlayPause();
+                }
                 if (actionEnumName == "REMOTE_0" && _enableNetflixOsd)
                 {
                     SendKeyToBrowser("^(%(+(d)))");
@@ -102,11 +107,13 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         public override Entities.EventResult Play()
         {
+            if (!_disableLogging) MessageHandler.Info("Netflix. Input: {0}", "Play");
             return PlayPause();
         }
 
         public override Entities.EventResult Pause()
         {
+            if (!_disableLogging) MessageHandler.Info("Netflix. Input: {0}", "Pause");
             return PlayPause();
         }
 
