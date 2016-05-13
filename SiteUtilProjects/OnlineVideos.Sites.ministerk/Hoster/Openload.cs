@@ -27,7 +27,8 @@ namespace OnlineVideos.Hoster
                 ScriptEngine engine = new ScriptEngine();
                 engine.Execute(OnlineVideos.Sites.Properties.Resources.AADecode);
                 data = engine.CallGlobalFunction("decode", aaCode).ToString();
-                data = data.Replace("window.vs=", "function html(){return ");
+                rgx = new Regex(@"^window\.[^=]*=");
+                data = rgx.Replace(data, "function html(){return ");
                 data = data.Replace("window.vt='video/mp4'", "");
                 data += "}";
                 engine = new ScriptEngine();
