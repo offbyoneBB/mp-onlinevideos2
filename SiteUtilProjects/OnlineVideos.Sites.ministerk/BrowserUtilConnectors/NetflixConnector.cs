@@ -48,10 +48,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             if (!_disableLogging) MessageHandler.Info("Netflix. Input: {0}", actionEnumName);
             if (_currentState == State.Playing && !_isPlayingOrPausing)
             {
-                if (actionEnumName == "ACTION_SELECT_ITEM")
-                {
-                    PlayPause();
-                }
                 if (actionEnumName == "REMOTE_0" && _enableNetflixOsd)
                 {
                     SendKeyToBrowser("^(%(+(d)))");
