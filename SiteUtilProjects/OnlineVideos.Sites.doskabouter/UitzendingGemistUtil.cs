@@ -30,9 +30,12 @@ namespace OnlineVideos.Sites
         private string baseVideoListUrl = null;
 
         string matchaz = @"<li\sclass='a-z-scrubber-item'><a\shref=""(?<url>[^""]*)""(?:\sclass=""active"")?>(?<title>[^<]*)</a></li>";
+        string matchRecent = @"(?<=<span\sclass='[^']*'>Datum</span>.*)<li><a\shref=""(?<url>[^""]*)""\sdata-scorecard=""[^""]*"">(?<title>[^<]*)</a></li>";
 
         private WebProxy webProxy = null;
         private Regex regex_Az;
+
+        private Regex regex_Recent;
         #region singleton
         public WebProxy GetProxy()
         {
@@ -48,6 +51,7 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             regEx_AtoZ = new Regex(matchaz, defaultRegexOptions);
+            regex_Recent = new Regex(matchRecent, defaultRegexOptions);
 
             Settings.Categories.Add(new RssLink() { Name = "Meest bekeken", Url = @"http://www.npo.nl/uitzending-gemist", Other = UgType.MostViewed });
             Settings.Categories.Add(new RssLink() { Name = "Op datum", Url = @"http://www.npo.nl/uitzending-gemist", Other = UgType.Recent });
@@ -66,7 +70,7 @@ namespace OnlineVideos.Sites
             switch ((UgType)parentCategory.Other)
             {
                 case UgType.MostViewed: return getSubcats(parentCategory, UgType.None, @"most-viewed-date-range", @"http://www.npo.nl/uitzending-gemist/meest-bekeken?date={0}");
-                case UgType.Recent: return getSubcats(parentCategory, UgType.None, @"sort_date", @"http://www.npo.nl/zoeken?utf8=%E2%9C%93&sort_date={0}");
+                case UgType.Recent: return getRecent(parentCategory);
                 case UgType.Omroepen: return getSubcats(parentCategory, UgType.Type1, @"broadcaster", @"http://www.npo.nl/series?utf8=%E2%9C%93&genre=&broadcaster={0}&av_type=video");
                 case UgType.Genres: return getSubcats(parentCategory, UgType.Type1, @"genre", @"http://www.npo.nl/series?utf8=%E2%9C%93&genre={0}&broadcaster=&av_type=video");
                 case UgType.AtoZ: return getAtoZSubcats(parentCategory);
@@ -89,6 +93,16 @@ namespace OnlineVideos.Sites
             return res;
         }
 
+        private int getRecent(Category parentCat)
+        {
+            Regex sav = regEx_dynamicSubCategories;
+            regEx_dynamicSubCategories = regex_Recent;
+            int res = base.DiscoverSubCategories(parentCat);
+            foreach (Category cat in parentCat.SubCategories)
+                cat.Other = UgType.None;
+            regEx_dynamicSubCategories = sav;
+            return res;
+        }
 
         private string getSubcatWebData(string url)
         {
