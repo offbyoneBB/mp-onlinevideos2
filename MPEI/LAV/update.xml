@@ -53,32 +53,15 @@
         <UpdateUrl>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=162&amp;cf_id=52</UpdateUrl>
         <Version>
           <Major>0</Major>
-          <Minor>67</Minor>
-          <Build>0</Build>
+          <Minor>68</Minor>
+          <Build>1</Build>
           <Revision>0</Revision>
         </Version>
         <ExtensionDescription>The extension installs the LAV Filter package, which contains a splitter, audio and video decoder for the most common formats that are used around the web.</ExtensionDescription>
-        <VersionDescription>0.67.0 - 2015/11/15
-LAV Splitter
-- NEW: Support for HTTPS URLs
-- NEW: Automatic selection of the highest quality variant in HLS streams
-- Changed: Reverted back to the old ASF demuxer
-- Changed: Backported ASF seeking improvements to the old ASF demuxer
-- Fixed: ASS in AVI did not work in recent versions
-- Fixed: RTP/RTSP did not work properly in 0.66
-
-LAV Video
-- NEW: Improved DVD subtitle and menu drawing with madVR (support for madVRs subtitle repositioning and lower latency)
-- Changed: HEVC and 4K HWAccel is enabled by default
-- Changed: Enabled DXVA2-CB Direct Mode with YV12 output on 8-bit sources
-- Fixed: DVD menus could show a black screen instead of the menu in some situations
-
-LAV Audio
-- Fixed: Improved clipping behavior in badly mastered DTS-HD tracks
-</VersionDescription>
+        <VersionDescription>See https://github.com/Nevcairiel/LAVFilters/releases for release notes.</VersionDescription>
         <DevelopmentStatus>Stable</DevelopmentStatus>
         <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=162&amp;cf_id=24</OnlineLocation>
-        <ReleaseDate>2015-12-18T15:00:00</ReleaseDate>
+        <ReleaseDate>2016-05-14T15:00:00</ReleaseDate>
         <Tags>codec</Tags>
         <Location>.\LAVFilters[Version].mpe1</Location>
         <Params>
