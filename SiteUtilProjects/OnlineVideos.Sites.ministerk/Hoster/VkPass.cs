@@ -79,6 +79,19 @@ namespace OnlineVideos.Hoster
                         int index = subtitleText.IndexOf("WEBVTT\r\n\r\n");
                         if (index >= 0)
                             subtitleText = subtitleText.Substring(index).Replace("WEBVTT\r\n\r\n", "");
+                        if (!subtitleText.StartsWith("1\r\n"))
+                        {
+                            string oldSub = subtitleText;
+                            rgx = new Regex(@"(?<time>\d\d:\d\d:\d\d.\d\d\d -->)");
+                            int i = 1;
+                            foreach (Match match in rgx.Matches(oldSub))
+                            {
+                                string time = match.Groups["time"].Value;
+                                subtitleText = subtitleText.Replace(time, "\r\n" + i.ToString() + "\r\n" + time);
+                                i++;
+                            }
+                            subtitleText = subtitleText.TrimStart();
+                        }
                     }
                     catch { }
                 }
