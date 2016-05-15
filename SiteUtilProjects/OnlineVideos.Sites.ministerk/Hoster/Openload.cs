@@ -38,4 +38,13 @@ namespace OnlineVideos.Hoster
             return url;
         }
     }
+
+    public class OpenloadIo : Openload
+    {
+        public override string GetHosterUrl()
+        {
+            return "openload.io";
+        }
+
+    }
 }
