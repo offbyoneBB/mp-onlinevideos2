@@ -168,8 +168,6 @@ namespace OnlineVideos
 
                                 try
                                 {
-                                    System.Diagnostics.Debugger.Launch();
-
                                     ConstructorInfo constructor = field.FieldType.GetConstructor(new Type[] { typeof(String) });
                                     if (constructor != null)
                                     {
