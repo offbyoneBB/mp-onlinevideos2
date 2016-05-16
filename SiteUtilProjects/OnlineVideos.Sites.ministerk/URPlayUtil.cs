@@ -46,12 +46,12 @@ namespace OnlineVideos.Sites
         private Dictionary<string, string> tvCategories = new Dictionary<string, string>()
         {
             { "Alla", "" },
-            { "Dokumentär", "Dokumentär" },
-            { "Föreläsningar och debatt", "Föreläsningar+och+debatt" },
+            { "Dokumentärfilmer", "Dokument%C3%A4rfilmer" },
+            { "Föreläsningar", "F%C3%B6rel%C3%A4sningar" },
             { "Vetenskap", "Vetenskap" },
             { "Kultur och historia", "Kultur+och+historia" },
-            { "Samhälle", "Samhälle" },
-            { "Språk", "Språk" },
+            { "Samhälle", "Samh%C3%A4lle" },
+            { "Reality och livsstil", "Reality+och+livsstil" },
             { "Barn", "Barn" }
         };
 
