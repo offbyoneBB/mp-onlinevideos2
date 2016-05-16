@@ -105,7 +105,7 @@ namespace OnlineVideos.Sites
             Category kategori = new Category() { Name = "Kategori", HasSubCategories = true, SubCategories = new List<Category>() };
             Category land = new Category() { Name = "Land", HasSubCategories = true, SubCategories = new List<Category>() };
 
-            Regex rgx = new Regex(@"href=""(?<url>http://swefilm.tv/genre/[^/]*/)?"">(?<name>[^<]*)");
+            Regex rgx = new Regex(@"href=""(?<url>http://swefilm.tv/genre/[^""]*).*?title=""(?<name>[^""]*)");
             foreach (Match match in rgx.Matches(data))
             {
                 RssLink genre = new RssLink() { Name = match.Groups["name"].Value, Url = match.Groups["url"].Value, ParentCategory = kategori, HasSubCategories = true };
