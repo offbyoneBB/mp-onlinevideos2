@@ -973,9 +973,6 @@
         <Category xsi:type="RssLink" name="A..Z">http://www.gamersnet.nl/movies</Category>
       </Categories>
     </Site>
-    <Site name="NrkBrowser" util="NrkBrowser" agecheck="false" enabled="true" lang="no">
-      <Description>NRK er Norges største tilbud på nett; nyheter, radio- og tv-programmer live, nett-tv og podcast.</Description>
-    </Site>
     <Site name="DR TV" util="DRTV" agecheck="false" enabled="true" lang="da">
       <Description>Se 5 af DRs kanaler live, hent aktuelle og arkiverede udsendelser i DR NU og udforsk Bonanza-arkivet, der indholder tv og radioklip fra hele DRS historie.</Description>
     </Site>
