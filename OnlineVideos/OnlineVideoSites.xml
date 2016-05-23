@@ -168,24 +168,7 @@
     </Site>
     <Site name="ctTV" util="HeiseVideo" agecheck="false" enabled="true" lang="de">
       <Description>Videoportal des heise ctTVs</Description>
-    </Site>
-    <Site name="Miro" util="GenericSite" agecheck="false" enabled="true" lang="en">
-      <Description>Miro combines and categorizes collections of video channels from thousands of sources.</Description>
-      <Configuration>
-        <item key="resolveHoster"><![CDATA[FromUrl]]></item>
-        <item key="baseUrl"><![CDATA[https://www.miroguide.com/api/list_categories]]></item>
-        <item key="dynamicCategoriesRegEx"><![CDATA[\{'url'\:\su'(?<url>[^']+)',\s'name'\:\su'(?<title>[^']+)']]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<img\s+src="(?<thumb>http://s3.miroguide.com/static/media/thumbnails[^"]+)"\s+/>
-(?:(?!<div\s+class="details">).)+<div\s+class="details">\s*
-<h4\s+class="video-type">\s*<a\s+href="(?<mirourl>[^"]+)".*?>(?<title>.*?)</a></h4>\s*
-<a\s+href="http\://subscribe\.getmiro\.com/\?url1=(?<url>[^"]+)&amp;trackback1=[^"]+".*?>.*?</a>\s*
-<p>(?<description>.*?)</p>\s*
-</div>]]></item>
-        <item key="dynamicSubCategoryUrlDecoding"><![CDATA[UrlDecode]]></item>
-        <item key="dynamicSubCategoriesNextPageRegEx"><![CDATA[<ul\s+class="paginator">.*?<li\s+class="selected"\s*>.*?</li>\s*<li\s*>\s*<span><a\s+href="(?<url>[^"]+)">]]></item>
-        <item key="nextPageRegEx"><![CDATA[<li\s*>\s*<span><a\s*href="[^"]+">\s*(?<lastPage>\d+)\s*</a></span>\s*</li>\s*</ul>]]></item>
-      </Configuration>
-    </Site>
+    </Site>    
     <Site name="MetaCafe" util="MetaCafe" agecheck="false" enabled="true" lang="en">
       <Description>Metacafe is an audience-driven video entertainment site that focuses on short-form original videos.</Description>
       <Configuration>
