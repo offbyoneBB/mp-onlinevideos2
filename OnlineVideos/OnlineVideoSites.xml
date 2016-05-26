@@ -48,7 +48,7 @@
     <Site name="ZDF Mediathek" util="ZDFMediathek" agecheck="false" enabled="true" lang="de">
       <Description>Mediathek des Zweiten Deutschen Fernsehens.</Description>
     </Site>
-    <Site name="3sat" util="GenericSite" agecheck="false" enabled="true" lang="de">
+    <Site name="3sat" util="DreiSat" agecheck="false" enabled="true" lang="de">
       <Description>Einziges öffentlich-rechtliches Gemeinschaftsprogramm des deutschen Sprachraums (ZDF – ORF – SRG – ARD).</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx">
@@ -63,27 +63,9 @@
 <div\s+class="BoxHeadline[^"]*".*?>\s*<a.*?>(?<Title>[^<]*)</a>\s*</div>\s*
 <div\s+class="FloatText[^"]*".*?>\s*<a.*?>(?<Description>[^<]*)</a>]]>
         </item>
-        <item key="videoListUrlDecoding"><![CDATA[HtmlDecode]]></item>
-        <item key="videoUrlDecoding"><![CDATA[UrlDecode]]></item>
+        <item key="videoListUrlDecoding"><![CDATA[HtmlDecode]]></item>        
         <item key="nextPageRegEx"><![CDATA[<div\s+class="BoxLabel\s+BoxLabelMore">mehr.*?</div>\s*<a.*?href="(?<url>[^"]+)".*?>]]></item>
-        <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
-        <item key="playlistUrlRegEx"><![CDATA[var\s+url_xmlservice\s*=\s*"(?<url>[^"]+)"]]></item>
-        <item key="fileUrlRegEx">
-          <![CDATA[<formitaet[^>]*>\s*
-<quality>(?<n0>[^<]*)</quality>\s*
-<url>(?<m0>http[^<]*mp4)</url>\s*
-<ratio>\d*:\d*</ratio>\s*
-<height>(?<n2>\d*)</height>\s*
-<width>(?<n1>\d*)</width>\s*
-<videoBitrate>\d*</videoBitrate>\s*
-<audioBitrate>\d*</audioBitrate>\s*
-<filesize>\d*</filesize>\s*
-<facets>\s*
-<facet>progressive</facet>\s*
-</facets>\s*
-</formitaet>]]>
-        </item>
-        <item key="fileUrlNameFormatString"><![CDATA[{0} {1}x{2}]]></item>
+        <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>        
         <item key="baseUrl"><![CDATA[http://www.3sat.de/mediathek/?mode=sendungenaz]]></item>
       </Configuration>
     </Site>

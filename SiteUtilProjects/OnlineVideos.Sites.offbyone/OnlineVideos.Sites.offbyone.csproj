@@ -101,6 +101,7 @@
     <Compile Include="CNNUtil.cs" />
     <Compile Include="DailyMotionUtil.cs" />
     <Compile Include="DasErsteMediathekUtil.cs" />
+    <Compile Include="DreiSatUtil.cs" />
     <Compile Include="FilmStartsUtil.cs" />
     <Compile Include="Google\Apis\Auth\GoogleJsonWebSignature.cs" />
     <Compile Include="Google\Apis\Auth\JsonWebSignature.cs" />
