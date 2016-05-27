@@ -74,7 +74,6 @@
     <Compile Include="EuroSportUtil.cs" />
     <Compile Include="EventCasterUtil.cs" />
     <Compile Include="FilmonUtil.cs" />
-    <Compile Include="GameKingsUtil.cs" />
     <Compile Include="GamersNetUtil.cs" />
     <Compile Include="Helpers\NPOHelper.cs" />
     <Compile Include="Hoster\Archiv.cs" />
