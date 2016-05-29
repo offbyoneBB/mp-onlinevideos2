@@ -55,7 +55,8 @@ namespace OnlineVideos.Sites
                                 Url = new Uri(new Uri(baseUrl), a).AbsoluteUri,
                                 Description = (sub != null) ? HttpUtility.HtmlDecode(sub.InnerText) : ""
                             };
-                            shows.Add(show);
+                            lock(show)
+                                shows.Add(show);
                         }
 
                         threadWaitHandles[o_i].Set();
