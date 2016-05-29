@@ -38,12 +38,7 @@
       <Description>Kostenlos verfügbare Sendungen aus der NDR Mediathek.</Description>
     </Site>
     <Site name="WDR" util="WDR" agecheck="false" enabled="true" lang="de">
-      <Description>Podcasts des Westdeutschen Rundfunks (WDR).</Description>
-      <Configuration>
-        <item key="sendungenUrl"><![CDATA[http://www1.wdr.de/mediathek/video/sendungen/index.html]]></item>
-        <item key="searchUrl"><![CDATA[http://www1.wdr.de/mediathek/video/suche/videosuche106.jsp]]></item>
-        <item key="livestreamUrl"><![CDATA[http://www1.wdr.de/fernsehen/videostreamstundenlivestream100-videoplayer_size-L.html]]></item>
-      </Configuration>
+      <Description>Mediathek des Westdeutschen Rundfunks (WDR).</Description>
     </Site>
     <Site name="ZDF Mediathek" util="ZDFMediathek" agecheck="false" enabled="true" lang="de">
       <Description>Mediathek des Zweiten Deutschen Fernsehens.</Description>
@@ -67,13 +62,6 @@
         <item key="nextPageRegEx"><![CDATA[<div\s+class="BoxLabel\s+BoxLabelMore">mehr.*?</div>\s*<a.*?href="(?<url>[^"]+)".*?>]]></item>
         <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>        
         <item key="baseUrl"><![CDATA[http://www.3sat.de/mediathek/?mode=sendungenaz]]></item>
-      </Configuration>
-    </Site>
-    <Site name="Orf" util="Orf" agecheck="false" enabled="true" lang="de">
-      <Description>Kostenlos verfügbare Sendungen aus der TV-Thek des Österreichischen Rundfunks (ORF).</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<option\svalue="(?<url>[^"]+)">(?<title>[^<]+)</option>]]></item>
-        <item key="baseUrl"><![CDATA[http://tvthek.orf.at/]]></item>
       </Configuration>
     </Site>
 		<Site name="MyVideo" util="MyVideo" agecheck="false" enabled="true" lang="de">
