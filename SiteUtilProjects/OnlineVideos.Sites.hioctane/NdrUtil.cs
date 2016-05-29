@@ -13,7 +13,7 @@ namespace OnlineVideos.Sites
     {
 		const string baseUrl = "http://www.ndr.de";
         const string category_list_url = "http://www.ndr.de/mediathek/sendungen_a-z/index.html";
-        const string search_url = "http://www.ndr.de/suche10.html?query={0}&search_mediathek=1&sort_by=date&range=unlimited&results_per_page=50#";
+        const string search_url = "http://www.ndr.de/suche10.html?query={0}&search_epg=1&sort_by=date&range=one_year&results_per_page=50#";
 
 		string nextPageUrl = "";
 
@@ -38,7 +38,8 @@ namespace OnlineVideos.Sites
 			var result = new List<VideoInfo>();
 
 			var htmlDoc = new HtmlDocument();
-			htmlDoc.LoadHtml(GetWebData((category as RssLink).Url));
+            var uri = new Uri((category as RssLink).Url);
+            htmlDoc.LoadHtml(GetWebData(uri.AbsoluteUri));
 			foreach (var item in htmlDoc.DocumentNode.Descendants("div").Where(div => div.GetAttributeValue("class", "") == "teaser"))
 			{
 				string videoUrl = item.Descendants("a").First().GetAttributeValue("href", "");
@@ -52,7 +53,7 @@ namespace OnlineVideos.Sites
 						Title = item.Descendants("h2").First().InnerText.Trim(),
 						Description = item.Descendants("p").First().FirstChild.InnerText.Trim(),
 						VideoUrl = videoUrl,
-						Thumb = baseUrl + item.Descendants("img").First().GetAttributeValue("src", ""),
+						Thumb = new Uri(uri, item.Descendants("img").First().GetAttributeValue("src", "")).AbsoluteUri,
 						Length = length != null ? length.InnerText.Trim() : "",
 					};
                     var airDateNode = item.Descendants("div").FirstOrDefault(d => d.GetAttributeValue("class", "") == "subline");
@@ -79,49 +80,53 @@ namespace OnlineVideos.Sites
         public override String GetVideoUrl(VideoInfo video)
         {
 			video.PlaybackOptions = new Dictionary<string, string>();
-			string data = GetWebData(video.VideoUrl);
-            var match = Regex.Match(data, @"playlist\s*:\s*\[(?<inner>\s*
-{
-            [^{}]*
-            (
-                        (
-                                    (?<Open>{)
-                                    [^{}]*
-                        )+
-                        (
-                                    (?<Close-Open>})
-                                    [^{}]*
-                        )+
-            )*
-            (?(Open)(?!))
-})", RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace);
-			if (match.Success)
-			{
-                var json = JsonConvert.DeserializeObject<JObject>(match.Groups["inner"].Value.Replace("\"","'").Replace("' || '", ""));
-				foreach (var item in json.Children())
-				{
-                    string url = (item as JProperty).Value.Value<string>("src");
-					if (!string.IsNullOrEmpty(url))
-					{
-						if (url.EndsWith("f4m"))
-							video.PlaybackOptions.Add("HD", url = url + "?hdcore=2.8.2&g=AAAAAAAAAAAA");
-						else if (url.EndsWith("mp4"))
-							video.PlaybackOptions.Add("SD", url);
-					}
-				}
-			}
-			else
-			{
-				throw new OnlineVideosException("Keinen Stream gefunden.");
-			}
-			return video.PlaybackOptions.Select(d => d.Value).FirstOrDefault();
+			var html = GetWebData<HtmlDocument>(video.VideoUrl);
+            var itemprop = html.DocumentNode.Descendants("span").FirstOrDefault(s => s.GetAttributeValue("itemprop", "") == "contentUrl");
+            return itemprop.GetAttributeValue("content", "");
         }
 
 		public override bool CanSearch { get { return true; } }
 
 		public override List<SearchResultItem> Search(string query, string category = null)
 		{
-			return GetVideos(new RssLink() { Url = string.Format(search_url, query) }).ConvertAll<SearchResultItem>(v => (SearchResultItem)v);
+            var result = new List<SearchResultItem>();
+
+            var uri = new Uri(string.Format(search_url, query));
+
+            var doc = GetWebData<HtmlDocument>(uri.AbsoluteUri);
+            var section = doc.DocumentNode.Descendants("section").FirstOrDefault();
+            if (section != null)
+            {
+                foreach (var li in section.Descendants("ul").First().Elements("li"))
+                {
+                    var videoUrl = "";
+                    var a = li.Descendants("a").FirstOrDefault();
+                    if (a != null) videoUrl = a.GetAttributeValue("href", "");
+                    else continue;
+
+                    var title = "";
+                    var h2 = li.Descendants("h2").FirstOrDefault();
+                    if (h2 != null) title = h2.InnerText.Trim();
+
+                    var thumb = "";
+                    var img = li.Descendants("img").FirstOrDefault();
+                    if (img != null) thumb = new Uri(uri, img.GetAttributeValue("src", "")).AbsoluteUri;
+
+                    string desc = "";
+                    var teasertextDiv = li.Descendants("div").FirstOrDefault(s => s.GetAttributeValue("class", "") == "teasertext");
+                    if (teasertextDiv != null) desc = teasertextDiv.InnerText.Trim();
+
+                    string airdate = "";
+                    var dateSpan = li.Descendants("span").FirstOrDefault(s => s.GetAttributeValue("class", "") == "date");
+                    var timeSpan = li.Descendants("span").FirstOrDefault(s => s.GetAttributeValue("class", "") == "time");
+                    if (dateSpan != null) airdate += dateSpan.InnerText.Trim();
+                    if (timeSpan != null) airdate += timeSpan.InnerText.Trim();
+
+                    result.Add(new VideoInfo { Title = title, VideoUrl = videoUrl, Thumb = thumb, Description = desc, Airdate = airdate });
+                }
+            }
+
+			return result;
 		}
     }
 }
