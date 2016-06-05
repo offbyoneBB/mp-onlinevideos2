@@ -27,7 +27,7 @@ namespace OnlineVideos.Sites
         #region constants, vars and properties
 
         protected const string loginUrl = "https://www.tv4play.se/session/new";
-        protected const string loginPostUrl = "https://www.tv4play.se/session";
+        protected const string loginPostUrl = "https://account.services.tv4play.se/session/authenticate";
         protected const string showsUrl = "http://www.tv4play.se/tv/more_programs?order_by=name&per_page=40&page={0}";
         protected const string helaProgramUrl = "http://www.tv4play.se/videos/episodes_search?per_page=100&sort_order=desc&is_live=false&type=video&nodes_mode=any&page={0}&node_nids=";
         protected const string klippUrl = "http://www.tv4play.se/videos/search?node_nids_mode=any&per_page=100&sort_order=desc&type=clip&page={0}&node_nids=";
@@ -62,11 +62,13 @@ namespace OnlineVideos.Sites
         private string currentUrl = "";
         protected CookieContainer cc = new CookieContainer();
 
-        protected bool ShowPremium
+        bool showPremium = false;
+
+        protected bool HasLogin
         {
             get
             {
-                return (string.IsNullOrWhiteSpace(username) ? false : !string.IsNullOrWhiteSpace(password));
+                return (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password));
             }
         }
 
@@ -74,26 +76,40 @@ namespace OnlineVideos.Sites
 
         #region Log in
 
-        private bool isLoggedIn()
-        {
-            return GetWebData(loginPostUrl, cookies: cc).Trim() == "ok";
-        }
+        bool isLoggedIn = false;
 
         private void login()
         {
-            if (!ShowPremium)
+            if (!HasLogin)
+            {
+                throw new OnlineVideosException("Fyll i inloggningsuppgifter");                
+            }
+            else if (!isLoggedIn)
             {
                 cc = new CookieContainer();
-            }
-            else if (!isLoggedIn())
-            {
                 HtmlDocument htmlDoc = GetWebData<HtmlDocument>(loginUrl, cookies: cc);
                 HtmlNode input = htmlDoc.DocumentNode.SelectSingleNode("//input[@id = 'authenticity_token']");
                 string authenticity_token = input.GetAttributeValue("value", "");
                 string postData = string.Format("username={0}&password={1}&client=web&authenticity_token={2}&https=", HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password), HttpUtility.UrlEncode(authenticity_token));
-                string loginresponse = GetWebData(loginPostUrl, postData, cc);
-                if (!isLoggedIn())
+                JObject json = GetWebData<JObject>(loginPostUrl, postData, cc);
+                try
+                {
+                    cc.Add(new Cookie("user_name", HttpUtility.UrlEncode(username), "/", ".tv4play.se"));
+                    cc.Add(new Cookie("username", HttpUtility.UrlEncode(json["user_id"].Value<string>()), "/", ".tv4play.se"));
+                    cc.Add(new Cookie("user_id", HttpUtility.UrlEncode(json["user_id"].Value<string>()), "/", ".tv4play.se"));
+                    cc.Add(new Cookie("contact_id", HttpUtility.UrlEncode(json["contact_id"].Value<string>()), "/", ".tv4play.se"));
+                    cc.Add(new Cookie("rememberme", HttpUtility.UrlEncode(json["session_token"].Value<string>()), "/", ".tv4play.se"));
+                    cc.Add(new Cookie("sessionToken", HttpUtility.UrlEncode(json["session_token"].Value<string>()), "/", ".tv4play.se"));
+                    cc.Add(new Cookie("JSESSIONID", HttpUtility.UrlEncode(json["vimond_session_token"].Value<string>()), "/", ".tv4play.se"));
+                    cc.Add(new Cookie("pSessionToken", HttpUtility.UrlEncode(json["vimond_remember_me"].Value<string>()), "/", ".tv4play.se"));
+                    // cc.Add(new Cookie("tv4_token", HttpUtility.UrlEncode(GetWebData("").Trim()), "/", ".tv4play.se"));
+                    isLoggedIn = true;
+                    showPremium = json["active_subscriptions"].Values() != null && json["active_subscriptions"].Values().Count() > 0;
+                } 
+                catch
+                {
                     throw new OnlineVideosException("Inloggningen misslyckades");
+                }
             }
         }
 
@@ -103,13 +119,13 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
-            if (!ShowPremium)
+            login();
+            if (!showPremium)
             {
                 GetShows(page: 1).ForEach((Category s) => Settings.Categories.Add(s));
             }
             else
             {
-                login();
                 Category tv = new Category() { Name = "TV", SubCategories = new List<Category>(), HasSubCategories = true, SubCategoriesDiscovered = true };
                 foreach (KeyValuePair<string, string> keyValuePair in tvCategories)
                 {
@@ -251,7 +267,7 @@ namespace OnlineVideos.Sites
         private List<Category> GetShows(int page, Category parentCategory = null, string tag = null)
         {
             List<Category> shows = new List<Category>();
-            string url = string.Concat(string.Concat(string.Format(showsUrl, page), (ShowPremium ? "" : "&is_free=true")), (string.IsNullOrEmpty(tag) ? "" : string.Concat("&tags=", tag)));
+            string url = string.Concat(string.Concat(string.Format(showsUrl, page), (showPremium ? "" : "&is_free=true")), (string.IsNullOrEmpty(tag) ? "" : string.Concat("&tags=", tag)));
             HtmlDocument htmlDoc = GetWebData<HtmlDocument>(url);
             HtmlNodeCollection items = htmlDoc.DocumentNode.SelectNodes("//li[@class='card']");
             if (items != null)
@@ -340,7 +356,7 @@ namespace OnlineVideos.Sites
                 {
                     VideoInfo video = new VideoInfo();
                     HtmlNodeCollection premium = item.SelectNodes(".//span[contains(@class,'premium-badge')]");
-                    if ((ShowPremium || premium == null || premium.Count == 0))
+                    if ((showPremium || premium == null || premium.Count == 0))
                     {
                         HtmlNode titleNode = item.SelectSingleNode(".//h3");
                         video = new VideoInfo();
