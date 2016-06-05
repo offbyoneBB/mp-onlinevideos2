@@ -66,7 +66,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         public override Entities.EventResult PerformLogin(string username, string password)
         {
-
+            Cursor.Hide();
+            Application.DoEvents();
             _disableLogging = username.Contains("DISABLELOGGING");
             username = username.Replace("DISABLELOGGING", string.Empty);
             _showLoading = username.Contains("SHOWLOADING");
