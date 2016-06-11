@@ -21,7 +21,7 @@ namespace OnlineVideos.Sites
             string webData = GetWebData(orgurl, cookies: cc);
 
             //Check cloudflare...
-            Regex rgx = new Regex(@"var t,r,a,f,(?<g1>[^;]*;).*challenge-form.*?;[^;]*(?<g2>;.*)?a.value[^=]*=(?<g3>[^+]*)", RegexOptions.Singleline);
+            Regex rgx = new Regex(@"var s,t,o,p,b,r,e,a,k,i,n,g,f, (?<g1>[^;]*;).*?\s+;(?<g2>.*)?a.value[^=*]=(?<g3>[^+]*)", RegexOptions.Singleline);
             Match m = rgx.Match(webData);
             if (m.Success)
             {
