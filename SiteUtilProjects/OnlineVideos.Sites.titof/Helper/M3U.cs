@@ -119,13 +119,11 @@ namespace OnlineVideos.Sites.M3U
                 optionLine = optionLine.Trim();
                 int splitterPos = optionLine.IndexOf(splitterChar);
                 if (splitterPos < 0) return;
+                
                 string key = optionLine.Substring(0, splitterPos);
                 object value = optionLine.Substring(splitterPos + 1);
-                if (key == "#EXT-X-MEDIA") 
-                {
                 
-                }
-                else if (Constantes.INT_OPTIONS.Contains(key))
+                if (Constantes.INT_OPTIONS.Contains(key))
                 {
                     value = int.Parse(value.ToString());
                 }

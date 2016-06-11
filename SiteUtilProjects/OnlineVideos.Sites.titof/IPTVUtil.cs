@@ -60,6 +60,7 @@ namespace OnlineVideos.Sites
                                         }
                                         vid.Thumb = th;
                                     }
+                                    tChan = null;
                                 }
                             }
                             catch { }
@@ -76,32 +77,34 @@ namespace OnlineVideos.Sites
         {
             if (video.VideoUrl.ToLower().Contains("m3u8") || video.VideoUrl.ToLower().Contains("hls"))
             {
-                M3U.M3U.M3UPlaylist pl = new M3U.M3U.M3UPlaylist();
-                pl.Read(video.VideoUrl);
-                if (pl.IsHLS() ) 
+                using (M3U.M3U.M3UPlaylist pl = new M3U.M3U.M3UPlaylist())
                 {
-                    return video.VideoUrl;
-                }
-                else if (pl.Count > 0)
-                {
-                    video.PlaybackOptions = new Dictionary<string, string>();
-                    for (int idx = pl.Count; idx > 0; idx--)
+                    pl.Read(video.VideoUrl);
+                    if (pl.IsHLS())
                     {
-                        string sName = "Item "+idx;
-                        var item = pl[pl.Count - idx];
-                        if (item.Options!=null && item.Options.ContainsKey("RESOLUTION"))
-                            sName = "RESOLUTION " + item.Options["RESOLUTION"].ToString();
-                        if (!video.PlaybackOptions.ContainsKey(sName))
-                            video.PlaybackOptions.Add (sName, item.Path);
-                    }                    
+                        return video.VideoUrl;
+                    }
+                    else if (pl.Count > 0)
+                    {
+                        video.PlaybackOptions = new Dictionary<string, string>();
+                        for (int idx = pl.Count; idx > 0; idx--)
+                        {
+                            string sName = "Item " + idx;
+                            var item = pl[pl.Count - idx];
+                            if (item.Options != null && item.Options.ContainsKey("RESOLUTION"))
+                                sName = "RESOLUTION " + item.Options["RESOLUTION"].ToString();
+                            if (!video.PlaybackOptions.ContainsKey(sName))
+                                video.PlaybackOptions.Add(sName, item.Path);
+                        }
 
-                    string url = pl[pl.Count -1].Path;
-                    return url;
-                }
-                else 
-                {
-                    string url = video.VideoUrl;
-                    return url;
+                        string url = pl[pl.Count - 1].Path;
+                        return url;
+                    }
+                    else
+                    {
+                        string url = video.VideoUrl;
+                        return url;
+                    }
                 }
                 
             }

@@ -66,7 +66,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         public override Entities.EventResult PerformLogin(string username, string password)
         {
-
+            Cursor.Hide();
+            Application.DoEvents();
             _disableLogging = username.Contains("DISABLELOGGING");
             username = username.Replace("DISABLELOGGING", string.Empty);
             _showLoading = username.Contains("SHOWLOADING");
@@ -132,26 +133,23 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             switch (_currentState)
             {
                 case State.Login:
-                    if (Url.Contains("/Login") && Url != @"https://www.netflix.com/Login")
+                    if (Url.Contains("/Login") && !usernamePosted && activateLoginTimer)
                     {
-                        if (activateLoginTimer)
+                        activateLoginTimer = false;
+                        System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+                        timer.Tick += (object sender, EventArgs e) =>
                         {
-                            activateLoginTimer = false;
-                            System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
-                            timer.Tick += (object sender, EventArgs e) =>
-                            {
-                                string jsCode = "document.getElementsByName('email')[0].value = '" + _username + "'; ";
-                                jsCode += "document.getElementsByName('password')[0].value = '" + _password + "'; ";
-                                jsCode += "if (document.getElementById('login-form-contBtn')) { document.getElementById('login-form-contBtn').click(); } else { document.getElementsByTagName('form')[0].submit();}";
-                                InvokeScript(jsCode);
-                                usernamePosted = true;
-                                timer.Stop();
-                                timer.Dispose();
-                            };
+                            string jsCode = "document.getElementsByName('email')[0].value = '" + _username + "'; ";
+                            jsCode += "document.getElementsByName('password')[0].value = '" + _password + "'; ";
+                            jsCode += "if (document.getElementById('login-form-contBtn')) { document.getElementById('login-form-contBtn').click(); } else { document.getElementsByTagName('form')[0].submit();}";
+                            InvokeScript(jsCode);
+                            usernamePosted = true;
+                            timer.Stop();
+                            timer.Dispose();
+                        };
 
-                            timer.Interval = 1000;
-                            timer.Start();
-                        }
+                        timer.Interval = 1000;
+                        timer.Start();
                     }
                     else if (Url.Contains("/Login") && usernamePosted && activatePasswordTimer)
                     {
