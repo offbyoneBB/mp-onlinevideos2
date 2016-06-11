@@ -19,20 +19,27 @@ namespace OnlineVideos.Hoster
         {
             string data = GetWebData<string>(url);
             url = "";
-            Regex rgx = new Regex(@"{}}}"">.*?<script type=""text/javascript"">(?<code>.*?)</script>", RegexOptions.Singleline);
-            Match m = rgx.Match(data);
-            if (m.Success)
+            Regex rgx = new Regex(@"text/javascript"">(?<code>ﾟ.*?)</script>", RegexOptions.Singleline);
+            List<string> matches = new List<string>();
+            foreach (Match m in rgx.Matches(data))
             {
-                string aaCode = m.Groups["code"].Value;
+                matches.Add(m.Groups["code"].Value);
+            }
+            rgx = new Regex(@"welikekodi_ya_rly = (?<n0>\d+) - (?<n1>\d+)");
+            Match match = rgx.Match(data);
+            if (match.Success && matches.Count > 0)
+            {
+                int index = int.Parse(match.Groups["n0"].Value) - int.Parse(match.Groups["n1"].Value);
+                string aaCode = matches[index];
                 ScriptEngine engine = new ScriptEngine();
                 engine.Execute(OnlineVideos.Sites.Properties.Resources.AADecode);
-                data = engine.CallGlobalFunction("decode", aaCode).ToString();
+                string js = engine.CallGlobalFunction("decode", aaCode).ToString();
                 rgx = new Regex(@"^window\.[^=]*=");
-                data = rgx.Replace(data, "function html(){return ");
-                data = data.Replace("window.vt='video/mp4'", "");
-                data += "}";
+                js = rgx.Replace(js, "function html(){return ");
+                js = js.Replace("window.vt='video/mp4'", "");
+                js += "}";
                 engine = new ScriptEngine();
-                engine.Execute(data);
+                engine.Execute(js);
                 url = engine.CallGlobalFunction("html").ToString();
             }
             return url;
