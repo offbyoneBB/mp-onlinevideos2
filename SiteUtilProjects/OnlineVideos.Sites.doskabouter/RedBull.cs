@@ -1,25 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Web;
 using HtmlAgilityPack;
 using HtmlNode = HtmlAgilityPack.HtmlNode;
-//TODO: Remove after release ov next version (2.1.1) of onlinevideos
-using OnlineVideos.AMF;
+using OnlineVideos.Helpers;
 
 namespace OnlineVideos.Sites
 {
     public class RedBull : BrightCoveUtil
     {
-        //TODO: Remove after release ov next version (2.1.1) of onlinevideos
-        private new AMFObject lastResponse = null;
 
         public override int DiscoverDynamicCategories()
         {
@@ -68,7 +62,7 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> GetNextPageVideos()
         {
-            Uri uri = UriWithoutUrlDecoding.Create(nextPageUrl);
+            Uri uri = DotNetFrameworkHelper.UriWithoutUrlDecoding.Create(nextPageUrl);
             string data = MyGetWebData(uri);
             var doc = new HtmlDocument();
             doc.LoadHtml(data);
@@ -77,7 +71,7 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverNextPageCategories(NextPageCategory category)
         {
-            Uri uri = UriWithoutUrlDecoding.Create(category.Url);
+            Uri uri = DotNetFrameworkHelper.UriWithoutUrlDecoding.Create(category.Url);
             string data = MyGetWebData(uri);
 
             category.ParentCategory.SubCategories.Remove(category);
@@ -89,7 +83,7 @@ namespace OnlineVideos.Sites
 
         public override string GetVideoUrl(VideoInfo video)
         {
-            string res = baseGetVideoUrl(video);
+            string res = base.GetVideoUrl(video);
             if (res.StartsWith(@"http://live", StringComparison.InvariantCultureIgnoreCase))
             {
                 if (video.PlaybackOptions != null)
@@ -195,7 +189,7 @@ namespace OnlineVideos.Sites
         {
             if (!Uri.IsWellFormedUriString(relativeUrl, UriKind.Absolute))
             {
-                Uri uri = UriWithoutUrlDecoding.Create(baseUrl, relativeUrl);
+                Uri uri = DotNetFrameworkHelper.UriWithoutUrlDecoding.Create(baseUrl, relativeUrl);
                 return uri.OriginalString;
             }
             return relativeUrl;
@@ -242,85 +236,6 @@ namespace OnlineVideos.Sites
                     url = HttpUtility.UrlDecode(url.Substring(33));
             }
             return url;
-        }
-        //TODO: Remove after release ov next version (2.1.1) of onlinevideos
-        public string baseGetVideoUrl(VideoInfo video)
-        {
-            string webdata = GetWebData<string>(video.VideoUrl);
-            return GetFileUrl(video, webdata);
-        }
-
-        protected string GetFileUrl(VideoInfo video, string data)
-        {
-            Match m = regEx_FileUrl.Match(data);
-
-            if (!m.Success)
-                return String.Empty;
-
-            AMFArray renditions;
-            if (requestType == RequestType.ViewerExperienceRequest)
-                renditions = GetResultsFromViewerExperienceRequest(m, video.VideoUrl);
-            else
-                renditions = GetResultsFromFindByMediaId(m);
-
-            return FillPlaybackOptions(video, renditions);
-        }
-
-        protected AMFArray GetResultsFromViewerExperienceRequest(Match m, string videoUrl)
-        {
-            AMFObject contentOverride = new AMFObject("com.brightcove.experience.ContentOverride");
-            System.Text.RegularExpressions.Group g;
-            if ((g = m.Groups["contentId"]).Success)
-            {
-                Log.Debug("param contentId=" + g.Value);
-                contentOverride.Add("contentId", (double)Int64.Parse(g.Value));
-            }
-            else
-                contentOverride.Add("contentId", double.NaN);
-            contentOverride.Add("target", "videoPlayer");
-            if ((g = m.Groups["contentRefId"]).Success)
-            {
-                Log.Debug("param contentRefId=" + g.Value);
-                contentOverride.Add("contentRefId", g.Value);
-            }
-            else
-                contentOverride.Add("contentRefId", null);
-
-            contentOverride.Add("featuredRefId", null);
-            contentOverride.Add("contentRefIds", null);
-            contentOverride.Add("featuredId", double.NaN);
-            contentOverride.Add("contentIds", null);
-            contentOverride.Add("contentType", 0);
-            AMFArray array = new AMFArray();
-            array.Add(contentOverride);
-
-            AMFObject ViewerExperienceRequest = new AMFObject("com.brightcove.experience.ViewerExperienceRequest");
-            ViewerExperienceRequest.Add("TTLToken", String.Empty);
-            if ((g = m.Groups["playerKey"]).Success)
-            {
-                Log.Debug("param playerKey=" + g.Value);
-                ViewerExperienceRequest.Add("playerKey", g.Value);
-            }
-            else
-                ViewerExperienceRequest.Add("playerKey", playerKey);
-            ViewerExperienceRequest.Add("deliveryType", double.NaN);
-            ViewerExperienceRequest.Add("contentOverrides", array);
-            ViewerExperienceRequest.Add("URL", videoUrl);
-            Log.Debug("param URL=" + videoUrl);
-
-            if ((g = m.Groups["experienceId"]).Success)
-            {
-                Log.Debug("param experienceId=" + g.Value);
-                ViewerExperienceRequest.Add("experienceId", (double)Int64.Parse(g.Value));
-            }
-            else
-                ViewerExperienceRequest.Add("experienceId", double.NaN);
-
-            AMFSerializer ser = new AMFSerializer();
-            byte[] data = ser.Serialize(ViewerExperienceRequest, "com.brightcove.experience.ExperienceRuntimeFacade.getDataForExperience", hashValue);
-
-            lastResponse = AMFObject.GetResponse(requestUrl, data);
-            return lastResponse.GetArray("programmedContent").GetObject("videoPlayer").GetObject("mediaDTO").GetArray("renditions");
         }
 
         private string MyGetWebData(Uri uri, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
@@ -430,79 +345,5 @@ namespace OnlineVideos.Sites
 
     }
 
-    //TODO: Remove after release ov next version (2.1.1) of onlinevideos
-    public static class UriWithoutUrlDecoding
-    {
-        private const GenericUriParserOptions c_Options =
-            GenericUriParserOptions.Default |
-            GenericUriParserOptions.DontUnescapePathDotsAndSlashes |
-            GenericUriParserOptions.Idn |
-            GenericUriParserOptions.IriParsing;
-        private static readonly GenericUriParser s_SyntaxHttp = new GenericUriParser(c_Options);
-        private static readonly GenericUriParser s_SyntaxHttps = new GenericUriParser(c_Options);
-
-        static UriWithoutUrlDecoding()
-        {
-            // Initialize the scheme
-            FieldInfo fieldInfoSchemeName = typeof(UriParser).GetField("m_Scheme", BindingFlags.Instance | BindingFlags.NonPublic);
-            if (fieldInfoSchemeName == null)
-            {
-                throw new MissingFieldException("'m_Scheme' field not found");
-            }
-            fieldInfoSchemeName.SetValue(s_SyntaxHttp, "http");
-            fieldInfoSchemeName.SetValue(s_SyntaxHttps, "https");
-
-            FieldInfo fieldInfoPort = typeof(UriParser).GetField("m_Port", BindingFlags.Instance | BindingFlags.NonPublic);
-            if (fieldInfoPort == null)
-            {
-                throw new MissingFieldException("'m_Port' field not found");
-            }
-            fieldInfoPort.SetValue(s_SyntaxHttp, 80);
-            fieldInfoPort.SetValue(s_SyntaxHttps, 443);
-        }
-
-        public static Uri Create(string url)
-        {
-            Uri result = new Uri(url);
-            if (url.IndexOf("%2F", StringComparison.OrdinalIgnoreCase) != -1)
-                FixUri(result);
-            return result;
-        }
-
-        public static Uri Create(string baseUrl, string relativeUrl)
-        {
-            Uri result = new Uri(new Uri(baseUrl), relativeUrl);
-            if (baseUrl.IndexOf("%2F", StringComparison.OrdinalIgnoreCase) != -1 || relativeUrl.IndexOf("%2F", StringComparison.OrdinalIgnoreCase) != -1)
-                FixUri(result);
-            return result;
-        }
-
-        private static void FixUri(Uri uri)
-        {
-            UriParser parser = null;
-            switch (uri.Scheme.ToLowerInvariant())
-            {
-                case "http":
-                    parser = s_SyntaxHttp;
-                    break;
-                case "https":
-                    parser = s_SyntaxHttps;
-                    break;
-            }
-
-            if (parser != null)
-            {
-                // Associate the parser
-                FieldInfo fieldInfo = typeof(Uri).GetField("m_Syntax", BindingFlags.Instance | BindingFlags.NonPublic);
-                if (fieldInfo == null)
-                {
-                    throw new MissingFieldException("'m_Syntax' field not found");
-                }
-                fieldInfo.SetValue(uri, parser);
-            }
-        }
-
-        
-    }
 }
 

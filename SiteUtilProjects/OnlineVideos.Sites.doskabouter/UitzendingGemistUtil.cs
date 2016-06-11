@@ -18,10 +18,6 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Preferred Format"), Description("Prefer this format when there are more than one for the desired quality.")]
         VideoQuality preferredQuality = VideoQuality.H264_std;
 
-        //TODO: Remove after release ov next version (2.1.1) of onlinevideos
-        [Category("OnlineVideosUserConfiguration"), Description("Proxy to use for WebRequests. Define like this: 83.84.85.86:8116")]
-        string proxy = null;
-
         private enum UgType { None, MostViewed, Recent, Omroepen, Genres, AtoZ, Type1, Series };
         private Regex regEx_AtoZ;
 
@@ -39,11 +35,8 @@ namespace OnlineVideos.Sites
         #region singleton
         public WebProxy GetProxy()
         {
-            //TODO: change after release ov next version (2.1.1) of onlinevideos
-            /*if (webProxy == null && !String.IsNullOrEmpty(httpSettings.ProxyServer))
-                webProxy = new WebProxy(httpSettings.ProxyServer, httpSettings.ProxyServerPort);*/
-            if (webProxy == null && !String.IsNullOrEmpty(proxy))
-                webProxy = new WebProxy(proxy);
+            if (webProxy == null && !String.IsNullOrEmpty(httpSettings.ProxyServer))
+                webProxy = new WebProxy(httpSettings.ProxyServer, httpSettings.ProxyServerPort);
             return webProxy;
         }
         #endregion
