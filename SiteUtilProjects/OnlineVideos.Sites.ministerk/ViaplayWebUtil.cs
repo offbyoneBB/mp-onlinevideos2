@@ -246,32 +246,6 @@ namespace OnlineVideos.Sites
                 return defaultValue;
         }
 
-        protected string EroticCategoryName
-        {
-            get
-            {
-                string eroticCategoryName;
-                switch (Settings.Language)
-                {
-                    case "sv":
-                        eroticCategoryName = "Erotik";
-                        break;
-                    case "da":
-                        eroticCategoryName = "Erotik";
-                        break;
-                    case "fi":
-                        eroticCategoryName = "Erotiikka";
-                        break;
-                    case "no":
-                        eroticCategoryName = "Erotikk";
-                        break;
-                    default:
-                        eroticCategoryName = string.Empty;
-                        break;
-                }
-                return eroticCategoryName;
-            }
-        }
         #endregion
 
         #region Helpers
@@ -290,8 +264,7 @@ namespace OnlineVideos.Sites
         private bool IsBlockedCategory(string categoryTitle)
         {
             return categoryTitle == GetTranslation("Rental store")
-                || categoryTitle == EroticCategoryName
-                || categoryTitle == "NHL GameCenter";
+                || categoryTitle == "Store" || categoryTitle == "NHL GameCenter";
         }
 
         private JObject MyGetWebData(string url, string postData = null)
