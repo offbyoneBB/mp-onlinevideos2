@@ -5,6 +5,7 @@ using System.Text;
 using OnlineVideos.Sites.Entities;
 using System.Windows.Forms;
 using OnlineVideos.Helpers;
+using System.Threading;
 
 
 namespace OnlineVideos.Sites.BrowserUtilConnectors
@@ -17,23 +18,40 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         bool clicked = false;
         bool maximized = false;
         bool startTimer = true;
+        bool showLoading = true;
+        bool isPremium = false;
 
-        private const string loginUrl = "https://www.tv4play.se/session/new";
+        private const string loginUrl = "https://www.tv4play.se/";
 
         private bool HaveCredentials
         {
             get { return !string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password); }
         }
 
+        public override void OnClosing()
+        {
+            if (maximized)
+                Browser.FindForm().Activated -= FormActivated;
+            base.OnClosing();
+        }
         public override EventResult PerformLogin(string username, string password)
         {
-            ShowLoading();
+            Cursor.Hide();
+            Application.DoEvents();
+            showLoading = username.Contains("SHOWLOADING");
+            username = username.Replace("SHOWLOADING", string.Empty);
+            isPremium = username.Contains("PREMIUM");
+            username = username.Replace("PREMIUM", string.Empty);
+            if (showLoading) ShowLoading();
             this.username = username;
             this.password = password;
-            if (HaveCredentials)
-                Url = loginUrl;
-            else
-                Url = "about:blank";
+            if (!HaveCredentials)
+            {
+                ProcessComplete.Finished = true;
+                ProcessComplete.Success = false;
+                return EventResult.Error("No login credantials");
+            }
+            Url = loginUrl;
             ProcessComplete.Finished = false;
             ProcessComplete.Success = false;
             return EventResult.Complete();
@@ -61,35 +79,42 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         private void SendKeyToBrowser(string key)
         {
-            if (maximized)
+            /*
+            if (maximized && isPremium)
             {
 
-                Cursor.Position = new System.Drawing.Point(Browser.FindForm().Location.X + 300, Browser.Location.Y + 300);
+                Cursor.Position = new System.Drawing.Point(Browser.FindForm().Left + 135, Browser.FindForm().Bottom - 100);
                 Application.DoEvents();
-                CursorHelper.DoLeftMouseClick();
+                Cursor.Position = new System.Drawing.Point(Browser.FindForm().Left + 135, Browser.FindForm().Bottom - 35);
                 Application.DoEvents();
                 CursorHelper.DoLeftMouseClick();
                 Application.DoEvents();
                 System.Windows.Forms.SendKeys.Send(key);
-            }
+                Cursor.Position = new System.Drawing.Point(Browser.FindForm().Left + 135, Browser.FindForm().Bottom - 100);
+                Application.DoEvents();
+                InvokeScript("document.getElementById('player').focus();"); //Prevent play/pause problem
+            }*/
         }
 
         private EventResult PlayPause()
         {
             if (maximized)
             {
-                Cursor.Position = new System.Drawing.Point(Browser.FindForm().Location.X + 200, Browser.Location.Y + 200);
+                Cursor.Position = new System.Drawing.Point(Browser.FindForm().Left + 100, Browser.FindForm().Bottom - 100);
                 Application.DoEvents();
-                Cursor.Position = new System.Drawing.Point(Browser.FindForm().Location.X + 300, Browser.Location.Y + 300);
+                Cursor.Position = new System.Drawing.Point(Browser.FindForm().Left + 35, Browser.FindForm().Bottom - 35);
                 Application.DoEvents();
                 CursorHelper.DoLeftMouseClick();
                 Application.DoEvents();
+                Cursor.Position = new System.Drawing.Point(Browser.FindForm().Left + 100, Browser.FindForm().Bottom - 100);
+                Application.DoEvents();
                 InvokeScript("document.getElementById('player').focus();"); //Prevent play/pause problem
+                Application.DoEvents();
             }
             return EventResult.Complete();
 
         }
- 
+
         public override EventResult Play()
         {
             return PlayPause();
@@ -100,19 +125,13 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             return PlayPause();
         }
 
+        bool refreshed = false;
         public override EventResult BrowserDocumentComplete()
         {
             MessageHandler.Info("Url: {0}, login: {1}, clicked: {2}, maximized: {3}", Url, login.ToString(), clicked.ToString(), maximized.ToString());
             if (login)
             {
-                if (Url == "about:blank")
-                {
-                    login = false;
-                    ProcessComplete.Finished = true;
-                    ProcessComplete.Success = true;
-
-                }
-                else if (clicked && Url != loginUrl)
+                if (refreshed)
                 {
                     login = false;
                     ProcessComplete.Finished = true;
@@ -120,11 +139,29 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 }
                 else
                 {
-                    InvokeScript("document.getElementById('user-name').value = '" + username + "';");
-                    InvokeScript("document.getElementById('password').value = '" + password + "';");
-                    InvokeScript("document.getElementById('remember_me').checked = false;");
-                    InvokeScript("setTimeout(\"document.getElementsByClassName('btn')[0].click()\", 2000);");
-                    clicked = true;
+                    if (!clicked)
+                    {
+                        InvokeScript("function openLogin() { $(\"a[href='https://www.tv4play.se/session/new']\")[0].click(); }; setTimeout(\"openLogin()\", 1500); ");
+                        string js = " function doLogin() { ";
+                        js += "var iframe = $('iframe.cboxIframe')[0].contentDocument; ";
+                        js += "iframe.getElementById('user-name').value = '" + username + "'; ";
+                        js += "iframe.getElementById('password').value = '" + password + "'; ";
+                        js += "iframe.getElementById('remember_me').checked = false; ";
+                        js += "iframe.getElementsByClassName('btn')[0].click(); }; ";
+                        js += "setTimeout(\"doLogin()\", 4000); ";
+                        InvokeScript(js);
+                        clicked = true;
+                        System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+                        timer.Tick += (object sender, EventArgs e) =>
+                        {
+                            refreshed = true;
+                            timer.Stop();
+                            timer.Dispose();
+                            Browser.Refresh();
+                        };
+                        timer.Interval = 7000;
+                        timer.Start();
+                    }
                 }
             }
             else
@@ -136,19 +173,43 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
                     timer.Tick += (object sender, EventArgs e) =>
                     {
-                        HideLoading();
-                        maximized = true;
+                        if (showLoading) HideLoading();
                         timer.Stop();
                         timer.Dispose();
                     };
 
                     timer.Interval = 2250;
                     timer.Start();
+
+                    System.Windows.Forms.Timer maxTimer = new System.Windows.Forms.Timer();
+                    maxTimer.Tick += (object sender, EventArgs e) =>
+                    {
+                        Cursor.Position = new System.Drawing.Point(Browser.FindForm().Right - 100, Browser.FindForm().Bottom - 100);
+                        Application.DoEvents();
+                        Cursor.Position = new System.Drawing.Point(Browser.FindForm().Right - 35, Browser.FindForm().Bottom - 35);
+                        Application.DoEvents();
+                        CursorHelper.DoLeftMouseClick();
+                        Application.DoEvents();
+                        Cursor.Position = new System.Drawing.Point(Browser.FindForm().Right - 100, Browser.FindForm().Bottom - 100);
+                        Application.DoEvents();
+                        //Workaround for keeping maximized flashplayer on top
+                        Browser.FindForm().Activated += FormActivated;
+                        InvokeScript("document.getElementById('player').focus();"); //Prevent play/pause problem
+                        maximized = true;
+                        maxTimer.Stop();
+                        maxTimer.Dispose();
+                    };
+                    maxTimer.Interval = isPremium ? 15000 : 60000;
+                    maxTimer.Start();
                 }
                 ProcessComplete.Finished = true;
                 ProcessComplete.Success = true;
             }
             return EventResult.Complete();
+        }
+        private void FormActivated(object sender, EventArgs e)
+        {
+            this.Browser.FindForm().SendToBack();
         }
     }
 }

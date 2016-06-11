@@ -18,9 +18,12 @@ namespace OnlineVideos.Sites
 
         [Category("OnlineVideosUserConfiguration"), Description("TV4Play username"), LocalizableDisplayName("Username")]
         protected string username = null;
-
         [Category("OnlineVideosUserConfiguration"), Description("TV4Play password"), LocalizableDisplayName("Password"), PasswordPropertyText(true)]
         protected string password = null;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show loading spinner"), Description("Show the loading spinner in the Browser Player")]
+        protected bool showLoadingSpinner = true;
+        //[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Prefer internal player"), Description("Try to play videos in Mediaportal. If not possible use browser player as fallback")]
+        protected bool preferInternal = true;
 
         #endregion
 
@@ -104,7 +107,7 @@ namespace OnlineVideos.Sites
                     cc.Add(new Cookie("pSessionToken", HttpUtility.UrlEncode(json["vimond_remember_me"].Value<string>()), "/", ".tv4play.se"));
                     // cc.Add(new Cookie("tv4_token", HttpUtility.UrlEncode(GetWebData("").Trim()), "/", ".tv4play.se"));
                     isLoggedIn = true;
-                    showPremium = json["active_subscriptions"].Values() != null && json["active_subscriptions"].Values().Count() > 0;
+                    showPremium = json["active_subscriptions"].Values() != null && (json["active_subscriptions"].Values().Count() > 0 && json["active_subscriptions"].First()["product_group_nid"].Value<string>() != "freemium");
                 } 
                 catch
                 {
@@ -444,7 +447,7 @@ namespace OnlineVideos.Sites
                 throw new OnlineVideosException(errorElement.SelectSingleNode("./description/text()").InnerText);
             }
             XmlNode drm = xDoc.SelectSingleNode("//drmProtected");
-            if ((drm == null ? false : drm.InnerText.Trim().ToLower() == "true"))
+            if (!preferInternal || (drm == null ? false : drm.InnerText.Trim().ToLower() == "true"))
             {
                 Settings.Player = PlayerType.Browser;
                 JObject json = GetWebData<JObject>(string.Format(videoAssetUrl, video.VideoUrl), cookies: cc);
@@ -503,7 +506,7 @@ namespace OnlineVideos.Sites
 
         string IBrowserSiteUtil.UserName
         {
-            get { return username; }
+            get { return username + (showLoadingSpinner ? "SHOWLOADING" : "") + (showPremium ? "PREMIUM" : ""); }
         }
 
         string IBrowserSiteUtil.Password
