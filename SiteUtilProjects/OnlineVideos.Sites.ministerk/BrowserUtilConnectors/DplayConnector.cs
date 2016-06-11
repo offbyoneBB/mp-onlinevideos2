@@ -17,6 +17,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         bool maximized = false;
         string username = null;
         string password = null;
+        bool _showLoading = true;
 
         private bool HaveCredentials
         {
@@ -32,7 +33,13 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         public override EventResult PerformLogin(string username, string password)
         {
-            ShowLoading();
+            _showLoading = username.Contains("SHOWLOADING");
+            username = username.Replace("SHOWLOADING", string.Empty);
+            if (_showLoading) ShowLoading();
+            //Need to position the mouse, otherwise automation can fail later on...
+            Cursor.Position = new System.Drawing.Point(Browser.FindForm().Location.X + 20, Browser.Location.Y + 200);
+            Cursor.Hide();
+            Application.DoEvents();
             string[] userStrings = username.Split('¥');
             this.username = userStrings[0];
             this.password = password;
@@ -103,26 +110,23 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
             else
             {
-                //Need to position the mouse, otherwise automation can fail later on...
-                Cursor.Position = new System.Drawing.Point(Browser.FindForm().Location.X + 20, Browser.Location.Y + 300);
-                Application.DoEvents();
                 InvokeScript("setTimeout(\"document.getElementsByClassName('play-button')[0].click()\", 2000);");
                 System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
                 timer.Tick += (object sender, EventArgs e) =>
                 {
-                    HideLoading();
+                    if (_showLoading) HideLoading();
                     if (!maximized)
                     {
                         maximized = true;
                         //Workaround for keeping maximized flashplayer on top
                         Browser.FindForm().Activated += FormActivated;
-                        Thread.Sleep(200);
-                        //Click only once
-                        Cursor.Position = new System.Drawing.Point(Browser.FindForm().Location.X + 20, Browser.Location.Y + 300);
+                        Cursor.Position = new System.Drawing.Point(Browser.FindForm().Location.X + 20, Browser.Location.Y + 200);
                         Application.DoEvents();
+                        Thread.Sleep(1000);
+                        //Click only once
                         CursorHelper.DoLeftMouseClick();
                         Application.DoEvents();
-                        Thread.Sleep(150);
+                        Thread.Sleep(500);
                     }
                     System.Windows.Forms.SendKeys.Send("f");
                     timer.Stop();

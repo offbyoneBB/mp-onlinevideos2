@@ -48,6 +48,10 @@ namespace OnlineVideos.Sites
         protected string password = null;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Always show premium"), Description("Always show premium content")]
         protected bool showPremium = false;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show loading spinner"), Description("Show the loading spinner in the Browser Player")]
+        protected bool showLoadingSpinner = true;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Prefer internal player"), Description("Try to play videos in Mediaportal. If not possible use browser player as fallback")]
+        protected bool preferInternal = true;
 
 
         private bool HaveCredentials
@@ -320,7 +324,7 @@ namespace OnlineVideos.Sites
             //End workaround...
             string url = string.Format("{0}secure/api/v2/user/authorization/stream/{1}?stream_type=hds", secureUrl, video.VideoUrl);
             JObject json = GetWebData<JObject>(url, cookies: Cookies, cache: false);
-            if (json["type"].Value<string>() == "drm")
+            if (!preferInternal || json["type"].Value<string>() == "drm")
             {
                 Settings.Player = PlayerType.Browser;
                 url = string.Format("{0}api/v2/ajax/videos?video_id={1}&page=0&items=500", baseUrl, video.VideoUrl);
@@ -391,7 +395,7 @@ namespace OnlineVideos.Sites
 
         string IBrowserSiteUtil.UserName
         {
-            get { return username + "¥" + secureUrl + "login/"; }
+            get { return username + "¥" + secureUrl + "login/" + (showLoadingSpinner ? "SHOWLOADING" : ""); }
         }
 
         string IBrowserSiteUtil.Password
