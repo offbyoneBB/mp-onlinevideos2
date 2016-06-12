@@ -10,6 +10,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Xml;
 
 namespace OnlineVideos.Sites
 {
@@ -21,6 +22,8 @@ namespace OnlineVideos.Sites
         protected string username = null;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Lösenord"), Description("Skriv in ditt lösenord."), PasswordPropertyText(true)]
         protected string password = null;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Använd mobilkompatibel videoström"), Description("Använd mobilkompatibel videoström. Buffrar sämre, har \"inbränd\" textning.")]
+        protected bool useMobile = false;
 
         #endregion
 
@@ -179,31 +182,96 @@ namespace OnlineVideos.Sites
             if (!match.Success)
                 return new List<string>();
             string id = match.Groups["id"].Value;
-            string playerHandlerUrl = "https://professional.player.qbrick.com/Html5/Web/PlayerHandler.ashx?action=getdata&embedId=qbrick_professional_qbrick1&types=mp4&widgettype=professional&mid={0}&init=false&dsat={1}";
             rgx = new Regex(@"http://www.imdb.com/title/(?<imdb>tt\d+)");
             match = rgx.Match(data);
             if (match.Success)
             {
                 video.Other = new TrackingInfo() { VideoKind = VideoKind.Movie, ID_IMDB = match.Groups["imdb"].Value };
             }
-            data = ExtendedWebCache.Instance.GetWebData(string.Format(playerHandlerUrl, id, token), cookies: cc, cache: false);
-            rgx = new Regex(@"""(?<url>http[^""]*?m3u8)");
-            match = rgx.Match(data);
-            if (!match.Success)
-                return new List<string>();
-            string payload = @"{{""mediaId"":""{0}"",""urls"":[{{""parameter"":""stream_index_0"",""url"":""{1}""}}]}}";
-            data = string.Format(payload, id, match.Groups["url"].Value);
-            NameValueCollection headers = new NameValueCollection();
-            headers.Add("Authorization", "Token " + token);
-            string qticketUrl = @"http://zmey.drakenfilm.se/qtickets?format=json";
-            JObject json = ExtendedWebCache.Instance.GetWebData<JObject>(qticketUrl, postData: data, headers: headers, contentType: "application/json", cookies: cc, cache: false);
-            string m3u8 = json["urls"].First()["url"].Value<string>();
-            m3u8 = ExtendedWebCache.Instance.GetWebData(m3u8, cookies: cc, cache: false);
-            rgx = new Regex(@"BANDWIDTH=(?<bandwidth>\d+)000.*?(?<url>http[^\n]*)", RegexOptions.Singleline);
             Dictionary<string, string> pbo = new Dictionary<string, string>();
-            foreach (Match m in rgx.Matches(m3u8))
+            if (useMobile)
             {
-                pbo.Add(m.Groups["bandwidth"].Value + " kbps", m.Groups["url"].Value);
+                string playerHandlerUrl = "https://professional.player.qbrick.com/Html5/Web/PlayerHandler.ashx?action=getdata&embedId=qbrick_professional_qbrick1&types=mp4&widgettype=professional&mid={0}&init=false&dsat={1}";
+                data = ExtendedWebCache.Instance.GetWebData(string.Format(playerHandlerUrl, id, token), cookies: cc, cache: false);
+                rgx = new Regex(@"""(?<url>http[^""]*?m3u8)");
+                match = rgx.Match(data);
+                if (!match.Success)
+                    return new List<string>();
+                string payload = @"{{""mediaId"":""{0}"",""urls"":[{{""parameter"":""stream_index_0"",""url"":""{1}""}}]}}";
+                data = string.Format(payload, id, match.Groups["url"].Value);
+                NameValueCollection headers = new NameValueCollection();
+                headers.Add("Authorization", "Token " + token);
+                string qticketUrl = @"http://zmey.drakenfilm.se/qtickets?format=json";
+                JObject json = ExtendedWebCache.Instance.GetWebData<JObject>(qticketUrl, postData: data, headers: headers, contentType: "application/json", cookies: cc, cache: false);
+                string m3u8 = json["urls"].First()["url"].Value<string>();
+                m3u8 = ExtendedWebCache.Instance.GetWebData(m3u8, cookies: cc, cache: false);
+                rgx = new Regex(@"BANDWIDTH=(?<bandwidth>\d+)000.*?(?<url>http[^\n]*)", RegexOptions.Singleline);
+                foreach (Match m in rgx.Matches(m3u8))
+                {
+                    pbo.Add(m.Groups["bandwidth"].Value + " kbps", m.Groups["url"].Value);
+                }
+            }
+            else
+            {
+                string playerHandlerUrl = "https://publisher.qbrick.com/EmbedHandler.ashx?embedId=qbrick_professional_qbrick1&flash=21&types=mp4,ogg,webm&widgettype=professional&mid={0}&init=false&dsat={1}";
+                data = ExtendedWebCache.Instance.GetWebData(string.Format(playerHandlerUrl, id, token), cookies: cc, cache: false);
+                rgx = new Regex(@"""playerId"":""(?<id>[^""]*).*?siteCatalystConfig =", RegexOptions.Singleline);
+                match = rgx.Match(data);
+                if (!match.Success)
+                    return new List<string>();
+                playerHandlerUrl = "https://vms.api.qbrick.com/rest/v3/getsingleplayer/{0}?statusCode=xml";
+                data = ExtendedWebCache.Instance.GetWebData(string.Format(playerHandlerUrl, match.Groups["id"].Value), cookies: cc, cache: false);
+                rgx = new Regex(@"smil\+xml"">(?<url>[^<]*)");
+                match = rgx.Match(data);
+                if (!match.Success)
+                    return new List<string>();
+                //SUBTITLE
+                Regex subRgx = new Regex(@"<caption>(?<caption>[^<]*)");
+                Match subMatch = subRgx.Match(data);
+                if (subMatch.Success)
+                {
+                    video.SubtitleText = GetSubtitle(subMatch.Groups["caption"].Value);
+                }
+                string payload = @"<urls mediaId=""{0}""><item><url>{1}</url></item></urls>";
+                data = string.Format(payload, id, match.Groups["url"].Value);
+                NameValueCollection headers = new NameValueCollection();
+                headers.Add("Authorization", "Token " + token);
+                string qticketUrl = @"http://zmey.drakenfilm.se/qtickets?format=xml";
+                data = ExtendedWebCache.Instance.GetWebData<string>(qticketUrl, postData: data, headers: headers, contentType: "application/xml", cookies: cc, cache: false);
+                rgx = new Regex(@"<url>(?<url>[^<]*)");
+                match = rgx.Match(data);
+                if (!match.Success)
+                    return new List<string>();
+                data = ExtendedWebCache.Instance.GetWebData(match.Groups["url"].Value.Replace("&amp;", "&"), referer: video.VideoUrl, cookies: cc, cache: false);
+                rgx = new Regex(@"meta base=""(?<url>[^""]*)");
+                match = rgx.Match(data);
+                if (!match.Success)
+                    return new List<string>();
+                string metaBase = match.Groups["url"].Value;
+                rgx = new Regex(@"<video src=""(?<url>[^""]*).*?system-bitrate=""(?<bitrate>\d*)");
+                string urls = "";
+                string urlFormat = "<parameter>stream_{0}</parameter><item><url>{1}</url></item>";
+                int index = 0;
+                Dictionary<string, string> tempPbo = new Dictionary<string, string>();
+                foreach(Match m in rgx.Matches(data))
+                {
+                    tempPbo.Add(m.Groups["bitrate"].Value, m.Groups["url"].Value);
+                    urls += string.Format(urlFormat, index, m.Groups["url"].Value);
+
+                }
+                payload = @"<urls mediaId=""{0}"">{1}</urls>";
+                data = string.Format(payload, id, urls);
+                headers = new NameValueCollection();
+                headers.Add("Authorization", "Token " + token);
+                data = ExtendedWebCache.Instance.GetWebData<string>(qticketUrl, postData: data, headers: headers, contentType: "application/xml", cookies: cc, cache: false);
+                rgx = new Regex(@"<url>(?<url>[^<]*)");
+                foreach (Match m in rgx.Matches(data))
+                {
+                    string matchUrl = m.Groups["url"].Value;
+                    string bitrate = tempPbo.FirstOrDefault(kvp => matchUrl.Contains(kvp.Value)).Key;
+                    MPUrlSourceFilter.RtmpUrl rtmp = new MPUrlSourceFilter.RtmpUrl(metaBase) { PlayPath = matchUrl };
+                    pbo.Add((int.Parse(bitrate)/1000) + " kbps", rtmp.ToString());
+                }
             }
             pbo = pbo.OrderByDescending((p) =>
             {
@@ -212,13 +280,46 @@ namespace OnlineVideos.Sites
                 int.TryParse(resKey, out parsedRes);
                 return parsedRes;
             }).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
             string url = pbo.First().Value;
             if (inPlaylist)
                 pbo = null;
             video.PlaybackOptions = pbo;
             return new List<string>() { url };
         }
+
+        private string GetSubtitle(string url)
+        {
+            string srt = string.Empty;
+            try
+            {
+                XmlDocument xDoc = GetWebData<XmlDocument>(url, encoding: System.Text.Encoding.UTF8);
+                string srtFormat = "{0}\r\n{1} --> {2}\r\n{3}\r\n";
+                string begin;
+                string end;
+                string text;
+                string textPart;
+                int line;
+                foreach (XmlElement p in xDoc.GetElementsByTagName("p"))
+                {
+                    text = string.Empty;
+                    begin = p.GetAttribute("begin");
+
+                    end = p.GetAttribute("end");
+                    line = int.Parse(p.GetAttribute("xml:id")) + 1;
+                    XmlNodeList textNodes = p.SelectNodes(".//text()");
+                    foreach (XmlNode textNode in textNodes)
+                    {
+                        textPart = textNode.InnerText;
+                        textPart.Trim();
+                        text += string.IsNullOrEmpty(textPart) ? "" : textPart + "\r\n";
+                    }
+                    srt += string.Format(srtFormat, line, begin.Replace(".", ","), end.Replace(".", ","), text);
+                }
+            }
+            catch { }
+            return srt;
+        }
+
 
         #endregion
 
@@ -249,6 +350,8 @@ namespace OnlineVideos.Sites
 
         public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
         {
+            if (!useMobile)
+                return base.GetFileNameForDownload(video, category, url);
             return Helpers.FileUtils.GetSaveFilename(video.Title) + ".mp4";
         }
 
