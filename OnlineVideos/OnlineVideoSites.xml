@@ -1317,11 +1317,11 @@
       <Description>Videos van tweakers.net</Description>
       <Configuration>
         <item key="videoListRegEx"><![CDATA[<tr>\s*<td\sclass="video-image">\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*><img\ssrc="(?<ImageUrl>[^"]*)"\swidth=124\sheight=70\salt=""><span\sclass="playtime">(?<Duration>[^<]*)</span></a>\s*</td>\s*<td>\s*<p\sclass="title\sellipsis"><a[^>]*>(?<Title>[^<]*)</a></p>\s*<p\sclass="lead"><span\sclass="date">(?<Airdate>[^<]*)</span>(?<Description>[^<]*)</p>]]></item>
-        <item key="videoUrlRegEx"><![CDATA[http://tweakers\.net/video/(?<m0>[^/]*)/]]></item>
-        <item key="videoUrlFormatString"><![CDATA[http://tweakers.net/video/s1playlist/{0}/620/349/playlist.xspf]]></item>
+        <item key="videoUrlRegEx"><![CDATA[https://tweakers\.net/video/(?<m0>[^/]*)/]]></item>
+        <item key="videoUrlFormatString"><![CDATA[https://tweakers.net/video/s1playlist/{0}/620/349/playlist.xspf]]></item>
         <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\stitle="Volgende\spagina">&raquo;</a>]]></item>
         <item key="fileUrlRegEx"><![CDATA["label":"(?<n0>[^"]*)","height":[^,]*,"width":[^,]*,"sources":\[{"type":"video\\/mp4","src":(?<m0>[^}]+)}]]></item>
-        <item key="baseUrl"><![CDATA[http://tweakers.net/]]></item>
+        <item key="baseUrl"><![CDATA[https://tweakers.net/]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Recente videos">http://tweakers.net/video/zoeken/</Category>
