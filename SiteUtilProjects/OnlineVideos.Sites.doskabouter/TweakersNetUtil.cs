@@ -21,7 +21,7 @@ namespace OnlineVideos.Sites
                 string postData = @"decision=accept&returnTo=http%3A%2F%2Ftweakers.net%2F&tweakers_token=" +
                     HttpUtility.UrlEncode(m.Groups["tweakerstoken"].Value);
 
-                cc = MyGetWebData(@"https://secure.tweakers.net/my.tnet/cookies/", postData, cc);
+                cc = MyGetWebData(@"https://tweakers.net/my.tnet/cookies/", postData, cc);
             }
             return base.DiscoverDynamicCategories();
         }
