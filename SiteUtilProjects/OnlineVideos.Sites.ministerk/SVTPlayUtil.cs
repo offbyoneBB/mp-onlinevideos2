@@ -424,7 +424,15 @@ namespace OnlineVideos.Sites
                // video.Airdate = HttpUtility.HtmlDecode(article.GetAttributeValue("data-broadcasted", ""));
                // video.Description = HttpUtility.HtmlDecode(article.GetAttributeValue("data-description", ""));
                 HtmlNode titleTextSpan = article.SelectSingleNode(".//h3");
+                if (titleTextSpan == null)
+                {
+                    titleTextSpan = article.SelectSingleNode(".//span[contains(@class,'_title-text')]");
+                }
                 HtmlNode titleSubTextSpan = article.SelectSingleNode(".//p[contains(@class,'play_videolist-element__subtext')]");
+                if (titleSubTextSpan == null)
+                {
+                    titleSubTextSpan = article.SelectSingleNode(".//span[contains(@class,'_subtext')]");
+                }
                 string title = titleTextSpan != null ? titleTextSpan.InnerText : "";
                 string subText = titleSubTextSpan != null ? titleSubTextSpan.InnerText : "";
                 title += " " + subText;
