@@ -88,7 +88,7 @@ namespace OnlineVideos.Sites
         {
             List<Category> cats = new List<Category>();
             HtmlNode htmlNode = GetWebData<HtmlDocument>("http://www.svtplay.se/program").DocumentNode;
-            HtmlNode div = htmlNode.SelectSingleNode("//div[contains(@class,'play_promotion-grid')]");
+            HtmlNode div = htmlNode.SelectSingleNode("//div[contains(@class,'lp_clust')]");
             foreach (HtmlNode article in div.SelectNodes("article"))
             {
                 RssLink cat = new RssLink();
