@@ -75,10 +75,15 @@ namespace OnlineVideos.Hoster
             }
             else
             {
-                string data = GetWebData<string>(url);
-                url = "";
                 subtitleText = "";
-                Regex rgx = new Regex(@"""(?<url>[^""]*?\.f4m)""");
+                string data = GetWebData<string>(url);
+                string rgxString = @"""(?<url>[^""]*?\.f4m)""";
+                if (url.Contains("http://www.svtplay.se/kanaler/"))
+                {
+                    url = url.Replace("http://www.svtplay.se/kanaler/", string.Empty);
+                    rgxString = @"title"":""" + url + @""".*?""(?<url>[^""]*?\.f4m)""";
+                }
+                Regex rgx = new Regex(rgxString);
                 Match m = rgx.Match(data);
                 if (!m.Success)
                     return url;
