@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using MediaPortal.Common.MediaManagement;
 using MediaPortal.Common.MediaManagement.DefaultItemAspects;
 using MediaPortal.Common;
@@ -14,21 +15,28 @@ namespace OnlineVideos.MediaPortal2
     public class PlaylistItem : MediaItem
     {
         public PlaylistItem(VideoViewModel videoInfo, string resolvedPlaybackUrl)
-            : base(Guid.Empty, new Dictionary<Guid, MediaItemAspect>
+            : base(Guid.Empty, new Dictionary<Guid, IList<MediaItemAspect>>
             {
-                { ProviderResourceAspect.ASPECT_ID, new MediaItemAspect(ProviderResourceAspect.Metadata)},
-                { MediaAspect.ASPECT_ID, new MediaItemAspect(MediaAspect.Metadata) },
-                { VideoAspect.ASPECT_ID, new MediaItemAspect(VideoAspect.Metadata) }
+                { ProviderResourceAspect.ASPECT_ID, new MediaItemAspect[]{ new MultipleMediaItemAspect(ProviderResourceAspect.Metadata) }},
+                { MediaAspect.ASPECT_ID, new MediaItemAspect[]{ new SingleMediaItemAspect(MediaAspect.Metadata) }},
+                { VideoAspect.ASPECT_ID, new MediaItemAspect[]{ new MultipleMediaItemAspect(VideoAspect.Metadata) }}
             })
         {
             SiteName = videoInfo.SiteName;
             Util = OnlineVideoSettings.Instance.SiteUtilsList[SiteName];
 
-            Aspects[ProviderResourceAspect.ASPECT_ID].SetAttribute(ProviderResourceAspect.ATTR_SYSTEM_ID, ServiceRegistration.Get<ISystemResolver>().LocalSystemId);
+            ISystemResolver systemResolver = ServiceRegistration.Get<ISystemResolver>();
+
+            IList<MultipleMediaItemAspect> providerResourceAspects;
+            MediaItemAspect.TryGetAspects(Aspects, ProviderResourceAspect.Metadata, out providerResourceAspects);
+            MultipleMediaItemAspect providerResourceAspect = providerResourceAspects.First();
+
+            providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_SYSTEM_ID, systemResolver.LocalSystemId);
+
             if (videoInfo.SiteUtilName == "DownloadedVideo")
             {
-                Aspects[ProviderResourceAspect.ASPECT_ID].SetAttribute(ProviderResourceAspect.ATTR_RESOURCE_ACCESSOR_PATH, LocalFsResourceProviderBase.ToResourcePath(resolvedPlaybackUrl).Serialize());
-                Aspects[MediaAspect.ASPECT_ID].SetAttribute(MediaAspect.ATTR_MIME_TYPE, "video/unknown");
+                providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_RESOURCE_ACCESSOR_PATH, LocalFsResourceProviderBase.ToResourcePath(resolvedPlaybackUrl).Serialize());
+                providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_MIME_TYPE, "video/unknown");
             }
             else
             {
@@ -36,26 +44,27 @@ namespace OnlineVideos.MediaPortal2
                 // Test if the resolved "url" is a real Uri (Sites can provide any content here)
                 var isUriSource = Uri.TryCreate(resolvedPlaybackUrl, UriKind.Absolute, out uri);
 
-                Aspects[ProviderResourceAspect.ASPECT_ID].SetAttribute(
+                providerResourceAspect.SetAttribute(
                     ProviderResourceAspect.ATTR_RESOURCE_ACCESSOR_PATH,
                     isUriSource
                         ? RawUrlResourceProvider.ToProviderResourcePath(resolvedPlaybackUrl).Serialize()
                         : RawTokenResourceProvider.ToProviderResourcePath(resolvedPlaybackUrl).Serialize());
 
                 var isBrowser = videoInfo.SiteSettings.Player == PlayerType.Browser;
-                Aspects[MediaAspect.ASPECT_ID].SetAttribute(MediaAspect.ATTR_MIME_TYPE,
+                providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_MIME_TYPE,
                     isBrowser
                         ? WebBrowserVideoPlayer.ONLINEVIDEOSBROWSER_MIMETYPE
                         : OnlineVideosPlayer.ONLINEVIDEOS_MIMETYPE);
             }
 
-            Aspects[MediaAspect.ASPECT_ID].SetAttribute(MediaAspect.ATTR_TITLE, videoInfo.Title);
+            MediaItemAspect.SetAttribute(Aspects, MediaAspect.ATTR_TITLE, videoInfo.Title);
 
-            Aspects[VideoAspect.ASPECT_ID].SetAttribute(VideoAspect.ATTR_STORYPLOT, videoInfo.Description);
+            // TODO: Restore line after story plot was moved back to VideoAspect!
+            // MediaItemAspect.SetAttribute(aspects, VideoAspect.ATTR_STORYPLOT, videoInfo.Description);
 
             DateTime parsedAirDate;
             if (DateTime.TryParse(videoInfo.VideoInfo.Airdate, out parsedAirDate))
-                Aspects[MediaAspect.ASPECT_ID].SetAttribute(MediaAspect.ATTR_RECORDINGTIME, parsedAirDate);
+                MediaItemAspect.SetAttribute(Aspects, MediaAspect.ATTR_RECORDINGTIME, parsedAirDate);
 
         }
 
