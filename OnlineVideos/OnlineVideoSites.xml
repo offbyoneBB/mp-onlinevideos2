@@ -417,6 +417,13 @@
         <Category xsi:type="RssLink" name="News" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p029fqtd.jpg">http://www.bbc.co.uk/iplayer/categories/news/all?sort=atoz</Category>
         <Category xsi:type="RssLink" name="Science &amp; Nature" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p027s8wj.jpg">http://www.bbc.co.uk/iplayer/categories/science-and-nature/all?sort=atoz</Category>
         <Category xsi:type="RssLink" name="Sport" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p024q1kt.jpg">http://www.bbc.co.uk/iplayer/categories/sport/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="BBC One" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_one.png">http://www.bbc.co.uk/bbcone/a-z</Category>
+        <Category xsi:type="RssLink" name="BBC Two" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_two_uk.png">http://www.bbc.co.uk/bbctwo/a-z</Category>
+        <Category xsi:type="RssLink" name="BBC Three" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_three.png">http://www.bbc.co.uk/tv/bbcthree/a-z</Category>
+        <Category xsi:type="RssLink" name="BBC Four" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_four_uk.png">http://www.bbc.co.uk/bbcfour/a-z</Category>
+        <Category xsi:type="RssLink" name="BBC News" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_news.png">http://www.bbc.co.uk/tv/bbcnews/a-z</Category>
+        <Category xsi:type="RssLink" name="BBC Parliament" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_parliament.png">http://www.bbc.co.uk/tv/bbcparliament/a-z</Category>
+        <Category xsi:type="RssLink" name="BBC ALBA" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_alba.png">http://www.bbc.co.uk/tv/bbcalba/a-z</Category>        
         <Category xsi:type="RssLink" name="Audio Described" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0276wg9.jpg">http://www.bbc.co.uk/iplayer/categories/audio-described/all?sort=atoz</Category>
         <Category xsi:type="RssLink" name="Signed" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01x0kbv.jpg">http://www.bbc.co.uk/iplayer/categories/signed/all?sort=atoz</Category>
         <Category xsi:type="RssLink" name="Northern Ireland" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p027lsl4.jpg">http://www.bbc.co.uk/iplayer/categories/northern-ireland/all?sort=atoz</Category>
@@ -424,15 +431,14 @@
         <Category xsi:type="RssLink" name="Wales" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0295zvd.jpg">http://www.bbc.co.uk/iplayer/categories/wales/all?sort=atoz</Category>
         <Category xsi:type="Group" name="Live TV">
           <Channels>
-            <Channel name="BBC One" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_one.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/ak/bbc_one_london.m3u8?guideid=94</Channel>
-            <Channel name="BBC Two" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_two_uk.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/llnw/bbc_two_england.m3u8?guideid=105</Channel>
-            <Channel name="BBC Three" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_three.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/llnw/bbc_three.m3u8?guideid=45</Channel>
-            <Channel name="BBC Four" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_four_uk.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/llnw/bbc_four.m3u8?guideid=47</Channel>
-            <Channel name="CBBC" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_cbbc.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/llnw/cbbc.m3u8?guideid=482</Channel>
-            <Channel name="CBeebies" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_cbeebies_uk.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/llnw/cbeebies.m3u8?guideid=483</Channel>
-            <Channel name="BBC News" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_news.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/ak/bbc_news24.m3u8?guideid=48</Channel>
-            <Channel name="BBC Parliament" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_parliament.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/llnw/bbc_parliament.m3u8?guideid=49</Channel>
-            <Channel name="BBC ALBA" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_alba.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/llnw/bbc_alba.m3u8?guideid=2098</Channel>
+            <Channel name="BBC One" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_one.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/ak/bbc_one_london.m3u8?guideid=bbcone</Channel>
+            <Channel name="BBC Two" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_two_uk.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/llnw/bbc_two_england.m3u8?guideid=bbctwo</Channel>
+            <Channel name="BBC Four" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_four_uk.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/llnw/bbc_four.m3u8?guideid=bbcfour</Channel>
+            <Channel name="CBBC" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_cbbc.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/llnw/cbbc.m3u8?guideid=cbbc</Channel>
+            <Channel name="CBeebies" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_cbeebies_uk.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/llnw/cbeebies.m3u8?guideid=cbeebies</Channel>
+            <Channel name="BBC News" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_news.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/ak/bbc_news24.m3u8?guideid=bbcnews</Channel>
+            <Channel name="BBC Parliament" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_parliament.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/llnw/bbc_parliament.m3u8?guideid=bbcparliament</Channel>
+            <Channel name="BBC ALBA" thumb="http://www.lyngsat-logo.com/logo/tv/bb/bbc_alba.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/llnw/bbc_alba.m3u8?guideid=bbcalba</Channel>
           </Channels>
         </Category>
       </Categories>
