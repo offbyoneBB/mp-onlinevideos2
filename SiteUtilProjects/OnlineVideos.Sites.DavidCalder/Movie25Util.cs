@@ -41,14 +41,19 @@ namespace OnlineVideos.Sites.DavidCalder
                     parent.sh.WaitForSubtitleCompleted();
                     parent.lastPlaybackOptionUrl = PlaybackOptions[url];
                 }
-                string[] parts = hosterUrl.Split(new[] { "url=" }, StringSplitOptions.None);
+                string[] parts;
+
+                parts = hosterUrl.Split(new[] { "http://tinklepad.is/stream.php?" }, StringSplitOptions.None);
 
                 if (parts.Length == 2)
                 {
                     byte[] tmp = Convert.FromBase64String(parts[1]);
                     hosterUrl = Encoding.ASCII.GetString(tmp);              
                 }
-                return GetVideoUrl(hosterUrl);
+
+                string newUrl = hosterUrl.Substring(hosterUrl.LastIndexOf("&&")+ 2);
+
+                return GetVideoUrl(newUrl);
             }
         }
 
