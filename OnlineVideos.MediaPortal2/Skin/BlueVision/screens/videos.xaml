@@ -16,16 +16,16 @@
                       Style="{ThemeResource ovsVideosListViewStyle}" Margin="-20,-18,-70,-8"
                       CurrentItem="{Binding Path=FocusedVideo, Mode=OneWayToSource}" 
                       ItemsSource="{Binding Path=VideosList}"/>
-            <StackPanel Orientation="Vertical" DockPanel.Dock="Bottom" VerticalAlignment="Top" Margin="0,625,0,-425"  >
-              <StackPanel Orientation="Horizontal"> 
-                <Label Content="{Binding Path=SelectedSite.Name}" Color="{ThemeResource TextColor}"/>
-                <Label Content=" • " Color="{ThemeResource TextColor}"/>
-                <Label Content="{Binding Path=SelectedCategory.Name}" Color="{ThemeResource TextColor}"/>
+            <StackPanel Orientation="Vertical" DockPanel.Dock="Bottom" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="0,625,0,-425"  >
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch"> 
+                <Label DataContext="{Binding ElementName=videolist,Path=CurrentItem}" Content="{Binding Path=Title}" Width="1000" Color="{ThemeResource TextColor}"/>
+                <Label DataContext="{Binding ElementName=videolist,Path=CurrentItem}" Content="{Binding Path=Airdate}" Width="250" Color="{ThemeResource TextColor}" Opacity="0.6"/>
+                <Label DataContext="{Binding ElementName=videolist,Path=CurrentItem}" Content="{Binding Path=Length}" Color="{ThemeResource TextColor}" Opacity="0.6"/>
               </StackPanel>
-              <Label Color="{ThemeResource TextColor}" Opacity="0.6"
+              <Label Color="{ThemeResource TextColor}" Opacity="0.6" Height="180"
                      VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Wrap="True" Scroll="Auto"
                      DataContext="{Binding ElementName=videolist,Path=CurrentItem}"
-                     Content="{Binding Path=Title}" />
+                     Content="{Binding Path=Description}" />
             </StackPanel>           
           </DockPanel>
         </ControlTemplate>

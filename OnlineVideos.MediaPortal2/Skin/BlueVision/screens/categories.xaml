@@ -17,13 +17,11 @@
                       CurrentItem="{Binding Path=FocusedCategory, Mode=OneWayToSource}" 
                       ItemsSource="{Binding Path=CategoriesList}"/>
             <StackPanel Orientation="Vertical" DockPanel.Dock="Bottom" VerticalAlignment="Top" Margin="0,625,0,-425">
-              <Label Content="{Binding Path=SelectedSite.Name}" Color="{ThemeResource TextColor}" Margin="0,0,0,5"/>
-              <Label Content="{Binding Path=SelectedSite.Description}" Color="{ThemeResource TextColor}" 
-                     Scroll="Auto" Wrap="True" Opacity="0.6" Margin="0,0,0,5"/>
-              <Label Color="{ThemeResource TextColor}" Opacity="0.6"
+              <Label Color="{ThemeResource TextColor}"
                      VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Scroll="Auto"
                      DataContext="{Binding ElementName=categorylist,Path=CurrentItem}"
                      Content="{Binding Path=Name}" />
+              <Label Content="{Binding Path=SelectedSite.Name}" Color="{ThemeResource TextColor}" Margin="0,0,0,5" Opacity="0.6"/>
             </StackPanel>
           </DockPanel>
         </ControlTemplate>
