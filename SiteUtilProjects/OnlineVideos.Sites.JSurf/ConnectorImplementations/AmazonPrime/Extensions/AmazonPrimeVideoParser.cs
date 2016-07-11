@@ -122,7 +122,12 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                                         video.ThumbnailImage = match.Groups[1].Value;
                                 }
                             }
-                            video.Length = item.GetNodeByClass("dv-el-runtime").GetInnerTextTrim();
+                            var tagValues = item.GetNodesByClass("dv-el-attr-value");
+                            if (tagValues.Count == 3)
+                            {
+                                video.Airdate = tagValues[2].GetInnerTextTrim();
+                                video.Length = tagValues[1].GetInnerTextTrim();
+                            }
                             var urlNode = item.GetNodeByClass("dv-playback-container");
                             if (urlNode != null)
                                 videoUrl = urlNode.GetAttributeValue("data-asin", null);
