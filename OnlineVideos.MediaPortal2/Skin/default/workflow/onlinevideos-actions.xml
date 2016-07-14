@@ -40,7 +40,7 @@
             Name="OnlineVideos->Search"
             DisplayCategory="z-OnlineVideos"
             SortOrder="a"
-            SourceStates="*"
+            SourceStates="517DD2C8-27C4-4AE1-ABDC-B8001BFC95DA, FF474A1A-CA39-4247-BFEA-4E7B578F482B"
             ContributorModelId="C43F4CD9-418A-4DFB-A0BD-DF24704B5BD6"
             DisplayTitle="[OnlineVideos.Search]"/>
 

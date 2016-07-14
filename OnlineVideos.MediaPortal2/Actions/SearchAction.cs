@@ -37,7 +37,7 @@ namespace OnlineVideos.MediaPortal2
             {
                 if (!BackgroundTask.Instance.IsExecuting)
                 {
-                    if (context.WorkflowState.Name == Guids.WorkflowStateCategoriesName || context.WorkflowState.StateId == Guids.WorkflowStateVideos)
+                    if (context.WorkflowState.StateId == Guids.WorkflowStateCategories || context.WorkflowState.StateId == Guids.WorkflowStateVideos)
                     {
                         return ((OnlineVideosWorkflowModel)context.Models[context.WorkflowModelId.Value]).SelectedSite.Site.CanSearch;
                     }

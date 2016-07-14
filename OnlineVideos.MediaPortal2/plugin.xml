@@ -56,6 +56,10 @@
         Name="OnlineVideosSiteSettings" MainScreen="ovsSiteSettings" WorkflowModel="C418243F-5BD3-4637-8871-DA6545387929"
         DisplayLabel="Settings"/>
 
+    <WorkflowState Id="517DD2C8-27C4-4AE1-ABDC-B8001BFC95DA"
+        Name="OnlineVideosCategories" MainScreen="categories" WorkflowModel="C418243F-5BD3-4637-8871-DA6545387929"
+        DisplayLabel="Site:"/>
+
     <WorkflowState Id="FF474A1A-CA39-4247-BFEA-4E7B578F482B"
         Name="OnlineVideosVideos" MainScreen="videos" WorkflowModel="C418243F-5BD3-4637-8871-DA6545387929"
         DisplayLabel="Category:"/>

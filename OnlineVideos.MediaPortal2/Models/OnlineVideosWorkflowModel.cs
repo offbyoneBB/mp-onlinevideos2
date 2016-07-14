@@ -333,9 +333,7 @@ namespace OnlineVideos.MediaPortal2
             foreach (Category c in categories) CategoriesList.Add(new CategoryViewModel(c));
             ImageDownloader.GetImages<Category>(categories);
             IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
-            workflowManager.NavigatePushTransientAsync(
-                WorkflowState.CreateTransientState(Guids.WorkflowStateCategoriesName, navigationLabel, false, "categories", false, WorkflowType.Workflow),
-                new NavigationContextConfig());
+            workflowManager.NavigatePushAsync(Guids.WorkflowStateCategories, new NavigationContextConfig() { NavigationContextDisplayLabel = navigationLabel });
         }
 
         void ShowVideos(CategoryViewModel category, List<VideoInfo> videos)
@@ -364,8 +362,8 @@ namespace OnlineVideos.MediaPortal2
         {
             // pop all states up to the site state from the current navigation stack
             IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
-            while (!(workflowManager.NavigationContextStack.Peek().WorkflowState.Name == Guids.WorkflowStateCategoriesName &&
-                workflowManager.NavigationContextStack.Peek().WorkflowState.DisplayLabel == SelectedSite.Name))
+            while (workflowManager.NavigationContextStack.Peek().Predecessor != null && 
+                workflowManager.NavigationContextStack.Peek().Predecessor.WorkflowState.StateId != Guids.WorkflowStateSites)
             {
                 workflowManager.NavigationContextStack.Pop();
             }
@@ -499,7 +497,7 @@ namespace OnlineVideos.MediaPortal2
                 CategoriesList = null;
             }
             // going from categories to categories view
-            else if (newContext.WorkflowState.Name == Guids.WorkflowStateCategoriesName && oldContext.WorkflowState.Name == Guids.WorkflowStateCategoriesName)
+            else if (newContext.WorkflowState.StateId == Guids.WorkflowStateCategories && oldContext.WorkflowState.StateId == Guids.WorkflowStateCategories)
             {
                 // going up in hierarchy
                 if (oldContext.Predecessor == newContext)
@@ -520,7 +518,7 @@ namespace OnlineVideos.MediaPortal2
                 }
             }
             // going from videos to categories view
-            else if (newContext.WorkflowState.Name == Guids.WorkflowStateCategoriesName && oldContext.WorkflowState.StateId == Guids.WorkflowStateVideos)
+            else if (newContext.WorkflowState.StateId == Guids.WorkflowStateCategories && oldContext.WorkflowState.StateId == Guids.WorkflowStateVideos)
             {
                 VideosList = null;
                 CategoriesList = new ItemsList();
