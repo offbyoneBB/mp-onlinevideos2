@@ -30,6 +30,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{2D8D59
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.offbyone", "SiteUtilProjects\OnlineVideos.Sites.offbyone\OnlineVideos.Sites.offbyone.csproj", "{022D3A7F-676E-4741-95D3-6E5D0223BFE4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.MediaPortal2.Interfaces", "OnlineVideos.MediaPortal2.Interfaces\OnlineVideos.MediaPortal2.Interfaces.csproj", "{F54CFB16-1599-4676-BED6-2AB1C6F4DE53}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,12 @@ Global
 		{022D3A7F-676E-4741-95D3-6E5D0223BFE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{022D3A7F-676E-4741-95D3-6E5D0223BFE4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{022D3A7F-676E-4741-95D3-6E5D0223BFE4}.Release|x86.ActiveCfg = Release|Any CPU
+		{F54CFB16-1599-4676-BED6-2AB1C6F4DE53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F54CFB16-1599-4676-BED6-2AB1C6F4DE53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F54CFB16-1599-4676-BED6-2AB1C6F4DE53}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F54CFB16-1599-4676-BED6-2AB1C6F4DE53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F54CFB16-1599-4676-BED6-2AB1C6F4DE53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F54CFB16-1599-4676-BED6-2AB1C6F4DE53}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

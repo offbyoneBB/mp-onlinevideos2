@@ -14,6 +14,7 @@ using OnlineVideos.Downloading;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OnlineVideos.MediaPortal2.Models;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -24,32 +25,7 @@ namespace OnlineVideos.MediaPortal2
             SiteGroupsList = new ItemsList();
             SitesList = new ItemsList();
 
-            OnlineVideosAppDomain.UseSeperateDomain = true;
-
-            ServiceRegistration.Get<ISettingsManager>().Load<Configuration.Settings>().SetValuesToApi();
-            string ovConfigPath = ServiceRegistration.Get<IPathManager>().GetPath(string.Format(@"<CONFIG>\{0}\", Environment.UserName));
-            string ovDataPath = ServiceRegistration.Get<IPathManager>().GetPath(@"<DATA>\OnlineVideos");
-
-            OnlineVideoSettings.Instance.Logger = new LogDelegator();
-            OnlineVideoSettings.Instance.UserStore = new Configuration.UserSiteSettingsStore();
-
-            OnlineVideoSettings.Instance.DllsDir = System.IO.Path.Combine(ovDataPath, "SiteUtils");
-            OnlineVideoSettings.Instance.ThumbsDir = System.IO.Path.Combine(ovDataPath, "Thumbs");
-            OnlineVideoSettings.Instance.ConfigDir = ovConfigPath;
-
-            OnlineVideoSettings.Instance.AddSupportedVideoExtensions(new List<string>() { ".asf", ".asx", ".flv", ".m4v", ".mov", ".mkv", ".mp4", ".wmv" });
-
-            // clear cache files that might be left over from an application crash
-            MPUrlSourceFilter.Downloader.ClearDownloadCache();
-            // load translation strings in other AppDomain, so SiteUtils can use localized language strings
-            TranslationLoader.LoadTranslations(ServiceRegistration.Get<ILocalization>().CurrentCulture.TwoLetterISOLanguageName, System.IO.Path.Combine(System.IO.Path.GetDirectoryName(GetType().Assembly.Location), "Language"), "en", "strings_{0}.xml");
-            // The default connection limit is 2 in .Net on most platforms! This means downloading two files will block all other WebRequests.
-            System.Net.ServicePointManager.DefaultConnectionLimit = 100;
-            // The default .Net implementation for URI parsing removes trailing dots, which is not correct
-            Helpers.DotNetFrameworkHelper.FixUriTrailingDots();
-
-            // load the xml that holds all configured sites
-            OnlineVideoSettings.Instance.LoadSites();
+            ConfigurationHelper.InitEnvironment();
 
             // create a message queue where we listen to changes to the sites
             _messageQueue = new AsynchronousMessageQueue(this, new string[] { OnlineVideosMessaging.CHANNEL });

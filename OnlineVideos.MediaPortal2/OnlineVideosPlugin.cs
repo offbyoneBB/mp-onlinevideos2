@@ -22,39 +22,42 @@
 
 #endregion
 
+using MediaPortal.Common;
 using MediaPortal.Common.MediaManagement;
-using MediaPortal.UI.Presentation.Players;
+using MediaPortal.Common.PluginManager;
+using OnlineVideos.MediaPortal2.Interfaces.Metadata;
+using OnlineVideos.MediaPortal2.Models;
 
 namespace OnlineVideos.MediaPortal2
 {
-    /// <summary>
-    /// Player builder for all video players of the VideoPlayers plugin.
-    /// </summary>
-    public class OnlineVideoPlayerBuilder : IPlayerBuilder
+    public class OnlineVideosPlugin : IPluginStateTracker
     {
-        #region IPlayerBuilder implementation
 
-        public IPlayer GetPlayer(MediaItem mediaItem)
+        public void Activated(PluginRuntime pluginRuntime)
         {
-            string mimeType;
-            string title;
-            if (!mediaItem.GetPlayData(out mimeType, out title))
-                return null;
+            // All non-default media item aspects must be registered
+            var miatr = ServiceRegistration.Get<IMediaItemAspectTypeRegistration>();
+            miatr.RegisterLocallyKnownMediaItemAspectType(OnlineVideosAspect.Metadata);
 
-            if (mimeType == WebBrowserVideoPlayer.ONLINEVIDEOSBROWSER_MIMETYPE)
-            {
-                var player = new WebBrowserVideoPlayer();
-                if (!player.Init(mediaItem))
-                {
-                    player.Dispose();
-                    return null;
-                }
-                return player;
-            }
-
-            return null;
+            // Prepare OV2 environment
+            ConfigurationHelper.InitEnvironment();
         }
 
-        #endregion
+        public bool RequestEnd()
+        {
+            return true;
+        }
+
+        public void Stop()
+        {
+        }
+
+        public void Continue()
+        {
+        }
+
+        public void Shutdown()
+        {
+        }
     }
 }

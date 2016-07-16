@@ -24,7 +24,9 @@
 
   <Runtime>
     <Assembly FileName="OnlineVideos.MediaPortal2.dll"/>
+    <Assembly FileName="OnlineVideos.MediaPortal2.Interfaces.dll"/>
     <Assembly FileName="OnlineVideos.dll"/>
+    <PluginStateTracker ClassName="OnlineVideos.MediaPortal2.OnlineVideosPlugin"/>
   </Runtime>
 
    <Register Location="/Players/Builders">
@@ -52,7 +54,7 @@
     <WorkflowState Id="629FD4EB-1EB5-4ADA-BA69-0977274C2FB0"
         Name="OnlineVideosSiteGroups" MainScreen="ovsSiteGroups" WorkflowModel="C418243F-5BD3-4637-8871-DA6545387929"
         DisplayLabel="OnlineVideos"/>
-    
+
     <WorkflowState Id="F9D7500D-EC5C-4FEF-8FAE-E4DED8A22CE0"
         Name="OnlineVideosSites" MainScreen="sites" WorkflowModel="C418243F-5BD3-4637-8871-DA6545387929"
         DisplayLabel="OnlineVideos"/>

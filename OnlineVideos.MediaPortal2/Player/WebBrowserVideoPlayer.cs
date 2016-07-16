@@ -2,20 +2,25 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
 using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.Common;
 using MediaPortal.Common.MediaManagement;
+using MediaPortal.Common.MediaManagement.DefaultItemAspects;
 using MediaPortal.Common.ResourceAccess;
 using MediaPortal.Common.Services.ResourceAccess.RawUrlResourceProvider;
 using MediaPortal.UiComponents.Media.Models;
 using MediaPortal.UI.Control.InputManager;
 using MediaPortal.UI.Presentation.Players;
 using MediaPortal.UI.Presentation.Screens;
+using MediaPortal.UI.Presentation.Workflow;
 using MediaPortal.UI.SkinEngine.InputManagement;
 using OnlineVideos.Helpers;
+using OnlineVideos.MediaPortal2.Interfaces.Metadata;
+using OnlineVideos.MediaPortal2.Models;
 using OnlineVideos.MediaPortal2.ResourceAccess;
 using OnlineVideos.Sites;
 using OnlineVideos.Sites.Interfaces;
@@ -67,10 +72,19 @@ namespace OnlineVideos.MediaPortal2
         /// We require the command line parameters for the web browser host
         /// Util should be an implementation of IBrowserSiteUtil
         /// </summary>
-        /// <param name="util"></param>
-        public void Initialise(SiteUtilBase util)
+        /// <param name="mediaItem"></param>
+        public void Prepare(MediaItem mediaItem)
         {
             bool useIE = false;
+
+            ConfigurationHelper.Init();
+            string siteName;
+            SiteUtilBase util;
+            if (!MediaItemAspect.TryGetAttribute(mediaItem.Aspects, OnlineVideosAspect.ATTR_SITEUTIL, out siteName) || !OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(siteName, out util))
+            {
+                throw new ArgumentException("Could not determine used site util, can't start playback!");
+            }
+
             var browserConfig = util as IBrowserSiteUtil;
             if (browserConfig != null)
             {
@@ -136,6 +150,9 @@ namespace OnlineVideos.MediaPortal2
 
         public bool Init(MediaItem mediaItem)
         {
+            // Prepare process information
+            Prepare(mediaItem);
+
             IResourceAccessor ra = null;
             try
             {
