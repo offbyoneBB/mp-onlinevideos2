@@ -6,8 +6,8 @@ using MediaPortal.Common;
 using MediaPortal.Common.SystemResolver;
 using MediaPortal.Common.ResourceAccess;
 using MediaPortal.Common.Services.ResourceAccess.RawUrlResourceProvider;
+using OnlineVideos.MediaPortal2.Interfaces.Metadata;
 using OnlineVideos.MediaPortal2.ResourceAccess;
-using OnlineVideos.Sites;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -18,11 +18,13 @@ namespace OnlineVideos.MediaPortal2
             {
                 { ProviderResourceAspect.ASPECT_ID, new MediaItemAspect(ProviderResourceAspect.Metadata)},
                 { MediaAspect.ASPECT_ID, new MediaItemAspect(MediaAspect.Metadata) },
-                { VideoAspect.ASPECT_ID, new MediaItemAspect(VideoAspect.Metadata) }
+                { VideoAspect.ASPECT_ID, new MediaItemAspect(VideoAspect.Metadata) },
+                { OnlineVideosAspect.ASPECT_ID, new MediaItemAspect(OnlineVideosAspect.Metadata) },
             })
         {
             SiteName = videoInfo.SiteName;
-            Util = OnlineVideoSettings.Instance.SiteUtilsList[SiteName];
+
+            Aspects[OnlineVideosAspect.ASPECT_ID].SetAttribute(OnlineVideosAspect.ATTR_SITEUTIL, SiteName);
 
             Aspects[ProviderResourceAspect.ASPECT_ID].SetAttribute(ProviderResourceAspect.ATTR_SYSTEM_ID, ServiceRegistration.Get<ISystemResolver>().LocalSystemId);
             if (videoInfo.SiteUtilName == "DownloadedVideo")
@@ -60,6 +62,5 @@ namespace OnlineVideos.MediaPortal2
         }
 
         public string SiteName { get; private set; }
-        public SiteUtilBase Util { get; private set; }
     }
 }

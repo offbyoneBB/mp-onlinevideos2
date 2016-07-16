@@ -24,7 +24,9 @@
 
   <Runtime>
     <Assembly FileName="OnlineVideos.MediaPortal2.dll"/>
+    <Assembly FileName="OnlineVideos.MediaPortal2.Interfaces.dll"/>
     <Assembly FileName="OnlineVideos.dll"/>
+    <PluginStateTracker ClassName="OnlineVideos.MediaPortal2.OnlineVideosPlugin"/>
   </Runtime>
 
    <Register Location="/Players/Builders">
@@ -104,7 +106,14 @@
     <Resource Id="OnlineVideosLanguage" Directory="Language" Type="Language"/>
   </Register>
 
-  <!-- Registration of our configuration section -->
+
+  <!-- Register our OnlineVideosAspect to be loaded inside Movie navigation -->
+  <Register Location="/Media/SkinSettings/default/default/Movie/OptionalMIATypes">
+    <MIATypeRegistration Id="OnlineVideosAspect" MediaItemAspectTypeId="CC63558B-0467-46DD-A896-4311D4E4B4D2"/>
+  </Register>
+
+
+    <!-- Registration of our configuration section -->
   <Register Location="/Configuration/Settings/Plugins">
     <ConfigSection
         Id="OnlineVideos"
