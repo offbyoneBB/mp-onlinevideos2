@@ -111,6 +111,9 @@
   <Register Location="/Media/SkinSettings/default/default/Movie/OptionalMIATypes">
     <MIATypeRegistration Id="OnlineVideosAspect" MediaItemAspectTypeId="CC63558B-0467-46DD-A896-4311D4E4B4D2"/>
   </Register>
+  <Register Location="/Media/SkinSettings/default/default/Series/OptionalMIATypes">
+    <MIATypeRegistration Id="OnlineVideosAspect" MediaItemAspectTypeId="CC63558B-0467-46DD-A896-4311D4E4B4D2"/>
+  </Register>
 
 
     <!-- Registration of our configuration section -->
