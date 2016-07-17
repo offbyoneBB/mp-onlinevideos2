@@ -26,6 +26,7 @@ using MediaPortal.Common;
 using MediaPortal.Common.MediaManagement;
 using MediaPortal.Common.PluginManager;
 using OnlineVideos.MediaPortal2.Interfaces.Metadata;
+using OnlineVideos.MediaPortal2.Models;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -37,6 +38,9 @@ namespace OnlineVideos.MediaPortal2
             // All non-default media item aspects must be registered
             var miatr = ServiceRegistration.Get<IMediaItemAspectTypeRegistration>();
             miatr.RegisterLocallyKnownMediaItemAspectType(OnlineVideosAspect.Metadata);
+
+            // Prepare OV2 environment
+            ConfigurationHelper.InitEnvironment();
         }
 
         public bool RequestEnd()
