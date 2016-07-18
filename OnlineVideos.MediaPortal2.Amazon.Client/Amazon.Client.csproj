@@ -80,6 +80,8 @@
   <ItemGroup>
     <Content Include="Language\strings_en.xml" />
     <Content Include="plugin.xml" />
+    <Content Include="Skin\default\images\162EC0C9-3F92-42BB-BCE4-A10AB14777F6.jpg" />
+    <Content Include="Skin\default\images\FA76A370-FEB8-4CE3-8015-9DDB478FC71C.jpg" />
     <Content Include="Skin\default\workflow\AmazonClient-actions.xml" />
   </ItemGroup>
   <ItemGroup>
