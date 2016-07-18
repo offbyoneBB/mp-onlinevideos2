@@ -49,13 +49,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Media">
-      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\Media\Media.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\Media\Media.dll</HintPath>
     </Reference>
     <Reference Include="MediaPortal.Common">
-      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\Debug\MediaPortal.Common.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\MediaPortal.Common.dll</HintPath>
     </Reference>
     <Reference Include="MediaPortal.UI">
-      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\Debug\MediaPortal.UI.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\MediaPortal.UI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
