@@ -1,0 +1,66 @@
+<Plugin
+    DescriptorVersion="1.0" 
+    Name="Amazon Prime Client Plugin"
+    PluginId="{D6B0B13A-4D89-4962-B6CE-7519620B2ADA}"
+    Author="Morpheus_xx"
+    Copyright="GPL"
+    AutoActivate="true"
+    Description="Provides an extension to the Media Library to browse Amazon Prime videos">
+
+  <Version
+    PluginVersion="1.0"
+    ReleaseDate="2016-07-01 01:00:00 GMT+01:00"
+    CurrentAPI="1"/>
+
+  <Runtime>
+    <Assembly FileName="Amazon.Client.dll"/>
+    <PluginStateTracker ClassName="Amazon.Client.AmazonPlugin"/>
+  </Runtime>
+
+  <DependsOn>
+    <CoreDependency Name="MediaPortal.Common" CompatibleAPI="1" />
+    <PluginReference PluginId="{5D239050-02B8-4f58-8301-7630A1C4CF85}" CompatibleAPI="1"/> <!-- SkinBase -->
+    <PluginReference PluginId="{D87D92F0-5E71-470a-A2A4-430F90A28BF3}" CompatibleAPI="1"/> <!-- SkinEngine -->
+    <PluginReference PluginId="{15FB35F7-8C85-4404-BC67-BFF28446158A}" CompatibleAPI="1"/> <!-- Media -->
+    <PluginReference PluginId="{269bd257-7ce5-450a-b786-1c2834c81849}" CompatibleAPI="1"/> <!-- OnlineVideos -->
+  </DependsOn>
+    
+  <Register Location="/Resources/Skin">
+    <Resource Id="AmazonSkin" Directory="Skin" Type="Skin"/>
+  </Register>
+
+  <Register Location="/Workflow/States">
+
+    <WorkflowState Id="A7FA34AC-72E2-489E-AFAA-5A9EC9CC84E7"
+      Name="AmazonMovies-Root"
+      DisplayLabel="[AmazonClient.MoviesMenuItem]"
+      WorkflowModel="4CDD601F-E280-43b9-AD0A-6D7B2403C856"/>   <!-- Workflow model = Media model -->
+
+    <WorkflowState Id="6D58D0DD-DEE9-4F01-B395-3ADE27F04A79"
+      Name="AmazonSeries-Root"
+      DisplayLabel="[AmazonClient.SeriesMenuItem]"
+      WorkflowModel="4CDD601F-E280-43b9-AD0A-6D7B2403C856"/>   <!-- Workflow model = Media model -->
+
+  </Register>
+
+  <!-- Language resources -->
+  <Register Location="/Resources/Language">
+    <Resource Id="AmazonClientLanguage" Directory="Language" Type="Language"/>
+  </Register>
+
+  <!-- MediaNavigationFilter -->
+  <Register Location="/Media/Filters">
+    <MediaNavigationFilterBuilder Id="{C9CD5C1B-0698-40E7-9E37-7CF1D0E0061B}" ClassName="MoviesNavigationInitializer"
+                                  Filter="{FilterWrapper}{Empty}{AttributeType}CC63558B-0467-46DD-A896-4311D4E4B4D2:SiteUtil{/AttributeType}{/Empty}{/FilterWrapper}"
+                                  />
+    <MediaNavigationFilterBuilder Id="{54FAF5BE-DB3D-4730-95A4-877D66666222}" ClassName="SeriesNavigationInitializer"
+                                  Filter="{FilterWrapper}{Empty}{AttributeType}CC63558B-0467-46DD-A896-4311D4E4B4D2:SiteUtil{/AttributeType}{/Empty}{/FilterWrapper}"
+                                  />
+  </Register>
+
+  <Register Location="/Models">
+    <Model Id="4A27E2AE-1EF2-40AD-B76D-D741DA35CBBB" Name="AmazonMoviesContributorModel" ClassName="Amazon.Client.Models.AmazonMoviesAction"/>
+    <Model Id="91748B7A-C80F-4B45-A013-AD67A34627D0" Name="AmazonSeriesContributorModel" ClassName="Amazon.Client.Models.AmazonSeriesAction"/>
+  </Register>
+
+</Plugin>
