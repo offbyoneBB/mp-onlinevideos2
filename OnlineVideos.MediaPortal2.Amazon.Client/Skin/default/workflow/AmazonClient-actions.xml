@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Workflow DescriptorVersion="1.0">
+  <MenuActions>
+
+    <WorkflowContributorAction Id="FA76A370-FEB8-4CE3-8015-9DDB478FC71C"
+      Name="Amazon Prime Movies"
+      DisplayCategory="A-1"
+      SortOrder="0"
+      SourceStates="7F702D9C-F2DD-42da-9ED8-0BA92F07787F"
+      ContributorModelId="4A27E2AE-1EF2-40AD-B76D-D741DA35CBBB"/>    <!-- Amazon movies action -->
+
+    <WorkflowContributorAction Id="162EC0C9-3F92-42BB-BCE4-A10AB14777F6"
+      Name="Amazon Prime Series"
+      DisplayCategory="A-2"
+      SortOrder="0"
+      SourceStates="7F702D9C-F2DD-42da-9ED8-0BA92F07787F"
+      ContributorModelId="91748B7A-C80F-4B45-A013-AD67A34627D0"/>    <!-- Amazon series action -->
+
+  </MenuActions>
+</Workflow>

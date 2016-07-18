@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="AmazonClient.SeriesMenuItem">Amazon Series</string>
+  <string name="AmazonClient.MoviesMenuItem">Amazon Movies</string>
+</resources>
