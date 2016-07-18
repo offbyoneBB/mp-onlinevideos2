@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+
+  <Target Name="AfterBuild">
+    <!-- Groups must be defined inside target, so they are evaluated at execution time, not parsing time (where the files are not yet copied!) -->
+    <PropertyGroup>
+      <PluginDestination>$(SolutionDir)..\MediaPortal\Bin\MP2-Server\bin\x86\$(Configuration)\Plugins\$(ProjectName)\</PluginDestination>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PluginFiles Include="$(TargetDir)$(ProjectName).dll" />
+      <PluginFiles Include="$(ProjectDir)plugin.xml" />
+      <PluginFiles Include="$(TargetDir)OnlineVideos.MediaPortal2.Interfaces.dll" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginDestination)" />
+  </Target>
+
+</Project>
