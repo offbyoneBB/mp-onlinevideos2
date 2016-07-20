@@ -20,6 +20,8 @@ namespace OnlineVideos.MediaPortal2.Configuration
         public int CacheTimeout { get; set; }
         [Setting(SettingScope.User, "")]
         public string DownloadFolder { get; set; }
+        [Setting(SettingScope.User, true)]
+        public bool GroupSitesByLanguage { get; set; }
         [Setting(SettingScope.Global)]
         public DateTime LastAutomaticUpdate { get; set; }
 
@@ -155,6 +157,21 @@ namespace OnlineVideos.MediaPortal2.Configuration
         {
             Settings settings = SettingsManager.Load<Settings>();
             settings.DownloadFolder = _path;
+            SettingsManager.Save(settings);
+        }
+    }
+
+    public class GroupSitesByLanguage : YesNo
+    {
+        public override void Load()
+        {
+            _yes = SettingsManager.Load<Settings>().GroupSitesByLanguage;
+        }
+
+        public override void Save()
+        {
+            Settings settings = SettingsManager.Load<Settings>();
+            settings.GroupSitesByLanguage = _yes;
             SettingsManager.Save(settings);
         }
     }

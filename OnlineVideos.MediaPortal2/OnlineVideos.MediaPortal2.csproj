@@ -111,6 +111,7 @@
     <Compile Include="ViewModels\OnlineSiteViewModel.cs" />
     <Compile Include="ViewModels\PlaylistItem.cs" />
     <Compile Include="ViewModels\ReportViewModel.cs" />
+    <Compile Include="ViewModels\SiteGroupViewModel.cs" />
     <Compile Include="ViewModels\SiteSettingViewModel.cs" />
     <Compile Include="ViewModels\SiteViewModel.cs" />
     <Compile Include="ValueConverter.cs" />
@@ -149,21 +150,48 @@
     </Content>
     <Content Include="Skin\default\images\C33E39CC-910E-41C8-BFFD-9ECCD340B569.jpg" />
     <Content Include="Skin\default\images\DownloadedVideo.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\--.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\bg.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\cs.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\da.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\de.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\el.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\en.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\es.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\et.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\fi.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\fr.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\hr.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\it.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\lt.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\lv.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\nl.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\no.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\pl.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\ro.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\ru.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\sk.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\sv.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\zh.png" />
     <Content Include="Skin\default\images\LanguageFlags\--.png" />
+    <Content Include="Skin\default\images\LanguageFlags\bg.png" />
     <Content Include="Skin\default\images\LanguageFlags\cs.png" />
     <Content Include="Skin\default\images\LanguageFlags\da.png" />
     <Content Include="Skin\default\images\LanguageFlags\de.png" />
     <Content Include="Skin\default\images\LanguageFlags\el.png" />
     <Content Include="Skin\default\images\LanguageFlags\en.png" />
     <Content Include="Skin\default\images\LanguageFlags\es.png" />
+    <Content Include="Skin\default\images\LanguageFlags\et.png" />
     <Content Include="Skin\default\images\LanguageFlags\fi.png" />
     <Content Include="Skin\default\images\LanguageFlags\fr.png" />
     <Content Include="Skin\default\images\LanguageFlags\hr.png" />
     <Content Include="Skin\default\images\LanguageFlags\it.png" />
     <Content Include="Skin\default\images\LanguageFlags\lt.png" />
+    <Content Include="Skin\default\images\LanguageFlags\lv.png" />
     <Content Include="Skin\default\images\LanguageFlags\nl.png" />
     <Content Include="Skin\default\images\LanguageFlags\no.png" />
     <Content Include="Skin\default\images\LanguageFlags\pl.png" />
+    <Content Include="Skin\default\images\LanguageFlags\ro.png" />
     <Content Include="Skin\default\images\LanguageFlags\ru.png" />
     <Content Include="Skin\default\images\LanguageFlags\sk.png" />
     <Content Include="Skin\default\images\LanguageFlags\sv.png" />
@@ -226,6 +254,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Skin\default\screens\FullScreenContentOV.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\default\screens\ovsSiteGroups.xaml">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>

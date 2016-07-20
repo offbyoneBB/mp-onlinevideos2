@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using MediaPortal.Common;
+﻿using MediaPortal.Common;
 using MediaPortal.Common.General;
 using MediaPortal.Common.Localization;
 using MediaPortal.Common.Messaging;
@@ -11,8 +9,11 @@ using MediaPortal.UI.Presentation.DataObjects;
 using MediaPortal.UI.Presentation.Models;
 using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.UI.Presentation.Workflow;
-using OnlineVideos.Downloading;
 using OnlineVideos.CrossDomain;
+using OnlineVideos.Downloading;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -20,6 +21,7 @@ namespace OnlineVideos.MediaPortal2
     {
         public OnlineVideosWorkflowModel()
         {
+            SiteGroupsList = new ItemsList();
             SitesList = new ItemsList();
 
             OnlineVideosAppDomain.UseSeperateDomain = true;
@@ -60,6 +62,7 @@ namespace OnlineVideos.MediaPortal2
 
         protected AsynchronousMessageQueue _messageQueue;
         protected SettingsChangeWatcher<Configuration.Settings> _settingsWatcher;
+        bool sitesListHasAllSites = false;
 
         SiteViewModel _focusedSite;
         public SiteViewModel FocusedSite
@@ -81,10 +84,26 @@ namespace OnlineVideos.MediaPortal2
         public VideoViewModel SelectedVideo { get; protected set; }
         public VideoViewModel SelectedDetailsVideo { get; protected set; }
 
+        public ItemsList SiteGroupsList { get; protected set; }
         public ItemsList SitesList { get; protected set; }
         public ItemsList CategoriesList { get; protected set; }
         public ItemsList VideosList { get; protected set; }
         public List<VideoViewModel> DetailsVideosList { get; protected set; }
+
+        public void SelectSiteGroup(SiteGroupViewModel siteGroupModel)
+        {
+            if (BackgroundTask.Instance.IsExecuting) return;
+            SitesList.Clear();
+            foreach (string siteName in siteGroupModel.Sites)
+            {
+                var siteutils = OnlineVideoSettings.Instance.SiteUtilsList;
+                SitesList.Add(new SiteViewModel(siteutils[siteName]));
+            }
+            sitesListHasAllSites = false;
+            SitesList.FireChange();
+            IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
+            workflowManager.NavigatePushAsync(Guids.WorkflowStateSites, new NavigationContextConfig() { NavigationContextDisplayLabel = siteGroupModel.Labels["Name"].ToString() });
+        }
 
         public void SelectSite(SiteViewModel siteModel)
         {
@@ -313,7 +332,26 @@ namespace OnlineVideos.MediaPortal2
                 Translation.Instance.GettingSearchResults);
         }
 
+        public void PushNavigationToOnlineVideosRoot()
+        {
+            var settings = ServiceRegistration.Get<ISettingsManager>().Load<Configuration.Settings>();
+
+            // when going to sites we need to rebuild the list of sites with all sites if not already done
+            if (!settings.GroupSitesByLanguage && !sitesListHasAllSites)
+            {
+                BuildSitesList();
+            }
+
+            ServiceRegistration.Get<IWorkflowManager>().NavigatePushAsync(settings.GroupSitesByLanguage ? Guids.WorkflowStateSiteGroups : Guids.WorkflowStateSites);
+        }
+
         void RebuildSitesList()
+        {
+            BuildSitesList();
+            BuildAutomaticSitesGroups();
+        }
+
+        void BuildSitesList()
         {
             SitesList.Clear();
             foreach (var site in OnlineVideoSettings.Instance.SiteUtilsList)
@@ -324,7 +362,33 @@ namespace OnlineVideos.MediaPortal2
                     SitesList.Add(new SiteViewModel(site.Value));
                 }
             }
+            sitesListHasAllSites = true;
             SitesList.FireChange();
+        }
+
+        void BuildAutomaticSitesGroups()
+        {
+            SiteGroupsList.Clear();
+            Dictionary<string, List<string>> sitenames = new Dictionary<string, List<string>>();
+            var siteutils = OnlineVideoSettings.Instance.SiteUtilsList;
+            foreach (string name in siteutils.Keys)
+            {
+                Sites.SiteUtilBase aSite;
+                if (siteutils.TryGetValue(name, out aSite) && !(aSite is Sites.FavoriteUtil) && !(aSite is Sites.DownloadedVideoUtil))
+                {
+                    string key = string.IsNullOrEmpty(aSite.Settings.Language) ? "--" : aSite.Settings.Language;
+                    List<string> listForLang = null;
+                    if (!sitenames.TryGetValue(key, out listForLang)) { listForLang = new List<string>(); sitenames.Add(key, listForLang); }
+                    listForLang.Add(aSite.Settings.Name);
+                }
+            }
+            foreach (string aLang in sitenames.Keys.ToList().OrderBy(l => l))
+            {
+                SiteGroupsList.Add(new SiteGroupViewModel(LanguageCodeLocalizedConverter.GetLanguageInUserLocale(aLang),
+                    string.Format(@"LanguageFlagsBig\{0}.png", aLang),
+                    sitenames[aLang]));
+            }
+            SiteGroupsList.FireChange();
         }
 
         void ShowCategories(IList<Category> categories, string navigationLabel)
@@ -472,7 +536,7 @@ namespace OnlineVideos.MediaPortal2
                     RebuildSitesList();
             }
         }
-
+        
         #region IWorkflowModel implementation
 
         public bool CanEnterState(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)

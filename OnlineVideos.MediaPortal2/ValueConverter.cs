@@ -1,16 +1,18 @@
-﻿using System;
-using System.Drawing;
-using MediaPortal.Common.Localization;
+﻿using MediaPortal.Common.Localization;
 using MediaPortal.UI.SkinEngine;
 using MediaPortal.UI.SkinEngine.MarkupExtensions;
 using MediaPortal.UI.SkinEngine.ScreenManagement;
 using OnlineVideos.Sites;
+using System;
+using System.Drawing;
+using System.Globalization;
+using System.Linq;
 
 namespace OnlineVideos.MediaPortal2
 {
     public class SiteUtilIconConverter : IValueConverter
     {
-        public bool Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+        public bool Convert(object value, Type targetType, object parameter, CultureInfo culture, out object result)
         {
             result = null;
 
@@ -40,7 +42,7 @@ namespace OnlineVideos.MediaPortal2
             return true;
         }
 
-        public bool ConvertBack(object val, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+        public bool ConvertBack(object val, Type targetType, object parameter, CultureInfo culture, out object result)
         {
             throw new NotImplementedException();
         }
@@ -48,21 +50,16 @@ namespace OnlineVideos.MediaPortal2
 
     public class LanguageIconConverter : IValueConverter
     {
-        public bool Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+        public bool Convert(object value, Type targetType, object parameter, CultureInfo culture, out object result)
         {
             result = null;
             if (value == null) return false;
             string lang = value.ToString();
-            string filename = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), @"Skin\default\images\LanguageFlags\" + lang + ".png");
-            if (System.IO.File.Exists(filename))
-            {
-                result = filename;
-                return true;
-            }
-            return false;
+            result = @"LanguageFlags\" + lang + ".png";
+            return true;            
         }
 
-        public bool ConvertBack(object val, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+        public bool ConvertBack(object val, Type targetType, object parameter, CultureInfo culture, out object result)
         {
             throw new NotImplementedException();
         }
@@ -70,7 +67,7 @@ namespace OnlineVideos.MediaPortal2
 
     public class SiteStateColorConverter : IValueConverter
     {
-        public bool Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+        public bool Convert(object value, Type targetType, object parameter, CultureInfo culture, out object result)
         {
             result = null;
             if (value == null) return false;
@@ -91,7 +88,7 @@ namespace OnlineVideos.MediaPortal2
             return true;
         }
 
-        public bool ConvertBack(object val, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+        public bool ConvertBack(object val, Type targetType, object parameter, CultureInfo culture, out object result)
         {
             throw new NotImplementedException();
         }
@@ -99,7 +96,7 @@ namespace OnlineVideos.MediaPortal2
 
     public class ExtendedInfoConverter : IValueConverter
     {
-        public bool Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+        public bool Convert(object value, Type targetType, object parameter, CultureInfo culture, out object result)
         {
             result = string.Empty;
             var model = value as VideoViewModel;
@@ -118,7 +115,7 @@ namespace OnlineVideos.MediaPortal2
             return false;
         }
 
-        public bool ConvertBack(object val, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+        public bool ConvertBack(object val, Type targetType, object parameter, CultureInfo culture, out object result)
         {
             throw new NotImplementedException();
         }
@@ -126,13 +123,13 @@ namespace OnlineVideos.MediaPortal2
 
     public class BoolFocusPrioConverter : IValueConverter
     {
-        public bool Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+        public bool Convert(object value, Type targetType, object parameter, CultureInfo culture, out object result)
         {
             result = (bool)value ? SetFocusPriority.Highest : SetFocusPriority.Default;
             return true;
         }
 
-        public bool ConvertBack(object val, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+        public bool ConvertBack(object val, Type targetType, object parameter, CultureInfo culture, out object result)
         {
             throw new NotImplementedException();
         }
@@ -140,13 +137,13 @@ namespace OnlineVideos.MediaPortal2
 
     public class FilterStateOptionLocalizedConverter : IValueConverter
     {
-        public bool Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+        public bool Convert(object value, Type targetType, object parameter, CultureInfo culture, out object result)
         {
             result = LocalizationHelper.Translate("[OnlineVideos." + ((SiteManagementWorkflowModel.FilterStateOption)value).ToString() + "]");
             return true;
         }
 
-        public bool ConvertBack(object val, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+        public bool ConvertBack(object val, Type targetType, object parameter, CultureInfo culture, out object result)
         {
             throw new NotImplementedException();
         }
@@ -154,7 +151,7 @@ namespace OnlineVideos.MediaPortal2
 
     public class LanguageCodeLocalizedConverter : IValueConverter
     {
-        public bool Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+        public bool Convert(object value, Type targetType, object parameter, CultureInfo culture, out object result)
         {
             if (string.IsNullOrEmpty(value as string))
                 result = LocalizationHelper.Translate("[OnlineVideos.All]");
@@ -168,9 +165,32 @@ namespace OnlineVideos.MediaPortal2
             return true;
         }
 
-        public bool ConvertBack(object val, Type targetType, object parameter, System.Globalization.CultureInfo culture, out object result)
+        public bool ConvertBack(object val, Type targetType, object parameter, CultureInfo culture, out object result)
         {
             throw new NotImplementedException();
+        }
+
+        public static string GetLanguageInUserLocale(string aLang)
+        {
+            string name = aLang;
+            try
+            {
+                name = aLang != "--" ? CultureInfo.GetCultureInfoByIetfLanguageTag(aLang).DisplayName : "Global";
+            }
+            catch
+            {
+                var temp = CultureInfo.GetCultures(CultureTypes.AllCultures).FirstOrDefault(
+                    ci => ci.IetfLanguageTag == aLang || ci.ThreeLetterISOLanguageName == aLang || ci.TwoLetterISOLanguageName == aLang || ci.ThreeLetterWindowsLanguageName == aLang);
+                if (temp != null)
+                {
+                    name = temp.DisplayName;
+                }
+                else
+                {
+                    Log.Warn("Unable to find CultureInfo for language identifier: '{0}'", name);
+                }
+            }
+            return name;
         }
     }
 

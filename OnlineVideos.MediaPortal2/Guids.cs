@@ -5,6 +5,7 @@ namespace OnlineVideos.MediaPortal2
     public static class Guids
     {
         public static readonly Guid WorkFlowModelOV = new Guid("C418243F-5BD3-4637-8871-DA6545387929");
+        public static readonly Guid WorkflowStateSiteGroups = new Guid("629FD4EB-1EB5-4ADA-BA69-0977274C2FB0");
         public static readonly Guid WorkflowStateSites = new Guid("F9D7500D-EC5C-4FEF-8FAE-E4DED8A22CE0");
         public static readonly Guid WorkflowStateCategories = new Guid("517DD2C8-27C4-4AE1-ABDC-B8001BFC95DA");
         public static readonly Guid WorkflowStateVideos = new Guid("FF474A1A-CA39-4247-BFEA-4E7B578F482B");
