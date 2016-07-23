@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.MediaPortal2", "OnlineVideos.MediaPortal2\OnlineVideos.MediaPortal2.csproj", "{FA12B047-F5EC-4045-8D26-47C7B17B3B16}"
 	ProjectSection(ProjectDependencies) = postProject
+		{75F69467-7062-45CB-909A-7D9A5D7E4958} = {75F69467-7062-45CB-909A-7D9A5D7E4958}
+		{022D3A7F-676E-4741-95D3-6E5D0223BFE4} = {022D3A7F-676E-4741-95D3-6E5D0223BFE4}
 		{F1199685-8F68-4B99-A47B-BC8CA1817732} = {F1199685-8F68-4B99-A47B-BC8CA1817732}
 	EndProjectSection
 EndProject
@@ -18,6 +20,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{B43036
 	ProjectSection(SolutionItems) = preProject
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SiteUtilProjects", "SiteUtilProjects", "{8064E323-422F-4DB2-92A8-AFE3875F0E95}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{2D8D5910-41F3-48BF-9A5C-CF4A797C7F38}"
+	ProjectSection(SolutionItems) = preProject
+		Build\Version.txt = Build\Version.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.offbyone", "SiteUtilProjects\OnlineVideos.Sites.offbyone\OnlineVideos.Sites.offbyone.csproj", "{022D3A7F-676E-4741-95D3-6E5D0223BFE4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,8 +67,18 @@ Global
 		{75F69467-7062-45CB-909A-7D9A5D7E4958}.Release|Any CPU.Build.0 = Release|Any CPU
 		{75F69467-7062-45CB-909A-7D9A5D7E4958}.Release|x86.ActiveCfg = Release|Any CPU
 		{75F69467-7062-45CB-909A-7D9A5D7E4958}.Release|x86.Build.0 = Release|Any CPU
+		{022D3A7F-676E-4741-95D3-6E5D0223BFE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{022D3A7F-676E-4741-95D3-6E5D0223BFE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{022D3A7F-676E-4741-95D3-6E5D0223BFE4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{022D3A7F-676E-4741-95D3-6E5D0223BFE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{022D3A7F-676E-4741-95D3-6E5D0223BFE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{022D3A7F-676E-4741-95D3-6E5D0223BFE4}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{75F69467-7062-45CB-909A-7D9A5D7E4958} = {8064E323-422F-4DB2-92A8-AFE3875F0E95}
+		{022D3A7F-676E-4741-95D3-6E5D0223BFE4} = {8064E323-422F-4DB2-92A8-AFE3875F0E95}
 	EndGlobalSection
 EndGlobal

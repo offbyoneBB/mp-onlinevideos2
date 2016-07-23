@@ -5,6 +5,7 @@
 
     <PropertyGroup>
       <PluginDestination>$(SolutionDir)..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\OnlineVideos\</PluginDestination>
+	  <DataDestination>$(ProgramData)\Team MediaPortal\MP2-Client\OnlineVideos\</DataDestination>
     </PropertyGroup>
 
     <ItemGroup>
@@ -19,6 +20,9 @@
       <LanguageFiles Include="$(ProjectDir)Language\*.*" />
       <SkinFiles Include="$(ProjectDir)Skin\**\*.*" Exclude="$(ProjectDir)Skin\**\.svn\**" />
       <MPUrlSourceSplitterFiles Include="$(TargetDir)MPUrlSourceSplitter\*.*" />
+	  <SiteUtilDllFiles Include="$(SolutionDir)Build\SiteUtilDlls\OnlineVideos.Sites.*.dll" />
+      <SiteUtilDllFiles Include="$(SolutionDir)Build\SiteUtilDlls\OnlineVideos.Sites.*.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
+	  <SiteIconFiles Include="$(SolutionDir)SiteImages\Icons\*.*" />
     </ItemGroup>
 
     <!-- Copy all plugin files to MediaPortal2 Plugins\OnlineVideos folder -->
@@ -45,5 +49,10 @@
     It might be worth also to change the BeforeBuild subversion revision detection to make it a MSBuild property and reuse it here.
     <Exec WorkingDirectory="$(ProjectDir)NuGetPackage" Command="$(NuGetExePath) pack OnlineVideos.MediaPortal2.nuspec -Version 2.1.0" />
     -->
+	<!-- Copy site util binaries to MediaPortal2 data folder -->
+	<Copy SourceFiles="@(SiteUtilDllFiles)" DestinationFolder="$(DataDestination)SiteUtils\" />
+	
+	<!-- Copy site icons to MediaPortal2 data folder -->
+	<Copy SourceFiles="@(SiteIconFiles)" DestinationFolder="$(DataDestination)Thumbs\Icons\" />
   </Target>
 </Project>

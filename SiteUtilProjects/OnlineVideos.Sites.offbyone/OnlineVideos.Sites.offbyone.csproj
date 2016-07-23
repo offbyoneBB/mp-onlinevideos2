@@ -408,8 +408,10 @@
     <MergeAsm Include="$(SolutionDir)\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll" />
     <MergeAsm Include="$(SolutionDir)\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll" />
   </ItemGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.-->
+  <Target Name="AfterClean">
+    <Delete Files="$(SolutionDir)\Build\SiteUtilDlls\$(TargetFileName)" />
+    <Delete Files="$(SolutionDir)\Build\SiteUtilDlls\$(TargetName).pdb" />
+  </Target>
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
