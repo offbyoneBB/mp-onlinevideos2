@@ -180,33 +180,7 @@
     </Site>
     <Site name="DailyMotion" util="DailyMotion" agecheck="false" enabled="true" lang="en">
       <Description>Dailymotion is a video sharing service website, based in Paris (France).</Description>
-    </Site>
-    <Site name="GameTrailers" util="GameTrailers" agecheck="false" enabled="true" lang="en">
-      <Description>Watch trailers, reviews, interviews and ingame footage for games from all the major platforms.</Description>
-      <Configuration>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[line_listing_results\.init\("(?<url>[^"]*)",\$\('\.line_listing_filters'\)\);\s*}\);]]></item>
-        <item key="dynamicSubCategoryUrlDecoding"><![CDATA[UrlDecode]]></item>
-        <item key="videoListRegEx"><![CDATA[]]></item>
-        <item key="videoListUrlDecoding"><![CDATA[HtmlDecode]]></item>
-        <item key="videoUrlRegEx"><![CDATA[<meta\sitemprop="url"\scontent="http://www\.gametrailers\.com/[^/]*/(?<Title>[^"]*)"/>\s*<meta\sitemprop="name"\scontent="(?<Title2>[^"]*)"/>\s*<meta\sitemprop="thumbnail"\scontent="(?<ImageUrl>[^"]*)"/>\s*<meta\sitemprop="description"\scontent="(?<Description>[^"]*)"/>\s*<meta\sitemprop="uploadDate"\scontent="(?<Airdate>[^"]*)"/>\s*<meta\sitemprop="duration"\scontent="(?<Duration>[^"]*)"/>\s*<a\shref="(?<VideoUrl>[^"]*)"\sclass="thumbnail">]]></item>
-        <item key="nextPageRegEx"><![CDATA[<div\sclass="pagination"><ul><li><span\sclass="override_promo_font_color\sselected_page">[^<]*</span></li><li><a\shref="(?<url>[^"]*)">]]></item>
-        <item key="nextPageRegExUrlFormatString"><![CDATA[{0}]]></item>
-        <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
-        <item key="playlistUrlRegEx"><![CDATA[\s*data-contentId='(?<contentid>[^']*)'*.*data-token="(?<token>[^"]*)"]]></item>
-        <item key="searchUrl"><![CDATA[http://www.gametrailers.com/search?category=videos&keywords={0}]]></item>
-        <item key="baseUrl"><![CDATA[[URL][URL][URL][URL][URL][URL]http://www.gametrailers.com[/URL][/URL][/URL][/URL][/URL][/URL]]]></item>
-        <item key="videoThumbFormatString"><![CDATA[<meta\sitemprop="thumbnail"\scontent="(?<ImageUrl>[^"]*)"/>]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="ALL">http://www.gametrailers.com/videos-trailers#</Category>
-        <Category xsi:type="RssLink" name="PC">http://www.gametrailers.com/pc/videos-trailers#</Category>
-        <Category xsi:type="RssLink" name="XBOX">http://www.gametrailers.com/xbox-360/videos-trailers#</Category>
-        <Category xsi:type="RssLink" name="PS3">http://www.gametrailers.com/ps3/videos-trailers#</Category>
-        <Category xsi:type="RssLink" name="WII U">http://www.gametrailers.com/wii-u/videos-trailers#</Category>
-        <Category xsi:type="RssLink" name="VITA">http://www.gametrailers.com/vita/videos-trailers#</Category>
-        <Category xsi:type="RssLink" name="3DS">http://www.gametrailers.com/3ds/videos-trailers#</Category>
-      </Categories>
-    </Site>
+    </Site>    
     <Site name="IMDb Movie Trailers" util="IMDb" agecheck="false" enabled="true" lang="en">
       <Description>View trailers and other movie related clips sourced by the most complete online movie database. Many trailers are available in high-quality HD</Description>
     </Site>
@@ -824,11 +798,6 @@
     <Site name="Katsomo.fi" util="KatsomoWeb" agecheck="false" enabled="true" lang="fi" player="Browser">
       <Description>MTV Katsomo on netti-tv, joka tuo katseltavaksesi suosikkiohjelmiesi uusimmat jaksot ilmaiseksi heti samaan aikaan kuin ne näytetään televisiokanavalla. Voit katsella MTV3:n, Subin ja AVA:n ohjelmia silloin kuin sinulle parhaiten sopii, ajankohdasta riippumatta tietokoneelta, puhelimesta, tabletista, MediaPortalista ja Samsung Smart TV:stä.</Description>
     </Site>
-    <Site name="OnlineTV by on-tv.ru" util="OnTVRu" agecheck="false" enabled="true" lang="ru">
-      <Categories>
-        <Category xsi:type="RssLink" name="Top 50">http://on-tv.ru</Category>
-      </Categories>
-    </Site>
     <Site name="Первый канал" util="PervyjKanalRu" agecheck="false" enabled="true" lang="ru">
       <Description>Официальный сайт. Новости. Премьеры. Вещание.</Description>
     </Site>
@@ -922,9 +891,6 @@
     </Site>
     <Site name="DR TV" util="DRTV" agecheck="false" enabled="true" lang="da">
       <Description>Se 5 af DRs kanaler live, hent aktuelle og arkiverede udsendelser i DR NU og udforsk Bonanza-arkivet, der indholder tv og radioklip fra hele DRS historie.</Description>
-    </Site>
-    <Site name="TV2" util="TV2" agecheck="false" enabled="true" lang="da">
-      <Description>Se udsendelser og klip fra video.tv2.dk.</Description>
     </Site>
     <Site name="TVE" util="TVE" agecheck="false" enabled="true" lang="es">
       <Description>Las series y programas de TVE, cuando quieras en rtve.es</Description>
@@ -1256,15 +1222,6 @@
         <Category xsi:type="RssLink" name="Kaikki ohjelmat">http://www.ruutu.fi/ohjelmat/kaikki</Category>
       </Categories>
     </Site>
-    <Site name="SBS.au" util="SBSau" agecheck="false" enabled="true" lang="en">
-      <Description>SBS On Demand gives you free, unlimited access to programs, films and events – watch your favourite SBS shows when you want!</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.sbs.com.au/ondemand/js/video-menu?v=1.1]]></item>
-        <item key="searchUrl"><![CDATA[http://www.sbs.com.au/api/video_feed/f/dYtmxB/search?form=json&q={0}&count=true&defaultThumbnailAssetType=Thumbnail&range=1-24]]></item>
-        <item key="playlistUrlRegEx"><![CDATA[playerParams\.releaseUrls\s=\s{\s*progressive:\s'[^']*',\s*html:\s'[^']*',\s*standard:\s'(?<url>[^']*)'\s*}|player\.releaseUrl\s=\s"(?<url>[^"]*)";]]></item>
-        <item key="fileUrlRegEx"><![CDATA[(<video\ssrc="(?<m0>[^"]*)"\ssystem-bitrate="(?<n0>[^"]*)"[^>]*>)|(<video\ssrc="(?<m0>[^"]*)"\stitle[^>]*>)]]></item>
-      </Configuration>
-    </Site>
     <Site name="TelegraafTV" util="TelegraafTV" agecheck="false" enabled="true" lang="nl">
       <Description>TV | Altijd op de hoogte van het laatste nieuws met Telegraaf.nl</Description>
       <Configuration>
@@ -1386,9 +1343,6 @@
     </Site>
     <Site name="ZTélé" util="ZTele" agecheck="false" enabled="true" lang="fr">
       <Description>Ztélé est une chaîne de télévision spécialisée dans les nouvelles technologies, la science, le multimédia, les jeux vidéo et les séries de science-fiction. Le site présente également la grille horaire des émissions, des blogues technos, des capsules vidéo, des concours, des fonds d'écran et plus encore.</Description>
-    </Site>
-    <Site name="ABC.com" util="ABC" agecheck="false" enabled="true" lang="en">
-      <Description>The American Broadcasting Company (ABC) is an American commercial broadcasting television network.</Description>
     </Site>
     <Site name="CTV.ca" util="CTV" agecheck="false" enabled="true" lang="en">
       <Description>CTV is Canada's largest private broadcaster, offering a wide range of leading news, sports, and entertainment programming.</Description>
@@ -1513,42 +1467,6 @@
     <Site name="YTV" util="YTV" agecheck="false" enabled="true" lang="en">
       <Description>YTV is a Canadian English-language cable television specialty channel aimed at kids and their families. If a show is crazy, cool, clever and funny, chances are it’s on YTV! With shows like SpongeBob SquarePants, iCarly, and The Next Star - plus the latest and greatest movies – YTV is family headquarters!</Description>
     </Site>
-    <Site name="4oD" util="Fourod" agecheck="false" enabled="true" lang="en">
-      <Description>Catchup on all your favourite Channel 4 shows (only available in the UK).</Description>
-      <Categories>
-        <Category xsi:type="RssLink" name="Catchup">http://www.channel4.com/programmes/4od/catchup/</Category>
-        <Category xsi:type="RssLink" name="Collections">http://www.channel4.com/programmes/4od/collections</Category>
-        <Category xsi:type="RssLink" name="All Shows">http://www.channel4.com/programmes/tags/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Comedy">http://www.channel4.com/programmes/tags/comedy/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Documentaries">http://www.channel4.com/programmes/tags/documentaries/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Drama">http://www.channel4.com/programmes/tags/drama/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Entertainment">http://www.channel4.com/programmes/tags/entertainment/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Food">http://www.channel4.com/programmes/tags/food/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="News, Current Affairs and Politics">http://www.channel4.com/programmes/tags/news-current-affairs-and-politics/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Animals">http://www.channel4.com/programmes/tags/animals/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Animation">http://www.channel4.com/programmes/tags/animation/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Art, Design and Literature">http://www.channel4.com/programmes/tags/art-design-and-literature/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Business and Money">http://www.channel4.com/programmes/tags/business-and-money/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Chat Shows">http://www.channel4.com/programmes/tags/chat-shows/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="E4">http://www.channel4.com/programmes/tags/e4/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Education and Learning">http://www.channel4.com/programmes/tags/education-and-learning/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Family and Parenting">http://www.channel4.com/programmes/tags/family-and-parenting/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Fashion and Beauty">http://www.channel4.com/programmes/tags/fashion-and-beauty/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Health and Wellbeing">http://www.channel4.com/programmes/tags/health-and-wellbeing/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="History">http://www.channel4.com/programmes/tags/history/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Homes and Gardens">http://www.channel4.com/programmes/tags/homes-and-gardens/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="More4">http://www.channel4.com/programmes/tags/more4/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="4Music">http://www.channel4.com/programmes/tags/music/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Quizzes and Gameshows">http://www.channel4.com/programmes/tags/quizzes-and-gameshows/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Reality Shows">http://www.channel4.com/programmes/tags/reality-shows/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Religion and Belief">http://www.channel4.com/programmes/tags/religion-and-belief/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Science, Nature and the Environment">http://www.channel4.com/programmes/tags/science-nature-and-the-environment/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Sex and Relationships">http://www.channel4.com/programmes/tags/sex-and-relationships/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Society and Culture">http://www.channel4.com/programmes/tags/society-and-culture/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="Sports and Games">http://www.channel4.com/programmes/tags/sports-and-games/4od/title/brand-list/</Category>
-        <Category xsi:type="RssLink" name="US Shows">http://www.channel4.com/programmes/tags/us-shows/4od/title/brand-list/</Category>
-      </Categories>
-    </Site>
     <Site name="ITV Player" util="ITVPlayer" agecheck="false" enabled="true" lang="en">
       <Description>Catchup on all your favourite ITV shows (only available in the UK).</Description>
       <Configuration>
@@ -1576,24 +1494,6 @@
             <Channel name="CITV" thumb="http://www.lyngsat-logo.com/logo/tv/cc/citv_uk.png">sim7?guideid=1981</Channel>
           </Channels>
         </Category>
-      </Categories>
-    </Site>      
-    <Site name="Demand 5" util="Demand5" agecheck="false" enabled="true" lang="en">
-      <Description>Catchup on all your favourite Channel 5 shows (only available in the UK).</Description>
-      <Configuration>
-        <item key="hashValue"><![CDATA[8e8e110bb9d7d95eb3c3e500a86a21024eccd983]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Recently on TV">http://www.channel5.com/demand5/recently_on_tv_episodes?visible_items_number=1</Category>
-        <Category xsi:type="RssLink" name="Top Shows">http://url-must-end-with-top-shows.com/topshows</Category>
-        <Category xsi:type="RssLink" name="All Shows" thumb="http://wwwcdn.channel5.com/assets/images/000/019/773/large_size_FifthGear_Oct2011_D5_original.jpg?1322157673">http://www.channel5.com/shows</Category>
-        <Category xsi:type="RssLink" name="Entertainment" thumb="http://wwwcdn.channel5.com/assets/images/000/014/632/large_size_bachelor_main.jpg?1312793454">http://www.channel5.com/shows?genre=entertainment</Category>
-        <Category xsi:type="RssLink" name="Drama" thumb="http://wwwcdn.channel5.com/assets/images/000/006/200/large_size_csim_maina.jpg?1294768057">http://www.channel5.com/shows?genre=drama</Category>
-        <Category xsi:type="RssLink" name="Documentary" thumb="http://wwwcdn.channel5.com/assets/images/000/001/633/large_size_Police_InterceptorsB-640x360.jpg?1285339295">http://www.channel5.com/shows?genre=documentary</Category>
-        <Category xsi:type="RssLink" name="Soap" thumb="http://wwwcdn.channel5.com/assets/images/000/020/048/large_size_summer.jpg?1322843311">http://www.channel5.com/shows?genre=soap</Category>
-        <Category xsi:type="RssLink" name="Milkshake!" thumb="http://wwwcdn.channel5.com/assets/images/000/020/122/large_size_Milkshake_Monkey_640_2.jpg?1323192335">http://www.channel5.com/shows?genre=milkshake!</Category>
-        <Category xsi:type="RssLink" name="Sport" thumb="http://wwwcdn.channel5.com/assets/images/000/019/481/large_size_tysonfury_640.jpg?1321029228">http://www.channel5.com/shows?genre=sport</Category>
-        <Category xsi:type="RssLink" name="Films" thumb="http://wwwcdn.channel5.com/assets/images/000/016/956/large_size_Circuit_D5.jpg?1315841899">http://www.channel5.com/shows?genre=films</Category>
       </Categories>
     </Site>
 	<Site name="YouPorn" util="GenericSite" agecheck="true" enabled="true" lang="en">
