@@ -41,29 +41,29 @@ namespace OnlineVideos.MediaPortal2.Interfaces.Metadata
         /// <summary>
         /// Name of the SiteUtil which provides the information and will be used for playback.
         /// </summary>
-        public static readonly MediaItemAspectMetadata.AttributeSpecification ATTR_SITEUTIL =
-            MediaItemAspectMetadata.CreateStringAttributeSpecification("SiteUtil", 100, Cardinality.Inline, true);
+        public static readonly MediaItemAspectMetadata.SingleAttributeSpecification ATTR_SITEUTIL =
+            MediaItemAspectMetadata.CreateSingleStringAttributeSpecification("SiteUtil", 100, Cardinality.Inline, true);
 
         /// <summary>
         /// Contains an alternative, longer url to the online video. This is needed sometimes, if the url is longer
         /// than <see cref="ProviderResourceAspect.ATTR_RESOURCE_ACCESSOR_PATH"/>.
         /// </summary>
-        public static readonly MediaItemAspectMetadata.AttributeSpecification ATTR_LONGURL =
-            MediaItemAspectMetadata.CreateStringAttributeSpecification("LongUrl", 4000, Cardinality.Inline, true);
+        public static readonly MediaItemAspectMetadata.SingleAttributeSpecification ATTR_LONGURL =
+            MediaItemAspectMetadata.CreateSingleStringAttributeSpecification("LongUrl", 4000, Cardinality.Inline, true);
 
         /// <summary>
         /// Contains an URL to a poster / cover for the item.
         /// </summary>
-        public static readonly MediaItemAspectMetadata.AttributeSpecification ATTR_POSTER =
-            MediaItemAspectMetadata.CreateStringAttributeSpecification("Poster", 200, Cardinality.Inline, true);
+        public static readonly MediaItemAspectMetadata.SingleAttributeSpecification ATTR_POSTER =
+            MediaItemAspectMetadata.CreateSingleStringAttributeSpecification("Poster", 200, Cardinality.Inline, true);
 
         /// <summary>
         /// Contains an URL to a fanart for the item.
         /// </summary>
-        public static readonly MediaItemAspectMetadata.AttributeSpecification ATTR_FANART =
-            MediaItemAspectMetadata.CreateStringAttributeSpecification("Fanart", 200, Cardinality.Inline, true);
+        public static readonly MediaItemAspectMetadata.SingleAttributeSpecification ATTR_FANART =
+            MediaItemAspectMetadata.CreateSingleStringAttributeSpecification("Fanart", 200, Cardinality.Inline, true);
 
-        public static readonly MediaItemAspectMetadata Metadata = new MediaItemAspectMetadata(
+        public static readonly SingleMediaItemAspectMetadata Metadata = new SingleMediaItemAspectMetadata(
             ASPECT_ID, "OnlineVideoItem", new[] {
             ATTR_SITEUTIL,
             ATTR_LONGURL,

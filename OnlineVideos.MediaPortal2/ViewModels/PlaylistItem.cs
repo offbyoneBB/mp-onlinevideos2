@@ -20,13 +20,13 @@ namespace OnlineVideos.MediaPortal2
             {
                 { ProviderResourceAspect.ASPECT_ID, new MediaItemAspect[]{ new MultipleMediaItemAspect(ProviderResourceAspect.Metadata) }},
                 { MediaAspect.ASPECT_ID, new MediaItemAspect[]{ new SingleMediaItemAspect(MediaAspect.Metadata) }},
-                { VideoAspect.ASPECT_ID, new MediaItemAspect[]{ new MultipleMediaItemAspect(VideoAspect.Metadata) }}
+                { VideoAspect.ASPECT_ID, new MediaItemAspect[]{ new SingleMediaItemAspect(VideoAspect.Metadata) }},
                 { OnlineVideosAspect.ASPECT_ID, new MediaItemAspect[]{ new SingleMediaItemAspect(OnlineVideosAspect.Metadata) }},
             })
         {
             SiteName = videoInfo.SiteName;
 
-            Aspects[OnlineVideosAspect.ASPECT_ID].SetAttribute(OnlineVideosAspect.ATTR_SITEUTIL, SiteName);
+            Aspects[OnlineVideosAspect.ASPECT_ID].First().SetAttribute(OnlineVideosAspect.ATTR_SITEUTIL, SiteName);
 
             ISystemResolver systemResolver = ServiceRegistration.Get<ISystemResolver>();
 
@@ -51,7 +51,7 @@ namespace OnlineVideos.MediaPortal2
                     ? RawUrlResourceProvider.ToProviderResourcePath(resolvedPlaybackUrl).Serialize()
                     : RawTokenResourceProvider.ToProviderResourcePath(resolvedPlaybackUrl).Serialize();
                 providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_RESOURCE_ACCESSOR_PATH, value);
-                Aspects[OnlineVideosAspect.ASPECT_ID].SetAttribute(OnlineVideosAspect.ATTR_LONGURL, value);
+                Aspects[OnlineVideosAspect.ASPECT_ID].First().SetAttribute(OnlineVideosAspect.ATTR_LONGURL, value);
 
                 var isBrowser = videoInfo.SiteSettings.Player == PlayerType.Browser;
                 providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_MIME_TYPE,
@@ -79,15 +79,15 @@ namespace OnlineVideos.MediaPortal2
         /// <returns>Resource locator instance or <c>null</c>, if this item doesn't contain a <see cref="ProviderResourceAspect"/>.</returns>
         public override IResourceLocator GetResourceLocator()
         {
-            MediaItemAspect onlineVideoAspect;
-            MediaItemAspect providerAspect;
+            IList<MediaItemAspect> onlineVideoAspect;
+            IList<MediaItemAspect> providerAspect;
             if (!_aspects.TryGetValue(OnlineVideosAspect.ASPECT_ID, out onlineVideoAspect))
                 return base.GetResourceLocator();
 
             if (!_aspects.TryGetValue(ProviderResourceAspect.ASPECT_ID, out providerAspect))
                 return null;
-            string systemId = (string)providerAspect[ProviderResourceAspect.ATTR_SYSTEM_ID];
-            string resourceAccessorPath = (string)onlineVideoAspect[OnlineVideosAspect.ATTR_LONGURL];
+            string systemId = (string)providerAspect.First()[ProviderResourceAspect.ATTR_SYSTEM_ID];
+            string resourceAccessorPath = (string)onlineVideoAspect.First()[OnlineVideosAspect.ATTR_LONGURL];
             return new ResourceLocator(systemId, ResourcePath.Deserialize(resourceAccessorPath));
         }
     }
