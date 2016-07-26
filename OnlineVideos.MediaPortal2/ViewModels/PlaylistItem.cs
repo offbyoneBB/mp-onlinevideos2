@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using MediaPortal.Common.MediaManagement;
 using MediaPortal.Common.MediaManagement.DefaultItemAspects;
 using MediaPortal.Common;
@@ -15,23 +16,30 @@ namespace OnlineVideos.MediaPortal2
     public class PlaylistItem : MediaItem
     {
         public PlaylistItem(VideoViewModel videoInfo, string resolvedPlaybackUrl)
-            : base(Guid.Empty, new Dictionary<Guid, MediaItemAspect>
+            : base(Guid.Empty, new Dictionary<Guid, IList<MediaItemAspect>>
             {
-                { ProviderResourceAspect.ASPECT_ID, new MediaItemAspect(ProviderResourceAspect.Metadata)},
-                { MediaAspect.ASPECT_ID, new MediaItemAspect(MediaAspect.Metadata) },
-                { VideoAspect.ASPECT_ID, new MediaItemAspect(VideoAspect.Metadata) },
-                { OnlineVideosAspect.ASPECT_ID, new MediaItemAspect(OnlineVideosAspect.Metadata) },
+                { ProviderResourceAspect.ASPECT_ID, new MediaItemAspect[]{ new MultipleMediaItemAspect(ProviderResourceAspect.Metadata) }},
+                { MediaAspect.ASPECT_ID, new MediaItemAspect[]{ new SingleMediaItemAspect(MediaAspect.Metadata) }},
+                { VideoAspect.ASPECT_ID, new MediaItemAspect[]{ new MultipleMediaItemAspect(VideoAspect.Metadata) }}
+                { OnlineVideosAspect.ASPECT_ID, new MediaItemAspect[]{ new SingleMediaItemAspect(OnlineVideosAspect.Metadata) }},
             })
         {
             SiteName = videoInfo.SiteName;
 
             Aspects[OnlineVideosAspect.ASPECT_ID].SetAttribute(OnlineVideosAspect.ATTR_SITEUTIL, SiteName);
 
-            Aspects[ProviderResourceAspect.ASPECT_ID].SetAttribute(ProviderResourceAspect.ATTR_SYSTEM_ID, ServiceRegistration.Get<ISystemResolver>().LocalSystemId);
+            ISystemResolver systemResolver = ServiceRegistration.Get<ISystemResolver>();
+
+            IList<MultipleMediaItemAspect> providerResourceAspects;
+            MediaItemAspect.TryGetAspects(Aspects, ProviderResourceAspect.Metadata, out providerResourceAspects);
+            MultipleMediaItemAspect providerResourceAspect = providerResourceAspects.First();
+
+            providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_SYSTEM_ID, systemResolver.LocalSystemId);
+
             if (videoInfo.SiteUtilName == "DownloadedVideo")
             {
-                Aspects[ProviderResourceAspect.ASPECT_ID].SetAttribute(ProviderResourceAspect.ATTR_RESOURCE_ACCESSOR_PATH, LocalFsResourceProviderBase.ToResourcePath(resolvedPlaybackUrl).Serialize());
-                Aspects[MediaAspect.ASPECT_ID].SetAttribute(MediaAspect.ATTR_MIME_TYPE, "video/unknown");
+                providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_RESOURCE_ACCESSOR_PATH, LocalFsResourceProviderBase.ToResourcePath(resolvedPlaybackUrl).Serialize());
+                providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_MIME_TYPE, "video/unknown");
             }
             else
             {
@@ -42,23 +50,24 @@ namespace OnlineVideos.MediaPortal2
                 var value = isUriSource
                     ? RawUrlResourceProvider.ToProviderResourcePath(resolvedPlaybackUrl).Serialize()
                     : RawTokenResourceProvider.ToProviderResourcePath(resolvedPlaybackUrl).Serialize();
-                Aspects[ProviderResourceAspect.ASPECT_ID].SetAttribute(ProviderResourceAspect.ATTR_RESOURCE_ACCESSOR_PATH, value);
+                providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_RESOURCE_ACCESSOR_PATH, value);
                 Aspects[OnlineVideosAspect.ASPECT_ID].SetAttribute(OnlineVideosAspect.ATTR_LONGURL, value);
 
                 var isBrowser = videoInfo.SiteSettings.Player == PlayerType.Browser;
-                Aspects[MediaAspect.ASPECT_ID].SetAttribute(MediaAspect.ATTR_MIME_TYPE,
+                providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_MIME_TYPE,
                     isBrowser
                         ? WebBrowserVideoPlayer.ONLINEVIDEOSBROWSER_MIMETYPE
                         : OnlineVideosPlayer.ONLINEVIDEOS_MIMETYPE);
             }
 
-            Aspects[MediaAspect.ASPECT_ID].SetAttribute(MediaAspect.ATTR_TITLE, videoInfo.Title);
+            MediaItemAspect.SetAttribute(Aspects, MediaAspect.ATTR_TITLE, videoInfo.Title);
 
-            Aspects[VideoAspect.ASPECT_ID].SetAttribute(VideoAspect.ATTR_STORYPLOT, videoInfo.Description);
+            // TODO: Restore line after story plot was moved back to VideoAspect!
+            // MediaItemAspect.SetAttribute(aspects, VideoAspect.ATTR_STORYPLOT, videoInfo.Description);
 
             DateTime parsedAirDate;
             if (DateTime.TryParse(videoInfo.VideoInfo.Airdate, out parsedAirDate))
-                Aspects[MediaAspect.ASPECT_ID].SetAttribute(MediaAspect.ATTR_RECORDINGTIME, parsedAirDate);
+                MediaItemAspect.SetAttribute(Aspects, MediaAspect.ATTR_RECORDINGTIME, parsedAirDate);
 
         }
 
