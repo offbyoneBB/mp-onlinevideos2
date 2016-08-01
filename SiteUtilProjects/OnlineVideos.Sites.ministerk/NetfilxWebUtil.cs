@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using OnlineVideos.Sites.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -55,7 +56,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private string loginUrl = @"https://www.netflix.com/Login";
         private string homeUrl = @"https://www.netflix.com/";
         private string playerUrl = @"http://www.netflix.com/watch/{0}";
-        private string loginPostData = @"authURL={0}&email={1}&password={2}&rememberMeCheckbox=true&flow=websiteSignUp&mode=login&action=loginAction&withFields=email%2Cpassword%2CrememberMe%2CnextPage&nextPage=";
+        private string loginPostData = "email={0}&password={1}&rememberMe=true&flow=websiteSignUp&mode=login&action=loginAction&withFields=email%2Cpassword%2CrememberMe%2CnextPage&authURL={2}&nextPage=";
         private string switchProfileUrl = @"{0}/profiles/switch/{1}?switchProfileGuid={2}&authURL={3}";
 
         #endregion
@@ -74,7 +75,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             bool tryToSetApiAndIds = false;
             if (m.Success)
             {
-                latestAuthUrl = m.Groups["authURL"].Value;
+                LatestAuthUrl = m.Groups["authURL"].Value;
                 if (enableVerboseLog) Log.Debug("NETFLIX: new authURL");
                 tryToSetApiAndIds = true;
             }
@@ -84,7 +85,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 m = rgx.Match(data);
                 if (m.Success)
                 {
-                    latestAuthUrl = m.Groups["authURL"].Value;
+                    LatestAuthUrl = m.Groups["authURL"].Value;
                     if (enableVerboseLog) Log.Debug("NETFLIX: new authURL");
                     tryToSetApiAndIds = true;
                 }
@@ -251,7 +252,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         private string GetPathData(string postData)
         {
-            //bale
             return MyGetWebData(ShaktiApi + "/pathEvaluator/" + PathEvaluatorId + "?withSize=true&materialize=true&model=harris&esn=www", postData: postData, contentType: "application/json");
         }
 
@@ -407,21 +407,22 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             Match m = rgx.Match(data);
             if (m.Success)
             {
-                _shaktiApi = m.Groups[1].Value.Replace("http:", "https:");
+                _shaktiApi = m.Groups[1].Value.Replace("http:", "https:").Replace("\\x2F","/");
             }
-            rgx = new Regex(@"/profiles/switch"":""([^""]*)");
+
+            rgx = new Regex(@"(?:\\x2F|/)profiles(?:\\x2F|/)switch"":""([^""]*)");
             m = rgx.Match(data);
             if (m.Success)
             {
                 _profileSwitchId = m.Groups[1].Value;
             }
-            rgx = new Regex(@"/pathEvaluator"":""([^""]*)");
+            rgx = new Regex(@"(?:\\x2F|/)pathEvaluator"":""([^""]*)");
             m = rgx.Match(data);
             if (m.Success)
             {
                 _pathEvaluatorId = m.Groups[1].Value;
             }
-            rgx = new Regex(@"/playlistop"":""([^""]*)");
+            rgx = new Regex(@"(?:\\x2F|/)playlistop"":""([^""]*)");
             m = rgx.Match(data);
             if (m.Success)
             {
@@ -433,7 +434,20 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         #region Cookies, credentials and auth
 
-        private string latestAuthUrl = "";
+        private string _latestAuthUrl;
+        private string LatestAuthUrl
+        {
+            get
+            {
+                return _latestAuthUrl;
+            }
+            set
+            {
+                _latestAuthUrl = value;
+                if (_latestAuthUrl.Contains("\\x"))
+                    _latestAuthUrl = HttpUtility.UrlDecode(_latestAuthUrl.Replace("\\x", "%"));
+            }
+        }
 
         private bool HaveCredentials
         {
@@ -453,15 +467,14 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 if (_cc == null)
                 {
                     _cc = new CookieContainer();
-                    string url = WebCache.Instance.GetRedirectedUrl(loginUrl).Replace("entrytrap", "Login");
                     // No caching in this case.
-                    string data = GetWebData<string>(url, cookies: _cc, cache: false);
+                    string data = ExtendedWebCache.Instance.GetWebData<string>(loginUrl, cookies: _cc, cache: false);
 
                     Regex rgx = new Regex(@"""authURL"":""(?<authURL>[^""]*)");
                     Match m = rgx.Match(data);
                     if (m.Success)
                     {
-                        latestAuthUrl = m.Groups["authURL"].Value;
+                        LatestAuthUrl = m.Groups["authURL"].Value;
                         if (enableVerboseLog) Log.Debug("NETFLIX: new authURL");
                     }
                     else
@@ -470,7 +483,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                         m = rgx.Match(data);
                         if (m.Success)
                         {
-                            latestAuthUrl = m.Groups["authURL"].Value;
+                            LatestAuthUrl = m.Groups["authURL"].Value;
                             if (enableVerboseLog) Log.Debug("NETFLIX: new authURL");
                         }
                         else
@@ -480,7 +493,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                         }
 
                     }
-                    data = GetWebData<string>(url, string.Format(loginPostData, HttpUtility.UrlEncode(latestAuthUrl), HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password)), _cc, cache: false);
+                    data = ExtendedWebCache.Instance.GetWebData<string>(loginUrl, string.Format(loginPostData, HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password), HttpUtility.UrlEncode(LatestAuthUrl)), _cc, cache: false);
                 }
                 return _cc;
             }
@@ -540,7 +553,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private List<Category> GetProfileSubCategories(Category parentCategory, JToken profile)
         {
             currentProfile = profile;
-            MyGetWebData(string.Format(switchProfileUrl, ShaktiApi, ProfileSwitchId, ProfileToken, latestAuthUrl), referer: homeUrl);
+            MyGetWebData(string.Format(switchProfileUrl, ShaktiApi, ProfileSwitchId, ProfileToken, LatestAuthUrl), referer: homeUrl);
             List<Category> cats = new List<Category>();
 
             RssLink home = new RssLink() { Name = Translate("Home"), HasSubCategories = true, ParentCategory = parentCategory };
@@ -577,7 +590,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             List<Category> cats = new List<Category>();
             string lolomoType = IsKidsProfile ? "kidslolomo" : "lolomo";
-            string data = GetPathData(@"{""paths"":[[""" + lolomoType + @""",{""from"":0,""to"":" + noOfCatsInHome + @"},[""summary"",""title"",""playListEvidence"",""bookmark"",""queue"",""displayName"",""context""]]],""authURL"":""" + latestAuthUrl + @"""}");
+            string data = GetPathData(@"{""paths"":[[""" + lolomoType + @""",{""from"":0,""to"":" + noOfCatsInHome + @"},[""summary"",""title"",""playListEvidence"",""bookmark"",""queue"",""displayName"",""context""]]],""authURL"":""" + LatestAuthUrl + @"""}");
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
             String lolmoGuid = json["value"][lolomoType].Values().Last().ToString();
             if (enableVerboseLog) Log.Debug("lolmoGuid: {0}", lolmoGuid);
@@ -613,11 +626,11 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private List<Category> GetCharactersCategories(RssLink parentCategory)
         {
             List<Category> cats = new List<Category>();
-            string data = GetPathData(@"{""paths"":[[""kidslolomo"",{""from"":0,""to"":50},[""context""]]],""authURL"":""" + latestAuthUrl + @"""}");
+            string data = GetPathData(@"{""paths"":[[""kidslolomo"",{""from"":0,""to"":50},[""context""]]],""authURL"":""" + LatestAuthUrl + @"""}");
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
             JProperty prop = json["value"]["lists"].Values<JProperty>().FirstOrDefault(p => !p.Name.Contains("size") && p.Value["context"].Value<string>() == "character");
             string lolmoGuid = prop.Name;
-            data = GetPathData(@"{""paths"":[[""lists"",""" + lolmoGuid + @""",{""from"":0,""to"":100},""summary""],[""lists"",""" + lolmoGuid + @""",{""from"":0,""to"":100},""artwork"",""character_square"",""png"",""_400x400""]],""authURL"":""" + latestAuthUrl + @"""}");
+            data = GetPathData(@"{""paths"":[[""lists"",""" + lolmoGuid + @""",{""from"":0,""to"":100},""summary""],[""lists"",""" + lolmoGuid + @""",{""from"":0,""to"":100},""artwork"",""character_square"",""png"",""_400x400""]],""authURL"":""" + LatestAuthUrl + @"""}");
             json = (JObject)JsonConvert.DeserializeObject(data);
             for (int i = 0; i <= 100 ; i++)
             {
@@ -638,7 +651,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private List<Category> GetGenreListCategories(Category parentCategory)
         {
             List<Category> cats = new List<Category>();
-            string data = GetPathData(@"{""paths"":[[""genreList"",{""from"":0,""to"":24},[""id"",""menuName""]],[""genreList"",""summary""]],""authURL"":""" + latestAuthUrl + @"""}");
+            string data = GetPathData(@"{""paths"":[[""genreList"",{""from"":0,""to"":24},[""id"",""menuName""]],[""genreList"",""summary""]],""authURL"":""" + LatestAuthUrl + @"""}");
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
             foreach (JToken token in json["value"]["genres"].Where(t => t.Values().Count() > 1 && t.First()["menuName"] != null))
             {
@@ -655,7 +668,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             List<Category> cats = new List<Category>();
             string id = (parentCategory as RssLink).Url;
-            string data = GetPathData(@"{""paths"":[[""videos""," + id + @",[""creators"",""cast"",""directors"",""tags"",""genres""],{""from"":0,""to"":49},[""id"",""name""]]],""authURL"":""" + latestAuthUrl + @"""}");
+            string data = GetPathData(@"{""paths"":[[""videos""," + id + @",[""creators"",""cast"",""directors"",""tags"",""genres""],{""from"":0,""to"":49},[""id"",""name""]]],""authURL"":""" + LatestAuthUrl + @"""}");
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
 
             // Creators
@@ -781,7 +794,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             List<Category> cats = new List<Category>();
 
-            string data = GetPathData(@"{""paths"":[[""lolomo"",""summary""],[""lolomo"",""" + listType + @""",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},[""summary"",""title"",""synopsis"",""queue"",""userRating"",""runtime"",""releaseYear""]],[""lolomo"",""" + listType + @""",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},""boxarts"",""_342x192"",""jpg""],[""lolomo"",""" + listType + @""",[""context"",""id"",""length"",""name"",""trackIds"",""requestId""]]],""authURL"":""" + latestAuthUrl + @"""}");
+            string data = GetPathData(@"{""paths"":[[""lolomo"",""summary""],[""lolomo"",""" + listType + @""",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},[""summary"",""title"",""synopsis"",""queue"",""userRating"",""runtime"",""releaseYear""]],[""lolomo"",""" + listType + @""",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},""boxarts"",""_342x192"",""jpg""],[""lolomo"",""" + listType + @""",[""context"",""id"",""length"",""name"",""trackIds"",""requestId""]]],""authURL"":""" + LatestAuthUrl + @"""}");
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
             if (json["value"] != null && json["value"]["videos"] != null)
             {
@@ -829,7 +842,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             if (getSubGenres)
             {
                 Category subgenreCat = new Category() { Name = Translate("Subgenres"), SubCategories = new List<Category>(), ParentCategory = parentCategory, HasSubCategories = true, SubCategoriesDiscovered = true };
-                data = GetPathData(@"{""paths"":[[""genres""," + id + @",""subgenres"",{""from"":0,""to"":20},""summary""]],""authURL"":""" + latestAuthUrl + @"""}");
+                data = GetPathData(@"{""paths"":[[""genres""," + id + @",""subgenres"",{""from"":0,""to"":20},""summary""]],""authURL"":""" + LatestAuthUrl + @"""}");
                 json = (JObject)JsonConvert.DeserializeObject(data);
                 foreach (JToken token in json["value"]["genres"].Where(t => t.Values().Count() > 1 && t.First()["summary"] != null))
                 {
@@ -844,7 +857,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 }
             }
 
-            data = GetPathData(@"{""paths"":[[""" + categoryType + @"""," + id + @",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},[""summary"",""title"",""synopsis"",""queue"",""userRating"",""runtime"",""releaseYear""]],[""" + categoryType + @"""," + id + @",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},""boxarts"",""_342x192"",""jpg""]],""authURL"":""" + latestAuthUrl + @"""}");
+            data = GetPathData(@"{""paths"":[[""" + categoryType + @"""," + id + @",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},[""summary"",""title"",""synopsis"",""queue"",""userRating"",""runtime"",""releaseYear""]],[""" + categoryType + @"""," + id + @",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},""boxarts"",""_342x192"",""jpg""]],""authURL"":""" + LatestAuthUrl + @"""}");
             json = (JObject)JsonConvert.DeserializeObject(data);
             if (json["value"] != null && json["value"]["videos"] != null)
             {
@@ -895,7 +908,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             if (isShow)
             {
                 //Seasons
-                string data = GetPathData(@"{""paths"":[[""videos""," + id + @",""seasonList"",{""from"":0,""to"":20},""summary""],[""videos""," + id + @",""seasonList"",""summary""]],""authURL"":""" + latestAuthUrl + @"""}");
+                string data = GetPathData(@"{""paths"":[[""videos""," + id + @",""seasonList"",{""from"":0,""to"":20},""summary""],[""videos""," + id + @",""seasonList"",""summary""]],""authURL"":""" + LatestAuthUrl + @"""}");
                 JObject json = (JObject)JsonConvert.DeserializeObject(data);
 
                 foreach (JToken token in json["value"]["seasons"].Where(t => t.Values().Count() > 1))
@@ -914,7 +927,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             //Trailers
 
             Category trailers = new Category() { Name = Translate("Trailers"), HasSubCategories = false, ParentCategory = parentCategory };
-            string trailerData = GetPathData(@"{""paths"":[[""videos""," + id + @",""trailers"",{""from"":0,""to"":25},[""summary"",""title"",""runtime"",""synopsis""]],[""videos""," + id + @",""trailers"",{""from"":0,""to"":25},""interestingMoment"",""_260x146"",""jpg""]],""authURL"":""" + latestAuthUrl + @"""}");
+            string trailerData = GetPathData(@"{""paths"":[[""videos""," + id + @",""trailers"",{""from"":0,""to"":25},[""summary"",""title"",""runtime"",""synopsis""]],[""videos""," + id + @",""trailers"",{""from"":0,""to"":25},""interestingMoment"",""_260x146"",""jpg""]],""authURL"":""" + LatestAuthUrl + @"""}");
             JObject trailerJson = (JObject)JsonConvert.DeserializeObject(trailerData);
             List<VideoInfo> videos = new List<VideoInfo>();
             for (int i = 0; i <= 25; i++)
@@ -965,7 +978,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             string videoId = (parentCategory.ParentCategory as NetflixCategory).Url;
             string title = parentCategory.ParentCategory.Name;
             string data = MyGetWebData(ShaktiApi + "/playlistop/" + PlaylistOpId + "?fallbackEsn=NFCDSF-01-",
-                postData: @"{""operation"":""" + addRemove + @""",""videoId"":" + videoId + @",""trackId"":0,""authURL"":""" + latestAuthUrl + @"""}",
+                postData: @"{""operation"":""" + addRemove + @""",""videoId"":" + videoId + @",""trackId"":0,""authURL"":""" + LatestAuthUrl + @"""}",
                 contentType: "application/json");
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
             //Do something with the result json...
@@ -997,7 +1010,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             List<VideoInfo> videos = new List<VideoInfo>();
             string id = (category as RssLink).Url;
-            string data = GetPathData(@"{""paths"":[[""seasons""," + id + @",""episodes"",{""from"":-1,""to"":" + noOfEpisodes + @"},[""summary"",""synopsis"",""title"",""runtime""]],[""seasons""," + id + @",""episodes"",{""from"":-1,""to"":" + noOfEpisodes + @"},""interestingMoment"",""_260x146"",""jpg""]],""authURL"":""" + latestAuthUrl + @"""}");
+            string data = GetPathData(@"{""paths"":[[""seasons""," + id + @",""episodes"",{""from"":-1,""to"":" + noOfEpisodes + @"},[""summary"",""synopsis"",""title"",""runtime""]],[""seasons""," + id + @",""episodes"",{""from"":-1,""to"":" + noOfEpisodes + @"},""interestingMoment"",""_260x146"",""jpg""]],""authURL"":""" + LatestAuthUrl + @"""}");
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
             foreach (JToken token in json["value"]["videos"].Where(t => t.Values().Count() > 1))
             {
@@ -1020,7 +1033,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private List<VideoInfo> GetPlayNowShowVideos(Category category)
         {
             string id = (category as RssLink).Url;
-            string data = GetPathData(@"{""paths"":[[""videos""," + id + @",""current"",[""summary"",""runtime"",""title"",""synopsis""]],[""videos""," + id + @",""current"",[""interestingMoment""],""_260x146"",""jpg""]],""authURL"":""" + latestAuthUrl + @"""}");
+            string data = GetPathData(@"{""paths"":[[""videos""," + id + @",""current"",[""summary"",""runtime"",""title"",""synopsis""]],[""videos""," + id + @",""current"",[""interestingMoment""],""_260x146"",""jpg""]],""authURL"":""" + LatestAuthUrl + @"""}");
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
             JToken item = json["value"]["videos"].First(t => t.Values().Count() > 1 && t.First()["size"].Value<int>() > 2).First();
             VideoInfo video = new VideoInfo();
@@ -1100,7 +1113,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 string videoId = (selectedCategory as NetflixCategory).Url;
                 string title = selectedCategory.Name;
                 string data = MyGetWebData(ShaktiApi + "/playlistop/" + PlaylistOpId + "?fallbackEsn=NFCDSF-01-",
-                        postData: @"{""operation"":""" + addRemove + @""",""videoId"":" + videoId + @",""trackId"":0,""authURL"":""" + latestAuthUrl + @"""}",
+                        postData: @"{""operation"":""" + addRemove + @""",""videoId"":" + videoId + @",""trackId"":0,""authURL"":""" + LatestAuthUrl + @"""}",
                     contentType: "application/json");
                 JObject json = (JObject)JsonConvert.DeserializeObject(data);
                 //Do something with the result json...
