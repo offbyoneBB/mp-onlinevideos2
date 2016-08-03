@@ -75,6 +75,7 @@
     <Compile Include="DplayUtil.cs" />
     <Compile Include="DrakenFilmUtil.cs" />
     <Compile Include="DreamfilmHDUtil.cs" />
+    <Compile Include="LastFmUtil.cs" />
     <Compile Include="Utils\ExtendedWebCache.cs" />
     <Compile Include="Hoster\Buggerdugger.cs" />
     <Compile Include="Hoster\IReferer.cs" />
