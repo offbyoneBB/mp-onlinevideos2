@@ -69,10 +69,21 @@ namespace OnlineVideos.Sites
             {
                 if (scrobbleToLastFm && percent >= 0.75 && video is LastFmVideo && !string.IsNullOrWhiteSpace((video as LastFmVideo).ArtistSlug) && !string.IsNullOrWhiteSpace((video as LastFmVideo).TrackSlug))
                 {
+                    int dur = (video as LastFmVideo).Duration;
+                    if (dur == 0)
+                    {
+                        string metaData = GetWebData("https://www.youtube.com/get_video_info?video_id=" + video.VideoUrl.Replace("https://www.youtube.com/watch?v=", "").Replace("http://www.youtube.com/watch?v=", ""));
+                        Regex regex = new Regex(@"dur%253D(?<dur>[1-9]\d*)");
+                        Match m = regex.Match(metaData);
+                        if(m.Success)
+                        {
+                            dur = int.Parse(m.Groups["dur"].Value);
+                        }
+                    }
                     Int32 ts = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-                    ts = ts - (int)(((double)(video as LastFmVideo).Duration) * percent);
+                    ts = ts - (int)(((double)dur) * percent);
                     string scrobbleDataFormat = "timestamp={0}&artist={1}&track={2}&duration={3}&ajax=1&csrfmiddlewaretoken={4}";
-                    string scrobbleData = string.Format(scrobbleDataFormat, ts, (video as LastFmVideo).ArtistSlug, (video as LastFmVideo).TrackSlug, (video as LastFmVideo).Duration, GetCsrfToken("http://www.last.fm"));
+                    string scrobbleData = string.Format(scrobbleDataFormat, ts, (video as LastFmVideo).ArtistSlug, (video as LastFmVideo).TrackSlug, dur, GetCsrfToken("http://www.last.fm"));
                     GetWebData("http://www.last.fm/player/scrobble", postData: scrobbleData, cookies: Cookies, referer: "http://www.last.fm/home", cache: false);
                 }
             }
@@ -89,14 +100,6 @@ namespace OnlineVideos.Sites
             //Need cookies / login
             if (Cookies == null)
                 throw new OnlineVideosException("Unknown error (no cookies)");
-
-            if (setPreferredPlayer)
-            {
-                // Set youtube as prefered player
-                string postDataFormat = "csrfmiddlewaretoken={0}&preferred_affiliate=youtube&submit=playback";
-                string postData = string.Format(postDataFormat, GetCsrfToken("https://secure.last.fm"));
-                GetWebData("https://secure.last.fm/settings/website", postData: postData, cookies: Cookies, referer: "https://secure.last.fm/settings/website", cache: false);
-            }
 
             UserCategories(username).ForEach(c => Settings.Categories.Add(c));
             Settings.DynamicCategoriesDiscovered = true;
@@ -336,7 +339,7 @@ namespace OnlineVideos.Sites
                 LastFmCategory period = new LastFmCategory()
                 {
                     Name = datePreset.Value,
-                    Url = "http://www.last.fm/user/" + username + "/library/tracks",
+                    Url = "http://www.last.fm/user/" + category.User + "/library/tracks",
                     User = category.User,
                     HasSubCategories = false,
                     ParentCategory = tracks
@@ -819,6 +822,13 @@ namespace OnlineVideos.Sites
                         cc = null;
                         throw new OnlineVideosException("Please enter a correct username and password.");
                     }
+                    if (setPreferredPlayer)
+                    {
+                        // Set youtube as prefered player
+                        string postDataFormat = "csrfmiddlewaretoken={0}&preferred_affiliate=youtube&submit=playback";
+                        string postData = string.Format(postDataFormat, GetCsrfToken("https://secure.last.fm"));
+                        GetWebData("https://secure.last.fm/settings/website", postData: postData, cookies: Cookies, referer: "https://secure.last.fm/settings/website", cache: false);
+                    }
                 }
                 return cc;
             }
@@ -843,6 +853,8 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> GetLatestVideos()
         {
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+                return new List<VideoInfo>();
             LastFmCategory scrobbles = new LastFmCategory()
             {
                 Name = "Scrobbles",
