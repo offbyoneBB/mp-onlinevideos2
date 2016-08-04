@@ -70,16 +70,6 @@ namespace OnlineVideos.Sites
                 if (scrobbleToLastFm && percent >= 0.75 && video is LastFmVideo && !string.IsNullOrWhiteSpace((video as LastFmVideo).ArtistSlug) && !string.IsNullOrWhiteSpace((video as LastFmVideo).TrackSlug))
                 {
                     int dur = (video as LastFmVideo).Duration;
-                    if (dur == 0)
-                    {
-                        string metaData = GetWebData("https://www.youtube.com/get_video_info?video_id=" + video.VideoUrl.Replace("https://www.youtube.com/watch?v=", "").Replace("http://www.youtube.com/watch?v=", ""));
-                        Regex regex = new Regex(@"dur%253D(?<dur>[1-9]\d*)");
-                        Match m = regex.Match(metaData);
-                        if(m.Success)
-                        {
-                            dur = int.Parse(m.Groups["dur"].Value);
-                        }
-                    }
                     Int32 ts = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
                     ts = ts - (int)(((double)dur) * percent);
                     string scrobbleDataFormat = "timestamp={0}&artist={1}&track={2}&duration={3}&ajax=1&csrfmiddlewaretoken={4}";
@@ -750,6 +740,17 @@ namespace OnlineVideos.Sites
             string url = video.PlaybackOptions.Last().Value;
             if (inPlaylist) video.PlaybackOptions.Clear();
 
+            int dur = (video as LastFmVideo).Duration;
+            if (dur == 0 && (publishNowPlaying || scrobbleToLastFm))
+            {
+                string metaData = GetWebData("https://www.youtube.com/get_video_info?video_id=" + video.VideoUrl.Replace("https://www.youtube.com/watch?v=", "").Replace("http://www.youtube.com/watch?v=", ""));
+                Regex regex = new Regex(@"dur%253D(?<dur>[1-9]\d*)");
+                Match m = regex.Match(metaData);
+                if (m.Success)
+                {
+                    (video as LastFmVideo).Duration = int.Parse(m.Groups["dur"].Value);
+                }
+            }
             if (publishNowPlaying && video is LastFmVideo && !string.IsNullOrWhiteSpace((video as LastFmVideo).ArtistSlug) && !string.IsNullOrWhiteSpace((video as LastFmVideo).TrackSlug))
             {
                 try
