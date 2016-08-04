@@ -22,6 +22,8 @@ namespace OnlineVideos.Sites
         protected bool preferInternal = false;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Always use browser player for sports"), Description("Always use browser player for sports")]
         protected bool preferBrowserSport = true;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show loading spinner"), Description("Show the loading spinner in the Browser Player")]
+        protected bool showLoadingSpinner = true;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show help category"), Description("Enable or disable help category (Link to forum - http://tinyurl.com/olv-viaplay)")]
         protected bool showHelpCategory = true;
         #endregion
@@ -52,7 +54,7 @@ namespace OnlineVideos.Sites
         {
             get
             {
-                return username;
+                return username + (showLoadingSpinner ? "SHOWLOADING" : "");
             }
         }
 
@@ -257,8 +259,7 @@ namespace OnlineVideos.Sites
 
         private bool IsBlockedMainCategory(string categoryTitle)
         {
-            return categoryTitle == "OS"
-                || IsBlockedCategory(categoryTitle);
+            return IsBlockedCategory(categoryTitle);
         }
 
         private bool IsBlockedCategory(string categoryTitle)
@@ -277,9 +278,9 @@ namespace OnlineVideos.Sites
                 return data;
             }
             data = GetWebData<JObject>(url, postData, cc);
-            if (data["user"] == null)
+            if (!url.Contains(AndroidApiUrl) && data["user"] == null)
             {
-                data = GetWebData<JObject>(string.Format(LoginUrl, HttpUtility.UrlEncode(UserName), HttpUtility.UrlEncode(Password)), cookies: cc);
+                data = GetWebData<JObject>(string.Format(LoginUrl, HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(Password)), cookies: cc);
                 if ((bool)data["success"])
                 {
                     data = GetWebData<JObject>(url, postData, cc);
@@ -304,7 +305,7 @@ namespace OnlineVideos.Sites
             data = GetWebData(url, cookies: cc);
             if (data.Contains("Unauthorized"))
             {
-                JObject logindata = GetWebData<JObject>(string.Format(LoginUrl, HttpUtility.UrlEncode(UserName), HttpUtility.UrlEncode(Password)), cookies: cc);
+                JObject logindata = GetWebData<JObject>(string.Format(LoginUrl, HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(Password)), cookies: cc);
                 if ((bool)logindata["success"])
                 {
                     data = GetWebData(url, cookies: cc);
@@ -341,6 +342,17 @@ namespace OnlineVideos.Sites
                     HasSubCategories = true,
                     SubCategories = new List<Category>(),
                     Other = _section
+                });
+            }
+            if (Settings.Language == "sv")
+            {
+                Settings.Categories.Add(new RssLink()
+                {
+                    Name = "Rio 2016",
+                    Url = "https://content.viaplay.se/pc-se/rio2016",
+                    HasSubCategories = true,
+                    SubCategories = new List<Category>(),
+                    Other = _filter
                 });
             }
             var starred = data["_links"]["viaplay:starred"];

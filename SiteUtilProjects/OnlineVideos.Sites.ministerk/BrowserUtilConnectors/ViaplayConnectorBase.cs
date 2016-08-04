@@ -30,13 +30,17 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         protected string _username;
         protected string _password;
         protected string _videoToPlay;
+        protected bool _showLoading = false;
 
         public abstract string BaseUrl { get; }
         public abstract string LoginUrl { get; }
 
         public override EventResult PerformLogin(string username, string password)
         {
-            ShowLoading();
+            _showLoading = username.Contains("SHOWLOADING");
+            username = username.Replace("SHOWLOADING", string.Empty);
+            if (_showLoading)
+                ShowLoading();
             _password = password;
             _username = username;
             _currentState = State.Login;
@@ -87,7 +91,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                         ProcessComplete.Finished = true;
                         ProcessComplete.Success = true;
                         _currentState = State.Playing;
-                        HideLoading();
+                        if (_showLoading)
+                            HideLoading();
                     }
                     break;
                 case State.Playing:
