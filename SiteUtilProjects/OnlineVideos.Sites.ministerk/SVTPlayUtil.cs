@@ -495,13 +495,17 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        public override string GetVideoUrl(VideoInfo video)
+        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             HosterBase svtPlay = HosterFactory.GetHoster("SVTPlay");
-            string url = svtPlay.GetVideoUrl(video.VideoUrl);
+            video.PlaybackOptions =  svtPlay.GetPlaybackOptions(video.VideoUrl);
+            string url = video.PlaybackOptions.First().Value;
+            if (inPlaylist)
+                video.PlaybackOptions.Clear();
             if (svtPlay is ISubtitle)
                 video.SubtitleText = (svtPlay as ISubtitle).SubtitleText;
-            return url;
+            return new List<string>() { url };
+
         }
 
         #endregion

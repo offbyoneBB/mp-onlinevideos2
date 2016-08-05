@@ -22,8 +22,9 @@ namespace OnlineVideos.Hoster
             get { return subtitleText; }
         }
 
-        public override string GetVideoUrl(string url)
+        public override Dictionary<string, string> GetPlaybackOptions(string url)
         {
+            Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
             if (url.ToLower().Contains("oppetarkiv"))
             {
                 JToken videoToken = GetWebData<JObject>(url + "?output=json")["video"];
@@ -72,35 +73,65 @@ namespace OnlineVideos.Hoster
                         Referer = "http://media.svt.se/swf/video/svtplayer-2015.01.swf"
                     }.ToString();
                 }
+                if (!string.IsNullOrWhiteSpace(url))
+                    playbackOptions.Add("url", url);
             }
             else
             {
                 subtitleText = "";
                 string data = GetWebData<string>(url);
-                string rgxString = @"""(?<url>[^""]*?\.f4m)""";
+                string rgxString = @"""(?<url>[^""]*?master\.m3u8[^""]*)""";
                 if (url.Contains("http://www.svtplay.se/kanaler/"))
                 {
                     url = url.Replace("http://www.svtplay.se/kanaler/", string.Empty);
-                    rgxString = @"title"":""" + url + @""".*?""(?<url>[^""]*?\.f4m)""";
+                    rgxString = @"title"":""" + url + @""".*?""(?<url>[^""]*?master\.m3u8[^""]*)""";
                 }
                 Regex rgx = new Regex(rgxString);
                 Match m = rgx.Match(data);
                 if (!m.Success)
-                    return url;
-                url = new MPUrlSourceFilter.AfhsManifestUrl(m.Groups["url"].Value + "?hdcore=3.7.0&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12))
+                    return playbackOptions;
+                string m3u8Url = m.Groups["url"].Value;
+                string m3u8 = GetWebData(m3u8Url);
+                rgx = new Regex(@"BANDWIDTH=(?<bandwidth>\d+)000.[^\n]*?\n(?<url>[^\n]*)", RegexOptions.Singleline);
+                foreach (Match match in rgx.Matches(m3u8))
                 {
-                    Referer = "http://media.svt.se/swf/video/svtplayer-2015.01.swf"
-                }.ToString();
+                    string key = match.Groups["bandwidth"].Value + " kbps";
+                    if (!playbackOptions.ContainsKey(key))
+                    {
+                        string value = match.Groups["url"].Value;
+                        if (!value.StartsWith("http"))
+                            value = m3u8Url.Remove(m3u8Url.IndexOf("master.m3u8")) + value;
+                        playbackOptions.Add(key, value);
+                    }
+                }
+
+                playbackOptions = playbackOptions.OrderByDescending((p) =>
+                {
+                    string resKey = p.Key.Replace(" kbps", "");
+                    int parsedRes = 0;
+                    int.TryParse(resKey, out parsedRes);
+                    return parsedRes;
+                }).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
                 rgx = new Regex(@"""(?<url>[^""]*?index\.m3u8)""");
-                 m = rgx.Match(data);
+                m = rgx.Match(data);
                 if (m.Success)
                 {
                     subtitleText = GetWebData(m.Groups["url"].Value.Replace("index.m3u8", "all.vtt"));
                     CleanSubtitle(true);
                 }
             }
-            return url;
+
+            return playbackOptions;
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            Dictionary<string, string> urls = GetPlaybackOptions(url);
+            if (urls.Count > 0)
+                return urls.First().Value;
+            else
+                return "";
         }
 
         void CleanSubtitle(bool isVtt = false)
