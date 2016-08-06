@@ -127,9 +127,6 @@
   <ItemGroup>
     <None Include="Resources\Katsomo.js" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="Resources\AADecode.js" />
-  </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

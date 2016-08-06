@@ -61,32 +61,6 @@ namespace OnlineVideos.Sites.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /* AADecode - Decode encoded-as-aaencode JavaScript program.
-        /// * 
-        /// * Copyright (C) 2010 @cat_in_136
-        /// * 
-        /// * This software is released under the MIT License.
-        /// * http://opensource.org/licenses/mit-license.php
-        /// */
-        ///
-        ///function decode(text)
-        ///{
-        ///    return AADecode.decode(text);
-        ///}
-        ///
-        ///var AADecode = {
-        ///    decode: function (text) {
-        ///        var evalPreamble = &quot;(\uFF9F\u0414\uFF9F) [&apos;_&apos;] ( (\uFF9F\u0414\uFF9F) [&apos;_&apos;] (&quot;;
-        ///        var decodePreamble = &quot;( (\uFF9F\u0414\uFF9F) [&apos;_&apos;] (&quot;;
-        ///        var evalPostamble  [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string AADecode {
-            get {
-                return ResourceManager.GetString("AADecode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to function myZoom() {
         ///    document.getElementById(&apos;katsomo-navi&apos;).style.zIndex = 0;
         ///    document.getElementById(&apos;video0_desktop-player&apos;).style.position = &apos;fixed&apos;;
