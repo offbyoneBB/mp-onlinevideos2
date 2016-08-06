@@ -135,7 +135,7 @@ namespace OnlineVideos.Sites
         {
             string url = (parentCategory as RssLink).Url;
             HtmlDocument doc = GetWebData<HtmlDocument>(url);
-            HtmlNodeCollection items = doc.DocumentNode.SelectNodes("//li[@class='series' or @class='user-collection']");
+            HtmlNodeCollection items = doc.DocumentNode.SelectNodes("//article[@class='series' or @class='user-collection']");
             parentCategory.SubCategories = new List<Category>();
             if (items != null)
             {
@@ -183,9 +183,9 @@ namespace OnlineVideos.Sites
             HtmlNodeCollection items;
             HtmlNode episodes = docNode.SelectSingleNode("//section[@id='episodes']");
             if (episodes != null)
-                items = episodes.SelectNodes("div/ul/li");
+                items = episodes.SelectNodes("div/div/article");
             else
-                items = docNode.SelectNodes("//li[@class='program']");
+                items = docNode.SelectNodes("//article[@class='program']");
             
             if (items != null)
             {
