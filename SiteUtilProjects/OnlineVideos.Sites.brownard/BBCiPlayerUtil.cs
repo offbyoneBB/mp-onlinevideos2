@@ -245,34 +245,13 @@ namespace OnlineVideos.Sites
             return lastUrl;
         }
 
-        //string getLiveUrls(VideoInfo video)
-        //{
-        //    WebProxy proxyObj = getProxy();
-        //    XmlDocument doc = new XmlDocument();
-        //    doc.LoadXml(GetWebData("http://www.bbc.co.uk/mediaselector/playlists/hds/pc/ak/" + video.VideoUrl, proxy: proxyObj));
-        //    SortedList<string, string> sortedPlaybackOptions = new SortedList<string, string>(new QualityComparer());
-        //    foreach (XmlElement mediaElem in doc.GetElementsByTagName("media"))
-        //    {
-        //        string url = null;
-        //        if (mediaElem.Attributes["href"] != null)
-        //            url = mediaElem.Attributes["href"].Value + "?live=true";
-        //        string bitrate = "";
-        //        if (mediaElem.Attributes["bitrate"] != null)
-        //            bitrate = mediaElem.Attributes["bitrate"].Value;
-        //        if (!string.IsNullOrEmpty(url))
-        //            sortedPlaybackOptions.Add(bitrate + " kbps", url);
-        //    }
-
-        //    string lastUrl = "";
-        //    video.PlaybackOptions = new Dictionary<string, string>();
-        //    var enumer = sortedPlaybackOptions.GetEnumerator();
-        //    while (enumer.MoveNext())
-        //    {
-        //        lastUrl = enumer.Current.Value;
-        //        video.PlaybackOptions.Add(enumer.Current.Key, enumer.Current.Value);
-        //    }
-        //    return lastUrl; //"http://bbcfmhds.vo.llnwd.net/hds-live/livepkgr/_definst_/bbc1/bbc1_1500.f4m";
-        //}
+        public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
+        {
+            string f = base.GetFileNameForDownload(video, category, url);
+            if (f.EndsWith(".m3u8"))
+                f = f.Substring(0, f.Length - 5) + ".mp4";
+            return f;
+        }
 
         WebProxy getProxy()
         {
