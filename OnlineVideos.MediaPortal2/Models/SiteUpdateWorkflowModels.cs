@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using MediaPortal.Common;
+﻿using MediaPortal.Common;
 using MediaPortal.Common.General;
 using MediaPortal.Common.Messaging;
 using MediaPortal.Common.Settings;
@@ -9,6 +6,9 @@ using MediaPortal.Common.Threading;
 using MediaPortal.UI.Presentation.Models;
 using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.UI.Presentation.Workflow;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -43,22 +43,23 @@ namespace OnlineVideos.MediaPortal2
 
         #region IWorkflowModel implementation
 
-        public bool CanEnterState(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
+        public bool CanEnterState(NavigationContext oldContext, NavigationContext newContext)
         {
-            return true;
+            lock (syncObject)
+            {
+                return currentBackgroundTask == null;
+            }
         }
 
-        public void ChangeModelContext(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext, bool push)
+        public void ChangeModelContext(NavigationContext oldContext, NavigationContext newContext, bool push)
         {
-
         }
 
-        public void Deactivate(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
+        public void Deactivate(NavigationContext oldContext, NavigationContext newContext)
         {
-
         }
 
-        public void EnterModelContext(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
+        public void EnterModelContext(NavigationContext oldContext, NavigationContext newContext)
         {
             // reset the properties
             UpdateInfo = string.Empty;
@@ -67,7 +68,7 @@ namespace OnlineVideos.MediaPortal2
             RunUpdate(newContext);
         }
 
-        public void ExitModelContext(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
+        public void ExitModelContext(NavigationContext oldContext, NavigationContext newContext)
         {
             // set a flag to stop the update if the thread is still running
             lock (syncObject)
@@ -86,14 +87,12 @@ namespace OnlineVideos.MediaPortal2
             get { return Guids.WorkFlowModelSiteUpdate; }
         }
 
-        public void Reactivate(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
+        public void Reactivate(NavigationContext oldContext, NavigationContext newContext)
         {
-
         }
 
-        public void UpdateMenuActions(MediaPortal.UI.Presentation.Workflow.NavigationContext context, IDictionary<Guid, MediaPortal.UI.Presentation.Workflow.WorkflowAction> actions)
+        public void UpdateMenuActions(NavigationContext context, IDictionary<Guid, WorkflowAction> actions)
         {
-
         }
 
         public ScreenUpdateMode UpdateScreen(MediaPortal.UI.Presentation.Workflow.NavigationContext context, ref string screen)
@@ -118,7 +117,7 @@ namespace OnlineVideos.MediaPortal2
                         sitesToUpdate = (ServiceRegistration.Get<IWorkflowManager>().GetModel(Guids.WorkFlowModelSiteManagement) as SiteManagementWorkflowModel).SitesList.Select(s => ((OnlineSiteViewModel)s).Site).ToList();
                     }
 
-                    bool? updateResult = OnlineVideos.Sites.Updater.UpdateSites((m, p) =>
+                    bool? updateResult = Sites.Updater.UpdateSites((m, p) =>
                     {
                         UpdateInfo = m ?? string.Empty;
                         if (p.HasValue) UpdateProgress = p.Value;

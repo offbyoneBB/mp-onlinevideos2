@@ -8,7 +8,7 @@
     Description="OnlineVideos Plugin">
 
   <Version
-    PluginVersion="1.0"
+    PluginVersion="1.0.1"
     ReleaseDate="2016-02-04 01:00:00 GMT+01:00"
     CurrentAPI="1"/>
 
@@ -25,6 +25,7 @@
   <Runtime>
     <Assembly FileName="OnlineVideos.MediaPortal2.dll"/>
     <Assembly FileName="OnlineVideos.dll"/>
+    <PluginStateTracker ClassName="OnlineVideos.MediaPortal2.OnlineVideosPlugin"/>
   </Runtime>
 
    <Register Location="/Players/Builders">

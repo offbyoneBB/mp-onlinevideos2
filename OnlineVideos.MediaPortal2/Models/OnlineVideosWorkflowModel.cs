@@ -1,15 +1,11 @@
 ﻿using MediaPortal.Common;
 using MediaPortal.Common.General;
-using MediaPortal.Common.Localization;
 using MediaPortal.Common.Messaging;
-using MediaPortal.Common.PathManager;
-using MediaPortal.Common.Services.Settings;
 using MediaPortal.Common.Settings;
 using MediaPortal.UI.Presentation.DataObjects;
 using MediaPortal.UI.Presentation.Models;
 using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.UI.Presentation.Workflow;
-using OnlineVideos.CrossDomain;
 using OnlineVideos.Downloading;
 using System;
 using System.Collections.Generic;
@@ -23,45 +19,15 @@ namespace OnlineVideos.MediaPortal2
         {
             SiteGroupsList = new ItemsList();
             SitesList = new ItemsList();
-
-            OnlineVideosAppDomain.UseSeperateDomain = true;
-
-            ServiceRegistration.Get<ISettingsManager>().Load<Configuration.Settings>().SetValuesToApi();
-            string ovConfigPath = ServiceRegistration.Get<IPathManager>().GetPath(string.Format(@"<CONFIG>\{0}\", Environment.UserName));
-            string ovDataPath = ServiceRegistration.Get<IPathManager>().GetPath(@"<DATA>\OnlineVideos");
-
-            OnlineVideoSettings.Instance.Logger = new LogDelegator();
-            OnlineVideoSettings.Instance.UserStore = new Configuration.UserSiteSettingsStore();
-
-            OnlineVideoSettings.Instance.DllsDir = System.IO.Path.Combine(ovDataPath, "SiteUtils");
-            OnlineVideoSettings.Instance.ThumbsDir = System.IO.Path.Combine(ovDataPath, "Thumbs");
-            OnlineVideoSettings.Instance.ConfigDir = ovConfigPath;
-
-            OnlineVideoSettings.Instance.AddSupportedVideoExtensions(new List<string>() { ".asf", ".asx", ".flv", ".m4v", ".mov", ".mkv", ".mp4", ".wmv" });
-
-            // clear cache files that might be left over from an application crash
-            MPUrlSourceFilter.Downloader.ClearDownloadCache();
-            // load translation strings in other AppDomain, so SiteUtils can use localized language strings
-            TranslationLoader.LoadTranslations(ServiceRegistration.Get<ILocalization>().CurrentCulture.TwoLetterISOLanguageName, System.IO.Path.Combine(System.IO.Path.GetDirectoryName(GetType().Assembly.Location), "Language"), "en", "strings_{0}.xml");
-            // The default connection limit is 2 in .Net on most platforms! This means downloading two files will block all other WebRequests.
-            System.Net.ServicePointManager.DefaultConnectionLimit = 100;
-            // The default .Net implementation for URI parsing removes trailing dots, which is not correct
-            Helpers.DotNetFrameworkHelper.FixUriTrailingDots();
-
-            // load the xml that holds all configured sites
-            OnlineVideoSettings.Instance.LoadSites();
-
+            
             // create a message queue where we listen to changes to the sites
             _messageQueue = new AsynchronousMessageQueue(this, new string[] { OnlineVideosMessaging.CHANNEL });
             _messageQueue.MessageReceived += new MessageReceivedHandler(OnlineVideosMessageReceived);
-
-            // listen to changes of configuration settings
-            _settingsWatcher = new SettingsChangeWatcher<Configuration.Settings>();
-            _settingsWatcher.SettingsChanged += OnlineVideosSettingsChanged;
+            _messageQueue.Start();
         }
 
         protected AsynchronousMessageQueue _messageQueue;
-        protected SettingsChangeWatcher<Configuration.Settings> _settingsWatcher;
+        
         bool sitesListHasAllSites = false;
 
         SiteViewModel _focusedSite;
@@ -320,7 +286,6 @@ namespace OnlineVideos.MediaPortal2
                 () =>
                 {
                     return SelectedSite.Site.Search(SearchString);
-
                 },
                 (success, result) =>
                 {
@@ -373,13 +338,17 @@ namespace OnlineVideos.MediaPortal2
             var siteutils = OnlineVideoSettings.Instance.SiteUtilsList;
             foreach (string name in siteutils.Keys)
             {
-                Sites.SiteUtilBase aSite;
-                if (siteutils.TryGetValue(name, out aSite) && !(aSite is Sites.FavoriteUtil) && !(aSite is Sites.DownloadedVideoUtil))
+                Sites.SiteUtilBase site;
+                if (siteutils.TryGetValue(name, out site))
                 {
-                    string key = string.IsNullOrEmpty(aSite.Settings.Language) ? "--" : aSite.Settings.Language;
-                    List<string> listForLang = null;
-                    if (!sitenames.TryGetValue(key, out listForLang)) { listForLang = new List<string>(); sitenames.Add(key, listForLang); }
-                    listForLang.Add(aSite.Settings.Name);
+                    if (site.Settings.IsEnabled &&
+                    (!site.Settings.ConfirmAge || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed))
+                    {
+                        string key = string.IsNullOrEmpty(site.Settings.Language) ? "--" : site.Settings.Language;
+                        List<string> listForLang = null;
+                        if (!sitenames.TryGetValue(key, out listForLang)) { listForLang = new List<string>(); sitenames.Add(key, listForLang); }
+                        listForLang.Add(site.Settings.Name);
+                    }
                 }
             }
             foreach (string aLang in sitenames.Keys.ToList().OrderBy(l => l))
@@ -459,92 +428,24 @@ namespace OnlineVideos.MediaPortal2
                 OnlineVideosMessaging.MessageType messageType = (OnlineVideosMessaging.MessageType)message.MessageType;
                 switch (messageType)
                 {
-                    case OnlineVideosMessaging.MessageType.SitesUpdated:
-                        bool? updateResult = (bool?)message.MessageData[OnlineVideosMessaging.UPDATE_RESULT];
-                        if (updateResult != false)
-                        {
-                            if (OnlineVideoSettings.Instance.IsSiteUtilsListBuilt())
-                            {
-                                if (updateResult == true)
-                                {
-                                    Log.Info("Reloading SiteUtil Dlls at runtime.");
-                                    DownloadManager.Instance.StopAll();
-                                    // now reload the appdomain
-                                    OnlineVideoSettings.Reload();
-                                    TranslationLoader.SetTranslationsToSingleton();
-                                    GC.Collect();
-                                    GC.WaitForFullGCComplete();
-                                }
-                            }
-                            OnlineVideoSettings.Instance.BuildSiteUtilsList();
-                            RebuildSitesList();
-                        }
-                        else
-                        {
-                            // called when entering OnlineVideos first time (after sites have been updated)
-                            if (!OnlineVideoSettings.Instance.IsSiteUtilsListBuilt())
-                            {
-                                // show the busy indicator, because loading site dlls takes some seconds
-                                ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
-                                try
-                                {
-                                    OnlineVideoSettings.Instance.BuildSiteUtilsList();
-                                    RebuildSitesList();
-                                }
-                                catch (Exception ex)
-                                {
-                                    Log.Error(ex);
-                                }
-                                finally
-                                {
-                                    ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
-                                }
-                            }
-                        }
+                    case OnlineVideosMessaging.MessageType.RebuildSites:
+                        SiteGroupsList.Clear();
+                        SitesList.Clear();
+                        sitesListHasAllSites = false;
                         break;
                 }
             }
         }
 
-        void OnlineVideosSettingsChanged(object sender, EventArgs e)
-        {
-            bool rebuildUtils = false;
-            bool rebuildList = false;
-
-            var settings = (sender as SettingsChangeWatcher<Configuration.Settings>).Settings;
-
-            // a download dir was now configured or removed
-            if ((string.IsNullOrEmpty(OnlineVideoSettings.Instance.DownloadDir) && !string.IsNullOrEmpty(settings.DownloadFolder)) ||
-                (!string.IsNullOrEmpty(OnlineVideoSettings.Instance.DownloadDir) && string.IsNullOrEmpty(settings.DownloadFolder)))
-            {
-                rebuildUtils = true;
-                rebuildList = true;
-            }
-            // usage of age confirmation has changed
-            if (settings.UseAgeConfirmation != OnlineVideoSettings.Instance.UseAgeConfirmation)
-            {
-                rebuildList = true;
-            }
-
-            settings.SetValuesToApi();
-
-            if (OnlineVideoSettings.Instance.IsSiteUtilsListBuilt())
-            {
-                if (rebuildUtils)
-                    OnlineVideoSettings.Instance.BuildSiteUtilsList();
-                if (rebuildList)
-                    RebuildSitesList();
-            }
-        }
-        
         #region IWorkflowModel implementation
 
-        public bool CanEnterState(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
+        public bool CanEnterState(NavigationContext oldContext, NavigationContext newContext)
         {
-            return !BackgroundTask.Instance.IsExecuting; // only can enter a new state when not doing any background work
+            // can only enter a new state when not running any background work
+            return !BackgroundTask.Instance.IsExecuting;
         }
 
-        public void ChangeModelContext(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext, bool push)
+        public void ChangeModelContext(NavigationContext oldContext, NavigationContext newContext, bool push)
         {
             // reload a site when going away from configuring it and settings were changed
             if (oldContext.WorkflowState.StateId == Guids.WorkflowStateSiteSettings && FocusedSite.UserSettingsChanged)
@@ -610,53 +511,32 @@ namespace OnlineVideos.MediaPortal2
             }
         }
 
-        public void Deactivate(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
+        public void Deactivate(NavigationContext oldContext, NavigationContext newContext)
         {
-            //
         }
 
-        public void Reactivate(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
+        public void Reactivate(NavigationContext oldContext, NavigationContext newContext)
         {
-            //
         }
 
-        public void EnterModelContext(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
+        public void EnterModelContext(NavigationContext oldContext, NavigationContext newContext)
         {
-            _messageQueue.Start();
-            // when entering OV model context and no siteutils have been loaded yet run automatic update (if configured)
+            // when no siteutils have been loaded yet - background automatic update is still running
             if (!OnlineVideoSettings.Instance.IsSiteUtilsListBuilt())
             {
-                if (_settingsWatcher.Settings.AutomaticUpdate &&
-                    _settingsWatcher.Settings.LastAutomaticUpdate.AddHours(_settingsWatcher.Settings.AutomaticUpdateInterval) < DateTime.Now &&
-                    OnlineVideos.Sites.Updater.VersionCompatible)
-                {
-                    IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
-                    workflowManager.NavigatePushAsync(Guids.DialogStateSiteUpdate);
-                }
-                else
-                {
-                    // show the busy indicator, because loading site dlls takes some seconds
-                    ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
-                    try
-                    {
-                        OnlineVideoSettings.Instance.BuildSiteUtilsList();
-                        RebuildSitesList();
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex);
-                    }
-                    finally
-                    {
-                        ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
-                    }
-                }
+                // show the busy indicator until sites are loaded
+                ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
+                while (!OnlineVideoSettings.Instance.IsSiteUtilsListBuilt())
+                    System.Threading.Thread.Sleep(50);
+                ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
             }
+
+            if (SiteGroupsList.Count == 0 && SitesList.Count == 0)
+                RebuildSitesList();
         }
 
-        public void ExitModelContext(MediaPortal.UI.Presentation.Workflow.NavigationContext oldContext, MediaPortal.UI.Presentation.Workflow.NavigationContext newContext)
+        public void ExitModelContext(NavigationContext oldContext, NavigationContext newContext)
         {
-            _messageQueue.Shutdown();
         }
 
         public Guid ModelId
@@ -664,12 +544,11 @@ namespace OnlineVideos.MediaPortal2
             get { return Guids.WorkFlowModelOV; }
         }
 
-        public void UpdateMenuActions(MediaPortal.UI.Presentation.Workflow.NavigationContext context, IDictionary<Guid, MediaPortal.UI.Presentation.Workflow.WorkflowAction> actions)
+        public void UpdateMenuActions(NavigationContext context, IDictionary<Guid, WorkflowAction> actions)
         {
-            //
         }
 
-        public ScreenUpdateMode UpdateScreen(MediaPortal.UI.Presentation.Workflow.NavigationContext context, ref string screen)
+        public ScreenUpdateMode UpdateScreen(NavigationContext context, ref string screen)
         {
             return ScreenUpdateMode.AutoWorkflowManager;
         }

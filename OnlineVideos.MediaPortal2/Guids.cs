@@ -39,7 +39,7 @@ namespace OnlineVideos.MediaPortal2
     public static class OnlineVideosMessaging
     {
         public const string CHANNEL = "OnlineVideos";
-        public enum MessageType { SitesUpdated }
+        public enum MessageType { SitesUpdated, RebuildSites }
         public const string UPDATE_RESULT = "UpdateResult";
     }
 }

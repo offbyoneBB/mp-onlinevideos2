@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using MediaPortal.Common;
+﻿using MediaPortal.Common;
 using MediaPortal.Common.General;
 using MediaPortal.Common.Localization;
 using MediaPortal.Common.Messaging;
@@ -12,6 +9,9 @@ using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.UI.Presentation.Workflow;
 using MediaPortal.UiComponents.Media.General;
 using OnlineVideos.Downloading;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -102,6 +102,37 @@ namespace OnlineVideos.MediaPortal2
                 });
         }
 
+        public void RemoveAllSites()
+        {
+            if (SitesList.Count > 0)
+            {
+                var dialogHandleId = ServiceRegistration.Get<IDialogManager>().ShowDialog(LocalizationHelper.Translate("[OnlineVideos.RemoveAllFromMySites]") + "?", "", DialogType.YesNoDialog, false, DialogButtonType.No);
+                _dialogCloseWatcher = new DialogCloseWatcher(this, dialogHandleId, (dialogResult) =>
+                {
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        bool needRefresh = false;
+                        foreach (var siteToRemove in SitesList)
+                        {
+                            SiteSettings localSite = null;
+                            var localSiteIndex = OnlineVideoSettings.Instance.GetSiteByName(((OnlineSiteViewModel)siteToRemove).Site.Name, out localSite);
+                            if (localSiteIndex >= 0)
+                            {
+                                OnlineVideoSettings.Instance.RemoveSiteAt(localSiteIndex);
+                                needRefresh = true;
+                            }
+                        }
+                        if (needRefresh)
+                        {
+                            OnlineVideoSettings.Instance.SaveSites();
+                            newDataSaved = true;
+                            GetFilteredAndSortedSites();
+                        }
+                    }
+                });
+            }
+        }
+
         #endregion
 
         #region IWorkflowModel implementation
@@ -113,12 +144,10 @@ namespace OnlineVideos.MediaPortal2
 
         public void ChangeModelContext(NavigationContext oldContext, NavigationContext newContext, bool push)
         {
-            //
         }
 
         public void Deactivate(NavigationContext oldContext, NavigationContext newContext)
         {
-            //
         }
 
         public void EnterModelContext(NavigationContext oldContext, NavigationContext newContext)
@@ -137,7 +166,6 @@ namespace OnlineVideos.MediaPortal2
                 {
                     Log.Info("Reloading SiteUtil Dlls at runtime.");
                     DownloadManager.Instance.StopAll();
-                    // now reload the appdomain
                     OnlineVideoSettings.Reload();
                     TranslationLoader.SetTranslationsToSingleton();
                     GC.Collect();
@@ -145,9 +173,8 @@ namespace OnlineVideos.MediaPortal2
                 }
                 if (newDataSaved || newDllsDownloaded)
                 {
-                    SystemMessage msg = new SystemMessage(OnlineVideosMessaging.MessageType.SitesUpdated);
-                    msg.MessageData[OnlineVideosMessaging.UPDATE_RESULT] = newDllsDownloaded ? new bool?(true) : new bool?();
-                    ServiceRegistration.Get<IMessageBroker>().Send(OnlineVideosMessaging.CHANNEL, msg);
+                    OnlineVideoSettings.Instance.BuildSiteUtilsList();                    
+                    ServiceRegistration.Get<IMessageBroker>().Send(OnlineVideosMessaging.CHANNEL, new SystemMessage(OnlineVideosMessaging.MessageType.RebuildSites));
                 }
             }
             newDataSaved = false;
@@ -161,7 +188,6 @@ namespace OnlineVideos.MediaPortal2
 
         public void Reactivate(NavigationContext oldContext, NavigationContext newContext)
         {
-            //
         }
 
         public void UpdateMenuActions(NavigationContext context, IDictionary<Guid, WorkflowAction> actions)
@@ -268,37 +294,6 @@ namespace OnlineVideos.MediaPortal2
         #endregion
 
         #region Private members - Menu commands
-
-        public void RemoveAllSites()
-        {
-            if (SitesList.Count > 0)
-            {
-                var dialogHandleId = ServiceRegistration.Get<IDialogManager>().ShowDialog(LocalizationHelper.Translate("[OnlineVideos.RemoveAllFromMySites]") + "?", "", DialogType.YesNoDialog, false, DialogButtonType.No);
-                _dialogCloseWatcher = new DialogCloseWatcher(this, dialogHandleId, (dialogResult) =>
-                {
-                    if (dialogResult == DialogResult.Yes)
-                    {
-                        bool needRefresh = false;
-                        foreach (var siteToRemove in SitesList)
-                        {
-                            SiteSettings localSite = null;
-                            var localSiteIndex = OnlineVideoSettings.Instance.GetSiteByName(((OnlineSiteViewModel)siteToRemove).Site.Name, out localSite);
-                            if (localSiteIndex >= 0)
-                            {
-                                OnlineVideoSettings.Instance.RemoveSiteAt(localSiteIndex);
-                                needRefresh = true;
-                            }
-                        }
-                        if (needRefresh)
-                        {
-                            OnlineVideoSettings.Instance.SaveSites();
-                            newDataSaved = true;
-                            GetFilteredAndSortedSites();
-                        }
-                    }
-                });
-            }
-        }
 
         void CreateMenuActions(NavigationContext context, IDictionary<Guid, WorkflowAction> actions)
         {
@@ -554,7 +549,7 @@ namespace OnlineVideos.MediaPortal2
             var settings = (sender as SettingsChangeWatcher<Configuration.Settings>).Settings;
             if (settings.UseAgeConfirmation != OnlineVideoSettings.Instance.UseAgeConfirmation)
             {
-                GetFilteredAndSortedSites();
+                SitesList.Clear();
             }
         }
 
