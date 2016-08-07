@@ -14,6 +14,7 @@ namespace OnlineVideos.Sites
         #region Constants
 
         const string MEDIA_SELECTOR_URL = "http://open.live.bbc.co.uk/mediaselector/5/select/version/2.0/mediaset/pc/vpid/"; //"http://www.bbc.co.uk/mediaselector/4/mtis/stream/";
+        const string HLS_MEDIA_SELECTOR_URL = "http://open.live.bbc.co.uk/mediaselector/5/select/version/2.0/mediaset/apple-ipad-hls/vpid/";
         const string MOST_POPULAR_URL = "http://www.bbc.co.uk/iplayer/group/most-popular";
         const string ATOZ_URL = "http://www.bbc.co.uk/iplayer/a-z/";
         static readonly string[] atoz = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0-9" };
@@ -90,8 +91,9 @@ namespace OnlineVideos.Sites
                 return null;
             }
 
+            string vpid = m.Groups[1].Value;
             XmlDocument doc = new XmlDocument();
-            doc.LoadXml(GetWebData(MEDIA_SELECTOR_URL + m.Groups[1].Value, proxy: proxyObj)); //uk only
+            doc.LoadXml(GetWebData(MEDIA_SELECTOR_URL + vpid, proxy: proxyObj)); //uk only
             XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");
 
@@ -169,6 +171,11 @@ namespace OnlineVideos.Sites
 
             if (sortedPlaybackOptions.Count == 0)
             {
+                //Fallback to HLS streams
+                string hlsUrl = GetHLSVideoUrl(video, vpid, proxyObj);
+                if (!string.IsNullOrEmpty(hlsUrl))
+                    return hlsUrl;
+
                 var errorNodes = doc.SelectNodes("//ns1:error", nsmRequest);
                 if (errorNodes.Count > 0) throw new OnlineVideosException(string.Format("BBC says: {0}", ((XmlElement)errorNodes[0]).GetAttribute("id")));
             }
@@ -183,6 +190,37 @@ namespace OnlineVideos.Sites
                 video.PlaybackOptions.Add(enumer.Current.Key, enumer.Current.Value);
             }
             return lastUrl;
+        }
+
+        string GetHLSVideoUrl(VideoInfo video, string vpid, WebProxy proxyObj)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(GetWebData(HLS_MEDIA_SELECTOR_URL + vpid, proxy: proxyObj)); //uk only
+            XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
+            nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");
+                        
+            foreach (XmlElement mediaElem in doc.SelectNodes("//ns1:media[@kind='video']", nsmRequest))
+            {
+                foreach (XmlElement connectionElem in mediaElem.SelectNodes("ns1:connection", nsmRequest))
+                {
+                    string playlistUrl = connectionElem.Attributes["href"].Value;
+                    string playlistStr = GetWebData(playlistUrl, proxy: proxyObj, userAgent: HlsPlaylistParser.APPLE_USER_AGENT);
+                    HlsPlaylistParser playlist = new HlsPlaylistParser(playlistStr, playlistUrl);
+                    if (playlist.StreamInfos.Count == 0)
+                        continue;
+
+                    video.PlaybackOptions = new Dictionary<string, string>();
+                    string lastUrl = "";
+                    foreach (HlsStreamInfo streamInfo in playlist.StreamInfos)
+                    {
+                        lastUrl = streamInfo.Url;
+                        string name = string.Format("{0}x{1} | {2} kbps", streamInfo.Width, streamInfo.Height, streamInfo.Bandwidth / 1024);
+                        video.PlaybackOptions.Add(name, lastUrl);
+                    }
+                    return lastUrl;
+                }
+            }
+            return null;
         }
 
         string getLiveUrls(VideoInfo video)
