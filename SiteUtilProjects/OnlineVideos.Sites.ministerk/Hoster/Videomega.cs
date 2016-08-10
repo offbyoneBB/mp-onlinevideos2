@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Jurassic;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,9 +8,8 @@ using System.Web;
 
 namespace OnlineVideos.Hoster
 {
-    public class Videomega : HosterBase, IReferer
+    public class Videomega : HosterBase
     {
-        private string refererUrl = null;
 
         public override string GetHosterUrl()
         {
@@ -18,50 +18,29 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
-            if (url.ToLower().Contains("/cdn.php") || url.ToLower().Contains("/view.php"))
-            {
-                string refUrl = RefererUrl;
-                //Clear referer
-                RefererUrl = null;
-                string data = GetWebData(url, referer: refUrl, cache: false, userAgent: "Apple-iPhone/701.341");
-                Regex rgx = new Regex(@"<source.*?src=""(?<url>[^""]*)");
-                Match m = rgx.Match(data);
-                if (m.Success)
-                {
-                    MPUrlSourceFilter.HttpUrl httpUrl = new MPUrlSourceFilter.HttpUrl(m.Groups["url"].Value);
-                    httpUrl.Referer = url;
-                    httpUrl.UserAgent = "Apple-iPhone/701.341";
-                    return httpUrl.ToString();
-                }
-            }
-            else
-            {
-                //doskabouter impl
-                int p = url.IndexOf('?');
-                string url2 = url.Insert(p, "iframe.php");
-                string webData = WebCache.Instance.GetWebData(url2);
-                Match m = Regex.Match(webData, @"document\.write\(unescape\(""(?<data>[^""]*)""\)\);");
-                if (m.Success)
-                {
-                    string data = HttpUtility.UrlDecode(m.Groups["data"].Value);
-                    m = Regex.Match(data, @"file:\s""(?<url>[^""]*)"",");
-                    if (m.Success)
-                        return m.Groups["url"].Value;
-                }
-            }
-            return String.Empty;
-        }
 
-        public string RefererUrl
-        {
-            get
+            string url2 = url;
+            if (!url.ToLower().Contains("iframe.php"))
             {
-                return refererUrl;
+                int p = url.IndexOf('?');
+                url2 = url.Insert(p, "iframe.php");
             }
-            set
-            {
-                refererUrl = value;
-            }
+            string webData = WebCache.Instance.GetWebData(url2);
+            Match m = Regex.Match(webData, @"eval\((?<js>.*)?\)$", RegexOptions.Multiline);
+            if (!m.Success)
+                return string.Empty;
+            string js = "var p = ";
+            js += m.Groups["js"].Value;
+            js += "; ";
+            js += "function packed(){return p;};";
+            ScriptEngine engine = new ScriptEngine();
+            engine.Execute(js);
+            string data = engine.CallGlobalFunction("packed").ToString();
+            m = Regex.Match(data, @"""(?<url>http[^""]*)");
+            if (!m.Success)
+                return String.Empty;
+            
+            return m.Groups["url"].Value;
         }
     }
 }
