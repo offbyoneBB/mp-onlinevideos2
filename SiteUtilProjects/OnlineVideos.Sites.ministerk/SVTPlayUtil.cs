@@ -514,13 +514,13 @@ namespace OnlineVideos.Sites
 
         public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
         {
-            //Extension always .f4m
+            string ext = url.Contains(".m3u8") ? ".mp4" : ".f4m";
             ITrackingInfo ti = GetTrackingInfo(video);
             if (ti != null && ti.VideoKind == VideoKind.TvSeries)
             {
-                return Helpers.FileUtils.GetSaveFilename(ti.Title) + ".S" + (ti.Season > 9 ? ti.Season.ToString() : "0" + ti.Season.ToString()) + "E" + (ti.Episode > 9 ? ti.Episode.ToString() : "0" + ti.Episode.ToString()) + ".f4m";
+                return Helpers.FileUtils.GetSaveFilename(ti.Title) + ".S" + (ti.Season > 9 ? ti.Season.ToString() : "0" + ti.Season.ToString()) + "E" + (ti.Episode > 9 ? ti.Episode.ToString() : "0" + ti.Episode.ToString()) + ext;
             }
-            return Helpers.FileUtils.GetSaveFilename(video.Title) + ".f4m";
+            return Helpers.FileUtils.GetSaveFilename(video.Title) + ext;
         }
 
 
