@@ -1077,7 +1077,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             List<SearchResultItem> results = new List<SearchResultItem>();
             if (currentProfile != null)
             {
-                RssLink cat = new RssLink() { Url = @"""" + HttpUtility.UrlEncode(query) + @"""" };
+                RssLink cat = new RssLink() { Url = @"""" + HttpUtility.UrlEncode(query) + @""", ""titles""" };
                 cat.SubCategories = GetSubCategories(cat, "search", 0);
                 cat.SubCategories.ForEach(c => results.Add(c));
             }
