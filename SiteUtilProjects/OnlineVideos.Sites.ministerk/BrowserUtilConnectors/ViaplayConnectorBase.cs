@@ -41,6 +41,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             username = username.Replace("SHOWLOADING", string.Empty);
             if (_showLoading)
                 ShowLoading();
+            Cursor.Hide();
+            Application.DoEvents();
             _password = password;
             _username = username;
             _currentState = State.Login;
