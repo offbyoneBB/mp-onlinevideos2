@@ -77,7 +77,6 @@
     <Compile Include="DreamfilmHDUtil.cs" />
     <Compile Include="LastFmUtil.cs" />
     <Compile Include="Utils\ExtendedWebCache.cs" />
-    <Compile Include="Hoster\Buggerdugger.cs" />
     <Compile Include="Hoster\IReferer.cs" />
     <Compile Include="Hoster\MailRu.cs" />
     <Compile Include="Hoster\Openload.cs" />
