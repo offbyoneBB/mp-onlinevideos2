@@ -31,10 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OnlineVideos">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
@@ -46,6 +42,12 @@
   <ItemGroup>
     <Compile Include="GameTrailersUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\OnlineVideos\OnlineVideos.csproj">
+      <Project>{e0d9d390-cdd6-4b98-86f3-6eb04a958882}</Project>
+      <Name>OnlineVideos</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
