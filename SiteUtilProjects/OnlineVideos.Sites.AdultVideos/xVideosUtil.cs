@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -135,6 +136,28 @@ namespace OnlineVideos.Sites
                 {
                     nextPageUrl = Utils.FormatAbsoluteUrl(nextPageNode.GetAttributeValue(@"href", string.Empty), baseUrl);
                 }
+                else
+                {
+                    bool isCurrent = false;
+                    // There is no next button, we need to scan pages and get next page manual
+                    foreach (var anchor in document.DocumentNode.SelectNodes(@"//div[@class ='pagination '][last()]/ul/li"))
+                    {
+                        var curUrlNode = anchor.SelectSingleNode(@".//a");
+                        if (curUrlNode != null)
+                        {
+                            var curUrl = curUrlNode.GetAttributeValue(@"href", string.Empty);
+                            if (string.IsNullOrEmpty(curUrl))
+                                isCurrent = true;
+                            else if (isCurrent)
+                            {
+                                nextPageUrl = Utils.FormatAbsoluteUrl(curUrl, baseUrl);
+                                break;
+                            }
+                        }
+                    }
+
+                }
+
 
                 foreach (var anchor in document.DocumentNode.SelectNodes(@"//div[@class ='mozaique']/div"))
                 {
