@@ -34,14 +34,13 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         {
             get
             {
-                if (_siteUtil.Settings.Language == "de")
-                {
+                if (string.Equals(_siteUtil.Settings.Language, "de", StringComparison.OrdinalIgnoreCase))
                     return "OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrimeDe.Connectors.AmazonPrimeDeConnector";
-                }
-                else
-                {
-                    return "OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connectors.AmazonPrimeConnector";
-                }
+
+                if (string.Equals(_siteUtil.Settings.Language, "en-us", StringComparison.OrdinalIgnoreCase))
+                    return "OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrimeUs.Connectors.AmazonPrimeUsConnector";
+
+                return "OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connectors.AmazonPrimeConnector";
             }
         }
 

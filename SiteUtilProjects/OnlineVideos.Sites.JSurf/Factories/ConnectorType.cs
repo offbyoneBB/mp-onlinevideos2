@@ -11,6 +11,7 @@ namespace OnlineVideos.Sites.JSurf.Factories
     public enum ConnectorType
     {
         AmazonPrime,
-        AmazonPrimeDe
+        AmazonPrimeDe,
+        AmazonPrimeUs
     }
 }

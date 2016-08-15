@@ -130,6 +130,8 @@ namespace OnlineVideos.Sites.JSurf.Properties
 
 		public static string Resources_de { get { return GetResourceString("Resources.de"); } }
 
+		public static string Resources_en_US { get { return GetResourceString("Resources.en_US"); } }
+
 		public static class Names
 		{
 			public const string SkyGoLiveTvImageUrl = "SkyGoLiveTvImageUrl";

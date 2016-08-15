@@ -19,6 +19,8 @@ namespace OnlineVideos.Sites.JSurf.Factories
                 return new AmazonPrimeInformationConnector(siteUtil);
             if (connectorType == ConnectorType.AmazonPrimeDe)
                 return new AmazonPrimeInformationConnector(siteUtil);
+            if (connectorType == ConnectorType.AmazonPrimeUs)
+                return new AmazonPrimeInformationConnector(siteUtil);
             return null;
         }
     }

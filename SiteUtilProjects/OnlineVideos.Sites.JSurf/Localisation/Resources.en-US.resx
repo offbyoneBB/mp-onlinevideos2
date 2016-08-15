@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AmazonLoginUrl" xml:space="preserve">
+    <value>https://www.amazon.com/ap/signin?_encoding=UTF8&amp;openid.assoc_handle=usflex&amp;openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&amp;openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&amp;openid.mode=checkid_setup&amp;openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&amp;openid.ns.pape=http%3A%2F%2Fspecs.openid.net%2Fextensions%2Fpape%2F1.0&amp;openid.pape.max_auth_age=0&amp;openid.return_to=https%3A%2F%2Fwww.amazon.com%2Fgp%2Fyourstore%2Fhome%3Fie%3DUTF8%26ref_%3Dnav_signin_btn</value>
+  </data>
+  <data name="AmazonMovieUrl" xml:space="preserve">
+    <value>http://www.amazon.com/gp/product/{VIDEO_ID}?ref_=pda_recs_wdgt_nav_dyn_{VIDEO_ID}&amp;autoplay=1</value>
+  </data>
+  <data name="AmazonMovieCategoriesUrl" xml:space="preserve">
+    <value>https://www.amazon.com/Prime-Movie-Genres/b/ref=atv_sn_piv_cl1_mv_gn?_encoding=UTF8&amp;node=3788183031</value>
+  </data>
+  <data name="AmazonTVCategoriesUrl" xml:space="preserve">
+    <value>http://www.amazon.com/Prime-TV-Genres/b/ref=atv_sn_piv_cl2_tv_gn?_encoding=UTF8&amp;node=3788187031</value>
+  </data>
+  <data name="AmazonRootUrl" xml:space="preserve">
+    <value>http://www.amazon.com</value>
+  </data>
+  <data name="AmazonMovieIcon" xml:space="preserve">
+    <value>http://ecx.images-amazon.com/images/I/51b8AY8hQBL._SX200_.jpg</value>
+  </data>
+  <data name="AmazonTvIcon" xml:space="preserve">
+    <value>http://ecx.images-amazon.com/images/I/51qB6Z-XI3L._SX200_.jpg</value>
+  </data>
+  <data name="AmazonMovieWatchlistUrl" xml:space="preserve">
+    <value>https://www.amazon.com/gp/video/watchlist/movies/ref=dv_web_wtls_nr_bar_mov?ie=UTF8&amp;&amp;sort=DATE_ADDED_DESC</value>
+  </data>
+  <data name="AmazonTVWatchlistUrl" xml:space="preserve">
+    <value>https://www.amazon.com/gp/video/watchlist/tv/ref=dv_web_wtls_nr_bar_tv?ie=UTF8&amp;sort=DATE_ADDED_DESC</value>
+  </data>
+  <data name="AmazonMoviePopularUrl" xml:space="preserve">
+    <value>https://www.amazon.com/s/ref=atv_mv_hom_1_c_s9pmpop_8_smr?_encoding=UTF8&amp;bbn=2858778011&amp;field-entity_type=14069184011&amp;field-ways_to_watch=12007865011&amp;node=2858778011&amp;pf_rd_i=home&amp;pf_rd_m=ATVPDKIKX0DER</value>
+  </data>
+  <data name="AmazonMovieRecentUrl" xml:space="preserve">
+    <value>http://www.amazon.com/s/ref=atv_sn_piv_cl1_mv_ra?_encoding=UTF8&amp;rh=n%3A3010085031%2Cn%3A3356010031%2Cn%3A4205369031&amp;sort=popularity-rank</value>
+  </data>
+  <data name="AmazonMovieEditorsUrl" xml:space="preserve">
+    <value>https://www.amazon.com/Prime-Movie-Editors-Picks/b/ref=atv_sn_piv_cl1_mv_ep?_encoding=UTF8&amp;node=3788182031</value>
+  </data>
+  <data name="AmazonTVPopularUrl" xml:space="preserve">
+    <value>http://www.amazon.com/s/ref=atv_sn_piv_cl2_tv_pl?_encoding=UTF8&amp;rh=n%3A3010085031%2Cn%3A3356011031&amp;sort=popularity-rank</value>
+  </data>
+  <data name="AmazonTVRecentUrl" xml:space="preserve">
+    <value>http://www.amazon.com/s/ref=atv_sn_siv_cl2_tv_nr?_encoding=UTF8&amp;rh=n%3A3010085031%2Cn%3A3356013031%2Cp_n_date%3A3280636031&amp;sort=popularity-rank</value>
+  </data>
+  <data name="AmazonTVEditorsUrl" xml:space="preserve">
+    <value>http://www.amazon.com/Shop-TV-Editors-Picks/b/ref=atv_sn_siv_cl2_tv_ep?_encoding=UTF8&amp;node=3788192031</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="AmazonSearchUrl" xml:space="preserve">
+    <value>http://www.amazon.com/s/ref=nb_sb_noss_1?url=search-alias%3Dprime-instant-video&amp;field-keywords={QUERY}&amp;ie=UTF-8&amp;lo=prime-instant-video</value>
+  </data>
+</root>
