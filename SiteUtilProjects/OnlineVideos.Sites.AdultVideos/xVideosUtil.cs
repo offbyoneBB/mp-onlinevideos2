@@ -10,7 +10,7 @@ using OnlineVideos.Sites.georgius;
 
 namespace OnlineVideos.Sites
 {
-    public class xVideosUtil : GenericSiteUtil
+    public class XVideosUtil : GenericSiteUtil
     {
         [Category("OnlineVideosConfiguration"), Description("Url used for prepending relative links.")]
         protected new string baseUrl = @"http://www.xvideos.com";
