@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\UrlExtensions.cs" />
     <Compile Include="XVideosUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -53,10 +54,6 @@
     <ProjectReference Include="..\..\OnlineVideos\OnlineVideos.csproj">
       <Project>{e0d9d390-cdd6-4b98-86f3-6eb04a958882}</Project>
       <Name>OnlineVideos</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OnlineVideos.Sites.georgius\OnlineVideos.Sites.georgius.csproj">
-      <Project>{FF136E46-938B-456F-8A54-F5E0B13BA2DC}</Project>
-      <Name>OnlineVideos.Sites.georgius</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

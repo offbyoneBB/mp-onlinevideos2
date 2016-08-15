@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using HtmlAgilityPack;
-using OnlineVideos.Sites.georgius;
+using OnlineVideos.Sites.Helpers;
 
 namespace OnlineVideos.Sites
 {
@@ -86,7 +86,7 @@ namespace OnlineVideos.Sites
                         Settings.Categories.Add(new RssLink()
                         {
                             Name = anchor.SelectSingleNode(".//a/b").InnerText,
-                            Url = Utils.FormatAbsoluteUrl(anchor.SelectSingleNode(".//a").GetAttributeValue(@"href", string.Empty), baseUrl),
+                            Url = baseUrl.CombineUrl(anchor.SelectSingleNode(".//a").GetAttributeValue(@"href", string.Empty)),
                             HasSubCategories = false
                         });
                     }
@@ -102,7 +102,7 @@ namespace OnlineVideos.Sites
                         Settings.Categories.Add(new RssLink()
                         {
                             Name = anchor.SelectSingleNode(".//a").InnerText,
-                            Url = Utils.FormatAbsoluteUrl(anchor.SelectSingleNode(".//a").GetAttributeValue(@"href", string.Empty), baseUrl),
+                            Url = baseUrl.CombineUrl(anchor.SelectSingleNode(".//a").GetAttributeValue(@"href", string.Empty)),
                             HasSubCategories = false
                         });
                     }
@@ -134,51 +134,67 @@ namespace OnlineVideos.Sites
                 var nextPageNode = document.DocumentNode.SelectSingleNode(@"//a[@class='no-page']");
                 if (nextPageNode != null)
                 {
-                    nextPageUrl = Utils.FormatAbsoluteUrl(nextPageNode.GetAttributeValue(@"href", string.Empty), baseUrl);
+                    nextPageUrl = baseUrl.CombineUrl(nextPageNode.GetAttributeValue(@"href", string.Empty));
                 }
                 else
                 {
-                    bool isCurrent = false;
-                    // There is no next button, we need to scan pages and get next page manual
-                    foreach (var anchor in document.DocumentNode.SelectNodes(@"//div[@class ='pagination '][last()]/ul/li"))
+                    try
                     {
-                        var curUrlNode = anchor.SelectSingleNode(@".//a");
-                        if (curUrlNode != null)
+                        // There is no next button, we need to scan pages and get next page manual
+                        bool isCurrent = false;
+                        foreach (var anchor in document.DocumentNode.SelectNodes(@"//div[@class ='pagination '][last()]/ul/li"))
                         {
-                            var curUrl = curUrlNode.GetAttributeValue(@"href", string.Empty);
-                            if (string.IsNullOrEmpty(curUrl))
-                                isCurrent = true;
-                            else if (isCurrent)
+                            var curUrlNode = anchor.SelectSingleNode(@".//a");
+                            if (curUrlNode != null)
                             {
-                                nextPageUrl = Utils.FormatAbsoluteUrl(curUrl, baseUrl);
-                                break;
+                                var curUrl = curUrlNode.GetAttributeValue(@"href", string.Empty);
+                                if (string.IsNullOrEmpty(curUrl))
+                                    isCurrent = true;
+                                else if (isCurrent)
+                                {
+                                    nextPageUrl = baseUrl.CombineUrl(curUrl);
+                                    break;
+                                }
                             }
                         }
                     }
-
+                    catch (Exception ex)
+                    {
+                        Log.Warn(string.Format("Error while retrieving Next Page Url: {0}", ex.Message));
+                    }
                 }
 
-
-                foreach (var anchor in document.DocumentNode.SelectNodes(@"//div[@class ='mozaique']/div"))
+                try
                 {
-                    var thumbNode = anchor.SelectSingleNode(@".//div[@class ='thumb']");
-                    if (thumbNode == null)
-                        continue;
-
-                    var rawThumb = thumbNode.InnerText;
-                    rawThumb = rawThumb.Substring(rawThumb.IndexOf("'", StringComparison.Ordinal)+1,
-                        rawThumb.LastIndexOf("'", StringComparison.Ordinal) - rawThumb.IndexOf("'", StringComparison.Ordinal)+1);
-                    var documentThumb = new HtmlDocument();
-                    documentThumb.LoadHtml(rawThumb);
-                    var thumb = documentThumb.DocumentNode.SelectSingleNode(@"//a/img").GetAttributeValue(@"src", string.Empty);
-
-                    result.Add(new VideoInfo()
+                    foreach (var anchor in document.DocumentNode.SelectNodes(@"//div[@class ='mozaique']/div"))
                     {
-                        VideoUrl = Utils.FormatAbsoluteUrl(anchor.SelectSingleNode(".//p/a").GetAttributeValue(@"href", string.Empty), baseUrl),
-                        Thumb = thumb,
-                        Title = anchor.SelectSingleNode(".//p/a/@title").InnerText,
-                        Length = anchor.SelectSingleNode(".//p/span/span[@class ='duration']").InnerText
-                    });
+                        var thumbNode = anchor.SelectSingleNode(@".//div[@class ='thumb']");
+                        if (thumbNode == null)
+                            continue;
+
+                        var rawThumb = thumbNode.InnerText;
+                        rawThumb = rawThumb.Substring(rawThumb.IndexOf("'", StringComparison.Ordinal) + 1,
+                            rawThumb.LastIndexOf("'", StringComparison.Ordinal) -
+                            rawThumb.IndexOf("'", StringComparison.Ordinal) + 1);
+                        var documentThumb = new HtmlDocument();
+                        documentThumb.LoadHtml(rawThumb);
+                        var thumb = documentThumb.DocumentNode.SelectSingleNode(@"//a/img")
+                            .GetAttributeValue(@"src", string.Empty);
+
+                        result.Add(new VideoInfo()
+                        {
+                            VideoUrl =
+                                baseUrl.CombineUrl(anchor.SelectSingleNode(".//p/a")
+                                    .GetAttributeValue(@"href", string.Empty)),
+                            Thumb = thumb,
+                            Title = anchor.SelectSingleNode(".//p/a/@title").InnerText,
+                            Length = anchor.SelectSingleNode(".//p/span/span[@class ='duration']").InnerText
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Error while retrieving VideoList: {0}", ex.Message);
                 }
             }
             return result;
@@ -224,11 +240,8 @@ namespace OnlineVideos.Sites
 
         public override List<SearchResultItem> Search(string query, string category = null)
         {
-            List<SearchResultItem> results = new List<SearchResultItem>();
             query = string.Format(searchUrl, HttpUtility.UrlEncode(query));
-            var internalResults = GetVideoListForSinglePage(_currentCategory, query);
-            internalResults.ForEach(ir => results.Add(ir));
-            return results;
+            return GetVideoListForSinglePage(_currentCategory, query).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
         }
     }
 }
