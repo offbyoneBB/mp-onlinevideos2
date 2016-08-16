@@ -16,6 +16,8 @@ using MediaPortal.UI.Presentation.Players;
 using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.UI.SkinEngine.InputManagement;
 using OnlineVideos.Helpers;
+using OnlineVideos.MediaPortal2.Interfaces.Metadata;
+using OnlineVideos.MediaPortal2.Models;
 using OnlineVideos.MediaPortal2.ResourceAccess;
 using OnlineVideos.Sites;
 using OnlineVideos.Sites.Interfaces;
@@ -57,8 +59,6 @@ namespace OnlineVideos.MediaPortal2
         protected PlayerEventDlgt _playbackStateChanged = null;
         protected PlayerEventDlgt _playbackError = null;
 
-        protected Timer _activationTimer;
-
         public bool GoFullscreen { get; set; }
         public string SubtitleFile { get; set; }
         public string PlaybackUrl { get; set; }
@@ -67,10 +67,19 @@ namespace OnlineVideos.MediaPortal2
         /// We require the command line parameters for the web browser host
         /// Util should be an implementation of IBrowserSiteUtil
         /// </summary>
-        /// <param name="util"></param>
-        public void Initialise(SiteUtilBase util)
+        /// <param name="mediaItem"></param>
+        public void Prepare(MediaItem mediaItem)
         {
             bool useIE = false;
+
+            ConfigurationHelper.Init();
+            string siteName;
+            SiteUtilBase util;
+            if (!MediaItemAspect.TryGetAttribute(mediaItem.Aspects, OnlineVideosAspect.ATTR_SITEUTIL, out siteName) || !OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(siteName, out util))
+            {
+                throw new ArgumentException("Could not determine used site util, can't start playback!");
+            }
+
             var browserConfig = util as IBrowserSiteUtil;
             if (browserConfig != null)
             {
@@ -89,12 +98,6 @@ namespace OnlineVideos.MediaPortal2
 
             _callback.OnBrowserClosing += _callback_OnBrowserHostClosing;
             _callback.OnBrowserKeyPress += _callback_OnBrowserKeyPress;
-            _callback.OnBrowserWndProc += _callback_OnBrowserWndProc;
-
-            _activationTimer = new Timer(500);
-            _activationTimer.AutoReset = true;
-            _activationTimer.Elapsed += AfterRemoteAction;
-            _activationTimer.Start();
 
             var processName = useIE ? HOST_PROCESS_NAME_IE : HOST_PROCESS_NAME;
             _processPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), processName + ".exe");
@@ -136,6 +139,9 @@ namespace OnlineVideos.MediaPortal2
 
         public bool Init(MediaItem mediaItem)
         {
+            // Prepare process information
+            Prepare(mediaItem);
+
             IResourceAccessor ra = null;
             try
             {
@@ -213,7 +219,6 @@ namespace OnlineVideos.MediaPortal2
                 {
                     ReinitialiseService();
                     SuspendMP(true);
-                    ActivateWindow();
                     ProcessHelper.SetForeground(_browserProcess.MainWindowHandle);
                     Redirect(_browserProcess.StandardError);
                 }
@@ -238,7 +243,7 @@ namespace OnlineVideos.MediaPortal2
             { Key.Right, OnlineVideos.Constants.ACTION_MOVE_RIGHT },
             { Key.Previous, OnlineVideos.Constants.ACTION_PREV_ITEM },
             { Key.Next, OnlineVideos.Constants.ACTION_NEXT_ITEM },
-            { Key.Escape, OnlineVideos.Constants.ACTION_WINDOWED },
+            { Key.Ok, OnlineVideos.Constants.ACTION_WINDOWED },
             { Key.Back, OnlineVideos.Constants.ACTION_WINDOWED },
             { Key.Fullscreen, OnlineVideos.Constants.ACTION_FULLSCREEN },
             { Key.Red, OnlineVideos.Constants.ACTION_FULLSCREEN },
@@ -293,6 +298,8 @@ namespace OnlineVideos.MediaPortal2
         {
             if (action == OnlineVideos.Constants.ACTION_WINDOWED)
             {
+                // Make sure the MP2 GUI is back visible
+                ServiceRegistration.Get<IScreenControl>().Restore();
                 int left = (int)TargetBounds.Left;
                 int top = (int)TargetBounds.Top;
                 int width = (int)TargetBounds.Width;
@@ -370,18 +377,10 @@ namespace OnlineVideos.MediaPortal2
         private void ToggleMinimise(bool shouldMinimise)
         {
             ServiceRegistration.Get<IScreenControl>().DisableTopMost = shouldMinimise;
-        }
-
-        private void ActivateWindow()
-        {
-            var form = ServiceRegistration.Get<IScreenControl>() as Form;
-            if (form != null)
-                form.Activate();
-        }
-
-        private void AfterRemoteAction(object sender, EventArgs e)
-        {
-            ActivateWindow();
+            if (shouldMinimise)
+                ServiceRegistration.Get<IScreenControl>().Minimize();
+            else
+                ServiceRegistration.Get<IScreenControl>().Restore();
         }
 
         /// <summary>
@@ -441,55 +440,17 @@ namespace OnlineVideos.MediaPortal2
         }
 
         /// <summary>
-        /// Handle wnd proc from the browser host to try and translate to an action
-        /// </summary>
-        /// <param name="msg"></param>
-        bool _callback_OnBrowserWndProc(Message msg)
-        {
-            Action action;
-            char key;
-            Keys keyCode;
-
-            //if (InputDevices.WndProc(ref msg, out action, out key, out keyCode))
-            //{
-            //    //If remote doesn't fire event directly we manually fire it
-            //    if (action != null && action.wID != Action.ActionType.ACTION_INVALID)
-            //    {
-            //        GUIWindowManager_OnNewAction(action);
-            //    }
-
-            //    if (keyCode != Keys.A)
-            //    {
-            //        var ke = new KeyEventArgs(keyCode);
-            //        _callback_OnBrowserKeyPress(ke.KeyValue);
-            //    }
-            //    return true;
-            //}
-            return false;
-        }
-
-        /// <summary>
         /// When the browser has a key press, try and map it to an action and fire the on action 
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="keyPressed">Key pressed in browser</param>
         void _callback_OnBrowserKeyPress(int keyPressed)
         {
-            //var action = new Action();
-
-            //if (ActionTranslator.GetAction(-1, new Key(0, keyPressed), ref action))
-            //{
-            //    GUIWindowManager_OnNewAction(action);
-            //}
-            //else
-            //{
-            //    //See if it's mapped to KeyPressed instead
-            //    if (keyPressed >= (int)Keys.A && keyPressed <= (int)Keys.Z)
-            //        keyPressed += 32; //convert to char code
-            //    if (ActionTranslator.GetAction(-1, new Key(keyPressed, 0), ref action))
-            //        GUIWindowManager_OnNewAction(action);
-            //}
+            // We received a key press from browser, translate it into an MP2 key. Then we try to invoke an action inside the browserhost by sending
+            // back a translated message
+            var key = InputMapper.MapSpecialKey((Keys)keyPressed, false, false, false);
+            InstanceOnKeyPressed(ref key);
         }
+
         #endregion
 
         protected void Ended()
@@ -500,11 +461,6 @@ namespace OnlineVideos.MediaPortal2
 
         public void Stop()
         {
-            if (_activationTimer != null)
-            {
-                _activationTimer.Dispose();
-                _activationTimer = null;
-            }
             Shutdown();
             State = PlayerState.Ended;
             FireEnded();

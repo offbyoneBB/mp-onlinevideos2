@@ -296,6 +296,8 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                     {
                         Size = new Size(width, height);
                         Location = new Point(left, top);
+                        TopMost = true;
+                        BringToFront();
                         _logger.Debug("ACTION_WINDOWED: Position: {0}, Size: {1}", Location, Size);
                     }
                 }

@@ -79,6 +79,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OnlineVideos.MediaPortal2.Interfaces\OnlineVideos.MediaPortal2.Interfaces.csproj">
+      <Project>{F54CFB16-1599-4676-BED6-2AB1C6F4DE53}</Project>
+      <Name>OnlineVideos.MediaPortal2.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OnlineVideos\OnlineVideos.csproj">
       <Project>{E0D9D390-CDD6-4B98-86F3-6EB04A958882}</Project>
       <Name>OnlineVideos</Name>
@@ -94,14 +98,14 @@
     <Compile Include="Configuration\Configuration.cs" />
     <Compile Include="Controls\OverlayPanel.cs" />
     <Compile Include="DynamicWorkflow.cs" />
+    <Compile Include="Models\ConfigurationHelper.cs" />
+    <Compile Include="OnlineVideosPlugin.cs" />
     <Compile Include="Models\SiteUpdateWorkflowModels.cs" />
     <Compile Include="Configuration\UserSiteSettingsStore.cs" />
     <Compile Include="Models\SiteManagementWorkflowModel.cs" />
     <Compile Include="OnlineVideosPlugin.cs" />
     <Compile Include="Player\OnlineVideoPlayerBuilder.cs" />
     <Compile Include="Player\WebBrowserVideoPlayer.cs" />
-    <Compile Include="ResourceAccess\RawTokenResourceAccessor.cs" />
-    <Compile Include="ResourceAccess\RawTokenResourceProvider.cs" />
     <Compile Include="ViewModels\CategoryViewModel.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="LogDelegator.cs" />
