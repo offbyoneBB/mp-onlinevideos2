@@ -34,12 +34,11 @@ using MediaPortal.Common.Threading;
 using MediaPortal.UI.Presentation.Workflow;
 using OnlineVideos.CrossDomain;
 using OnlineVideos.Downloading;
+using OnlineVideos.MediaPortal2.Interfaces.Metadata;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using OnlineVideos.MediaPortal2.Interfaces.Metadata;
-using OnlineVideos.MediaPortal2.Models;
 
 namespace OnlineVideos.MediaPortal2
 {

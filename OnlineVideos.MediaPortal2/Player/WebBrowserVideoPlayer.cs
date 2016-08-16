@@ -17,14 +17,12 @@ using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.UI.SkinEngine.InputManagement;
 using OnlineVideos.Helpers;
 using OnlineVideos.MediaPortal2.Interfaces.Metadata;
-using OnlineVideos.MediaPortal2.Models;
 using OnlineVideos.MediaPortal2.ResourceAccess;
 using OnlineVideos.Sites;
 using OnlineVideos.Sites.Interfaces;
 using OnlineVideos.Sites.Proxy.WebBrowserPlayerService;
 using OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation;
 using SharpDX;
-using Timer = System.Timers.Timer;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -72,7 +70,6 @@ namespace OnlineVideos.MediaPortal2
         {
             bool useIE = false;
 
-            ConfigurationHelper.Init();
             string siteName;
             SiteUtilBase util;
             if (!MediaItemAspect.TryGetAttribute(mediaItem.Aspects, OnlineVideosAspect.ATTR_SITEUTIL, out siteName) || !OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(siteName, out util))

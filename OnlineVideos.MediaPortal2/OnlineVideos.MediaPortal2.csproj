@@ -98,12 +98,10 @@
     <Compile Include="Configuration\Configuration.cs" />
     <Compile Include="Controls\OverlayPanel.cs" />
     <Compile Include="DynamicWorkflow.cs" />
-    <Compile Include="Models\ConfigurationHelper.cs" />
     <Compile Include="OnlineVideosPlugin.cs" />
     <Compile Include="Models\SiteUpdateWorkflowModels.cs" />
     <Compile Include="Configuration\UserSiteSettingsStore.cs" />
     <Compile Include="Models\SiteManagementWorkflowModel.cs" />
-    <Compile Include="OnlineVideosPlugin.cs" />
     <Compile Include="Player\OnlineVideoPlayerBuilder.cs" />
     <Compile Include="Player\WebBrowserVideoPlayer.cs" />
     <Compile Include="ViewModels\CategoryViewModel.cs" />
