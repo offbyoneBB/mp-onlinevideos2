@@ -1181,6 +1181,16 @@
         <item key="baseUrl"><![CDATA[http://www1.wdr.de/fernsehen/kultur/rockpalast/videos/index.html]]></item>
       </Configuration>
     </Site>
+    <Site name="RTBF" util="RTBF" agecheck="false" enabled="true" lang="fr">
+      <Description>Retrouvez le replay de toutes vos émissions et séries  de la RTBF</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://www.rtbf.be/auvio]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" thumb="" desc="" name="Live (not supported)">http://www.rtbf.be/auvio/direct#category=0</Category>
+        <Category xsi:type="RssLink" thumb="" desc="" name="Émissions">http://www.rtbf.be/auvio/emissions</Category>
+      </Categories>
+    </Site>
     <Site name="RTE.ie" util="RTEPlayer" agecheck="false" enabled="true" lang="en">
       <Description>RTÉ news brings you the latest Irish news, world news, international news and up to the minute reports on breaking Irish news stories and news from around the world. Watch and listen to Irish news stories on our video and audio streams.</Description>
       <Configuration>

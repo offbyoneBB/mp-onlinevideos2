@@ -119,6 +119,7 @@
     <Compile Include="PowerUnlimitedUtil.cs" />
     <Compile Include="RedBull.cs" />
     <Compile Include="RockPalastUtil.cs" />
+    <Compile Include="RTBFUtil.cs" />
     <Compile Include="RTEPlayerUtil.cs" />
     <Compile Include="RtmpUtil.cs" />
     <Compile Include="RuutuUtil.cs" />
