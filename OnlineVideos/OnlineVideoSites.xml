@@ -971,6 +971,7 @@
         <Category xsi:type="RssLink" thumb="" desc="" name="Series">http://www.kijk.nl/series</Category>
         <Category xsi:type="RssLink" thumb="" desc="" name="Genres">http://www.kijk.nl/genres</Category>
         <Category xsi:type="RssLink" thumb="" desc="" name="A - Z">http://www.kijk.nl/programmas</Category>
+        <Category xsi:type="RssLink" thumb="" desc="" name="Upload">http://upload.kijk.nl</Category>
       </Categories>
     </Site>
     <Site name="KissAnime" util="KissAnime" agecheck="false" enabled="true" lang="en">
