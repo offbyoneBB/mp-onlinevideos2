@@ -1,10 +1,6 @@
 ﻿using Jurassic;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
 
 namespace OnlineVideos.Hoster
 {
@@ -20,7 +16,11 @@ namespace OnlineVideos.Hoster
         {
 
             string url2 = url;
-            if (!url.ToLower().Contains("iframe.php"))
+            if (url.ToLower().Contains("view.php"))
+            {
+                url2 = url.Replace("view.php", "iframe.php");
+            }
+            else if (!url.ToLower().Contains("iframe.php"))
             {
                 int p = url.IndexOf('?');
                 url2 = url.Insert(p, "iframe.php");
@@ -39,7 +39,7 @@ namespace OnlineVideos.Hoster
             m = Regex.Match(data, @"""(?<url>http[^""]*)");
             if (!m.Success)
                 return String.Empty;
-            
+
             return m.Groups["url"].Value;
         }
     }
