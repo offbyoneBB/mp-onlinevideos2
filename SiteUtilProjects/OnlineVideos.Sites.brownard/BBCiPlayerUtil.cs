@@ -78,6 +78,14 @@ namespace OnlineVideos.Sites
 
         #region GetUrl
 
+        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        {
+            string url = GetVideoUrl(video);
+            if (inPlaylist)
+                video.PlaybackOptions.Clear();
+            return new List<string>() { url };
+        }
+
         public override string GetVideoUrl(VideoInfo video)
         {
             if (video.Other == "livestream")
