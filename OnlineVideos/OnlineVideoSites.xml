@@ -1083,7 +1083,7 @@
     <Site name="Nos" util="GenericSite" agecheck="false" enabled="true" lang="nl">
       <Description>Nieuws, Sport en Evenementen op Radio, TV en Internet</Description>
       <Configuration>
-        <item key="videoListRegEx"><![CDATA[(<li\sclass="list-featured__item\s"><a\shref="(?<VideoUrl>[^"]*)"\s*class="link-block"><figure\sclass="list-featured__img"><img\s*src="(?<ImageUrl>[^"]*)"\s*alt=""\s*class="media-full"\s*/><span\sclass="img-icon-play\sbadge--larger\spos-bl\sshow-from--tablet-small"></span></figure><div\sclass="list-featured__wrap"><span\sclass="list-featured__title\slink-hover">(?<Title>[^<]*)</span><div\sclass="list-featured__meta\smeta"><span\sclass="icon-time\sico-space-right"></span><time\sdatetime="[^"]*">(?<Airdate>[^<]*)</time></div></div></a></li>)(?#videos nieuws_sport)|(<li\sclass="broadcast-player__playlist__item"><a\shref="(?<VideoUrl>[^"]*)"\sclass="link-hover\sbroadcast-link\s*"\s*><span\sclass="broadcast-link__play\simg-icon-play"></span><span\sclass="broadcast-link__name\s">(?<Title>[^<]*)</span><time\sclass="broadcast-link__date"\sdatetime="(?<Airdate>[^"]*)"><span\sclass="broadcast-link__icon\sicon-time\sico-space-right"></span>(?<Time>[^<]*)</time></a></li>)(?#videos uitzendingen)]]></item>
+        <item key="videoListRegEx"><![CDATA[(<li\sclass="list-featured__item\s"[^>]*><a\shref="(?<VideoUrl>[^"]*)"\s*class="link-block[^>]*><figure\sclass="list-featured__img"><img\s*src="(?<ImageUrl>[^"]*)"\s*alt=""\s*class="media-full"\s*/><span\sclass="img-icon-play\sbadge--larger\spos-bl\sshow-from--tablet-small"></span></figure><div\sclass="list-featured__wrap"><span\sclass="list-featured__title\slink-hover">(?<Title>[^<]*)</span><div\sclass="list-featured__meta\smeta"><span\sclass="icon-time\sico-space-right"></span><time\sdatetime="[^"]*">(?<Airdate>[^<]*)</time></div></div></a></li>)(?#videos nieuws_sport)|(<li\sclass="broadcast-player__playlist__item"><a\shref="(?<VideoUrl>[^"]*)"\sclass="link-hover\sbroadcast-link\s*"\s*><span\sclass="broadcast-link__play\simg-icon-play"></span><span\sclass="broadcast-link__name\s">(?<Title>[^<]*)</span><time\sclass="broadcast-link__date"\sdatetime="(?<Airdate>[^"]*)"><span\sclass="broadcast-link__icon\sicon-time\sico-space-right"></span>(?<Time>[^<]*)</time></a></li>)(?#videos uitzendingen)]]></item>
         <item key="fileUrlRegEx"><![CDATA[<source\ssrc="(?<m0>[^"]*)"\stype="[^"]*"\sdata-label="(?<n0>[^"]*)"\s*/>]]></item>
         <item key="baseUrl"><![CDATA[http://nos.nl]]></item>
       </Configuration>
@@ -1092,6 +1092,7 @@
           <SubCategories>
             <Category xsi:type="RssLink" thumb="" desc="" name="Binnenland">http://nos.nl/nieuws/binnenland/videos/</Category>
             <Category xsi:type="RssLink" thumb="" desc="" name="Buitenland">http://nos.nl/nieuws/buitenland/videos/</Category>
+            <Category xsi:type="RssLink" thumb="" desc="" name="Regio">http://nos.nl/nieuws/regio/videos/</Category>
             <Category xsi:type="RssLink" thumb="" desc="" name="Politiek">http://nos.nl/nieuws/politiek/videos/</Category>
             <Category xsi:type="RssLink" thumb="" desc="" name="Economie">http://nos.nl/nieuws/economie/videos/</Category>
             <Category xsi:type="RssLink" thumb="" desc="" name="Koningshuis">http://nos.nl/nieuws/koningshuis/videos/</Category>
@@ -1112,7 +1113,6 @@
           <SubCategories>
             <Category xsi:type="RssLink" thumb="" desc="" name="NOS Journaal">http://nos.nl/uitzending/nos-journaal</Category>
             <Category xsi:type="RssLink" thumb="" desc="" name="Nieuwsuur">http://nos.nl/uitzending/nieuwsuur</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="NOS op 3">http://nos.nl/uitzending/nos-op-3</Category>
             <Category xsi:type="RssLink" thumb="" desc="" name="NOS Jeugdjournaal">http://nos.nl/uitzending/nos-jeugdjournaal</Category>
             <Category xsi:type="RssLink" thumb="" desc="" name="NOS Sportjournaal">http://nos.nl/uitzending/nos-sportjournaal</Category>
             <Category xsi:type="RssLink" thumb="" desc="" name="NOS Studio Sport">http://nos.nl/uitzending/nos-studio-sport</Category>
