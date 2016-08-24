@@ -141,7 +141,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                         {
                             string jsCode = "document.getElementsByName('email')[0].value = '" + _username + "'; ";
                             jsCode += "document.getElementsByName('password')[0].value = '" + _password + "'; ";
-                            jsCode += "if (document.getElementById('login-form-contBtn')) { document.getElementById('login-form-contBtn').click(); } else { document.getElementsByTagName('form')[0].submit();}";
+                            jsCode += "if (document.getElementById('login-form-contBtn')) { document.getElementById('login-form-contBtn').click(); } else if ( jQuery('.login-button:visible')) { jQuery('.login-button:visible').click(); setTimeout( function() {  jQuery('.login-button:visible').click(); }, 500);} else { document.getElementsByTagName('form')[0].submit();}";
                             InvokeScript(jsCode);
                             usernamePosted = true;
                             timer.Stop();
@@ -158,7 +158,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                         timer.Tick += (object sender, EventArgs e) =>
                         {
                             string jsCode = "document.getElementsByName('password')[0].value = '" + _password + "'; ";
-                            jsCode += "document.getElementsByTagName('form')[0].submit(); ";
+                            jsCode += " if (jQuery('.login-button:visible')) { jQuery('.login-button:visible').click(); } else {  document.getElementsByTagName('form')[0].submit();};  ";
                             InvokeScript(jsCode);
                             timer.Stop();
                             timer.Dispose();
