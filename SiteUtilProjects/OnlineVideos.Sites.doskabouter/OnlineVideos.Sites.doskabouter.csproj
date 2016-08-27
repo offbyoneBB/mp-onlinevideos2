@@ -124,7 +124,6 @@
     <Compile Include="RtmpUtil.cs" />
     <Compile Include="RuutuUtil.cs" />
     <Compile Include="SBSauUtil.cs" />
-    <Compile Include="SubtitleHandler.cs" />
     <Compile Include="TelewizjadaUtil.cs" />
     <Compile Include="ToonsTv.cs" />
     <Compile Include="TubePlusUtil.cs" />

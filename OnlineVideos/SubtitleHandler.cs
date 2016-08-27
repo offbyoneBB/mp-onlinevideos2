@@ -1,7 +1,4 @@
-﻿#if SUBTITLE
-extern alias MySubtitleDownloader; //resolves conflicts with HtmlAgilityPack elsewhere in this project
-using MySubtitleDownloader.SubtitleDownloader.Core;
-#endif
+﻿using SubtitleDownloader.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -45,9 +42,7 @@ namespace OnlineVideos.Subtitles
                     for (int i = 0; i < langs.Length; i++)
                         languagePrios.Add(langs[i], i);
 
-#if SUBTITLE
                     tryLoadSubtitles = tryLoad(className);
-#endif
                 }
                 else
                     Log.Debug("SubtitleDownloader: classname empty");
@@ -66,9 +61,7 @@ namespace OnlineVideos.Subtitles
         {
             try
             {
-#if SUBTITLE
                 setSubtitleText(video, trackingInfo);
-#endif
             }
             catch (Exception e)
             {
@@ -130,7 +123,6 @@ namespace OnlineVideos.Subtitles
                 thread.Join();
         }
 
-#if SUBTITLE
 
         // keep all references to subtitledownloader in separate methods, so that methods that are called from siteutil don't throw an ecxeption
         private bool tryLoad(string className)
@@ -200,7 +192,6 @@ namespace OnlineVideos.Subtitles
                     fi.Delete();
             }
         }
-#endif
     }
 
     /// <summary>
@@ -224,13 +215,11 @@ namespace OnlineVideos.Subtitles
         {
             List<String> sources = new List<String>();
 
-#if SUBTITLE
             Assembly subAssembly = Assembly.GetAssembly(typeof(ISubtitleDownloader));
             Type ISubType = typeof(ISubtitleDownloader);
             foreach (Type t in subAssembly.GetTypes())
                 if (t != ISubType && ISubType.IsAssignableFrom(t) && t.Name.EndsWith("Downloader"))
                     sources.Add(t.Name.Substring(0, t.Name.Length - 10));
-#endif
             return new StandardValuesCollection(sources);
         }
 
