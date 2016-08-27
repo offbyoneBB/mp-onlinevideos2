@@ -77,6 +77,37 @@ namespace OnlineVideos.Sites.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to function fillPassword(pwd) {
+        ///    var field = jQuery(&quot;input[name=password]:visible&quot;);
+        ///    if (field !== null &amp;&amp; field.length &gt; 0) {
+        ///        field.val(pwd).change();
+        ///        return true;
+        ///    };
+        ///    return false;
+        ///}
+        ///
+        ///function fillUser(user) {
+        ///    var field = jQuery(&quot;input[name=email]:visible&quot;);
+        ///    if (field !== null &amp;&amp; field.length &gt; 0) {
+        ///        field.val(user).change();
+        ///        return true;
+        ///    };
+        ///    return false;
+        ///}
+        ///
+        ///function doClick() {
+        ///    jQuery(&quot;.login-button:visible&quot;).click();
+        ///}
+        ///
+        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string NetflixJs {
+            get {
+                return ResourceManager.GetString("NetflixJs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to function myLogin(u, p) {
         ///    $(&apos;#LoginForm_email&apos;).val(u);
         ///    $(&apos;#LoginForm_password&apos;).val(p);
