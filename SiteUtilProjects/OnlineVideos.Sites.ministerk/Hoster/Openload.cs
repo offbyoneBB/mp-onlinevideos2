@@ -23,12 +23,13 @@ namespace OnlineVideos.Hoster
                 string enc = HttpUtility.HtmlDecode(m.Groups["enc"].Value);
                 string chars = "";
 
-                for (int i = 0; i < enc.Count(); i++)
+                int eCount = enc.Count();
+                for (int i = 0; i < eCount; i++)
                 {
                     int j = (int)enc[i];
                     if (j >= 33 && j <= 126)
                         j = ((j + 14) % 94) + 33;
-                    chars += (char)j;
+                    chars += (char)(j + (i == eCount -1 ? 2 : 0));
                 }
                 url = "https://openload.co/stream/" + chars + "?mime=true";
                 return url;
