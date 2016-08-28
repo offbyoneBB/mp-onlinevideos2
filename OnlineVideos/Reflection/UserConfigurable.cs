@@ -82,14 +82,14 @@ namespace OnlineVideos
             return ((ICustomTypeDescriptor)this).GetProperties(null);
         }
 
-        private PropertyDescriptorCollection cachedPropertyDescriptors;
-        private FilterCache cachedFilter;
+        private PropertyDescriptorCollection _cachedPropertyDescriptors;
+        private FilterCache _cachedFilter;
 
         PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties(Attribute[] attributes)
         {
             bool filtering = (attributes != null && attributes.Length > 0);
-            PropertyDescriptorCollection props = cachedPropertyDescriptors;
-            FilterCache cache = cachedFilter;
+            PropertyDescriptorCollection props = _cachedPropertyDescriptors;
+            FilterCache cache = _cachedFilter;
 
             // Use a cached version if possible
             if (filtering && cache != null && cache.IsValid(attributes))
@@ -118,9 +118,9 @@ namespace OnlineVideos
                 cache = new FilterCache();
                 cache.Attributes = attributes;
                 cache.FilteredProperties = props;
-                cachedFilter = cache;
+                _cachedFilter = cache;
             }
-            else cachedPropertyDescriptors = props;
+            else _cachedPropertyDescriptors = props;
 
             return props;
         }

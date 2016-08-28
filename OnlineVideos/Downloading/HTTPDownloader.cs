@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Net;
 
 namespace OnlineVideos.Downloading
 {
-	public class HTTPDownloader : MarshalByRefObject, IDownloader
+    public class HTTPDownloader : MarshalByRefObject, IDownloader
     {
-		System.Threading.Thread downloadThread;
+        System.Threading.Thread _downloadThread;
 
         public bool Cancelled { get; private set; }
 
@@ -22,16 +20,16 @@ namespace OnlineVideos.Downloading
             HttpWebResponse response = null;
             try
             {
-				downloadThread = System.Threading.Thread.CurrentThread;
+                _downloadThread = System.Threading.Thread.CurrentThread;
                 using (FileStream fs = new FileStream(downloadInfo.LocalFile, FileMode.Create, FileAccess.Write, FileShare.None))
                 {
-                    HttpWebRequest request = (HttpWebRequest)System.Net.WebRequest.Create(downloadInfo.Url);
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(downloadInfo.Url);
                     request.Timeout = 15000;
                     request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
                     request.Accept = "*/*";
                     request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
                     response = (HttpWebResponse)request.GetResponse();
-                                        
+
                     Stream responseStream;
                     if (response.ContentEncoding.ToLower().Contains("gzip"))
                         responseStream = new System.IO.Compression.GZipStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
@@ -70,17 +68,17 @@ namespace OnlineVideos.Downloading
             }
         }
 
-		public void Abort()
-		{
-			if (downloadThread != null) downloadThread.Abort();
-		}
+        public void Abort()
+        {
+            if (_downloadThread != null) _downloadThread.Abort();
+        }
 
-		#region MarshalByRefObject overrides
-		public override object InitializeLifetimeService()
-		{
-			// In order to have the lease across appdomains live forever, we return null.
-			return null;
-		}
-		#endregion
+        #region MarshalByRefObject overrides
+        public override object InitializeLifetimeService()
+        {
+            // In order to have the lease across appdomains live forever, we return null.
+            return null;
+        }
+        #endregion
     }
 }

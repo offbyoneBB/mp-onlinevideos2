@@ -48,12 +48,12 @@ namespace OnlineVideos.Hoster
 
         public virtual Dictionary<string, string> GetPlaybackOptions(string url)
         {
-            return new Dictionary<string, string>() { { GetType().Name, GetVideoUrl(url) } };
+            return new Dictionary<string, string> { { GetType().Name, GetVideoUrl(url) } };
         }
 
         public virtual Dictionary<string, string> GetPlaybackOptions(string url, System.Net.IWebProxy proxy)
         {
-            return new Dictionary<string, string>() { { GetType().Name, GetVideoUrl(url) } };
+            return new Dictionary<string, string> { { GetType().Name, GetVideoUrl(url) } };
         }
 
         public abstract string GetVideoUrl(string url);

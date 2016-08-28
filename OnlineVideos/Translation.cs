@@ -13,59 +13,59 @@ namespace OnlineVideos
     /// All public strings of this class should be used for localized display.
     /// The will be loaded with the translated version of their content at startup.
     /// </summary>
-	public class Translation : CrossDomain.CrossDomainSingleton<Translation>
+    public class Translation : CrossDomain.CrossDomainSingleton<Translation>
     {
-		private Translation() {}
+        private Translation() { }
 
-		Dictionary<string, string> _translations;
-		/// <summary>
-		/// Gets the translated strings collection in the active language
-		/// </summary>
-		public Dictionary<string, string> Strings
-		{
-			get
-			{
-				if (_translations == null)
-				{
-					_translations = new Dictionary<string, string>();
-					Type transType = typeof(Translation);
-					FieldInfo[] fields = transType.GetFields(BindingFlags.Public | BindingFlags.Instance);
-					foreach (FieldInfo field in fields)
-					{
-						_translations.Add(field.Name, field.GetValue(this).ToString());
-					}
-				}
-				return _translations;
-			}
-		}
+        Dictionary<string, string> _translations;
+        /// <summary>
+        /// Gets the translated strings collection in the active language
+        /// </summary>
+        public Dictionary<string, string> Strings
+        {
+            get
+            {
+                if (_translations == null)
+                {
+                    _translations = new Dictionary<string, string>();
+                    Type transType = typeof(Translation);
+                    FieldInfo[] fields = transType.GetFields(BindingFlags.Public | BindingFlags.Instance);
+                    foreach (FieldInfo field in fields)
+                    {
+                        _translations.Add(field.Name, field.GetValue(this).ToString());
+                    }
+                }
+                return _translations;
+            }
+        }
 
-		public string GetByName(string name)
-		{
-			string result = name;
-			Strings.TryGetValue(name, out result);
-			return result;
-		}
+        public string GetByName(string name)
+        {
+            string result = name;
+            Strings.TryGetValue(name, out result);
+            return result;
+        }
 
-		public string GetByName(string name, params object[] args)
-		{
-			return String.Format(GetByName(name), args);
-		}
+        public string GetByName(string name, params object[] args)
+        {
+            return String.Format(GetByName(name), args);
+        }
 
-		/// <summary>
-		/// Takes an input string and replaces all ${named} variables with the proper translation if available
-		/// </summary>
-		/// <param name="input">a string containing ${named} variables that represent the translation keys</param>
-		/// <returns>translated input string</returns>
-		public string ParseString(string input)
-		{
-			Regex replacements = new Regex(@"\$\{([^\}]+)\}");
-			MatchCollection matches = replacements.Matches(input);
-			foreach (Match match in matches)
-			{
-				input = input.Replace(match.Value, GetByName(match.Groups[1].Value));
-			}
-			return input;
-		}
+        /// <summary>
+        /// Takes an input string and replaces all ${named} variables with the proper translation if available
+        /// </summary>
+        /// <param name="input">a string containing ${named} variables that represent the translation keys</param>
+        /// <returns>translated input string</returns>
+        public string ParseString(string input)
+        {
+            Regex replacements = new Regex(@"\$\{([^\}]+)\}");
+            MatchCollection matches = replacements.Matches(input);
+            foreach (Match match in matches)
+            {
+                input = input.Replace(match.Value, GetByName(match.Groups[1].Value));
+            }
+            return input;
+        }
 
         // A
         public string AddingToFavorites = "adding to favorites";
@@ -90,7 +90,7 @@ namespace OnlineVideos
         public string Category = "Category";
         public string CategoryNotFound = "Category not found";
         public string Categories = "Categories";
-		public string ChangeSettings = "Change Settings";
+        public string ChangeSettings = "Change Settings";
         public string Concurrent = "concurrent";
         public string Creator = "Creator";
         public string CreateNewPlaylist = "Create new Playlist ...";
@@ -110,7 +110,7 @@ namespace OnlineVideos
         public string DownloadComplete = "Download Complete";
         public string DownloadStarted = "Download Started";
         public string DownloadedVideos = "Downloaded Videos";
-		public string DownloadsWillBeAborted = "Downloads will be aborted.";
+        public string DownloadsWillBeAborted = "Downloads will be aborted.";
         public string Delete = "Delete";
         public string DeletePlaylist = "Delete Playlist";
         public string DeleteAll = "Delete All";
@@ -172,19 +172,19 @@ namespace OnlineVideos
         public string NewSearch = "New search";
 
         // O
-		public string OnlyLocal = "Only Local";
-		public string OnlyServer = "Only Server";
-		public string Others = "Others";
+        public string OnlyLocal = "Only Local";
+        public string OnlyServer = "Only Server";
+        public string Others = "Others";
 
         // P
         public string PlayAll = "Play all";
-		public string PlayAllRandom = "Play all (random order)";
-		public string PlayAllFromHere = "Play all (from here)";
+        public string PlayAllRandom = "Play all (random order)";
+        public string PlayAllFromHere = "Play all (from here)";
         public string PlayWith = "Play with ...";
-		public string Playlists = "Playlists";
-		public string PlaybackWillBeStopped = "Playback will be stopped.";
+        public string Playlists = "Playlists";
+        public string PlaybackWillBeStopped = "Playback will be stopped.";
         public string PleaseEnterDescription = "Please give a short description.";
-		public string PleaseUpdateLocalSite = "Please update and retest your local site before reporting it broken.";
+        public string PleaseUpdateLocalSite = "Please update and retest your local site before reporting it broken.";
         public string PlotOutline = "Plot outline";
         public string PreviousPage = "Previous page";
         public string PerformAutomaticUpdate = "Perform automatic update?";
@@ -194,7 +194,7 @@ namespace OnlineVideos
 
         // R
         public string RateVideo = "Rate the Video ...";
-		public string Recommendations = "Recommendations";
+        public string Recommendations = "Recommendations";
         public string RemoveFromFavorites = "Remove from favorites";
         public string RemoveFromPlaylist = "Remove from Playlist";
         public string RemovingFromFavorites = "removing from favorites";
@@ -205,7 +205,7 @@ namespace OnlineVideos
         public string Reports = "Reports";
         public string Runtime = "Runtime";
         public string RemoveFromMySites = "Remove from my sites";
-		public string RemoveAllFromMySites = "Remove all from my sites";
+        public string RemoveAllFromMySites = "Remove all from my sites";
         public string RestartMediaPortal = "Restart MediaPortal!";
         public string RetrievingRemoteDlls = "Retrieving remote dlls ...";
         public string RetrievingRemoteSites = "Retrieving remote sites ...";
@@ -215,7 +215,7 @@ namespace OnlineVideos
         public string SelectSource = "Select source";
         public string Sites = "Sites";
         public string Size = "Size";
-		public string SkipSingleCategory = "Skip single Category";
+        public string SkipSingleCategory = "Skip single Category";
         public string SortOptions = "Sort options";
         public string Search = "Search";
         public string SetDownloadFolderInConfig = "Please set a download folder in Configuration!";
@@ -247,7 +247,7 @@ namespace OnlineVideos
 
         // V
         public string Videos = "Videos";
-		public string VideoQuality = "Video Quality";
+        public string VideoQuality = "Video Quality";
 
         // W
         public string Working = "Working";
@@ -257,142 +257,142 @@ namespace OnlineVideos
 
         // Z
 
-		// Strings from the settings file
-		public string Settings_Yes = "Yes";
-		public string Settings_No = "No";
-		public string Settings_SearchHistoryType_Off = "Off";
-		public string Settings_SearchHistoryType_Simple = "Simple";
-		public string Settings_SearchHistoryType_Extended = "Extended";
-		public string Settings_BasicHomeName = "Basic Home Name";
-		public string Settings_PluginEnabled = "Plugin Enabled";
-		public string Settings_ListedInHome = "Listed in Home";
-		public string Settings_ListedInPlugins = "Listed in My Plugins";
-		public string Settings_AutoGroupByLang = "Automatically group all sites by their language";
-		public string Settings_UseQuickSelect = "Use alphanumeric keys to quickly select items by first letter";
-		public string Settings_SearchHistoryType = "Search history";
-		public string Settings_ThumbAge = "Maximum age (days) for thumbnails";
-		public string Settings_CacheTimeout = "Time (minutes) to cache data from the web";
-		public string Settings_CategoryDiscoveryTimeout = "Time (minutes) after which categories are reloaded from the web";
-		public string Settings_UtilTimeout = "Timeout (seconds) for webrequests";
-		public string Settings_WmpBuffer = "Buffer (milliseconds) for Windows Media Player";
-		public string Settings_PlayBuffer = "Percentage to buffer before starting playback";
+        // Strings from the settings file
+        public string Settings_Yes = "Yes";
+        public string Settings_No = "No";
+        public string Settings_SearchHistoryType_Off = "Off";
+        public string Settings_SearchHistoryType_Simple = "Simple";
+        public string Settings_SearchHistoryType_Extended = "Extended";
+        public string Settings_BasicHomeName = "Basic Home Name";
+        public string Settings_PluginEnabled = "Plugin Enabled";
+        public string Settings_ListedInHome = "Listed in Home";
+        public string Settings_ListedInPlugins = "Listed in My Plugins";
+        public string Settings_AutoGroupByLang = "Automatically group all sites by their language";
+        public string Settings_UseQuickSelect = "Use alphanumeric keys to quickly select items by first letter";
+        public string Settings_SearchHistoryType = "Search history";
+        public string Settings_ThumbAge = "Maximum age (days) for thumbnails";
+        public string Settings_CacheTimeout = "Time (minutes) to cache data from the web";
+        public string Settings_CategoryDiscoveryTimeout = "Time (minutes) after which categories are reloaded from the web";
+        public string Settings_UtilTimeout = "Timeout (seconds) for webrequests";
+        public string Settings_WmpBuffer = "Buffer (milliseconds) for Windows Media Player";
+        public string Settings_PlayBuffer = "Percentage to buffer before starting playback";
         public string Settings_AllowRefreshrateChange = "Enable dynamic refresh rate adaption";
-		public string Settings_FavoritesFirst = "Put Favorites and Downloads sites first in the list instead of last";
+        public string Settings_FavoritesFirst = "Put Favorites and Downloads sites first in the list instead of last";
         public string Settings_LatestVideosMaxItems = "Amount of latest videos to display";
         public string Settings_LatestVideosRandomize = "Randomize all latest videos before displaying";
-		public string Settings_LatestVideosOnlineDataRefresh = "Refresh latest videos data from web every x minutes";
-		public string Settings_LatestVideosGuiDataRefresh = "Refresh displayed latest videos every x seconds";
-		public string Settings_StoreLayoutPerCategory = "Remember view layout per Site and Category";
+        public string Settings_LatestVideosOnlineDataRefresh = "Refresh latest videos data from web every x minutes";
+        public string Settings_LatestVideosGuiDataRefresh = "Refresh displayed latest videos every x seconds";
+        public string Settings_StoreLayoutPerCategory = "Remember view layout per Site and Category";
     }
 
-	/// <summary>
-	/// Helper class to load a localization xml file into the <see cref="Translation"/> class strings.
-	/// </summary>
-	public static class TranslationLoader
-	{
-		static Dictionary<string, string> TranslatedStrings = new Dictionary<string, string>();
+    /// <summary>
+    /// Helper class to load a localization xml file into the <see cref="Translation"/> class strings.
+    /// </summary>
+    public static class TranslationLoader
+    {
+        static Dictionary<string, string> TranslatedStrings = new Dictionary<string, string>();
 
-		/// <summary>
-		/// Load a localization. If the given <paramref name="language"/> file is not found, it will first try to load en-us.xml as a backup
-		/// If that also fails the hardcoded english strings are used.
-		/// </summary>
-		/// <param name="language">The language ISO code to load.</param>
-		/// <param name="translationFilesPath">The path where to look for localization xml files.</param>
-		/// <param name="fallBackLanguage">ISO code for a language to use when the other lanuage is not available - should be one that is 100% available</param>
-		/// <param name="fileNameFormatString">formatstring to apply when building the language file name, should include the {0} group</param>
-		/// <returns></returns>
-		public static string LoadTranslations(string language, string translationFilesPath, string fallBackLanguage = "en-US", string fileNameFormatString = "{0}.xml")
-		{
-			XmlDocument doc = new XmlDocument();
+        /// <summary>
+        /// Load a localization. If the given <paramref name="language"/> file is not found, it will first try to load en-us.xml as a backup
+        /// If that also fails the hardcoded english strings are used.
+        /// </summary>
+        /// <param name="language">The language ISO code to load.</param>
+        /// <param name="translationFilesPath">The path where to look for localization xml files.</param>
+        /// <param name="fallBackLanguage">ISO code for a language to use when the other lanuage is not available - should be one that is 100% available</param>
+        /// <param name="fileNameFormatString">formatstring to apply when building the language file name, should include the {0} group</param>
+        /// <returns></returns>
+        public static string LoadTranslations(string language, string translationFilesPath, string fallBackLanguage = "en-US", string fileNameFormatString = "{0}.xml")
+        {
+            XmlDocument doc = new XmlDocument();
 
-			string langPath = "";
-			try
-			{
-				langPath = Path.Combine(translationFilesPath, string.Format(fileNameFormatString, language));
-				doc.Load(langPath);
-			}
-			catch (Exception ex)
-			{
-				if (language == fallBackLanguage)
-				{
-					return language; // otherwise we are in an endless loop!
-				}
-				if (ex.GetType() == typeof(FileNotFoundException) || ex.GetType() == typeof(DirectoryNotFoundException))
-				{
-					Log.Warn("Cannot find translation xml file '{0}'.  Falling back to English", langPath);
-				}
-				else
-				{
-					Log.Error("Error in translation xml file: '{0}'. Falling back to English : {1}", langPath, ex.Message);
-				}
-				language = fallBackLanguage;
-				return LoadTranslations(language, translationFilesPath, fallBackLanguage, fileNameFormatString);
-			}
+            string langPath = "";
+            try
+            {
+                langPath = Path.Combine(translationFilesPath, string.Format(fileNameFormatString, language));
+                doc.Load(langPath);
+            }
+            catch (Exception ex)
+            {
+                if (language == fallBackLanguage)
+                {
+                    return language; // otherwise we are in an endless loop!
+                }
+                if (ex.GetType() == typeof(FileNotFoundException) || ex.GetType() == typeof(DirectoryNotFoundException))
+                {
+                    Log.Warn("Cannot find translation xml file '{0}'.  Falling back to English", langPath);
+                }
+                else
+                {
+                    Log.Error("Error in translation xml file: '{0}'. Falling back to English : {1}", langPath, ex.Message);
+                }
+                language = fallBackLanguage;
+                return LoadTranslations(language, translationFilesPath, fallBackLanguage, fileNameFormatString);
+            }
 
-			
-			foreach (XmlNode stringEntry in doc.DocumentElement.ChildNodes)
-			{
-				if (stringEntry.NodeType == XmlNodeType.Element)
-				{
-					try
-					{
-						// for MP2 we have every resource prefixed with OnlineVideos.
-						string key = stringEntry.Attributes.GetNamedItem("name").Value;
-						if (key.StartsWith("OnlineVideos.")) key = key.Substring("OnlineVideos.".Length);
-						// Android String Resources Format Has Escaped apostrophes
-						string value = stringEntry.InnerText.Replace(@"\'", "'");
-						TranslatedStrings.Add(key, value);
-					}
-					catch (Exception ex)
-					{
-						Log.Error("Error in Translation Engine: {0}", ex.ToString());
-					}
-				}
-			}
 
-			SetTranslationsToSingleton();
-			return language;
-		}
+            foreach (XmlNode stringEntry in doc.DocumentElement.ChildNodes)
+            {
+                if (stringEntry.NodeType == XmlNodeType.Element)
+                {
+                    try
+                    {
+                        // for MP2 we have every resource prefixed with OnlineVideos.
+                        string key = stringEntry.Attributes.GetNamedItem("name").Value;
+                        if (key.StartsWith("OnlineVideos.")) key = key.Substring("OnlineVideos.".Length);
+                        // Android String Resources Format Has Escaped apostrophes
+                        string value = stringEntry.InnerText.Replace(@"\'", "'");
+                        TranslatedStrings.Add(key, value);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error("Error in Translation Engine: {0}", ex.ToString());
+                    }
+                }
+            }
 
-		/// <summary>
-		/// The <see cref="Translation"/> class live in a sperate <see cref="AppDomain"/> than the main application.
-		/// This method re-sets all string fields with the previously loaded translation after the Domain was reloaded at runtime.
-		/// </summary>
-		public static void SetTranslationsToSingleton()
-		{
-			Type TransType = typeof(Translation);
-			FieldInfo[] fieldInfos = TransType.GetFields(BindingFlags.Public | BindingFlags.Instance);
-			foreach (FieldInfo fi in fieldInfos)
-			{
-				if (TranslatedStrings != null && TranslatedStrings.ContainsKey(fi.Name))
-					fi.SetValue(Translation.Instance, TranslatedStrings[fi.Name]);
-				else
-					Log.Debug("Translation not found for field: '{0}'. Using hard-coded English default.", fi.Name);
-			}
-		}
+            SetTranslationsToSingleton();
+            return language;
+        }
 
-		/// <summary>
-		/// Gets the Display Name of a Language from the localized installation of the .Net framework.
-		/// </summary>
-		/// <param name="languageCode">RFC 4646 Language Code</param>
-		/// <returns>loclaized language name for the given code when found</returns>
-		public static string GetLocalizedLanguageName(string languageCode)
-		{
-			string name = languageCode;
-			try
-			{
-				name = languageCode != "--" ? CultureInfo.GetCultureInfoByIetfLanguageTag(languageCode).DisplayName : "Global";
-			}
-			catch
-			{
-				var temp = CultureInfo.GetCultures(CultureTypes.AllCultures).FirstOrDefault(
-					ci => ci.IetfLanguageTag == languageCode || ci.ThreeLetterISOLanguageName == languageCode || ci.TwoLetterISOLanguageName == languageCode || ci.ThreeLetterWindowsLanguageName == languageCode);
-				if (temp != null)
-				{
-					name = temp.DisplayName;
-				}
-			}
-			return name;
-		}
-	}
+        /// <summary>
+        /// The <see cref="Translation"/> class live in a sperate <see cref="AppDomain"/> than the main application.
+        /// This method re-sets all string fields with the previously loaded translation after the Domain was reloaded at runtime.
+        /// </summary>
+        public static void SetTranslationsToSingleton()
+        {
+            Type transType = typeof(Translation);
+            FieldInfo[] fieldInfos = transType.GetFields(BindingFlags.Public | BindingFlags.Instance);
+            foreach (FieldInfo fi in fieldInfos)
+            {
+                if (TranslatedStrings != null && TranslatedStrings.ContainsKey(fi.Name))
+                    fi.SetValue(Translation.Instance, TranslatedStrings[fi.Name]);
+                else
+                    Log.Debug("Translation not found for field: '{0}'. Using hard-coded English default.", fi.Name);
+            }
+        }
+
+        /// <summary>
+        /// Gets the Display Name of a Language from the localized installation of the .Net framework.
+        /// </summary>
+        /// <param name="languageCode">RFC 4646 Language Code</param>
+        /// <returns>loclaized language name for the given code when found</returns>
+        public static string GetLocalizedLanguageName(string languageCode)
+        {
+            string name = languageCode;
+            try
+            {
+                name = languageCode != "--" ? CultureInfo.GetCultureInfoByIetfLanguageTag(languageCode).DisplayName : "Global";
+            }
+            catch
+            {
+                var temp = CultureInfo.GetCultures(CultureTypes.AllCultures).FirstOrDefault(
+                    ci => ci.IetfLanguageTag == languageCode || ci.ThreeLetterISOLanguageName == languageCode || ci.TwoLetterISOLanguageName == languageCode || ci.ThreeLetterWindowsLanguageName == languageCode);
+                if (temp != null)
+                {
+                    name = temp.DisplayName;
+                }
+            }
+            return name;
+        }
+    }
 }
