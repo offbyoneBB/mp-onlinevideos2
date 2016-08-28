@@ -75,6 +75,8 @@
     <Compile Include="DplayUtil.cs" />
     <Compile Include="DrakenFilmUtil.cs" />
     <Compile Include="DreamfilmHDUtil.cs" />
+    <Compile Include="Filmer4EverUtil.cs" />
+    <Compile Include="Hoster\Filmer4Ever.cs" />
     <Compile Include="LastFmUtil.cs" />
     <Compile Include="LosMoviesUtil.cs" />
     <Compile Include="Utils\ExtendedWebCache.cs" />
