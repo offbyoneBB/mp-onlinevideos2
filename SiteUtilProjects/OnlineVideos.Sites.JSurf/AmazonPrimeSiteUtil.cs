@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.ComponentModel;
 using OnlineVideos.Sites.JSurf.Factories;
-using System.Windows.Forms;
-using System.Diagnostics;
-using System.IO;
 using OnlineVideos.Sites.JSurf.Interfaces;
 using OnlineVideos.Sites.JSurf.Entities;
-using System.Globalization;
 using OnlineVideos.Sites.Interfaces;
 using OnlineVideos.Sites.JSurf.Properties;
 using OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connectors;
@@ -115,7 +110,7 @@ namespace OnlineVideos.Sites.JSurf
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
-            Properties.Resources.ResourceManager = new SingleAssemblyComponentResourceManager(typeof(Resources));
+            Resources.ResourceManager = new SingleAssemblyComponentResourceManager(typeof(Resources));
             _connector = ConnectorFactory.GetInformationConnector(webAutomationType, this);
         }
 
@@ -158,7 +153,7 @@ namespace OnlineVideos.Sites.JSurf
 
             parentCategory.SubCategoriesDiscovered = true;
             if (_connector.ShouldSortResults)
-                parentCategory.SubCategories = parentCategory.SubCategories.OrderBy(x => GetCategorySortField(x)).ToList();
+                parentCategory.SubCategories = parentCategory.SubCategories.OrderBy(GetCategorySortField).ToList();
 
             return parentCategory.SubCategories.Count;
         }
@@ -181,7 +176,7 @@ namespace OnlineVideos.Sites.JSurf
             {
                 return ((AmazonPrimeInformationConnector)_connector).getMultipleVideoUrls(video, inPlaylist);
             }
-            return new List<string>() { video.Other.ToString() };
+            return new List<string> { video.Other.ToString() };
         }
 
         /// <summary>
