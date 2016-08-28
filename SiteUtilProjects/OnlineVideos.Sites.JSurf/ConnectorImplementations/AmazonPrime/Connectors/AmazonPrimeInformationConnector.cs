@@ -10,8 +10,8 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
 {
     public class AmazonPrimeInformationConnector : IInformationConnector
     {
-        SiteUtilBase _siteUtil;
-        AmazonBrowserSession _browserSession;
+        readonly SiteUtilBase _siteUtil;
+        readonly AmazonBrowserSession _browserSession;
 
         public AmazonPrimeInformationConnector(SiteUtilBase siteUtil)
         {
@@ -65,10 +65,11 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
             {
                 DoLogin();
                 // Grab next page categories here (we'll deal with videos as the category)
-                if (parentCategory is NextPageCategory)
+                var category = parentCategory as NextPageCategory;
+                if (category != null)
                 {
-                    result = (parentCategory as NextPageCategory).Url.LoadAmazonPrimeVideosAsCategoriesFromUrl(parentCategory.ParentCategory, _browserSession);
-                    parentCategory.ParentCategory.SubCategories.AddRange(result);
+                    result = category.Url.LoadAmazonPrimeVideosAsCategoriesFromUrl(category.ParentCategory, _browserSession);
+                    category.ParentCategory.SubCategories.AddRange(result);
                 }
                 else
                 {

@@ -57,6 +57,7 @@
     <Compile Include="ConnectorImplementations\BrowserUtilConnectorBase.cs" />
     <Compile Include="ConnectorImplementations\FormElementCollection.cs" />
     <Compile Include="Entities\ExtendedCategory.cs" />
+    <Compile Include="Entities\ExtendedProperties.cs" />
     <Compile Include="Extensions\HtmlAgilityPackExtensions.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />
     <Compile Include="Factories\ConnectorFactory.cs" />

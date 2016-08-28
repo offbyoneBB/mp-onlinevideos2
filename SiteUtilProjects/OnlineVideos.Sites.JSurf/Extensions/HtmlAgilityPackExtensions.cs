@@ -46,16 +46,14 @@ namespace OnlineVideos.Sites.JSurf.Extensions
         /// <summary>
         /// Find the first descendent node which has the specified class
         /// </summary>
+        /// <param name="node"></param>
         /// <param name="className"></param>
+        /// <param name="allowPartialMatch">if <c>true</c>, also partial class names will be matched (no trailing/leading space)</param>
         /// <returns></returns>
-        public static HtmlNode GetNodeByClass(this HtmlNode node, string className)
+        public static HtmlNode GetNodeByClass(this HtmlNode node, string className, bool allowPartialMatch = false)
         {
-            var result = node.DescendantNodes().Where(x => x.GetAttribute("class") == className
-                                                            || x.GetAttribute("class").Contains(" " + className)
-                                                            || x.GetAttribute("class").Contains(className + " "));
-            if (result == null || result.Count() == 0)
-                return null;
-            return result.First();
+            var allNodes = GetNodesByClass(node, className);
+            return allNodes != null ? allNodes.FirstOrDefault() : null;
         }
 
         /// <summary>
@@ -63,13 +61,14 @@ namespace OnlineVideos.Sites.JSurf.Extensions
         /// </summary>
         /// <param name="node"></param>
         /// <param name="className"></param>
+        /// <param name="allowPartialMatch">if <c>true</c>, also partial class names will be matched (no trailing/leading space)</param>
         /// <returns></returns>
-        public static List<HtmlNode> GetNodesByClass(this HtmlNode node, string className)
+        public static List<HtmlNode> GetNodesByClass(this HtmlNode node, string className, bool allowPartialMatch = false)
         {
             var results = node.DescendantNodes().Where(x => x.GetAttribute("class") == className
-                                                            || x.GetAttribute("class").Contains(" " + className)
-                                                            || x.GetAttribute("class").Contains(className + " "));
-            if (results == null || results.Count() == 0)
+                                                            || x.GetAttribute("class").Contains((allowPartialMatch ? "": " ") + className)
+                                                            || x.GetAttribute("class").Contains(className + (allowPartialMatch ? "" : " "))).ToList();
+            if (results.Count == 0)
                 return null;
             return results.ToList();
         }
@@ -82,14 +81,7 @@ namespace OnlineVideos.Sites.JSurf.Extensions
         public static HtmlNode FindFirstChildElement(this HtmlNode node)
         {
             if (node == null) return null;
-            foreach (HtmlNode childNode in node.ChildNodes)
-            {
-                if (childNode.NodeType == HtmlNodeType.Element)
-                {
-                    return childNode;
-                }
-            }
-            return null;
+            return node.ChildNodes.FirstOrDefault(childNode => childNode.NodeType == HtmlNodeType.Element);
         }
 
         /// <summary>
@@ -99,13 +91,7 @@ namespace OnlineVideos.Sites.JSurf.Extensions
         /// <returns></returns>
         public static List<HtmlNode> FindAllChildElements(this HtmlNode node)
         {
-            var result = new List<HtmlNode>();
-            foreach (HtmlNode childNode in node.ChildNodes)
-            {
-                if (childNode.NodeType == HtmlNodeType.Element && childNode.Name != "script")
-                    result.Add(childNode);
-            }
-            return result;
+            return node.ChildNodes.Where(childNode => childNode.NodeType == HtmlNodeType.Element && childNode.Name != "script").ToList();
         }
 
         /// <summary>
