@@ -76,6 +76,7 @@
     <Compile Include="DrakenFilmUtil.cs" />
     <Compile Include="DreamfilmHDUtil.cs" />
     <Compile Include="LastFmUtil.cs" />
+    <Compile Include="LosMoviesUtil.cs" />
     <Compile Include="Utils\ExtendedWebCache.cs" />
     <Compile Include="Hoster\IReferer.cs" />
     <Compile Include="Hoster\MailRu.cs" />
