@@ -29,7 +29,7 @@ namespace OnlineVideos.Hoster
                     int j = (int)enc[i];
                     if (j >= 33 && j <= 126)
                         j = ((j + 14) % 94) + 33;
-                    chars += (char)(j + (i == eCount -1 ? 2 : 0));
+                    chars += (char)(j + (i == eCount -1 ? 1 : 0));
                 }
                 url = "https://openload.co/stream/" + chars + "?mime=true";
                 return url;
