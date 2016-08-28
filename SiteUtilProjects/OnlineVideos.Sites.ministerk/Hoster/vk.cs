@@ -19,6 +19,7 @@ namespace OnlineVideos.Hoster
 
         public override Dictionary<string, string> GetPlaybackOptions(string url)
         {
+            url = HttpUtility.HtmlDecode(url);
             string data = WebCache.Instance.GetWebData(url);
             Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
             List<KeyValuePair<string, string>> pairs = new List<KeyValuePair<string, string>>();
