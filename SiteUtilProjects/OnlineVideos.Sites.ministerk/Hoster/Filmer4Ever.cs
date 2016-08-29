@@ -46,7 +46,9 @@ namespace OnlineVideos.Hoster
                     string subUrl = subMatch.Groups["u"].Value;
                     if (subUrl.StartsWith("/"))
                         subUrl = "http://www.filmer4ever.com" + subUrl;
-                    sub = GetWebData(subUrl, encoding: Encoding.Default);
+                    sub = GetWebData(subUrl, encoding: Encoding.Default, cache: false);
+                    if (sub.Contains("Ã"))
+                        sub = GetWebData(subUrl, cache: false);
                     sub = sub.Substring(sub.IndexOf("1"));
                 }
             }
