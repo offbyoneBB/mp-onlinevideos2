@@ -15,6 +15,8 @@ namespace OnlineVideos.Sites
         {
             public string LatestOption { get; private set; }
             public ITrackingInfo TrackingInfo { get; set; }
+            //private SubtitleHandler _sh = null;
+            //public SubtitleHandler SubHandler { get { return _sh; } set { _sh = value; } }
             public override string GetPlaybackOptionUrl(string option)
             {
                 string u = this.PlaybackOptions[option];
@@ -25,6 +27,8 @@ namespace OnlineVideos.Sites
                     string url = hoster.GetVideoUrl(u);
                     if (hoster is ISubtitle)
                         this.SubtitleText = (hoster as ISubtitle).SubtitleText;
+                    //if (SubHandler != null && string.IsNullOrWhiteSpace(this.SubtitleText))
+                    //    SubHandler.SetSubtitleText(this, delegate(VideoInfo v) { return TrackingInfo; }, false);
                     return url;
                 }
                 return "";
@@ -32,6 +36,14 @@ namespace OnlineVideos.Sites
         }
 
         string nextPageVideoUrl = "";
+
+        //private SubtitleHandler sh = null;
+
+        public override void Initialize(SiteSettings siteSettings)
+        {
+            base.Initialize(siteSettings);
+            //sh = new SubtitleHandler("Podnapisi", "swe;eng");
+        }
 
         public override int DiscoverDynamicCategories()
         {
@@ -168,9 +180,22 @@ namespace OnlineVideos.Sites
             }
             if (video.PlaybackOptions.Count == 0)
                 return new List<string>();
-            url = video.PlaybackOptions.First().Value;
+            
+
+            string latestOption = (video is ExtendedVideoInfo) ? (video as ExtendedVideoInfo).LatestOption : "";
+            
+            if (string.IsNullOrEmpty(latestOption))
+                url = video.PlaybackOptions.First().Value;
+            else if (video.PlaybackOptions.ContainsKey(latestOption))
+                url = video.PlaybackOptions[latestOption];
+            else
+                url = video.PlaybackOptions.First().Value;
+
             if (inPlaylist)
                 video.PlaybackOptions.Clear();
+            //if (video is ExtendedVideoInfo)
+            //    (video as ExtendedVideoInfo).SubHandler = sh;
+            
             return new List<string>() { url };
         }
 
