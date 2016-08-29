@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using Jurassic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 
@@ -21,18 +22,24 @@ namespace OnlineVideos.Hoster
             if (m.Success)
             {
                 string enc = HttpUtility.HtmlDecode(m.Groups["enc"].Value);
-                string chars = "";
 
-                int eCount = enc.Count();
-                for (int i = 0; i < eCount; i++)
+                rgx = new Regex(@"<script type=""text/javascript"">(?<enc>ﾟ.*?\n)");
+                m = rgx.Match(data);
+                if (m.Success)
                 {
-                    int j = (int)enc[i];
-                    if (j >= 33 && j <= 126)
-                        j = ((j + 14) % 94) + 33;
-                    chars += (char)(j + (i == eCount -1 ? 1 : 0));
+                    string js = OnlineVideos.Sites.Utils.HelperUtils.AaDecode(m.Groups["enc"].Value);
+                    rgx = new Regex(@"""#hiddenurl""\).text\(\);(?<js>[^\$]*)");
+                    m = rgx.Match(js);
+                    if (m.Success)
+                    {
+                        js = m.Groups["js"].Value;
+                        js = "function aaDecode(x) { " + js + " return str; };";
+                        ScriptEngine engine = new ScriptEngine();
+                        engine.Execute(js);
+                        string decoded = engine.CallGlobalFunction("aaDecode", enc).ToString();
+                        return "https://openload.co/stream/" + decoded + "?mime=true";
+                    }                    
                 }
-                url = "https://openload.co/stream/" + chars + "?mime=true";
-                return url;
             }
             return "";
         }
