@@ -26,6 +26,7 @@ namespace OnlineVideos.Hoster
             {
                 string l = m.Groups["l"].Value;
                 string u = m.Groups["u"].Value;
+                u = WebCache.Instance.GetRedirectedUrl(u);
                 int c = 1;
                 while (pbos.ContainsKey(string.Format(format, l, c)))
                     c++;
