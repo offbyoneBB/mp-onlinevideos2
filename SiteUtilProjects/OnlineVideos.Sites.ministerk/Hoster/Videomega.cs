@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Hoster
 {
-    public class Videomega : HosterBase
+    public class Videomega : HosterBase, ISubtitle
     {
 
         public override string GetHosterUrl()
@@ -39,8 +39,34 @@ namespace OnlineVideos.Hoster
             m = Regex.Match(data, @"""(?<url>http[^""]*)");
             if (!m.Success)
                 return String.Empty;
-
+            SetSub(webData);
             return m.Groups["url"].Value;
+        }
+
+        private string sub = "";
+
+        private void SetSub(string data)
+        {
+            try
+            {
+                Regex r = new Regex(@"captions""\s+src=""(?<u>[^""]*)[^>]*?default");
+                Match m = r.Match(data);
+                if (m.Success)
+                {
+                    sub = m.Groups["u"].Value;
+                    sub = GetWebData(sub);
+                    sub = sub.Substring(sub.IndexOf("1"));
+                }
+            }
+            catch
+            {
+                sub = "";
+            }
+        }
+
+        public string SubtitleText
+        {
+            get { return sub; }
         }
     }
 }
