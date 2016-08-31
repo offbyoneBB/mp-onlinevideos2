@@ -168,7 +168,7 @@ namespace OnlineVideos.Sites
                     hex = hex.Replace(@"\x", string.Empty);
                     iframe = ConvertHex(hex);
                 }
-                r = new Regex(@"src=""(?<url>[^""]*)");
+                r = new Regex(@"src=""(?<url>[^""]*)", RegexOptions.IgnoreCase);
                 match = r.Match(iframe);
                 if (match.Success)
                 {
