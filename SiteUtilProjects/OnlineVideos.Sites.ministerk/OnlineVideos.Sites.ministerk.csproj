@@ -77,6 +77,10 @@
     <Compile Include="DreamfilmHDUtil.cs" />
     <Compile Include="Filmer4EverUtil.cs" />
     <Compile Include="Hoster\Filmer4Ever.cs" />
+    <Compile Include="Hoster\NowVideoSx.cs" />
+    <Compile Include="Hoster\Streamplay.cs" />
+    <Compile Include="Hoster\VidziTv.cs" />
+    <Compile Include="Hoster\FileHoot.cs" />
     <Compile Include="Hoster\Zstream.cs" />
     <Compile Include="LastFmUtil.cs" />
     <Compile Include="LosMoviesUtil.cs" />
