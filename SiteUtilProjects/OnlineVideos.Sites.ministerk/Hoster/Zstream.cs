@@ -15,6 +15,14 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
+            if (!url.Contains("embed-"))
+            {
+                url = url.Replace("zstream.to/", "zstream.to/embed-");
+            }
+            if (!url.EndsWith(".html"))
+            {
+                url += ".html";
+            }
 
             string data = GetWebData<string>(url);
             sub = "";

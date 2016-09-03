@@ -12,7 +12,14 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
-
+            if (!url.Contains("embed-"))
+            {
+                url = url.Replace("vidzi.tv/", "vidzi.tv/embed-");
+            }
+            if (!url.EndsWith(".html"))
+            {
+                url += ".html";
+            }
             string data = GetWebData<string>(url);
             Regex rgx = new Regex(@">eval(?<js>.*?)</script>", RegexOptions.Singleline);
             Match m = rgx.Match(data);

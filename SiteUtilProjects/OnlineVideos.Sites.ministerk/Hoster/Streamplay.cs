@@ -12,6 +12,14 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
+            if(!url.Contains("embed-"))
+            {
+                url = url.Replace("play.to/", "play.to/embed-");
+            }
+            if (!url.EndsWith(".html"))
+            {
+                url += ".html";
+            }
 
             string data = GetWebData<string>(url);
             Regex rgx = new Regex(@">eval(?<js>.*?)</script>", RegexOptions.Singleline);
