@@ -171,6 +171,10 @@ namespace OnlineVideos.Sites
       Log.Debug("DR TV struri: " + struri);
       string assetLink = null;
       string m3u8Link = null;
+      int curr_bandwidth = 0;
+      int new_bandwidth = 0;
+      bool selectnext = false;
+      string[] parts = null;
       JObject objuri = JObject.Parse(struri);
       JArray links = (JArray)objuri["Links"];
       foreach (JObject link in links)
@@ -186,10 +190,29 @@ namespace OnlineVideos.Sites
           foreach (string line in lines)
           {
             Log.Debug("DR TV m3u8 line: " + line);
-            if (line.StartsWith("http://"))
+            if (line.StartsWith("#EXT-"))
+            {
+              parts = line.Split(',');
+              foreach (string part in parts)
+              {
+                if (part.StartsWith("BANDWIDTH="))
+                {
+                  Int32.TryParse(part.Substring(10), out new_bandwidth);
+                  if (new_bandwidth > curr_bandwidth)
+                  {
+                    curr_bandwidth = new_bandwidth;
+                    selectnext = true;
+                  }
+                  else
+                  {
+                    selectnext = false;
+                  }
+                }
+              }
+            }
+            if (line.StartsWith("http://") && selectnext == true)
             {
               assetLink = line;
-              break;
             }
           }
         }
