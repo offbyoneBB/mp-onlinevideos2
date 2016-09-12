@@ -22,65 +22,116 @@ namespace OnlineVideos.Hoster
             get { return subtitleText; }
         }
 
-        public override string GetVideoUrl(string url)
+        public override Dictionary<string, string> GetPlaybackOptions(string url)
         {
-            JToken videoToken = GetWebData<JObject>(url + "?output=json")["video"];
-            url = "";
-            subtitleText = "";
-            try
+            Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
+            if (url.ToLower().Contains("oppetarkiv"))
             {
-                var subtitleReferences = videoToken["subtitleReferences"].Where(sr => ((string)sr["url"] ?? "").EndsWith("srt") || ((string)sr["url"] ?? "").EndsWith("index.m3u8"));
-                if (subtitleReferences != null && subtitleReferences.Count() > 0)
+                JToken videoToken = GetWebData<JObject>(url + "?output=json")["video"];
+                url = "";
+                subtitleText = "";
+                try
                 {
-                    url = (string)subtitleReferences.First()["url"];
-                    if (!string.IsNullOrEmpty(url))
+                    var subtitleReferences = videoToken["subtitleReferences"].Where(sr => ((string)sr["url"] ?? "").EndsWith("srt") || ((string)sr["url"] ?? "").EndsWith("index.m3u8"));
+                    if (subtitleReferences != null && subtitleReferences.Count() > 0)
                     {
-                        if (url.EndsWith("index.m3u8"))
+                        url = (string)subtitleReferences.First()["url"];
+                        if (!string.IsNullOrEmpty(url))
                         {
-                            string baseUrl = url.Replace("index.m3u8", string.Empty);
-                            //try with all.vtt
-                            subtitleText = GetWebData(baseUrl + "all.vtt");
-                            /* Could be used as fallback, but very slow making hundreds of gets
-                            if (string.IsNullOrWhiteSpace(subtitleText))
+                            if (url.EndsWith("index.m3u8"))
                             {
-                                string plist = GetWebData(url);
-                                Regex rgx = new Regex(@"(?<url>.*?\.vtt)");
-                                foreach (Match m in rgx.Matches(plist))
-                                {
-                                    subtitleText += GetWebData(baseUrl + m.Groups["url"].Value);
-                                }
-                            }*/
-                            CleanSubtitle(true);
-                        }
-                        else
-                        {
-                            subtitleText = GetWebData(url);
-                            CleanSubtitle();
+                                string baseUrl = url.Replace("index.m3u8", string.Empty);
+                                //try with all.vtt
+                                subtitleText = GetWebData(baseUrl + "all.vtt");
+                                CleanSubtitle(true);
+                            }
+                            else
+                            {
+                                subtitleText = GetWebData(url);
+                                CleanSubtitle();
+                            }
                         }
                     }
                 }
-            }
-            catch { }
+                catch { }
 
-            JToken videoReference = videoToken["videoReferences"].FirstOrDefault(vr => (string)vr["playerType"] == "flash" && !string.IsNullOrEmpty((string)vr["url"]));
-            if (videoReference == null)
-            {
-                url = "";
+                JToken videoReference = videoToken["videoReferences"].FirstOrDefault(vr => (string)vr["playerType"] == "flash" && !string.IsNullOrEmpty((string)vr["url"]));
+                if (videoReference == null)
+                {
+                    url = "";
+                }
+                else
+                {
+                    Boolean live = false;
+                    JValue liveVal = (JValue)videoToken["live"];
+                    if (liveVal != null)
+                        live = liveVal.Value<bool>();
+                    url = (string)videoReference["url"] + "?hdcore=3.7.0&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12);
+                    url = new MPUrlSourceFilter.AfhsManifestUrl(url)
+                    {
+                        LiveStream = live,
+                        Referer = "http://media.svt.se/swf/video/svtplayer-2015.01.swf"
+                    }.ToString();
+                }
+                if (!string.IsNullOrWhiteSpace(url))
+                    playbackOptions.Add("url", url);
             }
             else
             {
-                Boolean live = false;
-                JValue liveVal = (JValue)videoToken["live"];
-                if (liveVal != null)
-                    live = liveVal.Value<bool>();
-                url = (string)videoReference["url"] + "?hdcore=3.7.0&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12);
-                url = new MPUrlSourceFilter.AfhsManifestUrl(url)
+                subtitleText = "";
+                string data = GetWebData<string>(url);
+                string rgxString = @"""(?<url>[^""]*?master\.m3u8[^""]*)""";
+                if (url.Contains("http://www.svtplay.se/kanaler/"))
                 {
-                    LiveStream = live,
-                    Referer = "http://media.svt.se/swf/video/svtplayer-2015.01.swf"
-                }.ToString();
+                    url = url.Replace("http://www.svtplay.se/kanaler/", string.Empty);
+                    rgxString = @"title"":""" + url + @""".*?""(?<url>[^""]*?master\.m3u8[^""]*)""";
+                }
+                Regex rgx = new Regex(rgxString);
+                Match m = rgx.Match(data);
+                if (!m.Success)
+                    return playbackOptions;
+                string m3u8Url = m.Groups["url"].Value;
+                string m3u8 = GetWebData(m3u8Url);
+                rgx = new Regex(@"BANDWIDTH=(?<bandwidth>\d+)000.[^\n]*?\n(?<url>[^\n]*)", RegexOptions.Singleline);
+                foreach (Match match in rgx.Matches(m3u8))
+                {
+                    string key = match.Groups["bandwidth"].Value + " kbps";
+                    if (!playbackOptions.ContainsKey(key))
+                    {
+                        string value = match.Groups["url"].Value;
+                        if (!value.StartsWith("http"))
+                            value = m3u8Url.Remove(m3u8Url.IndexOf("master.m3u8")) + value;
+                        playbackOptions.Add(key, value);
+                    }
+                }
+
+                playbackOptions = playbackOptions.OrderByDescending((p) =>
+                {
+                    string resKey = p.Key.Replace(" kbps", "");
+                    int parsedRes = 0;
+                    int.TryParse(resKey, out parsedRes);
+                    return parsedRes;
+                }).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+                rgx = new Regex(@"""(?<url>[^""]*?index\.m3u8)""");
+                m = rgx.Match(data);
+                if (m.Success)
+                {
+                    subtitleText = GetWebData(m.Groups["url"].Value.Replace("index.m3u8", "all.vtt"));
+                    CleanSubtitle(true);
+                }
             }
-            return url;
+
+            return playbackOptions;
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            Dictionary<string, string> urls = GetPlaybackOptions(url);
+            if (urls.Count > 0)
+                return urls.First().Value;
+            else
+                return "";
         }
 
         void CleanSubtitle(bool isVtt = false)

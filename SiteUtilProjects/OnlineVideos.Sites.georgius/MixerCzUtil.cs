@@ -273,7 +273,7 @@ namespace OnlineVideos.Sites.georgius
                         match = Regex.Match(entry, MixerCzUtil.videoUrlRegex);
                         if (match.Success)
                         {
-                            url = match.Groups["videoUrl"].Value;
+                            url = match.Groups["videoUrl"].Value.Replace("\\n", "");
                         }
 
                         match = Regex.Match(entry, MixerCzUtil.videoUrlFormatRegex);
@@ -284,7 +284,7 @@ namespace OnlineVideos.Sites.georgius
 
                         if ((!String.IsNullOrEmpty(quality)) && (!String.IsNullOrEmpty(url)) && (!String.IsNullOrEmpty(format)))
                         {
-                            video.PlaybackOptions.Add(String.Format("{0} | {1}", quality, format), url);
+                            video.PlaybackOptions.Add(String.Format("{0} | {1}", quality, format), System.Text.Encoding.ASCII.GetString(System.Convert.FromBase64String(url)));
                         }
                     }
                 }

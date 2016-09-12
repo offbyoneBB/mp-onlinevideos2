@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Web;
+using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites
 {
@@ -35,7 +36,7 @@ namespace OnlineVideos.Sites
 
 			// load homepage
 			var doc = GetWebData<HtmlDocument>(baseUrl);
-			var json = JsonFromScriptBlock(doc.DocumentNode, "require('js/page/home')");
+            var json = JsonFromScriptBlock(doc.DocumentNode, @"\(function\(\)\s*\{\s*var\s*element\s*=\s*React\.createElement\(HomePage,\s*(?<json>\{.*?})\);");
 
 			// build categories for the themes
 			Category categoriesCategory = new Category() { HasSubCategories = true, SubCategoriesDiscovered = true, Name = "Themen", SubCategories = new List<Category>() };
@@ -100,19 +101,25 @@ namespace OnlineVideos.Sites
 			video.PlaybackOptions = new Dictionary<string, string>();
 
 			var doc = GetWebData<HtmlDocument>(video.VideoUrl);
-			var vpDiv = doc.DocumentNode.Descendants("div").FirstOrDefault(s => !string.IsNullOrEmpty(s.GetAttributeValue("arte_vp_url", "")));
+            var vpDiv = doc.DocumentNode.Descendants("div").FirstOrDefault(s => !string.IsNullOrEmpty(s.GetAttributeValue("arte_vp_url_oembed", "")));
 
 			if (vpDiv == null)
 				throw new OnlineVideosException("Video nicht verfügbar!");
 
-			var jsonUrl = vpDiv.GetAttributeValue("arte_vp_url", "");
-			var json = GetWebData<JObject>(jsonUrl);
+			var json = GetWebData<JObject>(vpDiv.GetAttributeValue("arte_vp_url_oembed", ""));
+            HtmlDocument iframe = new HtmlAgilityPack.HtmlDocument();
+            iframe.LoadHtml(json["html"].ToString());
+            json = GetWebData<JObject>(HttpUtility.ParseQueryString(new Uri(iframe.DocumentNode.FirstChild.GetAttributeValue("src", "")).Query)["json_url"]);            
+
 			foreach (var quality in json["videoJsonPlayer"]["VSR"])
 			{
-				string qualityName = string.Format("{0} | {1} | {2}",
+				string qualityName = string.Format("{0} | {1} | {2} ({3}x{4} - {5} kbps)",
 					(quality.First.Value<string>("versionShortLibelle") ?? "").PadRight(3),
 					quality.First.Value<string>("mediaType").PadRight(4),
-					quality.First.Value<string>("quality"));
+					quality.First.Value<string>("quality"),
+                    quality.First.Value<string>("width"),
+                    quality.First.Value<string>("height"),
+                    quality.First.Value<string>("bitrate"));
 
 				if (quality.First.Value<string>("mediaType") == "rtmp")
 				{
@@ -180,10 +187,18 @@ namespace OnlineVideos.Sites
 
 		private JObject JsonFromScriptBlock(HtmlNode node, string require)
 		{
-			var jsNode = node.Descendants("script").FirstOrDefault(s => s.InnerText.TrimStart().StartsWith(require));
-			if (jsNode == null) return null;
-			var text = jsNode.InnerText.Trim().Replace(require, "").Trim(';', '(', ')');
-			return JObject.Parse(text);
+            var regex = new Regex(require, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline | RegexOptions.Singleline);
+
+            foreach(var scriptNode in node.Descendants("script"))
+            {
+                var match = regex.Match(scriptNode.InnerText);
+                if (match.Success)
+                {
+                    string json = match.Groups["json"].Value;
+                    return JObject.Parse(json);
+                }
+            }
+            throw new OnlineVideosException("Site changed - Please report as broken!");
 		}
 
         public override List<VideoInfo> GetNextPageVideos()

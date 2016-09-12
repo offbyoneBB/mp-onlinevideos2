@@ -10,6 +10,7 @@ using System.IO;
 using OnlineVideos.Sites.JSurf.Interfaces;
 using OnlineVideos.Sites.JSurf.Entities;
 using System.Globalization;
+using OnlineVideos.Sites.Interfaces;
 using OnlineVideos.Sites.JSurf.Properties;
 using OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connectors;
 
@@ -18,7 +19,7 @@ namespace OnlineVideos.Sites.JSurf
     /// <summary>
     /// General Util class for web automation - that is where we load the information by scraping the website and play via a browser
     /// </summary>
-    public class AmazonPrimeSiteUtil : SiteUtilBase, IBrowserSiteUtil
+    public class AmazonPrimeSiteUtil : SiteUtilBase, IBrowserVersionEmulation
     {
         IInformationConnector _connector;
 
@@ -72,7 +73,7 @@ namespace OnlineVideos.Sites.JSurf
 
         public enum VideoQuality { Low, Medium, High, HD, FullHD };
 
-        public enum AmazonPlayerType { Internal, Browser };
+        public enum AmazonPlayerType { /*Internal,*/ Browser, BrowserHTML5 };
 
         [Category("OnlineVideosConfiguration"), Description("Type of web automation to run")]
         ConnectorType webAutomationType = ConnectorType.AmazonPrime;
@@ -104,7 +105,7 @@ namespace OnlineVideos.Sites.JSurf
         /// <summary>
         /// Player type for amazon
         /// </summary>
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Amazon Player Type"), Description("Amazon Player Type, Browser(Silverlight) or Internal Player(Rtmp/Flash)")]
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Amazon Player Type"), Description("Amazon Player Type, Browser(Silverlight) or BrowserHTML5")]
         AmazonPlayerType amznPlayerType = AmazonPlayerType.Browser;
 
         /// <summary>
@@ -114,11 +115,10 @@ namespace OnlineVideos.Sites.JSurf
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
-            amznPlayerType = AmazonPlayerType.Browser;
             Properties.Resources.ResourceManager = new SingleAssemblyComponentResourceManager(typeof(Resources));
             _connector = ConnectorFactory.GetInformationConnector(webAutomationType, this);
         }
-        
+
         /// <summary>
         /// Load the list of videos - see if they've been pre-loaded when populating categories or not
         /// </summary>
@@ -155,14 +155,14 @@ namespace OnlineVideos.Sites.JSurf
                 return 1;
             parentCategory.SubCategories = new List<Category>();
             BuildCategories(parentCategory, null);
-           
+
             parentCategory.SubCategoriesDiscovered = true;
             if (_connector.ShouldSortResults)
                 parentCategory.SubCategories = parentCategory.SubCategories.OrderBy(x => GetCategorySortField(x)).ToList();
-            
+
             return parentCategory.SubCategories.Count;
         }
-        
+
         /// <summary>
         /// Get the sort field for the category 
         /// </summary>
@@ -196,10 +196,10 @@ namespace OnlineVideos.Sites.JSurf
             nextPagecategory.ParentCategory.SubCategories.Remove(nextPagecategory);
 
             BuildCategories(nextPagecategory, null);
-            
-           /* if (results != null)
-                nextPagecategory.ParentCategory.SubCategories.AddRange(results);
-            */
+
+            /* if (results != null)
+                 nextPagecategory.ParentCategory.SubCategories.AddRange(results);
+             */
             return nextPagecategory.ParentCategory.SubCategories.Count;
         }
 
@@ -225,7 +225,7 @@ namespace OnlineVideos.Sites.JSurf
         private void BuildVideos(IList<VideoInfo> videosToPopulate, Category parentCategory)
         {
             var results = _connector.LoadVideos(parentCategory);
-            results.OrderBy(x=>x.Title).ToList().ForEach(videosToPopulate.Add);
+            results/*.OrderBy(x => x.Title).ToList()*/.ForEach(videosToPopulate.Add);
         }
 
         public override bool CanSearch { get { return _connector.CanSearch; } }
@@ -235,5 +235,14 @@ namespace OnlineVideos.Sites.JSurf
             return _connector.DoSearch(query);
         }
 
+        public int EmulatedVersion
+        {
+            get
+            {
+                return AmznPlayerType == AmazonPlayerType.Browser
+                    ? 10000 /* IE10+Silverlight */
+                    : 12000 /* IE11/Edge with HTML5*/;
+            }
+        }
     }
 }

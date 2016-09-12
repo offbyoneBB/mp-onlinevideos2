@@ -15,7 +15,7 @@ namespace OnlineVideos.Sites.M3U
             internal static string M3U_INFO_MARKER = "#EXTINF";
             internal static string M3U8_INFO_MARKER = "#EXT-X-STREAM-INF";
 
-            internal static string INT_OPTIONS = "#EXT-X-MEDIA-SEQUENCE#EXT-X-TARGETDURATION#EXT-X-VERSION#EXT-X-MEDIA-SEQUENCE";
+            internal static string INT_OPTIONS = "#EXT-X-MEDIA-SEQUENCE#EXT-X-TARGETDURATION#EXT-X-VERSION#EXT-X-MEDIA-SEQUENCE#";
         } //EOC
 
         internal static class Helper
@@ -47,7 +47,7 @@ namespace OnlineVideos.Sites.M3U
 
             internal static M3UElement[] ReadM3uElement(string content, string basepath, ReaderConfiguration config, int activeDepth)
             {
-                string[] tcontent = content.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                var tcontent = content.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
                 return ReadM3uElement(tcontent, basepath, config, activeDepth);
             }
@@ -89,15 +89,31 @@ namespace OnlineVideos.Sites.M3U
                 {
                     m3UPlaylist.AddRange(tReturn.ToArray());
                 }
+                tElement.Clear();
+
                 return tReturn.ToArray();
             }
 
             internal static void ConvertRelative2Absolute(string basepath, M3UComponent component)
             {
-                if (basepath.StartsWith("http") && !component.Path.StartsWith("http"))
+                string spath = component.Path;
+                bool isAbsolute= false;
+                if (spath.ToLower().Contains("http://")
+                    || spath.ToLower().Contains("rtp://")
+                    || spath.ToLower().Contains("rtsp://")
+                    || spath.ToLower().Contains("rtmp://")
+                    || spath.ToLower().Contains("mms://")
+                    || spath.ToLower().Contains("udp://")
+                    )
+                {
+                    isAbsolute = true;
+                }
+
+                if (basepath.StartsWith("http") && !isAbsolute)
                 {
                     component.Path = basepath + "/" + component.Path;
                 }
+                
             }
 
             internal static void ReadOptions(string optionLine, System.Collections.Hashtable Options, char splitterChar = ':')
@@ -105,13 +121,11 @@ namespace OnlineVideos.Sites.M3U
                 optionLine = optionLine.Trim();
                 int splitterPos = optionLine.IndexOf(splitterChar);
                 if (splitterPos < 0) return;
+                
                 string key = optionLine.Substring(0, splitterPos);
                 object value = optionLine.Substring(splitterPos + 1);
-                if (key == "#EXT-X-MEDIA") 
-                {
                 
-                }
-                else if (Constantes.INT_OPTIONS.Contains(key))
+                if (Constantes.INT_OPTIONS.Contains(key+"#"))
                 {
                     value = int.Parse(value.ToString());
                 }
@@ -209,6 +223,7 @@ namespace OnlineVideos.Sites.M3U
                     if (tOptions.Length > 1)
                         oReturn.Options.Add("INFOS", tOptions[1].Trim());
 
+                    tOptions = null;
                 }
 
                 //Try Recursive.
@@ -237,6 +252,7 @@ namespace OnlineVideos.Sites.M3U
                     childs.AddRange(Helper.ReadM3uElement(contentStreams, sbasepath, config, 0));
                     if (childs.Count > 0) oReturn.AddRange(childs);
 
+                    fullcontent = null;
                 }
 
                 return oReturn;
@@ -246,6 +262,7 @@ namespace OnlineVideos.Sites.M3U
             {
                 string[] tContent = content.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
                 return Read(tContent, basepath, config, activeDepth);
+                tContent = null;
             }
             #endregion<<STATIC>>
 
@@ -307,12 +324,14 @@ namespace OnlineVideos.Sites.M3U
                 }
                 else { oReturn = null; }
 
+                tOptions = null;
+
                 return oReturn;
             }
 
             internal new static M3U8Element Read(string content, string basepath, ReaderConfiguration config, int activeDepth)
             {
-                string[] tContent = content.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                var tContent = content.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
                 return Read(tContent, basepath, config, activeDepth);
             }
             #endregion<<STATIC>>
@@ -360,6 +379,7 @@ namespace OnlineVideos.Sites.M3U
             {
                 this.Dispose();
             }
+
             public void Dispose()
             {
                 if (_watcher != null)
@@ -374,6 +394,7 @@ namespace OnlineVideos.Sites.M3U
 
                 if (Options != null)
                 { Options = null; }
+
             }
             #endregion <<CTR>>
 
@@ -381,7 +402,7 @@ namespace OnlineVideos.Sites.M3U
             /// Absolute Path of the Element
             /// </summary>
             public string Path { get; set; }
-
+            
             /// <summary>
             /// Options
             /// </summary>
@@ -431,6 +452,16 @@ namespace OnlineVideos.Sites.M3U
             /// </summary>
             public ReaderConfiguration Configuration { get; set; }
 
+            /// <summary>
+            /// Is Playlist "HTTP_Live_Streaming"
+            /// </summary>
+            /// <returns></returns>
+            public bool IsHLS()
+            {
+                if (this.Options == null) return false;
+                return this.Options.ContainsKey("#EXT-X-MEDIA-SEQUENCE");
+            }
+
             private void AnalyzeContent(string basepath, string content)
             {
                 if (string.IsNullOrEmpty(content)) return;
@@ -452,6 +483,10 @@ namespace OnlineVideos.Sites.M3U
                 //Analysing Stream
                 string[] contentStreams = fullcontent.Where((x, idx) => idx > contentPosition).ToArray();
                 Helper.ReadM3uElement(this, contentStreams, basepath, this.Configuration, 0);
+
+                fullcontent = null;
+                contentStreams = null;
+
             }
 
         } //EOC

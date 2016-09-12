@@ -63,25 +63,38 @@
     <Compile Include="..\..\Build\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
-    <Compile Include="BrowserUtilConnectors\HboNordicConnector.cs" />
+    <Compile Include="BrowserUtilConnectors\DplayConnector.cs" />
     <Compile Include="BrowserUtilConnectors\KatsomoConnector.cs" />
     <Compile Include="BrowserUtilConnectors\NetflixConnector.cs" />
+    <Compile Include="BrowserUtilConnectors\TV4PlayConnector.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorNo.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorFi.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorDa.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorBase.cs" />
     <Compile Include="BrowserUtilConnectors\ViaplayConnectorSv.cs" />
+    <Compile Include="DplayUtil.cs" />
+    <Compile Include="DrakenFilmUtil.cs" />
     <Compile Include="DreamfilmHDUtil.cs" />
-    <Compile Include="HboNordicWebUtil.cs" />
-    <Compile Include="HboNordic\HboWebCache.cs" />
-    <Compile Include="Hoster\Buggerdugger.cs" />
+    <Compile Include="Filmer4EverUtil.cs" />
+    <Compile Include="Hoster\Filmer4Ever.cs" />
+    <Compile Include="Hoster\NowVideoSx.cs" />
+    <Compile Include="Hoster\Streamplay.cs" />
+    <Compile Include="Hoster\VidziTv.cs" />
+    <Compile Include="Hoster\FileHoot.cs" />
+    <Compile Include="Hoster\Zstream.cs" />
+    <Compile Include="LastFmUtil.cs" />
+    <Compile Include="LosMoviesUtil.cs" />
+    <Compile Include="Utils\ExtendedWebCache.cs" />
     <Compile Include="Hoster\IReferer.cs" />
     <Compile Include="Hoster\MailRu.cs" />
+    <Compile Include="Hoster\Openload.cs" />
     <Compile Include="Hoster\SVTPlay.cs" />
     <Compile Include="Hoster\Videomega.cs" />
     <Compile Include="Hoster\VkPass.cs" />
     <Compile Include="Hoster\vk.cs" />
     <Compile Include="KatsomoWebUtil.cs" />
+    <Compile Include="SwefilmUtil.cs" />
+    <Compile Include="SweflixUtil.cs" />
     <Compile Include="YleUtil.cs" />
     <Compile Include="NetfilxWebUtil.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -90,7 +103,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ViaplayWebUtil.cs" />
-    <Compile Include="Kanal59PlayUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SVTPlayUtil.cs" />
     <Compile Include="TV4Play.cs" />
@@ -119,10 +131,10 @@
     <None Include="Resources\ViaplayPlayMovie.js" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\HboNordic.js" />
+    <None Include="Resources\Katsomo.js" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Katsomo.js" />
+    <None Include="Resources\Netflix.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

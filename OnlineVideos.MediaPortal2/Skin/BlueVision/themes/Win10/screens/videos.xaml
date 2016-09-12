@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include
+    xmlns="www.team-mediaportal.com/2008/mpf/directx"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Source="screens\master_menu.xaml">
+    <Include.Resources>
+
+      <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
+      <!-- Header -->
+      <ResourceWrapper x:Key="Header_Text" Resource="OnlineVideos"/>
+        <!-- Contents -->
+        <ControlTemplate x:Key="Contents_Template">
+          <DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}" Margin="-74,21,-74,50">
+            <Rectangle Fill="Black" Opacity="0.5" DockPanel.Dock="Center" Margin="-9,-9,-9,-9">
+              <Rectangle.Effect>
+                <ZoomBlurEffect BlurAmount="0.01" CenterX="0.5" CenterY="1" />
+              </Rectangle.Effect>
+            </Rectangle>
+            <Border BorderThickness="0" Background="#D9777777" DockPanel.Dock="Center"/>
+            <ListView x:Name="videolist" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center" 
+                      Style="{ThemeResource ovsVideosListViewStyle}" Margin="0,0,-15,0"
+                      CurrentItem="{Binding Path=FocusedVideo, Mode=OneWayToSource}" 
+                      ItemsSource="{Binding Path=VideosList}"/>
+            <StackPanel Orientation="Vertical" DockPanel.Dock="Bottom" VerticalAlignment="Top" Margin="0,625,0,-425"  >
+              <StackPanel Orientation="Horizontal"> 
+                <Label Content="{Binding Path=SelectedSite.Name}" Color="{ThemeResource TextColor}"/>
+                <Label Content=" • " Color="{ThemeResource TextColor}"/>
+                <Label Content="{Binding Path=SelectedCategory.Name}" Color="{ThemeResource TextColor}"/>
+              </StackPanel>
+              <Label Color="{ThemeResource TextColor}" Opacity="0.6"
+                     VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Wrap="True" Scroll="Auto"
+                     DataContext="{Binding ElementName=videolist,Path=CurrentItem}"
+                     Content="{Binding Path=Title}" />
+            </StackPanel>           
+          </DockPanel>
+        </ControlTemplate>
+    </Include.Resources>
+</Include>

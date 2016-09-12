@@ -99,7 +99,19 @@ namespace OnlineVideos.Sites
             string sUrl = video.VideoUrl;
             string sContent = GetWebData(sUrl+"/5");
             string content2 = GetWebData("http://ok.ru/videoembed/39040911942");
-        
+            //http://videomega.tv/iframe.php?ref=9rdiDCK0n66n0KCDidr9&width=700&height=400
+            string s= OnlineVideos.Hoster.HosterFactory.GetHoster("Videomega").GetVideoUrl("http://videomega.tv/iframe.php?ref=9rdiDCK0n66n0KCDidr9");
+            string webData = WebCache.Instance.GetWebData("http://videomega.tv/iframe.php?ref=9rdiDCK0n66n0KCDidr9&width=700&height=400");
+            Match m = Regex.Match(webData, @"document\.write\(unescape\(""(?<data>[^""]*)""\)\);");
+            if (m.Success)
+            {
+                //string data = HttpUtility.UrlDecode(m.Groups["data"].Value);
+                string data = m.Groups["data"].Value;
+                m = Regex.Match(data, @"file:\s""(?<url>[^""]*)"",");
+                if (m.Success)
+                    return m.Groups["url"].Value;
+            }
+
 
             //JObject obj = JObject.Parse(sContent);
 

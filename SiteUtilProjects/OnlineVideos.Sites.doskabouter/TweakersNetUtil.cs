@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Net;
@@ -22,7 +21,7 @@ namespace OnlineVideos.Sites
                 string postData = @"decision=accept&returnTo=http%3A%2F%2Ftweakers.net%2F&tweakers_token=" +
                     HttpUtility.UrlEncode(m.Groups["tweakerstoken"].Value);
 
-                cc = MyGetWebData(@"https://secure.tweakers.net/my.tnet/cookies/", postData, cc);
+                cc = MyGetWebData(@"https://tweakers.net/my.tnet/cookies/", postData, cc);
             }
             return base.DiscoverDynamicCategories();
         }
@@ -59,18 +58,9 @@ namespace OnlineVideos.Sites
             return result;
         }
 
-
         protected override CookieContainer GetCookie()
         {
             return cc;
-        }
-
-        public override string GetVideoUrl(VideoInfo video)
-        {
-            string res = base.GetVideoUrl(video);
-            if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 1)
-                return video.PlaybackOptions.Last().Value;
-            return res;
         }
     }
 }

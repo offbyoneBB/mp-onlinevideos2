@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+
+  <Target Name="AfterBuild">
+
+    <ItemGroup>
+      <BrowserHostConfigFiles Include="$(TargetDir)\OnlineVideos.WebAutomation.BrowserHost.exe.config" />
+      <BrowserHostFiles Include="$(TargetDir)\OnlineVideos.WebAutomation.BrowserHost.exe" />
+      <BrowserHostFiles Include="$(TargetDir)\OnlineVideos.WebAutomation.BrowserHost.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
+    </ItemGroup>
+
+    <!-- Copy all plugin files to MediaPortal2 Plugins\OnlineVideos folder -->
+    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginDestination)" />
+
+    <Copy SourceFiles="@(BrowserHostFiles)" DestinationFiles="@(BrowserHostFiles->'$(TargetDir)\iexplore%(Extension)')" />
+    <Copy SourceFiles="@(BrowserHostConfigFiles)" DestinationFiles="@(BrowserHostConfigFiles->'$(TargetDir)\iexplore.exe%(Extension)')" />
+  </Target>
+</Project>

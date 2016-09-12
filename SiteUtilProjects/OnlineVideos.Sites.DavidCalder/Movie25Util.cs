@@ -34,36 +34,26 @@ namespace OnlineVideos.Sites.DavidCalder
 
             public override string GetPlaybackOptionUrl(string url)
             {
-                string data = WebCache.Instance.GetWebData(PlaybackOptions[url]);
+                string hosterUrl = PlaybackOptions[url];
+
                 if (parent != null)
                 {
                     parent.sh.WaitForSubtitleCompleted();
                     parent.lastPlaybackOptionUrl = PlaybackOptions[url];
                 }
-                Match n = Regex.Match(data, @"<IFRAME\sid=""showvideo""\ssrc=""(?<url>[^""]*)""");
-                if (n.Success)
-                {
-                    string url2 = n.Groups["url"].Value;
-                    if (url2.Contains("/tz.php?url=external.php?url="))
-                    {
-                        string newurl = url2.Replace(@"/tz.php?url=external.php?url=", "");
-                        byte[] tmp = Convert.FromBase64String(newurl);
-                        string i = Encoding.ASCII.GetString(tmp);
-                        return GetVideoUrl(i);
-                    }
-                    if (url2.Contains("/tz.php?url="))
-                    {
+                string[] parts;
 
-                        int p = url2.IndexOf("url=");
-                        if (p > 0)
-                        {
-                            string newurl = url2.Substring(p + 4);
-                            return GetVideoUrl(newurl);
-                        }
-                    }
-                    return GetVideoUrl(n.Groups["url"].Value);
+                parts = hosterUrl.Split(new[] { "http://tinklepad.is/stream.php?" }, StringSplitOptions.None);
+
+                if (parts.Length == 2)
+                {
+                    byte[] tmp = Convert.FromBase64String(parts[1]);
+                    hosterUrl = Encoding.ASCII.GetString(tmp);              
                 }
-                return GetVideoUrl(url);
+
+                string newUrl = hosterUrl.Substring(hosterUrl.LastIndexOf("&&")+ 2);
+
+                return GetVideoUrl(newUrl);
             }
         }
 
@@ -147,8 +137,7 @@ namespace OnlineVideos.Sites.DavidCalder
 
         public override List<SearchResultItem> Search(string query, string category = null)
         {
-            searchUrl = string.Format("http://www.movie25.so/search.php?key={0}&submit=", query.Replace(" ", "+"));
-            List<SearchResultItem> videos = base.Search(searchUrl, category);
+            List<SearchResultItem> videos = base.Search(query.Replace(" ","+"), category);
             TMDB.BackgroundWorker worker = new TMDB.BackgroundWorker();
             worker.start(videos.ConvertAll<VideoInfo>(v => v as VideoInfo));
             return videos;

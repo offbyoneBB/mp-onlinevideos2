@@ -44,7 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArenavisionUtil.cs" />
     <Compile Include="D17Util.cs" />
+    <Compile Include="Helper\TLDB\Channel.cs" />
     <Compile Include="IPTVUtil.cs" />
     <Compile Include="RmcSportUtil.cs" />
     <Compile Include="BFMBusinessUtil.cs" />

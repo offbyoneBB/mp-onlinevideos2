@@ -81,6 +81,7 @@
   <string name="LayoutIcons">Ansicht: Symbole klein</string>
   <string name="LayoutBigIcons">Ansicht: Symbole groß</string>
   <!--M-->
+  <string name="Main.Help">Diese Erweiterung bietet eine einheitliche Oberfläche, um Videos verschiedenster Websites zu durchsuchen und abzuspielen.</string>
   <string name="ManageSites">Sites verwalten</string>
   <string name="MaxResults">Max. Ergebnisse</string>
   <!--N-->

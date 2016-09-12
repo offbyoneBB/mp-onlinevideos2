@@ -12,19 +12,9 @@ namespace OnlineVideos.Sites.georgius
         #region Private fields
 
         private static String baseUrl = @"http://www.apetitonline.cz/apetit-tv";
-        private static String videoBaseUrl = @"http://www.apetitonline.cz/video/apetit_tv";
 
-        private static String showEpisodesStart = @"<div id=""wrapper""";
-        private static String showEpisodesEnd = @"<aside";
-        private static String showEpisodeStart = @"<div class=""article-default video-art"">";
-
-        private static String showEpisodeThumbRegex = @"<img typeof=""foaf:Image"" src=""(?<showEpisodeThumbUrl>[^""]+)""";
-        private static String showEpisodeUrlAndTitleRegex = @"<a href=""(?<showEpisodeUrl>[^""]+)"">(?<showEpisodeTitle>[^<]+)</a>";
-
-        private static String showEpisodeNextPageRegex = @"<a title=""Přejít na další stranu"" href=""(?<nextPageUrl>[^""]+)""";
-
-        private static String showVideoUrlBlockStart = @"<source src=""";
-        private static String showVideoUrlBlockEnd = @"""";
+        private static String videoUrlStart = "\"file\":\"";
+        private static String videoUrlEnd = "\"";
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
@@ -57,90 +47,98 @@ namespace OnlineVideos.Sites.georgius
 
         public override int DiscoverDynamicCategories()
         {
-            int dynamicCategoriesCount = 1;
+            int dynamicCategoriesCount = 0;
 
-            this.Settings.Categories.Add(
-                new RssLink()
+            String baseWebData = GetWebData(ApetitTvUtil.baseUrl, forceUTF8: true);
+            HtmlAgilityPack.HtmlDocument document = new HtmlAgilityPack.HtmlDocument();
+            document.LoadHtml(baseWebData);
+
+            HtmlAgilityPack.HtmlNodeCollection categories = document.DocumentNode.SelectNodes(".//div[@class='clear']/div/div[@class='view-footer']/div");
+
+            foreach (var category in categories)
+            {
+                HtmlAgilityPack.HtmlNode cat1 = category.SelectSingleNode(".//div[@class='view-header']/h3/text()");
+                HtmlAgilityPack.HtmlNode cat2 = category.SelectSingleNode(".//div[@class='view-header']/a");
+
+                if (cat1 != null)
                 {
-                    Name = "Apetit.tv",
-                    Url = ApetitTvUtil.baseUrl
-                });
+                    this.Settings.Categories.Add(
+                    new RssLink()
+                    {
+                        Name = cat1.InnerText,
+                        Other = category
+                    });
+
+                    dynamicCategoriesCount++;
+                }
+                else if (cat2 != null)
+                {
+                    this.Settings.Categories.Add(
+                    new RssLink()
+                    {
+                        Name = cat2.SelectSingleNode(".//text()").InnerText,
+                        Url = Utils.FormatAbsoluteUrl(cat2.Attributes["href"].Value, ApetitTvUtil.baseUrl)
+                    });
+
+                    dynamicCategoriesCount++;
+                }
+            }
 
             this.Settings.DynamicCategoriesDiscovered = true;
             return dynamicCategoriesCount;
         }
 
-        private List<VideoInfo> GetPageVideos(String pageUrl)
+        private List<VideoInfo> GetPageVideos(RssLink category, String pageUrl)
         {
             List<VideoInfo> pageVideos = new List<VideoInfo>();
 
-            if (!String.IsNullOrEmpty(pageUrl))
+            if (String.IsNullOrEmpty(pageUrl) && (category.Other != null))
+            {
+                HtmlAgilityPack.HtmlNode root = (HtmlAgilityPack.HtmlNode)category.Other;
+
+                HtmlAgilityPack.HtmlNodeCollection shows = root.SelectNodes(".//div[contains(@class, 'article-default')]");
+
+                foreach (var show in shows)
+                {
+                    HtmlAgilityPack.HtmlNode linkNode = show.SelectSingleNode(".//h3/a");
+                    HtmlAgilityPack.HtmlNode thumbNode = show.SelectSingleNode(".//img");
+
+                    VideoInfo videoInfo = new VideoInfo()
+                    {
+                        Thumb = Utils.FormatAbsoluteUrl(thumbNode.Attributes["src"].Value, ApetitTvUtil.baseUrl),
+                        Title = linkNode.InnerText,
+                        VideoUrl = Utils.FormatAbsoluteUrl(linkNode.Attributes["href"].Value, ApetitTvUtil.baseUrl)
+                    };
+
+                    pageVideos.Add(videoInfo);
+                }
+            }
+            else if (!String.IsNullOrEmpty(pageUrl))
             {
                 this.nextPageUrl = String.Empty;
-                String baseWebData = WebCache.Instance.GetWebData(pageUrl, forceUTF8: true);
+                String baseWebData = GetWebData(pageUrl, forceUTF8: true);
+                HtmlAgilityPack.HtmlDocument document = new HtmlAgilityPack.HtmlDocument();
+                document.LoadHtml(baseWebData);
 
-                int index = baseWebData.IndexOf(ApetitTvUtil.showEpisodesStart);
-                if (index > 0)
+                HtmlAgilityPack.HtmlNodeCollection shows = document.DocumentNode.SelectNodes(".//div[contains(@class, 'article-default')]");
+
+                foreach (var show in shows)
                 {
-                    baseWebData = baseWebData.Substring(index);
+                    HtmlAgilityPack.HtmlNode linkNode = show.SelectSingleNode(".//h3/a");
+                    HtmlAgilityPack.HtmlNode thumbNode = show.SelectSingleNode(".//img");
 
-                    index = baseWebData.IndexOf(ApetitTvUtil.showEpisodesEnd);
-
-                    if (index > 0)
+                    VideoInfo videoInfo = new VideoInfo()
                     {
-                        baseWebData = baseWebData.Substring(0, index);
+                        Thumb = Utils.FormatAbsoluteUrl(thumbNode.Attributes["src"].Value, ApetitTvUtil.baseUrl),
+                        Title = linkNode.InnerText,
+                        VideoUrl = Utils.FormatAbsoluteUrl(linkNode.Attributes["href"].Value, ApetitTvUtil.baseUrl)
+                    };
 
-                        while (true)
-                        {
-                            index = baseWebData.IndexOf(ApetitTvUtil.showEpisodeStart);
-
-                            if (index > 0)
-                            {
-                                baseWebData = baseWebData.Substring(index);
-
-                                String showEpisodeUrl = String.Empty;
-                                String showEpisodeTitle = String.Empty;
-                                String showEpisodeThumb = String.Empty;
-
-                                Match match = Regex.Match(baseWebData, ApetitTvUtil.showEpisodeThumbRegex);
-                                if (match.Success)
-                                {
-                                    showEpisodeThumb = match.Groups["showEpisodeThumbUrl"].Value;
-                                    baseWebData = baseWebData.Substring(match.Index + match.Length);
-                                }
-
-                                match = Regex.Match(baseWebData, ApetitTvUtil.showEpisodeUrlAndTitleRegex);
-                                if (match.Success)
-                                {
-                                    showEpisodeUrl = HttpUtility.UrlDecode(match.Groups["showEpisodeUrl"].Value);
-                                    showEpisodeTitle = HttpUtility.HtmlDecode(match.Groups["showEpisodeTitle"].Value);
-                                    baseWebData = baseWebData.Substring(match.Index + match.Length);
-                                }
-
-                                if ((String.IsNullOrEmpty(showEpisodeUrl)) && (String.IsNullOrEmpty(showEpisodeThumb)) && (String.IsNullOrEmpty(showEpisodeTitle)))
-                                {
-                                    break;
-                                }
-
-                                VideoInfo videoInfo = new VideoInfo()
-                                {
-                                    Thumb = Utils.FormatAbsoluteUrl(showEpisodeThumb, ApetitTvUtil.baseUrl),
-                                    Title = showEpisodeTitle,
-                                    VideoUrl = Utils.FormatAbsoluteUrl(showEpisodeUrl, ApetitTvUtil.baseUrl)
-                                };
-
-                                pageVideos.Add(videoInfo);
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                    }
-
-                    Match nextPageMatch = Regex.Match(baseWebData, ApetitTvUtil.showEpisodeNextPageRegex);
-                    this.nextPageUrl = Utils.FormatAbsoluteUrl(nextPageMatch.Groups["nextPageUrl"].Value, ApetitTvUtil.baseUrl);
+                    pageVideos.Add(videoInfo);
                 }
+
+                HtmlAgilityPack.HtmlNode nextPageLink = document.DocumentNode.SelectSingleNode(".//li[@class='pager-next']/a");
+                this.nextPageUrl = (nextPageLink == null) ? this.nextPageUrl : Utils.FormatAbsoluteUrl(System.Web.HttpUtility.HtmlDecode(nextPageLink.Attributes["href"].Value), pageUrl);
             }
 
             return pageVideos;
@@ -160,7 +158,7 @@ namespace OnlineVideos.Sites.georgius
                 this.loadedEpisodes.Clear();
             }
 
-            if ((parentCategory.Other != null) && (this.currentCategory.Other != null))
+            if ((parentCategory.Other != null) && (this.currentCategory.Other != null) && (parentCategory.Other is String) && (currentCategory.Other is String))
             {
                 String parentCategoryOther = (String)parentCategory.Other;
                 String currentCategoryOther = (String)currentCategory.Other;
@@ -175,7 +173,7 @@ namespace OnlineVideos.Sites.georgius
 
             this.currentCategory = parentCategory;
 
-            this.loadedEpisodes.AddRange(this.GetPageVideos(this.nextPageUrl));
+            this.loadedEpisodes.AddRange(this.GetPageVideos(parentCategory, this.nextPageUrl));
             while (this.currentStartIndex < this.loadedEpisodes.Count)
             {
                 videoList.Add(this.loadedEpisodes[this.currentStartIndex++]);
@@ -214,15 +212,17 @@ namespace OnlineVideos.Sites.georgius
 
         public override string GetVideoUrl(VideoInfo video)
         {
-            String baseWebData = WebCache.Instance.GetWebData(video.VideoUrl, forceUTF8: true);
+            String baseWebData = GetWebData(video.VideoUrl, forceUTF8: true);
 
-            int startIndex = baseWebData.IndexOf(ApetitTvUtil.showVideoUrlBlockStart);
-            if (startIndex >= 0)
+            int startIndex = baseWebData.IndexOf(ApetitTvUtil.videoUrlStart);
+            if (startIndex != (-1))
             {
-                int endIndex = baseWebData.IndexOf(ApetitTvUtil.showVideoUrlBlockEnd, startIndex + ApetitTvUtil.showVideoUrlBlockStart.Length);
-                if (endIndex >= 0)
+                startIndex += ApetitTvUtil.videoUrlStart.Length;
+                int endIndex = baseWebData.IndexOf(ApetitTvUtil.videoUrlEnd, startIndex);
+
+                if (endIndex != (-1))
                 {
-                    baseWebData = baseWebData.Substring(startIndex + ApetitTvUtil.showVideoUrlBlockStart.Length, endIndex - startIndex - ApetitTvUtil.showVideoUrlBlockStart.Length);
+                    baseWebData = baseWebData.Substring(startIndex, endIndex - startIndex);
 
                     return new MPUrlSourceFilter.HttpUrl(baseWebData) { UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:24.0) Gecko/20100101 Firefox/24.0" }.ToString();
                 }

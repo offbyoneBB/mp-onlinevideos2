@@ -5,53 +5,57 @@ using OnlineVideos.Helpers;
 
 namespace OnlineVideos.MediaPortal2.Configuration
 {
-	public class UserSiteSettings
-	{
-		[Setting(SettingScope.User, null)]
-		public SerializableDictionary<string, string> Entries { get; set; }
-	}
+    public class UserSiteSettings
+    {
+        public UserSiteSettings()
+        {
 
-	public class UserSiteSettingsStore : MarshalByRefObject, IUserStore
-	{
-		UserSiteSettings _settings;
-		bool _hasChanges;
+        }
+        [Setting(SettingScope.User, null)]
+        public SerializableDictionary<string, string> Entries { get; set; }
+    }
 
-		public UserSiteSettingsStore()
-		{
-			_settings = ServiceRegistration.Get<ISettingsManager>().Load<UserSiteSettings>();
-			if (_settings.Entries == null)
-				_settings.Entries = new SerializableDictionary<string, string>();
-		}
+    public class UserSiteSettingsStore : MarshalByRefObject, IUserStore
+    {
+        UserSiteSettings _settings;
+        bool _hasChanges;
+
+        public UserSiteSettingsStore()
+        {
+            _settings = ServiceRegistration.Get<ISettingsManager>().Load<UserSiteSettings>();
+            if (_settings.Entries == null)
+                _settings.Entries = new SerializableDictionary<string, string>();
+        }
 
         public string GetValue(string key, bool decrypt = false)
-		{
-			string result = null;
-			_settings.Entries.TryGetValue(key, out result);
+        {
+            string result = null;
+            _settings.Entries.TryGetValue(key, out result);
             return (result != null && decrypt) ? EncryptionUtils.SymDecryptLocalPC(result) : result;
-		}
+        }
 
         public void SetValue(string key, string value, bool encrypt = false)
-		{
-			_hasChanges = true;
+        {
+            _hasChanges = true;
             if (encrypt) value = EncryptionUtils.SymEncryptLocalPC(value);
-			_settings.Entries[key] = value;
-		}
+            _settings.Entries[key] = value;
+        }
 
-		public void SaveAll()
-		{
-			if (_hasChanges)
-			{
-				ServiceRegistration.Get<ISettingsManager>().Save(_settings);
-				_hasChanges = false;
-			}
-		}
+        public void SaveAll()
+        {
+            if (_hasChanges)
+            {
+                ServiceRegistration.Get<ISettingsManager>().Save(_settings);
+                _hasChanges = false;
+            }
+        }
 
-		#region MarshalByRefObject overrides
-		public override object InitializeLifetimeService()
-		{
-			// In order to have the lease across appdomains live forever, we return null.
-			return null;
-		}
-		#endregion
-	}
+        #region MarshalByRefObject overrides
+        public override object InitializeLifetimeService()
+        {
+            // In order to have the lease across appdomains live forever, we return null.
+            return null;
+        }
+        #endregion
+    }
 }

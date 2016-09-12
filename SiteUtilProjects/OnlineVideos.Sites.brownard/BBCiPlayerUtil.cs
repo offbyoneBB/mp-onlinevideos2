@@ -14,6 +14,7 @@ namespace OnlineVideos.Sites
         #region Constants
 
         const string MEDIA_SELECTOR_URL = "http://open.live.bbc.co.uk/mediaselector/5/select/version/2.0/mediaset/pc/vpid/"; //"http://www.bbc.co.uk/mediaselector/4/mtis/stream/";
+        const string HLS_MEDIA_SELECTOR_URL = "http://open.live.bbc.co.uk/mediaselector/5/select/version/2.0/mediaset/apple-ipad-hls/vpid/";
         const string MOST_POPULAR_URL = "http://www.bbc.co.uk/iplayer/group/most-popular";
         const string ATOZ_URL = "http://www.bbc.co.uk/iplayer/a-z/";
         static readonly string[] atoz = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0-9" };
@@ -49,7 +50,7 @@ namespace OnlineVideos.Sites
 
         static readonly Regex seriesRegex = new Regex(@"<li class=""list-item[^""]*""\s+data-ip-id=""([^""]*)"">.*?<div class=""title top-title"">([^<]*)</div>.*?data-ip-src=""([^""]*)"">", RegexOptions.Singleline);
         static readonly Regex aToZRegex = new Regex(@"<li>\s*<a href=""/iplayer/brand/([^""]*)"".*?<span class=""title"">([^<]*)", RegexOptions.Singleline);
-        static readonly Regex nextPageRegex = new Regex(@"<span class=""next txt"">\s*<a href=""([^""]*)"">\s*Next");
+        static readonly Regex nextPageRegex = new Regex(@"<span class=""next txt"">\s*<a href=""([^""]*)""[^>]*>\s*Next", RegexOptions.Singleline);
 
         static readonly Regex episodeInfoRegex = new Regex(@"<li class=""list-item[^>]*>(.*?)</li>", RegexOptions.Singleline);
         static readonly Regex episodeUrlRegex = new Regex(@"href=""([^""]*)");
@@ -77,6 +78,14 @@ namespace OnlineVideos.Sites
 
         #region GetUrl
 
+        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        {
+            string url = GetVideoUrl(video);
+            if (inPlaylist)
+                video.PlaybackOptions.Clear();
+            return new List<string>() { url };
+        }
+
         public override string GetVideoUrl(VideoInfo video)
         {
             if (video.Other == "livestream")
@@ -90,8 +99,9 @@ namespace OnlineVideos.Sites
                 return null;
             }
 
+            string vpid = m.Groups[1].Value;
             XmlDocument doc = new XmlDocument();
-            doc.LoadXml(GetWebData(MEDIA_SELECTOR_URL + m.Groups[1].Value, proxy: proxyObj)); //uk only
+            doc.LoadXml(GetWebData(MEDIA_SELECTOR_URL + vpid, proxy: proxyObj)); //uk only
             XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");
 
@@ -169,6 +179,11 @@ namespace OnlineVideos.Sites
 
             if (sortedPlaybackOptions.Count == 0)
             {
+                //Fallback to HLS streams
+                string hlsUrl = GetHLSVideoUrl(video, vpid, proxyObj);
+                if (!string.IsNullOrEmpty(hlsUrl))
+                    return hlsUrl;
+
                 var errorNodes = doc.SelectNodes("//ns1:error", nsmRequest);
                 if (errorNodes.Count > 0) throw new OnlineVideosException(string.Format("BBC says: {0}", ((XmlElement)errorNodes[0]).GetAttribute("id")));
             }
@@ -183,6 +198,37 @@ namespace OnlineVideos.Sites
                 video.PlaybackOptions.Add(enumer.Current.Key, enumer.Current.Value);
             }
             return lastUrl;
+        }
+
+        string GetHLSVideoUrl(VideoInfo video, string vpid, WebProxy proxyObj)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(GetWebData(HLS_MEDIA_SELECTOR_URL + vpid, proxy: proxyObj)); //uk only
+            XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
+            nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");
+                        
+            foreach (XmlElement mediaElem in doc.SelectNodes("//ns1:media[@kind='video']", nsmRequest))
+            {
+                foreach (XmlElement connectionElem in mediaElem.SelectNodes("ns1:connection", nsmRequest))
+                {
+                    string playlistUrl = connectionElem.Attributes["href"].Value;
+                    string playlistStr = GetWebData(playlistUrl, proxy: proxyObj, userAgent: HlsPlaylistParser.APPLE_USER_AGENT);
+                    HlsPlaylistParser playlist = new HlsPlaylistParser(playlistStr, playlistUrl);
+                    if (playlist.StreamInfos.Count == 0)
+                        continue;
+
+                    video.PlaybackOptions = new Dictionary<string, string>();
+                    string lastUrl = "";
+                    foreach (HlsStreamInfo streamInfo in playlist.StreamInfos)
+                    {
+                        lastUrl = streamInfo.Url;
+                        string name = string.Format("{0}x{1} | {2} kbps", streamInfo.Width, streamInfo.Height, streamInfo.Bandwidth / 1024);
+                        video.PlaybackOptions.Add(name, lastUrl);
+                    }
+                    return lastUrl;
+                }
+            }
+            return null;
         }
 
         string getLiveUrls(VideoInfo video)
@@ -207,34 +253,13 @@ namespace OnlineVideos.Sites
             return lastUrl;
         }
 
-        //string getLiveUrls(VideoInfo video)
-        //{
-        //    WebProxy proxyObj = getProxy();
-        //    XmlDocument doc = new XmlDocument();
-        //    doc.LoadXml(GetWebData("http://www.bbc.co.uk/mediaselector/playlists/hds/pc/ak/" + video.VideoUrl, proxy: proxyObj));
-        //    SortedList<string, string> sortedPlaybackOptions = new SortedList<string, string>(new QualityComparer());
-        //    foreach (XmlElement mediaElem in doc.GetElementsByTagName("media"))
-        //    {
-        //        string url = null;
-        //        if (mediaElem.Attributes["href"] != null)
-        //            url = mediaElem.Attributes["href"].Value + "?live=true";
-        //        string bitrate = "";
-        //        if (mediaElem.Attributes["bitrate"] != null)
-        //            bitrate = mediaElem.Attributes["bitrate"].Value;
-        //        if (!string.IsNullOrEmpty(url))
-        //            sortedPlaybackOptions.Add(bitrate + " kbps", url);
-        //    }
-
-        //    string lastUrl = "";
-        //    video.PlaybackOptions = new Dictionary<string, string>();
-        //    var enumer = sortedPlaybackOptions.GetEnumerator();
-        //    while (enumer.MoveNext())
-        //    {
-        //        lastUrl = enumer.Current.Value;
-        //        video.PlaybackOptions.Add(enumer.Current.Key, enumer.Current.Value);
-        //    }
-        //    return lastUrl; //"http://bbcfmhds.vo.llnwd.net/hds-live/livepkgr/_definst_/bbc1/bbc1_1500.f4m";
-        //}
+        public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
+        {
+            string f = base.GetFileNameForDownload(video, category, url);
+            if (f.EndsWith(".m3u8"))
+                f = f.Substring(0, f.Length - 5) + ".mp4";
+            return f;
+        }
 
         WebProxy getProxy()
         {
@@ -430,17 +455,17 @@ namespace OnlineVideos.Sites
                 video.Thumb = channel.Thumb;
 
                 string guideId;
-                if (TVGuideGrabber.TryGetId(channel.Url, out guideId))
+                if (iPlayerTVGuide.TryGetId(channel.Url, out guideId))
                 {
-                    video.VideoUrl = TVGuideGrabber.RemoveId(channel.Url);
-                    NowNextDetails guide;
-                    if (retrieveTVGuide && TVGuideGrabber.TryGetNowNextForChannel(guideId, out guide))
+                    video.VideoUrl = iPlayerTVGuide.RemoveId(channel.Url);
+                    NowNextInfo guide;
+                    if (retrieveTVGuide && iPlayerTVGuide.TryGetNowNextForChannel(guideId, out guide))
                         video.Description = guide.Format(tvGuideFormatString);
                 }
                 else
                 {
                     video.VideoUrl = channel.Url;
-                }                
+                }
                 videos.Add(video);
             }
             return videos;
@@ -520,4 +545,3 @@ namespace OnlineVideos.Sites
         public string EpisodeTitle { get; set; }
     }
 }
-

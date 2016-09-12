@@ -1,373 +1,515 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using Newtonsoft.Json.Linq;
+using OnlineVideos.Sites.Utils;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Web;
 using System.Xml;
-using System.Text.RegularExpressions;
-using System.Net;
-using Newtonsoft.Json;
 
 namespace OnlineVideos.Sites
 {
-    public class TV4Play : SiteUtilBase
+    public class TV4Play : SiteUtilBase, IBrowserSiteUtil
     {
-        // API: http://webapi.tv4play.se/ also http://mobapi.tv4play.se/
+        #region Config
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Username"), Description("TV4Play username")]
+        [Category("OnlineVideosUserConfiguration"), Description("TV4Play username"), LocalizableDisplayName("Username")]
         protected string username = null;
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("TV4Play password"), PasswordPropertyText(true)]
+        [Category("OnlineVideosUserConfiguration"), Description("TV4Play password"), LocalizableDisplayName("Password"), PasswordPropertyText(true)]
         protected string password = null;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show loading spinner"), Description("Show the loading spinner in the Browser Player")]
+        protected bool showLoadingSpinner = true;
+        //[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Prefer internal player"), Description("Try to play videos in Mediaportal. If not possible use browser player as fallback")]
+        protected bool preferInternal = true;
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show movies"), Description("Show \"Filmer\" category or not when logged in (Mostly DRM titles)")]
-        protected bool showMovies = true;
+        #endregion
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show live TV"), Description("Show \"TV-kanaler\" category or not when logged in (Some DRM free channels)")]
-        protected bool showTv = true;
+        #region constants, vars and properties
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Filter DRM videos"), Description("Remove videos marked with DRM from video lists")]
-        protected bool tryFilterDrm = true;
+        protected const string loginUrl = "https://www.tv4play.se/session/new";
+        protected const string loginPostUrl = "https://account.services.tv4play.se/session/authenticate";
+        protected const string showsUrl = "http://www.tv4play.se/program/more_programs?order_by=name&per_page=40&page={0}";
+        protected const string helaProgramUrl = "http://www.tv4play.se/videos/episodes_search?per_page=100&sort_order=desc&is_live=false&type=video&nodes_mode=any&page={0}&node_nids=";
+        protected const string klippUrl = "http://www.tv4play.se/videos/search?node_nids_mode=any&per_page=100&sort_order=desc&type=clip&page={0}&node_nids=";
+        protected const string liveUrl = "http://www.tv4play.se/videos/episodes_search?per_page=100&sort_order=asc&is_live=true&type=video&nodes_mode=any&page={0}&node_nids=";
+        protected const string videoPlayUrl = "https://prima.tv4play.se/api/web/asset/{0}/play";
+        protected const string videoAssetUrl = "https://www.tv4play.se/player/assets/common/{0}.json";
+        protected const string filmerUrl = "http://www.tv4play.se/film/tags?order_by=name";
+        protected const string barnUrl = "http://www.tv4play.se/barn";
+        protected const string barnFilmerUrl = "http://www.tv4play.se/film/tags?genre=barn&order_by=name";
+        protected const string familjFilmerUrl = "http://www.tv4play.se/film/tags?genre=familj&order_by=name";
+        protected const string episodeSearchUrl = "http://www.tv4play.se/videos/search?is_channel=false&type=episode&per_page=100&page={0}&q=";
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Download Subtitles"), Description("Choose if you want to download available subtitles or not")]
-        protected bool retrieveSubtitles = true;
+        private Dictionary<string, string> tvCategories = new Dictionary<string, string>()
+        {
+            { "Alla program", "" },
+            { "Drama", "drama" },
+            { "Dokumentärer", "dokument%C3%A4rer" },
+            { "Hem & fritid", "hem%20%26%20fritid" },
+            { "Humor", "humor" },
+            { "Nyheter & debatt", "nyheter%20%26%20debatt" },
+            { "Nöje", "n%C3%B6je" },
+            { "Sport", "sport" },
+            { "Deckare", "deckare" },
+            { "Mat & dryck", "mat%20%26%20dryck" },
+            { "Kändisar", "k%C3%A4ndisar" },
+            { "Musik", "musik" },
+            { "Reality", "reality" },
+            { "Övernaturligt", "%C3%B6vernaturligt" }
+        };
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Videos per page"), Description("Default 50, maximum 500. Lower if you get timouts")]
-        protected int numberOfVideosPerPage = 50;
-        protected const int maxNumberOfVideosPerPage = 500;
-
-
+        private int currentPage = 1;
+        private string currentUrl = "";
         protected CookieContainer cc = new CookieContainer();
 
-        protected const string loginUrl = @"https://www.tv4play.se/session/new?https=";
-        protected const string loginPostUrl = @"https://www.tv4play.se/session";
+        bool showPremium = false;
 
-        protected const string webApiBaseUrl = @"http://webapi.tv4play.se/play";
-        protected const string programCategoriesUrl = webApiBaseUrl + @"/categories";
-        protected const string programSubCategoryUrl = webApiBaseUrl + @"/programs?per_page=1000&page=1&is_premium={0}&category={1}";
-        protected const string programVideosUrl = webApiBaseUrl + @"/video_assets?is_live=false&page={0}&platform=web&node_nids={1}&per_page={2}&type={3}";
-        protected const string programImageUrl = @"http://img.tv4cdn.se/?quality=40&resize=340x190&shape=cut&source={0}{1}";
-        
-        protected const string filmerVideosUrl = webApiBaseUrl + @"/movie_assets?platform=web&rows=1000";
-        protected const string filmerImageUrl = @"http://img.tv4cdn.se/?quality=40&resize=340x484&shape=cut&source={0}{1}";
-
-        protected const string tvKanalerVideosUrl = webApiBaseUrl + @"/video_assets?platform=web&is_channel=true";
-        
-        protected const string videoAssetBaseUrl = @"http://premium.tv4play.se/api/web/asset/{0}/play";
-
-        protected const string playbackSwfUrl = @"http://www.tv4play.se/flash/tv4play_sa.swf";
-
-        protected string currentVideoUrl = "";
-        protected int currentPage = 1;
-        protected string currentVideoCategoryName = "";
-
-        protected const string program = "Program";
-        protected const string helaProgram = "Hela program";
-        protected const string klipp = "Klipp";
-        protected const string filmer = "Filmer";
-        protected const string tvKanaler = "TV-kanaler";
-
-        protected bool isPremium = false;
-        protected bool fakePremium = false;
-
-        private bool isLoggedIn()
+        protected bool HasLogin
         {
-            if (fakePremium) return fakePremium;
-            return GetWebData(loginPostUrl, cookies: cc).Trim() == "ok";
+            get
+            {
+                return (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password));
+            }
         }
+
+        #endregion
+
+        #region Log in
+
+        bool isLoggedIn = false;
 
         private void login()
         {
-            if (fakePremium)
+            if (!HasLogin)
             {
-                isPremium = fakePremium;
-                return;
+                throw new OnlineVideosException("Fyll i inloggningsuppgifter");                
             }
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            else if (!isLoggedIn)
             {
                 cc = new CookieContainer();
-                isPremium = false;
-                return;
+                string postData = string.Format("username={0}&password={1}&client=tv4play-web", HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password));
+                JObject json = GetWebData<JObject>(loginPostUrl, postData, cc);
+                try
+                {
+                    cc.Add(new Cookie("user_name", HttpUtility.UrlEncode(username), "/", ".tv4play.se"));
+                    cc.Add(new Cookie("username", HttpUtility.UrlEncode(json["user_id"].Value<string>()), "/", ".tv4play.se"));
+                    cc.Add(new Cookie("user_id", HttpUtility.UrlEncode(json["user_id"].Value<string>()), "/", ".tv4play.se"));
+                    cc.Add(new Cookie("contact_id", HttpUtility.UrlEncode(json["contact_id"].Value<string>()), "/", ".tv4play.se"));
+                    cc.Add(new Cookie("rememberme", HttpUtility.UrlEncode(json["session_token"].Value<string>()), "/", ".tv4play.se"));
+                    cc.Add(new Cookie("sessionToken", HttpUtility.UrlEncode(json["session_token"].Value<string>()), "/", ".tv4play.se"));
+                    cc.Add(new Cookie("JSESSIONID", HttpUtility.UrlEncode(json["vimond_session_token"].Value<string>()), "/", ".tv4play.se"));
+                    cc.Add(new Cookie("pSessionToken", HttpUtility.UrlEncode(json["vimond_remember_me"].Value<string>()), "/", ".tv4play.se"));
+                    isLoggedIn = true;
+                    showPremium = json["active_subscriptions"].Values() != null && (json["active_subscriptions"].Values().Count() > 0 && json["active_subscriptions"].First()["product_group_nid"].Value<string>() != "freemium");
+                } 
+                catch
+                {
+                    throw new OnlineVideosException("Inloggningen misslyckades");
+                }
             }
-            isPremium = isLoggedIn();
-            if (isPremium) 
-                return;
-            var loginpage = GetWebData(loginUrl, cookies: cc);
-            var htmlDoc = new HtmlAgilityPack.HtmlDocument();
-            htmlDoc.LoadHtml(loginpage);
-            var input = htmlDoc.DocumentNode.SelectSingleNode("//input[@id = 'authenticity_token']");
-            var authenticity_token = input.GetAttributeValue("value", "");
-            string postData = string.Format("user_name={0}&password={1}&authenticity_token={2}&https=", System.Web.HttpUtility.UrlEncode(username), System.Web.HttpUtility.UrlEncode(password), System.Web.HttpUtility.UrlEncode(authenticity_token));
-            string loginresponse = GetWebData(loginPostUrl, postData, cc);
-            isPremium = isLoggedIn();
         }
+
+        #endregion
+
+        #region Categories
 
         public override int DiscoverDynamicCategories()
         {
-            currentPage = 1;
             login();
-
-            Settings.Categories.Clear();
-            
-            Settings.Categories.Add (new RssLink(){Url = programCategoriesUrl, Name = program, HasSubCategories = true});
-            if (isPremium && showMovies)
-                Settings.Categories.Add(new RssLink() { Url = filmerVideosUrl, Name = filmer, HasSubCategories = false });
-            if (isPremium && showTv)
-                Settings.Categories.Add(new RssLink() { Url = tvKanalerVideosUrl, Name = tvKanaler, HasSubCategories = false });
-
-            Settings.DynamicCategoriesDiscovered = true;
-            return Settings.Categories.Count;
-        }
-
-        // Only program
-        public override int DiscoverSubCategories(Category parentCategory)
-        {
-            currentPage = 1;
-            login();
-            if (parentCategory.ParentCategory == null)
+            if (!showPremium)
             {
-                string jsonstr = GetWebData((parentCategory as RssLink).Url);
-                Newtonsoft.Json.Linq.JArray jsonArray = (Newtonsoft.Json.Linq.JArray)JsonConvert.DeserializeObject(jsonstr);
-                List<Category> cats = new List<Category>();
-                Category cat = new RssLink()
-                {
-                    Name = "Alla program",
-                    Url = string.Format(programSubCategoryUrl, (isPremium ? "" : "false"), ""),
-                    HasSubCategories = true,
-                    ParentCategory = parentCategory
-                };
-                cats.Add(cat);
-
-                foreach (var json in jsonArray)
-                {
-                    cat = new RssLink()
-                    {
-                        Name = (string)json["name"],
-                        Url = string.Format(programSubCategoryUrl, (isPremium ? "" : "false"), (string)json["nid"]),
-                        HasSubCategories = true,
-                        ParentCategory = parentCategory
-                    };
-                    cats.Add(cat);
-                }
-                parentCategory.SubCategories = cats;
-            }
-            else if (parentCategory.ParentCategory.ParentCategory == null)
-            {
-                var json = GetWebData<Newtonsoft.Json.Linq.JObject>((parentCategory as RssLink).Url);
-                Newtonsoft.Json.Linq.JArray results = (Newtonsoft.Json.Linq.JArray)json["results"];
-                List<Category> cats = new List<Category>();
-                Category cat = null;
-                foreach (var result in results)
-                {
-                    cat = new RssLink()
-                    {
-                        Other = (string)result["nid"],
-                        Name = (string)result["name"],
-                        Thumb = (string)result["program_image"],
-                        Description = (string)result["description"],
-                        ParentCategory = parentCategory,
-                        HasSubCategories = true
-                    };
-                    cats.Add(cat);
-                }
-                (parentCategory as RssLink).EstimatedVideoCount = (uint)cats.Count;
-                parentCategory.SubCategories = cats;
-            }
-            else if (parentCategory.ParentCategory.ParentCategory.ParentCategory == null)
-            {
-                if (numberOfVideosPerPage > maxNumberOfVideosPerPage)
-                {
-                    numberOfVideosPerPage = maxNumberOfVideosPerPage;
-                }
-                parentCategory.SubCategories = new List<Category>() { 
-                    new RssLink() { 
-                        HasSubCategories = false, 
-                                Name = helaProgram, 
-                                ParentCategory = parentCategory, 
-                                Url = string.Format(string.Format(programVideosUrl, currentPage, parentCategory.Other, numberOfVideosPerPage, "episode"))
-                            },
-                            new RssLink() 
-                            { 
-                                HasSubCategories = false, 
-                                Name = klipp, 
-                                ParentCategory = parentCategory, 
-                                Url = string.Format(string.Format(programVideosUrl, currentPage, parentCategory.Other, numberOfVideosPerPage, "clip"))
-                            }
-                };
+                GetShows(page: 1).ForEach((Category s) => Settings.Categories.Add(s));
             }
             else
             {
-                parentCategory.SubCategories = new List<Category>();
-            }
-            //(parentCategory as RssLink).EstimatedVideoCount = (uint)parentCategory.SubCategories.Count;
-            parentCategory.SubCategoriesDiscovered = (parentCategory.SubCategories.Count > 0);
-            return parentCategory.SubCategories.Count;
-        }
-
-        
-        public override List<VideoInfo> GetVideos(Category category)
-        {
-            currentPage = 1;
-            currentVideoCategoryName = category.Name;
-            return generateVideoList(category);
-        }
-
-        public override List<VideoInfo> GetNextPageVideos()
-        {
-            return generateVideoList(new RssLink() { Url = currentVideoUrl, Name = currentVideoCategoryName });
-        }
-
-        private List<VideoInfo> generateVideoList(Category category)
-        {
-            login();
-            currentVideoUrl = (category as RssLink).Url;
-            List<VideoInfo> videos = new List<VideoInfo>();
-            Newtonsoft.Json.Linq.JObject json = new Newtonsoft.Json.Linq.JObject();
-            try
-            {
-                json = GetWebData<Newtonsoft.Json.Linq.JObject>((category as RssLink).Url);
-            }
-            catch(Exception e)
-            {
-                Log.Error("Error when trying to get TV4Play videos: {0}", (category as RssLink).Url);
-                Log.Error(e);
-                throw new OnlineVideosException("Error getting videos, try again!",false);
-            }
-            Newtonsoft.Json.Linq.JArray results = (Newtonsoft.Json.Linq.JArray)json["results"];
-            foreach (var result in results)
-            {
-                if ((!tryFilterDrm || !(bool)result["is_drm_protected"]) && (isPremium || int.Parse(((string)result["availability"]["availability_group_free"]).Replace("+",string.Empty)) > 0))
+                Category tv = new Category() { Name = "TV", SubCategories = new List<Category>(), HasSubCategories = true, SubCategoriesDiscovered = true };
+                foreach (KeyValuePair<string, string> keyValuePair in tvCategories)
                 {
-                    VideoInfo video = new VideoInfo();
-                    video.Title = (string)result["title"];
+                    Category category = new Category();
+                    category.Name = keyValuePair.Key;
+                    category.HasSubCategories = true;
+                    category.ParentCategory = tv;
+                    category.Other = (Func<List<Category>>)(() => GetShows(1, category, keyValuePair.Value));
+                    tv.SubCategories.Add(category);
+                }
+                Settings.Categories.Add(tv);
+                Category film = new Category() { Name = "Film", HasSubCategories = false };
+                film.Other = (Func<List<VideoInfo>>)(() => GetFilmer(filmerUrl));
+                Settings.Categories.Add(film);
+                Category sport = new Category() { Name = "Sport", HasSubCategories = false };
+                sport.Other = (Func<List<VideoInfo>>)(() => GetSport());
+                Settings.Categories.Add(sport);
+                RssLink nyheter = new RssLink() { Name = "Nyheter", Url = "nyheterna", SubCategories = new List<Category>(), HasSubCategories = true };
+                nyheter.Other = (Func<List<Category>>)(() => GetShow(nyheter));
+                Settings.Categories.Add(nyheter);
+                Category barn = new Category() { Name = "Barn", SubCategories = new List<Category>(), HasSubCategories = true, SubCategoriesDiscovered = true };
+                Category barnprogram = new Category() { Name = "Alla barnprogram", HasSubCategories = true, ParentCategory = barn };
+                barnprogram.Other = (Func<List<Category>>)(() => GetShows(1, barnprogram, "barn"));
+                barn.SubCategories.Add(barnprogram);
+                Category barnserier = new Category() { Name = "Barnserier", HasSubCategories = true, ParentCategory = barn };
+                barnserier.Other = (Func<List<Category>>)(() => GetBarnserier(barnserier));
+                barn.SubCategories.Add(barnserier);
+                Category barnFilmer = new Category() { Name = "Barnfilm", HasSubCategories = false, ParentCategory = barn };
+                barnFilmer.Other = (Func<List<VideoInfo>>)(() => GetFilmer(barnFilmerUrl));
+                barn.SubCategories.Add(barnFilmer);
+                Category familjFilmer = new Category() { Name = "Familjefilm", HasSubCategories = false, ParentCategory = barn };
+                familjFilmer.Other = (Func<List<VideoInfo>>)(() => GetFilmer(familjFilmerUrl));
+                barn.SubCategories.Add(familjFilmer);
+                Settings.Categories.Add(barn);
+                Category kanaler = new Category() { Name = "Kanaler", HasSubCategories = false };
+                kanaler.Other = (Func<List<VideoInfo>>)(() => GetKanaler());
+                Settings.Categories.Add(kanaler);
+            }
+            Settings.DynamicCategoriesDiscovered = Settings.Categories.Count > 0;
+            return Settings.Categories.Count;
+        }
 
-                    if (category.Name == klipp || category.Name == helaProgram)
+        public override int DiscoverNextPageCategories(NextPageCategory category)
+        {
+            if (category.ParentCategory == null)
+            {
+                Settings.Categories.Remove(category);
+            }
+            else
+            {
+                category.ParentCategory.SubCategories.Remove(category);
+            }
+            Func<List<Category>> method = category.Other as Func<List<Category>>;
+            if (method != null)
+            {
+                List<Category> cats = method();
+                if (cats != null)
+                {
+                    if (category.ParentCategory == null)
                     {
-                        //broadcast_date_time=2012-12-12T21:30:00+01:00
-                        var dateNode = result["broadcast_date_time"];
-                        if (dateNode != null) video.Airdate = ((DateTime)dateNode).ToString("g", OnlineVideoSettings.Instance.Locale);
-                    }
-                    video.VideoUrl = string.Format(videoAssetBaseUrl, (string)result["id"]);
-                    if (category.Name == filmer)
-                    {
-                        if (((string)result["poster_image"]) != null)
-                        {
-                            video.Thumb = ((string)result["poster_image"]).StartsWith("/") ?
-                                string.Format(filmerImageUrl, webApiBaseUrl, (string)result["poster_image"]) :
-                                (string)result["poster_image"];
-                        }
-                        video.Description = (string)result["synopsis"];
+                        cats.ForEach((Category c) => Settings.Categories.Add(c));
                     }
                     else
                     {
-                        video.Thumb = string.Format(programImageUrl, "", HttpUtility.UrlEncode((string)result["image"]));
-                        video.Description = (string)result["description"];
+                        category.ParentCategory.SubCategories.AddRange(cats);
                     }
-                    videos.Add(video);
+                    return cats.Count;
                 }
             }
-            HasNextPage = false;
-            if (category.Name == klipp || category.Name == helaProgram)
+            return 0;
+        }
+
+        public override int DiscoverSubCategories(Category parentCategory)
+        {
+            Func<List<Category>> method = parentCategory.Other as Func<List<Category>>;
+            if (method != null)
             {
-                var assets_types_hits = json["assets_types_hits"];
-                bool gotClip = (assets_types_hits["clip"] != null);
-                bool gotProgram = (assets_types_hits["program"] != null);
-                int hits = 0;
-                if (gotClip && gotProgram)
+                parentCategory.SubCategories = method.Invoke();
+                parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
+                return parentCategory.SubCategories.Count;
+            }
+            return 0;
+        }
+
+        private List<Category> GetBarnserier(Category barnserier)
+        {
+            List<Category> categories = new List<Category>();
+            HtmlNodeCollection nodes = GetWebData<HtmlDocument>(barnUrl).DocumentNode.SelectNodes("//section[@class='module']");
+            HtmlNode seriesNode = null;
+            foreach (HtmlNode node in nodes)
+            {
+                if (node.InnerText.ToLower().Contains("barnserier"))
                 {
-                    hits = (int)json["assets_types_hits"][(category.Name == helaProgram) ? "program" : "clip"];
+                    seriesNode = node;
+                    break;
                 }
-                else if (gotProgram && category.Name == helaProgram)
+            }
+            if (seriesNode != null)
+            {
+                HtmlNodeCollection items = seriesNode.SelectNodes(".//li[@class='card']");
+                if (items != null)
                 {
-                    hits = (int)json["assets_types_hits"]["program"];
-                }
-                else if (gotClip && category.Name == klipp)
-                {
-                    hits = (int)json["assets_types_hits"]["clip"];
+                    foreach (HtmlNode item in items)
+                    {
+                        RssLink cat = new RssLink();
+                        cat.ParentCategory = barnserier;
+                        HtmlNode imgNode = item.SelectSingleNode(".//img");
+                        cat.Thumb = imgNode != null ? imgNode.GetAttributeValue("src", "") : "";
+                        cat.Name = HttpUtility.HtmlDecode(imgNode != null ? imgNode.GetAttributeValue("alt", "") : "");
+                        HtmlNode aNode = item.SelectSingleNode(".//h3/a");
+                        cat.Url = "http://www.tv4play.se" + aNode.GetAttributeValue("href", "");
+                        cat.Other = (Func<List<VideoInfo>>)(() => GetFilmer(cat.Url));
+                        categories.Add(cat);
+                    }
                 }
 
-                HasNextPage = hits > (currentPage * numberOfVideosPerPage);
-                if (HasNextPage)
+            }
+            return categories;
+        }
+
+        private List<Category> GetShow(Category parentCategory)
+        {
+            List<Category> categories = new List<Category>();
+            RssLink helaProgram = new RssLink() { Name = "Hela program", HasSubCategories = false, ParentCategory = parentCategory, Url = helaProgramUrl + (parentCategory as RssLink).Url };
+            HtmlNodeCollection nodes = GetWebData<HtmlDocument>(string.Format(helaProgram.Url, 1)).DocumentNode.SelectNodes("//li[contains(@class,'episode')]");
+            if (nodes != null && nodes.Count > 0)
+                categories.Add(helaProgram);
+            RssLink klipp = new RssLink() { Name = "Klipp", HasSubCategories = false, ParentCategory = parentCategory, Url = klippUrl + (parentCategory as RssLink).Url };
+            nodes = GetWebData<HtmlDocument>(string.Format(klipp.Url, 1)).DocumentNode.SelectNodes("//li[contains(@class,'clip')]");
+            if (nodes != null && nodes.Count > 0)
+                categories.Add(klipp);
+            RssLink live = new RssLink() { Name = "Live", HasSubCategories = false, ParentCategory = parentCategory, Url = liveUrl + (parentCategory as RssLink).Url };
+            nodes = GetWebData<HtmlDocument>(string.Format(live.Url, 1)).DocumentNode.SelectNodes("//li[contains(@class,'episode')]");
+            if (nodes != null && nodes.Count > 0)
+                categories.Add(live);
+            return categories;
+        }
+
+        private List<Category> GetShows(int page, Category parentCategory = null, string tag = null)
+        {
+            List<Category> shows = new List<Category>();
+            string url = string.Concat(string.Concat(string.Format(showsUrl, page), (showPremium ? "" : "&is_free=true")), (string.IsNullOrEmpty(tag) ? "" : string.Concat("&tags=", tag)));
+            HtmlDocument htmlDoc = GetWebData<HtmlDocument>(url);
+            HtmlNodeCollection items = htmlDoc.DocumentNode.SelectNodes("//li[@class='card']");
+            if (items != null)
+            {
+                foreach (HtmlNode item in items)
                 {
-                    currentVideoUrl = (category as RssLink).Url.Replace("&page=" + currentPage, "&page=" + (currentPage + 1));
-                    currentPage++;
+                    RssLink show = new RssLink();
+                    HtmlNode h3 = item.SelectSingleNode(".//h3");
+                    if (h3 != null)
+                    {
+                        show.Name = HttpUtility.HtmlDecode(h3.InnerText.Trim());
+                        show.ParentCategory = parentCategory;
+                        show.Url = item.GetAttributeValue("data-nid", "");
+                        show.HasSubCategories = true;
+                        show.SubCategories = new List<Category>();
+                        show.Other = (Func<List<Category>>)(() => GetShow(show));
+                        HtmlNode img = item.SelectSingleNode(".//img");
+                        if (img != null)
+                        {
+                            show.Thumb = img.GetAttributeValue("data-original", "");
+                        }
+                        shows.Add(show);
+                    }
                 }
+            }
+            if (htmlDoc.DocumentNode.SelectNodes("//footer/p/a") != null)
+            {
+                NextPageCategory next = new NextPageCategory();
+                next.ParentCategory = parentCategory;
+                next.Other = (Func<List<Category>>)(() => GetShows(page + 1, parentCategory, tag));
+                shows.Add(next);
+            }
+            return shows;
+        }
+
+        #endregion
+
+        #region Videos
+
+        private List<VideoInfo> GetKanaler()
+        {
+            List<VideoInfo> videos = new List<VideoInfo>();
+            HtmlNodeCollection nodes = GetWebData<HtmlDocument>("http://www.tv4play.se/kanaler/tv4").DocumentNode.SelectNodes("//li[contains(@class,'js-channel-info')]");
+            foreach (HtmlNode node in nodes)
+            {
+                JObject json = JObject.Parse(HttpUtility.HtmlDecode(node.GetAttributeValue("data-asset", "")));
+                VideoInfo video = new VideoInfo();
+                video.VideoUrl = json["id"].Value<string>();
+                video.Title = HttpUtility.HtmlDecode(json["title"].Value<string>());
+                video.Description = HttpUtility.HtmlDecode(json["description"].Value<string>());
+                video.Thumb = json["image"].Value<string>();
+                videos.Add(video);
             }
             return videos;
         }
 
-        public override string GetVideoUrl(VideoInfo video)
+        private List<VideoInfo> GetSport()
         {
-            //To be certain if the user is *really* logged in...
-            login();
-            
-            string result = string.Empty;
-            video.PlaybackOptions = new Dictionary<string, string>();
-            XmlDocument xDoc = GetWebData<XmlDocument>(video.VideoUrl, cookies: cc);
-            var errorElements = xDoc.SelectNodes("//meta[@name = 'error']");
-            if (errorElements != null && errorElements.Count > 0)
+            List<VideoInfo> videos = new List<VideoInfo>();
+            HtmlNodeCollection nodes = GetWebData<HtmlDocument>("http://www.tv4play.se/sport").DocumentNode.SelectNodes("//li[contains(@class,'sport_listing')]");
+            foreach (HtmlNode node in nodes)
             {
-                throw new OnlineVideosException(((XmlElement)errorElements[0]).GetAttribute("content"));
+                VideoInfo video = new VideoInfo();
+                HtmlNode a = node.SelectSingleNode(".//a");
+                video.VideoUrl = a.GetAttributeValue("href", "").Replace("/sport/", "");
+                video.Title = HttpUtility.HtmlDecode(node.SelectSingleNode(".//span[contains(@class,'sport_listing-sport')]").InnerText.Trim());
+                video.Airdate = node.SelectSingleNode(".//span[contains(@class,'time')]").InnerText.Trim();
+                video.Description = node.SelectSingleNode(".//div[contains(@class,'sports-game-info')]").InnerText.Trim();
+                video.Description += " - " + node.SelectSingleNode(".//span[contains(@class,'ports-league-info')]").InnerText.Trim();
+                if (node.SelectSingleNode(".//span[contains(@class,'premium_sport-badge')]") != null)
+                    video.Description += " - C More Sport";
+                video.Description = HttpUtility.HtmlDecode(video.Description);
+                videos.Add(video);
+            }
+            return videos;
+        }
+
+        private List<VideoInfo> GetVideos()
+        {
+            List<VideoInfo> videos = new List<VideoInfo>();
+            HtmlDocument doc = GetWebData<HtmlDocument>(string.Format(currentUrl, currentPage));
+            HtmlNodeCollection items = doc.DocumentNode.SelectNodes(".//li[contains(@class,'episode') or contains(@class,'clip') or contains(@class,'card')]");
+            if (items != null)
+            {
+                foreach (HtmlNode item in items)
+                {
+                    VideoInfo video = new VideoInfo();
+                    HtmlNodeCollection premium = item.SelectNodes(".//span[contains(@class,'premium-badge')]");
+                    if ((showPremium || premium == null || premium.Count == 0))
+                    {
+                        HtmlNode titleNode = item.SelectSingleNode(".//h3");
+                        video = new VideoInfo();
+                        video.VideoUrl = item.GetAttributeValue("data-video-id", "");
+                        video.Title = HttpUtility.HtmlDecode(titleNode != null ? titleNode.InnerText.Trim() : "");
+                        HtmlNode imgNode = item.SelectSingleNode(".//img");
+                        video.Thumb = imgNode != null ? imgNode.GetAttributeValue("src", "") : "";
+                        if (string.IsNullOrWhiteSpace(video.Thumb))
+                        {
+                            video.Thumb = (imgNode != null ? imgNode.GetAttributeValue("data-original", "") : "");
+                        }
+                        HtmlNode descNode = item.SelectSingleNode(".//p[contains(@class,'description')]");
+                        video.Description = HttpUtility.HtmlDecode((descNode != null ? descNode.InnerText.Trim() : ""));
+                        HtmlNode airNode = item.SelectSingleNode(".//p[contains(@class,'broadcast')]/span");
+                        video.Airdate = (airNode != null ? airNode.InnerText.Trim() : "");
+                        videos.Add(video);
+                    }
+                }
+            }
+            HasNextPage = doc.DocumentNode.SelectNodes("//footer/p/a") != null;
+            return videos;
+        }
+
+        private List<VideoInfo> GetFilmer(string url)
+        {
+            List<VideoInfo> videos = new List<VideoInfo>();
+            HtmlDocument doc = GetWebData<HtmlDocument>(url);
+            HtmlNodeCollection items = doc.DocumentNode.SelectNodes("//li[@class='card']");
+            if (items != null)
+            {
+                foreach (HtmlNode item in items)
+                {
+                    VideoInfo video = new VideoInfo();
+                    HtmlNode imgNode = item.SelectSingleNode(".//img");
+                    video.Thumb = imgNode != null ? imgNode.GetAttributeValue("src", "") : "";
+                    video.Title = HttpUtility.HtmlDecode(imgNode != null ? imgNode.GetAttributeValue("alt", "") : "");
+                    HtmlNode aNode = item.SelectSingleNode(".//h3/a");
+                    video.VideoUrl = aNode.GetAttributeValue("href", "").Replace("/film/", "");
+                    HtmlNode lengthNode = item.SelectSingleNode(".//span[contains(@class,'length')]");
+                    video.Length = (lengthNode != null ? lengthNode.InnerText.Replace(",", "").Trim() : "");
+                    HtmlNode airNode = item.SelectSingleNode(".//span[contains(@class,'year')]");
+                    video.Airdate = (airNode != null ? airNode.InnerText.Replace(",", "").Trim() : "");
+                    videos.Add(video);
+                }
+            }
+            return videos;
+
+        }
+
+        public override List<VideoInfo> GetVideos(Category category)
+        {
+            HasNextPage = false;
+            if (category.Other is Func<List<VideoInfo>>)
+            {
+                Func<List<VideoInfo>> method = category.Other as Func<List<VideoInfo>>;
+                if (method != null)
+                {
+                    return method();
+                }
+                return new List<VideoInfo>();
             }
             else
             {
-                List<KeyValuePair<int, string>> urls = new List<KeyValuePair<int, string>>();
-                string mediaformat;
-                string urlbase;
-                string scheme = "";
-                foreach (XmlElement videoElem in xDoc.SelectNodes("//items/item"))
-                {
-                    mediaformat = videoElem.GetElementsByTagName("mediaFormat")[0].InnerText.ToLower();
-                    var schemeNode = videoElem.GetElementsByTagName("scheme");
-                    if (schemeNode != null && schemeNode.Count > 0)
-                        scheme = schemeNode[0].InnerText.ToLower();
-
-                    if (mediaformat.StartsWith("mp4"))
-                    {
-                        urlbase = videoElem.GetElementsByTagName("base")[0].InnerText.ToLower().Trim();
-                        if (urlbase.StartsWith("rtmp"))
-                        {
-                            urls.Add(new KeyValuePair<int, string>(
-                                int.Parse(videoElem.GetElementsByTagName("bitrate")[0].InnerText),
-                                new MPUrlSourceFilter.RtmpUrl(videoElem.GetElementsByTagName("base")[0].InnerText)
-                                {
-                                    PlayPath = videoElem.GetElementsByTagName("url")[0].InnerText.Replace(".mp4", ""),
-                                    SwfUrl = playbackSwfUrl,
-                                    SwfVerify = true
-                                }.ToString()));
-                        }
-                        else if (urlbase.EndsWith(".f4m"))
-                        {
-                            urls.Add(new KeyValuePair<int, string>(
-                                int.Parse(videoElem.GetElementsByTagName("bitrate")[0].InnerText),
-                                videoElem.GetElementsByTagName("url")[0].InnerText + "?hdcore=2.10.3&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12)));
-                        }
-                        else if (scheme.StartsWith("http"))
-                        {
-                            urls.Add(new KeyValuePair<int, string>(
-                                int.Parse(videoElem.GetElementsByTagName("bitrate")[0].InnerText),
-                                videoElem.GetElementsByTagName("url")[0].InnerText + "hdcore=2.10.3&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12)));
-                        }
-
-                    } /* Can not play wvm format, drm'ed? (widevine) ? */
-                    else if (mediaformat.StartsWith("wvm"))
-                    {
-                        throw new OnlineVideosException("Sorry, unable to play video (Needs widevine plug in)", false);
-                        /*urls.Add(new KeyValuePair<int, string>(
-                            int.Parse(videoElem.GetElementsByTagName("bitrate")[0].InnerText),
-                            videoElem.GetElementsByTagName("url")[0].InnerText));*/
-                    }
-                    else if (retrieveSubtitles && mediaformat.StartsWith("smi"))
-                    {
-                        video.SubtitleText = GetWebData(videoElem.GetElementsByTagName("url")[0].InnerText, cookies: cc, encoding: System.Text.Encoding.Default);
-                    }
-                }
-                foreach (var item in urls.OrderBy(u => u.Key))
-                {
-                    video.PlaybackOptions.Add(string.Format("{0} kbps", item.Key), item.Value);
-                    result = item.Value;
-                }
-                return result;
+                currentPage = 1;
+                currentUrl = (category as RssLink).Url;
+                return GetVideos();
             }
         }
+
+        public override List<VideoInfo> GetNextPageVideos()
+        {
+            currentPage++;
+            return GetVideos();
+        }
+
+        public override string GetVideoUrl(VideoInfo video)
+        {
+            login();
+            Settings.Player = PlayerType.Internal;
+            string url = string.Format(videoPlayUrl, video.VideoUrl);
+            XmlDocument xDoc = GetWebData<XmlDocument>(url, cookies: cc);
+            XmlNode errorElement = xDoc.SelectSingleNode("//error");
+            if (errorElement != null)
+            {
+                throw new OnlineVideosException(errorElement.SelectSingleNode("./description/text()").InnerText);
+            }
+            XmlNode drm = xDoc.SelectSingleNode("//drmProtected");
+            if (!preferInternal || (drm == null ? false : drm.InnerText.Trim().ToLower() == "true"))
+            {
+                Settings.Player = PlayerType.Browser;
+                JObject json = GetWebData<JObject>(string.Format(videoAssetUrl, video.VideoUrl), cookies: cc);
+                return json["share_url"].Value<string>();
+            }
+            foreach (XmlElement item in xDoc.SelectNodes("//items/item"))
+            {
+                string mediaformat = item.GetElementsByTagName("mediaFormat")[0].InnerText.ToLower();
+                string itemUrl = item.GetElementsByTagName("url")[0].InnerText.Trim();
+                if (mediaformat.StartsWith("mp4") && itemUrl.ToLower().EndsWith(".f4m"))
+                {
+                    url = string.Concat(itemUrl, "?hdcore=3.5.0&g=", HelperUtils.GetRandomChars(12));
+                }
+                else if (mediaformat.StartsWith("mp4") && itemUrl.ToLower().Contains(".f4m?"))
+                {
+                    url = string.Concat(itemUrl, "&hdcore=3.5.0&g=", HelperUtils.GetRandomChars(12));
+                }
+                else if (mediaformat.StartsWith("smi"))
+                {
+                    video.SubtitleText = GetWebData(itemUrl, cookies: cc, encoding: System.Text.Encoding.Default);
+                }
+            }
+            return url;
+        }
+
+        #endregion
+
+        #region Search
+
+        public override bool CanSearch
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override List<SearchResultItem> Search(string query, string category = null)
+        {
+            HasNextPage = false;
+            currentPage = 1;
+            currentUrl = episodeSearchUrl + HttpUtility.UrlEncode(query);
+            List<SearchResultItem> results = new List<SearchResultItem>();
+            GetVideos().ForEach(v => results.Add(v));
+            return results;
+        }
+
+        #endregion
+
+        #region Browser
+
+        string IBrowserSiteUtil.ConnectorEntityTypeName
+        {
+            get { return "OnlineVideos.Sites.BrowserUtilConnectors.TV4PlayConnector"; }
+        }
+
+        string IBrowserSiteUtil.UserName
+        {
+            get { return username + (showLoadingSpinner ? "SHOWLOADING" : "") + (showPremium ? "PREMIUM" : ""); }
+        }
+
+        string IBrowserSiteUtil.Password
+        {
+            get { return password; }
+        }
+
+        #endregion
     }
 }

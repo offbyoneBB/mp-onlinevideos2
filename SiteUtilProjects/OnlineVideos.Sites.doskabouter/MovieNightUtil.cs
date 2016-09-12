@@ -31,42 +31,29 @@ namespace OnlineVideos.Sites
             if (String.IsNullOrEmpty(data)) data = GetWebData(url);
             var doc = new HtmlDocument();
             doc.LoadHtml(data);
-            var nodes = doc.DocumentNode.SelectNodes(@".//a[@href][img[@title]]");
+            var nodes = doc.DocumentNode.SelectNodes(@".//div[@id='box_movies']/div[@class='movie']");
             var result = new List<VideoInfo>();
             foreach (var node in nodes)
             {
                 VideoInfo video = new VideoInfo()
                 {
-                    VideoUrl = node.Attributes["href"].Value,
-                    Thumb = htmlValue(node.SelectSingleNode(".//img").Attributes["src"])
+                    VideoUrl = node.SelectSingleNode(".//a[@href]").Attributes["href"].Value,
+                    Thumb = htmlValue(node.SelectSingleNode(".//img[@src]").Attributes["src"])
                 };
-                string title = htmlValue(node.SelectSingleNode(".//img").Attributes["title"]);
+                string title = node.SelectSingleNode(".//h2").InnerText;
                 title = HttpUtility.HtmlDecode(title);
-                var docTitle = new HtmlDocument();
-                docTitle.LoadHtml(title);
-                var node2 = docTitle.DocumentNode.SelectSingleNode(@"//h4/a");
-                if (node2 == null)
-                    node2 = docTitle.DocumentNode.SelectSingleNode(@"//div[@class='in_title']");
-                if (node2 != null)
+                if (!String.IsNullOrEmpty(title))
                 {
-                    string s = node2.InnerText;
-                    int p = s.IndexOf('(');
-                    if (p >= 0)
+                    Match m = Regex.Match(title, @"\((?<airdate>\d+)\)");
+                    if (m.Success)
                     {
-                        int q = s.IndexOf(')', p);
-                        if (q >= 0)
-                        {
-                            video.Airdate = s.Substring(p + 1, q - p - 1);
-                            s = s.Substring(0, p).Trim();
-                        }
+                        video.Airdate = m.Groups["airdate"].Value;
+                        title = title.Remove(m.Captures[0].Index, m.Captures[0].Length).Trim();
                     }
-                    video.Title = s;
+
+                    video.Title = title;
                 }
-                node2 = docTitle.DocumentNode.SelectSingleNode(@"//p");
-                if (node2 != null)
-                    video.Description = node2.InnerText;
-                if (video.Title.ToUpperInvariant() != "IMPORTANT!")
-                    result.Add(video);
+                result.Add(video);
             }
 
             Match mNext = regEx_NextPage.Match(data);
@@ -135,9 +122,7 @@ namespace OnlineVideos.Sites
                 {
                     string subData = GetWebData(subs[prefSub]);
                     if (subData.StartsWith(@"WEBVTT"))
-                        subData = subData.Substring(8);
-                    // after new release:
-                    // subData = Helpers.SubtitleUtils.Webvtt2SRT(subData);
+                        subData = Helpers.SubtitleUtils.Webvtt2SRT(subData);
 
                     video.SubtitleText = subData;
                     break;

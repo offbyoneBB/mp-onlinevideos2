@@ -22,6 +22,8 @@ namespace OnlineVideos.Sites
         protected bool preferInternal = false;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Always use browser player for sports"), Description("Always use browser player for sports")]
         protected bool preferBrowserSport = true;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show loading spinner"), Description("Show the loading spinner in the Browser Player")]
+        protected bool showLoadingSpinner = true;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show help category"), Description("Enable or disable help category (Link to forum - http://tinyurl.com/olv-viaplay)")]
         protected bool showHelpCategory = true;
         #endregion
@@ -52,7 +54,7 @@ namespace OnlineVideos.Sites
         {
             get
             {
-                return username;
+                return username + (showLoadingSpinner ? "SHOWLOADING" : "");
             }
         }
 
@@ -110,21 +112,43 @@ namespace OnlineVideos.Sites
                 string apiUrl;
                 switch (Settings.Language)
                 {
-                case "sv":
-                    apiUrl = @"https://content.viaplay.se/pc-se";
-                    break;
-                case "da":
-                    apiUrl = @"https://content.viaplay.dk/pc-dk";
-                    break;
-                case "fi":
-                    apiUrl = @"https://content.viaplay.fi/pc-fi";
-                    break;
-                case "no":
-                    apiUrl = @"https://content.viaplay.no/pc-no";
-                    break;
-                default:
-                    apiUrl = string.Empty;
-                    break;
+                    case "sv":
+                        apiUrl = @"https://content.viaplay.se/pc-se";
+                        break;
+                    case "da":
+                        apiUrl = @"https://content.viaplay.dk/pc-dk";
+                        break;
+                    case "fi":
+                        apiUrl = @"https://content.viaplay.fi/pc-fi";
+                        break;
+                    case "no":
+                        apiUrl = @"https://content.viaplay.no/pc-no";
+                        break;
+                    default:
+                        apiUrl = string.Empty;
+                        break;
+                }
+                return apiUrl;
+            }
+        }
+        protected string SportApiUrl
+        {
+            get
+            {
+                string apiUrl = ApiUrl;
+                switch (Settings.Language)
+                {
+                    case "fi":
+                        apiUrl += @"/urheilu";
+                        break;
+                    case "no":
+                    case "sv":
+                    case "da":
+                        apiUrl += @"/sport";
+                        break;
+                    default:
+                        apiUrl = string.Empty;
+                        break;
                 }
                 return apiUrl;
             }
@@ -246,32 +270,6 @@ namespace OnlineVideos.Sites
                 return defaultValue;
         }
 
-        protected string EroticCategoryName
-        {
-            get
-            {
-                string eroticCategoryName;
-                switch (Settings.Language)
-                {
-                    case "sv":
-                        eroticCategoryName = "Erotik";
-                        break;
-                    case "da":
-                        eroticCategoryName = "Erotik";
-                        break;
-                    case "fi":
-                        eroticCategoryName = "Erotiikka";
-                        break;
-                    case "no":
-                        eroticCategoryName = "Erotikk";
-                        break;
-                    default:
-                        eroticCategoryName = string.Empty;
-                        break;
-                }
-                return eroticCategoryName;
-            }
-        }
         #endregion
 
         #region Helpers
@@ -283,15 +281,13 @@ namespace OnlineVideos.Sites
 
         private bool IsBlockedMainCategory(string categoryTitle)
         {
-            return categoryTitle == "OS"
-                || IsBlockedCategory(categoryTitle);
+            return IsBlockedCategory(categoryTitle);
         }
 
         private bool IsBlockedCategory(string categoryTitle)
         {
             return categoryTitle == GetTranslation("Rental store")
-                || categoryTitle == EroticCategoryName
-                || categoryTitle == "NHL GameCenter";
+                || categoryTitle == "Store" || categoryTitle == "NHL GameCenter";
         }
 
         private JObject MyGetWebData(string url, string postData = null)
@@ -304,9 +300,9 @@ namespace OnlineVideos.Sites
                 return data;
             }
             data = GetWebData<JObject>(url, postData, cc);
-            if (data["user"] == null)
+            if (!url.Contains(AndroidApiUrl) && data["user"] == null)
             {
-                data = GetWebData<JObject>(string.Format(LoginUrl, HttpUtility.UrlEncode(UserName), HttpUtility.UrlEncode(Password)), cookies: cc);
+                data = GetWebData<JObject>(string.Format(LoginUrl, HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(Password)), cookies: cc);
                 if ((bool)data["success"])
                 {
                     data = GetWebData<JObject>(url, postData, cc);
@@ -331,7 +327,7 @@ namespace OnlineVideos.Sites
             data = GetWebData(url, cookies: cc);
             if (data.Contains("Unauthorized"))
             {
-                JObject logindata = GetWebData<JObject>(string.Format(LoginUrl, HttpUtility.UrlEncode(UserName), HttpUtility.UrlEncode(Password)), cookies: cc);
+                JObject logindata = GetWebData<JObject>(string.Format(LoginUrl, HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(Password)), cookies: cc);
                 if ((bool)logindata["success"])
                 {
                     data = GetWebData(url, cookies: cc);
@@ -370,6 +366,14 @@ namespace OnlineVideos.Sites
                     Other = _section
                 });
             }
+            Settings.Categories.Add(new RssLink()
+            {
+                Name = GetTranslation("Sport","Sport"),
+                Url = SportApiUrl,
+                HasSubCategories = true,
+                SubCategories = new List<Category>(),
+                Other = _section
+            });
             var starred = data["_links"]["viaplay:starred"];
             var watched = data["_links"]["viaplay:watched"];
             if (starred != null)
@@ -854,13 +858,32 @@ namespace OnlineVideos.Sites
                 data = MyGetWebData(url);
                 url = data["_links"]["viaplay:playlist"]["href"].Value<string>();
                 string m3u8 = MyGetWebStringData(url);
-                Regex rgx = new Regex(@"RESOLUTION=(?<res>\d+x\d+).*?[\r|\n]*(?<url>.*?m3u8)");
-                foreach (Match m in rgx.Matches(m3u8))
+                if (!m3u8.Contains("#EXT-X-VERSION:4")) //Not supported, use Browser
                 {
-                    video.PlaybackOptions.Add(m.Groups["res"].Value, Regex.Replace(url, @"([^/]*)?\?", delegate(Match match)
+
+                    Regex rgx = new Regex(@"RESOLUTION=(?<res>\d+x\d+).*?[\r|\n]+(?<url>.*?m3u8)");
+                    foreach (Match m in rgx.Matches(m3u8))
                     {
-                        return m.Groups["url"].Value + "?";
-                    }));
+                        string newUrl = m.Groups["url"].Value;
+                        string res = m.Groups["res"].Value;
+                        int resCount = 2;
+                        while (video.PlaybackOptions.ContainsKey(res))
+                        {
+                            res = m.Groups["res"].Value + " " + resCount;
+                            resCount++;
+                        }
+                        if (newUrl.StartsWith("http"))
+                        {
+                            video.PlaybackOptions.Add(res, newUrl);
+                        }
+                        else
+                        {
+                            video.PlaybackOptions.Add(res, Regex.Replace(url, @"([^/]*)?\?", delegate(Match match)
+                            {
+                                return m.Groups["url"].Value + "?";
+                            }));
+                        }
+                    }
                 }
                 if (video.PlaybackOptions.Count < 1)
                 {

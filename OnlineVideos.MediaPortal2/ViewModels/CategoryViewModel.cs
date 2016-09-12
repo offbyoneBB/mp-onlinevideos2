@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MediaPortal.Common.General;
+﻿using MediaPortal.Common.General;
 using MediaPortal.UI.Presentation.DataObjects;
-using MediaPortal.UI.SkinEngine.ScreenManagement;
 using MediaPortal.UiComponents.Media.General;
 using OnlineVideos.CrossDomain;
 
@@ -12,7 +7,7 @@ namespace OnlineVideos.MediaPortal2
 {
     public class CategoryViewModel : ListItem
     {
-		protected PropertyChangedDelegator eventDelegator = null;
+        protected PropertyChangedDelegator _eventDelegator = null;
 
         protected AbstractProperty _nameProperty;
         public AbstractProperty NameProperty { get { return _nameProperty; } }
@@ -53,7 +48,7 @@ namespace OnlineVideos.MediaPortal2
         }
 
         public CategoryViewModel(Category category)
-			: base(Consts.KEY_NAME, category.Name)
+            : base(Consts.KEY_NAME, category.Name)
         {
             _category = category;
 
@@ -62,22 +57,22 @@ namespace OnlineVideos.MediaPortal2
             _thumbProperty = new WProperty(typeof(string), null);
             _estimatedChildrenProperty = new WProperty(typeof(uint?), CalculateChildrenCount());
 
-			if (Category is NextPageCategory)
-			{
-				Thumb = "NextPage.png";
-			}
-			else
-			{
-				eventDelegator = OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(PropertyChangedDelegator).Assembly.FullName, typeof(PropertyChangedDelegator).FullName) as PropertyChangedDelegator;
-				eventDelegator.InvokeTarget = new PropertyChangedExecutor()
-				{
-					InvokeHandler = (s, e) =>
-					{
-						if (e.PropertyName == "ThumbnailImage") Thumb = (s as Category).ThumbnailImage;
-					}
-				};
-				_category.PropertyChanged += eventDelegator.EventDelegate;
-			}
+            if (Category is NextPageCategory)
+            {
+                Thumb = "NextPage.png";
+            }
+            else
+            {
+                _eventDelegator = OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(PropertyChangedDelegator).Assembly.FullName, typeof(PropertyChangedDelegator).FullName) as PropertyChangedDelegator;
+                _eventDelegator.InvokeTarget = new PropertyChangedExecutor
+                {
+                    InvokeHandler = (s, e) =>
+                    {
+                        if (e.PropertyName == "ThumbnailImage") Thumb = (s as Category).ThumbnailImage;
+                    }
+                };
+                _category.PropertyChanged += _eventDelegator.EventDelegate;
+            }
         }
 
         uint? CalculateChildrenCount()

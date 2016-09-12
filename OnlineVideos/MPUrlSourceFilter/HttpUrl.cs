@@ -35,6 +35,8 @@ namespace OnlineVideos.MPUrlSourceFilter
         private String proxyServerPassword = HttpUrl.DefaultHttpProxyServerPassword;
         private ProxyServerType proxyServerType = HttpUrl.DefaultHttpProxyServerType;
 
+        private String streamFileName = HttpUrl.DefaultStreamFileName;
+
         #endregion
 
         #region Constructors
@@ -366,6 +368,23 @@ namespace OnlineVideos.MPUrlSourceFilter
             }
         }
 
+        /// <summary>
+        /// Gets or sets the stream file name. Stream file name have to be used when FFmpeg cannot autodetect stream format.
+        /// </summary>
+        public String StreamFileName
+        {
+            get { return this.streamFileName; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException("StreamFileName");
+                }
+
+                this.streamFileName = value;
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -450,6 +469,11 @@ namespace OnlineVideos.MPUrlSourceFilter
                 parameters.Add(new Parameter(HttpUrl.ParameterHttpProxyServerUserName, this.ProxyServerUserName));
                 parameters.Add(new Parameter(HttpUrl.ParameterHttpProxyServerPassword, this.ProxyServerPassword));
                 parameters.Add(new Parameter(HttpUrl.ParameterHttpProxyServerType, ((int)this.ProxyServerType).ToString()));
+            }
+
+            if (String.CompareOrdinal(this.StreamFileName, HttpUrl.DefaultStreamFileName) != 0)
+            {
+                parameters.Add(new Parameter(HttpUrl.ParameterHttpStreamFileName, this.StreamFileName.ToString()));
             }
 
             // return formatted connection string
@@ -592,6 +616,11 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// </summary>
         protected static readonly String ParameterHttpProxyServerType = "HttpProxyServerType";
 
+        /// <summary>
+        /// Specifies the value of stream file name.
+        /// </summary>
+        protected static readonly String ParameterHttpStreamFileName = "StreamFileName";
+
         /* default values */
 
         /// Default value for <see cref="ParameterHttpOpenConnectionTimeout"/>.
@@ -692,6 +721,11 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// Default value for <see cref="ParameterHttpProxyServerType"/>.
         /// </summary>
         public const ProxyServerType DefaultHttpProxyServerType = ProxyServerType.HTTP;
+
+        /// <summary>
+        /// Default value for <see cref="StreamFileName"/>.
+        /// </summary>
+        public const String DefaultStreamFileName = "";
 
         #endregion
     }

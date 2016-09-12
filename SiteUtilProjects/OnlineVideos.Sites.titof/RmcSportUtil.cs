@@ -4,6 +4,7 @@
     {
         #region Methods
 
+
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);

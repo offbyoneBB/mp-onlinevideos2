@@ -26,70 +26,77 @@ namespace OnlineVideos.Hoster
             RefererUrl = null;
 
             Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
-            string data = GetWebData(url, referer: refUrl);
-            Regex rgx = new Regex(@"window.atob\(\\'(?<base64>.*)\\'\)");
-            Match m = rgx.Match(data);
-            if (m.Success)
+            try
             {
-                string base64 = m.Groups["base64"].Value;
-                byte[] bytes = Convert.FromBase64String(base64);
-                data = Encoding.UTF8.GetString(bytes);
-            }
-            rgx = new Regex(@"video_link:\s*'.*?oid=(?<oid>\d+).*?[^o]id=(?<id>\d+).*?hash=(?<hash>[0-9a-f]*)");
-            m = rgx.Match(data);
-            if (m.Success)
-            {
-                string format = @"https://api.vk.com/method/video.getEmbed?oid={0}&video_id={1}&embed_hash={2}&callback=callbackFunc";
-                string vkUrl = string.Format(format, m.Groups["oid"].Value, m.Groups["id"].Value, m.Groups["hash"].Value);
-                return HosterFactory.GetHoster("vk").GetPlaybackOptions(vkUrl);
-            }
-            else
-            {
-                rgx = new Regex(@"<iframe.*src=""(?<url>[^""]*).*?</iframe");
-                m = rgx.Match(data);
+                string data = GetWebData(url, referer: refUrl);
+                Regex rgx = new Regex(@"<script>(?<js>eval.*?\|vkpass\|.*?)</script>");
+                string js = null;
+                Match m = rgx.Match(data);
                 if (m.Success)
                 {
-                    data = GetWebData(m.Groups["url"].Value, referer: url);
+                    js = m.Groups["js"].Value;
                 }
+                if (!string.IsNullOrEmpty(js))
+                {
+                    js = "var document={s:'',write:function(s){this.s=s;return;},read:function(){return this.s;}};function html(){return document.read();}; " + js;
+                    var engine = new Jurassic.ScriptEngine();
+                    engine.Execute(js);
+                    data = engine.CallGlobalFunction("html").ToString();
+                    rgx = new Regex(@"<source.*?src=""(?<url>[^""]*).*?label=""(?<label>[^""]*)");
+                    foreach (Match match in rgx.Matches(data))
+                    {
+                        MPUrlSourceFilter.HttpUrl hurl = new MPUrlSourceFilter.HttpUrl(match.Groups["url"].Value);
+                        hurl.Referer = "http://vkpass.com";
+                        playbackOptions.Add(match.Groups["label"].Value, hurl.ToString());
+                    }
 
-                rgx = new Regex(@"{file:""(?<url>[^""]*).*?label:""(?<label>[^""]*).*?type:\s*?""mp4""");
+                }
+                string subUrl = "";
+
+                rgx = new Regex(@"<track.*?src=""(?<url>[^""]*).*?label=""(?<label>[^""]*)");
                 foreach (Match match in rgx.Matches(data))
                 {
-                    string vUrl = match.Groups["url"].Value;
-                    playbackOptions.Add(match.Groups["label"].Value, vUrl);
+                    string label = match.Groups["label"].Value;
+                    if (label.ToLower() == "swedish" || label.ToLower() == "svenska")
+                    {
+                        subUrl = match.Groups["url"].Value;
+                        break;
+                    }
+                    else if (label.ToLower() == "english" || label.ToLower() == "engelska")
+                    {
+                        subUrl = match.Groups["url"].Value;
+                    }
+                    else if (string.IsNullOrEmpty(subUrl))
+                    {
+                        subUrl = match.Groups["url"].Value;
+                    }
+                }
+                if (!string.IsNullOrWhiteSpace(subUrl))
+                {
+                    try
+                    {
+                        subtitleText = WebCache.Instance.GetWebData(subUrl, forceUTF8: true);
+                        int index = subtitleText.IndexOf("WEBVTT\r\n\r\n");
+                        if (index >= 0)
+                            subtitleText = subtitleText.Substring(index).Replace("WEBVTT\r\n\r\n", "");
+                        if (!subtitleText.StartsWith("1\r\n"))
+                        {
+                            string oldSub = subtitleText;
+                            rgx = new Regex(@"(?<time>\d\d:\d\d:\d\d.\d\d\d -->)");
+                            int i = 1;
+                            foreach (Match match in rgx.Matches(oldSub))
+                            {
+                                string time = match.Groups["time"].Value;
+                                subtitleText = subtitleText.Replace(time, "\r\n" + i.ToString() + "\r\n" + time);
+                                i++;
+                            }
+                            subtitleText = subtitleText.TrimStart();
+                        }
+                    }
+                    catch { }
                 }
             }
-            string subUrl = "";
-            rgx = new Regex(@"file:\s*?'(?<url>[^']*).*?kind:\s*?'captions'.*?label:\s*?'(?<label>[^']*)");
-            foreach(Match match in rgx.Matches(data))
-            {
-                string label = match.Groups["label"].Value;
-                if (label.ToLower() == "swedish" || label.ToLower() == "svenska")
-                {
-                    subUrl = match.Groups["url"].Value;
-                    break;
-                }
-                else if (label.ToLower() == "english" || label.ToLower() == "engelska")
-                {
-                    subUrl = match.Groups["url"].Value;
-                }
-                else if (string.IsNullOrEmpty(subUrl))
-                {
-                    subUrl = match.Groups["url"].Value;
-                }
-            }
-            if (!string.IsNullOrWhiteSpace(subUrl))
-            {
-                try
-                {
-                    subtitleText = WebCache.Instance.GetWebData(subUrl, forceUTF8: true);
-                    int index = subtitleText.IndexOf("WEBVTT\r\n\r\n");
-                    if (index >= 0)
-                        subtitleText = subtitleText.Substring(index).Replace("WEBVTT\r\n\r\n", "");
-                }
-                catch { }
-            }
-
+            catch { }
             return playbackOptions;
         }
 

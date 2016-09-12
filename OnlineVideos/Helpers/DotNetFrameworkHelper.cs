@@ -75,5 +75,82 @@ namespace OnlineVideos.Helpers
                 }
             }
         }
+
+        public static class UriWithoutUrlDecoding
+        {
+            //Default .NET Uri automatically decodes url's so a request to http://.../a%2Fb is impossible. in this case a request to http://.../a/b is made.
+            //It's possible in .NET 4.0 to change a configuration parameter to disable this, but that changes the behaviour of all Uri's
+            //This is a workaround copied from http://blogs.msdn.com/b/xiangfan/archive/2012/01/16/10256915.aspx
+
+            private const GenericUriParserOptions c_Options =
+                GenericUriParserOptions.Default |
+                GenericUriParserOptions.DontUnescapePathDotsAndSlashes |
+                GenericUriParserOptions.Idn |
+                GenericUriParserOptions.IriParsing;
+            private static readonly GenericUriParser s_SyntaxHttp = new GenericUriParser(c_Options);
+            private static readonly GenericUriParser s_SyntaxHttps = new GenericUriParser(c_Options);
+
+            static UriWithoutUrlDecoding()
+            {
+                // Initialize the scheme
+                FieldInfo fieldInfoSchemeName = typeof(UriParser).GetField("m_Scheme", BindingFlags.Instance | BindingFlags.NonPublic);
+                if (fieldInfoSchemeName == null)
+                {
+                    throw new MissingFieldException("'m_Scheme' field not found");
+                }
+                fieldInfoSchemeName.SetValue(s_SyntaxHttp, "http");
+                fieldInfoSchemeName.SetValue(s_SyntaxHttps, "https");
+
+                FieldInfo fieldInfoPort = typeof(UriParser).GetField("m_Port", BindingFlags.Instance | BindingFlags.NonPublic);
+                if (fieldInfoPort == null)
+                {
+                    throw new MissingFieldException("'m_Port' field not found");
+                }
+                fieldInfoPort.SetValue(s_SyntaxHttp, 80);
+                fieldInfoPort.SetValue(s_SyntaxHttps, 443);
+            }
+
+            public static Uri Create(string url)
+            {
+                Uri result = new Uri(url);
+                if (url.IndexOf("%2F", StringComparison.OrdinalIgnoreCase) != -1)
+                    FixUri(result);
+                return result;
+            }
+
+            public static Uri Create(string baseUrl, string relativeUrl)
+            {
+                Uri result = new Uri(new Uri(baseUrl), relativeUrl);
+                if (baseUrl.IndexOf("%2F", StringComparison.OrdinalIgnoreCase) != -1 || relativeUrl.IndexOf("%2F", StringComparison.OrdinalIgnoreCase) != -1)
+                    FixUri(result);
+                return result;
+            }
+
+            private static void FixUri(Uri uri)
+            {
+                UriParser parser = null;
+                switch (uri.Scheme.ToLowerInvariant())
+                {
+                    case "http":
+                        parser = s_SyntaxHttp;
+                        break;
+                    case "https":
+                        parser = s_SyntaxHttps;
+                        break;
+                }
+
+                if (parser != null)
+                {
+                    // Associate the parser
+                    FieldInfo fieldInfo = typeof(Uri).GetField("m_Syntax", BindingFlags.Instance | BindingFlags.NonPublic);
+                    if (fieldInfo == null)
+                    {
+                        throw new MissingFieldException("'m_Syntax' field not found");
+                    }
+                    fieldInfo.SetValue(uri, parser);
+                }
+            }
+        }
+
     }
 }

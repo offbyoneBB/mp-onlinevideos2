@@ -162,7 +162,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
             for (int i = 0; i <= 10; i++)
             {
                 doc = tmpWeb.Load(url);
-                listItems = doc.DocumentNode.GetNodesByClass("packshot-wrapper");//ilo2");
+                listItems = doc.DocumentNode.GetNodesByClass("dv-packshot");
 
                 if (listItems == null)
                 {
@@ -181,7 +181,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                         var tmpCateg = new Category();
                         tmpCateg.ParentCategory = parent;
                         tmpCateg.HasSubCategories = false;
-                        tmpCateg.Name = item.NavigatePath(new[] { 0, 0 }).Attributes["alt"].Value; //item.GetNodeByClass("watchlist-row-link").Attributes["title"].Value;
+                        tmpCateg.Name = item.GetNodeByClass("dv-core-title").InnerText;
                         tmpCateg.Name = StringUtils.PlainTextFromHtml(tmpCateg.Name.Replace("\n", String.Empty).Trim());
                         tmpCateg.Other = item.NavigatePath(new[] { 0 }).Attributes["href"].Value.Replace("&amp;", "&"); ;
                         tmpCateg.Thumb = item.NavigatePath(new[] { 0, 0 }).Attributes["src"].Value;

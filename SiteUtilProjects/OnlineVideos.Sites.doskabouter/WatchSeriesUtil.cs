@@ -78,7 +78,7 @@ namespace OnlineVideos.Sites
                     if (cat.Name == "Series")
                     {
                         cat.Other = Depth.MainMenu;
-                        cat.Url = @"http://watchseries.ag/series";
+                        cat.Url = @"https://watchseriesfree.to/series";
                     }
                     else
                     {
@@ -123,12 +123,16 @@ namespace OnlineVideos.Sites
                     m = regEx_dynamicSubCategories.Match(webData);
                     break;
                 case Depth.Series:
+                    Match m2 = Regex.Match(webData, @"imdb\.com/title/(?<imdbId>[^/]*)/");
                     webData = Helpers.StringUtils.GetSubString(webData, @"class=""lists"">", @"class=""clear""");
                     string[] tmp = { @"class=""lists"">" };
                     string[] seasons = webData.Split(tmp, StringSplitOptions.RemoveEmptyEntries);
                     foreach (string s in seasons)
                     {
-                        RssLink cat = new RssLink();
+                        SeriesRssLink cat = new SeriesRssLink();
+                        if (m2.Success)
+                            cat.imDbId = m2.Groups["imdbId"].Value;
+
                         cat.Name = HttpUtility.HtmlDecode(Helpers.StringUtils.GetSubString(s, ">", "<")).Trim();
                         cat.Url = s;
                         cat.SubCategoriesDiscovered = true;
@@ -147,7 +151,7 @@ namespace OnlineVideos.Sites
             while (m != null && m.Success)
             {
                 RssLink cat = new RssLink();
-                cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value);
+                cat.Name = HttpUtility.HtmlDecode(m.Groups["title"].Value).Trim();
                 cat.Url = m.Groups["url"].Value;
                 if (!String.IsNullOrEmpty(cat.Url) && !Uri.IsWellFormedUriString(cat.Url, System.UriKind.Absolute))
                     cat.Url = new Uri(new Uri(baseUrl), cat.Url).AbsoluteUri;
@@ -222,7 +226,7 @@ namespace OnlineVideos.Sites
                     {
                         TrackingInfo tInfo = new TrackingInfo()
                         {
-                            Regex = Regex.Match(video.Title, @"(?<Title>.+)\s+Seas\.\s*?(?<Season>\d+)\s+Ep\.\s*?(?<Episode>\d+)", RegexOptions.IgnoreCase),
+                            Regex = Regex.Match(video.Title, @"(?<Title>.+?)\s+(?:-)?\s*Seas(?:\.|on)\s*?(?<Season>\d+)\s+(?:-)?\s*Ep(?:\.|isode)\s*?(?<Episode>\d+)", RegexOptions.IgnoreCase),
                             VideoKind = VideoKind.TvSeries
                         };
 
@@ -237,7 +241,11 @@ namespace OnlineVideos.Sites
                         }
 
                         if (tInfo.Season != 0)
+                        {
+                            if (category is SeriesRssLink)
+                                tInfo.ID_IMDB = ((SeriesRssLink)category).imDbId;
                             video.Other = tInfo;
+                        }
                     }
                     catch (Exception e)
                     {
@@ -354,6 +362,11 @@ namespace OnlineVideos.Sites
             return GetVideoUrl(url);
         }
 
+    }
+
+    public class SeriesRssLink : RssLink
+    {
+        public string imDbId = null;
     }
 
 }

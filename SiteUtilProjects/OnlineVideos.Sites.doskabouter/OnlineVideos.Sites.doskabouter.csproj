@@ -53,11 +53,6 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SubtitleDownloader">
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\SubtitleDownloader.dll</HintPath>
-      <Private>False</Private>
-      <Aliases>MySubtitleDownloader</Aliases>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
@@ -67,7 +62,6 @@
     <Compile Include="..\..\Build\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
-    <Compile Include="BigPondVideoUtil.cs" />
     <Compile Include="BrassBandTubeUtil.cs" />
     <Compile Include="CollegeHumorUtil.cs" />
     <Compile Include="DeferredResolveUtil.cs" />
@@ -75,7 +69,6 @@
     <Compile Include="EuroSportUtil.cs" />
     <Compile Include="EventCasterUtil.cs" />
     <Compile Include="FilmonUtil.cs" />
-    <Compile Include="GameKingsUtil.cs" />
     <Compile Include="GamersNetUtil.cs" />
     <Compile Include="Helpers\NPOHelper.cs" />
     <Compile Include="Hoster\Archiv.cs" />
@@ -121,12 +114,11 @@
     <Compile Include="PowerUnlimitedUtil.cs" />
     <Compile Include="RedBull.cs" />
     <Compile Include="RockPalastUtil.cs" />
+    <Compile Include="RTBFUtil.cs" />
     <Compile Include="RTEPlayerUtil.cs" />
     <Compile Include="RtmpUtil.cs" />
     <Compile Include="RuutuUtil.cs" />
     <Compile Include="SBSauUtil.cs" />
-    <Compile Include="SubtitleHandler.cs" />
-    <Compile Include="TelegraafTVUtil.cs" />
     <Compile Include="TelewizjadaUtil.cs" />
     <Compile Include="ToonsTv.cs" />
     <Compile Include="TubePlusUtil.cs" />
@@ -138,7 +130,6 @@
     <Compile Include="VimeoUtil.cs" />
     <Compile Include="Vimeo\AuthBase.cs" />
     <Compile Include="VodTvpUtil.cs" />
-    <Compile Include="ZieNlUtil.cs" />
     <Compile Include="CinemassacreUtil.cs" />
     <Compile Include="MyHosters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
