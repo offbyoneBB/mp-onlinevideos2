@@ -125,41 +125,20 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
 
         private bool activateLoginTimer = true;
-        private bool activatePasswordTimer = true;
-        private bool usernamePosted = false;
         public override Entities.EventResult BrowserDocumentComplete()
         {
             if (!_disableLogging) MessageHandler.Info("Netflix. Url: {0}, State: {1}", Url, _currentState.ToString());
             switch (_currentState)
             {
                 case State.Login:
-                    if (Url.Contains("/Login") && !usernamePosted && activateLoginTimer)
+                    if (Url.Contains("/Login") && activateLoginTimer)
                     {
                         activateLoginTimer = false;
                         System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
                         timer.Tick += (object sender, EventArgs e) =>
                         {
-                            string jsCode = "document.getElementsByName('email')[0].value = '" + _username + "'; ";
-                            jsCode += "document.getElementsByName('password')[0].value = '" + _password + "'; ";
-                            jsCode += "if (document.getElementById('login-form-contBtn')) { document.getElementById('login-form-contBtn').click(); } else { document.getElementsByTagName('form')[0].submit();}";
-                            InvokeScript(jsCode);
-                            usernamePosted = true;
-                            timer.Stop();
-                            timer.Dispose();
-                        };
-
-                        timer.Interval = 1000;
-                        timer.Start();
-                    }
-                    else if (Url.Contains("/Login") && usernamePosted && activatePasswordTimer)
-                    {
-                        activatePasswordTimer = false;
-                        System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
-                        timer.Tick += (object sender, EventArgs e) =>
-                        {
-                            string jsCode = "document.getElementsByName('password')[0].value = '" + _password + "'; ";
-                            jsCode += "document.getElementsByTagName('form')[0].submit(); ";
-                            InvokeScript(jsCode);
+                            InvokeScript(Properties.Resources.NetflixJs);
+                            InvokeScript(@"doLogin(""" + _username + @""", """ + _password + @""");");
                             timer.Stop();
                             timer.Dispose();
                         };

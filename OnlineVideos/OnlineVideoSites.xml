@@ -971,6 +971,7 @@
         <Category xsi:type="RssLink" thumb="" desc="" name="Series">http://www.kijk.nl/series</Category>
         <Category xsi:type="RssLink" thumb="" desc="" name="Genres">http://www.kijk.nl/genres</Category>
         <Category xsi:type="RssLink" thumb="" desc="" name="A - Z">http://www.kijk.nl/programmas</Category>
+        <Category xsi:type="RssLink" thumb="" desc="" name="Upload">http://upload.kijk.nl</Category>
       </Categories>
     </Site>
     <Site name="KissAnime" util="KissAnime" agecheck="false" enabled="true" lang="en">
@@ -1082,7 +1083,7 @@
     <Site name="Nos" util="GenericSite" agecheck="false" enabled="true" lang="nl">
       <Description>Nieuws, Sport en Evenementen op Radio, TV en Internet</Description>
       <Configuration>
-        <item key="videoListRegEx"><![CDATA[(<li\sclass="list-featured__item\s"><a\shref="(?<VideoUrl>[^"]*)"\s*class="link-block"><figure\sclass="list-featured__img"><img\s*src="(?<ImageUrl>[^"]*)"\s*alt=""\s*class="media-full"\s*/><span\sclass="img-icon-play\sbadge--larger\spos-bl\sshow-from--tablet-small"></span></figure><div\sclass="list-featured__wrap"><span\sclass="list-featured__title\slink-hover">(?<Title>[^<]*)</span><div\sclass="list-featured__meta\smeta"><span\sclass="icon-time\sico-space-right"></span><time\sdatetime="[^"]*">(?<Airdate>[^<]*)</time></div></div></a></li>)(?#videos nieuws_sport)|(<li\sclass="broadcast-player__playlist__item"><a\shref="(?<VideoUrl>[^"]*)"\sclass="link-hover\sbroadcast-link\s*"\s*><span\sclass="broadcast-link__play\simg-icon-play"></span><span\sclass="broadcast-link__name\s">(?<Title>[^<]*)</span><time\sclass="broadcast-link__date"\sdatetime="(?<Airdate>[^"]*)"><span\sclass="broadcast-link__icon\sicon-time\sico-space-right"></span>(?<Time>[^<]*)</time></a></li>)(?#videos uitzendingen)]]></item>
+        <item key="videoListRegEx"><![CDATA[(<li\sclass="list-featured__item\s"[^>]*><a\shref="(?<VideoUrl>[^"]*)"\s*class="link-block[^>]*><figure\sclass="list-featured__img"><img\s*src="(?<ImageUrl>[^"]*)"\s*alt=""\s*class="media-full"\s*/><span\sclass="img-icon-play\sbadge--larger\spos-bl\sshow-from--tablet-small"></span></figure><div\sclass="list-featured__wrap"><span\sclass="list-featured__title\slink-hover">(?<Title>[^<]*)</span><div\sclass="list-featured__meta\smeta"><span\sclass="icon-time\sico-space-right"></span><time\sdatetime="[^"]*">(?<Airdate>[^<]*)</time></div></div></a></li>)(?#videos nieuws_sport)|(<li\sclass="broadcast-player__playlist__item"><a\shref="(?<VideoUrl>[^"]*)"\sclass="link-hover\sbroadcast-link\s*"\s*><span\sclass="broadcast-link__play\simg-icon-play"></span><span\sclass="broadcast-link__name\s">(?<Title>[^<]*)</span><time\sclass="broadcast-link__date"\sdatetime="(?<Airdate>[^"]*)"><span\sclass="broadcast-link__icon\sicon-time\sico-space-right"></span>(?<Time>[^<]*)</time></a></li>)(?#videos uitzendingen)]]></item>
         <item key="fileUrlRegEx"><![CDATA[<source\ssrc="(?<m0>[^"]*)"\stype="[^"]*"\sdata-label="(?<n0>[^"]*)"\s*/>]]></item>
         <item key="baseUrl"><![CDATA[http://nos.nl]]></item>
       </Configuration>
@@ -1091,6 +1092,7 @@
           <SubCategories>
             <Category xsi:type="RssLink" thumb="" desc="" name="Binnenland">http://nos.nl/nieuws/binnenland/videos/</Category>
             <Category xsi:type="RssLink" thumb="" desc="" name="Buitenland">http://nos.nl/nieuws/buitenland/videos/</Category>
+            <Category xsi:type="RssLink" thumb="" desc="" name="Regio">http://nos.nl/nieuws/regio/videos/</Category>
             <Category xsi:type="RssLink" thumb="" desc="" name="Politiek">http://nos.nl/nieuws/politiek/videos/</Category>
             <Category xsi:type="RssLink" thumb="" desc="" name="Economie">http://nos.nl/nieuws/economie/videos/</Category>
             <Category xsi:type="RssLink" thumb="" desc="" name="Koningshuis">http://nos.nl/nieuws/koningshuis/videos/</Category>
@@ -1111,7 +1113,6 @@
           <SubCategories>
             <Category xsi:type="RssLink" thumb="" desc="" name="NOS Journaal">http://nos.nl/uitzending/nos-journaal</Category>
             <Category xsi:type="RssLink" thumb="" desc="" name="Nieuwsuur">http://nos.nl/uitzending/nieuwsuur</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="NOS op 3">http://nos.nl/uitzending/nos-op-3</Category>
             <Category xsi:type="RssLink" thumb="" desc="" name="NOS Jeugdjournaal">http://nos.nl/uitzending/nos-jeugdjournaal</Category>
             <Category xsi:type="RssLink" thumb="" desc="" name="NOS Sportjournaal">http://nos.nl/uitzending/nos-sportjournaal</Category>
             <Category xsi:type="RssLink" thumb="" desc="" name="NOS Studio Sport">http://nos.nl/uitzending/nos-studio-sport</Category>
@@ -1180,6 +1181,16 @@
         <item key="baseUrl"><![CDATA[http://www1.wdr.de/fernsehen/kultur/rockpalast/videos/index.html]]></item>
       </Configuration>
     </Site>
+    <Site name="RTBF" util="RTBF" agecheck="false" enabled="true" lang="fr">
+      <Description>Retrouvez le replay de toutes vos émissions et séries  de la RTBF</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[http://www.rtbf.be/auvio]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" thumb="" desc="" name="Live (not supported)">http://www.rtbf.be/auvio/direct#category=0</Category>
+        <Category xsi:type="RssLink" thumb="" desc="" name="Émissions">http://www.rtbf.be/auvio/emissions</Category>
+      </Categories>
+    </Site>
     <Site name="RTE.ie" util="RTEPlayer" agecheck="false" enabled="true" lang="en">
       <Description>RTÉ news brings you the latest Irish news, world news, international news and up to the minute reports on breaking Irish news stories and news from around the world. Watch and listen to Irish news stories on our video and audio streams.</Description>
       <Configuration>
@@ -1224,19 +1235,6 @@
         <Category xsi:type="RssLink" name="Lapset">http://www.ruutu.fi/lapset</Category>
         <Category xsi:type="RssLink" name="Kaikki ohjelmat">http://www.ruutu.fi/ohjelmat/kaikki</Category>
       </Categories>
-    </Site>
-    <Site name="TelegraafTV" util="TelegraafTV" agecheck="false" enabled="true" lang="nl">
-      <Description>TV | Altijd op de hoogte van het laatste nieuws met Telegraaf.nl</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li><a\shref="(?<url>http://www.telegraaf.nl/tv/[^"]*)"\starget="_self">(?<title>[^<]*)</a></li>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<h2>(?:<a[^>]*>)?(?<title>[^<]*)(?:</a>)?</h2>\s*<div\sclass="moreVideos"><a\shref="[^"]*">[^<]*</a></div>\s*<div\sclass="pagination">\s*<div\sid="pagination(?<url>[^"]*)">\s*</div>]]></item>
-        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://www.telegraaf.nl/jsp/video_carrousel_page.jsp?artid={0}&pagenr=1]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\sclass="videoItem\s">\s*<div\sclass="[^"]*">\s*<a\shref="(?<VideoUrl>[^"]*)">\s*<img\sclass="itemImg"\salt="[^"]*"\ssrc="(?<ImageUrl>[^"]*)"\swidth="151"\sheight="87"\s/><span\sclass="playTime">(?<Duration>[^<]*)</span>\s*<span\sclass="playButton"><img\sclass="playImg"\ssrc="/graphics/videopage/play\.png"></span></a>\s*</div>\s*<a[^>]*>(?<Title>[^<]*)</a>\s*</div>]]></item>
-        <item key="playlistUrlRegEx"><![CDATA[loadPlayer\('(?<url>[^']*)',]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<location\ss1:label="(?<n0>[^"]*)"\ss1:height="[^"]*">(?<m0>[^<]*)</location>]]></item>
-        <item key="baseUrl"><![CDATA[http://www.telegraaf.nl/tv/]]></item>
-        <item key="forceUTF8Encoding"><![CDATA[True]]></item>
-      </Configuration>
     </Site>
     <Site name="Telewizjada" util="Telewizjada" agecheck="false" enabled="true" lang="pl">
       <Description>Telewizja na żywo</Description>
@@ -1333,18 +1331,6 @@
       <Categories>
         <Category xsi:type="RssLink" name="Serwisy Informacyjne">http://vod.tvp.pl/</Category>
       </Categories>
-    </Site>
-    <Site name="Zie.nl" util="ZieNl" agecheck="false" enabled="true" lang="nl">
-      <Description>Op zoek naar leuke en interessante video's? Zie.nl, de nieuwe videosite van Nederland.</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="[^"]*">\s*<h2>\s*<a\sclass="[^"]*"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>\s*</h2>\s*</li>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li>\s*<h2>\s*<a\sclass="[^"]*"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>\s*</h2>\s*</li>]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\sclass="floatclear\szero\s[^"]*">[^<]*<div\sclass="floatleft"\sstyle="margin-right:\s5px;"><a\shref="(?<VideoUrl>[^"]*)"[^>]*><img\ssize="ws"\s*height="88"\s*width="155"\s*src="(?<ImageUrl>[^"]*)"\s*alt="[^"]*"\s*style=""\s/></a></div>[^<]*<span\sclass="colorprofile\stitle">[^<]*<a[^>]*>(?<Title>[^<]*)</a>[^<]*</span>[^<]*(?:<span\sclass="description"\sstyle="padding-right:\s10px;">(?<Description>.*?)</span>)?[^<]*(?:<div\sstyle="position:absolute;\sbottom:\s0;left:160px"\sclass="darkgrey\ssmall">(?<Airdate>[^<]*)</div>)?]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<meta\sproperty="og:video"\scontent="[^\?]*\?config=[^&]*&file=(?<m0>[^&]*)&logo=[^>]*>]]></item>
-        <item key="searchUrl"><![CDATA[http://www.zie.nl/search]]></item>
-        <item key="searchPostString"><![CDATA[q={0}]]></item>
-        <item key="baseUrl"><![CDATA[http://www.zie.nl/]]></item>
-      </Configuration>
     </Site>
     <Site name="ZTélé" util="ZTele" agecheck="false" enabled="true" lang="fr">
       <Description>Ztélé est une chaîne de télévision spécialisée dans les nouvelles technologies, la science, le multimédia, les jeux vidéo et les séries de science-fiction. Le site présente également la grille horaire des émissions, des blogues technos, des capsules vidéo, des concours, des fonds d'écran et plus encore.</Description>

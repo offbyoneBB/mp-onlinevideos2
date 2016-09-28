@@ -31,7 +31,7 @@ namespace OnlineVideos.Sites
 
         protected const string loginUrl = "https://www.tv4play.se/session/new";
         protected const string loginPostUrl = "https://account.services.tv4play.se/session/authenticate";
-        protected const string showsUrl = "http://www.tv4play.se/tv/more_programs?order_by=name&per_page=40&page={0}";
+        protected const string showsUrl = "http://www.tv4play.se/program/more_programs?order_by=name&per_page=40&page={0}";
         protected const string helaProgramUrl = "http://www.tv4play.se/videos/episodes_search?per_page=100&sort_order=desc&is_live=false&type=video&nodes_mode=any&page={0}&node_nids=";
         protected const string klippUrl = "http://www.tv4play.se/videos/search?node_nids_mode=any&per_page=100&sort_order=desc&type=clip&page={0}&node_nids=";
         protected const string liveUrl = "http://www.tv4play.se/videos/episodes_search?per_page=100&sort_order=asc&is_live=true&type=video&nodes_mode=any&page={0}&node_nids=";
@@ -90,10 +90,7 @@ namespace OnlineVideos.Sites
             else if (!isLoggedIn)
             {
                 cc = new CookieContainer();
-                HtmlDocument htmlDoc = GetWebData<HtmlDocument>(loginUrl, cookies: cc);
-                HtmlNode input = htmlDoc.DocumentNode.SelectSingleNode("//input[@id = 'authenticity_token']");
-                string authenticity_token = input.GetAttributeValue("value", "");
-                string postData = string.Format("username={0}&password={1}&client=web&authenticity_token={2}&https=", HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password), HttpUtility.UrlEncode(authenticity_token));
+                string postData = string.Format("username={0}&password={1}&client=tv4play-web", HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password));
                 JObject json = GetWebData<JObject>(loginPostUrl, postData, cc);
                 try
                 {
@@ -105,7 +102,6 @@ namespace OnlineVideos.Sites
                     cc.Add(new Cookie("sessionToken", HttpUtility.UrlEncode(json["session_token"].Value<string>()), "/", ".tv4play.se"));
                     cc.Add(new Cookie("JSESSIONID", HttpUtility.UrlEncode(json["vimond_session_token"].Value<string>()), "/", ".tv4play.se"));
                     cc.Add(new Cookie("pSessionToken", HttpUtility.UrlEncode(json["vimond_remember_me"].Value<string>()), "/", ".tv4play.se"));
-                    // cc.Add(new Cookie("tv4_token", HttpUtility.UrlEncode(GetWebData("").Trim()), "/", ".tv4play.se"));
                     isLoggedIn = true;
                     showPremium = json["active_subscriptions"].Values() != null && (json["active_subscriptions"].Values().Count() > 0 && json["active_subscriptions"].First()["product_group_nid"].Value<string>() != "freemium");
                 } 

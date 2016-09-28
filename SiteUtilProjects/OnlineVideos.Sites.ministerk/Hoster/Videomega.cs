@@ -1,14 +1,10 @@
 ﻿using Jurassic;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
 
 namespace OnlineVideos.Hoster
 {
-    public class Videomega : HosterBase
+    public class Videomega : HosterBase, ISubtitle
     {
 
         public override string GetHosterUrl()
@@ -20,7 +16,11 @@ namespace OnlineVideos.Hoster
         {
 
             string url2 = url;
-            if (!url.ToLower().Contains("iframe.php"))
+            if (url.ToLower().Contains("view.php"))
+            {
+                url2 = url.Replace("view.php", "iframe.php");
+            }
+            else if (!url.ToLower().Contains("iframe.php"))
             {
                 int p = url.IndexOf('?');
                 url2 = url.Insert(p, "iframe.php");
@@ -39,8 +39,34 @@ namespace OnlineVideos.Hoster
             m = Regex.Match(data, @"""(?<url>http[^""]*)");
             if (!m.Success)
                 return String.Empty;
-            
+            SetSub(webData);
             return m.Groups["url"].Value;
+        }
+
+        private string sub = "";
+
+        private void SetSub(string data)
+        {
+            try
+            {
+                Regex r = new Regex(@"captions""\s+src=""(?<u>[^""]*)[^>]*?default");
+                Match m = r.Match(data);
+                if (m.Success)
+                {
+                    sub = m.Groups["u"].Value;
+                    sub = GetWebData(sub);
+                    sub = sub.Substring(sub.IndexOf("1"));
+                }
+            }
+            catch
+            {
+                sub = "";
+            }
+        }
+
+        public string SubtitleText
+        {
+            get { return sub; }
         }
     }
 }

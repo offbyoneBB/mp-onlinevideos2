@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace OnlineVideos
@@ -13,7 +14,7 @@ namespace OnlineVideos
         public string Length { get; set; }
         public string Airdate { get; set; }
         public string StartTime { get; set; }
-		public Dictionary<string, string> PlaybackOptions;
+        public Dictionary<string, string> PlaybackOptions;
 
         /// <summary>If the SiteUtil for this VideoInfo implements <see cref="Sites.IChoice"/> setting this to true will show the details view (default), false will play the video</summary>
         public bool HasDetails { get; set; }
@@ -37,7 +38,7 @@ namespace OnlineVideos
 
         public override string ToString()
         {
-			return string.Format("Title:{0}\r\nDesc:{1}\r\nVidUrl:{2}\r\nImgUrl:{3}\r\nLength:{4}\r\nAirdate:{5}", Title, Description, VideoUrl, Thumb, Length, Airdate);
+            return string.Format("Title:{0}\r\nDesc:{1}\r\nVidUrl:{2}\r\nImgUrl:{3}\r\nLength:{4}\r\nAirdate:{5}", Title, Description, VideoUrl, Thumb, Length, Airdate);
         }
 
         /// <summary>
@@ -51,35 +52,35 @@ namespace OnlineVideos
             return PlaybackOptions[option];
         }
 
-		/// <summary>
-		/// Create a Matroska Xml Tag (http://www.matroska.org/technical/specs/tagging/index.html) for the Video. With Title, Description and Airdate.
-		/// </summary>
-		/// <returns>Utf-8 encoded xml</returns>
-		public virtual string CreateMatroskaXmlTag(string niceTitle)
-		{
-			return new XDocument(new XDeclaration("1.0", "utf-8", "true"),
-			new XElement("Tags",
-				new XElement("Tag",
-				new XElement("Targets",
-					new XElement("TargetTypeValue", 50)),
-				new XElement("Simple",
-					new XElement("Name", "TITLE"),
-					new XElement("String", niceTitle)),
-				new XElement("Simple",
-					new XElement("Name", "DESCRIPTION"),
-					new XElement("String", Description)),
-				new XElement("Simple",
-					new XElement("Name", "DATE_RELEASED"),
-					new XElement("String", Airdate))
-			))).ToString();
-		}
+        /// <summary>
+        /// Create a Matroska Xml Tag (http://www.matroska.org/technical/specs/tagging/index.html) for the Video. With Title, Description and Airdate.
+        /// </summary>
+        /// <returns>Utf-8 encoded xml</returns>
+        public virtual string CreateMatroskaXmlTag(string niceTitle)
+        {
+            return new XDocument(new XDeclaration("1.0", "utf-8", "true"),
+            new XElement("Tags",
+                new XElement("Tag",
+                new XElement("Targets",
+                    new XElement("TargetTypeValue", 50)),
+                new XElement("Simple",
+                    new XElement("Name", "TITLE"),
+                    new XElement("String", niceTitle)),
+                new XElement("Simple",
+                    new XElement("Name", "DESCRIPTION"),
+                    new XElement("String", Description)),
+                new XElement("Simple",
+                    new XElement("Name", "DATE_RELEASED"),
+                    new XElement("String", Airdate))
+            ))).ToString();
+        }
 
         public virtual Dictionary<string, string> GetExtendedProperties()
         {
             IVideoDetails details = Other as IVideoDetails;
             return details == null ? null : details.GetExtendedProperties();
         }
-        
+
         public VideoInfo CloneForPlaylist(string videoUrl, bool withPlaybackOptions)
         {
             VideoInfo newVideoInfo = MemberwiseClone(false) as VideoInfo;
@@ -93,6 +94,32 @@ namespace OnlineVideos
             }
             newVideoInfo.VideoUrl = videoUrl;
             return newVideoInfo;
+        }
+
+        /// <summary>
+        /// Returns the preferred url from the PlaybackOptions
+        /// Also deletes PlaybackOptions if not needed
+        /// </summary>
+        /// <param name="first">true if first one is preferred, false returns the last one</param>
+        /// <returns></returns>
+        public string GetPreferredUrl(bool first)
+        {
+            if (PlaybackOptions == null || PlaybackOptions.Count == 0) return null;
+            else
+                if (PlaybackOptions.Count == 1)
+                {
+                    string resultUrl = PlaybackOptions.First().Value;
+                    PlaybackOptions = null;// only one url found, PlaybackOptions not needed
+                    return resultUrl;
+                }
+                else
+                {
+                    if (first)
+                        return PlaybackOptions.First().Value;
+                    else
+                        return PlaybackOptions.Last().Value;
+                }
+
         }
     }
 }

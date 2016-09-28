@@ -73,6 +73,10 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SubtitleDownloader, Version=3.0.16.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\Packages\SubtitleDownloader.3.0.16.0\lib\net35\SubtitleDownloader.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System.configuration" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
@@ -1030,6 +1034,7 @@
     <Compile Include="Sites\WebBrowserPlayerService\ServiceImplementation\WebBrowserPlayerServiceHost.cs" />
     <Compile Include="Sites\WebBrowserPlayerService\ServiceImplementation\WebBrowserPlayerCallback.cs" />
     <Compile Include="Helpers\SubtitleUtils.cs" />
+    <Compile Include="SubtitleHandler.cs" />
     <Compile Include="Translation.cs" />
     <Compile Include="VideoInfo.cs" />
     <Compile Include="Web References\OnlineVideosWebservice\Reference.cs">

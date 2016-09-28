@@ -40,7 +40,6 @@ namespace OnlineVideos.Sites
         protected const string _seriesBlock = "PRODUCT";
         protected const string _watched = "WATCHED";
         protected const string _latest = "LATEST";
-        protected const string _rio = "RIO";
         #endregion
         #endregion
 
@@ -113,21 +112,43 @@ namespace OnlineVideos.Sites
                 string apiUrl;
                 switch (Settings.Language)
                 {
-                case "sv":
-                    apiUrl = @"https://content.viaplay.se/pc-se";
-                    break;
-                case "da":
-                    apiUrl = @"https://content.viaplay.dk/pc-dk";
-                    break;
-                case "fi":
-                    apiUrl = @"https://content.viaplay.fi/pc-fi";
-                    break;
-                case "no":
-                    apiUrl = @"https://content.viaplay.no/pc-no";
-                    break;
-                default:
-                    apiUrl = string.Empty;
-                    break;
+                    case "sv":
+                        apiUrl = @"https://content.viaplay.se/pc-se";
+                        break;
+                    case "da":
+                        apiUrl = @"https://content.viaplay.dk/pc-dk";
+                        break;
+                    case "fi":
+                        apiUrl = @"https://content.viaplay.fi/pc-fi";
+                        break;
+                    case "no":
+                        apiUrl = @"https://content.viaplay.no/pc-no";
+                        break;
+                    default:
+                        apiUrl = string.Empty;
+                        break;
+                }
+                return apiUrl;
+            }
+        }
+        protected string SportApiUrl
+        {
+            get
+            {
+                string apiUrl = ApiUrl;
+                switch (Settings.Language)
+                {
+                    case "fi":
+                        apiUrl += @"/urheilu";
+                        break;
+                    case "no":
+                    case "sv":
+                    case "da":
+                        apiUrl += @"/sport";
+                        break;
+                    default:
+                        apiUrl = string.Empty;
+                        break;
                 }
                 return apiUrl;
             }
@@ -345,18 +366,14 @@ namespace OnlineVideos.Sites
                     Other = _section
                 });
             }
-            if (Settings.Language == "sv")
+            Settings.Categories.Add(new RssLink()
             {
-                Settings.Categories.Add(new RssLink()
-                {
-                    Name = "Rio 2016",
-                    Url = "https://content.viaplay.se/pc-se/rio2016",
-                    HasSubCategories = true,
-                    SubCategories = new List<Category>(),
-                    Other = _rio
-                });
-
-            }
+                Name = GetTranslation("Sport","Sport"),
+                Url = SportApiUrl,
+                HasSubCategories = true,
+                SubCategories = new List<Category>(),
+                Other = _section
+            });
             var starred = data["_links"]["viaplay:starred"];
             var watched = data["_links"]["viaplay:watched"];
             if (starred != null)
@@ -465,7 +482,6 @@ namespace OnlineVideos.Sites
                         }
                     }
                     break;
-                case _rio:
                 case _filter:
                     var sortings = data["_links"]["viaplay:sortings"];
                     if (sortings != null && sortings.Count() > 0)
@@ -504,39 +520,6 @@ namespace OnlineVideos.Sites
                                         SubCategories = new List<Category>()
                                     });
                                 }
-                            }
-                        }
-                    }
-                    if (parentCategory.GetOtherAsString() == _rio)
-                    {
-                        RssLink rioTabla = new RssLink()
-                        {
-                            ParentCategory = parentCategory,
-                            Name = "Fullständig tablå per dag",
-                            HasSubCategories = true,
-                            SubCategoriesDiscovered = true,
-                            SubCategories = new List<Category>()
-                        };
-                        parentCategory.SubCategories.Add(rioTabla);
-                        var days = data["_links"]["viaplay:days"];
-                        if (days != null && days.Type != JTokenType.Null && days.Count() > 0)
-                        {
-                            foreach (JToken day in days)
-                            {
-                                bool isToday = day["today"] != null && day["today"].Value<bool>();
-                                RssLink dagTabla = new RssLink()
-                                {
-                                    ParentCategory = rioTabla,
-                                    Name = (isToday ? "Idag - " : "") + (string)day["date"],
-                                    Url = ((string)day["href"]),
-                                    HasSubCategories = true,
-                                    SubCategories = new List<Category>(),
-                                    Other = _section
-                                };
-                                if (isToday)
-                                    rioTabla.SubCategories.Insert(0, dagTabla);
-                                else
-                                    rioTabla.SubCategories.Add(dagTabla);
                             }
                         }
                     }

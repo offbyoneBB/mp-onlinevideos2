@@ -75,13 +75,20 @@
     <Compile Include="DplayUtil.cs" />
     <Compile Include="DrakenFilmUtil.cs" />
     <Compile Include="DreamfilmHDUtil.cs" />
+    <Compile Include="Filmer4EverUtil.cs" />
+    <Compile Include="Hoster\Filmer4Ever.cs" />
+    <Compile Include="Hoster\NowVideoSx.cs" />
+    <Compile Include="Hoster\Streamplay.cs" />
+    <Compile Include="Hoster\VidziTv.cs" />
+    <Compile Include="Hoster\FileHoot.cs" />
+    <Compile Include="Hoster\Zstream.cs" />
     <Compile Include="LastFmUtil.cs" />
+    <Compile Include="LosMoviesUtil.cs" />
     <Compile Include="Utils\ExtendedWebCache.cs" />
     <Compile Include="Hoster\IReferer.cs" />
     <Compile Include="Hoster\MailRu.cs" />
     <Compile Include="Hoster\Openload.cs" />
     <Compile Include="Hoster\SVTPlay.cs" />
-    <Compile Include="Hoster\VidAg.cs" />
     <Compile Include="Hoster\Videomega.cs" />
     <Compile Include="Hoster\VkPass.cs" />
     <Compile Include="Hoster\vk.cs" />
@@ -126,7 +133,9 @@
   <ItemGroup>
     <None Include="Resources\Katsomo.js" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\Netflix.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
