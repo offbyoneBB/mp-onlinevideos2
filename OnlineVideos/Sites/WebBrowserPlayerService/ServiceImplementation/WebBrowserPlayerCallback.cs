@@ -1,9 +1,6 @@
 ﻿using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
 using System.Windows.Forms;
 
 namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
@@ -27,7 +24,7 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
         /// <param name="exception"></param>
         public void LogException(Exception exception)
         {
-            OnlineVideos.Log.Error(exception);
+            Log.Error(exception);
         }
 
         /// <summary>
@@ -36,7 +33,7 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
         /// <param name="message"></param>
         public void LogInfo(string message)
         {
-            OnlineVideos.Log.Info(message);
+            Log.Info(message);
         }
 
         /// <summary>
@@ -44,7 +41,7 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
         /// </summary>
         public void OnClosing()
         {
-            OnBrowserClosing.Invoke(this, EventArgs.Empty);
+            if (OnBrowserClosing != null) OnBrowserClosing.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -53,7 +50,7 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
         /// <param name="keyPressed"></param>
         public void OnKeyPress(int keyPressed)
         {
-            OnBrowserKeyPress.Invoke(keyPressed);
+            if (OnBrowserKeyPress != null) OnBrowserKeyPress.Invoke(keyPressed);
         }
 
         /// <summary>
@@ -63,7 +60,7 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
         /// <returns></returns>
         public bool OnWndProc(Message msg)
         {
-            return OnBrowserWndProc.Invoke(msg);
+            return OnBrowserWndProc != null && OnBrowserWndProc.Invoke(msg);
         }
     }
 }

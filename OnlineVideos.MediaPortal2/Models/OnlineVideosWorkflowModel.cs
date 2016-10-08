@@ -10,6 +10,7 @@ using OnlineVideos.Downloading;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OnlineVideos.MediaPortal2.Models;
 
 namespace OnlineVideos.MediaPortal2
 {

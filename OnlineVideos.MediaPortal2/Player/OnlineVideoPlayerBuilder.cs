@@ -36,20 +36,15 @@ namespace OnlineVideos.MediaPortal2
 
         public IPlayer GetPlayer(MediaItem mediaItem)
         {
-            PlaylistItem playlistItem = mediaItem as PlaylistItem;
-            if (playlistItem == null)
-                return null;
-
             string mimeType;
             string title;
-            if (!playlistItem.GetPlayData(out mimeType, out title))
+            if (!mediaItem.GetPlayData(out mimeType, out title))
                 return null;
 
             if (mimeType == WebBrowserVideoPlayer.ONLINEVIDEOSBROWSER_MIMETYPE)
             {
                 var player = new WebBrowserVideoPlayer();
-                player.Initialise(playlistItem.Util);
-                if (!player.Init(playlistItem))
+                if (!player.Init(mediaItem))
                 {
                     player.Dispose();
                     return null;

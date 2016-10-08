@@ -46,6 +46,7 @@
     <Compile Include="..\..\Build\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
+    <Compile Include="ConnectorImplementations\AmazonPrimeUs\Connectors\AmazonPrimeUsConnector.cs" />
     <Compile Include="ConnectorImplementations\AmazonPrime\Connectors\AmazonPrimeConnector.cs" />
     <Compile Include="ConnectorImplementations\AmazonPrimeDe\Connectors\AmazonPrimeDeConnector.cs" />
     <Compile Include="ConnectorImplementations\AmazonPrime\Connectors\AmazonPrimeInformationConnector.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="ConnectorImplementations\BrowserUtilConnectorBase.cs" />
     <Compile Include="ConnectorImplementations\FormElementCollection.cs" />
     <Compile Include="Entities\ExtendedCategory.cs" />
+    <Compile Include="Entities\ExtendedProperties.cs" />
     <Compile Include="Extensions\HtmlAgilityPackExtensions.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />
     <Compile Include="Factories\ConnectorFactory.cs" />
@@ -86,6 +88,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx" />
     <None Include="Localisation\Resources.de.resx">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Localisation\Resources.en-US.resx">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
