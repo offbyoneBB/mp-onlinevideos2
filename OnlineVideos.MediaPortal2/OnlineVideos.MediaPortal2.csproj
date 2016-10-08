@@ -99,7 +99,6 @@
     <Compile Include="Controls\OverlayPanel.cs" />
     <Compile Include="DynamicWorkflow.cs" />
     <Compile Include="Models\ConfigurationHelper.cs" />
-    <Compile Include="OnlineVideosPlugin.cs" />
     <Compile Include="Models\SiteUpdateWorkflowModels.cs" />
     <Compile Include="Configuration\UserSiteSettingsStore.cs" />
     <Compile Include="Models\SiteManagementWorkflowModel.cs" />
