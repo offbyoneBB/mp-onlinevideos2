@@ -75,8 +75,6 @@
     <Compile Include="DplayUtil.cs" />
     <Compile Include="DrakenFilmUtil.cs" />
     <Compile Include="DreamfilmHDUtil.cs" />
-    <Compile Include="Filmer4EverUtil.cs" />
-    <Compile Include="Hoster\Filmer4Ever.cs" />
     <Compile Include="Hoster\NowVideoSx.cs" />
     <Compile Include="Hoster\Streamplay.cs" />
     <Compile Include="Hoster\VidziTv.cs" />
