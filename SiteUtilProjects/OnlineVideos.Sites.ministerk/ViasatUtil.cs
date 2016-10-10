@@ -272,6 +272,10 @@ namespace OnlineVideos.Sites
             {
                 playstr += "?hdcore=3.3.0" + "&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12);
             }
+            else if (playstr.ToLower().Contains(".f4m?"))
+            {
+                playstr += "&hdcore=3.3.0" + "&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12);
+            }
 
             if (!string.IsNullOrEmpty(video.SubtitleUrl))
             {
