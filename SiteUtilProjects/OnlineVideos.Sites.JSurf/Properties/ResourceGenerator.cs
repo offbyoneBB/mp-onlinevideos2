@@ -125,6 +125,10 @@
 
         public static string AmazonSearchUrl { get { return GetResourceString("AmazonSearchUrl"); } }
 
+        public static string AmazonATVUrl { get { return GetResourceString("AmazonATVUrl"); } }
+
+        public static string AmazonMarketId { get { return GetResourceString("AmazonMarketId"); } }
+
 		public static string Resources_de { get { return GetResourceString("Resources.de"); } }
 
 		public static string Resources_en_US { get { return GetResourceString("Resources.en_US"); } }
@@ -166,6 +170,8 @@
 			public const string AmazonTvIcon = "AmazonTvIcon";
             public const string AmazonSearchUrl = "AmazonSearchUrl";
             public const string Resources_de = "Resources_de";
-  		}
+            public const string AmazonATVUrl = "AmazonATVUrl";
+            public const string AmazonMarketId = "AmazonMarketId";
+        }
 	}
 }

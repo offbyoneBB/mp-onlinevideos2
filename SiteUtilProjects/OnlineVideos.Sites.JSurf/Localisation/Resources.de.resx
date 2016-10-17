@@ -165,4 +165,10 @@
   <data name="AmazonTVEditorsUrl" xml:space="preserve">
     <value />
   </data>
+  <data name="AmazonATVUrl" xml:space="preserve">
+    <value>https://atv-eu.amazon.com</value>
+  </data>
+  <data name="AmazonMarketId" xml:space="preserve">
+    <value>A1PA6795UKMFR9</value>
+  </data>
 </root>

@@ -24,7 +24,6 @@ using OnlineVideos.Sites.Interfaces;
 using OnlineVideos.Sites.Proxy.WebBrowserPlayerService;
 using OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation;
 using SharpDX;
-using Timer = System.Timers.Timer;
 
 namespace OnlineVideos.MediaPortal2
 {

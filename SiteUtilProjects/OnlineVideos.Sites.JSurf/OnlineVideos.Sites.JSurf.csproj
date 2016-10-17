@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HashLib, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\HashLib.2.0.1\lib\net40\HashLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -52,12 +56,15 @@
     <Compile Include="ConnectorImplementations\AmazonPrime\Connectors\AmazonPrimeInformationConnector.cs" />
     <Compile Include="ConnectorImplementations\AmazonPrime\Extensions\AmazonPrimeCategoryParser.cs" />
     <Compile Include="ConnectorImplementations\AmazonPrime\Extensions\AmazonPrimeVideoParser.cs" />
-    <Compile Include="ConnectorImplementations\AmazonPrime\Connectors\AmazonBrowserSession.cs" />
+    <Compile Include="ConnectorImplementations\AmazonPrime\Connectors\AmazonBrowserSession.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="ConnectorImplementations\BrowserSessionBase.cs" />
     <Compile Include="ConnectorImplementations\BrowserUtilConnectorBase.cs" />
     <Compile Include="ConnectorImplementations\FormElementCollection.cs" />
     <Compile Include="Entities\ExtendedCategory.cs" />
     <Compile Include="Entities\ExtendedProperties.cs" />
+    <Compile Include="Extensions\HashExtension.cs" />
     <Compile Include="Extensions\HtmlAgilityPackExtensions.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />
     <Compile Include="Factories\ConnectorFactory.cs" />
@@ -80,6 +87,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Properties\ResourceGenerator.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ResourceGenerator.cs</LastGenOutput>

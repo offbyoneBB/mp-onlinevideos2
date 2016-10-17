@@ -5,6 +5,7 @@ using OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensions;
 using System.Globalization;
 using OnlineVideos.Sites.JSurf.Properties;
 using System.Text.RegularExpressions;
+using OnlineVideos.Sites.JSurf.Entities;
 
 namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connectors
 {
@@ -309,6 +310,13 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         {
             DoLogin();
             return Resources.AmazonSearchUrl.LoadAmazonPrimeSearchAsCategoriesFromUrl(query, _browserSession);
+        }
+
+        public bool GetInputStreamProperties(VideoInfo video, out string streamUrl, out string licenseUrl)
+        {
+            ExtendedProperties trackingInfo = video.Other as ExtendedProperties;
+            string asin = trackingInfo != null ? trackingInfo.Other :  video.Other as string ?? video.VideoUrl;
+            return _browserSession.GetInputStreamProperties(asin, out streamUrl, out licenseUrl);
         }
 
         protected void DoLogin()

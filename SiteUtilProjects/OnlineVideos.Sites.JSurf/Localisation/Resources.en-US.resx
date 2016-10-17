@@ -165,4 +165,10 @@
   <data name="AmazonSearchUrl" xml:space="preserve">
     <value>https://www.amazon.com/s/ref=nb_sb_noss_1?url=search-alias%3Dprime-instant-video&amp;field-keywords={QUERY}&amp;ie=UTF-8&amp;lo=prime-instant-video</value>
   </data>
+  <data name="AmazonATVUrl" xml:space="preserve">
+    <value>https://atv-ext.amazon.com</value>
+  </data>
+  <data name="AmazonMarketId" xml:space="preserve">
+    <value>ATVPDKIKX0DER</value>
+  </data>
 </root>

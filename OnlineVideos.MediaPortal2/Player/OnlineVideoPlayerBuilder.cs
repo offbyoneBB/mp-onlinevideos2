@@ -22,8 +22,22 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using MediaPortal.Common;
+using MediaPortal.Common.Localization;
+using MediaPortal.Common.Logging;
 using MediaPortal.Common.MediaManagement;
+using MediaPortal.Common.MediaManagement.DefaultItemAspects;
+using MediaPortal.Common.ResourceAccess;
+using MediaPortal.Common.Services.ResourceAccess.RawUrlResourceProvider;
+using MediaPortal.Common.Settings;
+using MediaPortal.UI.Players.InputStreamPlayer;
+using MediaPortal.UI.Players.Video.Settings;
 using MediaPortal.UI.Presentation.Players;
+using MediaPortal.UI.SkinEngine.SkinManagement;
+using MediaPortalWrapper;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -41,6 +55,36 @@ namespace OnlineVideos.MediaPortal2
             if (!mediaItem.GetPlayData(out mimeType, out title))
                 return null;
 
+            PlaylistItem item = mediaItem as PlaylistItem;
+            if (item != null && item.InputStreamSite != null)
+            {
+                Dictionary<string, string> properties;
+                if (item.InputStreamSite.GetStreamProperties(item.VideoInfo, out properties))
+                {
+                    // Replace raw url / token source by resolved stream url
+                    var resourceAccessor = new RawUrlResourceAccessor(properties["inputstream.streamurl"]);
+                    MediaItemAspect providerResourceAspect = item.Aspects[ProviderResourceAspect.ASPECT_ID];
+                    String raPath = resourceAccessor.CanonicalLocalResourcePath.Serialize();
+                    providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_RESOURCE_ACCESSOR_PATH, raPath);
+
+                    IResourceLocator locator = mediaItem.GetResourceLocator();
+                    InputStreamPlayer iplayer = new InputStreamPlayer();
+                    try
+                    {
+                        InitOnline(iplayer, properties);
+                        iplayer.SetMediaItem(locator, title);
+                    }
+                    catch (Exception ex)
+                    {
+                        ServiceRegistration.Get<ILogger>().Error("Error playing media item '{0}'", ex, locator);
+                        iplayer.Dispose();
+                        return null;
+                    }
+                    return iplayer;
+                }
+            }
+
+
             if (mimeType == WebBrowserVideoPlayer.ONLINEVIDEOSBROWSER_MIMETYPE)
             {
                 var player = new WebBrowserVideoPlayer();
@@ -56,5 +100,35 @@ namespace OnlineVideos.MediaPortal2
         }
 
         #endregion
+
+        public void InitOnline(InputStreamPlayer player, Dictionary<string, string> properties)
+        {
+            var videoSettings = ServiceRegistration.Get<ISettingsManager>().Load<VideoSettings>();
+            var regionSettings = ServiceRegistration.Get<ISettingsManager>().Load<RegionSettings>();
+            CultureInfo culture = CultureInfo.CurrentUICulture;
+            try
+            {
+                if (!string.IsNullOrEmpty(regionSettings.Culture))
+                    culture = CultureInfo.CreateSpecificCulture(regionSettings.Culture);
+            }
+            catch { }
+
+            // Prefer video in screen resolution
+            var height = SkinContext.CurrentDisplayMode.Height;
+            var width = SkinContext.CurrentDisplayMode.Width;
+
+            InputStream.StreamPreferences preferences = new InputStream.StreamPreferences
+            {
+                Width = width,
+                Height = height,
+                ThreeLetterLangCode = culture.ThreeLetterISOLanguageName,
+                PreferMultiChannel = videoSettings.PreferMultiChannelAudio
+            };
+
+            InputStream onlineSource = new InputStream(properties["inputstream.streamurl"], properties, preferences);
+
+            player.InitStream(onlineSource);
+        }
     }
 }
+
