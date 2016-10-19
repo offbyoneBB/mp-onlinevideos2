@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MediaPortal.Common;
 using MediaPortal.Common.Localization;
 using MediaPortal.Common.PathManager;
@@ -15,6 +12,7 @@ namespace OnlineVideos.MediaPortal2.Models
     static class ConfigurationHelper
     {
         private static bool _isInitialized;
+        private static readonly object _syncObj = new object();
 
         public static void Init()
         {
@@ -24,11 +22,18 @@ namespace OnlineVideos.MediaPortal2.Models
 
         public static void InitEnvironment()
         {
-            if (_isInitialized)
-                return;
-            _isInitialized = true;
-
-            OnlineVideosAppDomain.UseSeperateDomain = true;
+            lock (_syncObj)
+            {
+                if (_isInitialized)
+                    return;
+                _isInitialized = true;
+            }
+            try
+            {
+                // The AppDomain might be initialized before, in this case this command will throw
+                OnlineVideosAppDomain.UseSeperateDomain = true;
+            }
+            catch { }
 
             ServiceRegistration.Get<ISettingsManager>().Load<Configuration.Settings>().SetValuesToApi();
             string ovConfigPath = ServiceRegistration.Get<IPathManager>().GetPath(string.Format(@"<CONFIG>\{0}\", Environment.UserName));
