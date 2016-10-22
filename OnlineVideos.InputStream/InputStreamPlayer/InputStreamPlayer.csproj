@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3171D2FF-4E7F-4413-B7A9-03AA7355DC68}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MediaPortal.UI.Players.InputStreamPlayer</RootNamespace>
+    <AssemblyName>InputStreamPlayer</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DirectShowWrapper, Version=2.16.10.8139, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\VideoPlayers\DirectShowWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="MediaPortal.Common, Version=2.16.10.8139, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\MediaPortal.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="MediaPortal.UI, Version=2.16.10.8139, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\MediaPortal.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D9, Version=2.6.3.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\SkinEngine\SharpDX.Direct3D9.dll</HintPath>
+    </Reference>
+    <Reference Include="SkinEngine, Version=2.16.10.8139, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\SkinEngine\SkinEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="VideoPlayers, Version=2.16.10.8139, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\VideoPlayers\VideoPlayers.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="InputStreamPlayer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="plugin.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="References\cdm\ssd_wv.dll" />
+    <Content Include="References\CurlSharp.dll" />
+    <Content Include="References\inputstream.mpd\addon.xml" />
+    <Content Include="References\inputstream.mpd\changelog.txt" />
+    <Content Include="References\inputstream.mpd\inputstream.mpd.dll" />
+    <Content Include="References\inputstream.mpd\inputstream.mpd.pdb" />
+    <Content Include="References\inputstream.mpd\resources\settings.xml" />
+    <Content Include="References\inputstream.smoothstream\addon.xml" />
+    <Content Include="References\inputstream.smoothstream\changelog.txt" />
+    <Content Include="References\inputstream.smoothstream\inputstream.smoothstream.dll" />
+    <Content Include="References\inputstream.smoothstream\resources\settings.xml" />
+    <Content Include="References\libcurl.dll" />
+    <Content Include="References\libcurlshim.dll" />
+    <Content Include="References\libeay32.dll" />
+    <Content Include="References\libssh2.dll" />
+    <Content Include="References\ssleay32.dll" />
+    <Content Include="References\widevinecdm.dll" />
+    <Content Include="References\zlib1.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\InputStreamSourceFilter\InputStreamSourceFilter.csproj">
+      <Project>{E1DBE4EC-283B-4B94-AA14-BFCE0EFA67CF}</Project>
+      <Name>InputStreamSourceFilter</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MediaPortalWrapper\MediaPortalWrapper.csproj">
+      <Project>{47731721-BA8A-4295-BCCE-399E5C289B4E}</Project>
+      <Name>MediaPortalWrapper</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="build.targets" />
+    <None Include="References\curl-ca-bundle.crt" />
+    <None Include="References\inputstream.mpd\inputstream.mpd.exp" />
+    <None Include="References\inputstream.mpd\inputstream.mpd.ilk" />
+    <None Include="References\inputstream.mpd\inputstream.mpd.lib" />
+    <None Include="References\inputstream.mpd\resources\language\resource.language.en_gb\strings.po" />
+    <None Include="References\inputstream.smoothstream\resources\language\resource.language.en_gb\strings.po" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="References\cdm\cdm\" />
+    <Folder Include="References\cdm\widevine\68747470733A2F2F6174762D65752E616D617A6F6E2E636F6D\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="build.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

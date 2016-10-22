@@ -32,25 +32,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.offbyone
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.MediaPortal2.Interfaces", "OnlineVideos.MediaPortal2.Interfaces\OnlineVideos.MediaPortal2.Interfaces.csproj", "{F54CFB16-1599-4676-BED6-2AB1C6F4DE53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InputStreamPlayer", "..\MediaPortal\Source\UI\Players\InputStream\InputStreamPlayer\InputStreamPlayer.csproj", "{3171D2FF-4E7F-4413-B7A9-03AA7355DC68}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InputStreamPlayer", "OnlineVideos.InputStream\InputStreamPlayer\InputStreamPlayer.csproj", "{3171D2FF-4E7F-4413-B7A9-03AA7355DC68}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InputStreamSourceFilter", "..\MediaPortal\Source\UI\Players\InputStream\InputStreamSourceFilter\InputStreamSourceFilter.csproj", "{E1DBE4EC-283B-4B94-AA14-BFCE0EFA67CF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InputStreamSourceFilter", "OnlineVideos.InputStream\InputStreamSourceFilter\InputStreamSourceFilter.csproj", "{E1DBE4EC-283B-4B94-AA14-BFCE0EFA67CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libKODI_inputstream", "..\MediaPortal\Source\UI\Players\InputStream\libKODI_inputstream\libKODI_inputstream.csproj", "{D930CB01-1765-4892-99A4-845392FD3210}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libKODI_inputstream", "OnlineVideos.InputStream\libKODI_inputstream\libKODI_inputstream.csproj", "{D930CB01-1765-4892-99A4-845392FD3210}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libXBMC_addon", "..\MediaPortal\Source\UI\Players\InputStream\libXBMC_addon\libXBMC_addon.csproj", "{227A18CA-CD85-47FA-997C-C1FFCB1E1A00}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libXBMC_addon", "OnlineVideos.InputStream\libXBMC_addon\libXBMC_addon.csproj", "{227A18CA-CD85-47FA-997C-C1FFCB1E1A00}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortalWrapper", "..\MediaPortal\Source\UI\Players\InputStream\MediaPortalWrapper\MediaPortalWrapper.csproj", "{47731721-BA8A-4295-BCCE-399E5C289B4E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectShowWrapper", "..\MediaPortal\Source\UI\Players\DirectShowWrapper\DirectShowWrapper.csproj", "{C4A45FA7-BCD1-4B14-B6D5-051A780EB83B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoPlayers", "..\MediaPortal\Source\UI\Players\VideoPlayer\VideoPlayers.csproj", "{ED9A8A29-91DD-4B21-8CB8-A8B0F3EFF61C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal.Common", "..\MediaPortal\Source\Core\MediaPortal.Common\MediaPortal.Common.csproj", "{ECF060E7-CAA1-4466-851F-F80B857641EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortalWrapper", "OnlineVideos.InputStream\MediaPortalWrapper\MediaPortalWrapper.csproj", "{47731721-BA8A-4295-BCCE-399E5C289B4E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InputStream", "InputStream", "{6C556A69-5996-482E-8C9C-1B8C678E29CB}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MediaPortal2", "MediaPortal2", "{09574265-741E-4AF7-84E5-59580F3C8591}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -120,6 +112,7 @@ Global
 		{E1DBE4EC-283B-4B94-AA14-BFCE0EFA67CF}.Debug|x86.ActiveCfg = Debug|x86
 		{E1DBE4EC-283B-4B94-AA14-BFCE0EFA67CF}.Debug|x86.Build.0 = Debug|x86
 		{E1DBE4EC-283B-4B94-AA14-BFCE0EFA67CF}.Release|Any CPU.ActiveCfg = Release|x86
+		{E1DBE4EC-283B-4B94-AA14-BFCE0EFA67CF}.Release|Any CPU.Build.0 = Release|x86
 		{E1DBE4EC-283B-4B94-AA14-BFCE0EFA67CF}.Release|x86.ActiveCfg = Release|x86
 		{E1DBE4EC-283B-4B94-AA14-BFCE0EFA67CF}.Release|x86.Build.0 = Release|x86
 		{D930CB01-1765-4892-99A4-845392FD3210}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -146,24 +139,6 @@ Global
 		{47731721-BA8A-4295-BCCE-399E5C289B4E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{47731721-BA8A-4295-BCCE-399E5C289B4E}.Release|x86.ActiveCfg = Release|x86
 		{47731721-BA8A-4295-BCCE-399E5C289B4E}.Release|x86.Build.0 = Release|x86
-		{C4A45FA7-BCD1-4B14-B6D5-051A780EB83B}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{C4A45FA7-BCD1-4B14-B6D5-051A780EB83B}.Debug|x86.ActiveCfg = Debug|x86
-		{C4A45FA7-BCD1-4B14-B6D5-051A780EB83B}.Debug|x86.Build.0 = Debug|x86
-		{C4A45FA7-BCD1-4B14-B6D5-051A780EB83B}.Release|Any CPU.ActiveCfg = Release|x86
-		{C4A45FA7-BCD1-4B14-B6D5-051A780EB83B}.Release|x86.ActiveCfg = Release|x86
-		{C4A45FA7-BCD1-4B14-B6D5-051A780EB83B}.Release|x86.Build.0 = Release|x86
-		{ED9A8A29-91DD-4B21-8CB8-A8B0F3EFF61C}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{ED9A8A29-91DD-4B21-8CB8-A8B0F3EFF61C}.Debug|x86.ActiveCfg = Debug|x86
-		{ED9A8A29-91DD-4B21-8CB8-A8B0F3EFF61C}.Debug|x86.Build.0 = Debug|x86
-		{ED9A8A29-91DD-4B21-8CB8-A8B0F3EFF61C}.Release|Any CPU.ActiveCfg = Release|x86
-		{ED9A8A29-91DD-4B21-8CB8-A8B0F3EFF61C}.Release|x86.ActiveCfg = Release|x86
-		{ED9A8A29-91DD-4B21-8CB8-A8B0F3EFF61C}.Release|x86.Build.0 = Release|x86
-		{ECF060E7-CAA1-4466-851F-F80B857641EA}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{ECF060E7-CAA1-4466-851F-F80B857641EA}.Debug|x86.ActiveCfg = Debug|x86
-		{ECF060E7-CAA1-4466-851F-F80B857641EA}.Debug|x86.Build.0 = Debug|x86
-		{ECF060E7-CAA1-4466-851F-F80B857641EA}.Release|Any CPU.ActiveCfg = Release|x86
-		{ECF060E7-CAA1-4466-851F-F80B857641EA}.Release|x86.ActiveCfg = Release|x86
-		{ECF060E7-CAA1-4466-851F-F80B857641EA}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -176,8 +151,5 @@ Global
 		{D930CB01-1765-4892-99A4-845392FD3210} = {6C556A69-5996-482E-8C9C-1B8C678E29CB}
 		{227A18CA-CD85-47FA-997C-C1FFCB1E1A00} = {6C556A69-5996-482E-8C9C-1B8C678E29CB}
 		{47731721-BA8A-4295-BCCE-399E5C289B4E} = {6C556A69-5996-482E-8C9C-1B8C678E29CB}
-		{C4A45FA7-BCD1-4B14-B6D5-051A780EB83B} = {09574265-741E-4AF7-84E5-59580F3C8591}
-		{ED9A8A29-91DD-4B21-8CB8-A8B0F3EFF61C} = {09574265-741E-4AF7-84E5-59580F3C8591}
-		{ECF060E7-CAA1-4466-851F-F80B857641EA} = {09574265-741E-4AF7-84E5-59580F3C8591}
 	EndGlobalSection
 EndGlobal

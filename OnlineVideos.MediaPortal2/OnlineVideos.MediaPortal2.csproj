@@ -62,7 +62,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="SharpDX.Direct3D9">
-      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\SkinEngine\SharpDX.Direct3D9.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\SkinEngine\SharpDX.Direct3D9.dll</HintPath>
     </Reference>
     <Reference Include="SkinEngine">
       <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\SkinEngine\SkinEngine.dll</HintPath>
@@ -82,11 +82,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MediaPortal\Source\UI\Players\InputStream\InputStreamPlayer\InputStreamPlayer.csproj">
+    <ProjectReference Include="..\OnlineVideos.InputStream\InputStreamPlayer\InputStreamPlayer.csproj">
       <Project>{3171D2FF-4E7F-4413-B7A9-03AA7355DC68}</Project>
       <Name>InputStreamPlayer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\MediaPortal\Source\UI\Players\InputStream\MediaPortalWrapper\MediaPortalWrapper.csproj">
+    <ProjectReference Include="..\OnlineVideos.InputStream\MediaPortalWrapper\MediaPortalWrapper.csproj">
       <Project>{47731721-BA8A-4295-BCCE-399E5C289B4E}</Project>
       <Name>MediaPortalWrapper</Name>
     </ProjectReference>
