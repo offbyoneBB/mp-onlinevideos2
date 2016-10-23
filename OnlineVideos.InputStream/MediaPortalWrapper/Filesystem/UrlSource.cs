@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using CurlSharp;
 using MediaPortalWrapper.Utils;
+using SeasideResearch.LibCurlNet;
 
 namespace MediaPortalWrapper.Filesystem
 {
@@ -25,15 +25,15 @@ namespace MediaPortalWrapper.Filesystem
     private byte[] _postData;
     private readonly Stopwatch _sw = new Stopwatch();
     private double _speed = 0;
-    private readonly CurlEasy _curl;
+    private readonly Easy _curl;
 
     private string _rawUrl;
     private readonly Dictionary<string, string> _headers = new Dictionary<string, string>();
 
     public UrlSource()
     {
-      Curl.GlobalInit(CurlInitFlag.All);
-      _curl = new CurlEasy();
+      Curl.GlobalInit((int)CURLinitFlag.CURL_GLOBAL_ALL);
+      _curl = new Easy();
 #if proxy
       _curl.Proxy = "127.0.0.1:8888";
 #endif
@@ -73,17 +73,17 @@ namespace MediaPortalWrapper.Filesystem
       switch (type)
       {
         case CURLOPTIONTYPE.CURL_OPTION_CREDENTIALS:
-          _curl.SetOpt(CurlOption.Username, name);
-          _curl.SetOpt(CurlOption.UserPwd, value);
+          //_curl.SetOpt(CurlOption.Username, name);
+          //_curl.SetOpt(CurlOption.UserPwd, value);
           break;
         case CURLOPTIONTYPE.CURL_OPTION_PROTOCOL:
         case CURLOPTIONTYPE.CURL_OPTION_HEADER:
           if (name == "referer")
-            _curl.Referer = value;
+            _curl.SetOpt(CURLoption.CURLOPT_REFERER, value);
           else if (name == "user-agent")
-            _curl.UserAgent = value;
+            _curl.SetOpt(CURLoption.CURLOPT_USERAGENT, value);
           else if (name == "cookie")
-            _curl.Cookie = value;
+            _curl.SetOpt(CURLoption.CURLOPT_COOKIE, value);
           else if (name == "postdata")
             _postData = Convert.FromBase64String(value);
           else if (name == "accept" || name == "accept-language" || name == "accept-datetime" || name == "accept-charset" ||
@@ -113,7 +113,7 @@ namespace MediaPortalWrapper.Filesystem
           if (name == "acceptencoding")
           {
             _headers["Accept-Encoding"] = value;
-            _curl.Encoding = value;
+            _curl.SetOpt(CURLoption.CURLOPT_ENCODING, value);
           }
           break;
         case CURLOPTIONTYPE.CURL_OPTION_OPTION:
@@ -132,44 +132,34 @@ namespace MediaPortalWrapper.Filesystem
     {
       try
       {
+        _sw.Start();
+        _contentStream = new MemoryStream();
+
+        Easy.WriteFunction wf = WriteData;
+        _curl.SetOpt(CURLoption.CURLOPT_WRITEFUNCTION, wf);
+        _curl.SetOpt(CURLoption.CURLOPT_URL, _rawUrl);
+        var asmFolder = Path.GetDirectoryName(GetType().Assembly.Location);
+        _curl.SetOpt(CURLoption.CURLOPT_CAINFO, Path.Combine(asmFolder, "curl-ca-bundle.crt"));
+
         if (_postData != null)
         {
-          _contentStream = new MemoryStream();
           var data = Encoding.ASCII.GetString(_postData);
 
-          _curl.WriteFunction = WriteData;
-          _curl.WriteData = null;
-          _curl.PostFields = data;
-          _curl.PostFieldSize = data.Length;
-          _curl.FollowLocation = true;
-          _curl.Url = _rawUrl;
-          _curl.Post = true;
-          var asmFolder = Path.GetDirectoryName(GetType().Assembly.Location);
-          _curl.CaInfo = Path.Combine(asmFolder, "curl-ca-bundle.crt");
-          var headers = new CurlSlist();
-          foreach (var header in _headers)
-          {
-            headers.Append(string.Format("{0}: {1}", header.Key, header.Value));
-          }
-          _curl.HttpHeader = headers;
-          var code = _curl.Perform();
-          _contentStream.Position = 0; // To allow reading from start
+          _curl.SetOpt(CURLoption.CURLOPT_WRITEDATA, null);
+          _curl.SetOpt(CURLoption.CURLOPT_POSTFIELDS, data);
+          _curl.SetOpt(CURLoption.CURLOPT_POSTFIELDSIZE, data.Length);
+          _curl.SetOpt(CURLoption.CURLOPT_FOLLOWLOCATION, true);
+          _curl.SetOpt(CURLoption.CURLOPT_POST, true);
         }
-        else
-        {
-          _sw.Start();
-          _contentStream = new MemoryStream();
-          _curl.SetOpt(CurlOption.Url, _rawUrl);
-          _curl.WriteFunction = WriteData;
-          var headers = new CurlSlist();
-          foreach (var header in _headers)
-          {
-            headers.Append(string.Format("{0}: {1}", header.Key, header.Value));
-          }
-          _curl.HttpHeader = headers;
-          _curl.Perform();
-          _contentStream.Position = 0; // To allow reading from start
-        }
+
+        var headers = new Slist();
+        foreach (var header in _headers)
+          headers.Append(string.Format("{0}: {1}", header.Key, header.Value));
+
+        _curl.SetOpt(CURLoption.CURLOPT_HTTPHEADER, headers);
+
+        var code = _curl.Perform();
+        _contentStream.Position = 0; // To allow reading from start
         return _contentStream != null;
       }
       catch (Exception ex)

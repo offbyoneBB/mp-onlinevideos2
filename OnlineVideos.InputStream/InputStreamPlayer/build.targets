@@ -9,6 +9,9 @@
     <PluginFiles Include="$(TargetDir)$(ProjectName).dll" />
     <PluginFiles Include="$(TargetDir)InputStreamSourceFilter.dll" />
     <PluginFiles Include="$(TargetDir)MediaPortalWrapper.dll" />
+    <PluginFiles Include="$(TargetDir)libcurl.dll" />
+    <PluginFiles Include="$(TargetDir)libcurl.NET.dll" />
+    <PluginFiles Include="$(TargetDir)LibCurlShim.dll" />
     <PluginFiles Include="$(ProjectDir)plugin.xml" />
   </ItemGroup>
 

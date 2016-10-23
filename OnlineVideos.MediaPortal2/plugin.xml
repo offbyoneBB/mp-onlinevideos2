@@ -20,6 +20,7 @@
     <PluginReference PluginId="{15FB35F7-8C85-4404-BC67-BFF28446158A}" CompatibleAPI="1"/> <!-- Media -->
     <PluginReference PluginId="{1AFF4467-64B0-4ca1-AF28-9AEDF3525BCE}" CompatibleAPI="1"/> <!-- ConfigurationManager -->
     <PluginReference PluginId="{B765A4B6-F455-4941-BDAE-2CE45208BFEB}" CompatibleAPI="1"/> <!-- Configuration plugin -->
+    <PluginReference PluginId="{6792C6C5-842C-4C65-A698-D94710984A42}" CompatibleAPI="1"/> <!-- InputStreamPlayer -->
   </DependsOn>
 
   <Runtime>
