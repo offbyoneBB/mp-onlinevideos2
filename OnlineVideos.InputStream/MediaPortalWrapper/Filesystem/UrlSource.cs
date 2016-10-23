@@ -30,9 +30,12 @@ namespace MediaPortalWrapper.Filesystem
     private string _rawUrl;
     private readonly Dictionary<string, string> _headers = new Dictionary<string, string>();
 
-    public UrlSource()
+    static UrlSource()
     {
       Curl.GlobalInit((int)CURLinitFlag.CURL_GLOBAL_ALL);
+    }
+    public UrlSource()
+    {
       _curl = new Easy();
 #if proxy
       _curl.Proxy = "127.0.0.1:8888";
@@ -73,8 +76,7 @@ namespace MediaPortalWrapper.Filesystem
       switch (type)
       {
         case CURLOPTIONTYPE.CURL_OPTION_CREDENTIALS:
-          //_curl.SetOpt(CurlOption.Username, name);
-          //_curl.SetOpt(CurlOption.UserPwd, value);
+          _curl.SetOpt(CURLoption.CURLOPT_USERPWD, string.Format("{0}:{1}", name, value));
           break;
         case CURLOPTIONTYPE.CURL_OPTION_PROTOCOL:
         case CURLOPTIONTYPE.CURL_OPTION_HEADER:
@@ -102,14 +104,7 @@ namespace MediaPortalWrapper.Filesystem
           {
             _headers[cname] = value;
           }
-          //SetRequestHeader(it->first, value);
-          //if (name == "authorization")
-          //  CLog::Logger.Log(LOGDEBUG, "CurlFile::ParseAndCorrectUrl() adding custom header option '%s: ***********'", it->first.c_str());
-          //else
-          //  CLog::Logger.Log(LOGDEBUG, "CurlFile::ParseAndCorrectUrl() adding custom header option '%s: %s'", it->first.c_str(), value.c_str());
 
-          //if (name == "seekable" && value == "0")
-          //  _seekable = false;
           if (name == "acceptencoding")
           {
             _headers["Accept-Encoding"] = value;
