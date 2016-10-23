@@ -8,6 +8,15 @@ namespace MediaPortal.UI.Players.InputStreamPlayer
   public class InputStreamPlayer : VideoPlayer
   {
     private InputStream _stream;
+    private StreamSourceFilter _streamSourceFilter;
+
+    /// <summary>
+    /// Indicates that internal decryption failed.
+    /// </summary>
+    public bool DecryptError
+    {
+      get { return _streamSourceFilter != null && _streamSourceFilter.DecryptError; }
+    }
 
     public void InitStream(InputStream onlineSource)
     {
@@ -16,11 +25,11 @@ namespace MediaPortal.UI.Players.InputStreamPlayer
 
     protected override void AddSourceFilter()
     {
-      var sourceFilter = new StreamSourceFilter(_stream);
-      var hr = _graphBuilder.AddFilter(sourceFilter, sourceFilter.Name);
+      _streamSourceFilter = new StreamSourceFilter(_stream);
+      var hr = _graphBuilder.AddFilter(_streamSourceFilter, _streamSourceFilter.Name);
       new HRESULT(hr).Throw();
 
-      using (DSFilter source2 = new DSFilter(sourceFilter))
+      using (DSFilter source2 = new DSFilter(_streamSourceFilter))
         foreach (DSPin pin in source2.Output)
           using (pin)
           {

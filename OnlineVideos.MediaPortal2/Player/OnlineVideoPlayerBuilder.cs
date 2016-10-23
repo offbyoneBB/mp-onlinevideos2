@@ -73,18 +73,21 @@ namespace OnlineVideos.MediaPortal2
                     {
                         InitOnline(iplayer, properties);
                         iplayer.SetMediaItem(locator, title);
+
+                        if (iplayer.DecryptError)
+                            throw new Exception("Decrypting by InputStream failed.");
+
+                        return iplayer;
                     }
                     catch (Exception ex)
                     {
-                        ServiceRegistration.Get<ILogger>().Error("Error playing media item '{0}'", ex, locator);
+                        ServiceRegistration.Get<ILogger>().Warn("Error playing media item '{0}': {1}", locator, ex.Message);
                         iplayer.Dispose();
-                        return null;
                     }
-                    return iplayer;
                 }
             }
 
-
+            // Also try browser player as fallback if InputStream decoding failed
             if (mimeType == WebBrowserVideoPlayer.ONLINEVIDEOSBROWSER_MIMETYPE)
             {
                 var player = new WebBrowserVideoPlayer();

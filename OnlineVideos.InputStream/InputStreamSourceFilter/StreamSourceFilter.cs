@@ -21,6 +21,14 @@ namespace InputStreamSourceFilter
   {
     protected StreamFileParser _streamParser;
 
+    /// <summary>
+    /// Indicates that internal decryption failed.
+    /// </summary>
+    public bool DecryptError
+    {
+      get { return _streamParser != null && _streamParser.DecryptError; }
+    }
+
     public StreamSourceFilter(InputStream stream)
       : base("InputStreamSourceFilter")
     {
@@ -236,10 +244,13 @@ namespace InputStreamSourceFilter
   public class StreamFileParser : FileParser
   {
     protected InputStream _stream;
+    private int _videoPackets;
+    private int _audioPackets;
 
     public List<MediaTypedDemuxTrack> Tracks { get { return m_Tracks.OfType<MediaTypedDemuxTrack>().ToList(); } }
     public List<InputstreamInfo> SelectableTracks { get { return _stream.AudioStreams; } }
     public InputStream InputStream { get { return _stream; } }
+    public bool DecryptError { get; private set; }
 
     public void SetSource(InputStream stream)
     {
@@ -291,14 +302,25 @@ namespace InputStreamSourceFilter
       DemuxTrack track = demuxPacket.StreamId == _stream.VideoStream.StreamId ? m_Tracks[0] : m_Tracks[1];
       if (track.Type == DemuxTrack.TrackType.Video)
       {
+        _videoPackets++;
         // Set video timestamps
         packet.Start = demuxPacket.Dts.ToDS();
         packet.Stop = demuxPacket.Duration.ToDS();
+      }
+      else
+      {
+        _audioPackets++;
       }
       // Queue samples
       track.AddToCache(ref packet);
 
       _stream.Free(demuxPacket);
+      // Check for decoding errors, commonly the audio part is working while video decoding might fail
+      if (_audioPackets > 5 && _videoPackets == 0)
+      {
+        DecryptError = true;
+        return S_FALSE;
+      }
       return S_OK;
     }
 
