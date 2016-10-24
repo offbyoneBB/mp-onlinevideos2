@@ -22,11 +22,15 @@ namespace OnlineVideos.Hoster
             {
                 string enc = HttpUtility.HtmlDecode(m.Groups["enc"].Value);
                 string chars = "";
-
+                int last = (int)enc[enc.Length - 1];
                 int eCount = enc.Count();
                 for (int i = 0; i < eCount; i++)
                 {
                     int j = (int)enc[i];
+                    if (j == last)
+                        j -= 1;
+                    else if (j == last - 1)
+                        j += 1;
                     if (j >= 33 && j <= 126)
                         j = ((j + 14) % 94) + 33;
                     chars += (char)(j + (i == eCount - 1 ? 2 : 0));
