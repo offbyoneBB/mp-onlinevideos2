@@ -341,7 +341,7 @@ namespace OnlineVideos
                         if (key.StartsWith("OnlineVideos.")) key = key.Substring("OnlineVideos.".Length);
                         // Android String Resources Format Has Escaped apostrophes
                         string value = stringEntry.InnerText.Replace(@"\'", "'");
-                        TranslatedStrings.Add(key, value);
+                        TranslatedStrings[key] = value;
                     }
                     catch (Exception ex)
                     {
