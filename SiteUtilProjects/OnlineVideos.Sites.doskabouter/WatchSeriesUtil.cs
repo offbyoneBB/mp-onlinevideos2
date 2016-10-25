@@ -236,7 +236,7 @@ namespace OnlineVideos.Sites
                         {
                             // 2nd way - using parent category name, category name and video title 
                             //Aaron Stone Season 1 (19 episodes) 1. Episode 21 1 Hero Rising (1)
-                            string parseString = string.Format("{0} {1} {2}", category.ParentCategory.Name, category.Name, video.Title);
+                            string parseString = string.Format("{0} {1} {2}", Regex.Replace(category.ParentCategory.Name, @"\(\d{4}\)", ""), category.Name, video.Title);
                             tInfo.Regex = Regex.Match(parseString, @"(?<Title>.+)\s+Season\s*?(?<Season>\d+).*?Episode\s*?(?<Episode>\d+)", RegexOptions.IgnoreCase);
                         }
 
