@@ -15,11 +15,11 @@
     <PluginFiles Include="$(ProjectDir)plugin.xml" />
   </ItemGroup>
 
-  <ItemGroup>
-    <References Include="$(ProjectDir)References\**\*.*" />
-  </ItemGroup>
-
   <Target Name="AfterBuild">
+    <ItemGroup>
+      <References Include="$(ProjectDir)References\**\*.*" />
+      <References Include="$(TargetDir)InputStream.*\**\*.*" />
+    </ItemGroup>
     <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginDestination)" />
     <Copy SourceFiles="@(References)" DestinationFiles="@(References->'$(PluginDestination)%(RecursiveDir)%(Filename)%(Extension)')"  />
   </Target>

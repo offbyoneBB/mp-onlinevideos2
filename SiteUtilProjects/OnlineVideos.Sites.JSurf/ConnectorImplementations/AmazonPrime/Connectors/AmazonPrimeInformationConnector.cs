@@ -312,11 +312,11 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
             return Resources.AmazonSearchUrl.LoadAmazonPrimeSearchAsCategoriesFromUrl(query, _browserSession);
         }
 
-        public bool GetInputStreamProperties(VideoInfo video, out string streamUrl, out string licenseUrl)
+        public bool GetInputStreamProperties(VideoInfo video, out string streamUrl, out string licenseUrl, out Dictionary<string, string> additionalTags)
         {
             ExtendedProperties trackingInfo = video.Other as ExtendedProperties;
             string asin = trackingInfo != null ? trackingInfo.Other :  video.Other as string ?? video.VideoUrl;
-            return _browserSession.GetInputStreamProperties(asin, out streamUrl, out licenseUrl);
+            return _browserSession.GetInputStreamProperties(asin, out streamUrl, out licenseUrl, out additionalTags);
         }
 
         protected void DoLogin()

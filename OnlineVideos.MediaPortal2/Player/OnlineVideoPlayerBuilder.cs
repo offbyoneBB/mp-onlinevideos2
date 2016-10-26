@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using MediaPortal.Common;
 using MediaPortal.Common.Localization;
 using MediaPortal.Common.Logging;
@@ -129,6 +130,14 @@ namespace OnlineVideos.MediaPortal2
             };
 
             InputStream onlineSource = new InputStream(properties["inputstream.streamurl"], properties, preferences);
+
+            // Subtitle support depends on "files".
+            string fakeFilename;
+            if (properties.TryGetValue("fakefilename", out fakeFilename))
+                onlineSource.FakeFilename = fakeFilename;
+
+            foreach (string subKey in properties.Keys.Where(k => k.StartsWith("subtitle")))
+                onlineSource.SubtitlePaths.Add(properties[subKey]);
 
             player.InitStream(onlineSource);
         }

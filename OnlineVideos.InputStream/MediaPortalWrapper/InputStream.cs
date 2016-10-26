@@ -43,6 +43,15 @@ namespace MediaPortalWrapper
       get { lock (_syncObj) return _inputstreamInfos.Values.Where(i => i.StreamType == StreamType.Audio).ToList(); }
     }
 
+    /// <summary>
+    /// Contains a dummy filename for the online stream. This can be used to check for downloaded subtitles (<see cref="SubtitlePaths"/>).
+    /// </summary>
+    public string FakeFilename { get; set; }
+    /// <summary>
+    /// Contains a list of subtitles for the current stream.
+    /// </summary>
+    public List<string> SubtitlePaths { get; private set; }
+
     public InputStreamAddonFunctions Functions { get { lock (_syncObj) return _addonFunctions; } }
     public InputstreamCapabilities Caps { get { return _caps; } }
 
@@ -56,6 +65,7 @@ namespace MediaPortalWrapper
 
     public InputStream(string streamUrl, Dictionary<string, string> addonProperties, StreamPreferences preferences)
     {
+      SubtitlePaths = new List<string>();
       string addonName;
       if (!addonProperties.TryGetValue(KEY_INPUTSTREAM_ADDON, out addonName))
         throw new ArgumentException("Missing inputstreamaddon key", "addonProperties");

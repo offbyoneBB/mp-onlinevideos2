@@ -251,7 +251,8 @@ namespace OnlineVideos.Sites.JSurf
                 return false;
             string streamUrl;
             string licenseUrl;
-            if (!ap.GetInputStreamProperties(videoInfo, out streamUrl, out licenseUrl))
+            Dictionary<string, string> additionalTags;
+            if (!ap.GetInputStreamProperties(videoInfo, out streamUrl, out licenseUrl, out additionalTags))
                 return false;
 
             properties = new Dictionary<string, string>
@@ -264,6 +265,12 @@ namespace OnlineVideos.Sites.JSurf
                 //{ InputStream.KEY_INPUTSTREAM_LIC_TYPE, "com.widevine.alpha" },
                 //{ InputStream.KEY_INPUTSTREAM_LIC_URL, licUrl }
               };
+
+            // Copy over all additional tags
+            if (additionalTags != null)
+                foreach (var tagKeys in additionalTags.Keys)
+                    properties[tagKeys] = additionalTags[tagKeys];
+
             return true;
         }
     }

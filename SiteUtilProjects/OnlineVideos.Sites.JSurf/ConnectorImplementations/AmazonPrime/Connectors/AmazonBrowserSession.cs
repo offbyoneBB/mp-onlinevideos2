@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -104,7 +105,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
             }
         }
 
-        public bool GetInputStreamProperties(string asin, out string streamUrl, out string licUrl)
+        public bool GetInputStreamProperties(string asin, out string streamUrl, out string licUrl, out Dictionary<string, string> additionalTags)
         {
             //var content = GetATVDataJSON("GetASINDetails", "ASINList=" + asin);
             //if (content == null)
@@ -120,9 +121,68 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
             JObject playbackData = JObject.Parse(urldata.Data);
 
             streamUrl = playbackData.SelectToken("audioVideoUrls.avCdnUrlSets[0].avUrlInfoList[0].url").Value<string>(); // Cloudfront
-            //streamUrl = playbackData.SelectToken("audioVideoUrls.avCdnUrlSets[3].avUrlInfoList[0].url").Value<string>(); // Akamai
+
+            additionalTags = new Dictionary<string, string>();
+            for (int s = 0; ; s++)
+            {
+                //{"displayName":"German (Germany)","format":"DFXP","index":"0","languageCode":"de-DE","subtype":"dialog","type":"subtitle","url":"http://....dfxp","videoMaterialType":"Feature"},
+                var subtitleNode = playbackData.SelectToken("subtitleUrls[" + s + "]");
+                if (subtitleNode == null)
+                    break;
+
+                string subtitlePath;
+                string lang = subtitleNode.SelectToken("languageCode").Value<string>();
+                string displayName = subtitleNode.SelectToken("displayName").Value<string>();
+                string value = subtitleNode.SelectToken("url").Value<string>();
+                string fakeFilename;
+                if (DownloadAndConvertSubtitle(asin, displayName, value, out fakeFilename, out subtitlePath))
+                {
+                    additionalTags["subtitle_" + lang] = subtitlePath;
+                    additionalTags["fakefilename"] = fakeFilename;
+                }
+            }
+
             licUrl = GetUrldata("catalog/GetPlaybackResources", values, extra: true, vMT: vMT, dRes: "Widevine2License", retURL: true).Url;
             return streamUrl != null && licUrl != null;
+        }
+
+        private bool DownloadAndConvertSubtitle(string asin, string displayName, string url, out string fakeFilename, out string subtitlePath)
+        {
+            try
+            {
+                var path = Path.Combine(Path.GetTempPath(), asin);
+
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+
+                fakeFilename = Path.Combine(path, asin + ".mkv");
+                subtitlePath = Path.Combine(path, asin + "." + displayName + ".srt");
+
+                // Use cached file if already exists
+                if (File.Exists(subtitlePath))
+                    return true;
+
+                string doc = GetWebData(url, cookies: _cc, userAgent: UserAgent);
+                Regex re = new Regex("<tt:p begin=\"(?<begin>[^\\\"]*)\" end=\"(?<end>[^\\\"]*)\">(?<text>.*)<\\/tt:p>", RegexOptions.Multiline);
+                var matches = re.Matches(doc);
+                int num = 1;
+
+                using (var srt = new FileStream(subtitlePath, FileMode.Create))
+                using (var sw = new StreamWriter(srt))
+                    foreach (Match match in matches)
+                    {
+                        string begin = match.Groups["begin"].Value;
+                        string end = match.Groups["end"].Value;
+                        string text = match.Groups["text"].Value.Replace("<tt:br/>", "\r\n").Replace("<tt:br>", "\r\n").Replace("</tt:br>", "");
+                        sw.Write("{0}\n{1} --> {2}\n{3}\n\n", num++, begin, end, text);
+                    }
+                return true;
+            }
+            catch (Exception)
+            {
+                subtitlePath = fakeFilename = null;
+                return false;
+            }
         }
 
         private Dictionary<string, string> GetFlashVars(string asin)
