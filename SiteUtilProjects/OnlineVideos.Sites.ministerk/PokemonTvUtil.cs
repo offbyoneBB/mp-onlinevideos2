@@ -164,8 +164,11 @@ namespace OnlineVideos.Sites
             country = (Country)Enum.Parse(typeof(Country), parentCategory.Name);
             List<OnlineVideos.Reflection.FieldPropertyDescriptorByRef> props = GetUserConfigurationProperties();
             OnlineVideos.Reflection.FieldPropertyDescriptorByRef prop = props.First(p => p.DisplayName == "Country");
-            this.SetConfigValueFromString(prop, country.ToString());
-            throw new OnlineVideosException(country.ToString() + " OK");
+            SetConfigValueFromString(prop, country.ToString());
+            int ret = DiscoverDynamicCategories();
+            parentCategory.SubCategories = new List<Category>();
+            parentCategory.SubCategories.AddRange(Settings.Categories);
+            return ret;
         }
 
         public override List<VideoInfo> GetVideos(Category category)
