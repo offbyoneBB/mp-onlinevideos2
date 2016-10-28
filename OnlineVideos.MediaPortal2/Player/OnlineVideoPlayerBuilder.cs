@@ -64,7 +64,9 @@ namespace OnlineVideos.MediaPortal2
                 {
                     // Replace raw url / token source by resolved stream url
                     var resourceAccessor = new RawUrlResourceAccessor(properties["inputstream.streamurl"]);
-                    MediaItemAspect providerResourceAspect = item.Aspects[ProviderResourceAspect.ASPECT_ID];
+                    IList<MultipleMediaItemAspect> providerResourceAspects;
+                    MediaItemAspect.TryGetAspects(item.Aspects, ProviderResourceAspect.Metadata, out providerResourceAspects);
+                    MultipleMediaItemAspect providerResourceAspect = providerResourceAspects.First();
                     String raPath = resourceAccessor.CanonicalLocalResourcePath.Serialize();
                     providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_RESOURCE_ACCESSOR_PATH, raPath);
 

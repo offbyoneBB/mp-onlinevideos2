@@ -36,6 +36,7 @@ namespace OnlineVideos.MediaPortal2
             MediaItemAspect.TryGetAspects(Aspects, ProviderResourceAspect.Metadata, out providerResourceAspects);
             MultipleMediaItemAspect providerResourceAspect = providerResourceAspects.First();
 
+            providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_PRIMARY, true);
             providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_SYSTEM_ID, systemResolver.LocalSystemId);
 
             if (videoInfo.SiteUtilName == "DownloadedVideo")
