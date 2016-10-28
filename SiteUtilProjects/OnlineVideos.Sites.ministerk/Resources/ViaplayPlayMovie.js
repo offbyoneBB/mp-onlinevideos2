@@ -1,7 +1,7 @@
 ﻿function myLogin(u, p) {
     $('#LoginForm_email').val(u);
     $('#LoginForm_password').val(p);
-    $('#login-btn').click();
+    $('#submit-login-password').click();
 }
 
 var __url = "dummy";

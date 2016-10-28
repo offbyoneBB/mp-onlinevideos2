@@ -795,6 +795,9 @@
     <Site name="Last.fm" util="LastFm" agecheck="false" enabled="true" lang="--">
       <Description>Play your personal Last.fm YouTube Radio in OnlineVideos</Description>
     </Site>
+    <Site name="Pokémon TV" util="PokemonTv" agecheck="false" enabled="true" lang="--">
+      <Description>Pokémon TV</Description>
+    </Site>
     <Site name="Yle Areena" util="Yle" agecheck="false" enabled="true" lang="fi">
       <Description>Yle Areena</Description>
     </Site>
