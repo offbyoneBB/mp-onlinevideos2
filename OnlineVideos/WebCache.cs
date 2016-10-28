@@ -23,15 +23,15 @@ namespace OnlineVideos
             // only use cache if a timeout > 0 was set
             if (OnlineVideoSettings.Instance.CacheTimeout > 0)
             {
-                cleanUpTimer = new Timer(CleanCache, null, TimeSpan.FromMinutes(10), TimeSpan.FromMinutes(10));
+                _cleanUpTimer = new Timer(CleanCache, null, TimeSpan.FromMinutes(10), TimeSpan.FromMinutes(10));
             }
         }
-        static WebCache instance;
-        public static WebCache Instance { get { if (instance == null) instance = new WebCache(); return instance; } }
+        static WebCache _instance;
+        public static WebCache Instance { get { if (_instance == null) _instance = new WebCache(); return _instance; } }
         #endregion
 
-        Timer cleanUpTimer;
-        Dictionary<string, WebCacheEntry> cache = new Dictionary<string, WebCacheEntry>();
+        Timer _cleanUpTimer;
+        readonly Dictionary<string, WebCacheEntry> _cache = new Dictionary<string, WebCacheEntry>();
 
         public string this[string url]
         {
@@ -42,7 +42,7 @@ namespace OnlineVideos
                     lock (this)
                     {
                         WebCacheEntry result = null;
-                        if (cache.TryGetValue(url, out result))
+                        if (_cache.TryGetValue(url, out result))
                         {
                             return result.Data;
                         }
@@ -56,7 +56,7 @@ namespace OnlineVideos
                 {
                     lock (this)
                     {
-                        cache[url] = new WebCacheEntry() { Data = value, LastUpdated = DateTime.Now };
+                        _cache[url] = new WebCacheEntry() { Data = value, LastUpdated = DateTime.Now };
                     }
                 }
             }
@@ -68,11 +68,11 @@ namespace OnlineVideos
             {
                 List<string> outdatedKeys = new List<string>();
 
-                foreach (string key in cache.Keys)
-                    if ((DateTime.Now - cache[key].LastUpdated).TotalMinutes >= OnlineVideoSettings.Instance.CacheTimeout)
+                foreach (string key in _cache.Keys)
+                    if ((DateTime.Now - _cache[key].LastUpdated).TotalMinutes >= OnlineVideoSettings.Instance.CacheTimeout)
                         outdatedKeys.Add(key);
 
-                foreach (string key in outdatedKeys) cache.Remove(key);
+                foreach (string key in outdatedKeys) _cache.Remove(key);
             }
         }
 
@@ -83,29 +83,29 @@ namespace OnlineVideos
             {
                 return (T)(object)webData;
             }
-            else if (typeof(T) == typeof(Newtonsoft.Json.Linq.JToken))
+            if (typeof(T) == typeof(Newtonsoft.Json.Linq.JToken))
             {
                 return (T)(object)Newtonsoft.Json.Linq.JToken.Parse(webData);
             }
-            else if (typeof(T) == typeof(Newtonsoft.Json.Linq.JObject))
+            if (typeof(T) == typeof(Newtonsoft.Json.Linq.JObject))
             {
                 return (T)(object)Newtonsoft.Json.Linq.JObject.Parse(webData);
             }
-            else if (typeof(T) == typeof(RssToolkit.Rss.RssDocument))
+            if (typeof(T) == typeof(RssToolkit.Rss.RssDocument))
             {
                 return (T)(object)RssToolkit.Rss.RssDocument.Load(webData);
             }
-            else if (typeof(T) == typeof(System.Xml.XmlDocument))
+            if (typeof(T) == typeof(System.Xml.XmlDocument))
             {
                 var xmlDoc = new System.Xml.XmlDocument();
                 xmlDoc.LoadXml(webData);
                 return (T)(object)xmlDoc;
             }
-            else if (typeof(T) == typeof(System.Xml.Linq.XDocument))
+            if (typeof(T) == typeof(System.Xml.Linq.XDocument))
             {
                 return (T)(object)System.Xml.Linq.XDocument.Parse(webData);
             }
-            else if (typeof(T) == typeof(HtmlAgilityPack.HtmlDocument))
+            if (typeof(T) == typeof(HtmlAgilityPack.HtmlDocument))
             {
                 HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument();
                 htmlDoc.LoadHtml(webData);
@@ -138,13 +138,13 @@ namespace OnlineVideos
                 // build a CRC of the url and all headers + proxy + cookies for caching
                 string requestCRC = Helpers.EncryptionUtils.CalculateCRC32(
                     string.Format("{0}{1}{2}{3}",
-                    uri.ToString(),
+                    uri,
                     headers != null ? string.Join("&", (from item in headers.AllKeys select string.Format("{0}={1}", item, headers[item])).ToArray()) : "",
                     proxy != null ? proxy.GetProxy(uri).AbsoluteUri : "",
                     cookies != null ? cookies.GetCookieHeader(uri) : ""));
 
                 // try cache first
-                string cachedData = cache ? WebCache.Instance[requestCRC] : null;
+                string cachedData = cache ? Instance[requestCRC] : null;
                 Log.Debug("GetWebData-{2}{1}: '{0}'", uri.ToString(), cachedData != null ? " (cached)" : "", postData != null ? "POST" : "GET");
                 if (cachedData != null) return cachedData;
 
@@ -213,7 +213,7 @@ namespace OnlineVideos
                 {
                     string str = reader.ReadToEnd().Trim();
                     // add to cache if HTTP Status was 200 and we got more than 500 bytes (might just be an errorpage otherwise)
-                    if (cache && response.StatusCode == HttpStatusCode.OK && str.Length > 500) WebCache.Instance[requestCRC] = str;
+                    if (cache && response.StatusCode == HttpStatusCode.OK && str.Length > 500) Instance[requestCRC] = str;
                     return str;
                 }
             }
@@ -240,7 +240,7 @@ namespace OnlineVideos
                 // (according to docs - this is after headers are completely received)
                 var result = request.BeginGetResponse((ar) => request.Abort(), null);
                 // wait for the completion (or abortion) of the async response
-                while (!result.IsCompleted) System.Threading.Thread.Sleep(10);
+                while (!result.IsCompleted) Thread.Sleep(10);
                 httpWebresponse = request.EndGetResponse(result) as HttpWebResponse;
                 if (httpWebresponse == null) return url;
                 if (request.RequestUri.Equals(httpWebresponse.ResponseUri))

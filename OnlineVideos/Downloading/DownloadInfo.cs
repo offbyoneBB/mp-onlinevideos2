@@ -3,24 +3,24 @@ using System.ComponentModel;
 
 namespace OnlineVideos.Downloading
 {
-	public class DownloadInfo : MarshalByRefObject, INotifyPropertyChanged
+    public class DownloadInfo : MarshalByRefObject, INotifyPropertyChanged
     {
-		#region MarshalByRefObject overrides
-		public override object InitializeLifetimeService()
-		{
-			// In order to have the lease across appdomains live forever, we return null.
-			return null;
-		}
-		#endregion
+        #region MarshalByRefObject overrides
+        public override object InitializeLifetimeService()
+        {
+            // In order to have the lease across appdomains live forever, we return null.
+            return null;
+        }
+        #endregion
 
-		public static DownloadInfo Create(VideoInfo video, Category category, Sites.SiteUtilBase site)
-		{
-			DownloadInfo di = (DownloadInfo)CrossDomain.OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(DownloadInfo).Assembly.FullName, typeof(DownloadInfo).FullName, false, System.Reflection.BindingFlags.CreateInstance | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, null, null, null);
-			di.VideoInfo = video;
-			di.Category = category;
-			di.Util = site;
-			return di;
-		}
+        public static DownloadInfo Create(VideoInfo video, Category category, Sites.SiteUtilBase site)
+        {
+            DownloadInfo di = (DownloadInfo)CrossDomain.OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(DownloadInfo).Assembly.FullName, typeof(DownloadInfo).FullName, false, System.Reflection.BindingFlags.CreateInstance | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic, null, null, null, null);
+            di.VideoInfo = video;
+            di.Category = category;
+            di.Util = site;
+            return di;
+        }
 
         protected DownloadInfo()
         {
@@ -37,10 +37,10 @@ namespace OnlineVideos.Downloading
         public int KbTotal { get; private set; }
         public IDownloader Downloader { get; set; }
         public VideoInfo VideoInfo { get; set; }
-		public Category Category { get; set; }
-		public Sites.SiteUtilBase Util { get; set; }
-		public string OverrideFolder { get; set; }
-		public string OverrideFileName { get; set; }
+        public Category Category { get; set; }
+        public Sites.SiteUtilBase Util { get; set; }
+        public string OverrideFolder { get; set; }
+        public string OverrideFileName { get; set; }
 
         public void DownloadProgressCallback(long TotalBytesToReceive, long currentBytes)
         {
@@ -58,7 +58,7 @@ namespace OnlineVideos.Downloading
             PercentComplete = percent;
             NotifyPropertyChanged("ProgressInfo");
         }
-        
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void NotifyPropertyChanged(string property)

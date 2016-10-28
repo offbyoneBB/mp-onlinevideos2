@@ -11,10 +11,10 @@ namespace OnlineVideos.CrossDomain
 {
     internal class PluginLoader : MarshalByRefObject
     {
-        static string onlineVideosMainDllName = Assembly.GetExecutingAssembly().GetName().Name;
-        Dictionary<String, Type> utils = new Dictionary<String, Type>();
-        Dictionary<String, HosterBase> hostersByName = new Dictionary<String, HosterBase>();
-        Dictionary<String, HosterBase> hostersByDNS = new Dictionary<String, HosterBase>();
+        static readonly string _onlineVideosMainDllName = Assembly.GetExecutingAssembly().GetName().Name;
+        readonly Dictionary<String, Type> _utils = new Dictionary<String, Type>();
+        readonly Dictionary<String, HosterBase> _hostersByName = new Dictionary<String, HosterBase>();
+        readonly Dictionary<String, HosterBase> _hostersByDns = new Dictionary<String, HosterBase>();
 
         public PluginLoader()
         {
@@ -71,16 +71,16 @@ namespace OnlineVideos.CrossDomain
                             if (shortName.EndsWith("Util")) shortName = shortName.Substring(0, shortName.Length - 4);
 
                             Type alreadyAddedType = null;
-                            if (!utils.TryGetValue(shortName, out alreadyAddedType))
+                            if (!_utils.TryGetValue(shortName, out alreadyAddedType))
                             {
-                                utils.Add(shortName, type);
+                                _utils.Add(shortName, type);
                             }
                             else
                             {
                                 // use the type from the assembly with the latest CompileTime
                                 if (assemblies[alreadyAddedType.Assembly] < assembly.Value)
                                 {
-                                    utils[shortName] = type;
+                                    _utils[shortName] = type;
                                     Log.Warn(string.Format("Duplicate SiteUtil '{0}'. Using the one from '{1}', because DLL has newer compile time than '{2}'.",
                                         shortName,
                                         type.Assembly.GetName().Name.Replace("OnlineVideos.Sites.", ""),
@@ -99,12 +99,12 @@ namespace OnlineVideos.CrossDomain
                         {
                             string shortName = type.Name.ToLower();
                             HosterBase alreadyAddedHoster = null;
-                            if (!hostersByName.TryGetValue(shortName, out alreadyAddedHoster))
+                            if (!_hostersByName.TryGetValue(shortName, out alreadyAddedHoster))
                             {
                                 HosterBase hb = (HosterBase)Activator.CreateInstance(type);
                                 hb.Initialize();
-                                hostersByName.Add(shortName, hb);
-                                if (!hostersByDNS.ContainsKey(hb.GetHosterUrl().ToLower())) hostersByDNS.Add(hb.GetHosterUrl().ToLower(), hb);
+                                _hostersByName.Add(shortName, hb);
+                                if (!_hostersByDns.ContainsKey(hb.GetHosterUrl().ToLower())) _hostersByDns.Add(hb.GetHosterUrl().ToLower(), hb);
                             }
                             else
                             {
@@ -113,7 +113,7 @@ namespace OnlineVideos.CrossDomain
                                 {
                                     HosterBase hb = (HosterBase)Activator.CreateInstance(type);
                                     hb.Initialize();
-                                    hostersByName[shortName] = hb;
+                                    _hostersByName[shortName] = hb;
                                     Log.Warn(string.Format("Duplicate Hoster '{0}'. Using the one from '{1}', because DLL has newer compile time than '{2}'.",
                                         shortName,
                                         type.Assembly.GetName().Name.Replace("OnlineVideos.Sites.", ""),
@@ -135,19 +135,19 @@ namespace OnlineVideos.CrossDomain
                     Log.Warn("Error loading SiteUtils and Hosters: {0} ", ex.Message);
                 }
             }
-            Log.Info("Found {0} SiteUtils and {1} Hosters in {2} assemblies", utils.Count, hostersByName.Count, assemblies.Count);
+            Log.Info("Found {0} SiteUtils and {1} Hosters in {2} assemblies", _utils.Count, _hostersByName.Count, assemblies.Count);
         }
 
         public bool UtilExists(string shortName)
         {
             if (string.IsNullOrEmpty(shortName)) return false;
-            else return utils.ContainsKey(shortName);
+            else return _utils.ContainsKey(shortName);
         }
 
         public SiteUtilBase CreateUtilFromShortName(string name, SiteSettings settings)
         {
             Type result = null;
-            if (utils.TryGetValue(name, out result))
+            if (_utils.TryGetValue(name, out result))
             {
                 SiteUtilBase util = null;
                 try
@@ -174,7 +174,7 @@ namespace OnlineVideos.CrossDomain
             // create new instance of this site with reset settings
             SerializableSettings s = new SerializableSettings() { Sites = new BindingList<SiteSettings>() };
             s.Sites.Add(site.Settings);
-            System.IO.MemoryStream ms = new System.IO.MemoryStream();
+            MemoryStream ms = new MemoryStream();
             s.Serialize(ms);
             ms.Position = 0;
             SiteSettings originalSettings = SerializableSettings.Deserialize(new StreamReader(ms))[0];
@@ -183,16 +183,16 @@ namespace OnlineVideos.CrossDomain
 
         public IList<SiteSettings> CreateSiteSettingsFromXml(string siteXml)
         {
-            return SerializableSettings.Deserialize(new System.IO.StringReader(siteXml));
+            return SerializableSettings.Deserialize(new StringReader(siteXml));
         }
 
         public string GetRequiredDllForUtil(string name)
         {
             Type result = null;
-            if (utils.TryGetValue(name, out result))
+            if (_utils.TryGetValue(name, out result))
             {
                 string dll = result.Assembly.GetName().Name;
-                return dll != onlineVideosMainDllName ? dll : null;
+                return dll != _onlineVideosMainDllName ? dll : null;
             }
             else
             {
@@ -203,8 +203,8 @@ namespace OnlineVideos.CrossDomain
 
         public string[] GetAllUtilNames()
         {
-            string[] names = new string[utils.Count];
-            utils.Keys.CopyTo(names, 0);
+            string[] names = new string[_utils.Count];
+            _utils.Keys.CopyTo(names, 0);
             Array.Sort(names);
             return names;
         }
@@ -212,23 +212,23 @@ namespace OnlineVideos.CrossDomain
         public HosterBase GetHoster(string name)
         {
             HosterBase hb = null;
-            if (hostersByName.TryGetValue(name.ToLower(), out hb)) return hb;
+            if (_hostersByName.TryGetValue(name.ToLower(), out hb)) return hb;
             return null;
         }
 
         public List<HosterBase> GetAllHosters()
         {
-            return hostersByName.Values.OrderByDescending(hb => hb.UserPriority).ToList();
+            return _hostersByName.Values.OrderByDescending(hb => hb.UserPriority).ToList();
         }
 
         public bool ContainsHoster(string name)
         {
-            return hostersByName.ContainsKey(name);
+            return _hostersByName.ContainsKey(name);
         }
 
         public bool ContainsHosters(Uri uri)
         {
-            return hostersByDNS.ContainsKey(uri.Host.Replace("www.", ""));
+            return _hostersByDns.ContainsKey(uri.Host.Replace("www.", ""));
         }
 
         #region MarshalByRefObject overrides

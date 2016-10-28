@@ -10,6 +10,7 @@ using MediaPortal.Common.Services.ResourceAccess;
 using MediaPortal.Common.Services.ResourceAccess.RawUrlResourceProvider;
 using OnlineVideos.MediaPortal2.Interfaces.Metadata;
 using OnlineVideos.MediaPortal2.ResourceAccess;
+using OnlineVideos.Sites.Interfaces;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -25,6 +26,7 @@ namespace OnlineVideos.MediaPortal2
             })
         {
             SiteName = videoInfo.SiteName;
+            VideoInfo = videoInfo.VideoInfo;
 
             Aspects[OnlineVideosAspect.ASPECT_ID].First().SetAttribute(OnlineVideosAspect.ATTR_SITEUTIL, SiteName);
 
@@ -71,7 +73,14 @@ namespace OnlineVideos.MediaPortal2
 
         }
 
+        public VideoInfo VideoInfo { get; private set; }
+
         public string SiteName { get; private set; }
+
+        public IInputStreamSite InputStreamSite
+        {
+            get { return OnlineVideoSettings.Instance.SiteUtilsList[SiteName] as IInputStreamSite; }
+        }
 
         /// <summary>
         /// Returns a resource locator instance for this item.

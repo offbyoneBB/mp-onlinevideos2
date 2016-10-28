@@ -14,6 +14,7 @@
     <TargetFrameworkProfile />
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <NuGetPackageImportStamp>9662b851</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,6 +34,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HashLib, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\HashLib.2.0.1\lib\net40\HashLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -46,16 +51,21 @@
     <Compile Include="..\..\Build\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
+    <Compile Include="ConnectorImplementations\AmazonPrimeUs\Connectors\AmazonPrimeUsConnector.cs" />
     <Compile Include="ConnectorImplementations\AmazonPrime\Connectors\AmazonPrimeConnector.cs" />
     <Compile Include="ConnectorImplementations\AmazonPrimeDe\Connectors\AmazonPrimeDeConnector.cs" />
     <Compile Include="ConnectorImplementations\AmazonPrime\Connectors\AmazonPrimeInformationConnector.cs" />
     <Compile Include="ConnectorImplementations\AmazonPrime\Extensions\AmazonPrimeCategoryParser.cs" />
     <Compile Include="ConnectorImplementations\AmazonPrime\Extensions\AmazonPrimeVideoParser.cs" />
-    <Compile Include="ConnectorImplementations\AmazonPrime\Connectors\AmazonBrowserSession.cs" />
+    <Compile Include="ConnectorImplementations\AmazonPrime\Connectors\AmazonBrowserSession.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="ConnectorImplementations\BrowserSessionBase.cs" />
     <Compile Include="ConnectorImplementations\BrowserUtilConnectorBase.cs" />
     <Compile Include="ConnectorImplementations\FormElementCollection.cs" />
     <Compile Include="Entities\ExtendedCategory.cs" />
+    <Compile Include="Entities\ExtendedProperties.cs" />
+    <Compile Include="Extensions\HashExtension.cs" />
     <Compile Include="Extensions\HtmlAgilityPackExtensions.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />
     <Compile Include="Factories\ConnectorFactory.cs" />
@@ -78,6 +88,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Properties\ResourceGenerator.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ResourceGenerator.cs</LastGenOutput>
@@ -88,6 +99,9 @@
     <None Include="Localisation\Resources.de.resx">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Localisation\Resources.en-US.resx">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="loading.gif" />
@@ -95,11 +109,21 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="FodyWeavers.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
+  <Import Project="..\..\Packages\Fody.1.28.3\build\Fody.targets" Condition="Exists('..\..\Packages\Fody.1.28.3\build\Fody.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Dieses Projekt verweist auf mindestens ein NuGet-Paket, das auf diesem Computer fehlt. Aktivieren Sie die Wiederherstellung von NuGet-Paketen, um die fehlende Datei herunterzuladen. Weitere Informationen finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=322105". Die fehlende Datei ist "{0}".</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\Packages\Fody.1.28.3\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\Fody.1.28.3\build\Fody.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

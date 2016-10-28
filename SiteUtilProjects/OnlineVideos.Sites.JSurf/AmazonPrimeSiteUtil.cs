@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.ComponentModel;
 using OnlineVideos.Sites.JSurf.Factories;
-using System.Windows.Forms;
-using System.Diagnostics;
-using System.IO;
 using OnlineVideos.Sites.JSurf.Interfaces;
 using OnlineVideos.Sites.JSurf.Entities;
-using System.Globalization;
 using OnlineVideos.Sites.Interfaces;
 using OnlineVideos.Sites.JSurf.Properties;
 using OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connectors;
@@ -19,7 +14,7 @@ namespace OnlineVideos.Sites.JSurf
     /// <summary>
     /// General Util class for web automation - that is where we load the information by scraping the website and play via a browser
     /// </summary>
-    public class AmazonPrimeSiteUtil : SiteUtilBase, IBrowserVersionEmulation
+    public class AmazonPrimeSiteUtil : SiteUtilBase, IBrowserVersionEmulation, IInputStreamSite
     {
         IInformationConnector _connector;
 
@@ -73,7 +68,7 @@ namespace OnlineVideos.Sites.JSurf
 
         public enum VideoQuality { Low, Medium, High, HD, FullHD };
 
-        public enum AmazonPlayerType { /*Internal,*/ Browser, BrowserHTML5 };
+        public enum AmazonPlayerType { InputStream, Browser, BrowserHTML5 };
 
         [Category("OnlineVideosConfiguration"), Description("Type of web automation to run")]
         ConnectorType webAutomationType = ConnectorType.AmazonPrime;
@@ -115,7 +110,7 @@ namespace OnlineVideos.Sites.JSurf
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
-            Properties.Resources.ResourceManager = new SingleAssemblyComponentResourceManager(typeof(Resources));
+            Resources.ResourceManager = new SingleAssemblyComponentResourceManager(typeof(Resources));
             _connector = ConnectorFactory.GetInformationConnector(webAutomationType, this);
         }
 
@@ -158,7 +153,7 @@ namespace OnlineVideos.Sites.JSurf
 
             parentCategory.SubCategoriesDiscovered = true;
             if (_connector.ShouldSortResults)
-                parentCategory.SubCategories = parentCategory.SubCategories.OrderBy(x => GetCategorySortField(x)).ToList();
+                parentCategory.SubCategories = parentCategory.SubCategories.OrderBy(GetCategorySortField).ToList();
 
             return parentCategory.SubCategories.Count;
         }
@@ -181,13 +176,13 @@ namespace OnlineVideos.Sites.JSurf
             {
                 return ((AmazonPrimeInformationConnector)_connector).getMultipleVideoUrls(video, inPlaylist);
             }
-            return new List<string>() { video.Other.ToString() };
+            return new List<string> { video.Other.ToString() };
         }
 
         /// <summary>
         /// Get the next page of categories
         /// </summary>
-        /// <param name="category"></param>
+        /// <param name="nextPagecategory"></param>
         /// <returns></returns>
         public override int DiscoverNextPageCategories(NextPageCategory nextPagecategory)
         {
@@ -243,6 +238,40 @@ namespace OnlineVideos.Sites.JSurf
                     ? 10000 /* IE10+Silverlight */
                     : 12000 /* IE11/Edge with HTML5*/;
             }
+        }
+
+        public bool GetStreamProperties(VideoInfo videoInfo, out Dictionary<string, string> properties)
+        {
+            properties = null;
+            AmazonPrimeInformationConnector ap = (AmazonPrimeInformationConnector)_connector;
+            if (ap == null)
+                return false;
+
+            if (AmznPlayerType != AmazonPlayerType.InputStream)
+                return false;
+            string streamUrl;
+            string licenseUrl;
+            Dictionary<string, string> additionalTags;
+            if (!ap.GetInputStreamProperties(videoInfo, out streamUrl, out licenseUrl, out additionalTags))
+                return false;
+
+            properties = new Dictionary<string, string>
+              {
+                { "inputstreamaddon", "inputstream.mpd" },
+                { "inputstream.mpd.license_type", "com.widevine.alpha" },
+                { "inputstream.mpd.license_key", licenseUrl },
+                { "inputstream.streamurl", streamUrl }
+                //{ InputStream.KEY_INPUTSTREAM_ADDON, InputStream.INPUTSTREAM_ADDON_MPD },
+                //{ InputStream.KEY_INPUTSTREAM_LIC_TYPE, "com.widevine.alpha" },
+                //{ InputStream.KEY_INPUTSTREAM_LIC_URL, licUrl }
+              };
+
+            // Copy over all additional tags
+            if (additionalTags != null)
+                foreach (var tagKeys in additionalTags.Keys)
+                    properties[tagKeys] = additionalTags[tagKeys];
+
+            return true;
         }
     }
 }

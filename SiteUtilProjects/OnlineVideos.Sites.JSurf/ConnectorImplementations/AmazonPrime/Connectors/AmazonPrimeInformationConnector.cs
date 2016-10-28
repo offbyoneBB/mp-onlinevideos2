@@ -5,13 +5,14 @@ using OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensions;
 using System.Globalization;
 using OnlineVideos.Sites.JSurf.Properties;
 using System.Text.RegularExpressions;
+using OnlineVideos.Sites.JSurf.Entities;
 
 namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connectors
 {
     public class AmazonPrimeInformationConnector : IInformationConnector
     {
-        SiteUtilBase _siteUtil;
-        AmazonBrowserSession _browserSession;
+        readonly SiteUtilBase _siteUtil;
+        readonly AmazonBrowserSession _browserSession;
 
         public AmazonPrimeInformationConnector(SiteUtilBase siteUtil)
         {
@@ -34,14 +35,13 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         {
             get
             {
-                if (_siteUtil.Settings.Language == "de")
-                {
+                if (string.Equals(_siteUtil.Settings.Language, "de", StringComparison.OrdinalIgnoreCase))
                     return "OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrimeDe.Connectors.AmazonPrimeDeConnector";
-                }
-                else
-                {
-                    return "OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connectors.AmazonPrimeConnector";
-                }
+
+                if (string.Equals(_siteUtil.Settings.Language, "en-us", StringComparison.OrdinalIgnoreCase))
+                    return "OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrimeUs.Connectors.AmazonPrimeUsConnector";
+
+                return "OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connectors.AmazonPrimeConnector";
             }
         }
 
@@ -66,20 +66,21 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
             {
                 DoLogin();
                 // Grab next page categories here (we'll deal with videos as the category)
-                if (parentCategory is NextPageCategory)
+                var category = parentCategory as NextPageCategory;
+                if (category != null)
                 {
-                    result = (parentCategory as NextPageCategory).Url.LoadAmazonPrimeVideosAsCategoriesFromUrl(parentCategory.ParentCategory, _browserSession);
-                    parentCategory.ParentCategory.SubCategories.AddRange(result);
+                    result = category.Url.LoadAmazonPrimeVideosAsCategoriesFromUrl(category.ParentCategory, _browserSession);
+                    category.ParentCategory.SubCategories.AddRange(result);
                 }
                 else
                 {
                     if (parentCategory.Other.ToString() == "M")
                     {
                         result = Resources.AmazonMovieCategoriesUrl.LoadAmazonPrimeCategoriesFromUrl(parentCategory, _browserSession);
-                        result.Insert(0, new Category { HasSubCategories = true, Name = "Editor's Picks", SubCategoriesDiscovered = false, Other = "ME", Thumb = Resources.AmazonMovieIcon });
-                        result.Insert(0, new Category { HasSubCategories = true, Name = "Recently Added", SubCategoriesDiscovered = false, Other = "MA", Thumb = Resources.AmazonMovieIcon });
-                        result.Insert(0, new Category { HasSubCategories = true, Name = "Popular Movies", SubCategoriesDiscovered = false, Other = "MP", Thumb = Resources.AmazonMovieIcon });
-                        result.Insert(0, new Category { HasSubCategories = true, Name = "Watchlist", SubCategoriesDiscovered = false, Other = "WM", Thumb = Resources.AmazonMovieIcon });
+                        TryInsert(result, new Category { HasSubCategories = true, Name = "Editor's Picks", SubCategoriesDiscovered = false, Other = "ME", Thumb = Resources.AmazonMovieIcon }, Resources.AmazonMovieEditorsUrl);
+                        TryInsert(result, new Category { HasSubCategories = true, Name = "Recently Added", SubCategoriesDiscovered = false, Other = "MA", Thumb = Resources.AmazonMovieIcon }, Resources.AmazonMovieRecentUrl);
+                        TryInsert(result, new Category { HasSubCategories = true, Name = "Popular Movies", SubCategoriesDiscovered = false, Other = "MP", Thumb = Resources.AmazonMovieIcon }, Resources.AmazonMoviePopularUrl);
+                        TryInsert(result, new Category { HasSubCategories = true, Name = "Watchlist", SubCategoriesDiscovered = false, Other = "WM", Thumb = Resources.AmazonMovieIcon }, Resources.AmazonMovieWatchlistUrl);
                     }
                     else if (parentCategory.Other.ToString() == "MP")
                     {
@@ -96,10 +97,10 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
                     else if (parentCategory.Other.ToString() == "T")
                     {
                         result = Resources.AmazonTVCategoriesUrl.LoadAmazonPrimeCategoriesFromUrl(parentCategory, _browserSession);
-                        result.Insert(0, new Category { HasSubCategories = true, Name = "Editor's Picks", SubCategoriesDiscovered = false, Other = "TE", Thumb = Resources.AmazonTvIcon });
-                        result.Insert(0, new Category { HasSubCategories = true, Name = "Recently Added", SubCategoriesDiscovered = false, Other = "TA", Thumb = Resources.AmazonTvIcon });
-                        result.Insert(0, new Category { HasSubCategories = true, Name = "Popular TV Shows", SubCategoriesDiscovered = false, Other = "TP", Thumb = Resources.AmazonTvIcon });
-                        result.Insert(0, new Category { HasSubCategories = true, Name = "Watchlist", SubCategoriesDiscovered = false, Other = "WT", Thumb = Resources.AmazonTvIcon });
+                        TryInsert(result, new Category { HasSubCategories = true, Name = "Editor's Picks", SubCategoriesDiscovered = false, Other = "TE", Thumb = Resources.AmazonTvIcon }, Resources.AmazonTVEditorsUrl);
+                        TryInsert(result, new Category { HasSubCategories = true, Name = "Recently Added", SubCategoriesDiscovered = false, Other = "TA", Thumb = Resources.AmazonTvIcon }, Resources.AmazonTVRecentUrl);
+                        TryInsert(result, new Category { HasSubCategories = true, Name = "Popular TV Shows", SubCategoriesDiscovered = false, Other = "TP", Thumb = Resources.AmazonTvIcon }, Resources.AmazonTVPopularUrl);
+                        TryInsert(result, new Category { HasSubCategories = true, Name = "Watchlist", SubCategoriesDiscovered = false, Other = "WT", Thumb = Resources.AmazonTvIcon }, Resources.AmazonTVWatchlistUrl);
                     }
                     else if (parentCategory.Other.ToString() == "TP")
                     {
@@ -115,8 +116,8 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
                     }
                     else if (parentCategory.Other.ToString() == "W")
                     {
-                        result.Add(new Category { HasSubCategories = true, Name = "TV Watchlist", SubCategoriesDiscovered = false, Other = "WT", Thumb = Resources.AmazonTvIcon });
-                        result.Add(new Category { HasSubCategories = true, Name = "Movies Watchlist", SubCategoriesDiscovered = false, Other = "WM", Thumb = Resources.AmazonMovieIcon });
+                        TryAdd(result, new Category { HasSubCategories = true, Name = "TV Watchlist", SubCategoriesDiscovered = false, Other = "WT", Thumb = Resources.AmazonTvIcon }, Resources.AmazonTVWatchlistUrl);
+                        TryAdd(result, new Category { HasSubCategories = true, Name = "Movies Watchlist", SubCategoriesDiscovered = false, Other = "WM", Thumb = Resources.AmazonMovieIcon }, Resources.AmazonMovieWatchlistUrl);
                     }
                     else if (parentCategory.Other.ToString() == "WM")
                     {
@@ -139,6 +140,18 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
 
             }
             return result;
+        }
+
+        protected static void TryInsert(List<Category> categories, Category category, string url)
+        {
+            if (!string.IsNullOrEmpty(url))
+                categories.Insert(0, category);
+        }
+
+        protected static void TryAdd(List<Category> categories, Category category, string url)
+        {
+            if (!string.IsNullOrEmpty(url))
+                categories.Add(category);
         }
 
         /// <summary>
@@ -297,6 +310,13 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         {
             DoLogin();
             return Resources.AmazonSearchUrl.LoadAmazonPrimeSearchAsCategoriesFromUrl(query, _browserSession);
+        }
+
+        public bool GetInputStreamProperties(VideoInfo video, out string streamUrl, out string licenseUrl, out Dictionary<string, string> additionalTags)
+        {
+            ExtendedProperties trackingInfo = video.Other as ExtendedProperties;
+            string asin = trackingInfo != null ? trackingInfo.Other :  video.Other as string ?? video.VideoUrl;
+            return _browserSession.GetInputStreamProperties(asin, out streamUrl, out licenseUrl, out additionalTags);
         }
 
         protected void DoLogin()

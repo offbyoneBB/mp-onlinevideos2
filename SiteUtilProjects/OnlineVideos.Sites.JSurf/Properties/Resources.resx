@@ -162,11 +162,20 @@
   <data name="AmazonTVEditorsUrl" xml:space="preserve">
     <value>http://www.amazon.co.uk/Shop-TV-Editors-Picks/b/ref=atv_sn_siv_cl2_tv_ep?_encoding=UTF8&amp;node=3788192031</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Resources.de" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\localisation\resources.de.resx;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
   <data name="AmazonSearchUrl" xml:space="preserve">
     <value>http://www.amazon.co.uk/s/ref=nb_sb_noss_1?url=search-alias%3Dprime-instant-video&amp;field-keywords={QUERY}&amp;ie=UTF-8&amp;lo=prime-instant-video</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Resources.de" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\localisation\resources.de.resx;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="Resources.en-US" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\localisation\resources.en-US.resx;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="AmazonATVUrl" xml:space="preserve">
+    <value>https://atv-eu.amazon.com</value>
+  </data>
+  <data name="AmazonMarketId" xml:space="preserve">
+    <value>A1F83G8C2ARO7P</value>
   </data>
 </root>

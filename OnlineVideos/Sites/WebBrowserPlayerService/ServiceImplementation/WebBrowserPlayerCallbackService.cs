@@ -1,10 +1,7 @@
 ﻿using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
-using OnlineVideos.Sites.WebBrowserPlayerService;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
 using System.Windows.Forms;
 
 namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
@@ -72,14 +69,14 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
             }
             catch (Exception ex)
             {
-                OnlineVideos.Log.Error(ex);
+                Log.Error(ex);
             }
         }
 
         /// <summary>
         /// Request that the client logs an error
         /// </summary>
-        /// <param name="ex"></param>
+        /// <param name="exceptionToLog"></param>
         public static void LogError(Exception exceptionToLog)
         {
             try
@@ -91,7 +88,7 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
             }
             catch (Exception ex)
             {
-                OnlineVideos.Log.Error(ex);
+                Log.Error(ex);
             }
         }
 
@@ -110,7 +107,7 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
             }
             catch (Exception ex)
             {
-                OnlineVideos.Log.Error(ex);
+                Log.Error(ex);
             }
         }
 
@@ -129,14 +126,14 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
             }
             catch (Exception ex)
             {
-                OnlineVideos.Log.Error(ex);
+                Log.Error(ex);
             }
         }
 
         /// <summary>
         /// Send the wndproc to all active callback listeners, return true if any listener returned true
         /// </summary>
-        /// <param name="keyPressed"></param>
+        /// <param name="msg"></param>
         public static bool SendWndProc(Message msg)
         {
             var result = false;
@@ -151,7 +148,7 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
             }
             catch (Exception ex)
             {
-                OnlineVideos.Log.Error(ex);
+                Log.Error(ex);
             }
             return result;
         }
@@ -173,7 +170,7 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
             }
             catch (Exception ex)
             {
-                OnlineVideos.Log.Error(ex);
+                Log.Error(ex);
             }
             return _subscribers;
         }

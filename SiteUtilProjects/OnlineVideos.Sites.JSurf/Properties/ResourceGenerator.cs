@@ -1,26 +1,23 @@
-﻿using System.Threading;
-using System.Web;
-
-namespace OnlineVideos.Sites.JSurf.Properties
+﻿namespace OnlineVideos.Sites.JSurf.Properties
 {
-	[global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+	[System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
 	public class Resources
 	{
-        private static global::System.Resources.ResourceManager resourceMan;
+        private static System.Resources.ResourceManager resourceMan;
         
-        private static global::System.Globalization.CultureInfo resourceCulture;
+        private static System.Globalization.CultureInfo resourceCulture;
 
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
-        [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager 
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public static System.Resources.ResourceManager ResourceManager 
 		{
             get 
 			{
-                if (object.ReferenceEquals(resourceMan, null)) 
+                if (ReferenceEquals(resourceMan, null)) 
 				{
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("OnlineVideos.Sites.JSurf.Properties.Resources", typeof(Resources).Assembly);
+                    System.Resources.ResourceManager temp = new System.Resources.ResourceManager("OnlineVideos.Sites.JSurf.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -35,8 +32,8 @@ namespace OnlineVideos.Sites.JSurf.Properties
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
-        [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public static System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -48,7 +45,7 @@ namespace OnlineVideos.Sites.JSurf.Properties
         /// <summary>
         ///   Returns the formatted resource string.
         /// </summary>
-        [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         private static string GetResourceString(string key, params string[] tokens)
 		{
             var str = ResourceManager.GetString(key, resourceCulture);
@@ -128,7 +125,13 @@ namespace OnlineVideos.Sites.JSurf.Properties
 
         public static string AmazonSearchUrl { get { return GetResourceString("AmazonSearchUrl"); } }
 
+        public static string AmazonATVUrl { get { return GetResourceString("AmazonATVUrl"); } }
+
+        public static string AmazonMarketId { get { return GetResourceString("AmazonMarketId"); } }
+
 		public static string Resources_de { get { return GetResourceString("Resources.de"); } }
+
+		public static string Resources_en_US { get { return GetResourceString("Resources.en_US"); } }
 
 		public static class Names
 		{
@@ -167,6 +170,8 @@ namespace OnlineVideos.Sites.JSurf.Properties
 			public const string AmazonTvIcon = "AmazonTvIcon";
             public const string AmazonSearchUrl = "AmazonSearchUrl";
             public const string Resources_de = "Resources_de";
-  		}
+            public const string AmazonATVUrl = "AmazonATVUrl";
+            public const string AmazonMarketId = "AmazonMarketId";
+        }
 	}
 }
