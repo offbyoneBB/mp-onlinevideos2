@@ -15,6 +15,8 @@ namespace OnlineVideos.Sites
     public class ITVPlayerUtil : SiteUtilBase
     {
         #region Site Config
+        [Category("OnlineVideosUserConfiguration"), Description("Select stream automatically?")]
+        protected bool AutoSelectStream = false;
         [Category("OnlineVideosUserConfiguration"), Description("Proxy to use for WebRequests (must be in the UK). Define like this: 83.84.85.86:8116")]
         string proxy = null;
         [Category("OnlineVideosUserConfiguration"), Description("If your proxy requires a username, set it here.")]
@@ -27,10 +29,6 @@ namespace OnlineVideos.Sites
         protected string thumbReplaceString;
         [Category("OnlineVideosUserConfiguration"), Description("Whether to download subtitles")]
         protected bool RetrieveSubtitles = false;
-        [Category("OnlineVideosUserConfiguration"), Description("Select stream automatically?")]
-        protected bool AutoSelectStream = false;
-        [Category("OnlineVideosUserConfiguration"), Description("Stream quality preference\r\n1 is low, 5 high")]
-        protected int StreamQualityPref = 5;
         [Category("OnlineVideosUserConfiguration"), Description("Whether to retrieve current program info for live streams.")]
         protected bool retrieveTVGuide = true;
         [Category("OnlineVideosConfiguration"), Description("The layout to use to display TV Guide info, possible wildcards are <nowtitle>,<nowdescription>,<nowstart>,<nowend>,<nexttitle>,<nextstart>,<nextend>,<newline>")]
@@ -126,6 +124,14 @@ namespace OnlineVideos.Sites
             if (group != null)
                 return getLiveStreams(group);
             return getShowsVids(category);
+        }
+
+        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        {
+            string url = GetVideoUrl(video);
+            if (inPlaylist)
+                video.PlaybackOptions.Clear();
+            return new List<string>() { url };
         }
 
         public override string GetVideoUrl(VideoInfo video)
@@ -263,18 +269,15 @@ namespace OnlineVideos.Sites
                 VideoInfo video = new VideoInfo();
                 video.Title = channel.StreamName;
                 video.Thumb = channel.Thumb;
+                string url = channel.Url;
                 string guideId;
-                if (TVGuideGrabber.TryGetId(channel.Url, out guideId))
+                if (TVGuideGrabber.TryGetIdAndRemove(ref url, out guideId))
                 {
-                    video.VideoUrl = TVGuideGrabber.RemoveId(channel.Url);
                     NowNextDetails guide;
-                    if (retrieveTVGuide && TVGuideGrabber.TryGetNowNextForChannel(guideId, out guide))
+                    if (retrieveTVGuide && TVGuideGrabber.TryGetNowNext(guideId, out guide))
                         video.Description = guide.Format(tvGuideFormatString);
                 }
-                else
-                {
-                    video.VideoUrl = channel.Url;
-                }
+                video.VideoUrl = url;
                 vids.Add(video);
             }
             return vids;
@@ -335,18 +338,28 @@ namespace OnlineVideos.Sites
                 }
             }
 
-            video.PlaybackOptions = new Dictionary<string, string>();
-            foreach (KeyValuePair<string, string> key in options)
-                video.PlaybackOptions.Add(key.Key, key.Value);
-
             if (RetrieveSubtitles)
             {
                 node = videoEntry.SelectSingleNode("./ClosedCaptioningURIs");
                 if (node != null && Helpers.UriUtils.IsValidUri(node.InnerText))
-                    video.SubtitleText = OnlineVideos.Sites.Utils.SubtitleReader.TimedText2SRT(GetWebData(node.InnerText));
+                    video.SubtitleText = SubtitleReader.TimedText2SRT(GetWebData(node.InnerText));
             }
 
-            return StreamComparer.GetBestPlaybackUrl(video.PlaybackOptions, StreamQualityPref, AutoSelectStream);
+            video.PlaybackOptions = new Dictionary<string, string>();
+            if (options.Count == 0)
+                return null;
+
+            if (AutoSelectStream)
+            {
+                var last = options.Last();
+                video.PlaybackOptions.Add(last.Key, last.Value);
+            }
+            else
+            {
+                foreach (KeyValuePair<string, string> key in options)
+                    video.PlaybackOptions.Add(key.Key, key.Value);
+            }
+            return options.Last().Value;
         }
 
         string getProductionId(string url)

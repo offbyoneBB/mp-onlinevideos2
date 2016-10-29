@@ -300,7 +300,7 @@ namespace OnlineVideos.Sites
             foreach (KeyValuePair<string, string> key in options)
                 video.PlaybackOptions.Add(key.Key, key.Value);
 
-            return StreamComparer.GetBestPlaybackUrl(video.PlaybackOptions, StreamQualityPref, AutoSelectStream);
+            return options.Count > 0 ? options.Last().Value : null;
         }
 
         private AMFObject GetResponse(string url, byte[] postData)

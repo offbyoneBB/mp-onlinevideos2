@@ -6,6 +6,7 @@ using System.Xml;
 using OnlineVideos.Sites.Brownard.Extensions;
 using System.Net;
 using OnlineVideos.Sites.Utils;
+using System.Linq;
 
 namespace OnlineVideos.Sites
 {
@@ -23,6 +24,8 @@ namespace OnlineVideos.Sites
 
         #region Settings
 
+        [Category("OnlineVideosUserConfiguration"), Description("Select stream automatically?")]
+        protected bool AutoSelectStream = false;
         [Category("OnlineVideosUserConfiguration"), Description("Proxy to use for WebRequests (must be in the UK). Define like this: 83.84.85.86:8116")]
         string proxy = null;
         [Category("OnlineVideosUserConfiguration"), Description("If your proxy requires a username, set it here.")]
@@ -88,9 +91,14 @@ namespace OnlineVideos.Sites
 
         public override string GetVideoUrl(VideoInfo video)
         {
-            if (video.Other == "livestream")
+            if (video.Other as string == "livestream")
                 return getLiveUrls(video);
+            else
+                return getCatchupUrls(video);
+        }
 
+        string getCatchupUrls(VideoInfo video)
+        {
             WebProxy proxyObj = getProxy();
             Match m = videoPidRegex.Match(GetWebData(video.VideoUrl, proxy: proxyObj));
             if (!m.Success)
@@ -119,7 +127,7 @@ namespace OnlineVideos.Sites
                 }
             }
 
-            SortedList<string, string> sortedPlaybackOptions = new SortedList<string, string>(new QualityComparer());
+            SortedList<string, string> sortedPlaybackOptions = new SortedList<string, string>(new StreamComparer());
             foreach (XmlElement mediaElem in doc.SelectNodes("//ns1:media[@kind='video']", nsmRequest))
             {
                 string info = "";
@@ -177,36 +185,42 @@ namespace OnlineVideos.Sites
                 }
             }
 
-            if (sortedPlaybackOptions.Count == 0)
-            {
-                //Fallback to HLS streams
-                string hlsUrl = GetHLSVideoUrl(video, vpid, proxyObj);
-                if (!string.IsNullOrEmpty(hlsUrl))
-                    return hlsUrl;
-
-                var errorNodes = doc.SelectNodes("//ns1:error", nsmRequest);
-                if (errorNodes.Count > 0) throw new OnlineVideosException(string.Format("BBC says: {0}", ((XmlElement)errorNodes[0]).GetAttribute("id")));
-            }
-
-            string lastUrl = "";
             video.PlaybackOptions = new Dictionary<string, string>();
-            var enumer = sortedPlaybackOptions.GetEnumerator();
-            while (enumer.MoveNext())
+            if (sortedPlaybackOptions.Count > 0)
             {
-                if (lastUrl == "" || !enumer.Current.Key.Contains("2800"))
-                    lastUrl = enumer.Current.Value;
-                video.PlaybackOptions.Add(enumer.Current.Key, enumer.Current.Value);
+                if (AutoSelectStream)
+                {
+                    var last = sortedPlaybackOptions.Last();
+                    video.PlaybackOptions.Add(last.Key, last.Value);
+                    return last.Value;
+                }
+                else
+                {
+                    foreach (var option in sortedPlaybackOptions)
+                        video.PlaybackOptions.Add(option.Key, option.Value);
+                    return sortedPlaybackOptions.Last().Value;
+                }
             }
-            return lastUrl;
+
+            //Fallback to HLS streams
+            string url = getHLSVideoUrls(video, vpid, proxyObj);
+            if (!string.IsNullOrEmpty(url))
+                return url;
+
+            var errorNodes = doc.SelectNodes("//ns1:error", nsmRequest);
+            if (errorNodes.Count > 0)
+                throw new OnlineVideosException(string.Format("BBC says: {0}", ((XmlElement)errorNodes[0]).GetAttribute("id")));
+            return null;
         }
 
-        string GetHLSVideoUrl(VideoInfo video, string vpid, WebProxy proxyObj)
+        string getHLSVideoUrls(VideoInfo video, string vpid, WebProxy proxyObj)
         {
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(GetWebData(HLS_MEDIA_SELECTOR_URL + vpid, proxy: proxyObj)); //uk only
             XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");
-                        
+
+            video.PlaybackOptions = new Dictionary<string, string>();
             foreach (XmlElement mediaElem in doc.SelectNodes("//ns1:media[@kind='video']", nsmRequest))
             {
                 foreach (XmlElement connectionElem in mediaElem.SelectNodes("ns1:connection", nsmRequest))
@@ -214,18 +228,8 @@ namespace OnlineVideos.Sites
                     string playlistUrl = connectionElem.Attributes["href"].Value;
                     string playlistStr = GetWebData(playlistUrl, proxy: proxyObj, userAgent: HlsPlaylistParser.APPLE_USER_AGENT);
                     HlsPlaylistParser playlist = new HlsPlaylistParser(playlistStr, playlistUrl);
-                    if (playlist.StreamInfos.Count == 0)
-                        continue;
-
-                    video.PlaybackOptions = new Dictionary<string, string>();
-                    string lastUrl = "";
-                    foreach (HlsStreamInfo streamInfo in playlist.StreamInfos)
-                    {
-                        lastUrl = streamInfo.Url;
-                        string name = string.Format("{0}x{1} | {2} kbps", streamInfo.Width, streamInfo.Height, streamInfo.Bandwidth / 1024);
-                        video.PlaybackOptions.Add(name, lastUrl);
-                    }
-                    return lastUrl;
+                    if (playlist.StreamInfos.Count > 0)
+                        return populateHlsPlaybackOptions(video, playlist.StreamInfos);
                 }
             }
             return null;
@@ -236,6 +240,7 @@ namespace OnlineVideos.Sites
             WebProxy proxyObj = getProxy();
             string playlistStr = GetWebData(video.VideoUrl, proxy: proxyObj, userAgent: HlsPlaylistParser.APPLE_USER_AGENT);
             HlsPlaylistParser playlist = new HlsPlaylistParser(playlistStr, video.VideoUrl);
+
             video.PlaybackOptions = new Dictionary<string, string>();
             if (playlist.StreamInfos.Count == 0)
             {
@@ -243,14 +248,27 @@ namespace OnlineVideos.Sites
                 return video.VideoUrl;
             }
 
-            string lastUrl = "";
-            foreach (HlsStreamInfo streamInfo in playlist.StreamInfos)
+            return populateHlsPlaybackOptions(video, playlist.StreamInfos);
+        }
+
+        string populateHlsPlaybackOptions(VideoInfo video, List<HlsStreamInfo> streamInfos)
+        {
+            if (AutoSelectStream)
             {
-                lastUrl = streamInfo.Url;
+                HlsStreamInfo streamInfo = streamInfos.Last();
                 string name = string.Format("{0}x{1} | {2} kbps", streamInfo.Width, streamInfo.Height, streamInfo.Bandwidth / 1024);
-                video.PlaybackOptions.Add(name, lastUrl);
+                video.PlaybackOptions.Add(name, streamInfo.Url);
+                return streamInfo.Url;
             }
-            return lastUrl;
+            else
+            {
+                foreach (HlsStreamInfo streamInfo in streamInfos)
+                {
+                    string name = string.Format("{0}x{1} | {2} kbps", streamInfo.Width, streamInfo.Height, streamInfo.Bandwidth / 1024);
+                    video.PlaybackOptions.Add(name, streamInfo.Url);
+                }
+                return streamInfos.Last().Url;
+            }
         }
 
         public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
@@ -453,19 +471,15 @@ namespace OnlineVideos.Sites
                 video.Title = channel.StreamName;
                 video.Other = "livestream";
                 video.Thumb = channel.Thumb;
-
+                string url = channel.Url;
                 string guideId;
-                if (iPlayerTVGuide.TryGetId(channel.Url, out guideId))
+                if (TVGuideGrabber.TryGetIdAndRemove(ref url, out guideId))
                 {
-                    video.VideoUrl = iPlayerTVGuide.RemoveId(channel.Url);
-                    NowNextInfo guide;
-                    if (retrieveTVGuide && iPlayerTVGuide.TryGetNowNextForChannel(guideId, out guide))
+                    NowNextDetails guide;
+                    if (retrieveTVGuide && TVGuideGrabber.TryGetNowNext(guideId, out guide))
                         video.Description = guide.Format(tvGuideFormatString);
                 }
-                else
-                {
-                    video.VideoUrl = channel.Url;
-                }
+                video.VideoUrl = url;
                 videos.Add(video);
             }
             return videos;
@@ -521,22 +535,6 @@ namespace OnlineVideos.Sites
         }
 
         #endregion
-    }
-
-    class QualityComparer : IComparer<string>
-    {
-        public int Compare(string x, string y)
-        {
-            int x_kbps = 0;
-            if (!int.TryParse(Regex.Match(x, @"(\d+) kbps").Groups[1].Value, out x_kbps)) return 1;
-            int y_kbps = 0;
-            if (!int.TryParse(Regex.Match(y, @"(\d+) kbps").Groups[1].Value, out y_kbps)) return -1;
-
-            int compare = x_kbps.CompareTo(y_kbps);
-            if (compare == 0) //if bitrates same, sort alphabetically
-                compare = x.CompareTo(y);
-            return compare;
-        }
     }
 
     class TrackingDetails

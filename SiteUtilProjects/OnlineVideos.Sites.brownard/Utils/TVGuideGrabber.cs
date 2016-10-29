@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using OnlineVideos.Sites.Brownard.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -8,72 +10,70 @@ using System.Text.RegularExpressions;
 namespace OnlineVideos.Sites.Utils
 {
     /// <summary>
-    /// Simple TV Guide grabber using data from xmltv.radiotimes.com
+    /// Simple TV Guide grabber using data from radiotimes.com
     /// </summary>
     class TVGuideGrabber
     {
-        const string RADIO_TIMES_URL = "http://xmltv.radiotimes.com/xmltv/{0}.dat";
-        static readonly Regex idReg = new Regex(@"[?&]guideid=(\d+)", RegexOptions.Compiled);
+        const string RADIOTIMES_JSON_URL = "http://www.radiotimes.com/rt-service/schedule/get?startdate={0}&hours=3&totalWidthUnits=898&channels={1}";
+        static readonly TimeZoneInfo GMT = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
+        static readonly Regex GUIDE_ID_REGEX = new Regex(@"[?&]guideid=(\d+)");
 
-        public static bool TryGetId(string url, out string id)
+        public static bool TryGetIdAndRemove(ref string url, out string id)
         {
-            Match match = idReg.Match(url);
+            Match match = GUIDE_ID_REGEX.Match(url);
             if (match.Success)
             {
                 id = match.Groups[1].Value;
+                url = url.Remove(match.Index, match.Length);
                 return true;
             }
             id = null;
             return false;
         }
 
-        public static string RemoveId(string url)
+        public static bool TryGetNowNext(string radioTimesId, out NowNextDetails nowNext)
         {
-            return idReg.Replace(url, "");
-        }
+            DateTime guideTime = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.Local, GMT);
+            string requestTime = new DateTime(guideTime.Year, guideTime.Month, guideTime.Day, guideTime.Hour, 0, 0).ToString("dd-MM-yyyy HH:mm:ss");
+            string url = string.Format(RADIOTIMES_JSON_URL, requestTime, radioTimesId);
 
-        public static bool TryGetNowNextForChannel(string radioTimesId, out NowNextDetails nowNext)
-        {
+            JObject guideData = WebCache.Instance.GetWebData<JObject>(url);
             nowNext = null;
-            //Retrieve .dat page for channel
-            string guide = WebCache.Instance.GetWebData(string.Format(RADIO_TIMES_URL, radioTimesId));
-            if (string.IsNullOrEmpty(guide))
+            if (guideData == null)
                 return false;
 
-            TimeZoneInfo gmt = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
-            DateTime guideTime = TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.Local, gmt);
-            //split into individual programmes
-            string[] programmes = guide.Split("\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-            foreach (string programme in programmes)
+            JArray channels = guideData["Channels"] as JArray;
+            if (channels == null || channels.Count == 0)
+                return false;
+
+            JArray listings = channels[0]["TvListings"] as JArray;
+            if (listings == null || listings.Count == 0)
+                return false;
+
+            foreach (JToken listing in listings)
             {
-                string[] programmeInfo = programme.Split('~');
-                if (programmeInfo.Length != 23) //not a valid line
-                    continue;
+                //remove UTC indicator, the times don't appear to be UTC but GMT
+                DateTime startTime = DateTime.Parse(listing.Value<string>("StartTimeMF").Replace("Z", ""), CultureInfo.InvariantCulture);
+                DateTime endTime = DateTime.Parse(listing.Value<string>("EndTimeMF").Replace("Z", ""), CultureInfo.InvariantCulture);
 
-                DateTime progDate = DateTime.Parse(programmeInfo[19], new CultureInfo("en-GB")); //uk date format
-                DateTime progStartTime = progDate.Add(TimeSpan.Parse(programmeInfo[20]));
-                DateTime progEndTime = progDate.Add(TimeSpan.Parse(programmeInfo[21]));
-
-                //Programme might span 2 days, e.g starts at 23.50 and ends at 01.00
-                if (progEndTime < progStartTime)
-                    progEndTime = progEndTime.AddDays(1);
-
-                if (nowNext != null) //if previous was current programme, we must be on next programme
+                if (nowNext != null)
                 {
-                    nowNext.NextTitle = programmeInfo[0];
-                    nowNext.NextStart = convertToLocalTime(progStartTime, gmt);
-                    nowNext.NextEnd = convertToLocalTime(progEndTime, gmt);
-                    break; //only get Now/Next
+                    nowNext.NextTitle = listing.Value<string>("Title");
+                    nowNext.NextDescription = listing.Value<string>("Description");
+                    nowNext.NextStart = convertToLocalTime(startTime, GMT);
+                    nowNext.NextEnd = convertToLocalTime(endTime, GMT);
+                    break;
                 }
 
-                //if programme starts before current time and ends after current time it is currently playing
-                if (progEndTime > guideTime && progStartTime <= guideTime)
+                if (startTime <= guideTime && endTime > guideTime)
                 {
-                    nowNext = new NowNextDetails();
-                    nowNext.NowTitle = programmeInfo[0];
-                    nowNext.NowDescription = programmeInfo[17];
-                    nowNext.NowStart = convertToLocalTime(progStartTime, gmt);
-                    nowNext.NowEnd = convertToLocalTime(progEndTime, gmt);
+                    nowNext = new NowNextDetails
+                    {
+                        NowTitle = listing.Value<string>("Title"),
+                        NowDescription = listing.Value<string>("Description"),
+                        NowStart = convertToLocalTime(startTime, GMT),
+                        NowEnd = convertToLocalTime(endTime, GMT)
+                    };
                 }
             }
             return nowNext != null;
@@ -94,14 +94,16 @@ namespace OnlineVideos.Sites.Utils
         public string NextTitle { get; set; }
         public string NextStart { get; set; }
         public string NextEnd { get; set; }
+        public string NextDescription { get; set; }
 
         public string Format(string format)
         {
-            return format.Replace("<nowtitle>", NowTitle)
-            .Replace("<nowdescription>", NowDescription)
+            return format.Replace("<nowtitle>", NowTitle.HtmlCleanup())
+            .Replace("<nowdescription>", NowDescription.HtmlCleanup())
             .Replace("<nowstart>", NowStart)
             .Replace("<nowend>", NowEnd)
-            .Replace("<nexttitle>", NextTitle)
+            .Replace("<nexttitle>", NextTitle.HtmlCleanup())
+            .Replace("<nextdescription>", NowDescription.HtmlCleanup())
             .Replace("<nextstart>", NextStart)
             .Replace("<nextend>", NextEnd)
             .Replace("<newline>", Environment.NewLine);
