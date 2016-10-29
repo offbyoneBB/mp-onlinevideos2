@@ -53,7 +53,7 @@ namespace OnlineVideos.Sites
 
         private string getDescription(HtmlNode node)
         {
-            var node2 = node.SelectSingleNode(".//div[@class='hoverbox-details']");//tested
+            var node2 = node.SelectSingleNode(".//p[@class='expanding-card__description']");//kausi
             if (node2 == null)
                 node2 = node.SelectSingleNode(".//div[@class='list-item-main1']");//klipit
             if (node2 != null)
@@ -64,7 +64,7 @@ namespace OnlineVideos.Sites
         private List<VideoInfo> myParse2(HtmlNode node)
         {
             List<VideoInfo> result = new List<VideoInfo>();
-            var res = node.SelectNodes(".//div[@class='hoverbox-container']");//tested
+            var res = node.SelectNodes(".//div[@data-content-type='video']");//tested data-content-type="video"
             if (res != null)//normal
             {
                 foreach (var vid2 in res)
@@ -75,11 +75,11 @@ namespace OnlineVideos.Sites
                     else
                         vid = vid2;
                     var node2 = vid.SelectSingleNode(".//a[@href]");
-                    if (node2 != null && vid.SelectSingleNode(".//h4") != null)
+                    if (node2 != null && vid.SelectSingleNode(".//h4 | .//h3") != null)
                     {
                         VideoInfo video = CreateVideoInfo();
 
-                        video.Title = vid.SelectSingleNode(".//h4").InnerText;
+                        video.Title = vid.SelectSingleNode(".//h4 | .//h3").InnerText;
                         video.Description = getDescription(vid);
                         video.VideoUrl = FormatDecodeAbsolutifyUrl(baseUrl, node2.Attributes["href"].Value, "", UrlDecoding.None);
                         video.Thumb = getImageUrl(vid);
