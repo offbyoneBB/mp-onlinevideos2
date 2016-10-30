@@ -314,6 +314,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
 
         public bool GetInputStreamProperties(VideoInfo video, out string streamUrl, out string licenseUrl, out Dictionary<string, string> additionalTags)
         {
+            DoLogin();
             ExtendedProperties trackingInfo = video.Other as ExtendedProperties;
             string asin = trackingInfo != null ? trackingInfo.Other :  video.Other as string ?? video.VideoUrl;
             return _browserSession.GetInputStreamProperties(asin, out streamUrl, out licenseUrl, out additionalTags);
