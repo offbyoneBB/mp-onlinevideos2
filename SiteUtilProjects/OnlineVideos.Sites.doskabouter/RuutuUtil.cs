@@ -184,7 +184,7 @@ namespace OnlineVideos.Sites
                     HasSubCategories = true,
                     SubCategories = new List<Category>()
                 };
-                if (sub.Name == "Lasten elokuvat")
+                if (sub.Name == "Elokuvat")
                 {
                     sub.HasSubCategories = false;
                     sub.Other = myParse2(node);
