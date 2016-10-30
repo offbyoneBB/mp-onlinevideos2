@@ -78,5 +78,12 @@ namespace MediaPortal.UI.Players.InputStreamPlayer
       }
       return false;
     }
+
+    protected override void FreeCodecs()
+    {
+      base.FreeCodecs();
+      if (_stream != null)
+        _stream.Dispose();
+    }
   }
 }

@@ -78,7 +78,7 @@ namespace MediaPortalWrapper
       var res = NativeMethods.SetDllDirectory(pluginRoot);
       var addonDllPath = Path.Combine(pluginRoot, string.Format("{0}\\{0}.dll", addonName));
       _wrapper.Init(addonDllPath);
-      var cb = new AddonCB { LibPath = pluginRoot };
+      var cb = new AddonCB { LibPath = pluginRoot + "\\" };
 
       var status = _wrapper.Create(ref cb, IntPtr.Zero);
       if (status != AddonStatus.Ok)
@@ -87,7 +87,9 @@ namespace MediaPortalWrapper
       _addonFunctions = _wrapper.Addon;
 
       // The path contains 2 dummy folders, because the InputStream.mpd plugin creates the cdm folder 2 levels higher.
-      string profileFolder = ServiceRegistration.Get<IPathManager>().GetPath("<DATA>\\OnlineVideos\\InputStream\\D1\\D2");
+      string profileFolder = ServiceRegistration.Get<IPathManager>().GetPath(string.Format("<DATA>\\OnlineVideos\\InputStream\\addons\\{0}\\", addonName));
+      if (!Directory.Exists(profileFolder))
+        Directory.CreateDirectory(profileFolder);
 
       var inputStreamConfig = new InputStreamConfig
       {
