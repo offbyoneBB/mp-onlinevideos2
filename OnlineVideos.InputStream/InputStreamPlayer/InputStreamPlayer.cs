@@ -17,7 +17,7 @@ namespace MediaPortal.UI.Players.InputStreamPlayer
   public class InputStreamPlayer : VideoPlayer
   {
     private InputStream _stream;
-    private StreamSourceFilter _streamSourceFilter;
+    protected StreamSourceFilter _streamSourceFilter;
 
     /// <summary>
     /// Indicates that internal decryption failed.
@@ -38,6 +38,12 @@ namespace MediaPortal.UI.Players.InputStreamPlayer
       var hr = _graphBuilder.AddFilter(_streamSourceFilter, _streamSourceFilter.Name);
       new HRESULT(hr).Throw();
 
+      RenderSourceFilterPins();
+    }
+
+    protected virtual void RenderSourceFilterPins()
+    {
+      int hr;
       using (DSFilter source2 = new DSFilter(_streamSourceFilter))
         foreach (DSPin pin in source2.Output)
           using (pin)
