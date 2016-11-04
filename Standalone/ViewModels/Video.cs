@@ -72,10 +72,13 @@ namespace Standalone.ViewModels
 		public static ListCollectionView GetVideosView<T>(OnlineVideosMainWindow window, IList<T> videoList, bool addNextPage, bool useTitle2 = false) where T : OnlineVideos.VideoInfo
 		{
 			List<Video> convertedVideos = new List<Video>();
-			foreach (OnlineVideos.VideoInfo video in videoList)
-			{
-				convertedVideos.Add(new Video(video, useTitle2));
-			}
+            if (videoList != null)
+            {
+                foreach (OnlineVideos.VideoInfo video in videoList)
+                {
+                    convertedVideos.Add(new Video(video, useTitle2));
+                }
+            }
 
 			if (addNextPage)
 			{

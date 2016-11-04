@@ -363,7 +363,8 @@ namespace Standalone
 							List<VideoInfo> videoList = resultInfo.ResultObject as List<VideoInfo>;
 							listViewMain.ItemsSource = ViewModels.VideoList.GetVideosView(this, videoList, SelectedSite.HasNextPage);
 							SelectAndFocusItem();
-							ImageDownloader.GetImages<VideoInfo>(videoList);
+                            if (videoList != null)
+							    ImageDownloader.GetImages<VideoInfo>(videoList);
 						}
 					}
 				);
