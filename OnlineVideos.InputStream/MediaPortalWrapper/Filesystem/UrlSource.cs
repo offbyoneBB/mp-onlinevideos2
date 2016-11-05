@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using MediaPortalWrapper.Utils;
 using SeasideResearch.LibCurlNet;
@@ -123,6 +124,8 @@ namespace MediaPortalWrapper.Filesystem
 
     }
 
+    // This attribute allows catching of AccessViolation, which would otherwise lead to immediate termination of application.
+    [HandleProcessCorruptedStateExceptions]
     public override bool Open(uint flags)
     {
       try
@@ -160,7 +163,8 @@ namespace MediaPortalWrapper.Filesystem
       catch (Exception ex)
       {
         Logger.Log("UrlSource: Error opening url: {0} [{1}]", _url, ex);
-        return false;
+        // Throwing exception here allows player builder to use the fallback to BrowserPlayer
+        throw new Exception("UrlSource: Error opening url");
       }
     }
 
