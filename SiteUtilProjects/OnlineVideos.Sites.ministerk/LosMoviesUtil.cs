@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using OnlineVideos.Hoster;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -8,7 +9,6 @@ namespace OnlineVideos.Sites
 
     public class LosMoviesUtil : LatestVideosSiteUtilBase
     {
-
         public class LosMoviesVideoInfo : VideoInfo
         {
             public string LatestOption { get; private set; }
@@ -20,7 +20,10 @@ namespace OnlineVideos.Sites
                 Hoster.HosterBase hoster = Hoster.HosterFactory.GetAllHosters().FirstOrDefault(h => u.ToLowerInvariant().Contains(h.GetHosterUrl().ToLowerInvariant()));
                 if (hoster != null)
                 {
-                    return hoster.GetVideoUrl(u);
+                    string theUrl = hoster.GetVideoUrl(u);
+                    if (hoster is ISubtitle)
+                        this.SubtitleText = (hoster as ISubtitle).SubtitleText;
+                    return theUrl;
                 }
                 return "";
             }
