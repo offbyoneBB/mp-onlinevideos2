@@ -16,3 +16,7 @@ bin
 /SiteImages/Banners/Thumbs.db
 /SiteImages/Icons/Thumbs.db
 /Standalone/Images/Thumbs.db
+ipch/*
+**/Debug/*
+**/Release/*
+*sdf
