@@ -21,11 +21,11 @@
       <References Include="$(TargetDir)InputStream.*\**\*.*" />
     </ItemGroup>
     <ItemGroup>
-      <CppCliReferences Include="$(SolutionDir)bin\library.xbmc.addon\libXBMC_addon.dll" />
+      <CppCliReferences Include="$(SolutionDir)bin\library.*\*.dll" />
     </ItemGroup>
     <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginDestination)" />
     <Copy SourceFiles="@(References)" DestinationFiles="@(References->'$(PluginDestination)%(RecursiveDir)%(Filename)%(Extension)')"  />
-    <Copy SourceFiles="@(CppCliReferences)" DestinationFiles="@(CppCliReferences->'$(PluginDestination)library.xbmc.addon\%(Filename)%(Extension)')"  />
+    <Copy SourceFiles="@(CppCliReferences)" DestinationFiles="@(CppCliReferences->'$(PluginDestination)%(RecursiveDir)\%(Filename)%(Extension)')"  />
   </Target>
 
 </Project>
