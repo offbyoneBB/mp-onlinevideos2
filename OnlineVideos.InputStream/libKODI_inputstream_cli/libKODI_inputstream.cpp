@@ -25,7 +25,7 @@
 #include <string>
 #include "Stdafx.h"
 
-#using "..\MediaPortalWrapper\bin\Release\MediaPortalWrapper.dll"
+#using "..\MediaPortalWrapper\bin\x86\Release\MediaPortalWrapper.dll"
 
 #ifdef _WIN32
 #include <windows.h>

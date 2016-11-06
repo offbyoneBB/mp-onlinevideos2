@@ -21,7 +21,8 @@
       <References Include="$(TargetDir)InputStream.*\**\*.*" />
     </ItemGroup>
     <ItemGroup>
-      <CppCliReferences Include="$(SolutionDir)bin\library.*\*.dll" />
+      <CppCliReferences Include="$(SolutionDir)bin\library.*\libKODI*.dll" />
+      <CppCliReferences Include="$(SolutionDir)bin\library.*\libXBMC*.dll" />
     </ItemGroup>
     <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginDestination)" />
     <Copy SourceFiles="@(References)" DestinationFiles="@(References->'$(PluginDestination)%(RecursiveDir)%(Filename)%(Extension)')"  />

@@ -33,7 +33,7 @@
 #define DLLEXPORT
 #endif
 
-#using "..\MediaPortalWrapper\bin\Release\MediaPortalWrapper.dll"
+#using "..\MediaPortalWrapper\bin\x86\Release\MediaPortalWrapper.dll"
 
 using namespace std;
 using namespace ADDON;

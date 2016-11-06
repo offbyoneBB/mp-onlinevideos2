@@ -162,7 +162,7 @@ namespace MediaPortalWrapper.Filesystem
       }
       catch (Exception ex)
       {
-        Logger.Log("UrlSource: Error opening url: {0} [{1}]", _url, ex);
+        Logger.Log(3, "UrlSource: Error opening url: {0} [{1}]", _url, ex);
         // Throwing exception here allows player builder to use the fallback to BrowserPlayer
         throw new Exception("UrlSource: Error opening url");
       }
