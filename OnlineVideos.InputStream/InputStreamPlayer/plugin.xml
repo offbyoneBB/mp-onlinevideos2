@@ -2,6 +2,7 @@
     DescriptorVersion="1.0"
     Name="InputStreamPlayer"
     PluginId="{6792C6C5-842C-4C65-A698-D94710984A42}"
+    AutoActivate="True"
     Author="Morpheus_xx"
     Copyright="GPL"
     Description="InputStreamPlayer">
@@ -21,9 +22,9 @@
   <Runtime>
     <Assembly FileName="InputStreamPlayer.dll"/>
     <Assembly FileName="MediaPortalWrapper.dll"/>
+    <Assembly FileName="..\VideoPlayers\DirectShowWrapper.dll"/>
     <Assembly FileName="library.xbmc.addon\libXBMC_addon.dll"/>
     <Assembly FileName="library.kodi.inputstream\libKODI_inputstream.dll"/>
-    <Assembly FileName="..\VideoPlayers\DirectShowWrapper.dll"/>
   </Runtime>
 
 </Plugin>

@@ -33,6 +33,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.MediaPortal2.Interfaces", "OnlineVideos.MediaPortal2.Interfaces\OnlineVideos.MediaPortal2.Interfaces.csproj", "{F54CFB16-1599-4676-BED6-2AB1C6F4DE53}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InputStreamPlayer", "OnlineVideos.InputStream\InputStreamPlayer\InputStreamPlayer.csproj", "{3171D2FF-4E7F-4413-B7A9-03AA7355DC68}"
+	ProjectSection(ProjectDependencies) = postProject
+		{31E46B4E-8088-4E6A-B53E-7401BD660703} = {31E46B4E-8088-4E6A-B53E-7401BD660703}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InputStreamSourceFilter", "OnlineVideos.InputStream\InputStreamSourceFilter\InputStreamSourceFilter.csproj", "{E1DBE4EC-283B-4B94-AA14-BFCE0EFA67CF}"
 EndProject
@@ -43,6 +46,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortalWrapper", "OnlineVideos.InputStream\MediaPortalWrapper\MediaPortalWrapper.csproj", "{47731721-BA8A-4295-BCCE-399E5C289B4E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InputStream", "InputStream", "{6C556A69-5996-482E-8C9C-1B8C678E29CB}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libXBMC_addon_cli", "OnlineVideos.InputStream\libXBMC_addon_cli\libXBMC_addon_cli.vcxproj", "{31E46B4E-8088-4E6A-B53E-7401BD660703}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -127,11 +132,9 @@ Global
 		{227A18CA-CD85-47FA-997C-C1FFCB1E1A00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{227A18CA-CD85-47FA-997C-C1FFCB1E1A00}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{227A18CA-CD85-47FA-997C-C1FFCB1E1A00}.Debug|x86.ActiveCfg = Debug|x86
-		{227A18CA-CD85-47FA-997C-C1FFCB1E1A00}.Debug|x86.Build.0 = Debug|x86
 		{227A18CA-CD85-47FA-997C-C1FFCB1E1A00}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{227A18CA-CD85-47FA-997C-C1FFCB1E1A00}.Release|Any CPU.Build.0 = Release|Any CPU
 		{227A18CA-CD85-47FA-997C-C1FFCB1E1A00}.Release|x86.ActiveCfg = Release|x86
-		{227A18CA-CD85-47FA-997C-C1FFCB1E1A00}.Release|x86.Build.0 = Release|x86
 		{47731721-BA8A-4295-BCCE-399E5C289B4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{47731721-BA8A-4295-BCCE-399E5C289B4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47731721-BA8A-4295-BCCE-399E5C289B4E}.Debug|x86.ActiveCfg = Debug|x86
@@ -140,6 +143,12 @@ Global
 		{47731721-BA8A-4295-BCCE-399E5C289B4E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{47731721-BA8A-4295-BCCE-399E5C289B4E}.Release|x86.ActiveCfg = Release|x86
 		{47731721-BA8A-4295-BCCE-399E5C289B4E}.Release|x86.Build.0 = Release|x86
+		{31E46B4E-8088-4E6A-B53E-7401BD660703}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{31E46B4E-8088-4E6A-B53E-7401BD660703}.Debug|x86.ActiveCfg = Debug|Win32
+		{31E46B4E-8088-4E6A-B53E-7401BD660703}.Debug|x86.Build.0 = Debug|Win32
+		{31E46B4E-8088-4E6A-B53E-7401BD660703}.Release|Any CPU.ActiveCfg = Release|Win32
+		{31E46B4E-8088-4E6A-B53E-7401BD660703}.Release|x86.ActiveCfg = Release|Win32
+		{31E46B4E-8088-4E6A-B53E-7401BD660703}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -152,5 +161,6 @@ Global
 		{D930CB01-1765-4892-99A4-845392FD3210} = {6C556A69-5996-482E-8C9C-1B8C678E29CB}
 		{227A18CA-CD85-47FA-997C-C1FFCB1E1A00} = {6C556A69-5996-482E-8C9C-1B8C678E29CB}
 		{47731721-BA8A-4295-BCCE-399E5C289B4E} = {6C556A69-5996-482E-8C9C-1B8C678E29CB}
+		{31E46B4E-8088-4E6A-B53E-7401BD660703} = {6C556A69-5996-482E-8C9C-1B8C678E29CB}
 	EndGlobalSection
 EndGlobal
