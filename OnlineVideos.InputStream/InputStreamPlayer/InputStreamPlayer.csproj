@@ -107,7 +107,6 @@
   <ItemGroup>
     <None Include="build.targets" />
     <None Include="packages.config" />
-    <None Include="References\curl-ca-bundle.crt" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -266,7 +266,7 @@ extern "C"
   DLLEXPORT void* XBMC_curl_create(void *hdl, void* cb, const char* strURL)
   {
     Utils::Logger::Log("XBMC_curl_create");
-    Filesystem::UrlSource^ urlSource = gcnew Filesystem::UrlSource();
+    Filesystem::UrlSourceHttpClient^ urlSource = gcnew Filesystem::UrlSourceHttpClient();
     if (!urlSource->UrlCreate(gcnew String(strURL)))
     {
       delete urlSource;

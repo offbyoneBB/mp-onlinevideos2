@@ -4,6 +4,14 @@ using System.Runtime.InteropServices;
 
 namespace MediaPortalWrapper.Filesystem
 {
+  public enum CURLOPTIONTYPE
+  {
+    CURL_OPTION_OPTION,     /**< Set a general option   */
+    CURL_OPTION_PROTOCOL,   /**< Set a protocol option  */
+    CURL_OPTION_CREDENTIALS,/**< Set User and password  */
+    CURL_OPTION_HEADER      /**< Add a Header           */
+  }
+
   public abstract class AbstractFile : IDisposable
   {
     protected Stream _contentStream;
