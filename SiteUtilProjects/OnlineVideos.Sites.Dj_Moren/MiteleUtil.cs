@@ -18,90 +18,33 @@ using Newtonsoft.Json.Linq;
 namespace OnlineVideos.Sites
 {
     public class MiteleUtil : GenericSiteUtil
-    {
-        internal String miteleBaseUrl = "http://www.mitele.es";
-
-        internal String seriesListRegex = "<a\\shref=\"(?<url>[^\"]*)\"\\stitle=\"(?<title>[^\"]*)\"\\sclass=\"ElementImageContainer\">\\s*<img\\swidth=\"[^\"]*\"\\sheight=\"[^\"]*\"\\salt=\"[^\"]*\"\\ssrc=\"(?<thumb>[^\"]*)\"\\s/>(?:(?!</a).)*</a>";
-        internal String nextPageRegex = "<li\\sclass=\"next\"><a\\shref=\"javascript:void\\(0\\);\">Siguiente\\s&raquo;</a></li>";
-        internal String nextPageProgramsARG = "pag=";
-        internal String programsData = "";
-        internal String temporadasBrowserRegex = "{\\s*temporadas:\\s\\[(?<temporadas>[^]]*)]\\s}";
-        internal String temporadasRegex = "{(?<temporadas>[^}]*)}";
-        internal String temporadasARG = "/temporadasbrowser/getCapitulos/";
-        internal String episodiosPaginaRegex = "{\"episodes\":\\[(?<episodios>[^]]*)],\"hasNext\":(?<hayMasPaginas>[^}]*)}";
-        internal String episodiosRegex = "{(?<episodios>[^}]*)}";
-        internal String xmlURLRegex = "{\"host\":\"(?<url>[^\"]*)\"";
-        //internal String xmlDataRegex = "<duration>(?<Duration>[^<]*)</duration>\\s*<videoUrl\\sscrubbing=\"(?<Scrubbing>[^\"]*)\"\\smultipleDef=\"(?<MultipleDef>[^\"]*)\"\\srtmp=\"(?<rtmp>[^\"]*)\">\\s*<link\\sstart=\"(?<start>[^\"]*)\"\\send=\"(?<end>[^\"]*)\">(?<VideoURL>[^<]*)</link>\\s*</videoUrl>";
-        internal String xmlDataRegex = "<videoUrl\\s[^>]*>\\s*<link[^>]*>(?<VideoURL>[^<]*)</link>\\s*</videoUrl>";
-        internal String episodesData = "";
-        internal String timeURL = "http://token.mitele.es/clock.php";
-        internal String tokenizerURL = "http://token.mitele.es/";
-        internal String finalVideoURLRegex = "<file[^>]*>(?<url>[^<]*)</file>";
-        internal String msPlayerDataConfigRegex = "data-config=\\s*\"(?<dataConfigUrl>[^\"]*)\"";
-        internal int i = 1;
-        internal int j = 1;
-        internal JArray episodios;
-
+    {   
         internal enum CategoryType
         {
             None,
-            Series,
-            TVMovies,
-            Programas,
-            Infantil,
-            VO,
-            Temporadas
+            Programs
         }
-
-        internal Regex regexSeriesList;
-        internal Regex regexNextPage;
-        internal Regex regexTemporadasBrowser;
-        internal Regex regexTemporadas;
-        internal Regex regexEpisodiosPagina;
-        internal Regex regexEpisodios;
-        internal Regex regexXmlURL;
-        internal Regex regexXmlData;
-        internal Regex regexFinalVideoURL;
-        internal Regex regexMSPlayerDataConfig; //data-config= "http://www.mitele.es/api/cms/mitele/videos/153471/config/final.json"
 
         public override void Initialize(SiteSettings siteSettings)
         {
-            InitializeRegex();
             siteSettings.DynamicCategoriesDiscovered = false;
             base.Initialize(siteSettings);
-        }
-
-        internal void InitializeRegex()
-        {
-            regexSeriesList = new Regex(seriesListRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
-            regexNextPage = new Regex(nextPageRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
-            regexTemporadasBrowser = new Regex(temporadasBrowserRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
-            regexTemporadas = new Regex(temporadasRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
-            regexEpisodiosPagina = new Regex(episodiosPaginaRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
-            regexEpisodios = new Regex(episodiosRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
-            regexXmlURL = new Regex(xmlURLRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
-            regexXmlData = new Regex(xmlDataRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
-            regexFinalVideoURL = new Regex(finalVideoURLRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);
-            regexMSPlayerDataConfig = new Regex(msPlayerDataConfigRegex, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Multiline);   
         }
 
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
-            Settings.Categories.Add(CreateCategory("Programas", miteleBaseUrl + "/programas-tv/", String.Empty, CategoryType.Programas, "", null));
-            Settings.Categories.Add(CreateCategory("Series", miteleBaseUrl+"/series-online/", String.Empty, CategoryType.Series, "", null));
-            Settings.Categories.Add(CreateCategory("TV Movies", miteleBaseUrl + "/tv-movies/", String.Empty, CategoryType.TVMovies, "", null));
-            Settings.Categories.Add(CreateCategory("Infantil", miteleBaseUrl + "/tv-infantil/", String.Empty, CategoryType.Infantil, "", null));
-            Settings.Categories.Add(CreateCategory("V.O.", miteleBaseUrl + "/mitele-vo/", String.Empty, CategoryType.VO, "", null));
+            Settings.Categories.Add(CreateCategory("Programas de TV", "https://cdn-search-mediaset.carbyne.ps.ooyala.com/search/v1/full/providers/104951/mini?q={%22types%22:%22tv_series%22,%22genres%22:[%22_ca_programas%22],%22sort%22:{%22field%22:%22ingestion_date%22,%22order%22:%22desc%22},%22page_size%22:1000,%22page_number%22:1,%22product_id%22:[%22Free_Web%22,%22Free_Web_Mobile%22,%22Register_Web%22,%22Free_Live_Web%22,%22Register_Live_Web%22,%22MITELTVOD_Web_Mobile_01%22]}&format=full&include_titles=Series,Season&&product_name=test&format=full", string.Empty, CategoryType.Programs, string.Empty, null));
+            Settings.Categories.Add(CreateCategory("Series Online", "https://cdn-search-mediaset.carbyne.ps.ooyala.com/search/v1/full/providers/104951/mini?q={%22types%22:%22tv_series%22,%22genres%22:[%22_ca_series%22],%22sort%22:{%22field%22:%22ingestion_date%22,%22order%22:%22desc%22},%22page_size%22:1000,%22page_number%22:1,%22product_id%22:[%22Free_Web%22,%22Free_Web_Mobile%22,%22Register_Web%22,%22Free_Live_Web%22,%22Register_Live_Web%22,%22MITELTVOD_Web_Mobile_01%22]}&format=full&include_titles=Series,Season&&product_name=test&format=full", string.Empty, CategoryType.Programs, string.Empty, null));
+            Settings.Categories.Add(CreateCategory("TV Movies", "https://cdn-search-mediaset.carbyne.ps.ooyala.com/search/v1/full/providers/104951/mini?q={%22types%22:%22tv_series%22,%22genres%22:[%22_ca_tv-movies%22],%22sort%22:{%22field%22:%22ingestion_date%22,%22order%22:%22desc%22},%22page_size%22:1000,%22page_number%22:1,%22product_id%22:[%22Free_Web%22,%22Free_Web_Mobile%22,%22Register_Web%22,%22Free_Live_Web%22,%22Register_Live_Web%22,%22MITELTVOD_Web_Mobile_01%22]}&format=full&include_titles=Series,Season&&product_name=test&format=full", string.Empty, CategoryType.Programs, string.Empty, null));
+            Settings.Categories.Add(CreateCategory("Documentales", "https://cdn-search-mediaset.carbyne.ps.ooyala.com/search/v1/full/providers/104951/mini?q={%22genres%22:%22_ca_documentales%22,%22sort%22:{%22field%22:%22region%22,%22order%22:%22asc%22},%22page_size%22:1000,%22page_number%22:1,%22product_id%22:[%22Free_Web%22,%22Free_Web_Mobile%22,%22Register_Web%22,%22Free_Live_Web%22,%22Register_Live_Web%22,%22MITELTVOD_Web_Mobile_01%22]}&format=full&include_titles=Series,Season&&product_name=test&format=full", string.Empty, CategoryType.Programs, string.Empty, null));
             Settings.DynamicCategoriesDiscovered = true;
-
             return Settings.Categories.Count;
         }
 
-        internal RssLink CreateCategory(String name, String url, String thumbUrl, CategoryType categoryType, String description, Category parentCategory)
+        internal RssLink CreateCategory(string name, string url, string thumbUrl, CategoryType categoryType, string description, Category parentCategory)
         {
             RssLink category = new RssLink();
-
             category.Name = name;
             category.Url = url;
             category.Thumb = thumbUrl;
@@ -110,7 +53,6 @@ namespace OnlineVideos.Sites
             category.HasSubCategories = categoryType != CategoryType.None;
             category.SubCategoriesDiscovered = false;
             category.ParentCategory = parentCategory;
-
             return category;
         }
 
@@ -120,23 +62,8 @@ namespace OnlineVideos.Sites
 
             switch ((CategoryType)parentCategory.Other)
             {
-                case CategoryType.Series:
-                    subCategories = DiscoverSeries(parentCategory as RssLink);
-                    break;
-                case CategoryType.TVMovies:
-                    subCategories = DiscoverSeries(parentCategory as RssLink);
-                    break;
-                case CategoryType.Programas:
-                    subCategories = DiscoverSeries(parentCategory as RssLink);
-                    break;
-                case CategoryType.Infantil:
-                    subCategories = DiscoverSeries(parentCategory as RssLink);
-                    break;
-                case CategoryType.VO:
-                    subCategories = DiscoverSeries(parentCategory as RssLink);
-                    break;
-                case CategoryType.Temporadas:
-                    subCategories = DiscoverTemporadas(parentCategory as RssLink);
+                case CategoryType.Programs:
+                    subCategories = DiscoverPrograms(parentCategory as RssLink);
                     break;
             }
 
@@ -147,208 +74,144 @@ namespace OnlineVideos.Sites
             return parentCategory.HasSubCategories ? subCategories.Count : 0;
         }
 
-        internal List<Category> DiscoverSeries(RssLink parentCategory)
+        internal List<Category> DiscoverPrograms(RssLink parentCategory)
         {
             List<Category> result = new List<Category>();
-            programsData = GetWebData(parentCategory.Url);
-            i = 1;
-            getNextPages(programsData, parentCategory.Url);
-            Match match = regexSeriesList.Match(programsData);
-            while (match.Success)
+            JArray programs = GetWebDataJArray(parentCategory.Url);
+            string programsBaseUrl = "https://cdn-search-mediaset.carbyne.ps.ooyala.com/search/v1/full/providers/104951/docs/series?series_id={0}&include=Episode,Season,Series&size=2000&include_titles=Series,Season&product_name=test&format=full&onlinevideos_id={1}";
+            foreach (JToken program in programs)
             {
-                String name = match.Groups["title"].Value;
-                String url = miteleBaseUrl + match.Groups["url"].Value;
-                String thumbUrl = match.Groups["thumb"].Value;
-                result.Add(CreateCategory(name, url, thumbUrl, CategoryType.Temporadas, "", parentCategory));
-                Log.Debug("mitele: serie {0} added.", name);
-                match = match.NextMatch();
+                JToken source = program.SelectToken("_source");
+                JToken localizable_titles = source.SelectToken("localizable_titles")[0];
+                string name = (string)localizable_titles.SelectToken("episode_name");
+                string externalId = (string)source.SelectToken("external_id");
+                string id = (string)program.SelectToken("_id");
+                string url = string.Format(programsBaseUrl, externalId, id);
+                string thumbUrl = (string)source.SelectToken("thumbnail.url");
+                string description = (string)localizable_titles.SelectToken("summary_long");
+                result.Add(CreateCategory(name, url, thumbUrl, CategoryType.None, description, parentCategory));
             }
+            result = result.OrderBy(o => o.Name).ToList();
             return result;
-        }
-
-        internal List<Category> DiscoverTemporadas(RssLink parentCategory)
-        {
-            List<Category> result = new List<Category>();
-            String data = GetWebData(parentCategory.Url);
-            Match content = regexTemporadasBrowser.Match(data);
-            JObject jsonTemporadas = JObject.Parse(content.Value);
-            JArray temporadas = (JArray)jsonTemporadas["temporadas"];
-            for (int k = 0; k < temporadas.Count; k++)
-            {
-                JToken temporada = temporadas[k];
-                String name = (String)temporada.SelectToken("post_title");
-                String idTemporada = (String)temporada.SelectToken("ID");
-                String url = miteleBaseUrl + temporadasARG + idTemporada;
-                result.Add(CreateCategory(name, url, "", CategoryType.None, "", parentCategory));
-                Log.Debug("Mitele: temporada {0} added.", name);
-            }
-            return result;
-        }
-
-        public void getNextPages(String data, String url)
-        {
-            String newData = "";
-            if (!string.IsNullOrEmpty(data))
-            {
-                Match match = regexNextPage.Match(data);
-                if (match.Success)
-                {
-                    fileUrlPostString = nextPageProgramsARG + ++i;
-                    Log.Debug("Mitele: searching next pages categories {0} {1}", url, fileUrlPostString);
-                    newData = GetWebDataFromPostMitele(url, fileUrlPostString);
-                    programsData += newData;
-                    match = regexNextPage.Match(newData);
-                    if (match.Success)
-                    {
-                        getNextPages(newData, url);
-                    }
-                }
-            }
         }
 
         public override List<VideoInfo> GetVideos(Category category)
         {
-            Log.Debug("Mitele: getting video list from category {0}", category.Name);
             List<VideoInfo> videoList = new List<VideoInfo>();
-            j = 1;
-            String data = GetWebData((category as RssLink).Url + "/" + j + "/");
-            Match episodiosPaginaMatch = regexEpisodiosPagina.Match(data);
-            JObject jsonEpisodios = JObject.Parse(episodiosPaginaMatch.Value);
-            episodios = (JArray)jsonEpisodios["episodes"];
-            getNextPagesEpisodes(data, (category as RssLink).Url);
-            for (int k = 0; k < episodios.Count; k++)
+            JArray episodes = GetWebDataJArray((category as RssLink).Url);
+            String videosBaseUrl = "http://player.ooyala.com/sas/player_api/v2/authorization/embed_code/FhcGUyOrTrXrKWC9kzg5OnqpZp3S/{0}?device=html5&domain=www.mitele.es";
+            if (episodes.Count == 0)
             {
-                JToken episodio = episodios[k];
-                VideoInfo video = new VideoInfo();
-                video.Title = episodio.SelectToken("post_title") + " - " + episodio.SelectToken("post_subtitle");
-                video.Description = (String)episodio.SelectToken("post_content");
-                video.Airdate = (String)episodio.SelectToken("post_date");
-                video.Thumb = (String)episodio.SelectToken("image");
-                video.VideoUrl = miteleBaseUrl + (String)episodio.SelectToken("url");
-                videoList.Add(video);
+                string id = (category as RssLink).Url.Split(new string[] { "&onlinevideos_id=" }, StringSplitOptions.None)[1];
+                string url = "https://cdn-search-mediaset.carbyne.ps.ooyala.com/search/v1/full/providers/104951/docs/{0}?&product_name=test&format=full";
+                episodes = GetWebDataJArray(String.Format(url, id));
             }
-            return videoList;
-        }
-
-        public void getNextPagesEpisodes(String data, String url)
-        {
-            String newData = "";
-            if (!string.IsNullOrEmpty(data))
+            foreach (JToken episode in episodes)
             {
-                Match episodiosPaginaMatch = regexEpisodiosPagina.Match(data);
-                if (episodiosPaginaMatch.Success && episodiosPaginaMatch.Groups["hayMasPaginas"].Value.Equals("true"))
+                JToken source = episode.SelectToken("_source");
+                JToken localizable_titles = source.SelectToken("localizable_titles[0]");
+                string showType = (string)source.SelectToken("show_type");
+                if ("Episode".Equals(showType) || "Movie".Equals(showType))
                 {
-                    Log.Debug("Mitele: searching next pages episodes");
-                    newData = GetWebData(url + "/" + ++j + "/");
-                    Match episodiosPaginaMatchAUX = regexEpisodiosPagina.Match(newData);
-                    JObject jsonEpisodios = JObject.Parse(episodiosPaginaMatchAUX.Value);
-                    JArray episodiosAUX = (JArray)jsonEpisodios["episodes"];
-                    for (int k = 0; k < episodiosAUX.Count; k++)
+                    VideoInfo video = new VideoInfo();
+                    string season_number = (string)source.SelectToken("season_number");
+                    string episode_name = (string)localizable_titles.SelectToken("title_sort_name");
+                    if (season_number != null)
                     {
-                        JToken episodio = episodiosAUX[k];
-                        episodios.Add(episodio);
+                        video.Title = string.Format("Temporada {0} - {1}", season_number, episode_name);
                     }
-                    episodiosPaginaMatch = regexEpisodiosPagina.Match(data);
-                    if (episodiosPaginaMatch.Success && episodiosPaginaMatch.Groups["hayMasPaginas"].Value.Equals("true"))
+                    else
                     {
-                        getNextPagesEpisodes(newData, url);
+                        video.Title = episode_name;
                     }
+                    
+                    video.Description = (string)localizable_titles.SelectToken("summary_long");
+                    //video.Airdate = (string)source.SelectToken("linear_broadcast_date");
+                    video.Thumb = (string)source.SelectToken("thumbnail.url");
+                    string embed_code = (string)source.SelectToken("offers[0].embed_codes[0]"); ;
+                    video.VideoUrl = string.Format(videosBaseUrl, embed_code);
+                    videoList.Add(video);
                 }
             }
+            videoList = videoList.OrderByDescending(o => o.Title).ToList();
+            return videoList;
         }
 
         public override string GetVideoUrl(VideoInfo video)
         {
-            Log.Debug("Mitele: getting video URL from video {0} ", video.Title);
-            String data = GetWebData(video.VideoUrl);
-            String videoURL = "";
-            Match dataConfigUrlMatch = regexMSPlayerDataConfig.Match(data);
-            if (dataConfigUrlMatch.Success)
+            string data = GetWebData(video.VideoUrl);
+            JObject jsonVideos = JObject.Parse(data);
+            JArray streams = (JArray)jsonVideos.SelectToken("authorization_data").First().First().SelectToken("streams");
+            string previous_master_m3u8_url = "";
+            foreach (JToken stream in streams)
             {
-                String dataConfigUrl = miteleBaseUrl + dataConfigUrlMatch.Groups["dataConfigUrl"].Value;
-                String dataConfig = GetWebData(dataConfigUrl + "?c=5");
-                String mmcUrl = (String)JObject.Parse(dataConfig).SelectToken("services.mmc");
-                String mmc = GetWebData(mmcUrl);
-                JObject mmcJson = JObject.Parse(mmc);
-                JArray locations = (JArray)mmcJson["locations"];
-                JToken location = locations[0];
-                String icd = (String)location.SelectToken("loc");
-                String bas = (String)location.SelectToken("bas");
-                String ogn = (String)location.SelectToken("ogn");
-                String finalUrl = "http://token.mitele.es/?bas=" + HttpUtility.UrlEncode(bas) + "&icd=" + icd + "&ogn=" + ogn + "&sta=0";
-                String videoFile = GetWebDataFromPostMitele(finalUrl, "");
-                String m3u8 = (String)JObject.Parse(videoFile).SelectToken("file");
-                String master = GetWebData(m3u8);
-                int inicioURL = master.IndexOf("http://");
-                if (inicioURL == -1)
+                if ("akamai_hd2_vod_hls".Equals((string)stream.SelectToken("delivery_type")))
                 {
-                    inicioURL = master.IndexOf("https://");
-                }
-                videoURL = master.Substring(inicioURL);
-            }
-            return videoURL;
-        }
-
-        /*public override string GetVideoUrl(VideoInfo video)
-        {
-            Log.Debug("Mitele: getting video URL from video {0} ", video.Title);
-            String data = GetWebData(video.VideoUrl);
-            String videoURL = "";
-            Match xmlURLMatch = regexXmlURL.Match(data);
-            if (xmlURLMatch.Success)
-            {
-                String xmlURL = xmlURLMatch.Groups["url"].Value;
-                xmlURL = xmlURL.Replace("\\", "");
-                String xmlData = GetWebData(xmlURL);
-                Match xmlDataMatch = regexXmlData.Match(xmlData);
-                if (xmlDataMatch.Success)
-                {
-                    String startTime = xmlDataMatch.Groups["start"].Value;
-                    if (string.IsNullOrEmpty(startTime))
-                    {
-                        startTime = "0";
-                    }
-                    String endTime = xmlDataMatch.Groups["end"].Value;
-                    if (string.IsNullOrEmpty(endTime))
-                    {
-                        endTime = "0";
-                    }
-                    String url = xmlDataMatch.Groups["VideoURL"].Value;
-                    videoURL = getVideoURLMitele(url, startTime, endTime);
-                    Log.Debug("Mitele: videoURL {0} added", videoURL);
+                    previous_master_m3u8_url = Base64Decode((string)stream.SelectToken("url.data"));
+                    break;
                 }
             }
-            return videoURL;
-        }*/
-
-        /*public String getVideoURLMitele(String url, String startTime, String endTime)
-        {
-            String serverTime = GetWebData(timeURL);
-            String toEncode = serverTime + ";" + url + ";" + startTime + ";" + endTime;
-            String encodedParams = Flowplayer.Commercial.V3_1_5_17_002.Aes.Encrypt(toEncode, base64Encode(Flowplayer.Commercial.V3_1_5_17_002.Aes.Key), Flowplayer.Commercial.V3_1_5_17_002.Aes.KeyType.Key256);
-            String hash = HttpUtility.UrlEncode(encodedParams);
-            NameValueCollection headers = new NameValueCollection();*/
-            //headers.Add("Accept", "*/*");
-            /*headers.Add("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.3");
-            headers.Add("Accept-Encoding", "gzip,deflate,sdch");
-            headers.Add("Accept-Language", "es-ES,es;q=0.8");
-            headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.89 Safari/537.1");
-            headers.Add("Origin", "http://static1.tele-cinco.net");
-            headers.Add("Referer", "http://static1.tele-cinco.net/comun/swf/playerMitele.swf");
-            string data = GetWebData(tokenizerURL+"?hash=" + hash + "&id=" + url + "&startTime=0&endTime=0", headers: headers, cache: false);
-            string master = GetWebData(data.Substring(data.IndexOf("tokenizedUrl\":\"") + "tokenizedUrl\":\"".Length).Split('\"')[0].Replace(" ", "").Replace("\\/", "/"));
-            return master.Substring(master.IndexOf("http://"));
-        }*/
-
-        public string GetWebDataFromPostMitele(string url, string postData)
-        {
-            NameValueCollection headers = new NameValueCollection();
-            headers.Add("X-Requested-With", "XMLHttpRequest");
-            headers.Add("Accept", "*/*"); // accept any content type
-            headers.Add("User-Agent", OnlineVideoSettings.Instance.UserAgent); // set the default OnlineVideos UserAgent when none specified
-            return GetWebData(url, postData, headers: headers);
+            if (!"".Equals(previous_master_m3u8_url))
+            {
+                string options_data = GetWebData(previous_master_m3u8_url);
+                string[] options = options_data.Split('\n');
+                SortedDictionary<string, string> playbackOptions = new SortedDictionary<string, string>();
+                for (int i = 1; i < options.Length; i = i + 2)
+                {
+                    string[] features = options[i].Split(',');
+                    string resolution = "";
+                    int bandwidth = 0;
+                    foreach (string feature in features)
+                    {
+                        if (feature.StartsWith("BANDWIDTH"))
+                        {
+                            bandwidth = int.Parse(feature.Split('=')[1]) / 1024;
+                        }
+                        else if (feature.StartsWith("RESOLUTION"))
+                        {
+                            resolution = feature.Split('=')[1];
+                        }
+                    }
+                    string nm = string.Format("{0} {1}K", resolution, bandwidth);
+                    string url = options[i + 1];
+                    playbackOptions.Add(nm, url);
+                }
+                video.PlaybackOptions = new Dictionary<string, string>();
+                foreach (var item in playbackOptions.OrderBy(i => i.Key))
+                {
+                    video.PlaybackOptions.Add(item.Key, item.Value);
+                }
+                    
+            }
+            if (video.PlaybackOptions.Count == 0)
+            {
+                return "";// if no match, return empty url -> error
+            }
+            else if (video.PlaybackOptions.Count == 1)
+            {
+                string resultUrl = video.PlaybackOptions.Last().Value;
+                video.PlaybackOptions = null;// only one url found, PlaybackOptions not needed
+                return resultUrl;
+            }
+            else
+            {
+                return video.PlaybackOptions.Last().Value;
+            }
         }
-        
+
+        public JArray GetWebDataJArray(string url)
+        {
+            string data = GetWebData(url);
+            JObject jsonEpisodes = JObject.Parse(data);
+            return (JArray)jsonEpisodes["hits"]["hits"];
+        }
+
+        public static string Base64Decode(string base64EncodedData)
+        {
+            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
+            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+        }
+
         public static string base64Encode(string plainText)
         {
             var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
