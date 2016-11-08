@@ -2,6 +2,7 @@
 //#define proxy
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
@@ -16,10 +17,13 @@ namespace MediaPortalWrapper.Filesystem
     private readonly Stopwatch _sw = new Stopwatch();
     private double _speed = 0;
 
-    private readonly HttpClient _client;
-    private readonly HttpClientHandler _handler;
+    // Reusing HttpClient to improve performance and sockets usage. See http://aspnetmonsters.com/2016/08/2016-08-27-httpclientwrong/.
+    private static readonly HttpClient _client;
+    private static readonly HttpClientHandler _handler;
 
-    public UrlSourceHttpClient()
+    private readonly Dictionary<string, string> _headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+    static UrlSourceHttpClient()
     {
       _handler = new HttpClientHandler
       {
@@ -30,15 +34,6 @@ namespace MediaPortalWrapper.Filesystem
 #endif
       };
       _client = new HttpClient(_handler, true);
-    }
-
-    public override void Dispose()
-    {
-      base.Dispose();
-      if (_client != null)
-        _client.Dispose();
-      if (_handler != null)
-        _handler.Dispose();
     }
 
     public override bool UrlCreate(string url)
@@ -68,6 +63,10 @@ namespace MediaPortalWrapper.Filesystem
       if (cname.Equals("AcceptEncoding", StringComparison.OrdinalIgnoreCase))
         cname = "Accept-Encoding";
 
+      // Ignore some non-http headers
+      if (cname.Equals("seekable", StringComparison.OrdinalIgnoreCase))
+        return true;
+
       switch (type)
       {
         case CURLOPTIONTYPE.CURL_OPTION_CREDENTIALS:
@@ -78,7 +77,7 @@ namespace MediaPortalWrapper.Filesystem
           if (cname.Equals("postdata", StringComparison.OrdinalIgnoreCase))
             _postData = Convert.FromBase64String(value);
           else
-            _client.DefaultRequestHeaders.TryAddWithoutValidation(cname, value);
+            _headers.Add(cname, value);
           break;
         case CURLOPTIONTYPE.CURL_OPTION_OPTION:
           break;
@@ -93,16 +92,16 @@ namespace MediaPortalWrapper.Filesystem
       try
       {
         _sw.Start();
-        if (_postData != null)
-        {
-          ByteArrayContent content = new ByteArrayContent(_postData);
-          HttpResponseMessage result = _client.PostAsync(_url, content).Result;
-          _contentStream = result.Content.ReadAsStreamAsync().Result;
-        }
-        else
-        {
-          _contentStream = _client.GetStreamAsync(_url).Result;
-        }
+
+        var message = _postData != null ?
+          new HttpRequestMessage(HttpMethod.Post, _url) { Content = new ByteArrayContent(_postData) } :
+          new HttpRequestMessage(HttpMethod.Get, _url);
+
+        foreach (var header in _headers)
+          message.Headers.TryAddWithoutValidation(header.Key, header.Value);
+
+        HttpResponseMessage result = _client.SendAsync(message).Result;
+        _contentStream = result.Content.ReadAsStreamAsync().Result;
         return _contentStream != null;
       }
       catch (Exception ex)
