@@ -270,7 +270,6 @@ namespace InputStreamSourceFilter
       if (MediaTypeBuilder.TryGetType(_stream.VideoStream, out mediaType))
         m_Tracks.Add(new MediaTypedDemuxTrack(this, DemuxTrack.TrackType.Video, mediaType));
 
-
       if (MediaTypeBuilder.TryGetType(_stream.AudioStream, out mediaType))
         m_Tracks.Add(new MediaTypedDemuxTrack(this, DemuxTrack.TrackType.Audio, mediaType) { LCID = _stream.AudioStream.Language.TryGetLCID() });
 
@@ -299,9 +298,10 @@ namespace InputStreamSourceFilter
       packet.Buffer = buffer;
       packet.Size = buffer.Length;
 
-      DemuxTrack track = demuxPacket.StreamId == _stream.VideoStream.StreamId ? m_Tracks[0] : m_Tracks[1];
-      if (track.Type == DemuxTrack.TrackType.Video)
+      DemuxTrack track;
+      if (demuxPacket.StreamId == _stream.VideoStream.StreamId)
       {
+        track = m_Tracks.FirstOrDefault(t => t.Type == DemuxTrack.TrackType.Video);
         _videoPackets++;
         // Set video timestamps
         packet.Start = demuxPacket.Dts.ToDS();
@@ -309,10 +309,12 @@ namespace InputStreamSourceFilter
       }
       else
       {
+        track = m_Tracks.FirstOrDefault(t => t.Type == DemuxTrack.TrackType.Audio);
         _audioPackets++;
       }
       // Queue samples
-      track.AddToCache(ref packet);
+      if (track != null)
+        track.AddToCache(ref packet);
 
       _stream.Free(demuxPacket);
       // Check for decoding errors, commonly the audio part is working while video decoding might fail

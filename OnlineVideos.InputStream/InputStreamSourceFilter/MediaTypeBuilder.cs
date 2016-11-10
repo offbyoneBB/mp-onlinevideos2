@@ -2,6 +2,8 @@
 using InputStreamSourceFilter.H264;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Runtime.InteropServices;
 using MediaPortalWrapper.NativeWrappers;
 
@@ -14,7 +16,6 @@ namespace InputStreamSourceFilter
     static readonly Guid MEDIASUBTYPE_AVC1 = new Guid(0x31435641, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
     static readonly Guid MEDIASUBTYPE_DOLBY_DDPLUS = new Guid("a7fb87af-2d02-42fb-a4d4-05cd93843bdd");
     static readonly Guid MEDIASUBTYPE_RAW_AAC1 = new Guid("{000000FF-0000-0010-8000-00AA00389B71}");
-
 
     private static readonly Dictionary<string, Func<InputstreamInfo, AMMediaType>> TYPE_MAPPINGS = new Dictionary<string, Func<InputstreamInfo, AMMediaType>>
     {
@@ -90,12 +91,21 @@ namespace InputStreamSourceFilter
     /// <returns></returns>
     public static AMMediaType H264_AVC1(InputstreamInfo streamInfo)
     {
-      H264CodecData codecData = new H264CodecData(streamInfo.ExtraData);
-      SPSUnit spsUnit = new SPSUnit(codecData.SPS);
-      int width = spsUnit.Width();
-      int height = spsUnit.Height();
-
+      H264CodecData codecData = null;
       Mpeg2VideoInfo vi = new Mpeg2VideoInfo();
+      byte[] extraData = new byte[0];
+      int width = (int)streamInfo.Width;
+      int height = (int)streamInfo.Height;
+
+      if (streamInfo.ExtraData.Length > 0)
+      {
+        codecData = new H264CodecData(streamInfo.ExtraData);
+
+        SPSUnit spsUnit = new SPSUnit(codecData.SPS);
+        width = spsUnit.Width();
+        height = spsUnit.Height();
+      }
+
       vi.hdr.SrcRect.right = width;
       vi.hdr.SrcRect.bottom = height;
       vi.hdr.TargetRect.right = width;
@@ -107,14 +117,44 @@ namespace InputStreamSourceFilter
 
       vi.hdr.BmiHeader.Width = width;
       vi.hdr.BmiHeader.Height = height;
+
       vi.hdr.BmiHeader.Planes = 1;
       vi.hdr.BmiHeader.Compression = FOURCC_AVC1;
+      vi.hdr.BmiHeader.BitCount = 24;
 
-      vi.dwProfile = (uint)codecData.Profile;
-      vi.dwLevel = (uint)codecData.Level;
-      vi.dwFlags = (uint)codecData.NALSizeMinusOne + 1;
+      if (codecData != null)
+      {
+        vi.dwProfile = (uint)codecData.Profile;
+        vi.dwLevel = (uint)codecData.Level;
+        vi.dwFlags = (uint)codecData.NALSizeMinusOne + 1;
 
-      byte[] extraData = NaluParser.CreateAVC1ParameterSet(codecData.SPS, codecData.PPS, 2);
+        extraData = NaluParser.CreateAVC1ParameterSet(codecData.SPS, codecData.PPS, 2);
+      }
+      else
+      {
+        // Example: avc1.4D401F -> Main Level 3.1
+        // Profile     Value
+        // Baseline    42E0
+        // Main        4D40
+        // High        6400
+        // Extended    58A0
+
+        // Level       Hex Value
+        // 3.0         1E
+        // 3.1         1F
+        // 4.1         29
+        // 5.1         33
+        string codecInfo = streamInfo.CodecInternalName.Split('.').Last();
+        if (codecInfo.Length == 6)
+        {
+          int codecNum;
+          if (int.TryParse(codecInfo.Substring(0, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out codecNum))
+            vi.dwProfile = (uint)codecNum;
+          if (int.TryParse(codecInfo.Substring(4, 2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out codecNum))
+            vi.dwLevel = (uint)codecNum;
+        }
+      }
+
       vi.cbSequenceHeader = (uint)extraData.Length;
 
       AMMediaType amt = new AMMediaType();
@@ -131,6 +171,8 @@ namespace InputStreamSourceFilter
     {
       wf.nChannels = (ushort)streamInfo.Channels;
       wf.nSamplesPerSec = (int)streamInfo.SampleRate;
+      if (wf.nSamplesPerSec == 0)
+        wf.nSamplesPerSec = 44100; // Fallback if missing, otherwise audio decoder filter will not connect
       wf.nAvgBytesPerSec = streamInfo.Bandwidth / 8;
       amt.sampleSize = streamInfo.Bandwidth;
     }

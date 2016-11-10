@@ -1,22 +1,22 @@
 /*
- *      Copyright (C) 2012-2013 Team XBMC
- *      http://xbmc.org
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with XBMC; see the file COPYING.  If not, see
- *  <http://www.gnu.org/licenses/>.
- *
- */
+*      Copyright (C) 2012-2013 Team XBMC
+*      http://xbmc.org
+*
+*  This Program is free software; you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation; either version 2, or (at your option)
+*  any later version.
+*
+*  This Program is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*  GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License
+*  along with XBMC; see the file COPYING.  If not, see
+*  <http://www.gnu.org/licenses/>.
+*
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -184,11 +184,13 @@ extern "C"
 
   DLLEXPORT double XBMC_get_file_download_speed(void *hdl, void* cb, void* file)
   {
-    Utils::Logger::Log("XBMC_get_file_download_speed");
     Filesystem::AbstractFile^ f;
+    double downloadSpeed = 0.0f;
     if (Filesystem::FileFactory::TryGetValue((IntPtr)file, f))
-      return f->DownloadSpeed;
-    return 0.0f;
+      downloadSpeed = f->DownloadSpeed;
+
+    Utils::Logger::Log("XBMC_get_file_download_speed: {0}", downloadSpeed);
+    return downloadSpeed;
   }
 
   DLLEXPORT void XBMC_close_file(void *hdl, void* cb, void* file)
@@ -206,32 +208,36 @@ extern "C"
 
   DLLEXPORT bool XBMC_file_exists(void *hdl, void* cb, const char *strFileName, bool bUseCache)
   {
-    Utils::Logger::Log("XBMC_file_exists");
+    String^ path = gcnew String(strFileName);
+    Utils::Logger::Log("XBMC_file_exists: {0}", path);
     return false;
   }
 
   DLLEXPORT int XBMC_stat_file(void *hdl, void* cb, const char *strFileName, struct __stat64* buffer)
   {
-    Utils::Logger::Log("XBMC_stat_file");
+    String^ path = gcnew String(strFileName);
+    Utils::Logger::Log("XBMC_stat_file: {0}", path);
     return -1;
   }
 
   DLLEXPORT bool XBMC_delete_file(void *hdl, void* cb, const char *strFileName)
   {
-    Utils::Logger::Log("XBMC_delete_file");
+    String^ path = gcnew String(strFileName);
+    Utils::Logger::Log("XBMC_delete_file: {0}", path);
     return true;
   }
 
-  DLLEXPORT bool XBMC_can_open_directory(void *hdl, void* cb, const char* strURL)
+  DLLEXPORT bool XBMC_can_open_directory(void *hdl, void* cb, const char* strPath)
   {
-    Utils::Logger::Log("XBMC_can_open_directory");
+    String^ path = gcnew String(strPath);
+    Utils::Logger::Log("XBMC_can_open_directory: {0}", path);
     return true;
   }
 
   DLLEXPORT bool XBMC_create_directory(void *hdl, void* cb, const char *strPath)
   {
-    Utils::Logger::Log("XBMC_create_directory");
     String^ path = gcnew String(strPath);
+    Utils::Logger::Log("XBMC_create_directory: {0}", path);
     if (!Directory::Exists(path))
       Directory::CreateDirectory(path);
     return true;
@@ -239,21 +245,23 @@ extern "C"
 
   DLLEXPORT bool XBMC_directory_exists(void *hdl, void* cb, const char *strPath)
   {
-    Utils::Logger::Log("XBMC_directory_exists");
     String^ path = gcnew String(strPath);
+    Utils::Logger::Log("XBMC_directory_exists: {0}", path);
     return Directory::Exists(path);
   }
 
   DLLEXPORT bool XBMC_remove_directory(void *hdl, void* cb, const char *strPath)
   {
-    Utils::Logger::Log("XBMC_remove_directory");
+    String^ path = gcnew String(strPath);
+    Utils::Logger::Log("XBMC_remove_directory: {0}", path);
     return false;
   }
 
   DLLEXPORT bool XBMC_get_directory(void *hdl, void* cb, const char *strPath, const char* mask, VFSDirEntry** items, unsigned int* num_items)
   {
-    Utils::Logger::Log("XBMC_get_directory");
-    return Filesystem::DirectoryHelper::GetDirectory(gcnew String(strPath), gcnew String(mask), (IntPtr)items, (IntPtr)num_items);
+    String^ path = gcnew String(strPath);
+    Utils::Logger::Log("XBMC_get_directory: {0}", path);
+    return Filesystem::DirectoryHelper::GetDirectory(path, gcnew String(mask), (IntPtr)items, (IntPtr)num_items);
   }
 
   DLLEXPORT void XBMC_free_directory(void *hdl, void* cb, VFSDirEntry* items, unsigned int num_items)
@@ -265,7 +273,7 @@ extern "C"
 
   DLLEXPORT void* XBMC_curl_create(void *hdl, void* cb, const char* strURL)
   {
-    Utils::Logger::Log("XBMC_curl_create");
+    Utils::Logger::Log("XBMC_curl_create: {0}", gcnew String(strURL));
     Filesystem::UrlSourceHttpClient^ urlSource = gcnew Filesystem::UrlSourceHttpClient();
     if (!urlSource->UrlCreate(gcnew String(strURL)))
     {
@@ -277,7 +285,7 @@ extern "C"
 
   DLLEXPORT bool XBMC_curl_add_option(void *hdl, void* cb, void *file, XFILE::CURLOPTIONTYPE type, const char* name, const char *value)
   {
-    Utils::Logger::Log("XBMC_curl_add_option");
+    Utils::Logger::Log("XBMC_curl_add_option: {0} : {1}", gcnew String(name), gcnew String(value));
     Filesystem::AbstractFile^ f;
     if (Filesystem::FileFactory::TryGetValue((IntPtr)file, f))
       return f->AddOption((Filesystem::CURLOPTIONTYPE)type, gcnew String(name), gcnew String(value));

@@ -41,6 +41,12 @@ namespace MediaPortal.UI.Players.InputStreamPlayer
       RenderSourceFilterPins();
     }
 
+    protected override void AddAudioRenderer()
+    {
+      if (_stream.AudioStream.StreamId != 0)
+        base.AddAudioRenderer();
+    }
+
     protected virtual void RenderSourceFilterPins()
     {
       int hr;
