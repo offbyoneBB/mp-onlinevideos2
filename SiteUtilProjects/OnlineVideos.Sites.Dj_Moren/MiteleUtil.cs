@@ -177,7 +177,7 @@ namespace OnlineVideos.Sites
                     playbackOptions.Add(nm, url);
                 }
                 video.PlaybackOptions = new Dictionary<string, string>();
-                foreach (var item in playbackOptions.OrderBy(i => i.Key))
+                foreach (var item in playbackOptions.OrderBy(i => int.Parse(i.Key.Split(' ')[1].Split('K')[0])))
                 {
                     video.PlaybackOptions.Add(item.Key, item.Value);
                 }
