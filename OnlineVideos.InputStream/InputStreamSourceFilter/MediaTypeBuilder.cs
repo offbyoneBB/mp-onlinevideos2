@@ -16,6 +16,7 @@ namespace InputStreamSourceFilter
     static readonly Guid MEDIASUBTYPE_AVC1 = new Guid(0x31435641, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71);
     static readonly Guid MEDIASUBTYPE_DOLBY_DDPLUS = new Guid("a7fb87af-2d02-42fb-a4d4-05cd93843bdd");
     static readonly Guid MEDIASUBTYPE_RAW_AAC1 = new Guid("{000000FF-0000-0010-8000-00AA00389B71}");
+    static readonly Guid MEDIASUBTYPE_ADTS = new Guid("{53544441-0000-0010-8000-00AA00389B71}");
 
     private static readonly Dictionary<string, Func<InputstreamInfo, AMMediaType>> TYPE_MAPPINGS = new Dictionary<string, Func<InputstreamInfo, AMMediaType>>
     {
@@ -54,10 +55,17 @@ namespace InputStreamSourceFilter
     /// <returns></returns>
     public static AMMediaType H264_AnnexB(InputstreamInfo streamInfo)
     {
-      H264CodecData codecData = new H264CodecData(streamInfo.ExtraData);
-      SPSUnit spsUnit = new SPSUnit(codecData.SPS);
-      int width = spsUnit.Width();
-      int height = spsUnit.Height();
+      int width = (int)streamInfo.Width;
+      int height = (int)streamInfo.Height;
+
+      if (streamInfo.ExtraData.Length > 0)
+      {
+        var codecData = new H264CodecData(streamInfo.ExtraData);
+
+        SPSUnit spsUnit = new SPSUnit(codecData.SPS);
+        width = spsUnit.Width();
+        height = spsUnit.Height();
+      }
 
       VideoInfoHeader2 vi = new VideoInfoHeader2();
       vi.SrcRect.right = width;
@@ -172,7 +180,7 @@ namespace InputStreamSourceFilter
       wf.nChannels = (ushort)streamInfo.Channels;
       wf.nSamplesPerSec = (int)streamInfo.SampleRate;
       if (wf.nSamplesPerSec == 0)
-        wf.nSamplesPerSec = 44100; // Fallback if missing, otherwise audio decoder filter will not connect
+        wf.nSamplesPerSec = 48000; // Fallback if missing, otherwise audio decoder filter will not connect
       wf.nAvgBytesPerSec = streamInfo.Bandwidth / 8;
       amt.sampleSize = streamInfo.Bandwidth;
     }
@@ -188,7 +196,7 @@ namespace InputStreamSourceFilter
       AMMediaType amt = new AMMediaType();
       AssignStreamInfoFields(streamInfo, ref wf, ref amt);
       amt.majorType = MediaType.Audio;
-      amt.subType = MEDIASUBTYPE_RAW_AAC1;
+      amt.subType = MEDIASUBTYPE_ADTS; // Works better than RAW_AAC1 (tested with Amazon Prime and 7TV)
       amt.temporalCompression = false;
       amt.fixedSizeSamples = true;
       amt.SetFormat(wf);

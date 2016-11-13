@@ -116,7 +116,12 @@ namespace MediaPortalWrapper
 
       _caps = Functions.GetCapabilities();
 
-      OnStreamChange();
+      UpdateStreams();
+
+      GetPreferredStreams(_inputstreamInfos, _preferences);
+
+      // Tell the inputstream to enable selected stream IDs
+      EnableStreams();
     }
 
     public override void Dispose()
@@ -132,11 +137,6 @@ namespace MediaPortalWrapper
     private void OnStreamChange()
     {
       UpdateStreams();
-
-      GetPreferredStreams(_inputstreamInfos, _preferences);
-
-      // Tell the inputstream to enable selected stream IDs
-      EnableStreams();
     }
 
     public bool EnableStream(int streamId, bool isEnabled)
@@ -244,7 +244,7 @@ namespace MediaPortalWrapper
 
         if (demuxPacket.StreamId == Constants.DMX_SPECIALID_STREAMCHANGE || demuxPacket.StreamId == Constants.DMX_SPECIALID_STREAMINFO)
         {
-          // No action here, calling class only cares for available data
+          UpdateStreams();
         }
 
         _packets[demuxPacket] = demuxPacketPtr;
