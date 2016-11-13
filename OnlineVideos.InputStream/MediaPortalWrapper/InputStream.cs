@@ -205,7 +205,7 @@ namespace MediaPortalWrapper
       {
         var matchingStreams = preferences.PreferMultiChannel ?
           streams.OrderByDescending(i => i.Channels).ThenBy(i => i.CodecInternalName) :
-          streams.OrderBy(i => i.Channels).ThenBy(i => i.CodecInternalName);
+          streams.OrderBy(CustomChannelCountSorting).ThenBy(i => i.CodecInternalName);
 
         var audioStream = matchingStreams.Any() ? matchingStreams.First().StreamId : 0;
         if (audioStream != 0)
@@ -215,6 +215,15 @@ namespace MediaPortalWrapper
         }
       }
       _enabledStreams = selectedIds.ToList();
+    }
+
+    private static uint CustomChannelCountSorting(InputstreamInfo i)
+    {
+      var channelCount = i.Channels;
+      // Gives mono channels a higher number, so they are not preferred over stereo in ascending order.
+      if (channelCount == 1)
+        channelCount *= 10;
+      return channelCount;
     }
 
     public override void Write(DemuxPacket packet)
