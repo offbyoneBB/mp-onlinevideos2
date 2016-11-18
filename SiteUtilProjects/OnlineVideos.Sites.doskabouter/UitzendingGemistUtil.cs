@@ -25,8 +25,8 @@ namespace OnlineVideos.Sites
         private int pageNr = 0;
         private string baseVideoListUrl = null;
 
-        string matchaz = @"<li\sclass='a-z-scrubber-item'><a\shref=""(?<url>[^""]*)""(?:\sclass=""active"")?>(?<title>[^<]*)</a></li>";
-        string matchRecent = @"(?<=<span\sclass='[^']*'>Datum</span>.*)<li><a\shref=""(?<url>[^""]*)""\sdata-scorecard=""[^""]*"">(?<title>[^<]*)</a></li>";
+        string matchaz = @"<li\sclass='a-z-scrubber-item'><a(?:\sclass=""active"")?\shref=""(?<url>[^""]*)"">(?<title>[^<]*)</a></li>";
+        string matchRecent = @"(?<=<span\sclass='[^']*'>Datum</span>.*)<li><a\sdata-scorecard=""[^""]*""\shref=""(?<url>[^""]*)"">(?<title>[^<]*)</a></li>";
 
         private WebProxy webProxy = null;
         private Regex regex_Az;
