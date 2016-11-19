@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using MediaPortalWrapper.Utils;
 
 namespace MediaPortalWrapper.Streams
 {
@@ -22,59 +20,29 @@ namespace MediaPortalWrapper.Streams
     public int DispTime;
   }
 
-  public class DemuxPacketHelper
+  public class DemuxPacketWrapper : IDisposable
   {
-    static readonly object _syncObj = new object();
-    static readonly Dictionary<IntPtr, GCHandle> PacketHandles = new Dictionary<IntPtr, GCHandle>();
-
-    public static IntPtr AllocateDemuxPacket(int dataSize, bool noPadding = false)
+    public DemuxPacketWrapper()
     {
-      var packet = CreateDemuxPacket(dataSize, noPadding);
-      var gch = GCHandle.Alloc(packet, GCHandleType.Pinned);
-      var ptr = gch.AddrOfPinnedObject();
-      lock (_syncObj)
-        PacketHandles[ptr] = gch;
-      return ptr;
+      NativePtr = IntPtr.Zero;
+      IsEOS = true;
     }
-
-    public static DemuxPacket CreateDemuxPacket(int dataSize, bool noPadding = false)
+    public DemuxPacketWrapper(DemuxPacket packet, IntPtr ptr)
     {
-      DemuxPacket packet = new DemuxPacket();
-      /**
-        * Required number of additionally allocated bytes at the end of the input bitstream for decoding.
-        * this is mainly needed because some optimized bitstream readers read
-        * 32 or 64 bit at once and could read over the end<br>
-        * Note, if the first 23 bits of the additional bytes are not 0 then damaged
-        * MPEG bitstreams could cause overread and segfault
-        */
-      if (dataSize > 0)
-      {
-        int adjustedSize = dataSize;
-        if (!noPadding)
-        {
-          adjustedSize = dataSize + 32 /*FF_INPUT_BUFFER_PADDING_SIZE*/;
-          var padding = adjustedSize%16;
-          if (padding != 0)
-            adjustedSize += 16 - padding; /* Padding to mod 16 */
-        }
-        packet.Data = Marshal.AllocCoTaskMem(adjustedSize);
-        packet.Size = adjustedSize;
-      }
-      return packet;
+      DemuxPacket = packet;
+      NativePtr = ptr;
+      IsEOS = packet.StreamId == 0;
     }
+    public IntPtr NativePtr;
+    public DemuxPacket DemuxPacket;
+    public bool IsEOS;
 
-    public static void FreeDemuxPacket(IntPtr packet)
+    public void Dispose()
     {
-      lock (_syncObj)
+      unsafe
       {
-        GCHandle gch;
-        if (PacketHandles.TryGetValue(packet, out gch))
-        {
-          var p = (DemuxPacket) gch.Target;
-          PtrExtension.FreeCO(ref p.Data);
-          gch.Free();
-          PacketHandles.Remove(packet);
-        }
+        if (NativePtr != IntPtr.Zero)
+          CManagedDemuxPacketHelper.FreeDemuxPacket2((void*)NativePtr);
       }
     }
   }

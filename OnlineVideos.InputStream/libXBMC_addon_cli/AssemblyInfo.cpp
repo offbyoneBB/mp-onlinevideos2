@@ -11,12 +11,12 @@ using namespace System::Security::Permissions;
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die mit einer Assembly verknüpft sind.
 //
-[assembly:AssemblyTitleAttribute(L"libXBMC_addon_cli")];
-[assembly:AssemblyDescriptionAttribute(L"")];
+[assembly:AssemblyTitleAttribute(L"libXBMC_addon")];
+[assembly:AssemblyDescriptionAttribute(L"Wrapper assembly")];
 [assembly:AssemblyConfigurationAttribute(L"")];
-[assembly:AssemblyCompanyAttribute(L"")];
-[assembly:AssemblyProductAttribute(L"libXBMC_addon_cli")];
-[assembly:AssemblyCopyrightAttribute(L"Copyright (c)  2016")];
+[assembly:AssemblyCompanyAttribute(L"Team MediaPortal")];
+[assembly:AssemblyProductAttribute(L"MediaPortal 2")];
+[assembly:AssemblyCopyrightAttribute(L"Copyright (c) Team MediaPortal 2016")];
 [assembly:AssemblyTrademarkAttribute(L"")];
 [assembly:AssemblyCultureAttribute(L"")];
 

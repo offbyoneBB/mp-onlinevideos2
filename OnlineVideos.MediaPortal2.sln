@@ -50,9 +50,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libXBMC_addon_cli", "Online
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libKODI_inputstream_cli", "OnlineVideos.InputStream\libKODI_inputstream_cli\libKODI_inputstream_cli.vcxproj", "{0AECC8D5-6010-4733-85DC-844BECAABC41}"
-	ProjectSection(ProjectDependencies) = postProject
-		{47731721-BA8A-4295-BCCE-399E5C289B4E} = {47731721-BA8A-4295-BCCE-399E5C289B4E}
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

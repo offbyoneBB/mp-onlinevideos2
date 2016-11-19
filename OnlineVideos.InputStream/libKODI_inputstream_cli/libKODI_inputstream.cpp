@@ -24,8 +24,7 @@
 #include <stdarg.h>
 #include <string>
 #include "Stdafx.h"
-
-#using "..\MediaPortalWrapper\bin\x86\Release\MediaPortalWrapper.dll"
+#include "ManagedDemuxPacketHelper.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -36,30 +35,25 @@
 
 using namespace std;
 using namespace System;
-using namespace MediaPortalWrapper;
 
 extern "C"
 {
   DLLEXPORT void* INPUTSTREAM_register_me(void *hdl)
   {
-    Utils::Logger::Log("INPUTSTREAM_register_me");
     return (void*)1;
   }
 
   DLLEXPORT void INPUTSTREAM_unregister_me(void *hdl, void* cb)
   {
-    Utils::Logger::Log("INPUTSTREAM_unregister_me");
   }
 
-  //DLLEXPORT DemuxPacket* INPUTSTREAM_allocate_demux_packet(void *hdl, void* cb, int iDataSize)
-  DLLEXPORT void* INPUTSTREAM_allocate_demux_packet(void *hdl, void* cb, int iDataSize)
+  DLLEXPORT DemuxPacket* INPUTSTREAM_allocate_demux_packet(void *hdl, void* cb, int iDataSize)
   {
-    return (void*)Streams::DemuxPacketHelper::AllocateDemuxPacket(iDataSize, false);
+    return CManagedDemuxPacketHelper::AllocateDemuxPacket(iDataSize);
   }
 
-  //DLLEXPORT void INPUTSTREAM_free_demux_packet(void *hdl, void* cb, DemuxPacket* pPacket)
-  DLLEXPORT void INPUTSTREAM_free_demux_packet(void *hdl, void* cb, void* pPacket)
+  DLLEXPORT void INPUTSTREAM_free_demux_packet(void *hdl, void* cb, DemuxPacket* pPacket)
   {
-    Streams::DemuxPacketHelper::FreeDemuxPacket((IntPtr)pPacket);
+    CManagedDemuxPacketHelper::FreeDemuxPacket(pPacket);
   }
 };

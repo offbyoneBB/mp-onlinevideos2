@@ -47,6 +47,7 @@ namespace MediaPortalWrapper
     /// Contains a dummy filename for the online stream. This can be used to check for downloaded subtitles (<see cref="SubtitlePaths"/>).
     /// </summary>
     public string FakeFilename { get; set; }
+
     /// <summary>
     /// Contains a list of subtitles for the current stream.
     /// </summary>
@@ -60,7 +61,6 @@ namespace MediaPortalWrapper
     private readonly InputStreamAddonFunctions _addonFunctions;
     private readonly StreamPreferences _preferences;
     private List<int> _enabledStreams;
-    private readonly Dictionary<DemuxPacket, IntPtr> _packets = new Dictionary<DemuxPacket, IntPtr>();
     private readonly InputstreamCapabilities _caps;
 
     public InputStream(string streamUrl, Dictionary<string, string> addonProperties, StreamPreferences preferences)
@@ -133,12 +133,6 @@ namespace MediaPortalWrapper
       }
     }
 
-
-    private void OnStreamChange()
-    {
-      UpdateStreams();
-    }
-
     public bool EnableStream(int streamId, bool isEnabled)
     {
       lock (_syncObj)
@@ -180,9 +174,7 @@ namespace MediaPortalWrapper
         {
           var info = Functions.GetStream((int)ids.StreamIds[i]);
           streamInfos.Add(info);
-          Logger.Log("Stream {1}:", i, info);
-          //byte[] extraData = info.ExtraData;
-          //Logger.Log(" - ExtraData: {0}", BitConverter.ToString(extraData));
+          Logger.Info("Stream {1}:", i, info);
         }
       }
       _inputstreamInfos = streamInfos.ToDictionary(s => s.StreamId);
@@ -231,14 +223,14 @@ namespace MediaPortalWrapper
       throw new NotImplementedException();
     }
 
-    public override DemuxPacket Read()
+    public override DemuxPacketWrapper Read()
     {
       lock (_syncObj)
       {
         IntPtr demuxPacketPtr = Functions.DemuxRead();
         // If there is no more data, DemuxRead returns 0
         if (demuxPacketPtr == IntPtr.Zero)
-          return new DemuxPacket { StreamId = 0 }; // EOS indicator
+          return new DemuxPacketWrapper(); // EOS indicator
 
         DemuxPacket demuxPacket = Marshal.PtrToStructure<DemuxPacket>(demuxPacketPtr);
 
@@ -247,21 +239,7 @@ namespace MediaPortalWrapper
           UpdateStreams();
         }
 
-        _packets[demuxPacket] = demuxPacketPtr;
-        return demuxPacket;
-      }
-    }
-
-    public override void Free(DemuxPacket packet)
-    {
-      lock (_syncObj)
-      {
-        IntPtr demuxPacketPtr;
-        if (_packets.TryGetValue(packet, out demuxPacketPtr))
-        {
-          DemuxPacketHelper.FreeDemuxPacket(demuxPacketPtr);
-          _packets.Remove(packet);
-        }
+        return new DemuxPacketWrapper(demuxPacket, demuxPacketPtr);
       }
     }
   }

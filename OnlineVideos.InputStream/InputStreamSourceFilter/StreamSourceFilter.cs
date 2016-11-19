@@ -321,10 +321,10 @@ namespace InputStreamSourceFilter
 
       while (_stream.VideoStream.ExtraSize == 0)
       {
-        DemuxPacket demuxPacket = _stream.Read();
+        DemuxPacketWrapper demuxPacket = _stream.Read();
 
         // EOS
-        if (demuxPacket.StreamId == 0)
+        if (demuxPacket.IsEOS)
           return S_FALSE;
       }
 
@@ -347,13 +347,13 @@ namespace InputStreamSourceFilter
       if (PauseDemux)
         return S_OK;
 
-      DemuxPacket demuxPacket = new DemuxPacket();
-      try
+      using (var demuxPacketWrapper = _stream.Read())
       {
-        demuxPacket = _stream.Read();
         // EOS
-        if (demuxPacket.StreamId == 0)
+        if (demuxPacketWrapper.IsEOS)
           return S_FALSE;
+
+        DemuxPacket demuxPacket = demuxPacketWrapper.DemuxPacket;
 
         // Stream changes
         if (demuxPacket.StreamId == Constants.DMX_SPECIALID_STREAMCHANGE ||
@@ -365,39 +365,21 @@ namespace InputStreamSourceFilter
         }
 
         if (demuxPacket.Data == IntPtr.Zero)
-        {
-          _stream.Free(demuxPacket);
           return S_OK;
-        }
 
         //Create the packet and add the data
-        PacketData packet = new PacketData();
-        byte[] buffer = new byte[demuxPacket.Size];
-        Marshal.Copy(demuxPacket.Data, buffer, 0, buffer.Length);
-        packet.Buffer = buffer;
-        packet.Size = buffer.Length;
+        var isVideo = demuxPacket.StreamId == _stream.VideoStream.StreamId;
+        PacketData packet = new DemuxPacketData(demuxPacket, isVideo);
 
-        DemuxTrack track;
-        if (demuxPacket.StreamId == _stream.VideoStream.StreamId)
-        {
-          track = m_Tracks.FirstOrDefault(t => t.Type == DemuxTrack.TrackType.Video);
+        DemuxTrack track = m_Tracks.FirstOrDefault(t => t.Type == (isVideo ? DemuxTrack.TrackType.Video : DemuxTrack.TrackType.Audio));
+        if (isVideo)
           _videoPackets++;
-          // Set video timestamps
-          packet.Start = demuxPacket.Dts.ToDS();
-          packet.Stop = demuxPacket.Duration.ToDS();
-        }
         else
-        {
-          track = m_Tracks.FirstOrDefault(t => t.Type == DemuxTrack.TrackType.Audio);
           _audioPackets++;
-        }
+
         // Queue samples
         if (track != null)
           track.AddToCache(ref packet);
-      }
-      finally
-      {
-        _stream.Free(demuxPacket);
       }
 
       // Check for decoding errors, commonly the audio part is working while video decoding might fail

@@ -45,6 +45,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Build\Version.cs">
+      <Link>Properties\Version.cs</Link>
+    </Compile>
+    <Compile Include="DemuxPacketData.cs" />
     <Compile Include="Extensions\CultureExtension.cs" />
     <Compile Include="Extensions\TimeStampExtension.cs" />
     <Compile Include="H264\H264CodecData.cs" />

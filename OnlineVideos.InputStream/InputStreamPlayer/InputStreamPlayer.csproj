@@ -85,6 +85,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Build\Version.cs">
+      <Link>Properties\Version.cs</Link>
+    </Compile>
     <Compile Include="InputStreamDownloader.cs" />
     <Compile Include="InputStreamPlayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

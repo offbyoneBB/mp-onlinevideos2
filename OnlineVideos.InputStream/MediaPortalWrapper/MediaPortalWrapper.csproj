@@ -67,6 +67,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Build\Version.cs">
+      <Link>Properties\Version.cs</Link>
+    </Compile>
     <Compile Include="Filesystem\UrlSourceHttpClient.cs" />
     <Compile Include="NativeWrappers\AddonWrapper.cs" />
     <Compile Include="InputStream.cs" />
@@ -84,6 +87,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Settings\Settings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\libKODI_inputstream_cli\libKODI_inputstream_cli.vcxproj">
+      <Project>{0aecc8d5-6010-4733-85dc-844becaabc41}</Project>
+      <Name>libKODI_inputstream_cli</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
