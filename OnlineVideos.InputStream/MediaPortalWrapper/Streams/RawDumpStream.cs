@@ -55,9 +55,9 @@ namespace MediaPortalWrapper.Streams
       _fileStream.Write(bytes, 0, bytes.Length);
     }
 
-    public override DemuxPacket Read()
+    public override DemuxPacketWrapper Read()
     {
-      DemuxPacket EOS = new DemuxPacket();
+      DemuxPacketWrapper EOS = new DemuxPacketWrapper(new DemuxPacket { StreamId = 0 }, IntPtr.Zero);
 
       byte[] bytes = new byte[1000000];
       if (_fileStream.Read(bytes, 0, 2) != 2) // 0xAF, 0xFE
@@ -72,7 +72,7 @@ namespace MediaPortalWrapper.Streams
       int size = BitConverter.ToInt32(bytes, 0);
 
       // noPadding = true, because padding was originally applied from source filter, avoid doing it again
-      var packet = DemuxPacketHelper.CreateDemuxPacket(size, true);
+      var packet = new DemuxPacket { Data = Marshal.AllocCoTaskMem(size) };
 
       // Packet data
       if (_fileStream.Read(bytes, 0, size) != size)
@@ -107,7 +107,7 @@ namespace MediaPortalWrapper.Streams
         return EOS;
       packet.GroupId = BitConverter.ToInt32(bytes, 0);
 
-      return packet;
+      return new DemuxPacketWrapper(packet, IntPtr.Zero);
     }
   }
 }

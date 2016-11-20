@@ -71,7 +71,9 @@ namespace OnlineVideos.MediaPortal2
                     providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_RESOURCE_ACCESSOR_PATH, raPath);
 
                     IResourceLocator locator = mediaItem.GetResourceLocator();
-                    InputStreamPlayer iplayer = new InputStreamPlayer();
+                    InputStreamPlayer iplayer = (false) ?
+                        new InputStreamDownloader(@"F:\Capture\Dump.mkv") : 
+                        new InputStreamPlayer();
                     try
                     {
                         InitOnline(iplayer, properties);

@@ -19,12 +19,11 @@ namespace MediaPortalWrapper.Streams
     protected readonly object _syncObj = new object();
     public abstract void Dispose();
     public abstract void Write(DemuxPacket packet);
-    public abstract DemuxPacket Read();
+    public abstract DemuxPacketWrapper Read();
 
-    public virtual void Free(DemuxPacket packet)
+    public virtual void Free(DemuxPacketWrapper packet)
     {
-      lock(_syncObj)
-        PtrExtension.FreeHG(ref packet.Data);
+    
     }
   }
 

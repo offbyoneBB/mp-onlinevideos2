@@ -47,6 +47,7 @@ namespace MediaPortalWrapper
     /// Contains a dummy filename for the online stream. This can be used to check for downloaded subtitles (<see cref="SubtitlePaths"/>).
     /// </summary>
     public string FakeFilename { get; set; }
+
     /// <summary>
     /// Contains a list of subtitles for the current stream.
     /// </summary>
@@ -60,7 +61,6 @@ namespace MediaPortalWrapper
     private readonly InputStreamAddonFunctions _addonFunctions;
     private readonly StreamPreferences _preferences;
     private List<int> _enabledStreams;
-    private readonly Dictionary<DemuxPacket, IntPtr> _packets = new Dictionary<DemuxPacket, IntPtr>();
     private readonly InputstreamCapabilities _caps;
 
     public InputStream(string streamUrl, Dictionary<string, string> addonProperties, StreamPreferences preferences)
@@ -116,7 +116,12 @@ namespace MediaPortalWrapper
 
       _caps = Functions.GetCapabilities();
 
-      OnStreamChange();
+      UpdateStreams();
+
+      GetPreferredStreams(_inputstreamInfos, _preferences);
+
+      // Tell the inputstream to enable selected stream IDs
+      EnableStreams();
     }
 
     public override void Dispose()
@@ -126,17 +131,6 @@ namespace MediaPortalWrapper
         Functions.Close();
         _wrapper.Dispose();
       }
-    }
-
-
-    private void OnStreamChange()
-    {
-      UpdateStreams();
-
-      GetPreferredStreams(_inputstreamInfos, _preferences);
-
-      // Tell the inputstream to enable selected stream IDs
-      EnableStreams();
     }
 
     public bool EnableStream(int streamId, bool isEnabled)
@@ -180,9 +174,7 @@ namespace MediaPortalWrapper
         {
           var info = Functions.GetStream((int)ids.StreamIds[i]);
           streamInfos.Add(info);
-          Logger.Log("Stream {1}:", i, info);
-          //byte[] extraData = info.ExtraData;
-          //Logger.Log(" - ExtraData: {0}", BitConverter.ToString(extraData));
+          Logger.Info("Stream {1}:", i, info);
         }
       }
       _inputstreamInfos = streamInfos.ToDictionary(s => s.StreamId);
@@ -205,7 +197,7 @@ namespace MediaPortalWrapper
       {
         var matchingStreams = preferences.PreferMultiChannel ?
           streams.OrderByDescending(i => i.Channels).ThenBy(i => i.CodecInternalName) :
-          streams.OrderBy(i => i.Channels).ThenBy(i => i.CodecInternalName);
+          streams.OrderBy(CustomChannelCountSorting).ThenBy(i => i.CodecInternalName);
 
         var audioStream = matchingStreams.Any() ? matchingStreams.First().StreamId : 0;
         if (audioStream != 0)
@@ -217,42 +209,37 @@ namespace MediaPortalWrapper
       _enabledStreams = selectedIds.ToList();
     }
 
+    private static uint CustomChannelCountSorting(InputstreamInfo i)
+    {
+      var channelCount = i.Channels;
+      // Gives mono channels a higher number, so they are not preferred over stereo in ascending order.
+      if (channelCount == 1)
+        channelCount *= 10;
+      return channelCount;
+    }
+
     public override void Write(DemuxPacket packet)
     {
       throw new NotImplementedException();
     }
 
-    public override DemuxPacket Read()
+    public override DemuxPacketWrapper Read()
     {
       lock (_syncObj)
       {
         IntPtr demuxPacketPtr = Functions.DemuxRead();
         // If there is no more data, DemuxRead returns 0
         if (demuxPacketPtr == IntPtr.Zero)
-          return new DemuxPacket { StreamId = 0 }; // EOS indicator
+          return new DemuxPacketWrapper(); // EOS indicator
 
         DemuxPacket demuxPacket = Marshal.PtrToStructure<DemuxPacket>(demuxPacketPtr);
 
         if (demuxPacket.StreamId == Constants.DMX_SPECIALID_STREAMCHANGE || demuxPacket.StreamId == Constants.DMX_SPECIALID_STREAMINFO)
         {
-          // No action here, calling class only cares for available data
+          UpdateStreams();
         }
 
-        _packets[demuxPacket] = demuxPacketPtr;
-        return demuxPacket;
-      }
-    }
-
-    public override void Free(DemuxPacket packet)
-    {
-      lock (_syncObj)
-      {
-        IntPtr demuxPacketPtr;
-        if (_packets.TryGetValue(packet, out demuxPacketPtr))
-        {
-          DemuxPacketHelper.FreeDemuxPacket(demuxPacketPtr);
-          _packets.Remove(packet);
-        }
+        return new DemuxPacketWrapper(demuxPacket, demuxPacketPtr);
       }
     }
   }

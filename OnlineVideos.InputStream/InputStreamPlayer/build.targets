@@ -9,19 +9,20 @@
     <PluginFiles Include="$(TargetDir)$(ProjectName).dll" />
     <PluginFiles Include="$(TargetDir)InputStreamSourceFilter.dll" />
     <PluginFiles Include="$(TargetDir)MediaPortalWrapper.dll" />
-    <PluginFiles Include="$(TargetDir)libcurl.dll" />
-    <PluginFiles Include="$(TargetDir)libcurl.NET.dll" />
-    <PluginFiles Include="$(TargetDir)LibCurlShim.dll" />
     <PluginFiles Include="$(ProjectDir)plugin.xml" />
   </ItemGroup>
 
   <Target Name="AfterBuild">
     <ItemGroup>
-      <References Include="$(ProjectDir)References\**\*.*" />
       <References Include="$(TargetDir)InputStream.*\**\*.*" />
+    </ItemGroup>
+    <ItemGroup>
+      <CppCliReferences Include="$(SolutionDir)bin\library.*\libKODI*.dll" />
+      <CppCliReferences Include="$(SolutionDir)bin\library.*\libXBMC*.dll" />
     </ItemGroup>
     <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginDestination)" />
     <Copy SourceFiles="@(References)" DestinationFiles="@(References->'$(PluginDestination)%(RecursiveDir)%(Filename)%(Extension)')"  />
+    <Copy SourceFiles="@(CppCliReferences)" DestinationFiles="@(CppCliReferences->'$(PluginDestination)%(RecursiveDir)\%(Filename)%(Extension)')"  />
   </Target>
 
 </Project>
