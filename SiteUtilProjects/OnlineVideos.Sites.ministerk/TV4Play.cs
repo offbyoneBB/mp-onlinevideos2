@@ -1,5 +1,7 @@
 ﻿using HtmlAgilityPack;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using OnlineVideos.Sites.Interfaces;
 using OnlineVideos.Sites.Utils;
 using System;
 using System.Collections.Generic;
@@ -12,16 +14,21 @@ using System.Xml;
 
 namespace OnlineVideos.Sites
 {
-    public class TV4Play : SiteUtilBase, IBrowserSiteUtil
+    public class TV4Play : SiteUtilBase, IBrowserVersionEmulation
     {
         #region Config
 
+        public enum BrowserVersion : int { IE10 = 10000, IE11 = 11000, EDGE = 12000 };
         [Category("OnlineVideosUserConfiguration"), Description("TV4Play username"), LocalizableDisplayName("Username")]
         protected string username = null;
         [Category("OnlineVideosUserConfiguration"), Description("TV4Play password"), LocalizableDisplayName("Password"), PasswordPropertyText(true)]
         protected string password = null;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable BrowserPlayer"), Description("Enable BrowserPlayer for DRM content, will only work with a non released version of OV")]
+        protected bool enableBrowser = false;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show loading spinner"), Description("Show the loading spinner in the Browser Player")]
         protected bool showLoadingSpinner = true;
+        //[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Browser version"), Description("Use edge, nothing else works!!!")]
+        protected BrowserVersion browserVersion = BrowserVersion.IE11;
         //[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Prefer internal player"), Description("Try to play videos in Mediaportal. If not possible use browser player as fallback")]
         protected bool preferInternal = true;
 
@@ -31,7 +38,7 @@ namespace OnlineVideos.Sites
 
         protected const string loginUrl = "https://www.tv4play.se/session/new";
         protected const string loginPostUrl = "https://account.services.tv4play.se/session/authenticate";
-        protected const string showsUrl = "http://www.tv4play.se/program/more_programs?order_by=name&per_page=40&page={0}";
+        protected const string showsUrl = "http://www.tv4play.se/api/programs?per_page=40&order_by=&page={0}&tags={1}";
         protected const string helaProgramUrl = "http://www.tv4play.se/videos/episodes_search?per_page=100&sort_order=desc&is_live=false&type=video&nodes_mode=any&page={0}&node_nids=";
         protected const string klippUrl = "http://www.tv4play.se/videos/search?node_nids_mode=any&per_page=100&sort_order=desc&type=clip&page={0}&node_nids=";
         protected const string liveUrl = "http://www.tv4play.se/videos/episodes_search?per_page=100&sort_order=asc&is_live=true&type=video&nodes_mode=any&page={0}&node_nids=";
@@ -63,6 +70,7 @@ namespace OnlineVideos.Sites
 
         private int currentPage = 1;
         private string currentUrl = "";
+        private string currentVideoId = "";
         protected CookieContainer cc = new CookieContainer();
 
         bool showPremium = false;
@@ -103,8 +111,8 @@ namespace OnlineVideos.Sites
                     cc.Add(new Cookie("JSESSIONID", HttpUtility.UrlEncode(json["vimond_session_token"].Value<string>()), "/", ".tv4play.se"));
                     cc.Add(new Cookie("pSessionToken", HttpUtility.UrlEncode(json["vimond_remember_me"].Value<string>()), "/", ".tv4play.se"));
                     isLoggedIn = true;
-                    showPremium = json["active_subscriptions"].Values() != null && (json["active_subscriptions"].Values().Count() > 0 && json["active_subscriptions"].First()["product_group_nid"].Value<string>() != "freemium");
-                } 
+                    showPremium = json["active_subscriptions"].Values() != null && (json["active_subscriptions"].Values().Count() > 0 && json["active_subscriptions"].Any(sub => sub["product_group_nid"].Value<string>() == "premium"));
+                }
                 catch
                 {
                     throw new OnlineVideosException("Inloggningen misslyckades");
@@ -263,36 +271,27 @@ namespace OnlineVideos.Sites
             return categories;
         }
 
-        private List<Category> GetShows(int page, Category parentCategory = null, string tag = null)
+        private List<Category> GetShows(int page, Category parentCategory = null, string tag = "")
         {
             List<Category> shows = new List<Category>();
-            string url = string.Concat(string.Concat(string.Format(showsUrl, page), (showPremium ? "" : "&is_free=true")), (string.IsNullOrEmpty(tag) ? "" : string.Concat("&tags=", tag)));
-            HtmlDocument htmlDoc = GetWebData<HtmlDocument>(url);
-            HtmlNodeCollection items = htmlDoc.DocumentNode.SelectNodes("//li[@class='card']");
-            if (items != null)
+            string url = string.Concat(string.Concat(string.Format(showsUrl, page, tag), (showPremium ? "" : "&is_free=true")));
+            JArray items = JArray.Parse(GetWebData<string>(url));
+            foreach (JToken item in items)
             {
-                foreach (HtmlNode item in items)
-                {
-                    RssLink show = new RssLink();
-                    HtmlNode h3 = item.SelectSingleNode(".//h3");
-                    if (h3 != null)
-                    {
-                        show.Name = HttpUtility.HtmlDecode(h3.InnerText.Trim());
-                        show.ParentCategory = parentCategory;
-                        show.Url = item.GetAttributeValue("data-nid", "");
-                        show.HasSubCategories = true;
-                        show.SubCategories = new List<Category>();
-                        show.Other = (Func<List<Category>>)(() => GetShow(show));
-                        HtmlNode img = item.SelectSingleNode(".//img");
-                        if (img != null)
-                        {
-                            show.Thumb = img.GetAttributeValue("data-original", "");
-                        }
-                        shows.Add(show);
-                    }
-                }
+                RssLink show = new RssLink();
+
+                show.Name = (item["name"] == null) ? "": item["name"].Value<string>();
+                show.Url = (item["nid"] == null) ? "" : item["nid"].Value<string>();
+                show.Description = (item["description"] == null) ? "" : item["description"].Value<string>();
+                show.Thumb = (item["program_image"] == null) ? "" : item["program_image"].Value<string>();
+                show.ParentCategory = parentCategory;
+                show.SubCategories = new List<Category>();
+                show.HasSubCategories = true;
+                show.Other = (Func<List<Category>>)(() => GetShow(show));
+                shows.Add(show);
             }
-            if (htmlDoc.DocumentNode.SelectNodes("//footer/p/a") != null)
+
+            if (items.Count > 39)
             {
                 NextPageCategory next = new NextPageCategory();
                 next.ParentCategory = parentCategory;
@@ -445,8 +444,11 @@ namespace OnlineVideos.Sites
             XmlNode drm = xDoc.SelectSingleNode("//drmProtected");
             if (!preferInternal || (drm == null ? false : drm.InnerText.Trim().ToLower() == "true"))
             {
+                if (!enableBrowser)
+                    throw new OnlineVideosException("DRM protected content :/ Enable browserplayer in settings if you have an non released version of OV");
                 Settings.Player = PlayerType.Browser;
                 JObject json = GetWebData<JObject>(string.Format(videoAssetUrl, video.VideoUrl), cookies: cc);
+                currentVideoId = video.VideoUrl;
                 return json["share_url"].Value<string>();
             }
             foreach (XmlElement item in xDoc.SelectNodes("//items/item"))
@@ -502,14 +504,22 @@ namespace OnlineVideos.Sites
 
         string IBrowserSiteUtil.UserName
         {
-            get { return username + (showLoadingSpinner ? "SHOWLOADING" : "") + (showPremium ? "PREMIUM" : ""); }
+            get { return username + "¥" + currentVideoId +(showLoadingSpinner ? "SHOWLOADING" : "") + (showPremium ? "PREMIUM" : ""); }
         }
 
         string IBrowserSiteUtil.Password
         {
-            get { return password; }
+            get 
+            {
+                return password;
+            }
         }
 
         #endregion
+
+        int IBrowserVersionEmulation.EmulatedVersion
+        {
+            get { return (int)browserVersion; }
+        }
     }
 }

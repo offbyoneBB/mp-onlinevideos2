@@ -237,7 +237,7 @@ namespace OnlineVideos.Sites
                             // 2nd way - using parent category name, category name and video title 
                             //Aaron Stone Season 1 (19 episodes) 1. Episode 21 1 Hero Rising (1)
                             string parseString = string.Format("{0} {1} {2}", Regex.Replace(category.ParentCategory.Name, @"\(\d{4}\)", ""), category.Name, video.Title);
-                            tInfo.Regex = Regex.Match(parseString, @"(?<Title>.+)\s+Season\s*?(?<Season>\d+).*?Episode\s*?(?<Episode>\d+)", RegexOptions.IgnoreCase);
+                            tInfo.Regex = Regex.Match(parseString, @"(?<Title>.+?)\s+Season\s*?(?<Season>\d+).*?Episode\s*?(?<Episode>\d+)", RegexOptions.IgnoreCase);
                         }
 
                         if (tInfo.Season != 0)
@@ -245,6 +245,7 @@ namespace OnlineVideos.Sites
                             if (category is SeriesRssLink)
                                 tInfo.ID_IMDB = ((SeriesRssLink)category).imDbId;
                             video.Other = tInfo;
+                            Log.Debug(String.Format("Trackinginfo: {0} Season: {1} Episode: {2}", tInfo.Title, tInfo.Season, tInfo.Episode));
                         }
                     }
                     catch (Exception e)

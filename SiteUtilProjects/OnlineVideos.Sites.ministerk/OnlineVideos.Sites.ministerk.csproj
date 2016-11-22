@@ -77,6 +77,7 @@
     <Compile Include="DreamfilmHDUtil.cs" />
     <Compile Include="Hoster\NowVideoSx.cs" />
     <Compile Include="Hoster\Streamplay.cs" />
+    <Compile Include="Hoster\VideozBz.cs" />
     <Compile Include="Hoster\VidziTv.cs" />
     <Compile Include="Hoster\FileHoot.cs" />
     <Compile Include="Hoster\Zstream.cs" />

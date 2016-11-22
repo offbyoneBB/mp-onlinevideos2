@@ -50,7 +50,7 @@ namespace OnlineVideos.Sites
             using (HttpWebResponse response = (HttpWebResponse)request.GetResponse()) { };//just to get the cookies
 
             CookieContainer result = new CookieContainer();
-            foreach (Cookie cookie in cc.GetCookies(new Uri("http://tmp.tweakers.net")))
+            foreach (Cookie cookie in cc.GetCookies(new Uri("https://tmp.tweakers.net")))
             {
                 cookie.Domain = new Uri(baseUrl).Host;
                 result.Add(cookie);

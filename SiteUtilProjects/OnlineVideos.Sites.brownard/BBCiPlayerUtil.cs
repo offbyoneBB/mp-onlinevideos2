@@ -51,13 +51,13 @@ namespace OnlineVideos.Sites
 
         #region Regex
 
-        static readonly Regex seriesRegex = new Regex(@"<li class=""list-item[^""]*""\s+data-ip-id=""([^""]*)"">.*?<div class=""title top-title"">([^<]*)</div>.*?data-ip-src=""([^""]*)"">", RegexOptions.Singleline);
+        static readonly Regex seriesRegex = new Regex(@"<li class=""list-item[^""]*""\s+data-ip-id=""([^""]*)"">.*?<div class=""title[^>]*>([^<]*)</div>.*?srcset=""([^""]*)"">", RegexOptions.Singleline);
         static readonly Regex aToZRegex = new Regex(@"<li>\s*<a href=""/iplayer/brand/([^""]*)"".*?<span class=""title"">([^<]*)", RegexOptions.Singleline);
         static readonly Regex nextPageRegex = new Regex(@"<span class=""next txt"">\s*<a href=""([^""]*)""[^>]*>\s*Next", RegexOptions.Singleline);
 
         static readonly Regex episodeInfoRegex = new Regex(@"<li class=""list-item[^>]*>(.*?)</li>", RegexOptions.Singleline);
         static readonly Regex episodeUrlRegex = new Regex(@"href=""([^""]*)");
-        static readonly Regex episodeImageRegex = new Regex(@"data-ip-src=""([^""]*)");
+        static readonly Regex episodeImageRegex = new Regex(@"srcset=""([^""]*)");
         static readonly Regex episodeTitleRegex = new Regex(@"class=""subtitle"">([^<]*)");
         static readonly Regex episodeParentTitleRegex = new Regex(@"class=""title"">([^<]*)");
         static readonly Regex episodeDescriptionRegex = new Regex(@"class=""synopsis"">([^<]*)");

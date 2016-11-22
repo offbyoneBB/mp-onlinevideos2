@@ -29,6 +29,7 @@ namespace OnlineVideos.MediaPortal1.Player
         private string _username;
         private string _password;
         private string _lastError;
+        private int _emulationLevel = 10000; //10000 IE10, 11000 IE11, 12000 Edge 
         private WebBrowserPlayerCallbackServiceProxy _callbackServiceProxy;
         private WebBrowserPlayerCallback _callback = new WebBrowserPlayerCallback();
         private WebBrowserPlayerServiceProxy _serviceProxy;
@@ -50,6 +51,11 @@ namespace OnlineVideos.MediaPortal1.Player
                 _automationType = browserConfig.ConnectorEntityTypeName;
                 _username = browserConfig.UserName;
                 _password = browserConfig.Password;
+            }
+            var emulationSite = util as OnlineVideos.Sites.Interfaces.IBrowserVersionEmulation;
+            if (emulationSite != null)
+            {
+                _emulationLevel = emulationSite.EmulatedVersion;
             }
             _lastError = string.Empty;
 
@@ -102,12 +108,13 @@ namespace OnlineVideos.MediaPortal1.Player
             var dir = MediaPortal.Configuration.Config.GetFolder(MediaPortal.Configuration.Config.Dir.Base);
             
             _browserProcess.StartInfo.FileName = Path.Combine(OnlineVideoSettings.Instance.DllsDir, "OnlineVideos.WebAutomation.BrowserHost.exe");
-            _browserProcess.StartInfo.Arguments = string.Format("\"{0} \" \"{1}\" \"{2}\" \"{3}\" \"{4}\"",
+            _browserProcess.StartInfo.Arguments = string.Format("\"{0} \" \"{1}\" \"{2}\" \"{3}\" \"{4}\" \"{5}\"",
                                             dir,
                                             strFile,
                                             _automationType,
                                             EncryptionUtils.SymEncryptLocalPC(string.IsNullOrEmpty(_username) ? "_" : _username),
-                                            EncryptionUtils.SymEncryptLocalPC(string.IsNullOrEmpty(_password) ? "_" : _password));
+                                            EncryptionUtils.SymEncryptLocalPC(string.IsNullOrEmpty(_password) ? "_" : _password),
+                                            _emulationLevel);
             _browserProcess.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;
             
             // Restart MP or Restore MP Window if needed
