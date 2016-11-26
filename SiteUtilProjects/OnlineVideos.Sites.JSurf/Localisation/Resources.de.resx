@@ -171,4 +171,10 @@
   <data name="AmazonMarketId" xml:space="preserve">
     <value>A1PA6795UKMFR9</value>
   </data>
+  <data name="AmazonMovie30DaysUrl" xml:space="preserve">
+    <value>https://www.amazon.de/s/ref=sr_nr_n_0?rh=n%3A9798874031%2Cn%3A!3010076031%2Cn%3A3015915031&amp;bbn=9798874031&amp;ie=UTF8</value>
+  </data>
+  <data name="AmazonTV30DaysUrl" xml:space="preserve">
+    <value>https://www.amazon.de/s/ref=sr_nr_n_1?rh=n%3A9798874031%2Cn%3A!3010076031%2Cn%3A3015916031&amp;bbn=9798874031&amp;ie=UTF8</value>
+  </data>
 </root>

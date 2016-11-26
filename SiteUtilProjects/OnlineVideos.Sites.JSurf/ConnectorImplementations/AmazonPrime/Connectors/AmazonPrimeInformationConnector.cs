@@ -80,6 +80,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
                         TryInsert(result, new Category { HasSubCategories = true, Name = "Editor's Picks", SubCategoriesDiscovered = false, Other = "ME", Thumb = Resources.AmazonMovieIcon }, Resources.AmazonMovieEditorsUrl);
                         TryInsert(result, new Category { HasSubCategories = true, Name = "Recently Added", SubCategoriesDiscovered = false, Other = "MA", Thumb = Resources.AmazonMovieIcon }, Resources.AmazonMovieRecentUrl);
                         TryInsert(result, new Category { HasSubCategories = true, Name = "Popular Movies", SubCategoriesDiscovered = false, Other = "MP", Thumb = Resources.AmazonMovieIcon }, Resources.AmazonMoviePopularUrl);
+                        TryInsert(result, new Category { HasSubCategories = true, Name = "Less than 30 days available", SubCategoriesDiscovered = false, Other = "MD", Thumb = Resources.AmazonMovieIcon }, Resources.AmazonMovie30DaysUrl);
                         TryInsert(result, new Category { HasSubCategories = true, Name = "Watchlist", SubCategoriesDiscovered = false, Other = "WM", Thumb = Resources.AmazonMovieIcon }, Resources.AmazonMovieWatchlistUrl);
                     }
                     else if (parentCategory.Other.ToString() == "MP")
@@ -94,12 +95,17 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
                     {
                         result = Resources.AmazonMovieEditorsUrl.LoadAmazonPrimeCategoriesFromUrl(parentCategory, _browserSession);
                     }
+                    else if (parentCategory.Other.ToString() == "MD")
+                    {
+                        result = Resources.AmazonMovie30DaysUrl.LoadAmazonPrimeVideosAsCategoriesFromUrl(parentCategory, _browserSession);
+                    }
                     else if (parentCategory.Other.ToString() == "T")
                     {
                         result = Resources.AmazonTVCategoriesUrl.LoadAmazonPrimeCategoriesFromUrl(parentCategory, _browserSession);
                         TryInsert(result, new Category { HasSubCategories = true, Name = "Editor's Picks", SubCategoriesDiscovered = false, Other = "TE", Thumb = Resources.AmazonTvIcon }, Resources.AmazonTVEditorsUrl);
                         TryInsert(result, new Category { HasSubCategories = true, Name = "Recently Added", SubCategoriesDiscovered = false, Other = "TA", Thumb = Resources.AmazonTvIcon }, Resources.AmazonTVRecentUrl);
                         TryInsert(result, new Category { HasSubCategories = true, Name = "Popular TV Shows", SubCategoriesDiscovered = false, Other = "TP", Thumb = Resources.AmazonTvIcon }, Resources.AmazonTVPopularUrl);
+                        TryInsert(result, new Category { HasSubCategories = true, Name = "Less than 30 days available", SubCategoriesDiscovered = false, Other = "TD", Thumb = Resources.AmazonTvIcon}, Resources.AmazonTV30DaysUrl);
                         TryInsert(result, new Category { HasSubCategories = true, Name = "Watchlist", SubCategoriesDiscovered = false, Other = "WT", Thumb = Resources.AmazonTvIcon }, Resources.AmazonTVWatchlistUrl);
                     }
                     else if (parentCategory.Other.ToString() == "TP")
@@ -109,6 +115,10 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
                     else if (parentCategory.Other.ToString() == "TA")
                     {
                         result = Resources.AmazonTVRecentUrl.LoadAmazonPrimeVideosAsCategoriesFromUrl(parentCategory, _browserSession);
+                    }
+                    else if (parentCategory.Other.ToString() == "TD")
+                    {
+                        result = Resources.AmazonTV30DaysUrl.LoadAmazonPrimeVideosAsCategoriesFromUrl(parentCategory, _browserSession);
                     }
                     else if (parentCategory.Other.ToString() == "TE")
                     {
