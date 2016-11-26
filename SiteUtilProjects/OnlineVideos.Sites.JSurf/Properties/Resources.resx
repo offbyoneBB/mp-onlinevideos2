@@ -178,4 +178,10 @@
   <data name="AmazonMarketId" xml:space="preserve">
     <value>A1F83G8C2ARO7P</value>
   </data>
+  <data name="AmazonMovie30DaysUrl" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AmazonTV30DaysUrl" xml:space="preserve">
+    <value />
+  </data>
 </root>
