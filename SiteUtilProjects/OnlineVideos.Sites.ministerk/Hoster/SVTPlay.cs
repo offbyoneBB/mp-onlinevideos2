@@ -8,118 +8,96 @@ using System.Web;
 
 namespace OnlineVideos.Hoster
 {
-    public class SVTPlay : HosterBase, ISubtitle
+    public class Svt : HosterBase, ISubtitle
     {
-        private string subtitleText = null;
+        private string subtitleUrl = null;
 
         public override string GetHosterUrl()
         {
-            return "svtplay.se";
+            return "svt.se";
         }
 
         public string SubtitleText
         {
-            get { return subtitleText; }
+            get
+            {
+                string subtitleText = "";
+                if (!string.IsNullOrWhiteSpace(subtitleUrl))
+                {
+                    subtitleText = GetWebData(subtitleUrl);
+                    Regex rgx;
+                    //Remove WEBVTT stuff
+
+                    //This is if we don't use all.vtt...
+                    //rgx = new Regex(@"WEBVTT.*?00:00:00.000", RegexOptions.Singleline);
+                    //subtitleText = rgx.Replace(subtitleText, new MatchEvaluator((Match m) =>
+                    //{
+                    //   return string.Empty;
+                    //}));
+                    rgx = new Regex(@"WEBVTT");
+                    subtitleText = rgx.Replace(subtitleText, new MatchEvaluator((Match m) =>
+                    {
+                        return string.Empty;
+                    }));
+                    // For some reason the time codes in the subtitles from Öppet arkiv starts @ 10 hours. replacing first number in the
+                    // hour position with 0. Hope and pray there will not be any shows with 10+ h playtime...
+                    // Remove all trailing stuff, ie in 00:45:21.960 --> 00:45:25.400 A:end L:82%
+                    rgx = new Regex(@"\d(\d:\d\d:\d\d\.\d\d\d)\s*-->\s*\d(\d:\d\d:\d\d\.\d\d\d).*$", RegexOptions.Multiline);
+                    subtitleText = rgx.Replace(subtitleText, new MatchEvaluator((Match m) =>
+                    {
+                        return "0" + m.Groups[1].Value + " --> 0" + m.Groups[2].Value + "\r";
+                    }));
+
+                    rgx = new Regex(@"</{0,1}[^>]+>");
+                    subtitleText = rgx.Replace(subtitleText, string.Empty);
+                    rgx = new Regex(@"(?<time>\d\d:\d\d:\d\d\.\d\d\d\s*?-->\s*?\d\d:\d\d:\d\d\.\d\d\d)");
+                    int i = 0;
+                    foreach (Match m in rgx.Matches(subtitleText))
+                    {
+                        i++;
+                        string time = m.Groups["time"].Value;
+                        subtitleText = subtitleText.Replace(time, i + "\r\n" + time);
+                    }
+                    subtitleText = HttpUtility.HtmlDecode(subtitleText);
+                }
+                return subtitleText;
+            }
         }
 
         public override Dictionary<string, string> GetPlaybackOptions(string url)
         {
+            subtitleUrl = null;
             Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
-            if (url.ToLower().Contains("oppetarkiv"))
+            JObject json = GetWebData<JObject>(url);
+            JArray videoReferences = json["videoReferences"].Value<JArray>();
+            JToken subtitleReferences = json["subtitleReferences"];
+            JToken videoReference = videoReferences.FirstOrDefault(vr => vr["format"].Value<string>() == "hls");
+            if (videoReference != null)
             {
-                JToken videoToken = GetWebData<JObject>(url + "?output=json")["video"];
-                url = "";
-                subtitleText = "";
-                try
-                {
-                    var subtitleReferences = videoToken["subtitleReferences"].Where(sr => ((string)sr["url"] ?? "").EndsWith("srt") || ((string)sr["url"] ?? "").EndsWith("index.m3u8"));
-                    if (subtitleReferences != null && subtitleReferences.Count() > 0)
-                    {
-                        url = (string)subtitleReferences.First()["url"];
-                        if (!string.IsNullOrEmpty(url))
-                        {
-                            if (url.EndsWith("index.m3u8"))
-                            {
-                                string baseUrl = url.Replace("index.m3u8", string.Empty);
-                                //try with all.vtt
-                                subtitleText = GetWebData(baseUrl + "all.vtt");
-                                CleanSubtitle(true);
-                            }
-                            else
-                            {
-                                subtitleText = GetWebData(url);
-                                CleanSubtitle();
-                            }
-                        }
-                    }
-                }
-                catch { }
-
-                JToken videoReference = videoToken["videoReferences"].FirstOrDefault(vr => (string)vr["playerType"] == "flash" && !string.IsNullOrEmpty((string)vr["url"]));
-                if (videoReference == null)
-                {
-                    url = "";
-                }
-                else
-                {
-                    Boolean live = false;
-                    JValue liveVal = (JValue)videoToken["live"];
-                    if (liveVal != null)
-                        live = liveVal.Value<bool>();
-                    url = (string)videoReference["url"] + "?hdcore=3.7.0&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12);
-                    url = new MPUrlSourceFilter.AfhsManifestUrl(url)
-                    {
-                        LiveStream = live,
-                        Referer = "http://media.svt.se/swf/video/svtplayer-2015.01.swf"
-                    }.ToString();
-                }
-                if (!string.IsNullOrWhiteSpace(url))
-                    playbackOptions.Add("url", url);
+                url = videoReference["url"].Value<string>();
+                OnlineVideos.Sites.Utils.MyHlsPlaylistParser parser = new OnlineVideos.Sites.Utils.MyHlsPlaylistParser(GetWebData(url), url);
+                foreach (OnlineVideos.Sites.Utils.MyHlsStreamInfo streamInfo in parser.StreamInfos)
+                    playbackOptions.Add(streamInfo.Width + "x" + streamInfo.Height + " (" + streamInfo.Bandwidth / 1000 + " kbps)", streamInfo.Url);
             }
             else
             {
-                subtitleText = "";
-                string data = GetWebData<string>(url);
-                string rgxString = @"""(?<url>[^""]*?master\.m3u8[^""]*)""";
-                if (url.Contains("http://www.svtplay.se/kanaler/"))
+                videoReference = videoReferences.FirstOrDefault(vr => vr["format"].Value<string>() == "hds");
+                if (videoReference != null)
                 {
-                    url = url.Replace("http://www.svtplay.se/kanaler/", string.Empty);
-                    rgxString = @"title"":""" + url + @""".*?""(?<url>[^""]*?master\.m3u8[^""]*)""";
+                    url = videoReference["url"].Value<string>();
+                    url += url.Contains("?") ? "&" : "?";
+                    url += "hdcore=3.7.0&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12);
+                    playbackOptions.Add("HDS", url);
                 }
-                Regex rgx = new Regex(rgxString);
-                Match m = rgx.Match(data);
-                if (!m.Success)
-                    return playbackOptions;
-                string m3u8Url = m.Groups["url"].Value;
-                string m3u8 = GetWebData(m3u8Url);
-                rgx = new Regex(@"BANDWIDTH=(?<bandwidth>\d+)000.[^\n]*?\n(?<url>[^\n]*)", RegexOptions.Singleline);
-                foreach (Match match in rgx.Matches(m3u8))
-                {
-                    string key = match.Groups["bandwidth"].Value + " kbps";
-                    if (!playbackOptions.ContainsKey(key))
-                    {
-                        string value = match.Groups["url"].Value;
-                        if (!value.StartsWith("http"))
-                            value = m3u8Url.Remove(m3u8Url.IndexOf("master.m3u8")) + value;
-                        playbackOptions.Add(key, value);
-                    }
-                }
+            }
+            if (playbackOptions.Count == 0)
+                return playbackOptions;
 
-                playbackOptions = playbackOptions.OrderByDescending((p) =>
-                {
-                    string resKey = p.Key.Replace(" kbps", "");
-                    int parsedRes = 0;
-                    int.TryParse(resKey, out parsedRes);
-                    return parsedRes;
-                }).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-
-                rgx = new Regex(@"""(?<url>[^""]*?index\.m3u8)""");
-                m = rgx.Match(data);
-                if (m.Success)
-                {
-                    subtitleText = GetWebData(m.Groups["url"].Value.Replace("index.m3u8", "all.vtt"));
-                    CleanSubtitle(true);
-                }
+            if (subtitleReferences != null && subtitleReferences.Type == JTokenType.Array)
+            {
+                JToken subtitleReference = subtitleReferences.FirstOrDefault(sr => sr["format"].Value<string>() == "webvtt");
+                if (subtitleReference != null)
+                    subtitleUrl = subtitleReference["url"].Value<string>();
             }
 
             return playbackOptions;
@@ -133,50 +111,40 @@ namespace OnlineVideos.Hoster
             else
                 return "";
         }
+    }
 
-        void CleanSubtitle(bool isVtt = false)
+    public class SVTPlay : Svt
+    {
+        public override string GetHosterUrl()
         {
-            Regex rgx;
-            if (isVtt)
-            {
-                //Remove WEBVTT stuff
-
-                //This is if we don't use all.vtt...
-                //rgx = new Regex(@"WEBVTT.*?00:00:00.000", RegexOptions.Singleline);
-                //subtitleText = rgx.Replace(subtitleText, new MatchEvaluator((Match m) =>
-                //{
-                 //   return string.Empty;
-                //}));
-                rgx = new Regex(@"WEBVTT");
-                subtitleText = rgx.Replace(subtitleText, new MatchEvaluator((Match m) =>
-                {
-                    return string.Empty;
-                }));
-            }
-            // For some reason the time codes in the subtitles from Öppet arkiv starts @ 10 hours. replacing first number in the
-            // hour position with 0. Hope and pray there will not be any shows with 10+ h playtime...
-            // Remove all trailing stuff, ie in 00:45:21.960 --> 00:45:25.400 A:end L:82%
-            rgx = new Regex(@"\d(\d:\d\d:\d\d\.\d\d\d)\s*-->\s*\d(\d:\d\d:\d\d\.\d\d\d).*$", RegexOptions.Multiline);
-            subtitleText = rgx.Replace(subtitleText, new MatchEvaluator((Match m) =>
-            {
-                return "0" + m.Groups[1].Value + " --> 0" + m.Groups[2].Value + "\r";
-            }));
-
-            rgx = new Regex(@"</{0,1}[^>]+>");
-            subtitleText = rgx.Replace(subtitleText, string.Empty);
-            if (isVtt)
-            {
-                rgx = new Regex(@"(?<time>\d\d:\d\d:\d\d\.\d\d\d\s*?-->\s*?\d\d:\d\d:\d\d\.\d\d\d)");
-                int i = 0;
-                foreach (Match m in rgx.Matches(subtitleText))
-                {
-                    i++;
-                    string time = m.Groups["time"].Value;
-                    subtitleText = subtitleText.Replace(time, i + "\r\n" + time);
-                }
-            }
-            subtitleText = HttpUtility.HtmlDecode(subtitleText);
+            return "svtplay.se";
         }
 
+        public override Dictionary<string, string> GetPlaybackOptions(string url)
+        {
+            string data = GetWebData(url);
+            JArray episodeIds = JArray.Parse(data);
+            return base.GetPlaybackOptions(string.Format("http://api.svt.se/videoplayer-api/video/{0}", episodeIds.Count > 0 ? episodeIds.First().ToString() : url.Replace("http://www.svtplay.se/api/episodeIds?ids=", "")));
+        }
     }
+
+    public class OppetArkiv : Svt
+    {
+        public override string GetHosterUrl()
+        {
+            return "oppetarkiv.se";
+        }
+
+        public override Dictionary<string, string> GetPlaybackOptions(string url)
+        {
+            string data = GetWebData(url);
+            Regex r = new Regex(@"data-video-id=""(?<url>[^""]*)");
+            Match m = r.Match(data);
+            if (m.Success)
+                return base.GetPlaybackOptions(string.Format("http://api.svt.se/videoplayer-api/video/{0}", m.Groups["url"].Value));
+            else
+                return new Dictionary<string, string>();
+        }
+    }
+
 }
