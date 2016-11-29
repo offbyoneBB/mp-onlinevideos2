@@ -93,7 +93,6 @@
     <Compile Include="Hoster\VkPass.cs" />
     <Compile Include="Hoster\vk.cs" />
     <Compile Include="KatsomoWebUtil.cs" />
-    <Compile Include="SwefilmUtil.cs" />
     <Compile Include="SweflixUtil.cs" />
     <Compile Include="Utils\MyHlsPlaylistParser.cs" />
     <Compile Include="YleUtil.cs" />
