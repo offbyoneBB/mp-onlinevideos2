@@ -667,7 +667,7 @@ namespace OnlineVideos.Sites
                     genres.SubCategories.Add(new RssLink()
                     {
                         Name = item["name"].Value<string>(),
-                        Url = item["url"].Value<string>().Replace("genre/", ""),
+                        Url = item["urlPart"].Value<string>().Replace("genre/", "").Replace("/", ""),
                         Thumb = item["posterImageUrl"].Value<string>(),
                         HasSubCategories = true,
                         SubCategories = new List<Category>()
