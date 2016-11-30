@@ -73,7 +73,13 @@ namespace OnlineVideos.Hoster
                     if (contents == null) contents = "";
                 }
                 Items = System.Web.HttpUtility.ParseQueryString(contents);
-                if (Items.Count == 0 || Items["status"] == "fail" || Items["use_cipher_signature"] == "True")
+                bool forceGetWebPage = false;
+
+                string url_encoded_fmt_stream_map = Items.Get("url_encoded_fmt_stream_map");
+                if (!string.IsNullOrEmpty(url_encoded_fmt_stream_map))
+                    forceGetWebPage = url_encoded_fmt_stream_map.Contains("&s=");
+
+                if (Items.Count == 0 || Items["status"] == "fail" || Items["use_cipher_signature"] == "True" || forceGetWebPage)
                 {
                     ItemsAPI = Items;
                     contents = WebCache.Instance.GetWebData(string.Format("http://www.youtube.com/watch?v={0}&has_verified=1", videoId), proxy: proxy);
