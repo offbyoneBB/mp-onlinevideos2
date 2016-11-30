@@ -21,14 +21,14 @@ namespace OnlineVideos.Hoster
             return "Youtube.com";
         }
 
-		[Category("OnlineVideosUserConfiguration"), Description("Don't show the 3D formats that youtube offers on some clips."), LocalizableDisplayName("Hide 3D Formats")]
-		protected bool hide3DFormats = true;
-		[Category("OnlineVideosUserConfiguration"), Description("Don't show the 3gpp formats that youtube offers on some clips."), LocalizableDisplayName("Hide Mobile Formats")]
-		protected bool hideMobileFormats = true;
+        [Category("OnlineVideosUserConfiguration"), Description("Don't show the 3D formats that youtube offers on some clips."), LocalizableDisplayName("Hide 3D Formats")]
+        protected bool hide3DFormats = true;
+        [Category("OnlineVideosUserConfiguration"), Description("Don't show the 3gpp formats that youtube offers on some clips."), LocalizableDisplayName("Hide Mobile Formats")]
+        protected bool hideMobileFormats = true;
 
-		static readonly ushort[] fmtOptions3D = new ushort[] { 82, 83, 84, 85, 100, 101, 102 };
-		static readonly ushort[] fmtOptionsMobile = new ushort[] { 13, 17 };
-		static readonly ushort[] fmtOptionsQualitySorted = new ushort[] { 38, 85, 137, 46, 37, 102, 84, 136, 45, 22, 101, 135, 83, 134, 44, 35, 100, 82, 43, 18, 34, 133, 6, 5, 0, 17, 13 };
+        static readonly ushort[] fmtOptions3D = new ushort[] { 82, 83, 84, 85, 100, 101, 102 };
+        static readonly ushort[] fmtOptionsMobile = new ushort[] { 13, 17 };
+        static readonly ushort[] fmtOptionsQualitySorted = new ushort[] { 38, 85, 137, 46, 37, 102, 84, 136, 45, 22, 101, 135, 83, 134, 44, 35, 100, 82, 43, 18, 34, 133, 6, 5, 0, 17, 13 };
         static Regex swfJsonArgs = new Regex(@"(?:var\s)?(?:swfArgs|'SWF_ARGS'|swf)\s*(?:=|\:)\s((""\s*(?<html>.*)"";)|
 (?<json>\{.+\})|
 (?:\<param\sname=\\""flashvars\\""\svalue=\\""(?<params>[^""]+)\\""\>)|
@@ -39,9 +39,9 @@ namespace OnlineVideos.Hoster
 
         Dictionary<string, Jurassic.ScriptEngine> cachedJavascript = new Dictionary<string, Jurassic.ScriptEngine>();
 
-		public override Dictionary<string, string> GetPlaybackOptions(string url)
-		{
-			IWebProxy proxy = null;
+        public override Dictionary<string, string> GetPlaybackOptions(string url)
+        {
+            IWebProxy proxy = null;
             Dictionary<string, string> PlaybackOptions = null;
 
             string videoId = url;
@@ -59,23 +59,23 @@ namespace OnlineVideos.Hoster
                 videoId = videoId.Substring(p, q - p);
             }
 
-			NameValueCollection ItemsAPI = new NameValueCollection();
+            NameValueCollection ItemsAPI = new NameValueCollection();
             NameValueCollection Items = new NameValueCollection();
             string contents = "";
             try
             {
-				try
-				{
+                try
+                {
                     contents = WebCache.Instance.GetWebData(string.Format("http://youtube.com/get_video_info?video_id={0}&has_verified=1", videoId), proxy: proxy);
-				}
-				catch
-				{
-					if (contents == null) contents = "";
-				}
+                }
+                catch
+                {
+                    if (contents == null) contents = "";
+                }
                 Items = System.Web.HttpUtility.ParseQueryString(contents);
                 if (Items.Count == 0 || Items["status"] == "fail" || Items["use_cipher_signature"] == "True")
                 {
-					ItemsAPI = Items;
+                    ItemsAPI = Items;
                     contents = WebCache.Instance.GetWebData(string.Format("http://www.youtube.com/watch?v={0}&has_verified=1", videoId), proxy: proxy);
                     Match m = swfJsonArgs.Match(contents);
                     if (m.Success)
@@ -86,7 +86,7 @@ namespace OnlineVideos.Hoster
                         }
                         else if (m.Groups["json"].Success)
                         {
-							Items = new NameValueCollection();
+                            Items = new NameValueCollection();
                             foreach (var z in Newtonsoft.Json.Linq.JObject.Parse(m.Groups["json"].Value))
                             {
                                 Items.Add(z.Key, z.Value.ToString());
@@ -94,7 +94,7 @@ namespace OnlineVideos.Hoster
                         }
                         else if (m.Groups["html"].Success)
                         {
-							Items = new NameValueCollection();
+                            Items = new NameValueCollection();
                             string html = Regex.Match(m.Groups["html"].Value, @"flashvars=\\""(?<value>.+?)\\""").Groups["value"].Value;
                             html = unicodeFinder.Replace(html, match => ((char)Int32.Parse(match.Value.Substring(2), NumberStyles.HexNumber)).ToString());
                             Items = System.Web.HttpUtility.ParseQueryString(System.Web.HttpUtility.HtmlDecode(html));
@@ -108,85 +108,85 @@ namespace OnlineVideos.Hoster
             {
                 string swfUrl = Regex.Unescape(Regex.Match(contents, @"""url""\s*:\s*""(https?:\\/\\/.*?watch[^""]+\.swf)""").Groups[1].Value);
 
-				List<KeyValuePair<string[], string>> qualities = new List<KeyValuePair<string[], string>>();
+                List<KeyValuePair<string[], string>> qualities = new List<KeyValuePair<string[], string>>();
 
                 string[] FmtUrlMap = Items["url_encoded_fmt_stream_map"].Split(',');
-				string[] FmtList = Items["fmt_list"].Split(',');
-				for (int i = 0; i < FmtList.Length; i++)
-				  if (i < FmtUrlMap.Length)
-				  {
-					qualities.Add(new KeyValuePair<string[], string>(FmtList[i].Split('/'), FmtUrlMap[i]));
-				  }				
-				/*
-				string[] AdaptiveFmtUrlMap = Items["adaptive_fmts"].Split(',');
-				for (int i = 0; i < AdaptiveFmtUrlMap.Length; i++)
-				{
-					var adaptive_options = HttpUtility.ParseQueryString(AdaptiveFmtUrlMap[i]);
-					var quality = new string[] { adaptive_options["itag"], adaptive_options["size"] };
-					qualities.Add(new KeyValuePair<string[], string>(quality, AdaptiveFmtUrlMap[i]));
-				}
-				*/
-                qualities.Sort(new Comparison<KeyValuePair<string[], string>>((a,b)=>
+                string[] FmtList = Items["fmt_list"].Split(',');
+                for (int i = 0; i < FmtList.Length; i++)
+                    if (i < FmtUrlMap.Length)
+                    {
+                        qualities.Add(new KeyValuePair<string[], string>(FmtList[i].Split('/'), FmtUrlMap[i]));
+                    }
+                /*
+                string[] AdaptiveFmtUrlMap = Items["adaptive_fmts"].Split(',');
+                for (int i = 0; i < AdaptiveFmtUrlMap.Length; i++)
                 {
-					return Array.IndexOf(fmtOptionsQualitySorted, ushort.Parse(b.Key[0])).CompareTo(Array.IndexOf(fmtOptionsQualitySorted, ushort.Parse(a.Key[0])));
+                    var adaptive_options = HttpUtility.ParseQueryString(AdaptiveFmtUrlMap[i]);
+                    var quality = new string[] { adaptive_options["itag"], adaptive_options["size"] };
+                    qualities.Add(new KeyValuePair<string[], string>(quality, AdaptiveFmtUrlMap[i]));
+                }
+                */
+                qualities.Sort(new Comparison<KeyValuePair<string[], string>>((a, b) =>
+                {
+                    return Array.IndexOf(fmtOptionsQualitySorted, ushort.Parse(b.Key[0])).CompareTo(Array.IndexOf(fmtOptionsQualitySorted, ushort.Parse(a.Key[0])));
                 }));
 
                 PlaybackOptions = new Dictionary<string, string>();
                 foreach (var quality in qualities)
                 {
-					ushort fmt_quality = ushort.Parse(quality.Key[0]);
+                    ushort fmt_quality = ushort.Parse(quality.Key[0]);
 
-					if (!fmtOptionsQualitySorted.Contains(fmt_quality)) continue;
+                    if (!fmtOptionsQualitySorted.Contains(fmt_quality)) continue;
 
-					if (hideMobileFormats && fmtOptionsMobile.Any(b => b == fmt_quality)) continue;
-					if (hide3DFormats && fmtOptions3D.Any(b => b == fmt_quality)) continue;
+                    if (hideMobileFormats && fmtOptionsMobile.Any(b => b == fmt_quality)) continue;
+                    if (hide3DFormats && fmtOptions3D.Any(b => b == fmt_quality)) continue;
 
                     var urlOptions = HttpUtility.ParseQueryString(quality.Value);
                     string type = urlOptions.Get("type");
-					string stereo = urlOptions["stereo3d"] == "1" ? " 3D " : " ";
+                    string stereo = urlOptions["stereo3d"] == "1" ? " 3D " : " ";
                     if (!string.IsNullOrEmpty(type))
                     {
                         type = Regex.Replace(type, @"; codecs=""[^""]*""", "");
                         type = type.Substring(type.LastIndexOfAny(new char[] { '/', '-' }) + 1);
                     }
-					string signature = urlOptions.Get("sig");
-					if (string.IsNullOrEmpty(signature))
-					{
-						string playerUrl = "";
-						var jsPlayerMatch = Regex.Match(contents, "\"assets\":.+?\"js\":\\s*(\"[^\"]+\")");
-						if (jsPlayerMatch.Success)
-							playerUrl = Newtonsoft.Json.Linq.JToken.Parse(jsPlayerMatch.Groups[1].Value).ToString();
-						signature = DecryptSignature(playerUrl, urlOptions.Get("s"));
-					}
-					string finalUrl = urlOptions.Get("url");
-					if (!string.IsNullOrEmpty(finalUrl))
-					{
-						if (!finalUrl.Contains("ratebypass"))
-							finalUrl += "&ratebypass=yes";
-						PlaybackOptions.Add(string.Format("{0} | {1}{2}({3})", quality.Key[1], type, stereo, quality.Key[0]), finalUrl + (!string.IsNullOrEmpty(signature) ? ("&signature=" + signature) : "") + "&ext=." + type.Replace("webm", "mkv"));
-					}
-					else
-					{
-						string rtmpUrl = urlOptions.Get("conn");
-						string rtmpPlayPath = urlOptions.Get("stream");
-						if (!string.IsNullOrEmpty(rtmpUrl) && !string.IsNullOrEmpty(rtmpPlayPath))
-						{
-							PlaybackOptions.Add(string.Format("{0} | {1} ({2})", quality.Key[1], type, quality.Key[0]),
-								new MPUrlSourceFilter.RtmpUrl(rtmpUrl) { PlayPath = rtmpPlayPath, SwfUrl = swfUrl, SwfVerify = true }.ToString());
-						}
-					}
+                    string signature = urlOptions.Get("sig");
+                    if (string.IsNullOrEmpty(signature))
+                    {
+                        string playerUrl = "";
+                        var jsPlayerMatch = Regex.Match(contents, "\"assets\":.+?\"js\":\\s*(\"[^\"]+\")");
+                        if (jsPlayerMatch.Success)
+                            playerUrl = Newtonsoft.Json.Linq.JToken.Parse(jsPlayerMatch.Groups[1].Value).ToString();
+                        signature = DecryptSignature(playerUrl, urlOptions.Get("s"));
+                    }
+                    string finalUrl = urlOptions.Get("url");
+                    if (!string.IsNullOrEmpty(finalUrl))
+                    {
+                        if (!finalUrl.Contains("ratebypass"))
+                            finalUrl += "&ratebypass=yes";
+                        PlaybackOptions.Add(string.Format("{0} | {1}{2}({3})", quality.Key[1], type, stereo, quality.Key[0]), finalUrl + (!string.IsNullOrEmpty(signature) ? ("&signature=" + signature) : "") + "&ext=." + type.Replace("webm", "mkv"));
+                    }
+                    else
+                    {
+                        string rtmpUrl = urlOptions.Get("conn");
+                        string rtmpPlayPath = urlOptions.Get("stream");
+                        if (!string.IsNullOrEmpty(rtmpUrl) && !string.IsNullOrEmpty(rtmpPlayPath))
+                        {
+                            PlaybackOptions.Add(string.Format("{0} | {1} ({2})", quality.Key[1], type, quality.Key[0]),
+                                new MPUrlSourceFilter.RtmpUrl(rtmpUrl) { PlayPath = rtmpPlayPath, SwfUrl = swfUrl, SwfVerify = true }.ToString());
+                        }
+                    }
                 }
             }
-            else if (Items.Get("status")== "fail")
+            else if (Items.Get("status") == "fail")
             {
                 string reason = Items.Get("reason");
                 if (!string.IsNullOrEmpty(reason) && (PlaybackOptions == null || PlaybackOptions.Count == 0)) throw new OnlineVideosException(reason);
             }
-			else if (ItemsAPI.Get("status") == "fail")
-			{
-				string reason = ItemsAPI.Get("reason");
-				if (!string.IsNullOrEmpty(reason) && (PlaybackOptions == null || PlaybackOptions.Count == 0)) throw new OnlineVideosException(reason);
-			}
+            else if (ItemsAPI.Get("status") == "fail")
+            {
+                string reason = ItemsAPI.Get("reason");
+                if (!string.IsNullOrEmpty(reason) && (PlaybackOptions == null || PlaybackOptions.Count == 0)) throw new OnlineVideosException(reason);
+            }
 
             return PlaybackOptions;
         }
@@ -199,9 +199,9 @@ namespace OnlineVideos.Hoster
             else return String.Empty;
         }
 
-		/// <summary>/// Turn the encrypted s parameter into a valid signature</summary>
-		/// <param name="s">s Parameter value of the URL parameters</param>
-		/// <returns>Decrypted string for the s parameter</returns>
+        /// <summary>/// Turn the encrypted s parameter into a valid signature</summary>
+        /// <param name="s">s Parameter value of the URL parameters</param>
+        /// <returns>Decrypted string for the s parameter</returns>
         string DecryptSignature(string javascriptUrl, string s)
         {
             if (string.IsNullOrEmpty(s)) return string.Empty;
