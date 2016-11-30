@@ -99,6 +99,7 @@ namespace OnlineVideos
         // D
         public string Date = "Date";
         public string DateOfRelease = "Date of Release";
+        public string Details = "Details";
         public string Directors = "Directors";
         public string Download = "Download";
         public string DownloadUserdefined = "Download to User Directory";
@@ -194,7 +195,8 @@ namespace OnlineVideos
 
         // R
         public string RateVideo = "Rate the Video ...";
-		public string Recommendations = "Recommendations";
+        public string Rating = "Rating";
+        public string Recommendations = "Recommendations";
         public string RemoveFromFavorites = "Remove from favorites";
         public string RemoveFromPlaylist = "Remove from Playlist";
         public string RemovingFromFavorites = "removing from favorites";
