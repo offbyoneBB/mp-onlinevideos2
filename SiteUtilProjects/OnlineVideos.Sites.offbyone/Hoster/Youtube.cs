@@ -33,7 +33,8 @@ namespace OnlineVideos.Hoster
 (?<json>\{.+\})|
 (?:\<param\sname=\\""flashvars\\""\svalue=\\""(?<params>[^""]+)\\""\>)|
 (flashvars=""(?<params>[^""]+)""))|
-(yt\.?player\.?Config\s*=\s*\{.*?""args""\:\s*(?<json>\{[^\}]+\}))", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+(yt\.?player\.?Config\s*=\s*\{.*?""args""\:\s*(?<json>\{(?>\{(?<c>)|[^{}]+|\}(?<-c>))*(?(c)(?!))\}))", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+        //the json part uses balancing groups, as demonstrated here: http://stackoverflow.com/a/35271017
         static Regex unicodeFinder = new Regex(@"\\[uU]([0-9A-F]{4})", RegexOptions.Compiled);
 
         Dictionary<string, Jurassic.ScriptEngine> cachedJavascript = new Dictionary<string, Jurassic.ScriptEngine>();
