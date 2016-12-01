@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites
 {
     public class ZDFMediathekUtil : SiteUtilBase
     {
+        string m3u8Regex = @"#EXT-X-STREAM-INF:PROGRAM-ID=\d,BANDWIDTH=(?<bitrate>\d+),RESOLUTION=(?<resolution>\d+x\d+),?CODECS=""(?<codecs>[^""]+)"".*?\n(?<url>.*)";
+
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName = "VideoQuality"), Description("Defines the maximum quality for the video to be played.")]
         string videoQuality = "veryhigh";
 
@@ -17,9 +20,8 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
-            //Settings.Categories.Add(new Category { Name = "Startseite" });
-            //Settings.Categories.Add(new Category { Name = "Live" });
-            //Settings.Categories.Add(new Category { Name = "Sendung Verpasst", HasSubCategories = true, Description = "Sendungen der letzten 7 Tage." });
+            Settings.Categories.Add(new Category { Name = "Live" });
+            Settings.Categories.Add(new Category { Name = "Sendung Verpasst", HasSubCategories = true, Description = "Sendungen der letzten 7 Tage." });
             Settings.Categories.Add(new Category { Name = "Rubriken", HasSubCategories = true });
             Settings.Categories.Add(new Category { Name = "Sendungen A-Z", HasSubCategories = true });
             Settings.DynamicCategoriesDiscovered = true;
@@ -92,80 +94,86 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> GetVideos(Category category)
         {
-            switch (category.Name)
+            List<VideoInfo> list = new List<VideoInfo>();
+
+            if (category.Name == "Live")
             {
-                case "Startseite":
-                    
-                    break;
-                case "Live":
-                    
-                    break;
-                default:
-                    if (category.ParentCategory.Name == "Sendung Verpasst")
+                var json = GetWebData<JObject>("https://api.zdf.de/content/documents/epg-livetv-100.json?profile=default", headers: headers);
+                var teasers = (json["livestreams"] as JArray)?.First?["teaser"] as JArray;
+                foreach(var teaser in teasers)
+                {
+                    var title = teaser["http://zdf.de/rels/target"].Value<string>("tvService");
+                    var img = teaser["http://zdf.de/rels/target"]["teaserImageRef"]["layouts"].Value<string>("384x216");
+                    var url = "http://api.zdf.de" + teaser["http://zdf.de/rels/target"]["mainVideoContent"]["http://zdf.de/rels/target"].Value<string>("http://zdf.de/rels/streams/ptmd-template").Replace("{playerId}", "portal");
+
+                    list.Add(new VideoInfo
                     {
-                        List<VideoInfo> list = new List<VideoInfo>();
-                        var json = GetWebData<JObject>((category as RssLink).Url, headers: headers);
-                        foreach(var broadcast in json["http://zdf.de/rels/broadcasts-page"]["http://zdf.de/rels/cmdm/broadcasts"])
-                        {
-                            var start = broadcast.Value<DateTime>("airtimeBegin");
-                            var length = TimeSpan.FromSeconds(broadcast.Value<int>("duration"));
-                            var title = broadcast.Value<string>("title");
-                            var subtitle = broadcast.Value<string>("subtitle");
-                            var tvStation = broadcast.Value<string>("tvService");
-                            var desc = broadcast.Value<string>("text");
-                            var img = broadcast["http://zdf.de/rels/image"].Type == JTokenType.Object ? broadcast["http://zdf.de/rels/image"]["layouts"]?.Value<string>("384x216") : null;
-
-                            var videoContent = broadcast["http://zdf.de/rels/content/video-page-teaser"]?["mainContent"]?.First["videoContent"] as JArray;
-                            if (videoContent == null)
-                                continue;
-                            var video = videoContent.FirstOrDefault(v => v.Value<string>("profile") == "http://zdf.de/rels/content-reference/video-content");
-                            if (video == null)
-                                continue;
-
-                            var url = "http://api.zdf.de" + video["http://zdf.de/rels/target"].Value<string>("http://zdf.de/rels/streams/ptmd-template").Replace("{playerId}", "portal");
-
-                            list.Add(new VideoInfo
-                            {
-                                Title = title + (subtitle != null ? " [" + subtitle + "]" : ""),
-                                Description = Helpers.StringUtils.PlainTextFromHtml(desc),
-                                Length = length.TotalMinutes <= 60 ? length.TotalMinutes.ToString() + " min" : length.ToString("h\\h\\ m\\ \\m\\i\\n"),
-                                Thumb = img,
-                                Airdate = start.ToString("g", OnlineVideoSettings.Instance.Locale),
-                                VideoUrl = url
-                            });
-                        }
-                        return list;
-                    }
-                    else
-                    {
-                        List<VideoInfo> list = new List<VideoInfo>();
-                        var json = GetWebData<JObject>((category as RssLink).Url, headers: headers);
-                        foreach(var result in json["http://zdf.de/rels/search/results"])
-                        {
-                            var obj = result["http://zdf.de/rels/target"];
-                            var videoContent = obj["mainContent"].First["videoContent"].First["http://zdf.de/rels/target"];
-
-                            if (!obj.Value<bool>("hasVideo")) continue;
-
-                            var title = obj.Value<string>("teaserHeadline");
-                            var start = obj.Value<DateTime>("editorialDate");
-                            var img = obj["teaserImageRef"]["layouts"]?.Value<string>("384x216");
-
-                            var length = TimeSpan.FromSeconds(videoContent.Value<int>("duration"));
-                            var url = "http://api.zdf.de" + videoContent.Value<string>("http://zdf.de/rels/streams/ptmd-template").Replace("{playerId}", "portal");
-                            list.Add(new VideoInfo
-                            {
-                                Title = title,
-                                Length = length.TotalMinutes <= 60 ? Math.Round(length.TotalMinutes).ToString() + " min" : length.ToString("h\\h\\ m\\ \\m\\i\\n"),
-                                Thumb = img,
-                                Airdate = start.ToString("g", OnlineVideoSettings.Instance.Locale),
-                                VideoUrl = url
-                            });
-                        }
-                        return list;
-                    }
+                        Title = title,
+                        Thumb = img,
+                        VideoUrl = url
+                    });
+                }
             }
-            return null;
+            else if (category.ParentCategory.Name == "Sendung Verpasst")
+            {
+                
+                var json = GetWebData<JObject>((category as RssLink).Url, headers: headers);
+                foreach (var broadcast in json["http://zdf.de/rels/broadcasts-page"]["http://zdf.de/rels/cmdm/broadcasts"])
+                {
+                    var video_page_teaser = broadcast["http://zdf.de/rels/content/video-page-teaser"];
+                    if (video_page_teaser == null)
+                        continue;
+                    var mainVideoContent = video_page_teaser?["mainVideoContent"];
+                    if (mainVideoContent == null)
+                        continue;
+
+                    var start = broadcast.Value<DateTime>("airtimeBegin");
+                    var length = TimeSpan.FromSeconds(broadcast.Value<int>("duration"));
+                    var title = broadcast.Value<string>("title");
+                    var subtitle = broadcast.Value<string>("subtitle");
+                    var tvStation = broadcast.Value<string>("tvService");
+                    var desc = broadcast.Value<string>("text");
+                    var img = video_page_teaser["teaserImageRef"]?["layouts"]?.Value<string>("384x216");
+                    var url = "http://api.zdf.de" + mainVideoContent["http://zdf.de/rels/target"].Value<string>("http://zdf.de/rels/streams/ptmd-template").Replace("{playerId}", "portal");
+
+                    list.Add(new VideoInfo
+                    {
+                        Title = title + (subtitle != null ? " [" + subtitle + "]" : ""),
+                        Description = Helpers.StringUtils.PlainTextFromHtml(desc),
+                        Length = length.TotalMinutes <= 60 ? length.TotalMinutes.ToString() + " min" : length.ToString("h\\h\\ m\\ \\m\\i\\n"),
+                        Thumb = img,
+                        Airdate = start.ToString("g", OnlineVideoSettings.Instance.Locale),
+                        VideoUrl = url
+                    });
+                }
+            }
+            else
+            {
+                var json = GetWebData<JObject>((category as RssLink).Url, headers: headers);
+                foreach (var result in json["http://zdf.de/rels/search/results"])
+                {
+                    var obj = result["http://zdf.de/rels/target"];
+                    var videoContent = obj["mainContent"].First["videoContent"].First["http://zdf.de/rels/target"];
+
+                    if (!obj.Value<bool>("hasVideo")) continue;
+
+                    var title = obj.Value<string>("teaserHeadline");
+                    var start = obj.Value<DateTime>("editorialDate");
+                    var img = obj["teaserImageRef"]["layouts"]?.Value<string>("384x216");
+
+                    var length = TimeSpan.FromSeconds(videoContent.Value<int>("duration"));
+                    var url = "http://api.zdf.de" + videoContent.Value<string>("http://zdf.de/rels/streams/ptmd-template").Replace("{playerId}", "portal");
+                    list.Add(new VideoInfo
+                    {
+                        Title = title,
+                        Length = length.TotalMinutes <= 60 ? Math.Round(length.TotalMinutes).ToString() + " min" : length.ToString("h\\h\\ m\\ \\m\\i\\n"),
+                        Thumb = img,
+                        Airdate = start.ToString("g", OnlineVideoSettings.Instance.Locale),
+                        VideoUrl = url
+                    });
+                }
+            }
+            return list;
         }
 
         public override String GetVideoUrl(VideoInfo video)
@@ -173,7 +181,7 @@ namespace OnlineVideos.Sites
             if (video.PlaybackOptions == null)
             {
                 var json = GetWebData<JObject>(video.VideoUrl, headers: headers);
-                var sortedPlaybackOptions = new SortedDictionary<string, List<KeyValuePair<string, string>>>();
+                var sortedPlaybackOptions = new SortedDictionary<string, Dictionary<string, string>>();
                 foreach (var formitaet in json["priorityList"].SelectMany(l=>l["formitaeten"]))
                 {
                     if (formitaet["facets"].Any(f => f.ToString() == "restriction_useragent"))
@@ -183,21 +191,37 @@ namespace OnlineVideos.Sites
                     foreach(var vid in formitaet["qualities"])
                     {
                         var quality = vid.Value<string>("quality");
+                        if (quality == "auto")
+                            continue;
                         var url = vid["audio"]["tracks"].First.Value<string>("uri");
 
                         if (url.EndsWith(".m3u8") || url.EndsWith(".webm"))
                             continue;
 
                         if (!sortedPlaybackOptions.ContainsKey(quality))
-                            sortedPlaybackOptions[quality] = new List<KeyValuePair<string, string>>();
+                            sortedPlaybackOptions[quality] = new Dictionary<string, string>();
 
-                        sortedPlaybackOptions[quality].Add(new KeyValuePair<string, string>(type, url));
+                        if (url.Contains("master.m3u8"))
+                        {
+                            var m3u8Data = GetWebData(url);
+                            foreach (Match match in Regex.Matches(m3u8Data, m3u8Regex))
+                            {
+                                sortedPlaybackOptions[quality]
+                                    [string.Format("HLS - {0} - {1} kbps", match.Groups["resolution"].Value, int.Parse(match.Groups["bitrate"].Value) / 1000)]
+                                    = match.Groups["url"].Value;
+                            }
+                        }
+                        else
+                            sortedPlaybackOptions[quality][type] = url;
                     }
                 }
                 
                 video.PlaybackOptions = new Dictionary<string, string>();
                 foreach (var e in sortedPlaybackOptions)
-                    e.Value.ForEach(f => video.PlaybackOptions.Add(string.Format("{0}-{1}", e.Key, f.Key), f.Value));
+                {
+                    foreach (var f in e.Value)
+                        video.PlaybackOptions.Add(string.Format("{0}-{1}", e.Key, f.Key), f.Value);
+                }
             }
 
             if (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0)
