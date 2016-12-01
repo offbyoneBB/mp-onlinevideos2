@@ -39,6 +39,8 @@ namespace Standalone
         string _CurrentFilter = "";
         public string CurrentFilter { get { return _CurrentFilter; } set { _CurrentFilter = value; PropertyChanged(this, new PropertyChangedEventArgs("CurrentFilter")); } }
 
+        public ICommand PublishSiteCommand { get; }
+
         public OnlineVideosMainWindow()
         {
             // default culture is en-us for all xaml, set the current ui culture, so it is used for all conversions
@@ -76,6 +78,8 @@ namespace Standalone
 			Gui2UtilConnector.Instance.TaskFinishedCallback += () => Dispatcher.Invoke((Action)Gui2UtilConnector.Instance.ExecuteTaskResultHandler);
 
             InitializeComponent();
+            DataContext = this;
+            PublishSiteCommand = new RelayCommand(PublishSite);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -1127,6 +1131,21 @@ namespace Standalone
                 return false;
             }
             return true;
+        }
+
+        private void PublishSite(object item)
+        {
+            if (SelectedSite != null)
+                return;
+
+            var site = listViewMain.SelectedItem as ViewModels.Site;
+
+            if (site == null)
+                return;
+
+            var p = listViewMain.PointToScreen(new Point(20, 10));
+            var dlg = new PublishSiteWindow(site.Model.Settings) { Width = listViewMain.ActualWidth - 40, Height = listViewMain.ActualHeight - 20, Owner = this, Left = p.X, Top = p.Y };
+            dlg.ShowDialog();
         }
 
         private void Settings_CanExecute(object sender, CanExecuteRoutedEventArgs e)
