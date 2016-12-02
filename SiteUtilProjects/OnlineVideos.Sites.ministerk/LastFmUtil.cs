@@ -34,8 +34,8 @@ namespace OnlineVideos.Sites
         protected string username = null;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("Last.fm password"), PasswordPropertyText(true)]
         protected string password = null;
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Filter out unplayable content"), Description("Filter out unplayable content, much slower.")]
-        protected bool filterUnplayable = true;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Filter out unplayable content"), Description("Filter out unplayable content. Not recommended much slower")]
+        protected bool filterOutUnplayable = false;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Scrobble to Last.fm"), Description("Scrobble to Last.fm if 75% of the track has been played")]
         protected bool scrobbleToLastFm = true;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Publish now playing to Last.fm"), Description("Publish now playing to Last.fm")]
@@ -623,7 +623,7 @@ namespace OnlineVideos.Sites
                 {
                     bool addVideo = true;
                     LastFmVideo track = new LastFmVideo();
-                    if (filterUnplayable)
+                    if (filterOutUnplayable)
                     {
                         Dictionary<string, string> pbos = Hoster.HosterFactory.GetHoster("youtube").GetPlaybackOptions(m.Groups["url"].Value);
                         track.Other = pbos;
@@ -679,7 +679,7 @@ namespace OnlineVideos.Sites
                     {
                         bool addVideo = true;
                         LastFmVideo video = new LastFmVideo();
-                        if (filterUnplayable)
+                        if (filterOutUnplayable)
                         {
                             Dictionary<string, string> pbos = Hoster.HosterFactory.GetHoster("youtube").GetPlaybackOptions(playlink["url"].Value<string>());
                             video.Other = pbos;
@@ -725,7 +725,7 @@ namespace OnlineVideos.Sites
 
         public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
-            if (filterUnplayable)
+            if (filterOutUnplayable)
             {
                 video.PlaybackOptions = new Dictionary<string, string>();
                 foreach (KeyValuePair<string, string> pbo in video.Other as Dictionary<string, string>)
