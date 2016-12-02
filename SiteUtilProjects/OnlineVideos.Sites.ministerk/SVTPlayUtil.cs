@@ -220,13 +220,12 @@ namespace OnlineVideos.Sites
             };
             if ((parentCategory as RssLink).Url != "barn" && (parentCategory as RssLink).Url != "oppetarkiv")
             {
-                JObject json = GetWebData<JObject>(string.Concat("http://www.svtplay.se/api/cluster_titles_and_episodes/?cluster=", (parentCategory as RssLink).Url));
-                jArray = json["contents"].Value<JArray>();
-                List<JToken> filtered = jArray.Where(jt => jt["contentType"].Value<string>() == "videoEpisod" || jt["contentType"].Value<string>() == "titelsida").ToList<JToken>();
-                foreach (JToken token in filtered)
+                string progData = GetWebData<string>(string.Concat("http://www.svtplay.se/api/cluster_titles_and_episodes/?cluster=", (parentCategory as RssLink).Url));
+                jArray = JArray.Parse(progData);
+                foreach (JToken token in jArray)
                 {
                     RssLink genreCategory;
-                    bool isVideoEpisode = token["contentType"].Value<string>() == "videoEpisod";
+                    bool isVideoEpisode = token["contentType"] != null && token["contentType"].Type == JTokenType.String && token["contentType"].Value<string>() == "videoEpisod";
                     if (!isVideoEpisode)
                         genreCategory = new RssLink();
                     else
@@ -235,8 +234,8 @@ namespace OnlineVideos.Sites
                     genreCategory.Name = token["programTitle"].Value<string>();
                     if (token["description"] != null && token["description"].Type != JTokenType.Null)
                         genreCategory.Description = token["description"].Value<string>();
-                    if (token["imageMedium"] != null&&token["imageMedium"].Type != JTokenType.Null)
-                        genreCategory.Thumb = token["imageMedium"].Value<string>();
+                    if (token["poster"] != null && token["poster"].Type != JTokenType.Null)
+                        genreCategory.Thumb = token["poster"].Value<string>().Replace("{format}", "medium");
                     genreCategory.HasSubCategories = !isVideoEpisode;
                     if (!isVideoEpisode)
                         genreCategory.Url = token["contentUrl"].Value<string>().Replace("/", "");
