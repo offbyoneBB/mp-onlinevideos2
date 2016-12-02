@@ -692,7 +692,7 @@ namespace OnlineVideos.Sites
                     {
                         Name = item["programTitle"].Value<string>(),
                         Url = item["contentUrl"].Value<string>().Replace("/", ""),
-                        Thumb = item["imageMedium"].Value<string>(),
+                        Thumb = item["image"].Value<string>().Replace("{format}", "medium"),
                         Description = item["description"].Value<string>(),
                         HasSubCategories = true,
                         SubCategories = new List<Category>()
