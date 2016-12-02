@@ -220,7 +220,7 @@ namespace OnlineVideos.Sites
             };
             if ((parentCategory as RssLink).Url != "barn" && (parentCategory as RssLink).Url != "oppetarkiv")
             {
-                JObject json = GetWebData<JObject>(string.Concat("http://www.svtplay.se/api/cluster_page?cluster=", (parentCategory as RssLink).Url));
+                JObject json = GetWebData<JObject>(string.Concat("http://www.svtplay.se/api/cluster_titles_and_episodes/?cluster=", (parentCategory as RssLink).Url));
                 jArray = json["contents"].Value<JArray>();
                 List<JToken> filtered = jArray.Where(jt => jt["contentType"].Value<string>() == "videoEpisod" || jt["contentType"].Value<string>() == "titelsida").ToList<JToken>();
                 foreach (JToken token in filtered)
