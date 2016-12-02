@@ -218,7 +218,27 @@ namespace OnlineVideos.Sites
                 HasSubCategories = true,
                 SubCategoriesDiscovered = true
             };
-            if ((parentCategory as RssLink).Url != "barn" && (parentCategory as RssLink).Url != "oppetarkiv")
+            if ((parentCategory as RssLink).Url == "oppetarkiv")
+            {
+                data = GetWebData("http://www.oppetarkiv.se/program");
+                Regex r = new Regex(@"<a\s+class=""svtoa-anchor-list-link""\s+href=""(?<url>[^""]*).*?>(?<title>[^<]*)", RegexOptions.Singleline);
+                foreach (Match m in r.Matches(data))
+                {
+                    if (m.Success)
+                    {
+                        RssLink programCategoriesAndVideos = new RssLink()
+                        {
+                            Name = HttpUtility.HtmlDecode(m.Groups["title"].Value),
+                            Url = string.Concat("http://www.oppetarkiv.se", m.Groups["url"].Value, "?sida={0}&sort=tid_stigande&embed=true"),
+                            HasSubCategories = false,
+                            ParentCategory = parentCategory
+                        };
+                        programCategoriesAndVideos.Other = (Func<List<Category>>)(() => GetProgramCategoriesAndVideos(programCategoriesAndVideos));
+                        cats.Add(programCategoriesAndVideos);
+                    }
+                }
+            }
+            else
             {
                 string progData = GetWebData<string>(string.Concat("http://www.svtplay.se/api/cluster_titles_and_episodes/?cluster=", (parentCategory as RssLink).Url));
                 jArray = JArray.Parse(progData);
@@ -246,52 +266,6 @@ namespace OnlineVideos.Sites
                     contents.SubCategories.Add(genreCategory);
                 }
                 cats.Add(contents);
-            }
-            else if ((parentCategory as RssLink).Url == "oppetarkiv")
-            {
-                data = GetWebData("http://www.oppetarkiv.se/program");
-                Regex r = new Regex(@"<a\s+class=""svtoa-anchor-list-link""\s+href=""(?<url>[^""]*).*?>(?<title>[^<]*)", RegexOptions.Singleline);
-                foreach (Match m in r.Matches(data))
-                {
-                    if (m.Success)
-                    {
-                        RssLink programCategoriesAndVideos = new RssLink()
-                        {
-                            Name = HttpUtility.HtmlDecode(m.Groups["title"].Value),
-                            Url = string.Concat("http://www.oppetarkiv.se", m.Groups["url"].Value, "?sida={0}&sort=tid_stigande&embed=true"),
-                            HasSubCategories = false,
-                            ParentCategory = parentCategory
-                        };
-                        programCategoriesAndVideos.Other = (Func<List<Category>>)(() => GetProgramCategoriesAndVideos(programCategoriesAndVideos));
-                        cats.Add(programCategoriesAndVideos);
-                    }
-                }
-            }
-            else
-            {
-                data = GetWebData("http://www.svtplay.se/barn");
-                Regex r = new Regex(@"<article(?:(?!data-title).)*data-title=""(?<title>[^""]*)(?:(?!data-description).)*data-description=""(?<description>[^""]*)(?:(?!<a\s+href).)*<a\s+href=""/(?!video)(?<url>[^""]*)(?:(?!src).)*src=""(?<thumb>[^""]*)", RegexOptions.Singleline);
-                foreach (Match match in r.Matches(data))
-                {
-                    if (match.Success)
-                    {
-                        RssLink programCategoriesAndVideos = new RssLink()
-                        {
-                            Name = HttpUtility.HtmlDecode(match.Groups["title"].Value),
-                            Url = match.Groups["url"].Value,
-                            Description = HttpUtility.HtmlDecode(match.Groups["description"].Value),
-                            Thumb = match.Groups["thumb"].Value,
-                            HasSubCategories = true,
-                            ParentCategory = contents
-                        };
-                        programCategoriesAndVideos.Other = (Func<List<Category>>)(() => GetProgramCategoriesAndVideos(programCategoriesAndVideos));
-                        contents.SubCategories.Add(programCategoriesAndVideos);
-                    }
-                }
-                cats.Add(contents);
-            }
-            if ((parentCategory as RssLink).Url != "oppetarkiv")
-            {
                 data = GetWebData<string>(string.Concat("http://www.svtplay.se/api/cluster_popular?cluster=", (parentCategory as RssLink).Url));
                 if (data.StartsWith("[") && data.EndsWith("]"))
                 {
