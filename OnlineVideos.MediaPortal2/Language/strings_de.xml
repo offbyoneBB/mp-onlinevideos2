@@ -29,6 +29,7 @@
   <!--D-->
   <string name="OnlineVideos.Date">Datum</string>
   <string name="OnlineVideos.DateOfRelease">Erscheinungsdatum</string>
+  <string name="OnlineVideos.Details">Details</string>
   <string name="OnlineVideos.Directors">Regisseure</string>
   <string name="OnlineVideos.Download">Herunterladen</string>
   <string name="OnlineVideos.DownloadUserdefined">Herunterladen (spezieller Ordner)</string>
@@ -113,6 +114,7 @@
   <string name="OnlineVideos.Queued">Nacheinander</string>
   <!--R-->
   <string name="OnlineVideos.RateVideo">Video bewerten ...</string>
+  <string name="OnlineVideos.Rating">Altersfreigabe</string>
   <string name="OnlineVideos.Recommendations">Empfehlungen</string>
   <string name="OnlineVideos.RemoveFromFavorites">Von den Favoriten entfernen</string>
   <string name="OnlineVideos.RemoveFromPlaylist">Von Playlist entfernen</string>

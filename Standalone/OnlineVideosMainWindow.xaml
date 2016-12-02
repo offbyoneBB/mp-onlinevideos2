@@ -110,6 +110,7 @@
             <ListView.InputBindings>
                 <!--Repeat the KeyBinding here, otherwise SPACE is not bubbled to the window-->
                 <KeyBinding Key="SPACE" Command="MediaCommands.TogglePlayPause"/>
+                <KeyBinding Key="P" Modifiers="Ctrl" Command="{Binding PublishSiteCommand}"/>
             </ListView.InputBindings>
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>

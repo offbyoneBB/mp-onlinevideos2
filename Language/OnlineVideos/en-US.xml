@@ -29,6 +29,7 @@
   <!--D-->
   <string name="Date">Date</string>
   <string name="DateOfRelease">Date of Release</string>
+  <string name="Details">Details</string>
   <string name="Directors">Directors</string>
   <string name="Download">Download</string>
   <string name="DownloadUserdefined">Download to User Directory</string>
@@ -113,6 +114,7 @@
   <string name="Queued">queued</string>
   <!--R-->
   <string name="RateVideo">Rate the Video ...</string>
+  <string name="Rating">Rating</string>
   <string name="Recommendations">Recommendations</string>
   <string name="RemoveFromFavorites">Remove from favorites</string>
   <string name="RemoveFromPlaylist">Remove from Playlist</string>
