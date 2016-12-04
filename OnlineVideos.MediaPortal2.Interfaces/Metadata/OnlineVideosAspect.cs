@@ -36,7 +36,7 @@ namespace OnlineVideos.MediaPortal2.Interfaces.Metadata
         /// <summary>
         /// Media item aspect id of the recording aspect.
         /// </summary>
-        public static readonly Guid ASPECT_ID = new Guid("CC63558B-0467-46DD-A896-4311D4E4B4D2");
+        public static readonly Guid ASPECT_ID = new Guid("02D73EC4-6689-467A-9CBE-EA70549F5CB4");
 
         /// <summary>
         /// Name of the SiteUtil which provides the information and will be used for playback.
