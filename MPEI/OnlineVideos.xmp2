@@ -2376,28 +2376,28 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.MediaPortal1.dll</LocalFileName>
+              <LocalFileName>%ProgramFiles(x86)%\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.MediaPortal1.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{c795f3a7-881d-4376-b2a2-e8ac9eec9eaa}-OnlineVideos.MediaPortal1.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.dll</LocalFileName>
+              <LocalFileName>%ProgramFiles(x86)%\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{acc12d0d-7e32-4ca4-8385-c6cff6c8b321}-OnlineVideos.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe</LocalFileName>
+              <LocalFileName>%ProgramFiles(x86)%\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{453f6e32-54d5-49c0-af60-cd08a14c386d}-OnlineVideos.WebAutomation.BrowserHost.exe</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe.config</LocalFileName>
+              <LocalFileName>%ProgramFiles(x86)%\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe.config</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{0e030923-323c-4964-9e9b-05806a4fac5c}-OnlineVideos.WebAutomation.BrowserHost.exe.config</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe.config</DestinationFilename>
             </FileItem>
@@ -6093,28 +6093,28 @@ BrowserPlayer changes to support MediaPortal2</VersionDescription>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.MediaPortal1.dll</LocalFileName>
+        <LocalFileName>%ProgramFiles(x86)%\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.MediaPortal1.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{c795f3a7-881d-4376-b2a2-e8ac9eec9eaa}-OnlineVideos.MediaPortal1.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.dll</LocalFileName>
+        <LocalFileName>%ProgramFiles(x86)%\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{acc12d0d-7e32-4ca4-8385-c6cff6c8b321}-OnlineVideos.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe</LocalFileName>
+        <LocalFileName>%ProgramFiles(x86)%\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{453f6e32-54d5-49c0-af60-cd08a14c386d}-OnlineVideos.WebAutomation.BrowserHost.exe</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe.config</LocalFileName>
+        <LocalFileName>%ProgramFiles(x86)%\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe.config</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{0e030923-323c-4964-9e9b-05806a4fac5c}-OnlineVideos.WebAutomation.BrowserHost.exe.config</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.WebAutomation.BrowserHost.exe.config</DestinationFilename>
       </FileItem>
