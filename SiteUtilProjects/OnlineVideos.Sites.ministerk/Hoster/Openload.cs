@@ -1,7 +1,4 @@
-﻿using Jurassic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Web;
+﻿using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Hoster
 {
@@ -20,29 +17,21 @@ namespace OnlineVideos.Hoster
 
             string data = GetWebData<string>(url);
             sub = "";
-            Regex rgx = new Regex(@"<div style=""display:none;"">[\s\r\n]*<span id=""(?<id1>[^""]*)"">(?<enc1>.+?)</span>[\s\r\n]*<span id=""(?<id2>[^""]*)"">(?<enc2>.+?)</span>");
+            Regex rgx = new Regex(@"<span\s+id=""[a-zA-Z0-9]*x"">(?<enc>\d*)<");
             Match m = rgx.Match(data);
             if (m.Success)
             {
-                string enc1 = HttpUtility.HtmlDecode(m.Groups["enc1"].Value);
-                string enc2 = HttpUtility.HtmlDecode(m.Groups["enc2"].Value);
-                string id1 = m.Groups["id1"].Value;
-                string id2 = m.Groups["id2"].Value;
-                rgx = new Regex(@"<script type=""text/javascript"">(?<aaenc>ﾟ.*?\n)");
-                m = rgx.Match(data);
-                if (m.Success)
+                string enc = m.Groups["enc"].Value;
+                int firstTwo = int.Parse(enc.Substring(0, 2));
+                string decoded = "";
+                int num = 2;
+                while (num < enc.Length)
                 {
-                    string js = OnlineVideos.Sites.Utils.HelperUtils.AaDecode(m.Groups["aaenc"].Value);
-                    js = js.Replace("$(document).ready(function() {", "function getTheUrl(enc1, enc2) {").Replace("});", "}");
-                    js = js.Replace(@"$(""#" + id1 + @""").text()", @"enc1");
-                    js = js.Replace(@"$(""#" + id2 + @""").text()", @"enc2");
-                    js = js.Replace(@"$(""#streamurl"").text(str)", "return str");
-                    ScriptEngine engine = new ScriptEngine();
-                    engine.Execute(js);
-                    string decoded = engine.CallGlobalFunction("getTheUrl", enc1, enc2).ToString();
-                    SetSub(data);
-                    return "https://openload.co/stream/" + decoded + "?mime=true";
+                    decoded += (char)(int.Parse(enc.Substring(num, 3)) - firstTwo * int.Parse(enc.Substring(num + 3, 2)));
+                    num += 5;
                 }
+                SetSub(data);
+                return "https://openload.co/stream/" + decoded + "?mime=true";
             }
             return "";
         }
@@ -87,6 +76,5 @@ namespace OnlineVideos.Hoster
         {
             return "openload.io";
         }
-
     }
 }
