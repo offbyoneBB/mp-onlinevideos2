@@ -1,0 +1,30 @@
+<Plugin
+    DescriptorVersion="1.0"
+    Name="InputStreamPlayer"
+    PluginId="{6792C6C5-842C-4C65-A698-D94710984A42}"
+    AutoActivate="True"
+    Author="Morpheus_xx"
+    Copyright="GPL"
+    Description="InputStreamPlayer">
+
+  <Version
+    PluginVersion="1.0"
+    ReleaseDate="2016-10-10 01:00:00 GMT+01:00"
+    CurrentAPI="1"/>
+
+  <DependsOn>
+    <PluginReference PluginId="{A965AFE5-44F9-46e0-980E-40BBE17F25CA}" CompatibleAPI="1"/> <!-- VideoPlayers -->
+    <PluginReference PluginId="{D87D92F0-5E71-470a-A2A4-430F90A28BF3}" CompatibleAPI="1"/> <!-- SkinEngine -->
+    <PluginReference PluginId="{1AFF4467-64B0-4ca1-AF28-9AEDF3525BCE}" CompatibleAPI="1"/> <!-- ConfigurationManager -->
+    <PluginReference PluginId="{B765A4B6-F455-4941-BDAE-2CE45208BFEB}" CompatibleAPI="1"/> <!-- Configuration Model -->
+  </DependsOn>
+
+  <Runtime>
+    <Assembly FileName="InputStreamPlayer.dll"/>
+    <Assembly FileName="MediaPortalWrapper.dll"/>
+    <Assembly FileName="..\VideoPlayers\DirectShowWrapper.dll"/>
+    <Assembly FileName="library.xbmc.addon\libXBMC_addon.dll"/>
+    <Assembly FileName="library.kodi.inputstream\libKODI_inputstream.dll"/>
+  </Runtime>
+
+</Plugin>

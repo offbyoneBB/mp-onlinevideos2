@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace OnlineVideos.Sites.JSurf.Factories
+﻿namespace OnlineVideos.Sites.JSurf.Factories
 {
     /// <summary>
     /// Connector types supported
@@ -11,6 +6,7 @@ namespace OnlineVideos.Sites.JSurf.Factories
     public enum ConnectorType
     {
         AmazonPrime,
-        AmazonPrimeDe
+        AmazonPrimeDe,
+        AmazonPrimeUs
     }
 }

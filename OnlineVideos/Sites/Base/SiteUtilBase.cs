@@ -90,8 +90,8 @@ namespace OnlineVideos.Sites
                             Log.Warn("{0} - could not set Configuration Value: {1}. Error: {2}", siteSettings.Name, field.Name, ex.Message);
                         }
                     }
-                    else 
-                        SetUserConfigurationValue(field, attrs[0] as CategoryAttribute); 
+                    else
+                        SetUserConfigurationValue(field, attrs[0] as CategoryAttribute);
                 }
             }
         }
@@ -191,8 +191,7 @@ namespace OnlineVideos.Sites
         /// <returns></returns>
         public virtual List<String> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
-            List<String> urls = new List<String>();
-            urls.Add(GetVideoUrl(video));
+            List<String> urls = new List<String> { GetVideoUrl(video) };
             return urls;
         }
 
@@ -214,7 +213,7 @@ namespace OnlineVideos.Sites
         /// <returns>A filled <see cref="ITrackingInfo"/> with the information required to identify the video uniquely</returns>
         public virtual ITrackingInfo GetTrackingInfo(VideoInfo video)
         {
-            return new TrackingInfo() { VideoKind = VideoKind.Other, Title = video.Title };
+            return new TrackingInfo { VideoKind = VideoKind.Other, Title = video.Title };
         }
 
         /// <summary>

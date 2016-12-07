@@ -34,45 +34,45 @@ namespace OnlineVideos
         public int DynamicCategoryTimeout = 300; // minutes
         public CultureInfo Locale;
         public BindingList<SiteSettings> SiteSettingsList { get; protected set; }
-        public Dictionary<string, Sites.SiteUtilBase> SiteUtilsList { get; protected set; }
-        public List<Sites.LatestVideosSiteUtilBase> LatestVideosSiteUtilsList { get; protected set; }
+        public Dictionary<string, SiteUtilBase> SiteUtilsList { get; protected set; }
+        public List<LatestVideosSiteUtilBase> LatestVideosSiteUtilsList { get; protected set; }
         public SortedList<string, bool> VideoExtensions { get; protected set; }
         public bool FavoritesFirst = false;
 
-        public String HttpPreferredNetworkInterface = OnlineVideoSettings.NetworkInterfaceSystemDefault;
-        public int HttpOpenConnectionTimeout = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpOpenConnectionTimeout;                     // ms
-        public int HttpOpenConnectionSleepTime = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpOpenConnectionSleepTime;                 // ms
-        public int HttpTotalReopenConnectionTimeout = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpTotalReopenConnectionTimeout;       // ms
+        public String HttpPreferredNetworkInterface = NetworkInterfaceSystemDefault;
+        public int HttpOpenConnectionTimeout = MPUrlSourceFilter.HttpUrl.DefaultHttpOpenConnectionTimeout;                     // ms
+        public int HttpOpenConnectionSleepTime = MPUrlSourceFilter.HttpUrl.DefaultHttpOpenConnectionSleepTime;                 // ms
+        public int HttpTotalReopenConnectionTimeout = MPUrlSourceFilter.HttpUrl.DefaultHttpTotalReopenConnectionTimeout;       // ms
 
-        public Boolean HttpServerAuthenticate = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpServerAuthenticate;
-        public String HttpServerUserName = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpServerUserName;
-        public String HttpServerPassword = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpServerPassword;
+        public Boolean HttpServerAuthenticate = MPUrlSourceFilter.HttpUrl.DefaultHttpServerAuthenticate;
+        public String HttpServerUserName = MPUrlSourceFilter.HttpUrl.DefaultHttpServerUserName;
+        public String HttpServerPassword = MPUrlSourceFilter.HttpUrl.DefaultHttpServerPassword;
 
-        public Boolean HttpProxyServerAuthenticate = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpProxyServerAuthenticate;
-        public String HttpProxyServer = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpProxyServer;
-        public int HttpProxyServerPort = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpProxyServerPort;
-        public String HttpProxyServerUserName = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpProxyServerUserName;
-        public String HttpProxyServerPassword = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpProxyServerPassword;
-        public OnlineVideos.MPUrlSourceFilter.ProxyServerType HttpProxyServerType = OnlineVideos.MPUrlSourceFilter.HttpUrl.DefaultHttpProxyServerType;
+        public Boolean HttpProxyServerAuthenticate = MPUrlSourceFilter.HttpUrl.DefaultHttpProxyServerAuthenticate;
+        public String HttpProxyServer = MPUrlSourceFilter.HttpUrl.DefaultHttpProxyServer;
+        public int HttpProxyServerPort = MPUrlSourceFilter.HttpUrl.DefaultHttpProxyServerPort;
+        public String HttpProxyServerUserName = MPUrlSourceFilter.HttpUrl.DefaultHttpProxyServerUserName;
+        public String HttpProxyServerPassword = MPUrlSourceFilter.HttpUrl.DefaultHttpProxyServerPassword;
+        public MPUrlSourceFilter.ProxyServerType HttpProxyServerType = MPUrlSourceFilter.HttpUrl.DefaultHttpProxyServerType;
 
-        public String RtmpPreferredNetworkInterface = OnlineVideoSettings.NetworkInterfaceSystemDefault;
-        public int RtmpOpenConnectionTimeout = OnlineVideos.MPUrlSourceFilter.RtmpUrl.DefaultRtmpOpenConnectionTimeout;                     // ms
-        public int RtmpOpenConnectionSleepTime = OnlineVideos.MPUrlSourceFilter.RtmpUrl.DefaultRtmpOpenConnectionSleepTime;                 // ms
-        public int RtmpTotalReopenConnectionTimeout = OnlineVideos.MPUrlSourceFilter.RtmpUrl.DefaultRtmpTotalReopenConnectionTimeout;       // ms
+        public String RtmpPreferredNetworkInterface = NetworkInterfaceSystemDefault;
+        public int RtmpOpenConnectionTimeout = MPUrlSourceFilter.RtmpUrl.DefaultRtmpOpenConnectionTimeout;                     // ms
+        public int RtmpOpenConnectionSleepTime = MPUrlSourceFilter.RtmpUrl.DefaultRtmpOpenConnectionSleepTime;                 // ms
+        public int RtmpTotalReopenConnectionTimeout = MPUrlSourceFilter.RtmpUrl.DefaultRtmpTotalReopenConnectionTimeout;       // ms
 
-        public String RtspPreferredNetworkInterface = OnlineVideoSettings.NetworkInterfaceSystemDefault;
-        public int RtspOpenConnectionTimeout = OnlineVideos.MPUrlSourceFilter.RtspUrl.DefaultRtspOpenConnectionTimeout;                     // ms
-        public int RtspOpenConnectionSleepTime = OnlineVideos.MPUrlSourceFilter.RtspUrl.DefaultRtspOpenConnectionSleepTime;                 // ms
-        public int RtspTotalReopenConnectionTimeout = OnlineVideos.MPUrlSourceFilter.RtspUrl.DefaultRtspTotalReopenConnectionTimeout;       // ms
+        public String RtspPreferredNetworkInterface = NetworkInterfaceSystemDefault;
+        public int RtspOpenConnectionTimeout = MPUrlSourceFilter.RtspUrl.DefaultRtspOpenConnectionTimeout;                     // ms
+        public int RtspOpenConnectionSleepTime = MPUrlSourceFilter.RtspUrl.DefaultRtspOpenConnectionSleepTime;                 // ms
+        public int RtspTotalReopenConnectionTimeout = MPUrlSourceFilter.RtspUrl.DefaultRtspTotalReopenConnectionTimeout;       // ms
 
-        public int RtspClientPortMin = OnlineVideos.MPUrlSourceFilter.RtspUrl.DefaultRtspClientPortMin;
-        public int RtspClientPortMax = OnlineVideos.MPUrlSourceFilter.RtspUrl.DefaultRtspClientPortMax;
+        public int RtspClientPortMin = MPUrlSourceFilter.RtspUrl.DefaultRtspClientPortMin;
+        public int RtspClientPortMax = MPUrlSourceFilter.RtspUrl.DefaultRtspClientPortMax;
 
-        public String UdpRtpPreferredNetworkInterface = OnlineVideoSettings.NetworkInterfaceSystemDefault;
-        public int UdpRtpOpenConnectionTimeout = OnlineVideos.MPUrlSourceFilter.UdpRtpUrl.DefaultUdpOpenConnectionTimeout;                  // ms
-        public int UdpRtpOpenConnectionSleepTime = OnlineVideos.MPUrlSourceFilter.UdpRtpUrl.DefaultUdpOpenConnectionSleepTime;              // ms
-        public int UdpRtpTotalReopenConnectionTimeout = OnlineVideos.MPUrlSourceFilter.UdpRtpUrl.DefaultUdpTotalReopenConnectionTimeout;    // ms
-        public int UdpRtpReceiveDataCheckInterval = OnlineVideos.MPUrlSourceFilter.UdpRtpUrl.DefaultUdpReceiveDataCheckInterval;            // ms
+        public String UdpRtpPreferredNetworkInterface = NetworkInterfaceSystemDefault;
+        public int UdpRtpOpenConnectionTimeout = MPUrlSourceFilter.UdpRtpUrl.DefaultUdpOpenConnectionTimeout;                  // ms
+        public int UdpRtpOpenConnectionSleepTime = MPUrlSourceFilter.UdpRtpUrl.DefaultUdpOpenConnectionSleepTime;              // ms
+        public int UdpRtpTotalReopenConnectionTimeout = MPUrlSourceFilter.UdpRtpUrl.DefaultUdpTotalReopenConnectionTimeout;    // ms
+        public int UdpRtpReceiveDataCheckInterval = MPUrlSourceFilter.UdpRtpUrl.DefaultUdpReceiveDataCheckInterval;            // ms
 
         public static readonly String NetworkInterfaceSystemDefault = "System default";
 
@@ -81,7 +81,7 @@ namespace OnlineVideos
             // set some defaults
             Locale = CultureInfo.CurrentUICulture;
             SiteSettingsList = new BindingList<SiteSettings>();
-            SiteUtilsList = new Dictionary<string, OnlineVideos.Sites.SiteUtilBase>();
+            SiteUtilsList = new Dictionary<string, SiteUtilBase>();
             LatestVideosSiteUtilsList = new List<LatestVideosSiteUtilBase>();
             VideoExtensions = new SortedList<string, bool>();
             ThumbsResizeOptions = ImageDownloader.ResizeOptions.Default;
@@ -94,46 +94,46 @@ namespace OnlineVideos
         public static void Reload()
         {
             // remember settings
-            IUserStore __UserStore = Instance.UserStore;
-            IFavoritesDatabase __FavDB = Instance.FavDB;
-            ILog __Logger = Instance.Logger;
-            ImageDownloader.ResizeOptions __ThumbsResizeOptions = Instance.ThumbsResizeOptions;
-            string __ConfigDir = Instance.ConfigDir;
-            string __ThumbsDir = Instance.ThumbsDir;
-            string __DownloadDir = Instance.DownloadDir;
-            string __DllsDir = Instance.DllsDir;
-            string __UserAgent = Instance.UserAgent;
-            string __SitesFileName = Instance.SitesFileName;
-            bool __UseAgeConfirmation = Instance.UseAgeConfirmation;
-            bool __AgeConfirmed = Instance.AgeConfirmed;
-            int __CacheTimeout = Instance.CacheTimeout;
-            int __UtilTimeout = Instance.UtilTimeout;
-            int __DynamicCategoryTimeout = Instance.DynamicCategoryTimeout;
-            CultureInfo __Locale = Instance.Locale;
-            SortedList<string, bool> __VideoExtensions = Instance.VideoExtensions;
-            bool __FavoritesFirst = Instance.FavoritesFirst;
+            IUserStore userStore = Instance.UserStore;
+            IFavoritesDatabase favDb = Instance.FavDB;
+            ILog logger = Instance.Logger;
+            ImageDownloader.ResizeOptions thumbsResizeOptions = Instance.ThumbsResizeOptions;
+            string configDir = Instance.ConfigDir;
+            string thumbsDir = Instance.ThumbsDir;
+            string downloadDir = Instance.DownloadDir;
+            string dllsDir = Instance.DllsDir;
+            string userAgent = Instance.UserAgent;
+            string sitesFileName = Instance.SitesFileName;
+            bool useAgeConfirmation = Instance.UseAgeConfirmation;
+            bool ageConfirmed = Instance.AgeConfirmed;
+            int cacheTimeout = Instance.CacheTimeout;
+            int utilTimeout = Instance.UtilTimeout;
+            int dynamicCategoryTimeout = Instance.DynamicCategoryTimeout;
+            CultureInfo locale = Instance.Locale;
+            SortedList<string, bool> videoExtensions = Instance.VideoExtensions;
+            bool favoritesFirst = Instance.FavoritesFirst;
             // reload domain and create new instance
             OnlineVideosAppDomain.Reload();
             var newInstance = Instance;
             // set remembered settings
-            newInstance.UserStore = __UserStore;
-            newInstance.FavDB = __FavDB;
-            newInstance.Logger = __Logger;
-            newInstance.ThumbsResizeOptions = __ThumbsResizeOptions;
-            newInstance.ConfigDir = __ConfigDir;
-            newInstance.ThumbsDir = __ThumbsDir;
-            newInstance.DownloadDir = __DownloadDir;
-            newInstance.DllsDir = __DllsDir;
-            newInstance.UserAgent = __UserAgent;
-            newInstance.SitesFileName = __SitesFileName;
-            newInstance.UseAgeConfirmation = __UseAgeConfirmation;
-            newInstance.AgeConfirmed = __AgeConfirmed;
-            newInstance.CacheTimeout = __CacheTimeout;
-            newInstance.UtilTimeout = __UtilTimeout;
-            newInstance.DynamicCategoryTimeout = __DynamicCategoryTimeout;
-            newInstance.Locale = __Locale;
-            newInstance.VideoExtensions = __VideoExtensions;
-            newInstance.FavoritesFirst = __FavoritesFirst;
+            newInstance.UserStore = userStore;
+            newInstance.FavDB = favDb;
+            newInstance.Logger = logger;
+            newInstance.ThumbsResizeOptions = thumbsResizeOptions;
+            newInstance.ConfigDir = configDir;
+            newInstance.ThumbsDir = thumbsDir;
+            newInstance.DownloadDir = downloadDir;
+            newInstance.DllsDir = dllsDir;
+            newInstance.UserAgent = userAgent;
+            newInstance.SitesFileName = sitesFileName;
+            newInstance.UseAgeConfirmation = useAgeConfirmation;
+            newInstance.AgeConfirmed = ageConfirmed;
+            newInstance.CacheTimeout = cacheTimeout;
+            newInstance.UtilTimeout = utilTimeout;
+            newInstance.DynamicCategoryTimeout = dynamicCategoryTimeout;
+            newInstance.Locale = locale;
+            newInstance.VideoExtensions = videoExtensions;
+            newInstance.FavoritesFirst = favoritesFirst;
             // load Sites Xml
             newInstance.LoadSites();
         }
@@ -184,7 +184,7 @@ namespace OnlineVideos
                 // only need enabled sites
                 if (siteSettings.IsEnabled)
                 {
-                    Sites.SiteUtilBase siteutil = SiteUtilFactory.CreateFromShortName(siteSettings.UtilName, siteSettings);
+                    SiteUtilBase siteutil = SiteUtilFactory.CreateFromShortName(siteSettings.UtilName, siteSettings);
                     if (siteutil != null && !SiteUtilsList.ContainsKey(siteSettings.Name)) SiteUtilsList.Add(siteSettings.Name, siteutil);
                     if (siteutil is LatestVideosSiteUtilBase) LatestVideosSiteUtilsList.Add(siteutil as LatestVideosSiteUtilBase);
                 }
@@ -210,7 +210,7 @@ namespace OnlineVideos
             if (FavDB != null)
             {
                 //create a favorites site
-                SiteSettings aSite = new SiteSettings()
+                SiteSettings aSite = new SiteSettings
                 {
                     Name = Translation.Instance.Favourites,
                     UtilName = "Favorite",
@@ -225,7 +225,7 @@ namespace OnlineVideos
             if (!String.IsNullOrEmpty(DownloadDir))
             {
                 //add a downloaded videos site
-                SiteSettings aSite = new SiteSettings()
+                SiteSettings aSite = new SiteSettings
                 {
                     Name = Translation.Instance.DownloadedVideos,
                     UtilName = "DownloadedVideo",
@@ -242,7 +242,7 @@ namespace OnlineVideos
             {
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    new SerializableSettings() { Sites = SiteSettingsList }.Serialize(ms);
+                    new SerializableSettings { Sites = SiteSettingsList }.Serialize(ms);
                     if (ms.Length > 0)
                     {
                         ms.Position = 0;

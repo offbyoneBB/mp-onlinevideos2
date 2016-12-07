@@ -7,14 +7,16 @@ namespace OnlineVideos
     /// Exception that can be used by SiteUtils to show explicit error messages to the user when methods executed in background fail.
     /// The <see cref="Message"/> of this <see cref="Exception"/> will be presented to the user.
     /// </summary>
-	[Serializable]
+    [Serializable]
     public class OnlineVideosException : Exception
     {
-		public OnlineVideosException() : base() { }
-		
-		protected OnlineVideosException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+        public OnlineVideosException()
+        { }
 
-        public OnlineVideosException(string message) : base(message) 
+        protected OnlineVideosException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+
+        public OnlineVideosException(string message)
+            : base(message)
         {
             ShowCurrentTaskDescription = true;
         }
