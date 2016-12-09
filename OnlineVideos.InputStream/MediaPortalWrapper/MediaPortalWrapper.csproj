@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\KodiAddon\bin\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -53,10 +53,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MediaPortal.Common, Version=2.16.10.8139, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\MediaPortal.Common.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
@@ -89,6 +85,10 @@
     <Compile Include="Settings\Settings.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\OnlineVideos\OnlineVideos.csproj">
+      <Project>{e0d9d390-cdd6-4b98-86f3-6eb04a958882}</Project>
+      <Name>OnlineVideos</Name>
+    </ProjectReference>
     <ProjectReference Include="..\libKODI_inputstream_cli\libKODI_inputstream_cli.vcxproj">
       <Project>{0aecc8d5-6010-4733-85dc-844becaabc41}</Project>
       <Name>libKODI_inputstream_cli</Name>

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using MediaPortal.Common;
-using MediaPortal.Common.PathManager;
 using MediaPortalWrapper.NativeWrappers;
 using MediaPortalWrapper.Streams;
 using MediaPortalWrapper.Utils;
@@ -87,7 +85,7 @@ namespace MediaPortalWrapper
       _addonFunctions = _wrapper.Addon;
 
       // The path contains 2 dummy folders, because the InputStream.mpd plugin creates the cdm folder 2 levels higher.
-      string profileFolder = ServiceRegistration.Get<IPathManager>().GetPath(string.Format("<DATA>\\OnlineVideos\\InputStream\\addons\\{0}\\", addonName));
+      string profileFolder = Path.Combine(Path.GetDirectoryName(OnlineVideos.OnlineVideoSettings.Instance.DllsDir), string.Format("InputStream\\addons\\{0}\\", addonName));
       if (!Directory.Exists(profileFolder))
         Directory.CreateDirectory(profileFolder);
 

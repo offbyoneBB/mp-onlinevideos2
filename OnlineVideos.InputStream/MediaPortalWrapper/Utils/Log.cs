@@ -1,6 +1,4 @@
 ﻿//#define TRACE_LOG
-using MediaPortal.Common;
-using MediaPortal.Common.Logging;
 
 namespace MediaPortalWrapper.Utils
 {
@@ -8,18 +6,18 @@ namespace MediaPortalWrapper.Utils
   {
     public static void Info(string format, params object[] args)
     {
-      ServiceRegistration.Get<ILogger>().Info(format, args);
+      OnlineVideos.Log.Info(format, args);
     }
     public static void Log(int logLevel, string format, params object[] args)
     {
       if (logLevel == 0)
-        ServiceRegistration.Get<ILogger>().Debug(format, args);
+        OnlineVideos.Log.Debug(format, args);
       if (logLevel == 1)
-        ServiceRegistration.Get<ILogger>().Info(format, args);
+        OnlineVideos.Log.Info(format, args);
       if (logLevel == 2)
-        ServiceRegistration.Get<ILogger>().Warn(format, args);
+        OnlineVideos.Log.Warn(format, args);
       if (logLevel == 3)
-        ServiceRegistration.Get<ILogger>().Error(format, args);
+        OnlineVideos.Log.Error(format, args);
     }
 
     /// <summary>
@@ -28,7 +26,7 @@ namespace MediaPortalWrapper.Utils
     public static void Log(string format, params object[] args)
     {
 #if TRACE_LOG
-      ServiceRegistration.Get<ILogger>().Debug(format, args);
+      OnlineVideos.Log.Debug(format, args);
 #endif
     }
   }
