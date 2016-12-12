@@ -1,11 +1,11 @@
-﻿using System;
-using System.Linq;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text.RegularExpressions;
-using System.Xml;
 using System.Web;
-using Newtonsoft.Json.Linq;
+using System.Xml;
 
 namespace OnlineVideos.Sites
 {
@@ -201,6 +201,8 @@ namespace OnlineVideos.Sites
                     video.SubtitleUrl = v["sami_path"].Value<string>();
                 if (string.IsNullOrEmpty(video.SubtitleUrl) && v["subtitles_for_hearing_impaired"] != null)
                     video.SubtitleUrl = v["subtitles_for_hearing_impaired"].Value<string>();
+                if (string.IsNullOrEmpty(video.SubtitleUrl) && v["subtitles_webvtt"] != null)
+                    video.SubtitleUrl = v["subtitles_webvtt"].Value<string>();
                 video.VideoUrl = v["_links"]["stream"]["href"].Value<string>();
                 string desc = "";
                 if (v["summary"] != null)
@@ -329,31 +331,76 @@ namespace OnlineVideos.Sites
             string srt = string.Empty;
             try
             {
-                XmlDocument xDoc = GetWebData<XmlDocument>(url, encoding: System.Text.Encoding.UTF8);
-                string srtFormat = "{0}\r\n{1}0 --> {2}0\r\n{3}\r\n";
-                string begin;
-                string end;
-                string text;
-                string textPart;
-                string line;
-                foreach (XmlElement p in xDoc.GetElementsByTagName("Subtitle"))
+                if (url.EndsWith(".xml"))
                 {
-                    text = string.Empty;
-                    begin = p.GetAttribute("TimeIn");
-                    end = p.GetAttribute("TimeOut");
-                    line = p.GetAttribute("SpotNumber");
-                    XmlNodeList textNodes = p.SelectNodes(".//text()");
-                    foreach (XmlNode textNode in textNodes)
+                    XmlDocument xDoc = GetWebData<XmlDocument>(url, encoding: System.Text.Encoding.UTF8);
+                    string srtFormat = "{0}\r\n{1}0 --> {2}0\r\n{3}\r\n";
+                    string begin;
+                    string end;
+                    string text;
+                    string textPart;
+                    string line;
+                    foreach (XmlElement p in xDoc.GetElementsByTagName("Subtitle"))
                     {
-                        textPart = textNode.InnerText;
-                        textPart.Trim();
-                        text += string.IsNullOrEmpty(textPart) ? "" : textPart + "\r\n";
+                        text = string.Empty;
+                        begin = p.GetAttribute("TimeIn");
+                        end = p.GetAttribute("TimeOut");
+                        line = p.GetAttribute("SpotNumber");
+                        XmlNodeList textNodes = p.SelectNodes(".//text()");
+                        foreach (XmlNode textNode in textNodes)
+                        {
+                            textPart = textNode.InnerText;
+                            textPart.Trim();
+                            text += string.IsNullOrEmpty(textPart) ? "" : textPart + "\r\n";
+                        }
+                        srt += string.Format(srtFormat, line, ReplaceLastOccurrence(begin, ":", ",").Substring(0, begin.Length - 1), ReplaceLastOccurrence(end, ":", ",").Substring(0, begin.Length - 1), text);
                     }
-                    srt += string.Format(srtFormat, line, ReplaceLastOccurrence(begin, ":", ",").Substring(0, begin.Length - 1), ReplaceLastOccurrence(end, ":", ",").Substring(0, begin.Length - 1), text);
+                }
+                else if (url.EndsWith(".vtt"))
+                {
+                    srt = GetWebData(url, encoding: System.Text.Encoding.UTF8, forceUTF8: true);
+                    Regex rgx;
+                    //Remove WEBVTT stuff
+                    rgx = new Regex(@"WEBVTT");
+                    srt = rgx.Replace(srt, new MatchEvaluator((Match m) =>
+                    {
+                        return string.Empty;
+                    }));
+                    //X-TIMESTAMP...
+                    rgx = new Regex(@"X-TIMESTAMP.*$", RegexOptions.Multiline);
+                    srt = rgx.Replace(srt, new MatchEvaluator((Match m) =>
+                    {
+                        return string.Empty;
+                    }));
+                    //Add hours
+                    rgx = new Regex(@"(\d\d:\d\d\.\d\d\d)\s*-->\s*(\d\d:\d\d\.\d\d\d).*?\n", RegexOptions.Multiline);
+                    srt = rgx.Replace(srt, new MatchEvaluator((Match m) =>
+                    {
+                        return "00:" + m.Groups[1].Value + " --> 00:" + m.Groups[2].Value + "\n";
+                    }));
+                    // Remove all trailing stuff, ie in 00:45:21.960 --> 00:45:25.400 A:end L:82%
+                    rgx = new Regex(@"(\d\d:\d\d:\d\d\.\d\d\d)\s*-->\s*(\d\d:\d\d:\d\d\.\d\d\d).*\n", RegexOptions.Multiline);
+                    srt = rgx.Replace(srt, new MatchEvaluator((Match m) =>
+                    {
+                        return m.Groups[1].Value + " --> " + m.Groups[2].Value + "\n";
+                    }));
+
+                    //Remove all tags
+                    rgx = new Regex(@"</{0,1}[^>]+>");
+                    srt = rgx.Replace(srt, string.Empty);
+                    //Add index
+                    rgx = new Regex(@"(?<time>\d\d:\d\d:\d\d\.\d\d\d\s*?-->\s*?\d\d:\d\d:\d\d\.\d\d\d)");
+                    int i = 0;
+                    foreach (Match m in rgx.Matches(srt))
+                    {
+                        i++;
+                        string time = m.Groups["time"].Value;
+                        srt = srt.Replace(time, i + "\n" + time);
+                    }
                 }
             }
             catch { }
-            return srt;
+            return srt.Trim();
         }
 
         private string ReplaceLastOccurrence(string Source, string Find, string Replace)
