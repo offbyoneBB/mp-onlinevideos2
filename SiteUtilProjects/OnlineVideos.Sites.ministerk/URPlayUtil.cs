@@ -302,7 +302,7 @@ namespace OnlineVideos.Sites
 
         private string GetSubtitle(JObject json, string language = null)
         {
-            JArray subtitles = (JArray)json["tracks"];
+            JArray subtitles = (JArray)json["subtitles"];
             JToken subtitle = null;
             string srt = string.Empty;
             if (language != null)
@@ -319,31 +319,44 @@ namespace OnlineVideos.Sites
             }
             if (subtitle != null)
             {
-                XmlDocument xDoc = GetWebData<XmlDocument>(subtitle["file"].Value<string>());
-                XmlNodeList errorElements = xDoc.SelectNodes("//meta[@name = 'error']");
-                if (errorElements == null || errorElements.Count <= 0)
+                string subUrl = subtitle["file"].Value<string>();
+                if (subUrl.StartsWith("//")) subUrl = "http:" + subUrl;
+                srt = GetWebData(subUrl);
+                
+                Regex rgx;
+                //Remove WEBVTT stuff
+                rgx = new Regex(@"WEBVTT");
+                srt = rgx.Replace(srt, new MatchEvaluator((Match m) =>
                 {
-                    string srtFormat = "{0}\r\n{1}0 --> {2}0\r\n{3}\r\n\r\n";
-                    string begin;
-                    string end;
-                    string text;
-                    string textPart;
-                    int line = 1;
-                    foreach (XmlElement p in xDoc.GetElementsByTagName("p"))
-                    {
-                        text = string.Empty;
-                        begin = p.GetAttribute("begin");
-                        end = p.GetAttribute("end");
-                        XmlNodeList textNodes = p.SelectNodes(".//text()");
-                        foreach (XmlNode textNode in textNodes)
-                        {
-                            textPart = textNode.InnerText;
-                            textPart.Trim();
-                            text += string.IsNullOrEmpty(textPart) ? "" : textPart + "\r\n";
-                        }
-                        srt += string.Format(srtFormat, line++, begin, end, text);
-                    }
+                    return string.Empty;
+                }));
+
+                //Add hours
+                rgx = new Regex(@"(\d\d:\d\d\.\d\d\d)\s*-->\s*(\d\d:\d\d\.\d\d\d).*?\n", RegexOptions.Multiline);
+                srt = rgx.Replace(srt, new MatchEvaluator((Match m) =>
+                {
+                    return "00:" + m.Groups[1].Value + " --> 00:" + m.Groups[2].Value + "\n";
+                }));
+                // Remove all trailing stuff, ie in 00:45:21.960 --> 00:45:25.400 A:end L:82%
+                rgx = new Regex(@"(\d\d:\d\d:\d\d\.\d\d\d)\s*-->\s*(\d\d:\d\d:\d\d\.\d\d\d).*\n", RegexOptions.Multiline);
+                srt = rgx.Replace(srt, new MatchEvaluator((Match m) =>
+                {
+                    return m.Groups[1].Value + " --> " + m.Groups[2].Value + "\n";
+                }));
+
+                //Remove all tags
+                rgx = new Regex(@"</{0,1}[^>]+>");
+                srt = rgx.Replace(srt, string.Empty);
+                //Add index
+                rgx = new Regex(@"(?<time>\d\d:\d\d:\d\d\.\d\d\d\s*?-->\s*?\d\d:\d\d:\d\d\.\d\d\d)");
+                int i = 0;
+                foreach (Match m in rgx.Matches(srt))
+                {
+                    i++;
+                    string time = m.Groups["time"].Value;
+                    srt = srt.Replace(time, i + "\n" + time);
                 }
+                srt = HttpUtility.HtmlDecode(srt).Trim();
             }
             return srt;
         }
@@ -363,7 +376,7 @@ namespace OnlineVideos.Sites
                 if (m != null)
                 {
                     var json = JObject.Parse(m.Groups[1].Value);
-                    JArray subtitles = (JArray)json["tracks"];
+                    JArray subtitles = (JArray)json["subtitles"];
                     if (subtitles != null && subtitles.Count() > 0)
                     {
                         ContextMenuEntry textningssprak = new ContextMenuEntry();
@@ -373,10 +386,10 @@ namespace OnlineVideos.Sites
                         ContextMenuEntry entry = new ContextMenuEntry();
                         entry.DisplayText = string.Format(_ingenTextning);
                         textningssprak.SubEntries.Add(entry);
-                        foreach (JToken subtitle in subtitles)
+                        foreach (JToken subtitle in subtitles.Where(s => s["label"] != null))
                         {
                             entry = new ContextMenuEntry();
-                            entry.DisplayText = string.Format(subtitle["label"].Value<string>());
+                            entry.DisplayText = subtitle["label"].Value<string>();
                             textningssprak.SubEntries.Add(entry);
                         }
                         entries.Add(textningssprak);
