@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using OnlineVideos.Sites;
-using OnlineVideos.Sites.Entities;
+﻿using OnlineVideos.Sites.Entities;
+using System;
 using System.Windows.Forms;
-using System.Web;
-using System.Threading;
-using OnlineVideos.Helpers;
-using OnlineVideos.Sites.Properties;
-using System.Drawing;
 
 
 
@@ -29,7 +20,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         protected State _currentState = State.None;
         protected string _username;
         protected string _password;
-        protected string _videoToPlay;
         protected bool _showLoading = false;
 
         public abstract string BaseUrl { get; }
@@ -57,10 +47,9 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             MessageHandler.Info("videoToPlay: {0}", videoToPlay);
             ProcessComplete.Finished = false;
             ProcessComplete.Success = false;
-            _videoToPlay = videoToPlay;
+            _currentState = State.StartPlaying;
             Uri uri = new Uri(BaseUrl + videoToPlay);
             Url = uri.GetLeftPart(UriPartial.Path);
-            _currentState = State.StartPlaying;
             return EventResult.Complete();
         }
 
@@ -87,7 +76,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     ProcessComplete.Success = true;
                     break;
                 case State.StartPlaying:
-                    InvokeScript(Properties.Resources.ViaplayPlayMovieJs + "__url = '" + _videoToPlay + "'; setTimeout(\"myPlay()\", 1000);");
+                    InvokeScript(Properties.Resources.ViaplayPlayMovieJs + " setTimeout(\"myPlay()\", 1000);");
                     if (Url.Contains("/player"))
                     {
                         ProcessComplete.Finished = true;
