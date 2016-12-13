@@ -279,10 +279,9 @@ namespace OnlineVideos.Sites
                 playstr += "&hdcore=3.3.0" + "&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12);
             }
 
-            if (!string.IsNullOrEmpty(video.SubtitleUrl))
+            if (!string.IsNullOrEmpty(video.SubtitleUrl) && string.IsNullOrEmpty(video.SubtitleText))
             {
                 video.SubtitleText = GetSubtitle(video.SubtitleUrl);
-                video.SubtitleUrl = "";
             }
             return playstr;
         }
