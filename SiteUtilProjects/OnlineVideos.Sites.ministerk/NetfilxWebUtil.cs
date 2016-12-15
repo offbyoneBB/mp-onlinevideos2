@@ -140,7 +140,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     else
                         i18n.Add("Subgenres", "Subgenres");
 
-                    rgx = new Regex(@"""tab.trailers.only"":""(?<val>[^""]*)");
+                    rgx = new Regex(@"""tab.trailers"":""(?<val>[^""]*)");
                     m = rgx.Match(data);
                     if (m.Success)
                         i18n.Add("Trailers", m.Groups["val"].Value.Trim());
@@ -154,21 +154,21 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     else
                         i18n.Add("Details", "Details");
 
-                    rgx = new Regex(@"""details.creator"":""(?<val>[^""]*)");
+                    rgx = new Regex(@"""details.creator"":""[^""]*\{(?<val>[^\}]+?)\}\}");
                     m = rgx.Match(data);
                     if (m.Success)
                         i18n.Add("Creator", m.Groups["val"].Value.Trim());
                     else
                         i18n.Add("Creator", "Creator");
 
-                    rgx = new Regex(@"""details.director"":""(?<val>[^""]*)");
+                    rgx = new Regex(@"""details.director"":""[^""]*\{(?<val>[^\}]+?)\}\}");
                     m = rgx.Match(data);
                     if (m.Success)
                         i18n.Add("Director", m.Groups["val"].Value.Trim());
                     else
                         i18n.Add("Director", "Director");
 
-                    rgx = new Regex(@"""details.cast"":""(?<val>[^""]*)");
+                    rgx = new Regex(@"""details.cast"":""[^""]*\{(?<val>[^\}]+?)\}\}");
                     m = rgx.Match(data);
                     if (m.Success)
                         i18n.Add("Cast", m.Groups["val"].Value.Trim());
@@ -841,20 +841,25 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             JObject json;
             if (getSubGenres)
             {
-                Category subgenreCat = new Category() { Name = Translate("Subgenres"), SubCategories = new List<Category>(), ParentCategory = parentCategory, HasSubCategories = true, SubCategoriesDiscovered = true };
-                data = GetPathData(@"{""paths"":[[""genres""," + id + @",""subgenres"",{""from"":0,""to"":20},""summary""]],""authURL"":""" + LatestAuthUrl + @"""}");
-                json = (JObject)JsonConvert.DeserializeObject(data);
-                foreach (JToken token in json["value"]["genres"].Where(t => t.Values().Count() > 1 && t.First()["summary"] != null))
+                try
                 {
-                    JToken summary = token.First()["summary"];
-                    RssLink subCat = new RssLink() { Name = summary["menuName"].Value<string>(), Url = summary["id"].Value<UInt32>().ToString(), HasSubCategories = true, ParentCategory = subgenreCat };
-                    subCat.Other = (Func<List<Category>>)(() => GetSubCategories(subCat, categoryType, 0));
-                    subgenreCat.SubCategories.Add(subCat);
+                    Category subgenreCat = new Category() { Name = Translate("Subgenres"), SubCategories = new List<Category>(), ParentCategory = parentCategory, HasSubCategories = true, SubCategoriesDiscovered = true };
+                    data = GetPathData(@"{""paths"":[[""genres""," + id + @",""subgenres"",{""from"":0,""to"":20},[""id"", ""name""]]],""authURL"":""" + LatestAuthUrl + @"""}");
+                    json = (JObject)JsonConvert.DeserializeObject(data);
+                    foreach (JToken token in json["value"]["genres"][id]["subgenres"].Where(t => t.Values().Count() > 1 && t.First()["name"] != null && t.First()["name"].Type == JTokenType.String))
+                    {
+                        JToken subgenre = token.First();
+                        RssLink subCat = new RssLink() { Name = subgenre["name"].Value<string>(), Url = subgenre["id"].Value<UInt32>().ToString(), HasSubCategories = true, ParentCategory = subgenreCat };
+                        subCat.Other = (Func<List<Category>>)(() => GetSubCategories(subCat, categoryType, 0));
+                        subgenreCat.SubCategories.Add(subCat);
+                    }
+                    if (subgenreCat.SubCategories.Count > 0)
+                    {
+                        cats.Add(subgenreCat);
+                    }
                 }
-                if (subgenreCat.SubCategories.Count > 0)
-                {
-                    cats.Add(subgenreCat);
-                }
+                catch
+                { }
             }
 
             data = GetPathData(@"{""paths"":[[""" + categoryType + @"""," + id + @",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},[""summary"",""title"",""synopsis"",""queue"",""userRating"",""runtime"",""releaseYear""]],[""" + categoryType + @"""," + id + @",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},""boxarts"",""_342x192"",""jpg""]],""authURL"":""" + LatestAuthUrl + @"""}");
