@@ -2,13 +2,10 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OnlineVideos.Sites.Utils;
-using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
@@ -17,6 +14,12 @@ namespace OnlineVideos.Sites
 {
     public class DrakenFilmUtil : LatestVideosSiteUtilBase
     {
+
+        public class DrakenVideo : VideoInfo
+        {
+            public string Director { get; set; }
+        }
+
         #region Configuration
 
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("E-post"), Description("Skriv in din e-postadress.")]
@@ -49,109 +52,65 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
-            Category filmer = new Category() { Name = "Filmer", HasSubCategories = true, SubCategoriesDiscovered = true, SubCategories = new List<Category>() };
-            RssLink allaFilmer = new RssLink() { Name = "Alla filmer", HasSubCategories = false, Url = "https://www.drakenfilm.se/site/type/film?site_fulltext=&page={0}", ParentCategory = filmer };
-            filmer.SubCategories.Add(allaFilmer);
-            RssLink genre = new RssLink() { Name = "Genre", HasSubCategories = true, Url = "genre", ParentCategory = filmer };
-            filmer.SubCategories.Add(genre);
-            RssLink tags = new RssLink() { Name = "Nyckelord", HasSubCategories = true, Url = "tags", ParentCategory = filmer };
-            filmer.SubCategories.Add(tags);
-            RssLink year = new RssLink() { Name = "Festivalår", HasSubCategories = true, Url = "year", ParentCategory = filmer };
-            filmer.SubCategories.Add(year);
-            RssLink country = new RssLink() { Name = "Land", HasSubCategories = true, Url = "country-of-origin", ParentCategory = filmer };
-            filmer.SubCategories.Add(country);
-            RssLink language = new RssLink() { Name = "Språk", HasSubCategories = true, Url = "spoken-language", ParentCategory = filmer };
-            filmer.SubCategories.Add(language);
-            RssLink director = new RssLink() { Name = "Regissör", HasSubCategories = true, Url = "director", ParentCategory = filmer };
-            filmer.SubCategories.Add(director);
-            Settings.Categories.Add(filmer);
-            Settings.Categories.Add(new RssLink() { Name = "Mest sedda", Url = "https://www.drakenfilm.se/filmer/mest-sedda?page={0}" });
-            Settings.Categories.Add(new RssLink() { Name = "Nytt på Draken Film", Url = "https://www.drakenfilm.se/filmer/nytt-pa-draken?page={0}" });
-            Settings.Categories.Add(new RssLink() { Name = "Film Väst", Url = "https://www.drakenfilm.se/films/film-vast?page={0}" });
-            Settings.Categories.Add(new RssLink() { Name = "A-Ö", Url = "https://www.drakenfilm.se/filmer/a-o" });
+            Settings.Categories.Add(new RssLink() { Name = "Filmer A-Ö", Url = "https://www.drakenfilm.se/films?size=1024" });
+            Settings.Categories.Add(new RssLink() { Name = "Regisörer", Url = "https://www.drakenfilm.se/films?size=1024", HasSubCategories = true });
+            Settings.Categories.Add(new RssLink() { Name = "Årtal", Url = "https://www.drakenfilm.se/films?size=1024", HasSubCategories = true });
+            Settings.Categories.Add(new RssLink() { Name = "Nytt på Draken Film", Url = "https://www.drakenfilm.se/films?size=20" });
             Settings.DynamicCategoriesDiscovered = true;
-            return 5;
+            return 4;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            string type = (parentCategory as RssLink).Url;
-            HtmlDocument doc = ExtendedWebCache.Instance.GetWebData<HtmlDocument>("https://www.drakenfilm.se/site/type/film");
-            List<Category> cats = new List<Category>();
-            foreach (HtmlNode item in doc.DocumentNode.SelectNodes("//ul[contains(@id,'-" + type + "')]/li/a"))
+            parentCategory.SubCategories = new List<Category>();
+            List<DrakenVideo> videos = GetVideos((parentCategory as RssLink).Url);
+            if (parentCategory.Name == "Regisörer")
+                videos = videos.OrderBy(v => v.Director).ToList();
+            if (parentCategory.Name == "Årtal")
+                videos = videos.OrderByDescending(v => int.Parse(v.Airdate)).ToList();
+            string currentName = "";
+            foreach(DrakenVideo video in videos)
             {
-                RssLink cat = new RssLink() { ParentCategory = parentCategory };
-                cat.Url = "https://www.drakenfilm.se" + item.GetAttributeValue("href", "") + "?site_fulltext=&page={0}";
-                cat.Name = HttpUtility.HtmlDecode(item.SelectSingleNode("text()").InnerText.Trim());
-                Regex rgx = new Regex(@"\((?<count>\d+?)\)");
-                Match m = rgx.Match(cat.Name);
-                if (m.Success)
+                string name = parentCategory.Name == "Regisörer" ? video.Director : video.Airdate;
+                if (currentName != name)
                 {
-                    string count = m.Groups["count"].Value;
-                    cat.Name = cat.Name.Replace("(" + count + ")", "").Trim();
-                    uint estimatedVideoCount = 0;
-                    uint.TryParse(count, out estimatedVideoCount);
-                    cat.EstimatedVideoCount = estimatedVideoCount;
+                    currentName = name;
+                    parentCategory.SubCategories.Add(new RssLink() { Name = name, ParentCategory = parentCategory, Other = new List<VideoInfo>(), EstimatedVideoCount = 0});
                 }
-                cats.Add(cat);
+                (parentCategory.SubCategories.Last() as RssLink).EstimatedVideoCount++;
+                (parentCategory.SubCategories.Last().Other as List<VideoInfo>).Add(video);
             }
-            parentCategory.SubCategories = cats;
-            parentCategory.SubCategoriesDiscovered = cats.Count > 0;
-            return cats.Count;
+            parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
+            return parentCategory.SubCategories.Count;
         }
-
         #endregion
 
         #region Videos
 
-        private string currentUrl = "";
-        private int currentPage = 0;
-        private List<VideoInfo> GetVideos(string url)
+        private List<DrakenVideo> GetVideos(string url)
         {
             string data = ExtendedWebCache.Instance.GetWebData(url);
-            List<VideoInfo> videos = new List<VideoInfo>();
-            Regex rgx = new Regex(@"foaf:Image"" src=""(?<thumb>[^""]*).*?<h4>(?<title>[^<]*).*?field__item even"">(?<description>[^<]*).*?<a href=""(?<url>/film/[^""]*)", RegexOptions.Singleline);
+            List<DrakenVideo> videos = new List<DrakenVideo>();
+            Regex rgx = new Regex(@"<img\s*src=""(?<ImageUrl>[^""]*)(?:(?!<a\s*class=""title""\s*).)*<a\s*class=""title""\s*href=""(?<VideoUrl>/film/[^""]*)[^>]*>(?<Title>[^<]*)(?:(?!role=""button""><span>).)*role=""button""><span>(?<Director>.*?),\s(?<Airdate>\d\d\d\d)(?:(?!<span\sclass=""summary"">).)*<span\sclass=""summary"">(?<Description>[^<]*)", RegexOptions.Singleline);
             foreach (Match m in rgx.Matches(data))
             {
-                VideoInfo video = new VideoInfo() { Title = HttpUtility.HtmlDecode(m.Groups["title"].Value), Description = HttpUtility.HtmlDecode(m.Groups["description"].Value), Thumb = m.Groups["thumb"].Value, VideoUrl = "https://www.drakenfilm.se" + m.Groups["url"].Value };
+                string description = HttpUtility.HtmlDecode(m.Groups["Director"].Value) + ", " + m.Groups["Airdate"].Value + "\r\n" + HttpUtility.HtmlDecode(m.Groups["Description"].Value);
+                DrakenVideo video = new DrakenVideo() { Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value), Description = description, Thumb = m.Groups["ImageUrl"].Value, VideoUrl = "https://www.drakenfilm.se" + m.Groups["VideoUrl"].Value, Airdate = m.Groups["Airdate"].Value, Director = HttpUtility.HtmlDecode(m.Groups["Director"].Value) };
                 videos.Add(video);
             }
             return videos;
         }
 
-        public override List<VideoInfo> GetNextPageVideos()
-        {
-            currentPage++;
-            List<VideoInfo> videos = GetVideos(string.Format(currentUrl, currentPage));
-            HasNextPage = (videos.Count == 16 || videos.Count == 32);
-            return videos;
-        }
-
         public override List<VideoInfo> GetVideos(Category category)
         {
+            if (category.Other is List<VideoInfo>)
+                return category.Other as List<VideoInfo>;
             List<VideoInfo> videos = new List<VideoInfo>();
-            currentUrl = (category as RssLink).Url;
-            currentPage = 0;
-            HasNextPage = false;
-            if (category.Name == "A-Ö")
-            {
-                string data = ExtendedWebCache.Instance.GetWebData(currentUrl);
-                Regex rgx = new Regex(@"href=""(?<url>/film/[^""]*).*?>(?<title>[^<]*)");
-                foreach (Match m in rgx.Matches(data))
-                {
-                    VideoInfo video = new VideoInfo() { Title = HttpUtility.HtmlDecode(m.Groups["title"].Value), VideoUrl = "https://www.drakenfilm.se" + m.Groups["url"].Value };
-                    videos.Add(video);
-                }
-            }
-            else if (currentUrl.EndsWith("{0}"))
-            {
-                videos = GetVideos(string.Format(currentUrl, currentPage));
-                HasNextPage = (videos.Count == 16 || videos.Count == 32);
-            }
+            List<DrakenVideo> drakenVideos = GetVideos((category as RssLink).Url);
+            if (category.Name.Contains("A-Ö"))
+                videos = drakenVideos.OrderBy(v => v.Title).ToList<VideoInfo>();
             else
-            {
-
-            }
+                videos = drakenVideos.ToList<VideoInfo>();
             return videos;
         }
 
@@ -171,7 +130,11 @@ namespace OnlineVideos.Sites
                 {
                     foreach (JToken rendition in videoRenditions)
                     {
-                        video.PlaybackOptions.Add((rendition["videos"].First()["bitrate"].Value<int>() / 1000) + "kbps", rendition["links"].First()["href"].Value<string>());
+                        string key = (rendition["videos"].First()["bitrate"].Value<int>() / 1000) + "kbps";
+                        if (!video.PlaybackOptions.ContainsKey(key))
+                        {
+                            video.PlaybackOptions.Add(key, rendition["links"].First()["href"].Value<string>());
+                        }
                     }
                     if (video.PlaybackOptions.Count > 0)
                     {
@@ -239,7 +202,6 @@ namespace OnlineVideos.Sites
             return srt;
         }
 
-
         #endregion
 
         #region Search
@@ -255,10 +217,7 @@ namespace OnlineVideos.Sites
         public override List<SearchResultItem> Search(string query, string category = null)
         {
             List<SearchResultItem> result = new List<SearchResultItem>();
-            currentUrl = "https://www.drakenfilm.se/site/type/film?site_fulltext=" + HttpUtility.UrlEncode(query) + "&page={0}";
-            currentPage = 0;
-            List<VideoInfo> videos = GetVideos(string.Format(currentUrl, currentPage));
-            HasNextPage = videos.Count > 15;
+            List<DrakenVideo> videos = GetVideos("https://www.drakenfilm.se/films?size=1024&utf8=✓&button=&query=" + HttpUtility.UrlEncode(query));
             videos.ForEach(v => result.Add(v));
             return result;
         }
@@ -289,8 +248,7 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> GetLatestVideos()
         {
-            List<VideoInfo> videos = GetVideos("https://www.drakenfilm.se/filmer/nytt-pa-draken");
-            return videos.Count >= LatestVideosCount ? videos.GetRange(0, (int)LatestVideosCount) : new List<VideoInfo>();
+            return GetVideos("https://www.drakenfilm.se/films?size=" + LatestVideosCount).ToList<VideoInfo>();
         }
 
         #endregion
