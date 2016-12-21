@@ -1,9 +1,5 @@
 ﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace OnlineVideos.Sites.WebAutomation.BrowserHost
 {
@@ -20,11 +16,11 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         /// Value reference: http://msdn.microsoft.com/en-us/library/ee330730%28v=VS.85%29.aspx
         /// IDOC Reference:  http://msdn.microsoft.com/en-us/library/ms535242%28v=vs.85%29.aspx
         /// </summary>
-        /// <param name="applicationName"></param>
-        internal static void SetIEVersion()
+        /// <param name="emulationLevel">IE version level</param>
+        internal static void SetIEVersion(int emulationLevel)
         {
             var baseKey = Registry.CurrentUser.ToString();
-            var ieVersion = 10000;
+            var ieVersion = emulationLevel;
             Registry.SetValue(baseKey + BrowserKeyPath,
                                            Process.GetCurrentProcess().ProcessName + ".exe",
                                            ieVersion,

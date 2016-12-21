@@ -720,30 +720,73 @@ namespace OnlineVideos.Sites
 
         List<VideoInfo> QueryNewestSubscriptionVideos(string pageToken = null)
         {
-            var query = Service.Activities.List("snippet, contentDetails");
-            query.Home = true;
-            query.RegionCode = regionCode;
+            var query = Service.Subscriptions.List("snippet, contentDetails");
+            query.Mine = true;
             query.MaxResults = pageSize;
+            query.Order = SubscriptionsResource.ListRequest.OrderEnum.Unread;
             query.PageToken = pageToken;
-
             var response = query.Execute();
-            var results = response.Items.Where(i => i.Snippet.Type == "upload").Select(i => new YouTubeVideo()
+            var results = new List<VideoInfo>();
+
+            foreach (var channel in response.Items)
             {
-                Title = i.Snippet.Title,
-                Description = i.Snippet.Description,
-                Thumb = i.Snippet.Thumbnails != null ? i.Snippet.Thumbnails.High.Url : null,
-                Airdate = i.Snippet.PublishedAt != null ? i.Snippet.PublishedAt.Value.ToString("g", OnlineVideoSettings.Instance.Locale) : i.Snippet.PublishedAtRaw,
-                VideoUrl = i.ContentDetails.Upload.VideoId,
-                ChannelId = i.Snippet.ChannelId,
-                ChannelTitle = i.Snippet.ChannelTitle
-            }).ToList<VideoInfo>();
+                results.AddRange(GetNewestSubscriptionVideos(channel.Snippet.ResourceId.ChannelId, channel.ContentDetails.NewItemCount));
+            }
 
             if (!string.IsNullOrEmpty(response.NextPageToken))
             {
                 base.HasNextPage = true;
                 nextPageVideosQuery = () => QueryNewestSubscriptionVideos(response.NextPageToken);
             }
-            return results;
+            return results.OrderByDescending(x => x.Airdate).ToList();
+        }
+
+        public List<VideoInfo> GetNewestSubscriptionVideos(string channelId, long? maxResults, string nextPageToken = null)
+        {
+            var query = Service.Search.List("snippet");
+            query.ChannelId = channelId;
+            query.MaxResults = maxResults;
+            query.Order = SearchResource.ListRequest.OrderEnum.Date;
+            query.Type = "video";
+            query.PageToken = nextPageToken;
+            var response = query.Execute();
+
+            // Collect video IDs from response for duration lookup
+            string videoIDs = "";
+
+            foreach (var item in response.Items)
+            {
+               
+                if (string.IsNullOrEmpty(videoIDs))
+                {
+                    videoIDs = item.Id.VideoId;
+                }
+                else
+                {
+                    videoIDs = videoIDs + "," + item.Id.VideoId;
+                }
+            }
+
+            // Retrieve Video durations
+            Dictionary<string, string> videoDurations = QueryVideoInfoDuration(videoIDs);
+
+            var results = response.Items.Select(i => new YouTubeVideo()
+            {
+                Title = i.Snippet.Title,
+                Description = i.Snippet.Description,
+                Thumb = i.Snippet.Thumbnails != null ? i.Snippet.Thumbnails.High.Url : null,
+                Airdate = i.Snippet.PublishedAt != null ? i.Snippet.PublishedAt.Value.ToString("g", OnlineVideoSettings.Instance.Locale) : i.Snippet.PublishedAtRaw,
+                VideoUrl = i.Id.VideoId,
+                ChannelId = i.Snippet.ChannelId,
+                ChannelTitle = i.Snippet.ChannelTitle,
+                Length = videoDurations.FirstOrDefault(x => x.Key == i.Id.VideoId).Value
+            }).ToList<VideoInfo>();
+
+            if (maxResults >= 50)
+            {
+                GetNewestSubscriptionVideos(channelId, maxResults, response.NextPageToken);
+            }
+            return results.OrderByDescending(x => x.Airdate).ToList();
         }
 
         /// <summary>Returns a list of most popular videos for the given category.</summary>

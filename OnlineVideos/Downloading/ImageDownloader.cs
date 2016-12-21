@@ -10,14 +10,14 @@ namespace OnlineVideos.Downloading
 {
     public static class ImageDownloader
     {
-		[Serializable]
+        [Serializable]
         public struct ResizeOptions
         {
             public static ResizeOptions Default
             {
                 get
                 {
-                    return new ResizeOptions()
+                    return new ResizeOptions
                     {
                         MaxSize = 500,
                         Compositing = CompositingQuality.AssumeLinear,
@@ -34,10 +34,10 @@ namespace OnlineVideos.Downloading
 
         public static bool StopDownload { get; set; }
 
-		/// <summary>
+        /// <summary>
         /// Downloads images from the <see cref="SearchResultItem.Thumb"/> in a background thread 
         /// and sets the path of the downloaded image to the <see cref="SearchResultItem.ThumbnailImage"/>.
-		/// </summary>
+        /// </summary>
         /// <typeparam name="T">must be a <see cref="SearchResultItem"/></typeparam>
         /// <param name="items">list of <see cref="SearchResultItem"/>s to download images for</param>
         public static void GetImages<T>(IList<T> items) where T : SearchResultItem
@@ -54,56 +54,56 @@ namespace OnlineVideos.Downloading
                     group.Add(items[j]);
                 }
 
-                new Thread(o => DownloadImages<T>((List<T>)o))
+                new Thread(o => DownloadImages((List<T>)o))
                 {
                     IsBackground = true,
-                    Name = "OVThumbs" + i.ToString()
+                    Name = "OVThumbs" + i
                 }.Start(group);
             }
         }
 
-		/// <summary>
+        /// <summary>
         /// Downloads images from the <see cref="SearchResultItem.Thumb"/> in the current thread
         /// and sets the path of the downloaded image to the <see cref="SearchResultItem.ThumbnailImage"/>.
-		/// </summary>
+        /// </summary>
         /// <typeparam name="T">must be a <see cref="SearchResultItem"/></typeparam>
         /// <param name="items">list of <see cref="SearchResultItem"/>s to download images for</param>
         public static void DownloadImages<T>(List<T> items) where T : SearchResultItem
-		{
-			foreach (T item in items)
-			{
-				if (StopDownload) break;
-                
+        {
+            foreach (T item in items)
+            {
+                if (StopDownload) break;
+
                 if (string.IsNullOrEmpty(item.Thumb)) continue;
 
-				foreach (string url in item.Thumb.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries))
-				{
-					string imageLocation = string.Empty;
+                foreach (string url in item.Thumb.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    string imageLocation = string.Empty;
 
-					Uri temp;
-					if (Uri.TryCreate(url, UriKind.Absolute, out temp))
-					{
-						if (temp.IsFile)
-						{
-							if (File.Exists(url)) imageLocation = url;
-						}
-						else
-						{
+                    Uri temp;
+                    if (Uri.TryCreate(url, UriKind.Absolute, out temp))
+                    {
+                        if (temp.IsFile)
+                        {
+                            if (File.Exists(url)) imageLocation = url;
+                        }
+                        else
+                        {
                             string thumbFile = string.IsNullOrEmpty(item.ThumbnailImage) ? Helpers.FileUtils.GetThumbFile(url) : item.ThumbnailImage;
-							if (File.Exists(thumbFile)) imageLocation = thumbFile;
+                            if (File.Exists(thumbFile)) imageLocation = thumbFile;
                             else if (DownloadAndCheckImage(url, thumbFile, item.ImageForcedAspectRatio)) imageLocation = thumbFile;
-						}
-					}
+                        }
+                    }
 
                     // stop with the first valid image
-					if (imageLocation != string.Empty)
-					{
+                    if (imageLocation != string.Empty)
+                    {
                         item.ThumbnailImage = imageLocation;
-						break;
-					}
-				}
-			}
-		}
+                        break;
+                    }
+                }
+            }
+        }
 
         public static bool DownloadAndCheckImage(string url, string file, float? forcedAspectRatio = null)
         {
@@ -137,9 +137,9 @@ namespace OnlineVideos.Downloading
                     if (forcedAspectRatio != null && Math.Abs(forcedAspectRatio.Value - imageAspectRatio) > 0.1) imageAspectRatio = forcedAspectRatio.Value;
 
                     if (image.Width > image.Height)
-                        iHeight = (int)Math.Floor((((float)iWidth) / imageAspectRatio));
+                        iHeight = (int)Math.Floor(iWidth / imageAspectRatio);
                     else
-                        iWidth = (int)Math.Floor((imageAspectRatio * ((float)iHeight)));
+                        iWidth = (int)Math.Floor(imageAspectRatio * iHeight);
 
                     Bitmap tmp = new Bitmap(iWidth, iHeight, image.PixelFormat);
                     using (Graphics g = Graphics.FromImage(tmp))
@@ -180,7 +180,7 @@ namespace OnlineVideos.Downloading
             try
             {
                 DateTime keepdate = DateTime.Now.AddDays(-maxAge);
-				FileInfo[] files = new DirectoryInfo(Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Cache\")).GetFiles();
+                FileInfo[] files = new DirectoryInfo(Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Cache\")).GetFiles();
                 Log.Info("Checking {0} thumbnails for age.", files.Length);
                 for (int i = 0; i < files.Length; i++)
                 {

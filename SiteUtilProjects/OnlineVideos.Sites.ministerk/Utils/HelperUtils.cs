@@ -2,38 +2,61 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites.Utils
 {
-    static class NetflixUtils
-    {
-        #region Category States
-        public static readonly string ProfilesState = "ProfilesState";
-        public static readonly string ProfileState = "ProfileState";
-        public static readonly string KidsState = "KidsState";
-        public static readonly string SinglePageCategoriesState = "SinglePageCategoriesState";
-        public static readonly string MultiplePageCategoriesState = "MultiplePageCategoriesState";
-        public static readonly string TitleState = "TitleState";
-        public static readonly string EpisodesState = "EpisodesState";
-        public static readonly string HelpState = "HelpState";
-        public static readonly string HomeCategoriesState = "HomeCategoriesState";
-
-        #endregion
-
-        #region Keys
-        public static readonly string State = "State";
-        public static readonly string PlayNow = "PlayNow";
-        public static readonly string Profile = "Profile";
-        public static readonly string TrackId = "TrackId";
-        public static readonly string StartIndex = "StartIndex";
-        public static readonly string Data = "Data";
-        public static readonly string RememberDiscoveredItems = "RememberDiscoveredItems";
-        #endregion
-
-    }
 
     class HelperUtils
     {
+        public static string AaDecode(string encoded)
+        {
+            string[] delim = new string[] { "(ﾟДﾟ)[ﾟεﾟ]+" };
+            Dictionary<string, string> symbol_table = new Dictionary<string, string>()
+            {
+                {"_", @"(ﾟДﾟ) [ﾟΘﾟ]"},
+                {"a", @"(ﾟДﾟ) [ﾟωﾟﾉ]"},
+                {"b", @"(ﾟДﾟ) [ﾟΘﾟﾉ]"},
+                {"d", @"(ﾟДﾟ) [ﾟｰﾟﾉ]"},
+                {"e", @"(ﾟДﾟ) [ﾟДﾟﾉ]"},
+                {"f", @"(ﾟДﾟ) [1]"},
+                
+                {"o", @"(ﾟДﾟ) [""o""]"},
+                {"u", @"(oﾟｰﾟo)"},
+                
+                {"7", @"((ﾟｰﾟ) + (o^_^o))"},
+                {"6", @"((o^_^o) +(o^_^o) +(c^_^o))"},
+                {"5", @"((ﾟｰﾟ) + (ﾟΘﾟ))"},
+                {"4", @"(-~3)"},
+                {"3", @"(-~-~1)"},
+                {"2", @"(-~1)"},
+                {"1", @"(-~0)"},
+                {"0", @"((c^_^o)-(c^_^o))"}
+            };
+
+            string decoded = "";
+            string[] aachars = encoded.Split(delim, StringSplitOptions.None);
+            foreach (string tmp in aachars)
+            {
+                string aachar = tmp;
+                foreach (KeyValuePair<string, string> pair in symbol_table)
+                    aachar = aachar.Replace(pair.Value, pair.Key);
+                aachar = aachar.Replace("+ ", "");
+                Regex re = new Regex(@"(?<v>^\d+)");
+                Match m = re.Match(aachar);
+                if (m.Success)
+                    decoded += (char)Convert.ToInt32(m.Groups["v"].Value, 8);
+                else
+                {
+                    re = new Regex(@"^u(?<v>[\da-f]+)");
+                    m = re.Match(aachar);
+                    if (m.Success)
+                        decoded += (char)Convert.ToInt32(m.Groups["v"].Value, 16);
+                }
+            }
+            return decoded;
+        }
+
         public static string GetRandomChars(int amount)
         {
             var random = new Random();

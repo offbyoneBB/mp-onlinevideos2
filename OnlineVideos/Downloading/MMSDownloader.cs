@@ -13,15 +13,15 @@ namespace OnlineVideos.Downloading
         }
         #endregion
 
-        bool connectionEstablished = false;
-        DownloadInfo downloadInfo;
-        System.Threading.Thread downloadThread;
+        bool _connectionEstablished = false;
+        DownloadInfo _downloadInfo;
+        System.Threading.Thread _downloadThread;
 
         long TotalFileSize
         {
             set
             {
-                if (downloadInfo != null) downloadInfo.DownloadProgressCallback(value, 0);
+                if (_downloadInfo != null) _downloadInfo.DownloadProgressCallback(value, 0);
             }
         }
 
@@ -29,7 +29,7 @@ namespace OnlineVideos.Downloading
         {
             set
             {
-                if (downloadInfo != null) downloadInfo.DownloadProgressCallback(0, value);
+                if (_downloadInfo != null) _downloadInfo.DownloadProgressCallback(0, value);
             }
         }
 
@@ -37,7 +37,7 @@ namespace OnlineVideos.Downloading
         {
             set
             {
-                if (downloadInfo != null) downloadInfo.DownloadProgressCallback(value);
+                if (_downloadInfo != null) _downloadInfo.DownloadProgressCallback(value);
             }
         }
 
@@ -48,20 +48,20 @@ namespace OnlineVideos.Downloading
         public void Abort()
         {
             Cancelled = true;
-            if (downloadThread != null) downloadThread.Abort();
+            if (_downloadThread != null) _downloadThread.Abort();
         }
 
         public Exception Download(DownloadInfo downloadInfo)
         {
-            downloadThread = System.Threading.Thread.CurrentThread;
-            this.downloadInfo = downloadInfo;
+            _downloadThread = System.Threading.Thread.CurrentThread;
+            _downloadInfo = downloadInfo;
             try
             {
                 MMSDownload(downloadInfo.Url, downloadInfo.LocalFile);
             }
             catch (Exception ex)
             {
-                if (!connectionEstablished && !Cancelled)
+                if (!_connectionEstablished && !Cancelled)
                 {
                     try
                     {
@@ -107,7 +107,7 @@ namespace OnlineVideos.Downloading
         {
             string Command = "NSPlayer/9.0.0.2980; {" + Guid.NewGuid().ToString() + "}; Host: " + @base;
             byte[] P1B1 = { 0xf0, 0xf0, 0xf0, 0xf0, 0xb, 0x0, 0x4, 0x0, 0x1c, 0x0, 0x3, 0x0 };
-            byte[] P1B2 = Pad0(System.Text.ASCIIEncoding.ASCII.GetBytes(Command), 6);
+            byte[] P1B2 = Pad0(System.Text.Encoding.ASCII.GetBytes(Command), 6);
             sd.Send(HPacket(0x1, P1B1, P1B2));
         }
 
@@ -122,14 +122,14 @@ namespace OnlineVideos.Downloading
             string Command3 = "\\\\" + sd.LocalEndPoint.ToString().Replace(":", "\\TCP\\");
             Command3 = "\\\\" + StringHereToHere(Command3, "\\\\", "\\TCP\\") + "\\TCP\\1755";
             byte[] P3B1 = { 0xf1, 0xf0, 0xf0, 0xf0, 0xff, 0xff, 0xff, 0xff, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xa0, 0x0, 0x2, 0x0, 0x0, 0x0 };
-            byte[] P3B2 = Pad0(System.Text.ASCIIEncoding.ASCII.GetBytes(Command3), 2);
+            byte[] P3B2 = Pad0(System.Text.Encoding.ASCII.GetBytes(Command3), 2);
             sd.Send(HPacket(0x2, P3B1, P3B2));
         }
 
         void RequestFile(System.Net.Sockets.Socket sd, string rest)
         {
             byte[] P4B1 = { 0x1, 0x0, 0x0, 0x0, 0xff, 0xff, 0xff, 0xff, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
-            byte[] P4B2 = Pad0(System.Text.ASCIIEncoding.ASCII.GetBytes(rest), 0);
+            byte[] P4B2 = Pad0(System.Text.Encoding.ASCII.GetBytes(rest), 0);
             sd.Send(HPacket(0x5, P4B1, P4B2));
         }
 
@@ -173,7 +173,7 @@ namespace OnlineVideos.Downloading
             int hsize = b[108] + b[109] * 256 + b[110] * 4096;
             int fsize = psize * nps + hsize;
             decimal time = (DoublePercisionHex(t) - 3.6M);
-            connectionEstablished = true;
+            _connectionEstablished = true;
             TotalFileSize = fsize;
             Log.Debug("MMSDownloader : File Size: " + fsize + "Bytes" + Environment.NewLine + "Media Length: " + time + "Seconds" + Environment.NewLine + "Packet Size: " + psize + "Bytes" + Environment.NewLine + "Header Size: " + hsize + "Bytes" + Environment.NewLine + "Number of Packets: " + nps + "Packets");
             WriteStream(sd, path, time, hsize);
@@ -219,7 +219,7 @@ namespace OnlineVideos.Downloading
             int i = 0;
             int n1 = 0;
             int cur = 0;
-            using (System.IO.FileStream fs = new System.IO.FileStream(path, System.IO.FileMode.Create, FileAccess.Write, FileShare.None))
+            using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 byte[] bs = new byte[8];
                 int p = 0;
@@ -234,7 +234,7 @@ namespace OnlineVideos.Downloading
                     //Log.Debug("MMSDownloader : Sorting Header..." + n1 + "Bytes Recieved...");
                 } while (!(Find(y.ToByteArray(), tbytes) > 0));
                 Array[] x = SortOutHeader(tbytes, n1);
-                connectionEstablished = true;
+                _connectionEstablished = true;
                 fs.Write((byte[])x[0], 0, ((byte[])x[0]).Length);
                 bs = (byte[])x[1];
                 hinfo = HexString(bs, 0, 0);
@@ -251,10 +251,10 @@ namespace OnlineVideos.Downloading
                 }
                 if (p == 0)
                     p = GetPacketLength(header);
-				Log.Debug("MMSDownloader : Packet Size: " + p + " Bytes");
+                Log.Debug("MMSDownloader : Packet Size: " + p + " Bytes");
                 if (np == 0)
                     np = GetNumberOfPackets(header);
-				Log.Debug("MMSDownloader : Total Packets to retrieve: " + np);
+                Log.Debug("MMSDownloader : Total Packets to retrieve: " + np);
                 fs.Write(header, 0, header.Length);
                 if (bs[5] == 0x4 | bs[5] == 0x8)
                 {
@@ -322,9 +322,9 @@ namespace OnlineVideos.Downloading
             int p = 0;
             int np = 0;
             long rp = 0;
-            System.IO.FileStream fs = null;
-            bool fe = System.IO.File.Exists(path);
-            fs = new System.IO.FileStream(path, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite, FileShare.None);
+            FileStream fs = null;
+            bool fe = File.Exists(path);
+            fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             byte[] P5B1 = { 0x1, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x80, 0x0, 0x0, 0xff, 0xff, 0xff, 0xff, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x20, 0xac, 0x40, 0x2, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
             byte[] rb = null;
             if (fe == true)

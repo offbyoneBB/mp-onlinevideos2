@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using OnlineVideos.AMF;
 using HtmlAgilityPack;
+using Newtonsoft.Json.Linq;
 using System.Web;
 
 namespace OnlineVideos.Sites
@@ -26,6 +28,8 @@ namespace OnlineVideos.Sites
                         subcat.Other = true;
                     }
                 }
+                if (cat.Name == "Upload")
+                    cat.Other = true;
             }
             return res;
         }
@@ -43,7 +47,8 @@ namespace OnlineVideos.Sites
                 {
                     ParentCategory = parentCategory,
                     Name = node.InnerText,
-                    HasSubCategories = parentCategory.Other == null
+                    HasSubCategories = parentCategory.Other == null,
+                    Url = ((RssLink)parentCategory).Url
                 };
                 if (!cat.HasSubCategories)
                 {
@@ -93,11 +98,42 @@ namespace OnlineVideos.Sites
             string webdata = GetWebData(url, referer: video.VideoUrl);
             Match m = regEx_FileUrl.Match(webdata);
 
-            if (!m.Success)
-                return String.Empty;
+            if (m.Success)
+            {
+                //regular gemist
+                AMFArray renditions = GetResultsFromViewerExperienceRequest(m, url);
+                return FillPlaybackOptions(video, renditions);
+            }
+            else
+            {
+                //upload and some gemist videos
+                //should have automatically redirected so not needed: to webdata = GetWebData(@"http://embed.kijk.nl/video/" + parts[parts.Length - 2]);
+                m = Regex.Match(webdata, @"""postfix"":""(?<postfix>[^""]*)""");
+                if (m.Success)
+                {
+                    webdata = GetWebData(@"http://embed.kijk.nl/api/roll/" + parts[parts.Length - 2] + m.Groups["postfix"].Value + "?");
+                    JToken data = JObject.Parse(webdata) as JToken;
+                    JArray streams = data["streams"] as JArray;
+                    video.PlaybackOptions = new Dictionary<string, string>();
+                    foreach (var stream in streams)
+                        video.PlaybackOptions.Add(stream.Value<String>("name"), stream.Value<String>("url"));
 
-            AMFArray renditions = GetResultsFromViewerExperienceRequest(m, url);
-            return FillPlaybackOptions(video, renditions);
+                    if (video.PlaybackOptions.Count == 0) return null;
+                    else
+                        if (video.PlaybackOptions.Count == 1)
+                        {
+                            string resultUrl = video.PlaybackOptions.First().Value;
+                            video.PlaybackOptions = null;// only one url found, PlaybackOptions not needed
+                            return resultUrl;
+                        }
+                        else
+                        {
+                            return video.PlaybackOptions.First().Value;
+                        }
+
+                }
+                return null;
+            }
         }
 
         private int ParseSubCategories(RssLink parentCategory, HtmlNode listNode, int startPageNr = 1)
@@ -166,7 +202,7 @@ namespace OnlineVideos.Sites
                             Thumb = FixUrl(baseUrl, getAttribute(node.SelectSingleNode(".//img[@itemprop='thumbnailUrl']"), "data-src")),
                             Description = getInnertext(node.SelectSingleNode(".//p[@itemprop='description']")),
                             Airdate = getInnertext(node.SelectSingleNode(".//div[@itemprop='datePublished']")),
-                            Length = getInnertext(node.SelectSingleNode("(.//span[@itemprop='timeRequired'])[last()]")),
+                            Length = getInnertext(node.SelectSingleNode("(.//span[@itemprop='timeRequired'])[last()]"))
                         };
                         string descr2 = getInnertext(node.SelectSingleNode(".//div[@class='desc meta']/text()"));
                         if (!String.IsNullOrEmpty(descr2))

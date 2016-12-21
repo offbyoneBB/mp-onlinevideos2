@@ -9,7 +9,9 @@ namespace OnlineVideos.Sites.Brownard.Extensions
     {
         public static string HtmlCleanup(this string s)
         {
-            return s.Replace("&amp;", "&").Replace("&pound;", "£").Replace("&hellip;", "...").Trim();
+            if (string.IsNullOrEmpty(s))
+                return "";
+            return s.Replace("&amp;", "&").Replace("&pound;", "£").Replace("&hellip;", "...").Replace("&#39;", "'").Trim();
         }
     }
 }

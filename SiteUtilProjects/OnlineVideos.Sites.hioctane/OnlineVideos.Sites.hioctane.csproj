@@ -63,7 +63,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BrUtil.cs" />
-    <Compile Include="MdrUtil.cs" />
     <Compile Include="MSNMoviesUtil.cs" />
     <Compile Include="NdrUtil.cs" />
     <Compile Include="Pro7Util.cs" />

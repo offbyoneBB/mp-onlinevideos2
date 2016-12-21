@@ -697,22 +697,20 @@ namespace OnlineVideos.Hoster
         {
             string webdata = WebCache.Instance.GetWebData(url);
             string timeToWait = Regex.Match(webdata, @"<span\sid=""countdown_str"">[^>]*>(?<time>[^<]+)</span>").Groups["time"].Value;
-            if (Convert.ToInt32(timeToWait) < 10)
+            if (String.IsNullOrEmpty(timeToWait) && webdata.Length < 50)
+                throw new OnlineVideosException(webdata);
+            int time;
+            if (Int32.TryParse(timeToWait, out time) && time < 10)
+                System.Threading.Thread.Sleep(time * 1001);
+            webdata = GetFromPost(url, webdata, false, null, new[] { "imhuman=+" });
+
+            string file = Helpers.StringUtils.GetSubString(webdata, @"file: """, @"""");
+            string streamer = Helpers.StringUtils.GetSubString(webdata, @"streamer: """, @"""");
+            RtmpUrl rtmpUrl = new RtmpUrl(streamer)
             {
-                System.Threading.Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
-
-                webdata = GetFromPost(url, webdata, false, null, new[] { "imhuman=+" });
-
-                string file = Helpers.StringUtils.GetSubString(webdata, @"file: """, @"""");
-                string streamer = Helpers.StringUtils.GetSubString(webdata, @"streamer: """, @"""");
-                RtmpUrl rtmpUrl = new RtmpUrl(streamer)
-                {
-                    PlayPath = file
-                };
-                return rtmpUrl.ToString();
-            }
-
-            return String.Empty;
+                PlayPath = file
+            };
+            return rtmpUrl.ToString();
 
         }
     }
@@ -943,14 +941,15 @@ namespace OnlineVideos.Hoster
                 postData += m.Groups["m0"].Value + "=" + m.Groups["m1"].Value;
                 m = m.NextMatch();
             }
-            if (String.IsNullOrEmpty(postData))
-                return null;
+            //if (String.IsNullOrEmpty(postData))
+            //return null;
 
             string timeToWait = Regex.Match(webData, @"<span\sid=""countdown_str"">[^>]*>(?<time>[^<]+)</span>").Groups["time"].Value;
-            if (Convert.ToInt32(timeToWait) < 10)
+            if (!String.IsNullOrEmpty(timeToWait) && Convert.ToInt32(timeToWait) < 10)
                 Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
 
-            webData = WebCache.Instance.GetWebData(url, postData);
+            if (!String.IsNullOrEmpty(postData))
+                webData = WebCache.Instance.GetWebData(url, postData);
             string packed = Helpers.StringUtils.GetSubString(webData, @"return p}", @"</script>");
             packed = packed.Replace(@"\'", @"'");
             string unpacked = Helpers.StringUtils.UnPack(packed);

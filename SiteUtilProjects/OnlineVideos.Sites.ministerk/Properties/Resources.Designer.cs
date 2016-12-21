@@ -61,29 +61,6 @@ namespace OnlineVideos.Sites.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to function __deleteAllCookiesAndStorage(rurl) {
-        ///    sessionStorage.clear();
-        ///    localStorage.clear();
-        ///    var cookies = document.cookie.split(&quot;;&quot;);
-        ///    for (var i = 0; i &lt; cookies.length; i++) {
-        ///        var cookie = cookies[i];
-        ///        var eqPos = cookie.indexOf(&quot;=&quot;);
-        ///        var name = eqPos &gt; -1 ? cookie.substr(0, eqPos) : cookie;
-        ///        document.cookie = name + &quot;=;expires=Thu, 01 Jan 1970 00:00:00 GMT&quot;;
-        ///    }
-        ///    window.location.href = rurl;
-        ///}
-        ///
-        ///function __login(u, p, rurl) {
-        ///    var linput = [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string HboNordicJs {
-            get {
-                return ResourceManager.GetString("HboNordicJs", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to function myZoom() {
         ///    document.getElementById(&apos;katsomo-navi&apos;).style.zIndex = 0;
         ///    document.getElementById(&apos;video0_desktop-player&apos;).style.position = &apos;fixed&apos;;
@@ -96,6 +73,37 @@ namespace OnlineVideos.Sites.Properties {
         internal static string Katsomo {
             get {
                 return ResourceManager.GetString("Katsomo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to function fillPassword(pwd) {
+        ///    var field = jQuery(&quot;input[name=password]:visible&quot;);
+        ///    if (field !== null &amp;&amp; field.length &gt; 0) {
+        ///        field.val(pwd).change();
+        ///        return true;
+        ///    };
+        ///    return false;
+        ///}
+        ///
+        ///function fillUser(user) {
+        ///    var field = jQuery(&quot;input[name=email]:visible&quot;);
+        ///    if (field !== null &amp;&amp; field.length &gt; 0) {
+        ///        field.val(user).change();
+        ///        return true;
+        ///    };
+        ///    return false;
+        ///}
+        ///
+        ///function doClick() {
+        ///    jQuery(&quot;.login-button:visible&quot;).click();
+        ///}
+        ///
+        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string NetflixJs {
+            get {
+                return ResourceManager.GetString("NetflixJs", resourceCulture);
             }
         }
         

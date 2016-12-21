@@ -38,43 +38,62 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DirectShowWrapper">
-      <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\VideoPlayers\DirectShowWrapper.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\VideoPlayers\DirectShowWrapper.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Media, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\Media\Media.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Media">
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\Media\Media.dll</HintPath>
     </Reference>
     <Reference Include="MediaPortal.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\MediaPortal.Common.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\MediaPortal.Common.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MediaPortal.UI">
-      <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\MediaPortal.UI.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\MediaPortal.UI.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="MediaPortal.Utilities, Version=2.0.0.1510, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\MediaPortal.Utilities.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX">
-      <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\SkinEngine\SharpDX.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\SkinEngine\SharpDX.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="SharpDX.Direct3D9">
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\SkinEngine\SharpDX.Direct3D9.dll</HintPath>
+    </Reference>
     <Reference Include="SkinEngine">
-      <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\SkinEngine\SkinEngine.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\SkinEngine\SkinEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="VideoPlayers">
-      <HintPath>..\..\MediaPortal-2\MediaPortal\Bin\MP2-Client\bin\x86\Debug\Plugins\VideoPlayers\VideoPlayers.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\VideoPlayers\VideoPlayers.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OnlineVideos.InputStream\InputStreamPlayer\InputStreamPlayer.csproj">
+      <Project>{3171D2FF-4E7F-4413-B7A9-03AA7355DC68}</Project>
+      <Name>InputStreamPlayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OnlineVideos.InputStream\MediaPortalWrapper\MediaPortalWrapper.csproj">
+      <Project>{47731721-BA8A-4295-BCCE-399E5C289B4E}</Project>
+      <Name>MediaPortalWrapper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OnlineVideos.MediaPortal2.Interfaces\OnlineVideos.MediaPortal2.Interfaces.csproj">
+      <Project>{F54CFB16-1599-4676-BED6-2AB1C6F4DE53}</Project>
+      <Name>OnlineVideos.MediaPortal2.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OnlineVideos\OnlineVideos.csproj">
       <Project>{E0D9D390-CDD6-4B98-86F3-6EB04A958882}</Project>
       <Name>OnlineVideos</Name>
@@ -88,20 +107,25 @@
     <Compile Include="BackgroundTask.cs" />
     <Compile Include="CommandContainer.cs" />
     <Compile Include="Configuration\Configuration.cs" />
+    <Compile Include="Controls\OverlayPanel.cs" />
     <Compile Include="DynamicWorkflow.cs" />
     <Compile Include="Models\SiteUpdateWorkflowModels.cs" />
     <Compile Include="Configuration\UserSiteSettingsStore.cs" />
     <Compile Include="Models\SiteManagementWorkflowModel.cs" />
+    <Compile Include="OnlineVideosPlugin.cs" />
+    <Compile Include="Player\OnlineVideoPlayerBuilder.cs" />
+    <Compile Include="Player\WebBrowserVideoPlayer.cs" />
     <Compile Include="ViewModels\CategoryViewModel.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="LogDelegator.cs" />
-    <Compile Include="OnlineVideosPlayer.cs" />
+    <Compile Include="Player\OnlineVideosPlayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\OnlineVideosWorkflowModel.cs" />
     <Compile Include="Actions\SearchAction.cs" />
     <Compile Include="ViewModels\OnlineSiteViewModel.cs" />
     <Compile Include="ViewModels\PlaylistItem.cs" />
     <Compile Include="ViewModels\ReportViewModel.cs" />
+    <Compile Include="ViewModels\SiteGroupViewModel.cs" />
     <Compile Include="ViewModels\SiteSettingViewModel.cs" />
     <Compile Include="ViewModels\SiteViewModel.cs" />
     <Compile Include="ValueConverter.cs" />
@@ -140,21 +164,48 @@
     </Content>
     <Content Include="Skin\default\images\C33E39CC-910E-41C8-BFFD-9ECCD340B569.jpg" />
     <Content Include="Skin\default\images\DownloadedVideo.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\--.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\bg.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\cs.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\da.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\de.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\el.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\en.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\es.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\et.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\fi.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\fr.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\hr.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\it.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\lt.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\lv.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\nl.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\no.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\pl.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\ro.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\ru.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\sk.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\sv.png" />
+    <Content Include="Skin\default\images\LanguageFlagsBig\zh.png" />
     <Content Include="Skin\default\images\LanguageFlags\--.png" />
+    <Content Include="Skin\default\images\LanguageFlags\bg.png" />
     <Content Include="Skin\default\images\LanguageFlags\cs.png" />
     <Content Include="Skin\default\images\LanguageFlags\da.png" />
     <Content Include="Skin\default\images\LanguageFlags\de.png" />
     <Content Include="Skin\default\images\LanguageFlags\el.png" />
     <Content Include="Skin\default\images\LanguageFlags\en.png" />
     <Content Include="Skin\default\images\LanguageFlags\es.png" />
+    <Content Include="Skin\default\images\LanguageFlags\et.png" />
     <Content Include="Skin\default\images\LanguageFlags\fi.png" />
     <Content Include="Skin\default\images\LanguageFlags\fr.png" />
     <Content Include="Skin\default\images\LanguageFlags\hr.png" />
     <Content Include="Skin\default\images\LanguageFlags\it.png" />
     <Content Include="Skin\default\images\LanguageFlags\lt.png" />
+    <Content Include="Skin\default\images\LanguageFlags\lv.png" />
     <Content Include="Skin\default\images\LanguageFlags\nl.png" />
     <Content Include="Skin\default\images\LanguageFlags\no.png" />
     <Content Include="Skin\default\images\LanguageFlags\pl.png" />
+    <Content Include="Skin\default\images\LanguageFlags\ro.png" />
     <Content Include="Skin\default\images\LanguageFlags\ru.png" />
     <Content Include="Skin\default\images\LanguageFlags\sk.png" />
     <Content Include="Skin\default\images\LanguageFlags\sv.png" />
@@ -200,13 +251,38 @@
     <Content Include="Skin\BlueVision\themes\default\styles\OnlineVideosConsts.xaml" />
     <Content Include="Skin\BlueVision\themes\default\styles\OnlineVideosStyles.xaml" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\BlueVision\screens\FullScreenContentOV.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\BlueVision\screens\CurrentlyPlayingOV.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\default\screens\CurrentlyPlayingOV.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\default\screens\FullScreenContentOV.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\default\screens\ovsSiteGroups.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="build.targets" />
-  <Import Project="..\packages\MediaPortal.UrlSourceSplitter.2.2.5.5752\build\MediaPortal.UrlSourceSplitter.targets" Condition="Exists('..\packages\MediaPortal.UrlSourceSplitter.2.2.5.5752\build\MediaPortal.UrlSourceSplitter.targets')" />
+  <Import Project="..\packages\MediaPortal.UrlSourceSplitter.2.2.10.5911\build\MediaPortal.UrlSourceSplitter.targets" Condition="Exists('..\packages\MediaPortal.UrlSourceSplitter.2.2.10.5911\build\MediaPortal.UrlSourceSplitter.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\MediaPortal.UrlSourceSplitter.2.2.5.5752\build\MediaPortal.UrlSourceSplitter.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MediaPortal.UrlSourceSplitter.2.2.5.5752\build\MediaPortal.UrlSourceSplitter.targets'))" />
+    <Error Condition="!Exists('..\packages\MediaPortal.UrlSourceSplitter.2.2.10.5911\build\MediaPortal.UrlSourceSplitter.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MediaPortal.UrlSourceSplitter.2.2.10.5911\build\MediaPortal.UrlSourceSplitter.targets'))" />
   </Target>
 </Project>

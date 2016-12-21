@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using HtmlAgilityPack;
@@ -24,15 +25,30 @@ namespace OnlineVideos.Sites
         private int pageNr = 0;
         private string baseVideoListUrl = null;
 
-        string matchaz = @"<li\sclass='a-z-scrubber-item'><a\shref=""(?<url>[^""]*)""(?:\sclass=""active"")?>(?<title>[^<]*)</a></li>";
+        string matchaz = @"<li\sclass='a-z-scrubber-item'><a(?:\sclass=""active"")?\shref=""(?<url>[^""]*)"">(?<title>[^<]*)</a></li>";
+        string matchRecent = @"(?<=<span\sclass='[^']*'>Datum</span>.*)<li><a\sdata-scorecard=""[^""]*""\shref=""(?<url>[^""]*)"">(?<title>[^<]*)</a></li>";
+
+        private WebProxy webProxy = null;
+        private Regex regex_Az;
+
+        private Regex regex_Recent;
+        #region singleton
+        public WebProxy GetProxy()
+        {
+            if (webProxy == null && !String.IsNullOrEmpty(httpSettings.ProxyServer))
+                webProxy = new WebProxy(httpSettings.ProxyServer, httpSettings.ProxyServerPort);
+            return webProxy;
+        }
+        #endregion
 
         public override int DiscoverDynamicCategories()
         {
             regEx_AtoZ = new Regex(matchaz, defaultRegexOptions);
+            regex_Recent = new Regex(matchRecent, defaultRegexOptions);
 
             Settings.Categories.Add(new RssLink() { Name = "Meest bekeken", Url = @"http://www.npo.nl/uitzending-gemist", Other = UgType.MostViewed });
             Settings.Categories.Add(new RssLink() { Name = "Op datum", Url = @"http://www.npo.nl/uitzending-gemist", Other = UgType.Recent });
-            Settings.Categories.Add(new RssLink() { Name = "Omroepen", Url = @"http://www.npo.nl/series", Other = UgType.Omroepen });
+            //Settings.Categories.Add(new RssLink() { Name = "Omroepen", Url = @"http://www.npo.nl/series", Other = UgType.Omroepen });
             //Settings.Categories.Add(new RssLink() { Name = "Genres", Url = @"http://www.npo.nl/series", Other = UgType.Genres });
             Settings.Categories.Add(new RssLink() { Name = "Programma’s A-Z", Url = @"http://www.npo.nl/a-z", Other = UgType.AtoZ });
             foreach (RssLink cat in Settings.Categories)
@@ -47,7 +63,7 @@ namespace OnlineVideos.Sites
             switch ((UgType)parentCategory.Other)
             {
                 case UgType.MostViewed: return getSubcats(parentCategory, UgType.None, @"most-viewed-date-range", @"http://www.npo.nl/uitzending-gemist/meest-bekeken?date={0}");
-                case UgType.Recent: return getSubcats(parentCategory, UgType.None, @"sort_date", @"http://www.npo.nl/zoeken?utf8=%E2%9C%93&sort_date={0}");
+                case UgType.Recent: return getRecent(parentCategory);
                 case UgType.Omroepen: return getSubcats(parentCategory, UgType.Type1, @"broadcaster", @"http://www.npo.nl/series?utf8=%E2%9C%93&genre=&broadcaster={0}&av_type=video");
                 case UgType.Genres: return getSubcats(parentCategory, UgType.Type1, @"genre", @"http://www.npo.nl/series?utf8=%E2%9C%93&genre={0}&broadcaster=&av_type=video");
                 case UgType.AtoZ: return getAtoZSubcats(parentCategory);
@@ -70,6 +86,16 @@ namespace OnlineVideos.Sites
             return res;
         }
 
+        private int getRecent(Category parentCat)
+        {
+            Regex sav = regEx_dynamicSubCategories;
+            regEx_dynamicSubCategories = regex_Recent;
+            int res = base.DiscoverSubCategories(parentCat);
+            foreach (Category cat in parentCat.SubCategories)
+                cat.Other = UgType.None;
+            regEx_dynamicSubCategories = sav;
+            return res;
+        }
 
         private string getSubcatWebData(string url)
         {
@@ -196,10 +222,10 @@ namespace OnlineVideos.Sites
             if (p >= 0)
             {
                 string id = video.VideoUrl.Substring(p + 1);
-                string newToken = Doskabouter.Helpers.NPOHelper.GetToken(video.VideoUrl);
+                string newToken = Doskabouter.Helpers.NPOHelper.GetToken(video.VideoUrl, GetProxy());
                 if (!String.IsNullOrEmpty(newToken))
                 {
-                    string webData = GetWebData(String.Format(fileUrlFormatString, id) + newToken);
+                    string webData = GetWebData(String.Format(fileUrlFormatString, id) + newToken, proxy: GetProxy());
                     JObject contentData = (JObject)JObject.Parse(webData);
                     JArray items = contentData["streams"] as JArray;
                     List<KeyValuePair<string, string>> playbackOptions = new List<KeyValuePair<string, string>>();
@@ -256,17 +282,19 @@ namespace OnlineVideos.Sites
 
         public override VideoInfo CreateVideoInfo()
         {
-            return new UZGVideoInfo();
+            return new UZGVideoInfo() { proxy = GetProxy() };
         }
 
     }
 
     public class UZGVideoInfo : VideoInfo
     {
+        public WebProxy proxy;
+
         public override string GetPlaybackOptionUrl(string option)
         {
             string s = base.GetPlaybackOptionUrl(option);
-            string webData = WebCache.Instance.GetWebData(s);
+            string webData = WebCache.Instance.GetWebData(s, proxy: proxy);
             Match m = Regex.Match(webData, @"\((?<res>.*)\)");
             if (m.Success)
                 webData = m.Groups["res"].Value;

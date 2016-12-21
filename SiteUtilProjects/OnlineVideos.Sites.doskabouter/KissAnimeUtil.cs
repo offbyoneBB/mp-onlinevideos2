@@ -21,7 +21,13 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             //test();
-            cc = decryptCFDDOSProtection(baseUrl);
+            int attempts = 0;
+            do
+            {
+                cc = decryptCFDDOSProtection(baseUrl);
+                attempts++;
+            } while (cc.Count == 0 && attempts < 10);
+
             foreach (Category cat in Settings.Categories)
             {
                 cat.HasSubCategories = true;

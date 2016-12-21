@@ -174,10 +174,10 @@ namespace OnlineVideos.MPUrlSourceFilter.UserSettings
         {
             base.Apply(udpUrl);
 
-            udpUrl.OpenConnectionSleepTime = OpenConnectionSleepTime;
-            udpUrl.OpenConnectionTimeout = OpenConnectionTimeout;
-            udpUrl.TotalReopenConnectionTimeout = TotalReopenConnectionTimeout;
-            udpUrl.ReceiveDataCheckInterval = ReceiveDataCheckInterval;
+            udpUrl.OpenConnectionSleepTime = this.OpenConnectionSleepTime;
+            udpUrl.OpenConnectionTimeout = this.OpenConnectionTimeout;
+            udpUrl.TotalReopenConnectionTimeout = this.TotalReopenConnectionTimeout;
+            udpUrl.ReceiveDataCheckInterval = this.ReceiveDataCheckInterval;
         }
 
         #endregion

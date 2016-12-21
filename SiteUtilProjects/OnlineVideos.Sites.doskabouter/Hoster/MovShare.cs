@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace OnlineVideos.Hoster
 {
-    public class MovShare : MyHosterBase
+    public class MovShare : WholeCloud
     {
         public override string GetHosterUrl()
         {
@@ -12,12 +13,8 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
-            string page = WebCache.Instance.GetWebData(url);
-            if (!string.IsNullOrEmpty(page))
-            {
-                return ParseData(page);
-            }
-            return String.Empty;
+            url = WebCache.Instance.GetRedirectedUrl(url);
+            return base.GetVideoUrl(url);
         }
 
         protected string ParseData(string data)
@@ -54,6 +51,42 @@ namespace OnlineVideos.Hoster
             }
             return String.Empty;
         }
+
+    }
+
+    public class WholeCloud : MyHosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "wholecloud.net";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            string page = WebCache.Instance.GetWebData(url);
+            if (!string.IsNullOrEmpty(page))
+            {
+                page = GetFromPost(url, page);
+                Match m = Regex.Match(page, @"flashvars\.file=""(?<file>[^""]*)"";\s*flashvars\.filekey=""(?<filekey>[^""]*)"";\s*flashvars\.advURL=""[^""]*"";\s*if\s\(typeof\sv728x90\s!==\s'undefined'\)\s{\s*flashvars\.cid=""(?<cid>[^""]*)""");
+                if (m.Success)
+                {
+                    url = String.Format(@"http://www.wholecloud.net/api/player.api.php?key={0}&cid3=wholecloud%2Enet&file={1}&user=undefined&numOfErrors=0&cid2=undefined&pass=undefined&cid={2}",
+                   HttpUtility.UrlEncode(m.Groups["filekey"].Value), m.Groups["file"].Value, m.Groups["cid"].Value);
+                    page = GetWebData(url);
+                    m = Regex.Match(page, @"url=(?<url>.*)");
+                    if (m.Success)
+                        return m.Groups["url"].Value;
+                }
+
+                //0:88%2E159%2E164%2E124%2Dba90bb83524f4fb8d65a9692923c5d54
+                //1:wholecloud%2Enet
+                //2:696178b4b52f6
+                //3:1
+            }
+
+            return String.Empty;
+        }
+
 
     }
 }

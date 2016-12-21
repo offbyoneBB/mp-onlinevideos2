@@ -17,6 +17,23 @@
         </ScrollViewer>
     </ControlTemplate>
 
+    <DataTemplate x:Key="ovsSiteGroupItemDataTemplate" DataType="{x:Type ovs:SiteGroupViewModel}">
+        <Grid Width="{ResolutionResource ovsSiteGroupItemWidth}" Height="{ResolutionResource ovsSiteGroupItemHeight}" Margin="{ResolutionResource ovsSiteGroupItemMargin}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Image x:Name="thumb" Stretch="Uniform" Margin="{ResolutionResource ovsSiteGroupItemThumbMargin}" Source="{Binding Path=Thumb}"/>
+            <Label x:Name="ItemLabelBig" HorizontalAlignment="Center" VerticalAlignment="Center" Wrap="true" Content="{Binding [Name]}" IsVisible="{Binding ElementName=thumb, Path=!HasImage}" Color="{ThemeResource TextColor}"/>
+            <Label x:Name="ItemLabel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="{Binding [Name]}" FontSize="{ThemeResource SmallerFontSize}" IsVisible="{Binding ElementName=thumb, Path=HasImage}"
+                   Color="{ThemeResource TextColor}" Background="#A0000000"/>
+            <Label VerticalAlignment="Bottom" HorizontalAlignment="Right" FontSize="{ThemeResource LittleFontSize}" Margin="0,0,2,2" Content="{Binding Path=Sites.Count}"
+                   Color="{ThemeResource TextColor}"/>
+        </Grid>
+    </DataTemplate>
+
     <DataTemplate x:Key="ovsSiteItemDataTemplate" DataType="{x:Type ovs:SiteViewModel}">
         <Grid Width="{ResolutionResource ovsSiteItemWidth}" Height="{ResolutionResource ovsSiteItemHeight}" Margin="{ResolutionResource ovsSiteItemMargin}">
             <Grid.ColumnDefinitions>
@@ -64,6 +81,30 @@
             <Label x:Name="ItemLabel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Wrap="true" Content="{Binding Path=Title}" FontSize="{ThemeResource LittleFontSize}" IsVisible="{Binding ElementName=thumb, Path=HasImage}" Color="{ThemeResource TextColor}"/>
         </Grid>
     </DataTemplate>
+
+    <Style x:Key="ovsSiteGroupItemContainerStyle" TargetType="{x:Type ListViewItem}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                    <Button x:Name="ovsGrowControl" RenderTransformOrigin="0.5,0.5" Margin="{ResolutionResource ovsSiteGroupItemContainerMargin}">
+                        <Button.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform x:Name="frameScale" ScaleX="1" ScaleY="1"/>
+                            </TransformGroup>
+                        </Button.RenderTransform>
+                        <Button.Command>
+                            <Command Source="{DynamicResource OnlineVideosModel}" Path="SelectSiteGroup" Parameters="{LateBoundValue BindingValue={Binding}}"/>
+                        </Button.Command>
+                    </Button>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Selected" Value="True">
+                            <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <Style x:Key="ovsSiteItemContainerStyle" TargetType="{x:Type ListViewItem}">
         <Setter Property="Template">
@@ -167,6 +208,20 @@
         </Setter>
     </Style>
 
+    <Style x:Key="ovsSiteGroupsListViewStyle" TargetType="{x:Type ListView}">
+        <Setter Property="Template" Value="{ThemeResource ovsListViewTemplate}"/>
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <WrapPanel IsItemsHost="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="{ResolutionResource ovsSiteGroupsPanelMargin}"/>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemTemplate" Value="{ThemeResource ovsSiteGroupItemDataTemplate}"/>
+        <Setter Property="ItemContainerStyle" Value="{ThemeResource ovsSiteGroupItemContainerStyle}"/>
+        <Setter Property="DataStringProvider" Value="{ThemeResource DefaultItemDataStringProvider}"/>
+    </Style>
+    
     <Style x:Key="ovsSitesListViewStyle" TargetType="{x:Type ListView}">
         <Setter Property="Template" Value="{ThemeResource ovsListViewTemplate}"/>
         <Setter Property="ItemsPanel">

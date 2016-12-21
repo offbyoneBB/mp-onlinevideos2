@@ -48,7 +48,12 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration")]
         protected string menu5;
         [Category("OnlineVideosConfiguration")]
-        protected string menu6;
+        protected string menu5Gaztelaniaz;
+
+        [Category("OnlineVideosConfiguration")]
+        protected string menu3Url;
+        [Category("OnlineVideosConfiguration")]
+        protected string menu4Url;
 
         [Category("OnlineVideosConfiguration")]
         protected string videoUrlService;
@@ -90,7 +95,12 @@ namespace OnlineVideos.Sites
         {
             // GET /es/get/playlist/676435921001/ HTTP/1.1
             List<VideoInfo> videoList = new List<VideoInfo>();
-            String data = GetWebData(baseUrl + "get/playlist/" + (category as RssLink).Url + "/");
+            String url = baseUrl + "get/playlist/" + (category as RssLink).Url + "/";
+            if ((category as RssLink).Name == menu3 || (category as RssLink).Name == menu4)
+            {
+                url = (category as RssLink).Url;
+            }
+            String data = GetWebData(url);
             JObject jsonEpisodios = JObject.Parse(data);
             JArray episodios = (JArray)jsonEpisodios["web_media"];
             foreach (JToken episodio in episodios)
@@ -142,7 +152,12 @@ namespace OnlineVideos.Sites
                     .Replace("tipoSubmenu4", replaceRegExp(parentCategory.Name)), defaultRegexOptions);
                     break;
                 case CategoryType.submenu:
-                    regEx_dynamicSubCategories = new Regex(submenuRegEx.Replace("tipoSubmenu", replaceRegExp(parentCategory.Name.ToLower())), defaultRegexOptions);
+                    String nameToReplace = parentCategory.Name.ToLower();
+                    if (nameToReplace == menu5.ToLower())
+                    {
+                        nameToReplace = menu5Gaztelaniaz;
+                    }
+                    regEx_dynamicSubCategories = new Regex(submenuRegEx.Replace("tipoSubmenu", replaceRegExp(nameToReplace)), defaultRegexOptions);
                     break;
             }
             subCategories = DiscoverSubmenu(parentCategory as RssLink, regEx_dynamicSubCategories);
@@ -210,12 +225,24 @@ namespace OnlineVideos.Sites
                     c.Other = CategoryType.submenu2;
                     c.HasSubCategories = true;
                 }
-                else if (c.Name == menu3 || c.Name == menu4 || c.Name == menu6)
+                /*else if (c.Name == menu3 || c.Name == menu4)
                 {
                     c.Other = CategoryType.nosubmenu;
                     regEx_dynamicSubCategories = new Regex(noSubmenuRegEx.Replace("tipoNoSubmenu", replaceRegExp(c.Name)), defaultRegexOptions);
                     List<Category> subCategories = DiscoverSubmenu(c as RssLink, regEx_dynamicSubCategories);
                     (c as RssLink).Url = (subCategories.ElementAt(0) as RssLink).Url;
+                    c.HasSubCategories = false;
+                }*/
+                else if (c.Name == menu3)
+                {
+                    c.Other = CategoryType.nosubmenu;
+                    (c as RssLink).Url = menu3Url;
+                    c.HasSubCategories = false;
+                }
+                else if (c.Name == menu4)
+                {
+                    c.Other = CategoryType.nosubmenu;
+                    (c as RssLink).Url = menu4Url;
                     c.HasSubCategories = false;
                 }
                 else if (c.Name == menu5)

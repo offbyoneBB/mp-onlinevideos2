@@ -22,8 +22,8 @@ namespace OnlineVideos.Sites
             Settings.Categories.Clear();
             foreach (JObject jChannel in GetWebData<JObject>(api_base_url + api_channel_list_url)["list"])
             {
-                Settings.Categories.Add(new RssLink() 
-                { 
+                Settings.Categories.Add(new RssLink()
+                {
                     Name = jChannel.Value<string>("name"),
                     Description = jChannel.Value<string>("description"),
                     Url = jChannel.Value<string>("id")
@@ -62,39 +62,31 @@ namespace OnlineVideos.Sites
 
         public override string GetVideoUrl(VideoInfo video)
         {
-            var json = JObject.Parse(Regex.Match(GetWebData(video.VideoUrl), "var info = (?<json>{.*),").Groups["json"].Value);
+            var json = JObject.Parse(Regex.Match(GetWebData(video.VideoUrl), @"dmp\.create\(document\.getElementById\(\'player\'\)\,\s*(?<json>{.*)\);").Groups["json"].Value);
 
-            video.PlaybackOptions = new Dictionary<string,string>();
-            
-            var url = json.Value<string>("stream_h264_ld_url");
-            if (!string.IsNullOrEmpty(url))
-                video.PlaybackOptions.Add("Low - 320x240", url);
-            
-            url = json.Value<string>("stream_h264_url");
-            if (!string.IsNullOrEmpty(url))
-                video.PlaybackOptions.Add("Normal - 512x384", url);
+            video.PlaybackOptions = new Dictionary<string, string>();
 
-            url = json.Value<string>("stream_h264_hq_url");
-            if (!string.IsNullOrEmpty(url))
-                video.PlaybackOptions.Add("High - 848x480", url);
-
-            url = json.Value<string>("stream_h264_hd_url");
-            if (!string.IsNullOrEmpty(url))
-                video.PlaybackOptions.Add("HD - 1280x720", url);
-
-            url = json.Value<string>("stream_h264_hd1080_url");
-            if (!string.IsNullOrEmpty(url))
-                video.PlaybackOptions.Add("Full HD - 1920x1080", url);
-
+            foreach (JProperty quality in json["metadata"]["qualities"])
+            {
+                try
+                {
+                    var name = quality.Name;
+                    var url = ((JArray)quality.Value)[0].Value<string>("url");
+                    if (!string.IsNullOrEmpty(url))
+                        video.PlaybackOptions.Add(name, url);
+                }
+                catch
+                { };
+            }
             return video.PlaybackOptions.Last().Value;
         }
 
         List<VideoInfo> VideosFromJson(string url)
         {
             var result = new List<VideoInfo>();
-            
+
             JObject json = GetWebData<JObject>(url);
-            
+
             HasNextPage = json.Value<bool>("has_more");
             current_videos_page = json.Value<int>("page");
             current_videos_url = url;

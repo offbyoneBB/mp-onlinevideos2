@@ -1,25 +1,23 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Web;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json.Linq;
-using System.Xml;
-using HtmlAgilityPack;
-using OnlineVideos.Helpers;
+using System.Web;
 
 namespace OnlineVideos.Sites
 {
     public class URPlayUtil : LatestVideosSiteUtilBase
     {
+        #region Enums
+
         public enum JaNej { Ja, Nej };
         public enum Subtitle { Svenska, Förvald_URPlay, Endast_manuellt_val, Ingen_textning };
 
-        protected const string _amnesord = "Ämnesord";
-        protected const string _textningssprak = "Textningsspråk";
-        protected const string _ingenTextning = "Ingen textning";
+        #endregion
+
+        #region Configuration
 
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Textning"), Description("Svenska; Förvalt av URPlay; Manuellt val från kontextmenyn (F9 eller info-knapp) för filmen; Ingen textning.")]
         protected Subtitle subtitleChoice = Subtitle.Svenska;
@@ -30,238 +28,255 @@ namespace OnlineVideos.Sites
         protected JaNej preferHD = JaNej.Nej;
         protected bool PreferHD { get { return preferHD == JaNej.Ja; } }
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Aktivera ämnesordsök"), Description("Välj om du vill kunna göra ämnesordsök från kontextmenyn (F9 eller info-knapp) för varje enskild film/video.")]
-        protected JaNej enableAOSearch = JaNej.Ja;
-        protected bool EnableAOSearch { get { return enableAOSearch == JaNej.Ja; } }
+        #endregion
 
-        protected string baseUrl = "http://urplay.se/";
-        protected string senasteUrl = "Senaste?product_type=programtv";
+        #region Consts and vars
 
-        protected string[] ignoreCategories = { "Aktuellt", "Start", "Tablå" };
-        protected string[] noSubCategories = { "Senaste", "Mest spelade", "Mest delade", "Sista chansen" };
+        protected const string _textningssprak = "Textningsspråk";
+        protected const string _ingenTextning = "Ingen textning";
+        private const string episodeVideosState = "EPISODES_STATE";
+        private string currentVideoUrl = "";
+        private int currentVideoOffset = 0;
 
-        protected int currentVideoIndex;
-        protected List<string> videoPages;
+        #endregion
+
+        #region Category dictionaries
+
+        private Dictionary<string, string> tvCategories = new Dictionary<string, string>()
+        {
+            { "Alla", "" },
+            { "Dokumentärfilmer", "Dokument%C3%A4rfilmer" },
+            { "Föreläsningar", "F%C3%B6rel%C3%A4sningar" },
+            { "Vetenskap", "Vetenskap" },
+            { "Kultur och historia", "Kultur+och+historia" },
+            { "Samhälle", "Samh%C3%A4lle" },
+            { "Reality och livsstil", "Reality+och+livsstil" },
+            { "Barn", "Barn" }
+        };
+
+        private Dictionary<string, string> programSorteringar = new Dictionary<string, string>()
+        {
+            { "Relevans", "default" },
+            { "Mest spelade", "most_viewed" },
+            { "Sista chansen", "last_chance" },
+            { "Mest delat", "most_shared" },
+            { "Senaste", "latest" },
+            { "A - Ö", "title" }
+        };
+
+        #endregion
+
+        #region Categories
 
         public override int DiscoverDynamicCategories()
         {
-            var htmlDoc = new HtmlAgilityPack.HtmlDocument();
-            htmlDoc.LoadHtml(GetWebData(baseUrl));
-            var div = htmlDoc.DocumentNode.SelectSingleNode("//div[@id = 'navigering-content']");
-            var a_s = div.Elements("ul").SelectMany(u => u.Descendants("a")).ToList();
-            Settings.Categories.Clear();
-            foreach (var a in a_s.Where(elt => !ignoreCategories.Contains(elt.InnerText.Trim())))
+            Category series = new Category()
             {
-                var span = a.Element("span");
-                if (span != null)
+                Name = "Serier",
+                SubCategories = new List<Category>(),
+                SubCategoriesDiscovered = true,
+                HasSubCategories = true,
+            };
+            Category programs = new Category()
+            {
+                Name = "Program",
+                SubCategories = new List<Category>(),
+                SubCategoriesDiscovered = true,
+                HasSubCategories = true,
+            };
+            RssLink spelistor = new RssLink()
+            {
+                Name = "Spellistor",
+                Url = "http://urplay.se/sok?age=&product_type=playlists&query=&type=programtv",
+                HasSubCategories = true,
+                Other = episodeVideosState
+            };
+
+            foreach(KeyValuePair<string,string> genre in tvCategories)
+            {
+                series.SubCategories.Add(new RssLink()
                 {
-                    a.RemoveChild(span);
-                }
-                var name = HttpUtility.HtmlDecode((a.InnerText)).Trim();
-                RssLink category = new RssLink()
+                    Name = genre.Key,
+                    Url = string.Format("http://urplay.se/sok?age=&product_type=series&query=&rows=1000&type=programtv&view=title&play_category={0}", genre.Value),
+                    HasSubCategories = true,
+                    ParentCategory = series
+                });
+                string programurl = "http://urplay.se/sok?age=&product_type=program&query=&rows=20&type=programtv&play_category={0}&view={1}&start=";
+                RssLink program = new RssLink()
                 {
-                    HasSubCategories = !noSubCategories.Contains(name),
+                    Name = genre.Key,
+                    HasSubCategories = true,
+                    ParentCategory = programs,
                     SubCategories = new List<Category>(),
-                    Url = HttpUtility.HtmlDecode(a.GetAttributeValue("href", "")) + "?product_type=programtv",
-                    Name = name,
+                    SubCategoriesDiscovered = true
                 };
-                Settings.Categories.Add(category);
+                foreach (KeyValuePair<string, string> programSortering in programSorteringar)
+                {
+                    program.SubCategories.Add(new RssLink()
+                    {
+                        Name = programSortering.Key,
+                        Url = string.Format(programurl, genre.Value, programSortering.Value) + "{0}",
+                        HasSubCategories = false,
+                        ParentCategory = program
+                    });
+                }
+                programs.SubCategories.Add(program);
+
             }
+            Settings.Categories.Add(series);
+            Settings.Categories.Add(programs);
+            Settings.Categories.Add(spelistor);
             Settings.DynamicCategoriesDiscovered = Settings.Categories.Count > 0;
             return Settings.Categories.Count;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            string data = GetWebData(baseUrl + (parentCategory as RssLink).Url);
+            string url = (parentCategory as RssLink).Url;
+            HtmlDocument doc = GetWebData<HtmlDocument>(url);
+            HtmlNodeCollection items = doc.DocumentNode.SelectNodes("//article[@class='series' or @class='user-collection']");
             parentCategory.SubCategories = new List<Category>();
-            if (!string.IsNullOrEmpty(data))
+            if (items != null)
             {
-                var htmlDoc = new HtmlAgilityPack.HtmlDocument();
-                htmlDoc.LoadHtml(data);
-                if (parentCategory.Name == "A-Ö")
+                foreach(HtmlNode item in items)
                 {
-                    var a_s = htmlDoc.DocumentNode.SelectSingleNode("//section[@id = 'alphabet']").Descendants("a");
-                    foreach (var a in a_s.Where(a => (a.Descendants("span").Where(s => s.GetAttributeValue("class", "") == "product-type tv")).Any()))
+                    HtmlNode cat = item.SelectSingleNode(".//p[@class='category']");
+                    string desc = "";
+                    if (cat != null)
+                        desc = HttpUtility.HtmlDecode(cat.InnerText.Trim()) + "\r\n";
+                    cat = item.SelectSingleNode(".//p[@class='description']");
+                    if (cat != null)
+                        desc += HttpUtility.HtmlDecode(item.SelectSingleNode(".//p[@class='description']").InnerText.Trim());
+                    string thumb = item.SelectSingleNode(".//img").GetAttributeValue("data-src", "").Replace("_t.","_l.");
+                    if (string.IsNullOrWhiteSpace(thumb))
+                        thumb = item.SelectSingleNode(".//img").GetAttributeValue("src", "").Replace("_t.","_l.");
+                    if (!string.IsNullOrWhiteSpace(thumb) && thumb.StartsWith("/"))
+                        thumb = "http://urplay.se" + thumb;
+                    string link = item.SelectSingleNode("a").GetAttributeValue("href", "");
+                    if (!string.IsNullOrWhiteSpace(link) && link.StartsWith("/"))
+                        link = "http://urplay.se" + link;
+                    parentCategory.SubCategories.Add(new RssLink()
                     {
-                        var span = a.Element("span");
-                        a.RemoveChild(span);
-                        RssLink category = new RssLink()
-                        {
-                            Name = HttpUtility.HtmlDecode(a.InnerHtml),
-                            Url = HttpUtility.HtmlDecode(a.GetAttributeValue("href", "")) + "?product_type=programtv",
-                            HasSubCategories = false,
-                            ParentCategory = parentCategory
-                        };
-                        parentCategory.SubCategories.Add(category);
-                    }
-                }
-                else
-                {
-                    var a_s = htmlDoc.DocumentNode.SelectSingleNode("//nav[@class = 'sort-options']").Descendants("a");
-                    foreach (var a in a_s)
-                    {
-                        var span = a.Element("span");
-                        uint estimatedVideoCount = 0;
-                        if (span != null)
-                        {
-                            a.RemoveChild(span);
-                            uint.TryParse(span.InnerText, out estimatedVideoCount);
-                        }
-                        RssLink category = new RssLink()
-                        {
-                            HasSubCategories = false,
-                            Url = HttpUtility.HtmlDecode(a.GetAttributeValue("href", "")),
-                            Name = HttpUtility.HtmlDecode((a.InnerText ?? "")).Trim()
-                        };
-                        category.ParentCategory = parentCategory;
-                        if (span == null)
-                        {
-                            parentCategory.SubCategories.Add(category);
-                        }
-                        else if (span != null && estimatedVideoCount > 0)
-                        {
-                            category.EstimatedVideoCount = estimatedVideoCount;
-                            parentCategory.SubCategories.Add(category);
-                        }
-                    }
-                    if (parentCategory.Other == null)
-                    {
-                        a_s = htmlDoc.DocumentNode.SelectSingleNode("//ul[@id = 'underkategori']").Descendants("a");
-                        foreach (var a in a_s.Where(elt => !(elt.InnerText ?? "").Trim().StartsWith("Alla ämnen")))
-                        {
-                            RssLink category = new RssLink()
-                            {
-                                HasSubCategories = true,
-                                SubCategories = new List<Category>(),
-                                Url = HttpUtility.HtmlDecode(a.GetAttributeValue("href", "")),
-                                Name = HttpUtility.HtmlDecode((a.InnerText ?? "")).Trim(),
-                                Other = "Ämne",
-                            };
-                            category.ParentCategory = parentCategory;
-                            parentCategory.SubCategories.Add(category);
-                        }
-                    }
+                        Name = HttpUtility.HtmlDecode(item.SelectSingleNode(".//h3").InnerText.Trim()),
+                        Url = link,
+                        Thumb = thumb,
+                        Description = desc,
+                        ParentCategory = parentCategory,
+                        Other = episodeVideosState
+                    });
                 }
             }
             parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
             return parentCategory.SubCategories.Count;
         }
 
+        #endregion
+
+        #region Videos
+
+        private List<VideoInfo> GetVideos(string url)
+        {
+            List<VideoInfo> videos = new List<VideoInfo>();
+            HtmlDocument doc = GetWebData<HtmlDocument>(url);
+            HtmlNode docNode = doc.DocumentNode;
+            HtmlNodeCollection items;
+            HtmlNode episodes = docNode.SelectSingleNode("//section[@id='episodes']");
+            if (episodes != null)
+                items = episodes.SelectNodes("div/div/article");
+            else
+                items = docNode.SelectNodes("//article[@class='program']");
+            
+            if (items != null)
+            {
+                foreach (HtmlNode item in items)
+                {
+                    List<string> descriptions = new List<string>();
+                    HtmlNode categoryNode = item.SelectSingleNode(".//p[@class='category']");
+                    if (categoryNode != null && !string.IsNullOrWhiteSpace(categoryNode.InnerText))
+                        descriptions.Add(HttpUtility.HtmlDecode(categoryNode.InnerText.Trim()));
+                    HtmlNode descNode = item.SelectSingleNode(".//p[@class='description']");
+                    if (descNode != null && !string.IsNullOrWhiteSpace(descNode.InnerText))
+                        descriptions.Add(HttpUtility.HtmlDecode(descNode.InnerText.Trim()));
+
+                    List<string> titleInfos = new List<string>();
+                    HtmlNode seriesTitle = item.SelectSingleNode(".//p[@class='series-title']");
+                    if (seriesTitle != null && !string.IsNullOrWhiteSpace(seriesTitle.InnerText))
+                        titleInfos.Add(HttpUtility.HtmlDecode(seriesTitle.InnerText.Trim()));
+                    HtmlNode episodeNum = item.SelectSingleNode(".//span[@class='episode-number']");
+                    if (episodeNum != null && !string.IsNullOrWhiteSpace(episodeNum.InnerText))
+                        titleInfos.Add(HttpUtility.HtmlDecode(episodeNum.InnerText.Trim()));
+
+                    string description = descriptions.Count > 0 ? string.Join("\r\n", descriptions) : "";
+                    string titleInfo = titleInfos.Count > 0 ? string.Format(" ({0})", string.Join(" ", titleInfos)) : "";
+
+                    string thumb = item.SelectSingleNode(".//img").GetAttributeValue("data-src", "").Replace("_t.", "_l.");
+                    if (string.IsNullOrWhiteSpace(thumb))
+                        thumb = item.SelectSingleNode(".//img").GetAttributeValue("src", "").Replace("_t.","_l.");
+                    if (!string.IsNullOrWhiteSpace(thumb) && thumb.StartsWith("/"))
+                        thumb = "http://urplay.se" + thumb;
+
+                    string videoUrl = item.SelectSingleNode("a").GetAttributeValue("href", "");
+                    if (!string.IsNullOrWhiteSpace(videoUrl) && videoUrl.StartsWith("/"))
+                        videoUrl = "http://urplay.se" + videoUrl;
+
+                    videos.Add(new VideoInfo()
+                    {
+                        Title = HttpUtility.HtmlDecode(item.SelectSingleNode(".//h3").InnerText.Trim()) + titleInfo,
+                        VideoUrl = videoUrl ,
+                        Thumb = thumb,
+                        Description = description,
+                        Length = HttpUtility.HtmlDecode(item.SelectSingleNode(".//span[@class='duration']").InnerText.Trim())
+                    });
+                }
+            }
+            return videos;
+        }
+
         public override List<VideoInfo> GetVideos(Category category)
         {
             HasNextPage = false;
-            currentVideoIndex = 0;
-            videoPages = new List<string>();
-            List<VideoInfo> videos = new List<VideoInfo>();
-            string url = (category as RssLink).Url;
-            string data = GetWebData(baseUrl + url);
-            if (data.Length > 0)
+            List<VideoInfo> videos;
+            if (category.Other is string && category.GetOtherAsString() == episodeVideosState)
             {
-                var htmlDoc = new HtmlAgilityPack.HtmlDocument();
-                htmlDoc.LoadHtml(data);
-                var pagination = htmlDoc.DocumentNode.SelectSingleNode("//nav[@class = 'pagination']");
-                if (pagination != null)
-                {
-                    var a_s = pagination.Descendants("a").Where(a => !a.InnerText.Contains(HttpUtility.HtmlEncode(">")));
-                    if (a_s != null && a_s.Count() > 0)
-                    {
-                        foreach (var a in a_s)
-                        {
-                            videoPages.Add(HttpUtility.HtmlDecode(a.GetAttributeValue("href", "")));
-                        }
-                        HasNextPage = videoPages.Count() > 1;
-                    }
-
-                }
-                videos = VideosForCategory(htmlDoc.DocumentNode);
+                currentVideoUrl = "";
+                currentVideoOffset = 0;
+                videos = GetVideos((category as RssLink).Url);
+            }
+            else
+            {
+                currentVideoUrl = (category as RssLink).Url;
+                currentVideoOffset = 0;
+                videos = GetVideos(string.Format(currentVideoUrl, currentVideoOffset));
+                HasNextPage = videos.Count > 19;
             }
             return videos;
         }
 
         public override List<VideoInfo> GetNextPageVideos()
         {
-            currentVideoIndex++;
-            List<VideoInfo> videos = new List<VideoInfo>();
-            var countPages = videoPages.Count();
-            if (countPages > currentVideoIndex)
-            {
-                string data = GetWebData(baseUrl + videoPages[currentVideoIndex]);
-                if (data.Length > 0)
-                {
-                    var htmlDoc = new HtmlAgilityPack.HtmlDocument();
-                    htmlDoc.LoadHtml(data);
-                    videos = VideosForCategory(htmlDoc.DocumentNode);
-                }
-            }
-            HasNextPage = countPages > currentVideoIndex + 1;
+            HasNextPage = false;
+            currentVideoOffset += 20;
+            List<VideoInfo> videos = GetVideos(string.Format(currentVideoUrl, currentVideoOffset));
+            HasNextPage = videos.Count > 19;
             return videos;
-        }
-
-        private List<VideoInfo> VideosForCategory(HtmlAgilityPack.HtmlNode node)
-        {
-            List<VideoInfo> videoList = new List<VideoInfo>();
-
-            var sections = node.Descendants("section").Where(s => s.GetAttributeValue("class", "") == "tv");
-            if (sections != null)
-            {
-                foreach (var section in sections)
-                {
-                    var a = section.SelectSingleNode("a");
-                    if (a != null)
-                    {
-                        VideoInfo video = new VideoInfo();
-                        video.VideoUrl = baseUrl + a.GetAttributeValue("href", "");
-                        var img = a.Descendants("img");
-                        if (img != null && img.First() != null)
-                        {
-                            video.Thumb = img.First().GetAttributeValue("data-src", "");
-                            video.Title = img.First().GetAttributeValue("alt", "");
-                        }
-                        var dd = a.Descendants("dd");
-                        if (dd != null && dd.FirstOrDefault() != null)
-                            video.Length = dd.FirstOrDefault().InnerText;
-                        var h1 = a.Descendants("h1");
-                        var descP = section.Descendants("p").Where(p => p.GetAttributeValue("class", "") == "ellipsis-lastline");
-                        if (descP != null && descP.FirstOrDefault() != null)
-                            video.Description = descP.FirstOrDefault().InnerText;
-                        if (EnableAOSearch)
-                        {
-                            SerializableDictionary<string, string> other = new SerializableDictionary<string, string>();
-                            var ul = section.SelectSingleNode("div[@class = 'details']/ul[@class = 'keywords']");
-                            if (ul != null)
-                            {
-                                IEnumerable<HtmlNode> keyAs = ul.Descendants("a");
-                                foreach (HtmlNode keyA in keyAs)
-                                {
-                                    other.Add(keyA.GetAttributeValue("data-keyword", ""), keyA.GetAttributeValue("href", ""));
-                                }
-                            }
-                            video.Other = other;
-                        }
-                        videoList.Add(video);
-                    }
-                }
-            }
-            return videoList;
         }
 
         public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
-            var data = GetWebData(video.VideoUrl);
-            var urlSD = string.Empty;
-            var urlHD = string.Empty;
+            string data = GetWebData(video.VideoUrl);
+            string urlSD = string.Empty;
+            string urlHD = string.Empty;
             Regex rgx = new Regex(@"urPlayer.init\((.*)\);", RegexOptions.Multiline);
             Match m = rgx.Match(data);
             video.PlaybackOptions = new Dictionary<string, string>();
             if (m != null)
             {
-                var json = JObject.Parse(m.Groups[1].Value);
-                var format = "http://{0}/{1}{2}";
-                var fileHD = (string)json["file_http_hd"];
-                var fileSD = (string)json["file_http"];
-                var domain = (string)json["streaming_config"]["streamer"]["redirect"];
-                var manifest = (string)json["streaming_config"]["http_streaming"]["hds_file"];
+                JObject json = JObject.Parse(m.Groups[1].Value);
+                string format = "http://{0}/{1}{2}";
+                string fileHD = json["file_http_hd"].Value<string>();
+                string fileSD = json["file_http"].Value<string>();
+                string domain = GetWebData<JObject>(json["streaming_config"]["loadbalancer"].Value<string>())["redirect"].Value<string>();
+                string manifest = json["streaming_config"]["http_streaming"]["hds_file"].Value<string>();
                 if (!string.IsNullOrEmpty(fileHD))
                 {
                     urlHD = string.Format(format, domain, fileHD, manifest);
@@ -303,60 +318,59 @@ namespace OnlineVideos.Sites
             }
             if (subtitle != null)
             {
-                XmlDocument xDoc = GetWebData<XmlDocument>(subtitle["file"].Value<string>());
-                var errorElements = xDoc.SelectNodes("//meta[@name = 'error']");
-                if (errorElements == null || errorElements.Count <= 0)
+                string subUrl = subtitle["file"].Value<string>();
+                if (subUrl.StartsWith("//")) subUrl = "http:" + subUrl;
+                srt = GetWebData(subUrl);
+                
+                Regex rgx;
+                //Remove WEBVTT stuff
+                rgx = new Regex(@"WEBVTT");
+                srt = rgx.Replace(srt, new MatchEvaluator((Match m) =>
                 {
-                    string srtFormat = "{0}\r\n{1}0 --> {2}0\r\n{3}\r\n\r\n";
-                    string begin;
-                    string end;
-                    string text;
-                    string textPart;
-                    int line = 1;
-                    foreach (XmlElement p in xDoc.GetElementsByTagName("p"))
-                    {
-                        text = string.Empty;
-                        begin = p.GetAttribute("begin");
-                        end = p.GetAttribute("end");
-                        XmlNodeList textNodes = p.SelectNodes(".//text()");
-                        foreach (XmlNode textNode in textNodes)
-                        {
-                            textPart = textNode.InnerText;
-                            textPart.Trim();
-                            text += string.IsNullOrEmpty(textPart) ? "" : textPart + "\r\n";
-                        }
-                        srt += string.Format(srtFormat, line++, begin, end, text);
-                    }
+                    return string.Empty;
+                }));
+
+                //Add hours
+                rgx = new Regex(@"(\d\d:\d\d\.\d\d\d)\s*-->\s*(\d\d:\d\d\.\d\d\d).*?\n", RegexOptions.Multiline);
+                srt = rgx.Replace(srt, new MatchEvaluator((Match m) =>
+                {
+                    return "00:" + m.Groups[1].Value + " --> 00:" + m.Groups[2].Value + "\n";
+                }));
+                // Remove all trailing stuff, ie in 00:45:21.960 --> 00:45:25.400 A:end L:82%
+                rgx = new Regex(@"(\d\d:\d\d:\d\d\.\d\d\d)\s*-->\s*(\d\d:\d\d:\d\d\.\d\d\d).*\n", RegexOptions.Multiline);
+                srt = rgx.Replace(srt, new MatchEvaluator((Match m) =>
+                {
+                    return m.Groups[1].Value + " --> " + m.Groups[2].Value + "\n";
+                }));
+
+                //Remove all tags
+                rgx = new Regex(@"</{0,1}[^>]+>");
+                srt = rgx.Replace(srt, string.Empty);
+                //Add index
+                rgx = new Regex(@"(?<time>\d\d:\d\d:\d\d\.\d\d\d\s*?-->\s*?\d\d:\d\d:\d\d\.\d\d\d)");
+                int i = 0;
+                foreach (Match m in rgx.Matches(srt))
+                {
+                    i++;
+                    string time = m.Groups["time"].Value;
+                    srt = srt.Replace(time, i + "\n" + time);
                 }
+                srt = HttpUtility.HtmlDecode(srt).Trim();
             }
             return srt;
         }
 
+        #endregion
+
         #region Context menu
+        
         public override List<ContextMenuEntry> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
         {
             List<ContextMenuEntry> entries = new List<ContextMenuEntry>();
-            if (selectedItem != null && EnableAOSearch && selectedItem.Other is SerializableDictionary<string, string>)
-            {
-                var other = selectedItem.Other as SerializableDictionary<string, string>;
-
-                ContextMenuEntry amnesord = new ContextMenuEntry();
-                amnesord.Action = ContextMenuEntry.UIAction.ShowList;
-                amnesord.DisplayText = _amnesord;
-                foreach (var ao in other)
-                {
-                    ContextMenuEntry entry = new ContextMenuEntry();
-                    entry.DisplayText = ao.Key;
-                    entry.Other = ao.Value;
-                    amnesord.SubEntries.Add(entry);
-                }
-                if (amnesord.SubEntries.Count > 0)
-                    entries.Add(amnesord);
-            }
             if (selectedItem != null && ManuallyRetrieveSubtitles)
             {
                 string data = GetWebData(selectedItem.VideoUrl);
-                Regex rgx = new Regex(@"^urPlayer.init\((.*)\);", RegexOptions.Multiline);
+                Regex rgx = new Regex(@"urPlayer.init\((.*)\);", RegexOptions.Multiline);
                 Match m = rgx.Match(data);
                 if (m != null)
                 {
@@ -371,10 +385,10 @@ namespace OnlineVideos.Sites
                         ContextMenuEntry entry = new ContextMenuEntry();
                         entry.DisplayText = string.Format(_ingenTextning);
                         textningssprak.SubEntries.Add(entry);
-                        foreach (JToken subtitle in subtitles)
+                        foreach (JToken subtitle in subtitles.Where(s => s["label"] != null))
                         {
                             entry = new ContextMenuEntry();
-                            entry.DisplayText = string.Format(subtitle["label"].Value<string>());
+                            entry.DisplayText = subtitle["label"].Value<string>();
                             textningssprak.SubEntries.Add(entry);
                         }
                         entries.Add(textningssprak);
@@ -397,26 +411,14 @@ namespace OnlineVideos.Sites
                 result.RefreshCurrentItems = false;
                 return result;
             }
-            else if (selectedItem != null && EnableAOSearch && choice.ParentEntry != null && choice.ParentEntry.DisplayText == _amnesord && choice.Other is string)
-            {
-                ContextMenuExecutionResult result = new ContextMenuExecutionResult();
-                RssLink cat = new RssLink()
-                {
-                    Name = choice.DisplayText,
-                    Url = choice.Other as string
-                };
-                List<SearchResultItem> results = new List<SearchResultItem>();
-                foreach (VideoInfo vi in GetVideos(cat))
-                    results.Add(vi);
-                result.ResultItems = results;
-                return result;
-            }
             else
                 return base.ExecuteContextMenuEntry(selectedCategory, selectedItem, choice);
         }
 
         #endregion
-        #region search
+
+        #region Search
+
         public override bool CanSearch
         {
             get
@@ -427,23 +429,22 @@ namespace OnlineVideos.Sites
 
         public override List<SearchResultItem> Search(string query, string category = null)
         {
-            RssLink cat = new RssLink()
-            {
-                Name = "Sök",
-                Url = "/Produkter?product_type=programtv&q=" + HttpUtility.UrlEncode(query)
-            };
             List<SearchResultItem> results = new List<SearchResultItem>();
-            foreach (VideoInfo vi in GetVideos(cat))
-                results.Add(vi);
+            HasNextPage = false;
+            currentVideoUrl = string.Format("http://urplay.se/sok?age=&product_type=program&query=&rows=20&type=programtv&play_category=&view=default&query={0}", HttpUtility.UrlEncode(query)) +  "&start={0}";
+            currentVideoOffset = 0;
+            GetVideos(string.Format(currentVideoUrl, currentVideoOffset)).ForEach(v => results.Add(v));
+            HasNextPage = results.Count > 19;
             return results;
         }
+
         #endregion
 
         #region LatestVideos
 
         public override List<VideoInfo> GetLatestVideos()
         {
-            RssLink latest = new RssLink() { Name = "Latest videos", Url = senasteUrl };
+            string latest = string.Format("http://urplay.se/sok?age=&product_type=program&query=&rows={0}&type=programtv&play_category=&view=latest&start=0", LatestVideosCount);
             List<VideoInfo> videos = GetVideos(latest);
             return videos.Count >= LatestVideosCount ? videos.GetRange(0, (int)LatestVideosCount) : new List<VideoInfo>();
         }

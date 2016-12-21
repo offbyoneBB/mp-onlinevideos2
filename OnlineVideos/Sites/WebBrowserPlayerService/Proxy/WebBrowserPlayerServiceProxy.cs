@@ -1,11 +1,6 @@
 ﻿using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
-using OnlineVideos.Sites.WebBrowserPlayerService;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
-using System.ServiceModel.Description;
-using System.Text;
 
 namespace OnlineVideos.Sites.Proxy.WebBrowserPlayerService
 {
@@ -18,10 +13,9 @@ namespace OnlineVideos.Sites.Proxy.WebBrowserPlayerService
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="callback"></param>
         public WebBrowserPlayerServiceProxy()
             : base(
-                new NetNamedPipeBinding()
+                new NetNamedPipeBinding
                 {
                     SendTimeout = TimeSpan.FromMilliseconds(300), // We don't care about waiting for responses, so we'll ignore timeouts
                     ReceiveTimeout = TimeSpan.MaxValue // Basically this is the connection idle timeout

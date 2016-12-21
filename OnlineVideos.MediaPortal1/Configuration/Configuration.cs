@@ -206,6 +206,17 @@ namespace OnlineVideos.MediaPortal1
                         textBoxHttpOpenConnectionSleepTime.Text = OnlineVideoSettings.Instance.HttpOpenConnectionSleepTime.ToString();
                         textBoxHttpTotalReopenConnectionTimeout.Text = OnlineVideoSettings.Instance.HttpTotalReopenConnectionTimeout.ToString();
 
+                        checkBoxHttpServerAuthentication.Checked = OnlineVideoSettings.Instance.HttpServerAuthenticate;
+                        textBoxHttpServerUserName.Text = OnlineVideoSettings.Instance.HttpServerUserName;
+                        textBoxHttpServerPassword.Text = OnlineVideoSettings.Instance.HttpServerPassword;
+
+                        checkBoxHttpProxyServerAuthentication.Checked = OnlineVideoSettings.Instance.HttpProxyServerAuthenticate;
+                        textBoxHttpProxyServer.Text = OnlineVideoSettings.Instance.HttpProxyServer;
+                        textBoxHttpProxyServerPort.Text = OnlineVideoSettings.Instance.HttpProxyServerPort.ToString();
+                        textBoxHttpProxyServerUserName.Text = OnlineVideoSettings.Instance.HttpProxyServerUserName;
+                        textBoxHttpProxyServerPassword.Text = OnlineVideoSettings.Instance.HttpProxyServerPassword;
+                        comboBoxHttpProxyServerType.SelectedIndex = ((int)OnlineVideoSettings.Instance.HttpProxyServerType - 1);
+
                         textBoxRtmpOpenConnectionTimeout.Text = OnlineVideoSettings.Instance.RtmpOpenConnectionTimeout.ToString();
                         textBoxRtmpOpenConnectionSleepTime.Text = OnlineVideoSettings.Instance.RtmpOpenConnectionSleepTime.ToString();
                         textBoxRtmpTotalReopenConnectionTimeout.Text = OnlineVideoSettings.Instance.RtmpTotalReopenConnectionTimeout.ToString();
@@ -318,6 +329,18 @@ namespace OnlineVideos.MediaPortal1
                 catch { }
                 try { OnlineVideoSettings.Instance.HttpTotalReopenConnectionTimeout = int.Parse(textBoxHttpTotalReopenConnectionTimeout.Text); }
                 catch { }
+
+                OnlineVideoSettings.Instance.HttpServerAuthenticate = checkBoxHttpServerAuthentication.Checked;
+                OnlineVideoSettings.Instance.HttpServerUserName = textBoxHttpServerUserName.Text;
+                OnlineVideoSettings.Instance.HttpServerPassword = textBoxHttpServerPassword.Text;
+
+                OnlineVideoSettings.Instance.HttpProxyServerAuthenticate = checkBoxHttpProxyServerAuthentication.Checked;
+                OnlineVideoSettings.Instance.HttpProxyServer = textBoxHttpProxyServer.Text;
+                try { OnlineVideoSettings.Instance.HttpProxyServerPort = int.Parse(textBoxHttpProxyServerPort.Text); }
+                catch { }
+                OnlineVideoSettings.Instance.HttpProxyServerUserName = textBoxHttpProxyServerUserName.Text;
+                OnlineVideoSettings.Instance.HttpProxyServerPassword = textBoxHttpProxyServerPassword.Text;
+                OnlineVideoSettings.Instance.HttpProxyServerType = (OnlineVideos.MPUrlSourceFilter.ProxyServerType)(comboBoxHttpProxyServerType.SelectedIndex + 1);
 
                 OnlineVideoSettings.Instance.RtmpPreferredNetworkInterface = (String)comboBoxRtmpPreferredNetworkInterface.SelectedItem;
                 try { OnlineVideoSettings.Instance.RtmpOpenConnectionTimeout = int.Parse(textBoxRtmpOpenConnectionTimeout.Text); }

@@ -1,10 +1,8 @@
-﻿using OnlineVideos.Sites.JSurf.Properties;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Resources;
 using System.Text;
 
@@ -30,16 +28,16 @@ namespace OnlineVideos.Sites.JSurf
         protected override ResourceSet InternalGetResourceSet(CultureInfo culture,
             bool createIfNotExists, bool tryParents)
         {
-            ResourceSet rs = (ResourceSet)this.ResourceSets[culture];
+            ResourceSet rs = (ResourceSet)ResourceSets[culture];
             if (rs == null)
             {
                 string resourceFileName = null;
 
                 //lazy-load default language (without caring about duplicate assignment in race conditions, no harm done);
-                if (this._neutralResourcesCulture == null)
+                if (_neutralResourcesCulture == null)
                 {
-                    this._neutralResourcesCulture =
-                        GetNeutralResourcesLanguage(this.MainAssembly);
+                    _neutralResourcesCulture =
+                        GetNeutralResourcesLanguage(MainAssembly);
                 }
 
                 // if we're asking for the default language, then ask for the
@@ -56,7 +54,7 @@ namespace OnlineVideos.Sites.JSurf
                     // The T4 template resource generator will link the culture specific resources in to the invariant culture resource
                     // We'll try and load the culture specific resource here
 
-                    var content = base.GetString("Resources." + culture);
+                    var content = GetString("Resources." + culture);
                     if (content != null)
                     {
                         using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(content)))
@@ -83,7 +81,7 @@ namespace OnlineVideos.Sites.JSurf
                 ResourceSet objA = (ResourceSet)localResourceSets[culture];
                 if (objA != null)
                 {
-                    if (!object.Equals(objA, rs))
+                    if (!Equals(objA, rs))
                     {
                         rs.Dispose();
                         rs = objA;

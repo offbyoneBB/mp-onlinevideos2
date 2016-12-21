@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.IO;
@@ -284,9 +285,11 @@ namespace OnlineVideos.Sites
             // on tubeplus it's always http://<hoster>/<id>
             //source for conversion: http://www.tubeplus.me/resources/js/player2.js 
             // doesn't really work, putlocker&sockshare needs file instead of embed, and gorillavid needs nothing
-            string[] parts = name.Split('/');
+            var temp = Convert.FromBase64String(name);
+            var dlLink = Encoding.ASCII.GetString(temp);
+            string[] parts = dlLink.Split('|');
             string id = parts[parts.Length - 1];
-            string hoster = parts[parts.Length - 2].ToLowerInvariant();
+            string hoster = parts[0].ToLowerInvariant();
 
             if (hoster == "youtube") return "http://youtube.com/v/" + id;
             if (hoster == "putlocker.com" || hoster == "sockshare.com")
@@ -301,33 +304,35 @@ namespace OnlineVideos.Sites
                 return String.Format(@"http://vidbull.com/embed-{0}-650x328.html", id);
             if (hoster == "divxstage.eu")
                 return @"http://embed.divxstage.eu/embed.php?&width=653&height=438&v=" + id;
+            if (hoster == "vodlocker.com")
+                return @"http://vodlocker.com/embed-" + id + @"-650x370.html";
             return name;
         }
 
         public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
         {
-			string pre = "";
-			if (category != null && category.ParentCategory != null && Mode.Series.Equals(category.ParentCategory.Other))
-			{
-				string season = category.Name.Split('(')[0];
-				pre = category.ParentCategory.Name + ' ' + season + ' ' + pre;
-				int l;
-				do
-				{
-					l = pre.Length;
-					pre = pre.Replace("  ", " ");
-				} while (l != pre.Length);
-			}
+            string pre = "";
+            if (category != null && category.ParentCategory != null && Mode.Series.Equals(category.ParentCategory.Other))
+            {
+                string season = category.Name.Split('(')[0];
+                pre = category.ParentCategory.Name + ' ' + season + ' ' + pre;
+                int l;
+                do
+                {
+                    l = pre.Length;
+                    pre = pre.Replace("  ", " ");
+                } while (l != pre.Length);
+            }
 
             if (string.IsNullOrEmpty(url)) // called for adding to favorites
-                return pre+video.Title;
+                return pre + video.Title;
             else // called for downloading
             {
                 string name = base.GetFileNameForDownload(video, category, url);
                 string extension = Path.GetExtension(name);
                 if (String.IsNullOrEmpty(extension) || !OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(extension))
                     name += ".flv";
-				name = pre + name;
+                name = pre + name;
                 return Helpers.FileUtils.GetSaveFilename(name);
             }
         }
@@ -346,7 +351,7 @@ namespace OnlineVideos.Sites
             {
                 Name = "Movies",
                 Other = Mode.MoviesAZ,
-                Url = String.Format(@"http://www.tubeplus.me/search/movies/{0}/0/", encodeQuery(query))
+                Url = String.Format(@"http://www.tubeplus.ag/search/movies/{0}/0/", encodeQuery(query))
             };
             result.Add(cat);
 
@@ -354,7 +359,7 @@ namespace OnlineVideos.Sites
             {
                 Name = "TV",
                 Other = Mode.ShowAZ,
-                Url = String.Format(@"http://www.tubeplus.me/search/tv-shows/{0}/0/", encodeQuery(query)),
+                Url = String.Format(@"http://www.tubeplus.ag/search/tv-shows/{0}/0/", encodeQuery(query)),
                 HasSubCategories = true
             };
             result.Add(cat);

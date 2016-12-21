@@ -1,21 +1,13 @@
 ﻿
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using OnlineVideos.Helpers;
 using OnlineVideos.Sites.WebAutomation.BrowserHost.Factories;
 using System.IO;
 using System.Diagnostics;
 using System.Configuration;
-using OnlineVideos.Sites;
-using System.ServiceModel;
+using System.Drawing;
 using System.Threading;
-using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
 using OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation;
 using OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers;
 using OnlineVideos.Sites.WebAutomation.BrowserHost.RemoteHandling;
@@ -28,28 +20,47 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         /// Which was the last of the 2 events fired between play/pause.  We'll use this to handle the media key as that's a single play/pause button.
         /// </summary>
         private enum PlayPauseToggle
-        { 
-            Play, 
-            Pause 
+        {
+            Play,
+            Pause
+        }
+
+        /// <summary>
+        /// Defines different window modes the browser form can enter.
+        /// </summary>
+        public enum ScreenMode
+        {
+            /// <summary>
+            /// Fullscreeen mode, no borders, TopMost.
+            /// </summary>
+            Fullscreen,
+            /// <summary>
+            /// Windowed mode, no borders, TopMost.
+            /// </summary>
+            Windowed,
+            /// <summary>
+            /// Debug mode only, will use resizable window, without TopMost.
+            /// </summary>
+            Debug
         }
 
         public bool ForceClose { get; private set; }
 
-        private string _connectorType;
-        private string _videoInfo;
-        private string _userName;
-        private string _password;
+        private readonly string _connectorType;
+        private readonly string _videoInfo;
+        private readonly string _userName;
+        private readonly string _password;
         private BrowserUtilConnector _connector;
-        private bool _debugMode = false; // Allow for the form to be resized/lose focus in debug mode
+        private readonly bool _debugMode = false; // Allow for the form to be resized/lose focus in debug mode
 
         private int _lastKeyPressed;
         private DateTime _lastKeyPressedTime;
 
         private PlayPauseToggle _lastPlayPauseState = PlayPauseToggle.Play;
         private DateTime _lastActionTime;
-        private static ILog _logger = new DebugLogger();
-        private RemoteProcessing _remoteProcessing = new RemoteProcessing(_logger);
-        private int _connectorTimeout = 20;
+        private static readonly ILog _logger = new DebugLogger();
+        private readonly RemoteProcessing _remoteProcessing = new RemoteProcessing(_logger);
+        private readonly int _connectorTimeout = 20;
 
         /// <summary>
         /// Store/retrieve the current screen the web player is showing on - this is stored in the user config
@@ -88,22 +99,19 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 _password = password;
                 _debugMode = false;
 
-                var configValue = ConfigurationManager.AppSettings["DebugMode"];
-                if (!string.IsNullOrEmpty(configValue) && configValue.ToUpper() == "TRUE")
-                    _debugMode = true;
-                
-                configValue = ConfigurationManager.AppSettings["BrowserHostWaitTimeout"];
-                var tmpVal = 0;
-                if (!string.IsNullOrEmpty(configValue) && Int32.TryParse(configValue, out tmpVal))
+                bool.TryParse(ConfigurationManager.AppSettings["DebugMode"], out _debugMode);
+
+                int tmpVal;
+                if (Int32.TryParse(ConfigurationManager.AppSettings["BrowserHostWaitTimeout"], out tmpVal))
                     _connectorTimeout = tmpVal;
-                
+
             }
             catch (Exception ex)
             {
                 _logger.Error(ex);
             }
         }
-        
+
         /// <summary>
         /// The form is loaded - let's navigate to the video
         /// </summary>
@@ -115,17 +123,17 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             {
 
                 _logger.Debug("Setting current screen");
-                SetScreenState();
+                SetScreenState(_debugMode ? ScreenMode.Debug : ScreenMode.Fullscreen);
                 SetCurrentScreen();
 
                 ForceClose = false;
-                this.Activate();
-                this.Focus();
+                Activate();
+                Focus();
                 _logger.Debug("AppDomain Root {0}", AppDomain.CurrentDomain.BaseDirectory);
                 _logger.Debug("Current Directory {0}", Directory.GetCurrentDirectory());
                 _logger.Debug(string.Format("Browser Host started with connector type: {0}, video info: {1}", _connectorType, _videoInfo));
                 WebBrowserPlayerCallbackService.LogInfo(string.Format("Browser Host started with connector type: {0}, video info: {1}", _connectorType, _videoInfo));
-                
+
                 // Set up remote handling
                 _remoteProcessing.ActionReceived += RemoteProcessing_OnNewAction;
                 _remoteProcessing.InitHandlers();
@@ -150,7 +158,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                     _logger.Debug("Playing Video");
                     _connector.PlayVideo(_videoInfo);
                     result = _connector.WaitForComplete(ForceQuitting, _connectorTimeout);
-                    _logger.Debug("Playing WaitforComplete " + result.ToString());
+                    _logger.Debug("Playing WaitforComplete " + result);
                     if (!result)
                         ForceQuit();
                 }
@@ -158,12 +166,12 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
                 {
                     _logger.Error("Log in failed");
                     ForceQuit();
-                }                
+                }
             }
             catch (Exception ex)
             {
                 _logger.Error(ex);
-                Console.Error.WriteLine(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
+                Console.Error.WriteLine("{0}\r\n{1}", ex.Message, ex.StackTrace);
                 Console.Error.Flush();
                 WebBrowserPlayerCallbackService.LogError(ex);
                 ForceQuit();
@@ -199,7 +207,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         {
             HandleKeyPress(e.KeyValue);
         }
-                
+
         /// <summary>
         /// Used to pass messages to remotes. Pre-filter to only messages we're likely to be interested in
         /// </summary>
@@ -210,10 +218,10 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             {
                 if (_remoteProcessing.ProcessWndProc(msg)) return;
             }
-            catch  (Exception ex)
+            catch (Exception ex)
             {
                 _logger.Error(ex);
-                Console.Error.WriteLine(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
+                Console.Error.WriteLine("{0}\r\n{1}", ex.Message, ex.StackTrace);
                 Console.Error.Flush();
                 WebBrowserPlayerCallbackService.LogError(ex);
             }
@@ -231,7 +239,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
             _lastKeyPressed = keyPressed;
             _lastKeyPressedTime = DateTime.Now;
 
-            _logger.Debug(string.Format("HandleKeyPress to be processed {0} {1}", keyPressed, ((Keys)keyPressed).ToString()));
+            _logger.Debug(string.Format("HandleKeyPress to be processed {0} {1}", keyPressed, (Keys)keyPressed));
 
             // Always force close when escape is pressed
             if (keyPressed == (int)Keys.Escape)
@@ -242,7 +250,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
 
             _remoteProcessing.ProcessKeyPress(keyPressed);
         }
-        
+
         /// <summary>
         /// Remote processing event handler
         /// </summary>
@@ -250,7 +258,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         void RemoteProcessing_OnNewAction(string action)
         {
             if (InvokeRequired)
-                BeginInvoke((MethodInvoker)delegate() { OnNewAction(action); });
+                BeginInvoke((MethodInvoker)delegate { OnNewAction(action); });
             else
                 OnNewAction(action);
         }
@@ -260,43 +268,72 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         /// We'll make play/pause a toggle, just so we can ensure we support media buttons properly
         /// </summary>
         /// <param name="action"></param>
+        /// <param name="overrideCheck"></param>
         void OnNewAction(string action, bool overrideCheck = false)
         {
             // Ignore duplicate actions within 300ms (apparently the Netflix connector has duplicate actions, I suspect it's because the Netflix connector is sending space key and this is doing the play/pause and firing an action :-( )
             if (!overrideCheck && _lastActionTime.AddMilliseconds(300) > DateTime.Now)
                 return;
-            
+
             _lastActionTime = DateTime.Now;
             _logger.Debug(string.Format("OnNewAction received {0}", action));
 
+            // Special case, command contains size arguments
+            if (action.StartsWith(Constants.ACTION_WINDOWED))
+            {
+                SetScreenState(ScreenMode.Windowed);
+                var sizeArgs = action.Replace(Constants.ACTION_WINDOWED, "").Split(',');
+                if (sizeArgs.Length == 4)
+                {
+                    int left;
+                    int top;
+                    int width;
+                    int height;
+                    if (int.TryParse(sizeArgs[0], out left) &&
+                        int.TryParse(sizeArgs[1], out top) &&
+                        int.TryParse(sizeArgs[2], out width) &&
+                        int.TryParse(sizeArgs[3], out height))
+                    {
+                        Size = new Size(width, height);
+                        Location = new Point(left, top);
+                        TopMost = true;
+                        BringToFront();
+                        _logger.Debug("ACTION_WINDOWED: Position: {0}, Size: {1}", Location, Size);
+                    }
+                }
+                return;
+            }
             switch (action)
             {
-                case "ACTION_PLAY":
-                case"ACTION_MUSIC_PLAY":
+                case Constants.ACTION_PLAY:
+                case Constants.ACTION_MUSIC_PLAY:
                     if (_lastPlayPauseState == PlayPauseToggle.Play)
-                        OnNewAction("ACTION_PAUSE", true);
+                        OnNewAction(Constants.ACTION_PAUSE, true);
                     else
                     {
                         _connector.Play();
                         _lastPlayPauseState = PlayPauseToggle.Play;
                     }
                     break;
-                case "ACTION_PAUSE":
+                case Constants.ACTION_PAUSE:
                     if (_lastPlayPauseState == PlayPauseToggle.Pause)
-                        OnNewAction("ACTION_PLAY", true);
+                        OnNewAction(Constants.ACTION_PLAY, true);
                     else
                     {
                         _connector.Pause();
                         _lastPlayPauseState = PlayPauseToggle.Pause;
                     }
                     break;
-                case "ACTION_STOP":
-                case "ACTION_PREVIOUS_MENU":
+                case Constants.ACTION_STOP:
+                case Constants.ACTION_PREVIOUS_MENU:
                     ForceQuit();
                     break;
-                case "ACTION_CONTEXT_MENU": // Change the screen we're on using the context menu button
+                case Constants.ACTION_CONTEXT_MENU: // Change the screen we're on using the context menu button
                     CurrentScreen++;
                     SetCurrentScreen();
+                    break;
+                case Constants.ACTION_FULLSCREEN:
+                    SetScreenState(ScreenMode.Fullscreen);
                     break;
                 default:
                     // fire the action on the connector also
@@ -335,20 +372,34 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         private void tmrKeepOnTop_Tick(object sender, EventArgs e)
         {
             ProcessHelper.SetForeground(Process.GetCurrentProcess().MainWindowHandle);
-            this.Activate();
-            this.Focus();
+            Activate();
+            Focus();
         }
 
         /// <summary>
         /// Set the screen state depending on which mode it's in
         /// </summary>
-        private void SetScreenState()
+        private void SetScreenState(ScreenMode screenMode)
         {
-            if (!_debugMode) Cursor.Hide();
-            if (_debugMode) tmrKeepOnTop.Enabled = false;
-            this.WindowState = _debugMode ? FormWindowState.Normal : FormWindowState.Maximized;
-            this.FormBorderStyle = _debugMode ? FormBorderStyle.Sizable : FormBorderStyle.FixedDialog;
-            this.ControlBox = _debugMode;            
+            switch (screenMode)
+            {
+                case ScreenMode.Debug:
+                    WindowState = FormWindowState.Normal;
+                    FormBorderStyle = FormBorderStyle.Sizable;
+                    tmrKeepOnTop.Enabled = false;
+                    break;
+                case ScreenMode.Fullscreen:
+                    WindowState = FormWindowState.Maximized;
+                    FormBorderStyle = FormBorderStyle.None;
+                    tmrKeepOnTop.Enabled = true;
+                    break;
+                case ScreenMode.Windowed:
+                    WindowState = FormWindowState.Normal;
+                    FormBorderStyle = FormBorderStyle.None;
+                    tmrKeepOnTop.Enabled = true;
+                    break;
+            }
+            ControlBox = screenMode == ScreenMode.Debug;
         }
 
         /// <summary>
@@ -356,16 +407,16 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         /// </summary>
         private void SetCurrentScreen()
         {
-            if (CurrentScreen >= Screen.AllScreens.Count())
+            if (CurrentScreen >= Screen.AllScreens.Length)
                 CurrentScreen = 0;
 
-            if (Screen.AllScreens.Count() > 1)
+            if (Screen.AllScreens.Length > 1)
             {
-                if (!_debugMode) this.WindowState = FormWindowState.Normal;
-                this.Location = Screen.AllScreens[CurrentScreen].Bounds.Location;
-                if (!_debugMode) this.WindowState = FormWindowState.Maximized;
+                if (!_debugMode) WindowState = FormWindowState.Normal;
+                Location = Screen.AllScreens[CurrentScreen].Bounds.Location;
+                if (!_debugMode) WindowState = FormWindowState.Maximized;
             }
-        }    
+        }
 
     }
 }

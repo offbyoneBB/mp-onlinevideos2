@@ -8,29 +8,36 @@
     Description="OnlineVideos Plugin">
 
   <Version
-    PluginVersion="1.0"
-    ReleaseDate="2015-06-21 03:00:00 GMT+01:00"
+    PluginVersion="1.0.1"
+    ReleaseDate="2016-02-04 01:00:00 GMT+01:00"
     CurrentAPI="1"/>
-  
+
   <DependsOn>
     <CoreDependency Name="MediaPortal.Common" CompatibleAPI="1" />
     <CoreDependency Name="MediaPortal.UI" CompatibleAPI="1" />
-    <PluginReference PluginId="{D87D92F0-5E71-470a-A2A4-430F90A28BF3}" CompatibleAPI="1"/> <!-- SkinEngine -->
+    <PluginReference PluginId="{D87D92F0-5E71-470a-A2A4-430F90A28BF3}" CompatibleAPI="3"/> <!-- SkinEngine -->
     <PluginReference PluginId="{A965AFE5-44F9-46e0-980E-40BBE17F25CA}" CompatibleAPI="1"/> <!-- VideoPlayers -->
     <PluginReference PluginId="{15FB35F7-8C85-4404-BC67-BFF28446158A}" CompatibleAPI="1"/> <!-- Media -->
     <PluginReference PluginId="{1AFF4467-64B0-4ca1-AF28-9AEDF3525BCE}" CompatibleAPI="1"/> <!-- ConfigurationManager -->
     <PluginReference PluginId="{B765A4B6-F455-4941-BDAE-2CE45208BFEB}" CompatibleAPI="1"/> <!-- Configuration plugin -->
+    <PluginReference PluginId="{6792C6C5-842C-4C65-A698-D94710984A42}" CompatibleAPI="1"/> <!-- InputStreamPlayer -->
   </DependsOn>
-  
+
   <Runtime>
     <Assembly FileName="OnlineVideos.MediaPortal2.dll"/>
+    <Assembly FileName="OnlineVideos.MediaPortal2.Interfaces.dll"/>
     <Assembly FileName="OnlineVideos.dll"/>
+    <PluginStateTracker ClassName="OnlineVideos.MediaPortal2.OnlineVideosPlugin"/>
   </Runtime>
 
-  <Register Location="/VideoPlayers/MimeTypeRegistrations">
-    <VideoPlayerMimeTypeMapping Id="ovs" ClassName="OnlineVideos.MediaPortal2.OnlineVideosPlayer" MimeType="video/online"/>
-  </Register>
-  
+   <Register Location="/Players/Builders">
+     <PlayerBuilder Id="2647C0BE-D510-47B1-AC02-A16D5E6098CA" ClassName="OnlineVideos.MediaPortal2.OnlineVideoPlayerBuilder"/>
+   </Register>
+
+   <Register Location="/VideoPlayers/MimeTypeRegistrations">
+     <VideoPlayerMimeTypeMapping Id="ovs" ClassName="OnlineVideos.MediaPortal2.OnlineVideosPlayer" MimeType="video/online"/>
+   </Register>
+
   <Register Location="/Models">
     <Model Id="C418243F-5BD3-4637-8871-DA6545387929" Name="OnlineVideosWorkflowModel" ClassName="OnlineVideos.MediaPortal2.OnlineVideosWorkflowModel"/>
     <Model Id="C39D6682-90B5-4813-8A28-A1C9118D4F3E" Name="OnlineVideosSiteManagementWorkflowModel" ClassName="OnlineVideos.MediaPortal2.SiteManagementWorkflowModel"/>
@@ -38,7 +45,17 @@
     <Model Id="C43F4CD9-418A-4DFB-A0BD-DF24704B5BD6" Name="OnlineVideosSearchContributorModel" ClassName="OnlineVideos.MediaPortal2.SearchAction"/>
   </Register>
 
+  <!-- The ResourceProvider to access abitrary token based media. -->
+  <Register Location="/ResourceProviders">
+    <Instance Id="RawTokenResourceProvider" ClassName="OnlineVideos.MediaPortal2.ResourceAccess.RawTokenResourceProvider"/>
+  </Register>
+
   <Register Location="/Workflow/States">
+
+    <WorkflowState Id="629FD4EB-1EB5-4ADA-BA69-0977274C2FB0"
+        Name="OnlineVideosSiteGroups" MainScreen="ovsSiteGroups" WorkflowModel="C418243F-5BD3-4637-8871-DA6545387929"
+        DisplayLabel="OnlineVideos"/>
+
     <WorkflowState Id="F9D7500D-EC5C-4FEF-8FAE-E4DED8A22CE0"
         Name="OnlineVideosSites" MainScreen="sites" WorkflowModel="C418243F-5BD3-4637-8871-DA6545387929"
         DisplayLabel="OnlineVideos"/>
@@ -46,6 +63,10 @@
     <WorkflowState Id="BFDE18C2-0019-43D5-8ED7-8C9C426CE4A1"
         Name="OnlineVideosSiteSettings" MainScreen="ovsSiteSettings" WorkflowModel="C418243F-5BD3-4637-8871-DA6545387929"
         DisplayLabel="Settings"/>
+
+    <WorkflowState Id="517DD2C8-27C4-4AE1-ABDC-B8001BFC95DA"
+        Name="OnlineVideosCategories" MainScreen="categories" WorkflowModel="C418243F-5BD3-4637-8871-DA6545387929"
+        DisplayLabel="Site:"/>
 
     <WorkflowState Id="FF474A1A-CA39-4247-BFEA-4E7B578F482B"
         Name="OnlineVideosVideos" MainScreen="videos" WorkflowModel="C418243F-5BD3-4637-8871-DA6545387929"
@@ -76,7 +97,7 @@
         DisplayLabel="[OnlineVideos.ReportBroken]" />
 
   </Register>
-  
+
   <!-- Registration of our skin directory -->
   <Register Location="/Resources/Skin">
     <!-- This registration is necessary to declare the skin directory. You can use an arbitrary directory name or
@@ -105,6 +126,11 @@
 
   <!-- Contents of '/Plugins/OnlineVideos' section -->
   <Register Location="/Configuration/Settings/Plugins/OnlineVideos">
+    <ConfigSetting
+        Id="OnlineVideosGroupSitesByLanguage"
+        Text="Group Sites By Language"
+        HelpText="Start OnlineVideos with a screen that groups all your sites by language?"
+        ClassName="OnlineVideos.MediaPortal2.Configuration.GroupSitesByLanguage"/>
     <ConfigSetting
         Id="OnlineVideosAutomaticUpdate"
         Text="Automatic Update"
@@ -147,5 +173,5 @@
         ClassName="OnlineVideos.MediaPortal2.Configuration.SiteManagement"
         AdditionalData="WorkflowState=026DF45C-86CB-44AE-9174-114810A6BAFF,ConfAppPanel=..."/>
   </Register>
-  
+
 </Plugin>

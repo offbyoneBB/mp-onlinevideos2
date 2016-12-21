@@ -152,6 +152,32 @@ namespace OnlineVideos.Sites
 
             if (String.IsNullOrEmpty(thisUrl)) return null;
 
+            if (thisUrl.StartsWith("//content.jwplatform.com/players"))
+            {
+                data = GetWebData("http:" + thisUrl);
+                video.PlaybackOptions = new Dictionary<string, string>();
+                Match m3 = Regex.Match(data, @"""file"":\s""(?<url>[^""]*)"",\s*""height""[^,]*,\s*""label"":\s""(?<resolution>[^""]*)"",\s*""type"":\s""video/mp4""");
+                while (m3.Success)
+                {
+                    string resolution = m3.Groups["resolution"].Value;
+                    if (!video.PlaybackOptions.ContainsKey(resolution))
+                        video.PlaybackOptions.Add(resolution, "http:" + m3.Groups["url"].Value);
+                    m3 = m3.NextMatch();
+                }
+                string resultUrl;
+                if (video.PlaybackOptions.Count == 0) return String.Empty;
+                else
+                {
+                    var enumer = video.PlaybackOptions.GetEnumerator();
+                    enumer.MoveNext();
+                    resultUrl = enumer.Current.Value;
+                }
+                if (video.PlaybackOptions.Count == 1) video.PlaybackOptions = null;
+
+                return resultUrl;
+                //"file":\s"(?<VideoUrl>[^"]*)",\s*"height"[^,]*,\s*"label":\s"(?<Title>[^"]*)",\s*"type":\s"video/mp4"
+            }
+
             if (thisUrl.Contains("//www.youtube.com"))
                 return GetUrlFromHosters(thisUrl, video);
 

@@ -3,7 +3,7 @@
     xmlns="www.team-mediaportal.com/2008/mpf/directx"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ovs="clr-namespace:OnlineVideos.MediaPortal2;assembly=OnlineVideos.MediaPortal2"
-    DependsOnStyleResources="Buttons,Colors,Consts,OnlineVideosConsts">
+    DependsOnStyleResources="Buttons,Colors,Consts,OnlineVideosConsts,OtherControls">
 
     <ovs:SiteUtilIconConverter x:Key="ovsSiteUtilIconConverter"/>
     <ovs:LanguageIconConverter x:Key="ovsLanguageIconConverter"/>
@@ -39,34 +39,38 @@
     </DataTemplate>
 
     <DataTemplate x:Key="ovsCategoryItemDataTemplate" DataType="{x:Type ovs:CategoryViewModel}">
-      <Grid Width="{ResolutionResource ovsCategoryItemWidth}" Height="{ResolutionResource ovsCategoryItemHeight}" Margin="1">
+      <Grid Width="{ResolutionResource ovsCategoryItemWidth}" Height="{ResolutionResource ovsCategoryItemHeight}" Margin="3">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
           <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        
         <!-- SHADOW -->
-        <Control Style="{ThemeResource Shadow_3_19}" IsVisible="{Binding ElementName=thumb, Path=HasImage}" />
-        <!-- SHADOW -->       
-        <Grid Grid.Row="0">
-         <Grid.Opacity>
-           <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} ? {1} : {2}">
-             <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type Button}}" Path="HasFocus"/>
-             <Binding Source="1.0"/>
-             <Binding Source="0.8"/>
-           </MultiBinding>
-         </Grid.Opacity>
+        <Control Style="{ThemeResource Shadow_3_20}" IsVisible="{Binding ElementName=thumb, Path=HasImage}"
+                 Height="{Binding ElementName=PosterGrid,Path=ActualHeight}" Width="{Binding ElementName=PosterGrid,Path=ActualWidth}"/>
+        <!-- SHADOW -->     
+        
+        <Grid Name="PosterGrid" HorizontalAlignment="Center" VerticalAlignment="Center" 
+              MaxHeight="{ResolutionResource ovsCategoryItemHeight}" MaxWidth="{ResolutionResource ovsCategoryItemWidth}">
+          <Grid.OpacityMask>
+            <VisualBrush>
+              <VisualBrush.Visual>
+                <Border Name="mask" Background="White" CornerRadius="{StaticResource MediumRadius}" BorderThickness="0" BorderBrush="Black"/>
+              </VisualBrush.Visual>
+            </VisualBrush>
+          </Grid.OpacityMask>
+
          <DockPanel>
-           <Image DockPanel.Dock="Center" x:Name="thumb" Stretch="Fill" 
-                  Source="{Binding Path=Thumb}">
-             <Image.OpacityMask>
-               <VisualBrush>
-                 <VisualBrush.Visual>
-                   <Border Name="mask" Background="White" CornerRadius="13.5" BorderThickness="0" BorderBrush="Black"/>
-                 </VisualBrush.Visual>
-               </VisualBrush>
-             </Image.OpacityMask>
+           <Image DockPanel.Dock="Center" x:Name="thumb" Stretch="Uniform" Source="{Binding Path=Thumb}">
+             <Image.Opacity>
+               <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} ? {1} : {2}">
+                 <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type Button}}" Path="HasFocus"/>
+                 <Binding Source="1.0"/>
+                 <Binding Source="0.85"/>
+               </MultiBinding>
+             </Image.Opacity>
            </Image>
            <Image DockPanel.Dock="Center" Stretch="Fill"
                   Source="Container.png" IsVisible="{Binding ElementName=thumb, Path=!HasImage}" />
@@ -81,33 +85,36 @@
     </DataTemplate>
 
     <DataTemplate x:Key="ovsVideoItemDataTemplate" DataType="{x:Type ovs:VideoViewModel}">
-      <Grid Width="{ResolutionResource ovsVideoItemWidth}" Height="{ResolutionResource ovsVideoItemHeight}" Margin="1">
+      <Grid Width="{ResolutionResource ovsVideoItemWidth}" Height="{ResolutionResource ovsVideoItemHeight}" Margin="3">
          <Grid.ColumnDefinitions>
            <ColumnDefinition Width="*"/>
          </Grid.ColumnDefinitions>
          <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
          </Grid.RowDefinitions>
-         <!-- SHADOW -->
-         <Control Style="{ThemeResource Shadow_3_19}" IsVisible="{Binding ElementName=thumb, Path=HasImage}" />
-         <!-- SHADOW -->
-         <Grid Grid.Row="0">
-           <Grid.Opacity>
-             <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} ? {1} : {2}">
-               <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type Button}}" Path="HasFocus"/>
-               <Binding Source="1.0"/>
-               <Binding Source="0.8"/>
-             </MultiBinding>
-           </Grid.Opacity>
-           <Image x:Name="thumb" Stretch="Fill" VerticalAlignment="Center" 
-                  Source="{Binding Path=ThumbnailImage}">
-             <Image.OpacityMask>
-               <VisualBrush>
-                 <VisualBrush.Visual>
-                   <Border Name="mask" Background="White" CornerRadius="13.5" BorderThickness="0" BorderBrush="Black"/>
-                 </VisualBrush.Visual>
-               </VisualBrush>
-             </Image.OpacityMask>
+        
+        <!-- SHADOW -->
+        <Control Style="{ThemeResource Shadow_3_20}" IsVisible="{Binding ElementName=thumb, Path=HasImage}"
+                 Height="{Binding ElementName=PosterGrid,Path=ActualHeight}" Width="{Binding ElementName=PosterGrid,Path=ActualWidth}"/>
+        <!-- SHADOW -->
+
+        <Grid Name="PosterGrid" HorizontalAlignment="Center" VerticalAlignment="Center"
+              MaxHeight="{ResolutionResource ovsVideoItemHeight}" MaxWidth="{ResolutionResource ovsVideoItemWidth}">
+          <Grid.OpacityMask>
+            <VisualBrush>
+              <VisualBrush.Visual>
+                <Border Name="mask" Background="White" CornerRadius="{StaticResource MediumRadius}" BorderThickness="0" BorderBrush="Black"/>
+              </VisualBrush.Visual>
+            </VisualBrush>
+          </Grid.OpacityMask>
+          <Image x:Name="thumb" Stretch="Uniform" VerticalAlignment="Center" Source="{Binding Path=ThumbnailImage}">
+            <Image.Opacity>
+              <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} ? {1} : {2}">
+                <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type Button}}" Path="HasFocus"/>
+                <Binding Source="1.0"/>
+                <Binding Source="0.85"/>
+              </MultiBinding>
+            </Image.Opacity>
            </Image>
            <!--Image x:Name="thumb" Stretch="Uniform" VerticalAlignment="Center" Margin="{ResolutionResource ovsSiteItemThumbMargin}" 
                    MaxHeight="{ResolutionResource ovsVideoItemThumbMaxHeight}" Source="{Binding Path=ThumbnailImage}"/-->
@@ -116,7 +123,7 @@
                    VerticalAlignment="Bottom" Wrap="False" Scroll="Auto" Margin="20,90,20,20" HorizontalAlignment="Center"
                    FontSize="{ThemeResource SmallFontSize}" Content="{Binding Path=Title}" Color="Black" />
          </Grid>     
-        </Grid>
+       </Grid>
     </DataTemplate>
 
     <Style x:Key="ovsSiteItemContainerStyle" TargetType="{x:Type ListViewItem}">

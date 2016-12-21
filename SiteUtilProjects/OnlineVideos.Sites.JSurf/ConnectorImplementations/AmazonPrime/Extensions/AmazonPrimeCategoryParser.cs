@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using OnlineVideos.Sites.JSurf.Extensions;
 using System.Threading;
 using OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connectors;
@@ -21,20 +20,22 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
         /// <returns></returns>
         public static List<Category> LoadAmazonPrimeCategoriesFromUrl(this string url, Category parent, AmazonBrowserSession session)
         {
-            HtmlDocument doc;
             var result = new List<Category>();
+            if (string.IsNullOrEmpty(url))
+                return result;
+            HtmlDocument doc;
             List<HtmlNode> nodes = null;
             var variedUserAgent = string.Empty;
             var tmpWeb = session; //HtmlWeb { UseCookies = true };
             // Attempt the URL up to 15 times as amazon wants us to use the api!
             for (int i = 0; i <= 15; i++)
-            { 
+            {
                 doc = tmpWeb.Load(url.Replace("{RANDOMNUMBER}", new Random().Next(1000000, 2000000).ToString()));
                 nodes = doc.DocumentNode.GetNodesByClass("collections-element");
 
                 if (nodes == null)
                     Thread.Sleep(400);
-                else 
+                else
                     break;
             }
 
@@ -75,7 +76,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                     tmpCateg.HasSubCategories = true;
                     tmpCateg.SubCategoriesDiscovered = false;
                     result.Add(tmpCateg);
-               }
+                }
             }
             return result;
         }
@@ -89,6 +90,8 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
         public static List<Category> LoadAmazonPrimeVideosAsCategoriesFromUrl(this string url, Category parent, AmazonBrowserSession session)
         {
             var results = new List<Category>();
+            if (string.IsNullOrEmpty(url))
+                return results;
             var nextPage = string.Empty;
             HtmlDocument doc = null;
             var tmpWeb = session;
@@ -111,33 +114,33 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
 
             if (listItems != null)
             {
-                    listItems = listItems.Where(x => x.OriginalName.ToLower() == "li" && x.Id.StartsWith("result_")).ToList();
+                listItems = listItems.Where(x => x.OriginalName.ToLower() == "li" && x.Id.StartsWith("result_")).ToList();
 
-                    // These are the movies - parse them into categories
-                    foreach (var item in listItems)
-                    {
-                        var tmpCateg = new Category();
-                        tmpCateg.ParentCategory = parent;
-                        tmpCateg.HasSubCategories = false;
-                        var link = item.GetNodeByClass("s-access-detail-page");                        
-                        tmpCateg.Name = link.GetAttribute("title");
-                        tmpCateg.Name = StringUtils.PlainTextFromHtml(tmpCateg.Name.Replace("\n", String.Empty).Trim());
-                        tmpCateg.Other = link.GetAttribute("href"); ;
-                        tmpCateg.Thumb = item.GetNodeByClass("s-access-image").GetAttribute("src");
-                        var released = link.ParentNode.NavigatePath(new int[] { 3 }).GetInnerText();
-                        var score = item.GetNodeByClass("a-icon-star") == null ? String.Empty : item.GetNodeByClass("a-icon-star").FirstChild.GetInnerText();
-                        tmpCateg.Description = StringUtils.PlainTextFromHtml("Released: " + released + "\r\nReview Score: " + score);
-                        results.Add(tmpCateg);
-                    }
+                // These are the movies - parse them into categories
+                foreach (var item in listItems)
+                {
+                    var tmpCateg = new Category();
+                    tmpCateg.ParentCategory = parent;
+                    tmpCateg.HasSubCategories = false;
+                    var link = item.GetNodeByClass("s-access-detail-page");
+                    tmpCateg.Name = link.GetAttribute("title");
+                    tmpCateg.Name = StringUtils.PlainTextFromHtml(tmpCateg.Name.Replace("\n", String.Empty).Trim());
+                    tmpCateg.Other = link.GetAttribute("href"); ;
+                    tmpCateg.Thumb = item.GetNodeByClass("s-access-image").GetAttribute("src");
+                    var released = link.ParentNode.NavigatePath(new int[] { 3 }).GetInnerText();
+                    var score = item.GetNodeByClass("a-icon-star") == null ? String.Empty : item.GetNodeByClass("a-icon-star").FirstChild.GetInnerText();
+                    tmpCateg.Description = StringUtils.PlainTextFromHtml("Released: " + released + "\r\nReview Score: " + score);
+                    results.Add(tmpCateg);
+                }
 
-                    var nextPageCtrl = doc.GetElementById("pagnNextLink");
+                var nextPageCtrl = doc.GetElementById("pagnNextLink");
 
-                    if (nextPageCtrl != null)
-                    {
-                        nextPage = Properties.Resources.AmazonRootUrl + nextPageCtrl.Attributes["href"].Value.Replace("&amp;", "&");
-                        if (!string.IsNullOrEmpty(nextPage))
-                            results.Add(new NextPageCategory() { ParentCategory = parent, Url = nextPage, SubCategories = new List<Category>() });
-                    }
+                if (nextPageCtrl != null)
+                {
+                    nextPage = Properties.Resources.AmazonRootUrl + nextPageCtrl.Attributes["href"].Value.Replace("&amp;", "&");
+                    if (!string.IsNullOrEmpty(nextPage))
+                        results.Add(new NextPageCategory() { ParentCategory = parent, Url = nextPage, SubCategories = new List<Category>() });
+                }
             }
 
             return results;
@@ -162,11 +165,11 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
             for (int i = 0; i <= 10; i++)
             {
                 doc = tmpWeb.Load(url);
-                listItems = doc.DocumentNode.GetNodesByClass("packshot-wrapper");//ilo2");
+                listItems = doc.DocumentNode.GetNodesByClass("dv-packshot");
 
                 if (listItems == null)
                 {
-                   Thread.Sleep(200);
+                    Thread.Sleep(200);
                 }
                 else
                     break;
@@ -176,29 +179,29 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
 
             if (listItems != null)
             {
-                    foreach (var item in listItems)
-                    {
-                        var tmpCateg = new Category();
-                        tmpCateg.ParentCategory = parent;
-                        tmpCateg.HasSubCategories = false;
-                        tmpCateg.Name = item.NavigatePath(new[] { 0, 0 }).Attributes["alt"].Value; //item.GetNodeByClass("watchlist-row-link").Attributes["title"].Value;
-                        tmpCateg.Name = StringUtils.PlainTextFromHtml(tmpCateg.Name.Replace("\n", String.Empty).Trim());
-                        tmpCateg.Other = item.NavigatePath(new[] { 0 }).Attributes["href"].Value.Replace("&amp;", "&"); ;
-                        tmpCateg.Thumb = item.NavigatePath(new[] { 0, 0 }).Attributes["src"].Value;
-                        //var released = (item.GetNodeByClass("reg subt") == null ? string.Empty : item.GetNodeByClass("reg subt").FirstChild.GetInnerText());
-                        //var score = (item.GetNodeByClass("asinReviewsSummaryNoPopover") == null ? string.Empty : (item.GetNodeByClass("asinReviewsSummaryNoPopover").FindFirstChildElement() == null ? string.Empty : item.GetNodeByClass("asinReviewsSummaryNoPopover").FindFirstChildElement().Attributes["alt"].Value));
-                        tmpCateg.Description = tmpCateg.Name; //"Released: " + released + "\r\nReview Score: " + score;
-                        results.Add(tmpCateg);
-                    }
- 
-                    var nextPageCtrl = doc.GetElementById("pagnNextLink");
+                foreach (var item in listItems)
+                {
+                    var tmpCateg = new Category();
+                    tmpCateg.ParentCategory = parent;
+                    tmpCateg.HasSubCategories = false;
+                    tmpCateg.Name = item.GetNodeByClass("dv-core-title").InnerText;
+                    tmpCateg.Name = StringUtils.PlainTextFromHtml(tmpCateg.Name.Replace("\n", String.Empty).Trim());
+                    tmpCateg.Other = item.NavigatePath(new[] { 0 }).Attributes["href"].Value.Replace("&amp;", "&"); ;
+                    tmpCateg.Thumb = item.NavigatePath(new[] { 0, 0 }).Attributes["src"].Value;
+                    //var released = (item.GetNodeByClass("reg subt") == null ? string.Empty : item.GetNodeByClass("reg subt").FirstChild.GetInnerText());
+                    //var score = (item.GetNodeByClass("asinReviewsSummaryNoPopover") == null ? string.Empty : (item.GetNodeByClass("asinReviewsSummaryNoPopover").FindFirstChildElement() == null ? string.Empty : item.GetNodeByClass("asinReviewsSummaryNoPopover").FindFirstChildElement().Attributes["alt"].Value));
+                    tmpCateg.Description = tmpCateg.Name; //"Released: " + released + "\r\nReview Score: " + score;
+                    results.Add(tmpCateg);
+                }
 
-                    if (nextPageCtrl != null)
-                    {
-                        nextPage = Properties.Resources.AmazonRootUrl + nextPageCtrl.Attributes["href"].Value.Replace("&amp;", "&");
-                        if (!string.IsNullOrEmpty(nextPage))
-                            results.Add(new NextPageCategory() { ParentCategory = parent, Url = nextPage, SubCategories = new List<Category>() });
-                    }
+                var nextPageCtrl = doc.GetElementById("pagnNextLink");
+
+                if (nextPageCtrl != null)
+                {
+                    nextPage = Properties.Resources.AmazonRootUrl + nextPageCtrl.Attributes["href"].Value.Replace("&amp;", "&");
+                    if (!string.IsNullOrEmpty(nextPage))
+                        results.Add(new NextPageCategory() { ParentCategory = parent, Url = nextPage, SubCategories = new List<Category>() });
+                }
             }
 
             return results;

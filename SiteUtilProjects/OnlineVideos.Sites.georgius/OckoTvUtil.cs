@@ -12,11 +12,10 @@ namespace OnlineVideos.Sites.georgius
     {
         #region Private fields
 
-        private static String baseUrl = @"http://ocko.tv/ocko-tv-zive/";
-
-        private static String dynamicCategoryStart = @"mediaPlayer.options";
-        private static String dynamicCategoryEnd = @"mediaPlayer.init";
-        private static String showUrlRegex = @"file : '(?<showUrl>[^']+)";
+        private static String archivUrl = @"http://ocko.tv/archiv";
+        private static String liveUrl = @"http://ocko-live.service.cdn.cra.cz/playlist/live/ocko";
+        private static String liveGoldUrl = @"http://ocko-live.service.cdn.cra.cz/playlist/live/ocko_gold";
+        private static String liveExpresUrl = @"http://ocko-live.service.cdn.cra.cz/playlist/live/ocko_expres";
 
         private int currentStartIndex = 0;
         private Boolean hasNextPage = false;
@@ -50,38 +49,41 @@ namespace OnlineVideos.Sites.georgius
         public override int DiscoverDynamicCategories()
         {
             int dynamicCategoriesCount = 0;
-            String baseWebData = GetWebData(OckoTvUtil.baseUrl, forceUTF8: true);
 
-            int index = baseWebData.IndexOf(OckoTvUtil.dynamicCategoryStart);
-            if (index > 0)
-            {
-                baseWebData = baseWebData.Substring(index);
-
-                index = baseWebData.IndexOf(OckoTvUtil.dynamicCategoryEnd);
-                if (index > 0)
+            this.Settings.Categories.Add(
+                new RssLink()
                 {
-                    baseWebData = baseWebData.Substring(0, index);
+                    Name = "Živě",
+                    HasSubCategories = false,
+                    Url = OckoTvUtil.liveUrl
+                });
 
-                    String showUrl = String.Empty;
-                    String showTitle = String.Empty;
+            dynamicCategoriesCount++;
 
-                    Match match = Regex.Match(baseWebData, OckoTvUtil.showUrlRegex);
-                    if (match.Success)
+            String baseWebData = GetWebData(OckoTvUtil.archivUrl, forceUTF8: true);
+            HtmlAgilityPack.HtmlDocument document = new HtmlAgilityPack.HtmlDocument();
+            document.LoadHtml(baseWebData);
+
+            HtmlAgilityPack.HtmlNodeCollection shows = document.DocumentNode.SelectNodes(".//ul[contains(@class, 'archive_list')]/li");
+
+            foreach (var show in shows)
+            {
+                HtmlAgilityPack.HtmlNode titleNode = show.SelectSingleNode(".//span[@class='title']");
+                HtmlAgilityPack.HtmlNode linkNode = show.SelectSingleNode(".//a[@class='nettv-show-link']");
+                HtmlAgilityPack.HtmlNode thumbNode = show.SelectSingleNode(".//img");
+                HtmlAgilityPack.HtmlNode descriptionNode = show.SelectSingleNode(".//div[@class='nettv-archive-team-desc']");
+
+                this.Settings.Categories.Add(
+                    new RssLink()
                     {
-                        showUrl = match.Groups["showUrl"].Value;
-                        showTitle = "Óčko Live";
-                        baseWebData = baseWebData.Substring(match.Index + match.Length);
-                    }
+                        Name = titleNode.InnerText,
+                        HasSubCategories = false,
+                        Url = Utils.FormatAbsoluteUrl(linkNode.Attributes["href"].Value, OckoTvUtil.archivUrl),
+                        Thumb = thumbNode.Attributes["src"].Value
+                    });
 
-                    this.Settings.Categories.Add(
-                        new RssLink()
-                        {
-                            Name = showTitle,
-                            Url = Utils.FormatAbsoluteUrl(showUrl, OckoTvUtil.baseUrl),
-                            HasSubCategories = false
-                        });
-                    dynamicCategoriesCount++;
-                }
+                dynamicCategoriesCount++;
+                
             }
 
             this.Settings.DynamicCategoriesDiscovered = true;
@@ -95,37 +97,60 @@ namespace OnlineVideos.Sites.georgius
             if (!String.IsNullOrEmpty(pageUrl))
             {
                 this.nextPageUrl = String.Empty;
-                String baseWebData = GetWebData(pageUrl);
-                XmlDocument document = new XmlDocument();
-                document.LoadXml(baseWebData);
 
-                XmlNamespaceManager namespaceManager = new XmlNamespaceManager(document.NameTable);
-                namespaceManager.AddNamespace("media", "http://search.yahoo.com/mrss/");
-                namespaceManager.AddNamespace("jwplayer", "http://developer.longtailvideo.com/trac/wiki/FlashFormats");
-
-                XmlNodeList media = document.SelectNodes("//media:content", namespaceManager);
-                XmlNode url = document.SelectSingleNode("//jwplayer:streamer", namespaceManager);
-
-                if ((media != null) && (url != null) && (media.Count != 0))
+                if (this.currentCategory.Name == "Živě")
                 {
-                    String rtmpUrl = url.InnerText;
-
-                    String tcUrl = rtmpUrl;
-                    String app = rtmpUrl.Substring(rtmpUrl.IndexOf("/", rtmpUrl.IndexOf("//") + 2) + 1);
-                    String playPath = "ockoHQ3";
-
-                    String resultUrl = new OnlineVideos.MPUrlSourceFilter.RtmpUrl(rtmpUrl) { LiveStream = true, TcUrl = tcUrl, App = app, PlayPath = playPath, PageUrl = OckoTvUtil.baseUrl, Live = true }.ToString();
-
                     VideoInfo videoInfo = new VideoInfo()
                     {
-                        Title = "Live",
-                        Thumb = "http://ocko.tv/public/templates/default/img/drop-logo.png",
-                        VideoUrl = resultUrl
+                        Title = "ÓČKO",
+                        VideoUrl = OckoTvUtil.liveUrl
+                    };
+                    pageVideos.Add(videoInfo);
+
+                    videoInfo = new VideoInfo()
+                    {
+                        Title = "ÓČKO GOLD",
+                        VideoUrl = OckoTvUtil.liveGoldUrl
+                    };
+                    pageVideos.Add(videoInfo);
+
+                    videoInfo = new VideoInfo()
+                    {
+                        Title = "ÓČKO EXPRES",
+                        VideoUrl = OckoTvUtil.liveExpresUrl
                     };
                     pageVideos.Add(videoInfo);
                 }
+                else
+                {
+                    String baseWebData = GetWebData(pageUrl, forceUTF8: true);
+                    HtmlAgilityPack.HtmlDocument document = new HtmlAgilityPack.HtmlDocument();
+                    document.LoadHtml(baseWebData);
 
-                this.nextPageUrl = String.Empty;
+                    HtmlAgilityPack.HtmlNodeCollection episodes = document.DocumentNode.SelectNodes(".//ul[contains(@class, 'archive_list')]/li");
+
+                    foreach (var episode in episodes)
+                    {
+                        HtmlAgilityPack.HtmlNode linkNode = episode.SelectSingleNode(".//h2/a");
+                        HtmlAgilityPack.HtmlNode thumbNode = episode.SelectSingleNode(".//img");
+                        HtmlAgilityPack.HtmlNode descriptionNode = episode.SelectSingleNode(".//p[@class='nettv-team-desc']");
+
+                        VideoInfo videoInfo = new VideoInfo()
+                        {
+                            Title = linkNode.SelectSingleNode(".//text()").InnerText,
+                            Thumb = thumbNode.Attributes["src"].Value,
+                            VideoUrl = Utils.FormatAbsoluteUrl(linkNode.Attributes["href"].Value, pageUrl),
+                            Description = descriptionNode.InnerText
+                        };
+                        pageVideos.Add(videoInfo);
+                    }
+
+                    HtmlAgilityPack.HtmlNode nextPageNode = document.DocumentNode.SelectSingleNode(".//a[@class='weebo_pager_next']");
+                    if (nextPageNode != null)
+                    {
+                        this.nextPageUrl = nextPageNode.Attributes["href"].Value;
+                    }
+                }
             }
 
             return pageVideos;
@@ -198,7 +223,34 @@ namespace OnlineVideos.Sites.georgius
 
         public override string GetVideoUrl(VideoInfo video)
         {
-            return video.VideoUrl;
+            if (video.PlaybackOptions == null)
+            {
+                video.PlaybackOptions = new Dictionary<string, string>();
+            }
+            video.PlaybackOptions.Clear();
+
+            if (this.currentCategory.Name == "Živě")
+            {
+                video.PlaybackOptions.Add("Low quality", Utils.FormatAbsoluteUrl("live_lq.m3u8", video.VideoUrl));
+                video.PlaybackOptions.Add("High quality", Utils.FormatAbsoluteUrl("live_hq.m3u8", video.VideoUrl));
+            }
+            else
+            {
+                String baseWebData = GetWebData(video.VideoUrl, forceUTF8: true);
+                HtmlAgilityPack.HtmlDocument document = new HtmlAgilityPack.HtmlDocument();
+                document.LoadHtml(baseWebData);
+
+                return document.DocumentNode.SelectSingleNode(".//div[@class='nettv-archive-video']/video").Attributes["src"].Value;
+            }
+
+            if (video.PlaybackOptions.Count > 0)
+            {
+                var enumer = video.PlaybackOptions.GetEnumerator();
+                enumer.MoveNext();
+                return enumer.Current.Value;
+            }
+
+            return String.Empty;
         }
 
         #endregion

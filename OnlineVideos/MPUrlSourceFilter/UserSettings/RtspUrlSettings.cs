@@ -212,11 +212,11 @@ namespace OnlineVideos.MPUrlSourceFilter.UserSettings
         {
             base.Apply(rtspUrl);
 
-            rtspUrl.OpenConnectionSleepTime = OpenConnectionSleepTime;
-            rtspUrl.OpenConnectionTimeout = OpenConnectionTimeout;
-            rtspUrl.TotalReopenConnectionTimeout = TotalReopenConnectionTimeout;
-            rtspUrl.ClientPortMax = ClientPortMin;
-            rtspUrl.ClientPortMin = ClientPortMax;
+            rtspUrl.OpenConnectionSleepTime = this.OpenConnectionSleepTime;
+            rtspUrl.OpenConnectionTimeout = this.OpenConnectionTimeout;
+            rtspUrl.TotalReopenConnectionTimeout = this.TotalReopenConnectionTimeout;
+            rtspUrl.ClientPortMax = this.ClientPortMin;
+            rtspUrl.ClientPortMin = this.ClientPortMax;
         }
 
         #endregion

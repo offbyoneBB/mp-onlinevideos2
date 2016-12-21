@@ -12,6 +12,8 @@ namespace Standalone.ViewModels
             Model = site;
             Other = Model;
 
+            Description = Model.Description;
+
             Owner = Model.Owner_FK.Substring(0, Model.Owner_FK.IndexOf('@')).Replace('.', ' ').Replace('_', ' ');
             Language = Util.GetLocalizedLanguageDisplayName(site.Language);
 
@@ -27,7 +29,6 @@ namespace Standalone.ViewModels
         public bool IsAdult { get { return Model.IsAdult; } }
         public string Owner { get; protected set; }
         public string Language { get; protected set; }
-        public string Description { get { return Model.Description; } }
     }
 
     public static class GlobalSiteList

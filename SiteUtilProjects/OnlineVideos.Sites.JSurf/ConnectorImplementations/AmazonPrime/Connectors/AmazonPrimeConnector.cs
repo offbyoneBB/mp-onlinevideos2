@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using OnlineVideos.Sites.Entities;
 using System.Windows.Forms;
 using OnlineVideos.Helpers;
-using System.Drawing;
-using OnlineVideos.Sites.JSurf.Extensions;
-using OnlineVideos.Sites.JSurf.ConnectorImplementations;
 
 namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connectors
 {
@@ -34,7 +29,9 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         private bool _isPlayOrPausing;
         private int _playPausePos = -1;
         private int _playPauseHeight = -1;
-        private Panel _blankPanel = new Panel();
+
+        // Keys (or Actions) which are directly forwarded to browser
+        private string[] _passThroughKeys = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
         /// <summary>
         /// Do the login
@@ -44,6 +41,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         /// <returns></returns>
         protected override EventResult PerformActualLogin(string username, string password)
         {
+            SetTopMostActivate();
             _username = username;
             _password = password;
             _currentState = State.LoggingIn;
@@ -58,7 +56,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         /// </summary>
         /// <param name="videoToPlay"></param>
         /// <returns></returns>
-        public override Sites.Entities.EventResult PlayVideo(string videoToPlay)
+        public override EventResult PlayVideo(string videoToPlay)
         {
             ShowLoading();
             Browser.ScrollBarsEnabled = false;
@@ -73,7 +71,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         /// Play button pressed
         /// </summary>
         /// <returns></returns>
-        public override Sites.Entities.EventResult Play()
+        public override EventResult Play()
         {
             DoPlayOrPause();
             return EventResult.Complete();
@@ -83,7 +81,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         /// Pause button pressed
         /// </summary>
         /// <returns></returns>
-        public override Sites.Entities.EventResult Pause()
+        public override EventResult Pause()
         {
             DoPlayOrPause();
             return EventResult.Complete();
@@ -93,18 +91,18 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         /// Document loaded - see what state we're in and react accordingly
         /// </summary>
         /// <returns></returns>
-        public override Sites.Entities.EventResult BrowserDocumentComplete()
+        public override EventResult BrowserDocumentComplete()
         {
             switch (_currentState)
             {
                 case State.LoggingIn:
                     if (Url.EndsWith("nav_signin_btn"))
                     {
-                        var jsCode = "document.getElementById('ap_email').value = '" + _username + "';";
-                        jsCode += "document.getElementById('ap_signin_existing_radio').checked='checked';";
-                        jsCode += "setElementAvailability('ap_password', true);";
-                        jsCode += "document.getElementById('ap_password').value = '" + _password + "';";
-                        jsCode += "document.getElementById('ap_signin_form').submit();";
+                        var jsCode = @"document.getElementById('ap_email').value = '" + _username + @"';
+                                    var r=document.getElementById('ap_signin_existing_radio'); if (r)r.checked='checked';
+                                    document.getElementById('ap_password').value = '" + _password + @"';
+                                    var fm=document.getElementById('ap_signin_form')||document.forms['signIn'];
+                                    if(fm)fm.submit();";
                         InvokeScript(jsCode);
                         _currentState = State.LoginResult;
                     }
@@ -124,28 +122,28 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
                     _currentState = State.PlayPage1;
                     break;
                 case State.PlayPage1:
-                    
-                    // Retry play every 1 second(s)
-/*                    var jsPlay = "var mpOVPlay = function() { ";
-                    jsPlay += "   try {";
-                    jsPlay += "         AMZNDetails.dvPlayer.play();";
-                    jsPlay += "         amzn.webGlobalVideoPlayer._mainPlayer._enableFullWindowPlaybackMode();";
-                    jsPlay += "   } catch(err) {";
-                    jsPlay += "      setTimeout(mpOVPlay,1000);";
-                    jsPlay += "   }";
-                    jsPlay += "};";
-                    jsPlay += "mpOVPlay();";
 
-                    InvokeScript(jsPlay);*/
+                    // Retry play every 1 second(s)
+                    /*                    var jsPlay = "var mpOVPlay = function() { ";
+                                        jsPlay += "   try {";
+                                        jsPlay += "         AMZNDetails.dvPlayer.play();";
+                                        jsPlay += "         amzn.webGlobalVideoPlayer._mainPlayer._enableFullWindowPlaybackMode();";
+                                        jsPlay += "   } catch(err) {";
+                                        jsPlay += "      setTimeout(mpOVPlay,1000);";
+                                        jsPlay += "   }";
+                                        jsPlay += "};";
+                                        jsPlay += "mpOVPlay();";
+
+                                        InvokeScript(jsPlay);*/
 
                     // Hide the scroll bar - can't get the webpage to do this nicely :-(
-/*                    _blankPanel.Height = Browser.Height;
-                    _blankPanel.Width = 35;
-                    _blankPanel.BackColor = Color.Black;
-                    _blankPanel.Left = Browser.FindForm().Right - 35;
+                    /*                    _blankPanel.Height = Browser.Height;
+                                        _blankPanel.Width = 35;
+                                        _blankPanel.BackColor = Color.Black;
+                                        _blankPanel.Left = Browser.FindForm().Right - 35;
 
-                    // Browser.FindForm().Controls.Add(_blankPanel);
-                    _blankPanel.BringToFront();*/
+                                        // Browser.FindForm().Controls.Add(_blankPanel);
+                                        _blankPanel.BringToFront();*/
 
                     HideLoading();
 
@@ -179,16 +177,26 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         {
             if (_currentState == State.PlayPage1 && !_isPlayOrPausing)
             {
-                if (actionEnumName == "ACTION_MOVE_LEFT")
+                if (_passThroughKeys.Contains(actionEnumName))
+                    SendKeyToControl(actionEnumName);
+                if (actionEnumName == Constants.ACTION_MOVE_LEFT)
                     SendKeyToControl("{LEFT}");
-                if (actionEnumName == "ACTION_MOVE_RIGHT")
+                if (actionEnumName == Constants.ACTION_MOVE_RIGHT)
                     SendKeyToControl("{RIGHT}");
                 // Jump to beginning of clip
-                if (actionEnumName == "ACTION_PREV_ITEM")
+                if (actionEnumName == Constants.ACTION_PREV_ITEM)
                     InvokeScript("amzn.webGlobalVideoPlayer._mainPlayer.seek(0)");
                 // Jump to next episode, more complicated than it could be, because jquery "click()" does not seem work
-                if (actionEnumName == "ACTION_NEXT_ITEM")
+                if (actionEnumName == Constants.ACTION_NEXT_ITEM)
                     InvokeScript("$('.episode-list .selected-episode').next().find('a.episode-list-link').each(function() { location.href = $(this).attr('href'); });");
+            }
+        }
+
+        protected bool IsHtml5Player
+        {
+            get
+            {
+                return Process.GetCurrentProcess().ProcessName.Contains("iexplore");
             }
         }
 
@@ -200,21 +208,41 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         /// <param name="keyStrokeToSend"></param>
         private void SendKeyToControl(string keyStrokeToSend)
         {
-            if (Browser.Document.GetElementById("dummyFocusControl") == null)
+            var isHtml5 = IsHtml5Player;
+            if (!isHtml5)
             {
-                //InvokeScript("$('#player_object').attr('height','99%');");
-                var newCtl = "$('<input  type=\"text\" id=\"dummyFocusControl\" style=\"width: 1px; height: 1%;opacity:0;color: transparent;\"/>')";
-                InvokeScript("$('#player_container').append(" + newCtl + ");");
+                if (Browser.Document.GetElementById("dummyFocusControl") == null)
+                {
+                    //InvokeScript("$('#player_object').attr('height','99%');");
+                    var newCtl = "$('<input  type=\"text\" id=\"dummyFocusControl\" style=\"width: 1px; height: 1%;opacity:0;color: transparent;\"/>')";
+                    InvokeScript("$('#player_container').append(" + newCtl + ");");
+                }
+                var form = Browser.FindForm();
+                Cursor.Position = new System.Drawing.Point(form.Left + 50, form.Top + 50);
+                Application.DoEvents();
+                CursorHelper.DoLeftMouseClick();
+                Application.DoEvents();
+                SendKeys.Send(keyStrokeToSend);
+                Application.DoEvents();
+            }
+            else
+            {
+                SetTopMostActivate();
+                SendKeys.SendWait(keyStrokeToSend);
             }
 
-            Cursor.Position = new System.Drawing.Point(Browser.FindForm().Left + 50, Browser.FindForm().Top + 50);
-            Application.DoEvents();
-            CursorHelper.DoLeftMouseClick();
-            Application.DoEvents();
-            System.Windows.Forms.SendKeys.Send(keyStrokeToSend);
-            Application.DoEvents();
+            if (!isHtml5)
+                InvokeScript("$('#dummyFocusControl').focus()");
+        }
 
-            InvokeScript("$('#dummyFocusControl').focus()");
+        private void SetTopMostActivate()
+        {
+            var form = Browser.FindForm();
+            if (form == null)
+                return;
+            form.TopMost = true;
+            form.BringToFront();
+            form.Activate();
         }
     }
 }

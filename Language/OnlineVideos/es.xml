@@ -81,6 +81,7 @@
   <string name="LayoutIcons">Vista: Icónos</string>
   <string name="LayoutBigIcons">Vista: Iconos grandes</string>
   <!--M-->
+  <string name="Main.Help">Este plugin crear una forma simple y consistente de navegar y reproducir vídeos alojados en varios sitios web.</string>
   <string name="ManageSites">Organizar sitios</string>
   <string name="MaxResults">Máx resultados</string>
   <!--N-->

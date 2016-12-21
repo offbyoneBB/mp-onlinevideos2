@@ -82,14 +82,14 @@ namespace OnlineVideos
             return ((ICustomTypeDescriptor)this).GetProperties(null);
         }
 
-        private PropertyDescriptorCollection cachedPropertyDescriptors;
-        private FilterCache cachedFilter;
+        private PropertyDescriptorCollection _cachedPropertyDescriptors;
+        private FilterCache _cachedFilter;
 
         PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties(Attribute[] attributes)
         {
             bool filtering = (attributes != null && attributes.Length > 0);
-            PropertyDescriptorCollection props = cachedPropertyDescriptors;
-            FilterCache cache = cachedFilter;
+            PropertyDescriptorCollection props = _cachedPropertyDescriptors;
+            FilterCache cache = _cachedFilter;
 
             // Use a cached version if possible
             if (filtering && cache != null && cache.IsValid(attributes))
@@ -118,9 +118,9 @@ namespace OnlineVideos
                 cache = new FilterCache();
                 cache.Attributes = attributes;
                 cache.FilteredProperties = props;
-                cachedFilter = cache;
+                _cachedFilter = cache;
             }
-            else cachedPropertyDescriptors = props;
+            else _cachedPropertyDescriptors = props;
 
             return props;
         }
@@ -158,7 +158,27 @@ namespace OnlineVideos
                         }
                         else
                         {
-                            field.SetValue(this, Convert.ChangeType(value, field.FieldType));
+                            try
+                            {
+                                field.SetValue(this, Convert.ChangeType(value, field.FieldType));
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Warn("{0} - could not set User Configuration Value: {1}. Trying method with constructor. Error: {2}", ToString(), field.Name, ex.Message);
+
+                                try
+                                {
+                                    ConstructorInfo constructor = field.FieldType.GetConstructor(new Type[] { typeof(String) });
+                                    if (constructor != null)
+                                    {
+                                        field.SetValue(this, constructor.Invoke(new Object[] { value }));
+                                    }
+                                }
+                                catch (Exception ex2)
+                                {
+                                    Log.Warn("{0} - could not set User Configuration Value: {1} with creating object. Error: {2}", ToString(), field.Name, ex2.Message);
+                                }
+                            }
                         }
                     }
                 }

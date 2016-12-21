@@ -83,7 +83,7 @@ namespace OnlineVideos.Sites
             string webData = GetWebData(video.VideoUrl);
             if (!webData.StartsWith("{")) // videos in serwisy informacyjne
             {
-                Match m = Regex.Match(webData, @"<iframe\s*src=""http://www\.tvp\.pl/sess/tvplayer\.php\?object_id=(?<id>[^&]*)&amp;autoplay=true""", defaultRegexOptions);
+                Match m = Regex.Match(webData, @"<iframe\s*src=""//www\.tvp\.pl/sess/tvplayer\.php\?object_id=(?<id>[^&]*)&amp;autoplay=true""", defaultRegexOptions);
                 if (m.Success)
                 {
                     string newUrl = String.Format(videoListRegExFormatString, m.Groups["id"].Value);

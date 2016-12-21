@@ -29,6 +29,7 @@
   <!--D-->
   <string name="Date">Datum</string>
   <string name="DateOfRelease">Erscheinungsdatum</string>
+  <string name="Details">Details</string>
   <string name="Directors">Regisseure</string>
   <string name="Download">Herunterladen</string>
   <string name="DownloadUserdefined">Herunterladen (spezieller Ordner)</string>
@@ -81,6 +82,7 @@
   <string name="LayoutIcons">Ansicht: Symbole klein</string>
   <string name="LayoutBigIcons">Ansicht: Symbole groß</string>
   <!--M-->
+  <string name="Main.Help">Diese Erweiterung bietet eine einheitliche Oberfläche, um Videos verschiedenster Websites zu durchsuchen und abzuspielen.</string>
   <string name="ManageSites">Sites verwalten</string>
   <string name="MaxResults">Max. Ergebnisse</string>
   <!--N-->
@@ -112,6 +114,7 @@
   <string name="Queued">Nacheinander</string>
   <!--R-->
   <string name="RateVideo">Video bewerten ...</string>
+  <string name="Rating">Altersfreigabe</string>
   <string name="Recommendations">Empfehlungen</string>
   <string name="RemoveFromFavorites">Von den Favoriten entfernen</string>
   <string name="RemoveFromPlaylist">Von Playlist entfernen</string>

@@ -1,11 +1,7 @@
 ﻿using OnlineVideos.Helpers;
-using OnlineVideos.Sites.WebAutomation.BrowserHost.Factories;
 using OnlineVideos.Sites.WebAutomation.BrowserHost.Helpers;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 
 namespace OnlineVideos.Sites.WebAutomation.BrowserHost
@@ -20,29 +16,35 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost
         {
             try
             {
-       
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 ProcessHelper.PreventMonitorPowerdown();
 
-                // Process requires path to MediaPortal, Video Id, Web Automation Type, Username, Password
+                // Process requires path to MediaPortal, Video Id, Web Automation Type, Username, Password, [EmulationVersion]
                 if (args.Length < 5) return;
-                                
+
                 Directory.SetCurrentDirectory(args[0]);
 
                 var result = args[2];
-                var host = new BrowserHost();
-                IERegistryVersion.SetIEVersion();
-                Application.Run(host.PlayVideo(result, args[1], args[3], args[4]));
 
+                int emulationLevel;
+                if (args.Length < 6 || !int.TryParse(args[5], out emulationLevel) || emulationLevel < 7000 || emulationLevel > 12001)
+                    emulationLevel = 10000; // Default: use IE10 compatibility mode
+
+                IERegistryVersion.SetIEVersion(emulationLevel);
+                var host = new BrowserHost();
+                var username = EncryptionUtils.SymDecryptLocalPC(args[3]);
+                var password = EncryptionUtils.SymDecryptLocalPC(args[4]);
+                Application.Run(host.PlayVideo(result, args[1], username, password));
+                IERegistryVersion.RemoveIEVersion();
             }
             catch (Exception ex)
             {
-                new DebugLogger().Error(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
-                Console.Error.WriteLine(string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
+                var message = string.Format("{0}\r\n{1}", ex.Message, ex.StackTrace);
+                new DebugLogger().Error(message);
+                Console.Error.WriteLine(message);
                 Console.Error.Flush();
             }
         }
-
     }
 }

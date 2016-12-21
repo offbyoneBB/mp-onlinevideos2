@@ -81,6 +81,7 @@
   <string name="OnlineVideos.LayoutIcons">Vista: Icónos</string>
   <string name="OnlineVideos.LayoutBigIcons">Vista: Iconos grandes</string>
   <!--M-->
+  <string name="OnlineVideos.Main.Help">Este plugin crear una forma simple y consistente de navegar y reproducir vídeos alojados en varios sitios web.</string>
   <string name="OnlineVideos.ManageSites">Organizar sitios</string>
   <string name="OnlineVideos.MaxResults">Máx resultados</string>
   <!--N-->

@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using OnlineVideos.Sites;
+﻿using OnlineVideos.Helpers;
 using OnlineVideos.Sites.Entities;
-using System.Windows.Forms;
-using OnlineVideos.Helpers;
-using OnlineVideos.Sites.Properties;
-using System.Drawing;
-using System.Threading;
+using System;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace OnlineVideos.Sites.BrowserUtilConnectors
 {
@@ -30,7 +23,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private string _password;
         private string _profile;
         private bool _showLoading = true;
-        private bool _rememberLogin = false;
         private bool _enableNetflixOsd = false;
         private bool _useAlternativeProfilePicker = false;
         private bool _disableLogging = false;
@@ -49,11 +41,11 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         public override void OnClosing()
         {
-            //Process.GetProcessesByName("OnlineVideos.WebAutomation.BrowserHost").First().Kill();
             Process.GetCurrentProcess().Kill();
         }
         public override void OnAction(string actionEnumName)
         {
+            if (!_disableLogging) MessageHandler.Info("Netflix. Input: {0}", actionEnumName);
             if (_currentState == State.Playing && !_isPlayingOrPausing)
             {
                 if (actionEnumName == "REMOTE_0" && _enableNetflixOsd)
@@ -71,12 +63,11 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
         }
 
- 
+
         public override Entities.EventResult PerformLogin(string username, string password)
         {
-
-            _rememberLogin = username.Contains("REMEMBERLOGIN");
-            username = username.Replace("REMEMBERLOGIN", string.Empty);
+            Cursor.Hide();
+            Application.DoEvents();
             _disableLogging = username.Contains("DISABLELOGGING");
             username = username.Replace("DISABLELOGGING", string.Empty);
             _showLoading = username.Contains("SHOWLOADING");
@@ -85,7 +76,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             username = username.Replace("ENABLENETFLIXOSD", string.Empty);
             _useAlternativeProfilePicker = username.Contains("PROFILEPICKER");
             username = username.Replace("PROFILEPICKER", string.Empty);
-            
+
             if (_showLoading)
                 ShowLoading();
             string[] userProfile = username.Split('¥');
@@ -113,11 +104,13 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         public override Entities.EventResult Play()
         {
+            if (!_disableLogging) MessageHandler.Info("Netflix. Input: {0}", "Play");
             return PlayPause();
         }
 
         public override Entities.EventResult Pause()
         {
+            if (!_disableLogging) MessageHandler.Info("Netflix. Input: {0}", "Pause");
             return PlayPause();
         }
 
@@ -131,30 +124,28 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         }
 
 
+        private bool activateLoginTimer = true;
         public override Entities.EventResult BrowserDocumentComplete()
         {
-            string jsCode;
             if (!_disableLogging) MessageHandler.Info("Netflix. Url: {0}, State: {1}", Url, _currentState.ToString());
             switch (_currentState)
             {
                 case State.Login:
-                    if (Url.Contains("/Login?"))
+                    if (Url.Contains("/Login") && activateLoginTimer)
                     {
-                        jsCode = "document.getElementById('email').value = '" + _username + "'; ";
-                        jsCode += "document.getElementById('password').value = '" + _password + "'; ";
-                        if (_rememberLogin)
+                        activateLoginTimer = false;
+                        System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+                        timer.Tick += (object sender, EventArgs e) =>
                         {
-                            jsCode += "document.getElementById('RememberMe').checked = true; ";
-                        }
-                        else
-                        {
-                            jsCode += "document.getElementById('RememberMe').checked = false; ";
-                        }
-                        jsCode += "setTimeout(\"document.getElementById('login-form-contBtn').click()\", 500);";
-                        InvokeScript(jsCode);
-                        //_currentState = State.ProfilesGate;
+                            InvokeScript(Properties.Resources.NetflixJs);
+                            InvokeScript(@"doLogin(""" + _username + @""", """ + _password + @""");");
+                            timer.Stop();
+                            timer.Dispose();
+                        };
+                        timer.Interval = 1000;
+                        timer.Start();
                     }
-                    else
+                    else if (!Url.Contains("/Login"))
                     {
                         Url = "https://www.netflix.com";
                         _currentState = State.SelectProfile;
@@ -172,7 +163,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                         else
                             InvokeScript("setTimeout(\"document.querySelector('a[data-reactid*=" + _profile + "]').click()\", 500);");
                         _currentState = State.ReadyToPlay;
-                    } else
+                    }
+                    else
                     {
                         Url = "https://www.netflix.com/ProfilesGate";
                     }

@@ -24,6 +24,7 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.RemoteHandling
         /// </summary>
         public RemoteProcessing(ILog logger)
         {
+#if !NO_MP1
             // Add the MP1 specific remote handling if enabled in the config
             var mp1HandlingEnabledConfig = ConfigurationManager.AppSettings["EnableMP1SpecificRemoteHandling"];
             var mp1HandlingEnabled = (!string.IsNullOrEmpty(mp1HandlingEnabledConfig) && mp1HandlingEnabledConfig.ToUpper() == "TRUE");
@@ -31,7 +32,9 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.RemoteHandling
             // MP1 handling must always be added first 
             if (mp1HandlingEnabled)
                 _remoteHandlers.Add(new MediaPortal1RemoteHandling(logger));
-
+#else
+            var mp1HandlingEnabled = false;
+#endif
             // Always add the web service handling - this will be a fallback event handler, but we'll only respond to actions from the service if the MP1 handling is enabled
             _remoteHandlers.Add(new WebServiceRemoteHandling(logger, !mp1HandlingEnabled));
         }

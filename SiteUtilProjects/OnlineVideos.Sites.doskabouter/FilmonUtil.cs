@@ -70,14 +70,20 @@ namespace OnlineVideos.Sites
             foreach (JToken stream in streams)
             {
                 string serverUrl = stream.Value<string>("url");
+                string theUrl;
+                if (serverUrl.StartsWith("rtmp", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    RtmpUrl res = new RtmpUrl(serverUrl);
+                    res.Live = true;
+                    res.PlayPath = stream.Value<string>("name");
 
-                RtmpUrl res = new RtmpUrl(serverUrl);
-                res.Live = true;
-                res.PlayPath = stream.Value<string>("name");
-
-                int p = serverUrl.IndexOf("live/?id");
-                res.App = serverUrl.Substring(p);
-                video.PlaybackOptions.Add(stream.Value<string>("quality"), res.ToString());
+                    int p = serverUrl.IndexOf("live/?id");
+                    res.App = serverUrl.Substring(p);
+                    theUrl = res.ToString();
+                }
+                else
+                    theUrl = serverUrl;
+                video.PlaybackOptions.Add(stream.Value<string>("quality"), theUrl);
             }
 
             return video.PlaybackOptions.First().Value;

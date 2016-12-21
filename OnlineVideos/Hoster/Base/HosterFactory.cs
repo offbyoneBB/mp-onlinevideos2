@@ -8,22 +8,22 @@ namespace OnlineVideos.Hoster
     {
         public static HosterBase GetHoster(string name)
         {
-			return OnlineVideosAppDomain.PluginLoader.GetHoster(name);
+            return OnlineVideosAppDomain.PluginLoader.GetHoster(name);
         }
 
         public static List<HosterBase> GetAllHosters()
         {
-			return OnlineVideosAppDomain.PluginLoader.GetAllHosters();
+            return OnlineVideosAppDomain.PluginLoader.GetAllHosters();
         }
 
         public static bool ContainsName(string name)
         {
-			return OnlineVideosAppDomain.PluginLoader.ContainsHoster(name);
+            return OnlineVideosAppDomain.PluginLoader.ContainsHoster(name);
         }
 
         public static bool Contains(Uri uri)
         {
-			return OnlineVideosAppDomain.PluginLoader.ContainsHosters(uri);
+            return OnlineVideosAppDomain.PluginLoader.ContainsHosters(uri);
         }
     }
 }

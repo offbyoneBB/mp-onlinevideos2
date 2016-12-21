@@ -76,7 +76,7 @@ namespace OnlineVideos.Sites
         }
 
         // keep a reference of all Categories ever created and reuse them, to get them selected when returning to the category view
-        Dictionary<string, RssLink> cachedCategories = new Dictionary<string, RssLink>();
+        readonly Dictionary<string, RssLink> _cachedCategories = new Dictionary<string, RssLink>();
 
         public override int DiscoverDynamicCategories()
         {
@@ -91,12 +91,14 @@ namespace OnlineVideos.Sites
             if (sumOfAllVideos > 0)  // only add the "ALL" category if we have single favorite videos in addition to favorites categories
             {
                 RssLink all = null;
-                if (!cachedCategories.TryGetValue(Translation.Instance.All, out all))
+                if (!_cachedCategories.TryGetValue(Translation.Instance.All, out all))
                 {
-                    all = new RssLink();
-                    all.Name = Translation.Instance.All;
-                    all.Url = string.Empty;
-                    cachedCategories.Add(all.Name, all);
+                    all = new RssLink
+                    {
+                        Name = Translation.Instance.All,
+                        Url = string.Empty
+                    };
+                    _cachedCategories.Add(all.Name, all);
                 }
                 all.EstimatedVideoCount = sumOfAllVideos;
                 Settings.Categories.Add(all);
@@ -112,14 +114,14 @@ namespace OnlineVideos.Sites
                        (!aSite.ConfirmAge || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed))
                     {
                         RssLink cat = null;
-                        if (!cachedCategories.TryGetValue(aSite.Name + " - " + Translation.Instance.Favourites, out cat))
+                        if (!_cachedCategories.TryGetValue(aSite.Name + " - " + Translation.Instance.Favourites, out cat))
                         {
                             cat = new RssLink();
                             cat.Name = aSite.Name + " - " + Translation.Instance.Favourites;
                             cat.Description = aSite.Description;
                             cat.Url = aSite.Name;
                             cat.Thumb = System.IO.Path.Combine(OnlineVideoSettings.Instance.ThumbsDir, @"Icons\" + aSite.Name + ".png");
-                            cachedCategories.Add(cat.Name, cat);
+                            _cachedCategories.Add(cat.Name, cat);
                         }
                         cat.EstimatedVideoCount = lsSiteId.Value;
                         Settings.Categories.Add(cat);
@@ -133,7 +135,7 @@ namespace OnlineVideos.Sites
                             cat.SubCategories = new List<Category>();
                             if (lsSiteId.Value > 0) // only add the "ALL" category if we have single favorite videos in addition to favorites categories
                             {
-                                cat.SubCategories.Add(new RssLink() { Name = Translation.Instance.All, Url = aSite.Name, ParentCategory = cat, EstimatedVideoCount = lsSiteId.Value });
+                                cat.SubCategories.Add(new RssLink { Name = Translation.Instance.All, Url = aSite.Name, ParentCategory = cat, EstimatedVideoCount = lsSiteId.Value });
                             }
                             foreach (var favCat in favCats)
                             {
@@ -176,12 +178,12 @@ namespace OnlineVideos.Sites
             List<ContextMenuEntry> result = new List<ContextMenuEntry>();
             if (selectedCategory is FavoriteCategory)
             {
-                if (selectedItem == null) result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.RemoveFromFavorites });
+                if (selectedItem == null) result.Add(new ContextMenuEntry { DisplayText = Translation.Instance.RemoveFromFavorites });
             }
             else if (selectedItem != null)
             {
-                result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.RemoveFromFavorites });
-                result.Add(new ContextMenuEntry() { DisplayText = Translation.Instance.DeleteAll });
+                result.Add(new ContextMenuEntry { DisplayText = Translation.Instance.RemoveFromFavorites });
+                result.Add(new ContextMenuEntry { DisplayText = Translation.Instance.DeleteAll });
             }
             return result;
         }
@@ -215,99 +217,96 @@ namespace OnlineVideos.Sites
 
         #endregion
 
-		#region IFilter Member
+        #region IFilter Member
 
-		string lastSort = "default";
+        string _lastSort = "default";
 
-		public List<VideoInfo> FilterVideos(Category category, int maxResult, string orderBy, string timeFrame)
-		{
-			lastSort = orderBy;
-			return GetVideos(category);
-		}
+        public List<VideoInfo> FilterVideos(Category category, int maxResult, string orderBy, string timeFrame)
+        {
+            _lastSort = orderBy;
+            return GetVideos(category);
+        }
 
-		public List<VideoInfo> FilterSearchResults(string query, int maxResult, string orderBy, string timeFrame)
-		{
-			lastSort = orderBy;
+        public List<VideoInfo> FilterSearchResults(string query, int maxResult, string orderBy, string timeFrame)
+        {
+            _lastSort = orderBy;
             return OrderVideos(OnlineVideoSettings.Instance.FavDB.GetFavoriteVideos(null, query));
-		}
+        }
 
-		public List<VideoInfo> FilterSearchResults(string query, string category, int maxResult, string orderBy, string timeFrame)
-		{
-			return null;
-		}
+        public List<VideoInfo> FilterSearchResults(string query, string category, int maxResult, string orderBy, string timeFrame)
+        {
+            return null;
+        }
 
-		public List<int> GetResultSteps()
-		{
-			return new List<int>();
-		}
+        public List<int> GetResultSteps()
+        {
+            return new List<int>();
+        }
 
-		public Dictionary<string, string> GetOrderByOptions()
-		{
-			Dictionary<string, string> options = new Dictionary<string, string>();
-			options.Add(Translation.Instance.Default, "default");
-			options.Add(Translation.Instance.Name, "name");
-			options.Add(Translation.Instance.Airdate, "airdate");
-			options.Add(Translation.Instance.Runtime, "runtime");
-			return options;
-		}
+        public Dictionary<string, string> GetOrderByOptions()
+        {
+            Dictionary<string, string> options = new Dictionary<string, string>();
+            options.Add(Translation.Instance.Default, "default");
+            options.Add(Translation.Instance.Name, "name");
+            options.Add(Translation.Instance.Airdate, "airdate");
+            options.Add(Translation.Instance.Runtime, "runtime");
+            return options;
+        }
 
-		public Dictionary<string, string> GetTimeFrameOptions()
-		{
-			return new Dictionary<string, string>();
-		}
+        public Dictionary<string, string> GetTimeFrameOptions()
+        {
+            return new Dictionary<string, string>();
+        }
 
-		List<VideoInfo> OrderVideos(List<VideoInfo> videos)
-		{
-			switch (lastSort)
-			{
-				case "name":
-					videos.Sort((Comparison<VideoInfo>)delegate(VideoInfo v1, VideoInfo v2)
-					{
-						return v1.Title.CompareTo(v2.Title);
-					});
-					break;
-				case "airdate":
-					videos.Sort((Comparison<VideoInfo>)delegate(VideoInfo v1, VideoInfo v2)
-					{
-						DateTime airdate_v1;
-						DateTime airdate_v2;
-						if (DateTime.TryParse(v1.Airdate, out airdate_v1) && DateTime.TryParse(v2.Airdate, out airdate_v2))
-							return airdate_v2.CompareTo(airdate_v1);
-						else
-							return v2.Airdate.CompareTo(v1.Airdate); // string compare as fallback
-					});
-					break;
-				case "runtime":
-					videos.Sort((Comparison<VideoInfo>)delegate(VideoInfo v1, VideoInfo v2)
-					{
-						double seconds_v1 = TryGetSeconds(v1.Length);
-						double seconds_v2 = TryGetSeconds(v2.Length);
-						if (seconds_v1 != 0.0f && seconds_v2 != 0.0f)
-							return seconds_v2.CompareTo(seconds_v1);
-						else
-							return v2.Length.CompareTo(v1.Length); // string compare as fallback
-					});
-					break;
-			}
-			return videos;
-		}
+        List<VideoInfo> OrderVideos(List<VideoInfo> videos)
+        {
+            switch (_lastSort)
+            {
+                case "name":
+                    videos.Sort((Comparison<VideoInfo>)((v1, v2) => v1.Title.CompareTo(v2.Title)));
+                    break;
+                case "airdate":
+                    videos.Sort((Comparison<VideoInfo>)delegate(VideoInfo v1, VideoInfo v2)
+                    {
+                        DateTime airdate_v1;
+                        DateTime airdate_v2;
+                        if (DateTime.TryParse(v1.Airdate, out airdate_v1) && DateTime.TryParse(v2.Airdate, out airdate_v2))
+                            return airdate_v2.CompareTo(airdate_v1);
+                        else
+                            return v2.Airdate.CompareTo(v1.Airdate); // string compare as fallback
+                    });
+                    break;
+                case "runtime":
+                    videos.Sort((Comparison<VideoInfo>)delegate(VideoInfo v1, VideoInfo v2)
+                    {
+                        double seconds_v1 = TryGetSeconds(v1.Length);
+                        double seconds_v2 = TryGetSeconds(v2.Length);
+                        if (seconds_v1 != 0.0f && seconds_v2 != 0.0f)
+                            return seconds_v2.CompareTo(seconds_v1);
+                        else
+                            return v2.Length.CompareTo(v1.Length); // string compare as fallback
+                    });
+                    break;
+            }
+            return videos;
+        }
 
-		double TryGetSeconds(string length)
-		{
-			// might be a single number
-			double seconds;
-			if (!double.TryParse(length, System.Globalization.NumberStyles.None | System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.CreateSpecificCulture("en-US"), out seconds))
-			{
-				// might be in HH:mm:ss notation
-				TimeSpan timespan;
-				if (TimeSpan.TryParse(length, out timespan))
-				{
-					seconds = timespan.TotalSeconds;
-				}
-			}
-			return seconds;
-		}
+        double TryGetSeconds(string length)
+        {
+            // might be a single number
+            double seconds;
+            if (!double.TryParse(length, System.Globalization.NumberStyles.None | System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.CreateSpecificCulture("en-US"), out seconds))
+            {
+                // might be in HH:mm:ss notation
+                TimeSpan timespan;
+                if (TimeSpan.TryParse(length, out timespan))
+                {
+                    seconds = timespan.TotalSeconds;
+                }
+            }
+            return seconds;
+        }
 
-		#endregion
+        #endregion
     }
 }

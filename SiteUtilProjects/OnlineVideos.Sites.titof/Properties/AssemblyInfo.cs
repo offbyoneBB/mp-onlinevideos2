@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("OnlineVideos.Sites.titof")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("CARL Software")]
+[assembly: AssemblyCompany("LopezTuparles")]
 [assembly: AssemblyProduct("OnlineVideos.Sites.titof")]
-[assembly: AssemblyCopyright("Copyright © CARL Software 2010")]
+[assembly: AssemblyCopyright("Copyright © Lopez Tuparles Software 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

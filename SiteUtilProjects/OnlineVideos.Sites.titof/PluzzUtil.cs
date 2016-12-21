@@ -22,6 +22,16 @@ namespace OnlineVideos.Sites
         {
             Settings.Categories.Clear();
             RssLink cat = null;
+
+            cat = new RssLink();
+            cat.Url = "%DIRECT%";
+            cat.Name = "En Direct";
+            cat.Other = "root";
+            cat.Thumb = "";
+            cat.HasSubCategories = true;
+            Settings.Categories.Add(cat);
+            
+            
             cat = new RssLink();
             cat.Url = channelCatalog.Replace("%chaine%", "la_1ere_reunion%2Cla_1ere_guyane%2Cla_1ere_polynesie%2Cla_1ere_martinique%2Cla_1ere_mayotte%2Cla_1ere_nouvellecaledonie%2Cla_1ere_guadeloupe%2Cla_1ere_wallisetfutuna%2Cla_1ere_saintpierreetmiquelon"); ;
             cat.Name = "La 1ère";
@@ -130,7 +140,64 @@ namespace OnlineVideos.Sites
         public override int DiscoverSubCategories(Category parentCategory)
         {
             RssLink parent = parentCategory as RssLink;
-            if (parentCategory.Other.ToString() == "root")
+            if (parentCategory.Other.ToString() == "root" && parent.Url == "%DIRECT%")
+            {
+                parent.SubCategories = new List<Category>();
+
+                Category cat = new Category();
+
+                cat = new Category();
+                cat.Other = "http://live.francetv.fr/simulcast/la_1ere_reunion/hls_v1/index.m3u8";
+                cat.Thumb = "http://www.francetelevisions.fr/sites/default/files/images/2015/07/08/F1.png";
+                cat.Name = "La 1ere";
+                cat.HasSubCategories = false;
+                parent.SubCategories.Add(cat);
+
+                cat = new Category();
+                cat.Other = "http://live.francetv.fr/simulcast/France_2/hls_v1/index.m3u8";
+                cat.Thumb = "http://static.francetv.fr/arches/france2/default/img/apple-touch-icon-72.png";
+                cat.Name = "France 2";
+                cat.HasSubCategories = false;
+                parent.SubCategories.Add(cat);
+
+                cat = new Category();
+                cat.Other = "http://live.francetv.fr/simulcast/France_3/hls_v1/index.m3u8";
+                cat.Thumb = "http://static.francetv.fr/arches/france3/default/img/apple-touch-icon-72.png";
+                cat.Name = "France 3";
+                cat.HasSubCategories = false;
+                parent.SubCategories.Add(cat);
+
+                cat = new Category();
+                cat.Other = "http://live.francetv.fr/simulcast/France_4/hls_v1/index.m3u8";
+                cat.Thumb = "http://static.francetv.fr/arches/france4/default/img/apple-touch-icon-72.png";
+                cat.Name = "France 4";
+                cat.HasSubCategories = false;
+                parent.SubCategories.Add(cat);
+
+                cat = new Category();
+                cat.Other = "http://live.francetv.fr/simulcast/France_5/hls_v1/index.m3u8";
+                cat.Thumb = "http://static.francetv.fr/arches/france5/default/img/apple-touch-icon-72.png";
+                cat.Name = "France 5";
+                cat.HasSubCategories = false;
+                parent.SubCategories.Add(cat);
+
+                cat = new Category();
+                cat.Other = "http://live.francetv.fr/simulcast/France_O/hls_v1/index.m3u8";
+                cat.Thumb = "http://static.francetv.fr/arches/franceO/default/img/apple-touch-icon-72.png";
+                cat.Name = "France Ô";
+                cat.HasSubCategories = false;
+                parent.SubCategories.Add(cat);
+
+                cat = new Category();
+                cat.Other = "http://ftviflivehdz-f.akamaihd.net/i/zouzous_live@88958/index_832_av-p.m3u8";
+                //cat.Thumb = "http://www.francetelevisions.fr/sites/default/files/images/2015/07/08/FO.png";
+                cat.Name = "Zouzou TV";
+                cat.HasSubCategories = false;
+                parent.SubCategories.Add(cat);
+
+
+            }
+            else if (parentCategory.Other.ToString() == "root")
             {
                 parent.SubCategories = new List<Category>();
 
@@ -197,34 +264,105 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> GetVideos(Category category)
         {
-            string webData = GetWebData(category.Other.ToString());
-            if (string.IsNullOrEmpty(webData)) return new List<VideoInfo>();
-            List<VideoInfo> tlist = GetVideo(webData);
+            List<VideoInfo> tlist = null;
+            
+            if (category.Other.ToString().Contains("m3u")) 
+            {
+                tlist = GetPlaylist(category);
+            }
+            else
+            {
+                string webData = GetWebData(category.Other.ToString());
+                if (string.IsNullOrEmpty(webData)) return new List<VideoInfo>();
+                tlist = GetVideo(webData);
+            }
             return tlist;
         }
 
-        public override string GetVideoUrl(VideoInfo video)
+        private List<VideoInfo> GetPlaylist(Category category)
         {
-            string moreinfo = GetWebData(showInfo.Replace("%s", video.Other.ToString()));
-            JObject obj1 = JObject.Parse(moreinfo);
-            JArray tarr = (JArray)obj1["videos"];
-
-            string surl = (string)tarr[2]["url"];
+            string url = category.Other.ToString();
+            List<VideoInfo> tReturn = new List<VideoInfo>();
 
             M3U.M3U.M3UPlaylist play = new M3U.M3U.M3UPlaylist();
             play.Configuration.Depth = 1;
-            play.Read(surl);
+            play.Read(url);
             IEnumerable<OnlineVideos.Sites.M3U.M3U.M3UComponent> telem = from item in play.OrderBy("BRANDWITH")
                                                                          select item;
 
             if (telem.Count() > 3)
             {
-                video.PlaybackOptions = new Dictionary<string, string>();
-                video.PlaybackOptions.Add("LOW", telem.ToList()[telem.Count() - 3].Path);
-                video.PlaybackOptions.Add("SD", telem.ToList()[telem.Count() - 2].Path);
-                video.PlaybackOptions.Add("HD", telem.ToList()[telem.Count() - 1].Path);
+                VideoInfo nfo = new VideoInfo();
+                nfo.Title = category.Name + " HD";
+                nfo.Thumb = category.Thumb;
+                nfo.VideoUrl = telem.ToList()[telem.Count() - 1].Path;
+                tReturn.Add(nfo);
+
+                nfo = new VideoInfo();
+                nfo.Thumb = category.Thumb;
+                nfo.Title = category.Name + " SD";
+                nfo.VideoUrl = telem.ToList()[telem.Count() - 2].Path;
+                tReturn.Add(nfo);
+
+                nfo = new VideoInfo();
+                nfo.Thumb = category.Thumb;
+                nfo.Title = category.Name + " LOW";
+                nfo.VideoUrl = telem.ToList()[telem.Count() - 3].Path;
+                tReturn.Add(nfo);
+
             }
-            return telem.Last().Path;
+            else 
+            {
+                VideoInfo nfo = new VideoInfo();
+                nfo.Title = category.Name + " HD";
+                nfo.Thumb = category.Thumb;
+                nfo.VideoUrl = category.Other.ToString();
+                tReturn.Add(nfo);
+            }
+            return tReturn ;
+        }
+
+        public override string GetVideoUrl(VideoInfo video)
+        {
+
+            if (video.VideoUrl.Contains("m3u8"))
+            {
+                M3U.M3U.M3UPlaylist pl = new M3U.M3U.M3UPlaylist();
+                pl.Read(video.VideoUrl);
+                if (pl.Options.ContainsKey("#EXT-X-MEDIA-SEQUENCE"))
+                {
+                    return video.VideoUrl;
+                }
+                else
+                {
+                    string url = "";
+                    return url;
+                }
+
+            }
+            else
+            {
+                string moreinfo = GetWebData(showInfo.Replace("%s", video.Other.ToString()));
+                JObject obj1 = JObject.Parse(moreinfo);
+                JArray tarr = (JArray)obj1["videos"];
+
+                string surl = (string)tarr[2]["url"];
+
+                M3U.M3U.M3UPlaylist play = new M3U.M3U.M3UPlaylist();
+                play.Configuration.Depth = 1;
+                play.Read(surl);
+                IEnumerable<OnlineVideos.Sites.M3U.M3U.M3UComponent> telem = from item in play.OrderBy("BRANDWITH")
+                                                                             select item;
+
+                if (telem.Count() > 3)
+                {
+                    video.PlaybackOptions = new Dictionary<string, string>();
+                    video.PlaybackOptions.Add("LOW", telem.ToList()[telem.Count() - 3].Path);
+                    video.PlaybackOptions.Add("SD", telem.ToList()[telem.Count() - 2].Path);
+                    video.PlaybackOptions.Add("HD", telem.ToList()[telem.Count() - 1].Path);
+                }
+                return telem.Last().Path;
+            }
         }
 
         private List<VideoInfo> GetVideo(string webData)

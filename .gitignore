@@ -12,3 +12,11 @@ bin
 /.nuget
 /UpgradeLog.htm
 /OnlineVideos/NuGetPackage/Content
+/OnlineVideos.MediaPortal1/Resources/Thumbs.db
+/SiteImages/Banners/Thumbs.db
+/SiteImages/Icons/Thumbs.db
+/Standalone/Images/Thumbs.db
+ipch/*
+**/Debug/*
+**/Release/*
+*sdf

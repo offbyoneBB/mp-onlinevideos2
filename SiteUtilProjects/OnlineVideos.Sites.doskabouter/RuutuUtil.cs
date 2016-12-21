@@ -53,7 +53,7 @@ namespace OnlineVideos.Sites
 
         private string getDescription(HtmlNode node)
         {
-            var node2 = node.SelectSingleNode(".//div[@class='hoverbox-details']/p");
+            var node2 = node.SelectSingleNode(".//p[@class='expanding-card__description']");//kausi
             if (node2 == null)
                 node2 = node.SelectSingleNode(".//div[@class='list-item-main1']");//klipit
             if (node2 != null)
@@ -64,7 +64,7 @@ namespace OnlineVideos.Sites
         private List<VideoInfo> myParse2(HtmlNode node)
         {
             List<VideoInfo> result = new List<VideoInfo>();
-            var res = node.SelectNodes(".//div[@class='hoverbox-container']");
+            var res = node.SelectNodes(".//div[@data-content-type='video']");//tested data-content-type="video"
             if (res != null)//normal
             {
                 foreach (var vid2 in res)
@@ -75,11 +75,11 @@ namespace OnlineVideos.Sites
                     else
                         vid = vid2;
                     var node2 = vid.SelectSingleNode(".//a[@href]");
-                    if (node2 != null && vid.SelectSingleNode(".//h4[@itemprop='name']") != null)
+                    if (node2 != null && vid.SelectSingleNode(".//h4 | .//h3") != null)
                     {
                         VideoInfo video = CreateVideoInfo();
 
-                        video.Title = vid.SelectSingleNode(".//h4[@itemprop='name']").InnerText;
+                        video.Title = vid.SelectSingleNode(".//h4 | .//h3").InnerText;
                         video.Description = getDescription(vid);
                         video.VideoUrl = FormatDecodeAbsolutifyUrl(baseUrl, node2.Attributes["href"].Value, "", UrlDecoding.None);
                         video.Thumb = getImageUrl(vid);
@@ -138,7 +138,7 @@ namespace OnlineVideos.Sites
             {
                 var cat = new RssLink()
                 {
-                    Name = node.SelectSingleNode(@".//div").InnerText,
+                    Name = node.SelectSingleNode(@".//div").InnerText.Trim(),
                     ParentCategory = parentCat,
                     HasSubCategories = true,
                     Url = FormatDecodeAbsolutifyUrl(baseUrl, node.Attributes["href"].Value, "", UrlDecoding.None),
@@ -161,7 +161,7 @@ namespace OnlineVideos.Sites
                     Name = node.SelectSingleNode(@".//h3").InnerText,
                     ParentCategory = parentCategory,
                     HasSubCategories = true,
-                    Thumb = htmlValue(node.SelectSingleNode(@".//img[@data-src]").Attributes["data-src"]),
+                    Thumb = getImageUrl(node),
                     SubCategories = new List<Category>(),
                     Url = FormatDecodeAbsolutifyUrl(baseUrl, node.Attributes["href"].Value, "", UrlDecoding.None),
                     Other = RuType.LapsetSeries
@@ -174,17 +174,17 @@ namespace OnlineVideos.Sites
 
         private int AddOhjelmat(HtmlDocument doc, Category parentCat)
         {
-            var nodes = doc.DocumentNode.SelectNodes(@"//section[div/h2[@class='header-title']]");
+            var nodes = doc.DocumentNode.SelectNodes(@"//section[div/h2[@class='header-title'][a]]");//tested
             foreach (var node in nodes)
             {
                 Category sub = new Category()
                 {
-                    Name = node.SelectSingleNode(@".//h2/a/text()").InnerText.Trim(),
+                    Name = node.SelectSingleNode(@".//h2/a/text()").InnerText.Trim(),//tested
                     ParentCategory = parentCat,
                     HasSubCategories = true,
                     SubCategories = new List<Category>()
                 };
-                if (sub.Name == "Lasten elokuvat")
+                if (sub.Name == "Elokuvat")
                 {
                     sub.HasSubCategories = false;
                     sub.Other = myParse2(node);
@@ -192,7 +192,7 @@ namespace OnlineVideos.Sites
                 }
                 else
                 {
-                    var nodes2 = node.SelectNodes(".//div[@class='hoverbox-container'][.//a[@itemprop='url']]");
+                    var nodes2 = node.SelectNodes(".//div[@class='hoverbox-container'][.//a[@href]]");//tested
                     if (nodes2 != null)
                     {
                         parentCat.SubCategories.Add(sub);
@@ -200,12 +200,12 @@ namespace OnlineVideos.Sites
                         {
                             RssLink sub2 = new RssLink()
                             {
-                                Name = node2.SelectSingleNode(".//h4[@itemprop='name']").InnerText,
+                                Name = node2.SelectSingleNode(".//h4").InnerText,
                                 ParentCategory = sub,
-                                Url = FormatDecodeAbsolutifyUrl(baseUrl, node2.SelectSingleNode(".//a[@itemprop='url']").Attributes["href"].Value, "", UrlDecoding.None),
+                                Url = FormatDecodeAbsolutifyUrl(baseUrl, node2.SelectSingleNode(".//a[@href]").Attributes["href"].Value, "", UrlDecoding.None),
                                 HasSubCategories = true,
                                 Other = RuType.Ohjelmat
-                            };
+                            };//tested
                             sub2.Description = getDescription(node2);
                             sub2.Thumb = getImageUrl(node2);
                             sub.SubCategories.Add(sub2);
@@ -220,15 +220,16 @@ namespace OnlineVideos.Sites
 
         private string getImageUrl(HtmlNode baseNode)
         {
-            var thumbNode = baseNode.SelectSingleNode(".//img[@itemprop='thumbnail']");
+            var thumbNode = baseNode.SelectSingleNode(".//img");//tested
             if (thumbNode != null)
             {
-                string src = htmlValue(thumbNode.Attributes["data-img_src_3"]);
-                if (String.IsNullOrEmpty(src))
-                    src = htmlValue(thumbNode.Attributes["data-img_src_2"]);
-                if (String.IsNullOrEmpty(src))
-                    src = htmlValue(thumbNode.Attributes["data-img_src_1"]);
-                return src;
+                foreach(var src in thumbNode.Attributes)
+                    if (src.Name == "src" && src.Value.StartsWith("http"))
+                        return src.Value;
+
+                foreach (var src in thumbNode.Attributes)
+                    if (src.Name == "data-srcset" && src.Value.StartsWith("http"))
+                        return src.Value.Split(' ')[0];
             }
             return String.Empty;
         }
@@ -236,7 +237,7 @@ namespace OnlineVideos.Sites
         private int DiscoverSubs(Category parentCategory, HtmlDocument doc)
         {
             parentCategory.SubCategories = new List<Category>();
-            var nodes = doc.DocumentNode.SelectNodes(@"//section[div/h2[@class='header-title']]");
+            var nodes = doc.DocumentNode.SelectNodes(@"//section[div/h2[@class='header-title']]");//tested
             foreach (var node in nodes)
             {
                 var videos = myParse2(node);

@@ -1,19 +1,18 @@
 ﻿using OnlineVideos.Sites.JSurf.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensions;
 using System.Globalization;
 using OnlineVideos.Sites.JSurf.Properties;
 using System.Text.RegularExpressions;
+using OnlineVideos.Sites.JSurf.Entities;
 
 namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connectors
 {
     public class AmazonPrimeInformationConnector : IInformationConnector
     {
-        SiteUtilBase _siteUtil;
-        AmazonBrowserSession _browserSession;
+        readonly SiteUtilBase _siteUtil;
+        readonly AmazonBrowserSession _browserSession;
 
         public AmazonPrimeInformationConnector(SiteUtilBase siteUtil)
         {
@@ -36,14 +35,13 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         {
             get
             {
-                if (_siteUtil.Settings.Language == "de")
-                {
+                if (string.Equals(_siteUtil.Settings.Language, "de", StringComparison.OrdinalIgnoreCase))
                     return "OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrimeDe.Connectors.AmazonPrimeDeConnector";
-                }
-                else
-                {
-                    return "OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connectors.AmazonPrimeConnector";
-                }
+
+                if (string.Equals(_siteUtil.Settings.Language, "en-us", StringComparison.OrdinalIgnoreCase))
+                    return "OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrimeUs.Connectors.AmazonPrimeUsConnector";
+
+                return "OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connectors.AmazonPrimeConnector";
             }
         }
 
@@ -54,93 +52,116 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         /// <returns></returns>
         public List<Category> LoadCategories(Category parentCategory = null)
         {
-            Properties.Resources.Culture = new CultureInfo(_siteUtil.Settings == null ? string.Empty : _siteUtil.Settings.Language);
-            
+            Resources.Culture = new CultureInfo(_siteUtil.Settings == null ? string.Empty : _siteUtil.Settings.Language);
+
             var result = new List<Category>();
 
-            if (parentCategory == null) 
+            if (parentCategory == null)
             {
-                result.Add(new Category { HasSubCategories = true, Name = "Movies", SubCategoriesDiscovered = false, Other="M", Thumb = Properties.Resources.AmazonMovieIcon });
-                result.Add(new Category { HasSubCategories = true, Name = "Tv", SubCategoriesDiscovered = false, Other = "T", Thumb = Properties.Resources.AmazonTvIcon });                
-                result.Add(new Category { HasSubCategories = true, Name = "Watchlist", SubCategoriesDiscovered = false, Other = "W", Thumb = Properties.Resources.AmazonTvIcon });
+                result.Add(new Category { HasSubCategories = true, Name = "Watchlist", SubCategoriesDiscovered = false, Other = "W", Thumb = Resources.AmazonTvIcon });
+                result.Add(new Category { HasSubCategories = true, Name = "Movies", SubCategoriesDiscovered = false, Other = "M", Thumb = Resources.AmazonMovieIcon });
+                result.Add(new Category { HasSubCategories = true, Name = "Tv", SubCategoriesDiscovered = false, Other = "T", Thumb = Resources.AmazonTvIcon });
             }
             else
             {
                 DoLogin();
                 // Grab next page categories here (we'll deal with videos as the category)
-                if (parentCategory is NextPageCategory)
+                var category = parentCategory as NextPageCategory;
+                if (category != null)
                 {
-                    result = (parentCategory as NextPageCategory).Url.LoadAmazonPrimeVideosAsCategoriesFromUrl(parentCategory.ParentCategory,_browserSession);
-                    parentCategory.ParentCategory.SubCategories.AddRange(result);
+                    result = category.Url.LoadAmazonPrimeVideosAsCategoriesFromUrl(category.ParentCategory, _browserSession);
+                    category.ParentCategory.SubCategories.AddRange(result);
                 }
                 else
                 {
                     if (parentCategory.Other.ToString() == "M")
                     {
-                        result = Properties.Resources.AmazonMovieCategoriesUrl.LoadAmazonPrimeCategoriesFromUrl(parentCategory, _browserSession);
-                        result.Insert(0, new Category { HasSubCategories = true, Name = "Editor's Picks", SubCategoriesDiscovered = false, Other = "ME", Thumb = Properties.Resources.AmazonMovieIcon });
-                        result.Insert(0, new Category { HasSubCategories = true, Name = "Recently Added", SubCategoriesDiscovered = false, Other = "MA", Thumb = Properties.Resources.AmazonMovieIcon });
-                        result.Insert(0, new Category { HasSubCategories = true, Name = "Popular Movies", SubCategoriesDiscovered = false, Other = "MP", Thumb = Properties.Resources.AmazonMovieIcon });
-                        result.Insert(0, new Category { HasSubCategories = true, Name = "Watchlist", SubCategoriesDiscovered = false, Other = "WM", Thumb = Properties.Resources.AmazonMovieIcon });
+                        result = Resources.AmazonMovieCategoriesUrl.LoadAmazonPrimeCategoriesFromUrl(parentCategory, _browserSession);
+                        TryInsert(result, new Category { HasSubCategories = true, Name = "Editor's Picks", SubCategoriesDiscovered = false, Other = "ME", Thumb = Resources.AmazonMovieIcon }, Resources.AmazonMovieEditorsUrl);
+                        TryInsert(result, new Category { HasSubCategories = true, Name = "Recently Added", SubCategoriesDiscovered = false, Other = "MA", Thumb = Resources.AmazonMovieIcon }, Resources.AmazonMovieRecentUrl);
+                        TryInsert(result, new Category { HasSubCategories = true, Name = "Popular Movies", SubCategoriesDiscovered = false, Other = "MP", Thumb = Resources.AmazonMovieIcon }, Resources.AmazonMoviePopularUrl);
+                        TryInsert(result, new Category { HasSubCategories = true, Name = "Less than 30 days available", SubCategoriesDiscovered = false, Other = "MD", Thumb = Resources.AmazonMovieIcon }, Resources.AmazonMovie30DaysUrl);
+                        TryInsert(result, new Category { HasSubCategories = true, Name = "Watchlist", SubCategoriesDiscovered = false, Other = "WM", Thumb = Resources.AmazonMovieIcon }, Resources.AmazonMovieWatchlistUrl);
                     }
                     else if (parentCategory.Other.ToString() == "MP")
                     {
-                        result = Properties.Resources.AmazonMoviePopularUrl.LoadAmazonPrimeVideosAsCategoriesFromUrl(parentCategory, _browserSession);
+                        result = Resources.AmazonMoviePopularUrl.LoadAmazonPrimeVideosAsCategoriesFromUrl(parentCategory, _browserSession);
                     }
                     else if (parentCategory.Other.ToString() == "MA")
                     {
-                        result = Properties.Resources.AmazonMovieRecentUrl.LoadAmazonPrimeVideosAsCategoriesFromUrl(parentCategory, _browserSession);
+                        result = Resources.AmazonMovieRecentUrl.LoadAmazonPrimeVideosAsCategoriesFromUrl(parentCategory, _browserSession);
                     }
                     else if (parentCategory.Other.ToString() == "ME")
                     {
-                        result = Properties.Resources.AmazonMovieEditorsUrl.LoadAmazonPrimeCategoriesFromUrl(parentCategory, _browserSession);
+                        result = Resources.AmazonMovieEditorsUrl.LoadAmazonPrimeCategoriesFromUrl(parentCategory, _browserSession);
+                    }
+                    else if (parentCategory.Other.ToString() == "MD")
+                    {
+                        result = Resources.AmazonMovie30DaysUrl.LoadAmazonPrimeVideosAsCategoriesFromUrl(parentCategory, _browserSession);
                     }
                     else if (parentCategory.Other.ToString() == "T")
                     {
-                        result = Properties.Resources.AmazonTVCategoriesUrl.LoadAmazonPrimeCategoriesFromUrl(parentCategory, _browserSession);
-                        result.Insert(0, new Category { HasSubCategories = true, Name = "Editor's Picks", SubCategoriesDiscovered = false, Other = "TE", Thumb = Properties.Resources.AmazonTvIcon });
-                        result.Insert(0, new Category { HasSubCategories = true, Name = "Recently Added", SubCategoriesDiscovered = false, Other = "TA", Thumb = Properties.Resources.AmazonTvIcon });
-                        result.Insert(0, new Category { HasSubCategories = true, Name = "Popular TV Shows", SubCategoriesDiscovered = false, Other = "TP", Thumb = Properties.Resources.AmazonTvIcon });
-                        result.Insert(0, new Category { HasSubCategories = true, Name = "Watchlist", SubCategoriesDiscovered = false, Other = "WT", Thumb = Properties.Resources.AmazonTvIcon });
+                        result = Resources.AmazonTVCategoriesUrl.LoadAmazonPrimeCategoriesFromUrl(parentCategory, _browserSession);
+                        TryInsert(result, new Category { HasSubCategories = true, Name = "Editor's Picks", SubCategoriesDiscovered = false, Other = "TE", Thumb = Resources.AmazonTvIcon }, Resources.AmazonTVEditorsUrl);
+                        TryInsert(result, new Category { HasSubCategories = true, Name = "Recently Added", SubCategoriesDiscovered = false, Other = "TA", Thumb = Resources.AmazonTvIcon }, Resources.AmazonTVRecentUrl);
+                        TryInsert(result, new Category { HasSubCategories = true, Name = "Popular TV Shows", SubCategoriesDiscovered = false, Other = "TP", Thumb = Resources.AmazonTvIcon }, Resources.AmazonTVPopularUrl);
+                        TryInsert(result, new Category { HasSubCategories = true, Name = "Less than 30 days available", SubCategoriesDiscovered = false, Other = "TD", Thumb = Resources.AmazonTvIcon}, Resources.AmazonTV30DaysUrl);
+                        TryInsert(result, new Category { HasSubCategories = true, Name = "Watchlist", SubCategoriesDiscovered = false, Other = "WT", Thumb = Resources.AmazonTvIcon }, Resources.AmazonTVWatchlistUrl);
                     }
                     else if (parentCategory.Other.ToString() == "TP")
                     {
-                        result = Properties.Resources.AmazonTVPopularUrl.LoadAmazonPrimeVideosAsCategoriesFromUrl(parentCategory, _browserSession);
+                        result = Resources.AmazonTVPopularUrl.LoadAmazonPrimeVideosAsCategoriesFromUrl(parentCategory, _browserSession);
                     }
                     else if (parentCategory.Other.ToString() == "TA")
                     {
-                        result = Properties.Resources.AmazonTVRecentUrl.LoadAmazonPrimeVideosAsCategoriesFromUrl(parentCategory, _browserSession);
+                        result = Resources.AmazonTVRecentUrl.LoadAmazonPrimeVideosAsCategoriesFromUrl(parentCategory, _browserSession);
+                    }
+                    else if (parentCategory.Other.ToString() == "TD")
+                    {
+                        result = Resources.AmazonTV30DaysUrl.LoadAmazonPrimeVideosAsCategoriesFromUrl(parentCategory, _browserSession);
                     }
                     else if (parentCategory.Other.ToString() == "TE")
                     {
-                        result = Properties.Resources.AmazonTVEditorsUrl.LoadAmazonPrimeCategoriesFromUrl(parentCategory, _browserSession);
+                        result = Resources.AmazonTVEditorsUrl.LoadAmazonPrimeCategoriesFromUrl(parentCategory, _browserSession);
                     }
                     else if (parentCategory.Other.ToString() == "W")
                     {
-                        result.Add(new Category { HasSubCategories = true, Name = "TV Watchlist", SubCategoriesDiscovered = false, Other = "WT", Thumb = Properties.Resources.AmazonMovieIcon });
-                        result.Add(new Category { HasSubCategories = true, Name = "Movies Watchlist", SubCategoriesDiscovered = false, Other = "WM", Thumb = Properties.Resources.AmazonMovieIcon });
+                        TryAdd(result, new Category { HasSubCategories = true, Name = "TV Watchlist", SubCategoriesDiscovered = false, Other = "WT", Thumb = Resources.AmazonTvIcon }, Resources.AmazonTVWatchlistUrl);
+                        TryAdd(result, new Category { HasSubCategories = true, Name = "Movies Watchlist", SubCategoriesDiscovered = false, Other = "WM", Thumb = Resources.AmazonMovieIcon }, Resources.AmazonMovieWatchlistUrl);
                     }
                     else if (parentCategory.Other.ToString() == "WM")
                     {
-                        result = Properties.Resources.AmazonMovieWatchlistUrl.LoadAmazonPrimeWatchlistAsCategoriesFromUrl(parentCategory, _browserSession);
+                        result = Resources.AmazonMovieWatchlistUrl.LoadAmazonPrimeWatchlistAsCategoriesFromUrl(parentCategory, _browserSession);
                     }
                     else if (parentCategory.Other.ToString() == "WT")
                     {
-                        result = Properties.Resources.AmazonTVWatchlistUrl.LoadAmazonPrimeWatchlistAsCategoriesFromUrl(parentCategory, _browserSession);
+                        result = Resources.AmazonTVWatchlistUrl.LoadAmazonPrimeWatchlistAsCategoriesFromUrl(parentCategory, _browserSession);
                     }
                     else if (parentCategory.Other.ToString().StartsWith("V~"))
                     {
-                        result = ((parentCategory.Other.ToString().ToLower().Contains(Properties.Resources.AmazonRootUrl.ToLower()) ? string.Empty : Properties.Resources.AmazonRootUrl) + (parentCategory.Other.ToString()).Replace("V~", string.Empty)).LoadAmazonPrimeVideosAsCategoriesFromUrl(parentCategory, _browserSession);
+                        result = ((parentCategory.Other.ToString().ToLower().Contains(Resources.AmazonRootUrl.ToLower()) ? string.Empty : Resources.AmazonRootUrl) + (parentCategory.Other.ToString()).Replace("V~", string.Empty)).LoadAmazonPrimeVideosAsCategoriesFromUrl(parentCategory, _browserSession);
                     }
                     else
                     {
-                        result = Properties.Resources.AmazonTVCategoriesUrl.LoadAmazonPrimeCategoriesFromUrl(parentCategory, _browserSession);
+                        result = Resources.AmazonTVCategoriesUrl.LoadAmazonPrimeCategoriesFromUrl(parentCategory, _browserSession);
                     }
                     parentCategory.SubCategories.AddRange(result);
                 }
-              
+
             }
             return result;
+        }
+
+        protected static void TryInsert(List<Category> categories, Category category, string url)
+        {
+            if (!string.IsNullOrEmpty(url))
+                categories.Insert(0, category);
+        }
+
+        protected static void TryAdd(List<Category> categories, Category category, string url)
+        {
+            if (!string.IsNullOrEmpty(url))
+                categories.Add(category);
         }
 
         /// <summary>
@@ -153,51 +174,49 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
             DoLogin();
             return parentCategory.Other.ToString().LoadVideosFromUrl(_browserSession);
         }
-        
+
         public List<String> getMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
-            if (((AmazonPrimeSiteUtil)_siteUtil).AmznPlayerType == AmazonPrimeSiteUtil.AmazonPlayerType.Browser)
-            {
-                _siteUtil.Settings.Player = PlayerType.Browser;
-                return new List<string>() { video.Other.ToString() };
-            }
+            // Only browser players are supported anymore (since mid of 2015)
+            _siteUtil.Settings.Player = PlayerType.Browser;
+            return new List<string> { video.Other.ToString() };
 
-            _siteUtil.Settings.Player = PlayerType.Internal;
+            //_siteUtil.Settings.Player = PlayerType.Internal;
 
-            video.PlaybackOptions = getPlaybackOptions(video);
-            var videoQuality = ((AmazonPrimeSiteUtil)_siteUtil).StreamVideoQuality;
+            //video.PlaybackOptions = getPlaybackOptions(video);
+            //var videoQuality = ((AmazonPrimeSiteUtil)_siteUtil).StreamVideoQuality;
 
-            List<String> urls = new List<String>();
-            if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
-            {
-                if (video.PlaybackOptions.Count == 1)
-                {
-                    // nothing to chose from, only one options available
-                    return new List<string>() { video.PlaybackOptions.First().Value };
-                }
-                else
-                {
-                    KeyValuePair<string, string> foundQuality = default(KeyValuePair<string, string>);
-                    switch (videoQuality)
-                    {
-                        case OnlineVideos.Sites.JSurf.AmazonPrimeSiteUtil.VideoQuality.Low:		//use first available option
-                           foundQuality = video.PlaybackOptions.First(); break;
-                        case OnlineVideos.Sites.JSurf.AmazonPrimeSiteUtil.VideoQuality.Medium:	// 480p 2000kpbs
-                           foundQuality = video.PlaybackOptions.LastOrDefault(q => q.Key.Contains("2000")); break;
-                        case OnlineVideos.Sites.JSurf.AmazonPrimeSiteUtil.VideoQuality.High:		// 720p 2500kbps
-                           foundQuality = video.PlaybackOptions.LastOrDefault(q => q.Key.Contains("2500")); break;
-                        case OnlineVideos.Sites.JSurf.AmazonPrimeSiteUtil.VideoQuality.HD:		// 720p 4000kbps
-                           foundQuality = video.PlaybackOptions.LastOrDefault(q => q.Key.Contains("4000")); break;
-                        case OnlineVideos.Sites.JSurf.AmazonPrimeSiteUtil.VideoQuality.FullHD:	//use highest available quality
-                           foundQuality = video.PlaybackOptions.Last(); break;
-                    }
-                    // fallback when no match was found -> use highest choice
-                    if (string.IsNullOrEmpty(foundQuality.Key)) foundQuality = video.PlaybackOptions.Last();
-                    if (inPlaylist) video.PlaybackOptions = null;
-                    return new List<string>() { foundQuality.Value };
-                }
-            }
-            return null;
+            //List<String> urls = new List<String>();
+            //if (video.PlaybackOptions != null && video.PlaybackOptions.Count > 0)
+            //{
+            //    if (video.PlaybackOptions.Count == 1)
+            //    {
+            //        // nothing to chose from, only one options available
+            //        return new List<string>() { video.PlaybackOptions.First().Value };
+            //    }
+            //    else
+            //    {
+            //        KeyValuePair<string, string> foundQuality = default(KeyValuePair<string, string>);
+            //        switch (videoQuality)
+            //        {
+            //            case OnlineVideos.Sites.JSurf.AmazonPrimeSiteUtil.VideoQuality.Low:		//use first available option
+            //               foundQuality = video.PlaybackOptions.First(); break;
+            //            case OnlineVideos.Sites.JSurf.AmazonPrimeSiteUtil.VideoQuality.Medium:	// 480p 2000kpbs
+            //               foundQuality = video.PlaybackOptions.LastOrDefault(q => q.Key.Contains("2000")); break;
+            //            case OnlineVideos.Sites.JSurf.AmazonPrimeSiteUtil.VideoQuality.High:		// 720p 2500kbps
+            //               foundQuality = video.PlaybackOptions.LastOrDefault(q => q.Key.Contains("2500")); break;
+            //            case OnlineVideos.Sites.JSurf.AmazonPrimeSiteUtil.VideoQuality.HD:		// 720p 4000kbps
+            //               foundQuality = video.PlaybackOptions.LastOrDefault(q => q.Key.Contains("4000")); break;
+            //            case OnlineVideos.Sites.JSurf.AmazonPrimeSiteUtil.VideoQuality.FullHD:	//use highest available quality
+            //               foundQuality = video.PlaybackOptions.Last(); break;
+            //        }
+            //        // fallback when no match was found -> use highest choice
+            //        if (string.IsNullOrEmpty(foundQuality.Key)) foundQuality = video.PlaybackOptions.Last();
+            //        if (inPlaylist) video.PlaybackOptions = null;
+            //        return new List<string>() { foundQuality.Value };
+            //    }
+            //}
+            //return null;
         }
 
         public Dictionary<string, string> getPlaybackOptions(VideoInfo video)
@@ -207,10 +226,10 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
             MatchCollection matchCID = null;
             for (int i = 0; i <= 10; i++)
             {
-                docStr = _browserSession.LoadAsStr(Properties.Resources.AmazonMovieUrl(video.Other.ToString()));
+                docStr = _browserSession.LoadAsStr(Resources.AmazonMovieUrl(video.Other.ToString()));
                 matchCID = Regex.Matches(docStr, "\"customerID\":\"(.+?)\"", RegexOptions.None);
                 if (matchCID.Count > 0)
-                   break;
+                    break;
             }
             Log.Info("matchCID" + matchCID[0].Groups[1].ToString());
             MatchCollection matchToken = Regex.Matches(docStr, "\"csrfToken\":\"(.+?)\"", RegexOptions.None);
@@ -230,9 +249,9 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
                 Log.Info("matchDID" + matchDID[0].Groups[1].ToString());
                 //deviceTypeID = matchDID[0].Groups[1].ToString(); //"A324MFXUEZFF7B";
             }
-            
+
             long milliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-            var urlMainS = Properties.Resources.AmazonRootUrl.Replace("http", "https");
+            var urlMainS = Resources.AmazonRootUrl.Replace("http", "https");
 
             if (docStr.Contains("parental-controls-on"))
             {
@@ -241,7 +260,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
                 var pinResponse = _browserSession.LoadAsStr(pinUrl);
                 Log.Info(pinResponse);
             }
-            
+
             var jsonUrl = urlMainS + "/gp/video/streaming/player-token.json?callback=jQuery16406641344620746118_" + milliseconds + "&csrftoken=" + Uri.EscapeDataString(matchToken[0].Groups[1].ToString()) + "&_=" + milliseconds;
             Log.Info(jsonUrl);
             var tokenResponse = _browserSession.LoadAsStr(jsonUrl);
@@ -251,7 +270,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
             string token = matchToken[0].Groups[1].ToString();
 
             jsonUrl = "https://atv-ps-eu.amazon.com/cdp/catalog/GetStreamingUrlSets?version=1&format=json&firmware=WIN%2011,7,700,224%20PlugIn&marketplaceID=" + matchMID[0].Groups[1].ToString() + "&token=" + token + "&deviceTypeID=" + deviceTypeID + "&asin=" + video.Other.ToString() + "&customerID=" + matchCID[0].Groups[1].ToString() + "&deviceID=" + matchCID[0].Groups[1].ToString() + milliseconds + video.Other.ToString();
-            
+
             var streamingUrls = _browserSession.LoadAsJSON(jsonUrl);
             //Log.Info(streamingUrls);
             var urlInfos = streamingUrls["message"]["body"]["urlSets"]["streamingURLInfoSet"][0]["streamingURLInfo"];
@@ -287,9 +306,9 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
                 //if (theUrl.Contains("$"))
                 //{
                 //}
-                
+
                 Log.Info(resultUrl);
-                PlaybackOptions.Add(urlInfo["contentQuality"].ToString() + " (" + urlInfo["bitrate"].ToString() +" kbps)", resultUrl);
+                PlaybackOptions.Add(urlInfo["contentQuality"].ToString() + " (" + urlInfo["bitrate"].ToString() + " kbps)", resultUrl);
             }
 
             return PlaybackOptions;
@@ -300,7 +319,15 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         public List<SearchResultItem> DoSearch(string query)
         {
             DoLogin();
-            return Properties.Resources.AmazonSearchUrl.LoadAmazonPrimeSearchAsCategoriesFromUrl(query, _browserSession);
+            return Resources.AmazonSearchUrl.LoadAmazonPrimeSearchAsCategoriesFromUrl(query, _browserSession);
+        }
+
+        public bool GetInputStreamProperties(VideoInfo video, out string streamUrl, out string licenseUrl, out Dictionary<string, string> additionalTags)
+        {
+            DoLogin();
+            ExtendedProperties trackingInfo = video.Other as ExtendedProperties;
+            string asin = trackingInfo != null ? trackingInfo.Other :  video.Other as string ?? video.VideoUrl;
+            return _browserSession.GetInputStreamProperties(asin, out streamUrl, out licenseUrl, out additionalTags);
         }
 
         protected void DoLogin()

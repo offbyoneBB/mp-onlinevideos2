@@ -29,6 +29,7 @@
   <!--D-->
   <string name="OnlineVideos.Date">Date</string>
   <string name="OnlineVideos.DateOfRelease">Date of Release</string>
+  <string name="OnlineVideos.Details">Details</string>
   <string name="OnlineVideos.Directors">Directors</string>
   <string name="OnlineVideos.Download">Download</string>
   <string name="OnlineVideos.DownloadUserdefined">Download to User Directory</string>
@@ -81,6 +82,7 @@
   <string name="OnlineVideos.LayoutIcons">Layout: Icons</string>
   <string name="OnlineVideos.LayoutBigIcons">Layout: Big Icons</string>
   <!--M-->
+  <string name="OnlineVideos.Main.Help">This plugin creates a simple and consistent way to browse and play videos hosted on various websites.</string>
   <string name="OnlineVideos.ManageSites">Manage Sites</string>
   <string name="OnlineVideos.MaxResults">Max Results</string>
   <!--N-->
@@ -112,6 +114,7 @@
   <string name="OnlineVideos.Queued">queued</string>
   <!--R-->
   <string name="OnlineVideos.RateVideo">Rate the Video ...</string>
+  <string name="OnlineVideos.Rating">Rating</string>
   <string name="OnlineVideos.Recommendations">Recommendations</string>
   <string name="OnlineVideos.RemoveFromFavorites">Remove from favorites</string>
   <string name="OnlineVideos.RemoveFromPlaylist">Remove from Playlist</string>

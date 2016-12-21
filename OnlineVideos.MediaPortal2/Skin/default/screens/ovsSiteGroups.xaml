@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Include
+    xmlns="www.team-mediaportal.com/2008/mpf/directx"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Source="screens\master_bare.xaml">
+    <Include.Resources>
+
+        <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
+
+        <!-- Contents -->
+        <ControlTemplate x:Key="Client_Template">
+            <DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}" LastChildFill="true">
+
+                <Label Color="{ThemeResource HintTextColor}" DockPanel.Dock="Bottom" Height="{ResolutionResource ovsSiteGroupsPageLabelHeight}" Margin="{ResolutionResource ovsSiteGroupsPageLabelMargin}"
+                       HorizontalAlignment="Stretch" VerticalAlignment="Center" Wrap="True" Scroll="Auto"
+                       DataContext="{Binding ElementName=siteGroupsList,Path=CurrentItem}"
+                       Content="{Binding Description}" />
+
+                <ListView x:Name="siteGroupsList" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center" 
+                          Style="{ThemeResource ovsSiteGroupsListViewStyle}"
+                          ItemsSource="{Binding Path=SiteGroupsList}" SetFocusPrio="RestoreState"/>
+            </DockPanel>
+        </ControlTemplate>
+
+    </Include.Resources>
+</Include>

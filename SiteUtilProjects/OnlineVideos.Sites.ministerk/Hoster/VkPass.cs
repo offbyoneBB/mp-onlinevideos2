@@ -18,6 +18,27 @@ namespace OnlineVideos.Hoster
             return "vkpass.com";
         }
 
+        private Dictionary<string, string> GetPlaybackOptionsFromIFrame(string data, string refUrl)
+        {
+            List<Hoster.HosterBase> hosters = Hoster.HosterFactory.GetAllHosters();
+
+            Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
+            Regex rgx = new Regex(@"<iframe[^>]*?src='(?<url>[^']*)");
+            Match m = rgx.Match(data);
+            if (m.Success)
+            {
+                string url = m.Groups["url"].Value;
+                Hoster.HosterBase hoster = hosters.FirstOrDefault(h => url.ToLower().StartsWith("http://" + h.GetHosterUrl().ToLower()));
+                if (hoster != null)
+                {
+                    if (hoster is IReferer)
+                        (hoster as IReferer).RefererUrl = refUrl;
+                    playbackOptions = hoster.GetPlaybackOptions(url);
+                }
+            }
+            return playbackOptions;
+        }
+
         public override Dictionary<string, string> GetPlaybackOptions(string url)
         {
             subtitleText = null;
@@ -26,70 +47,66 @@ namespace OnlineVideos.Hoster
             RefererUrl = null;
 
             Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
-            string data = GetWebData(url, referer: refUrl);
-            Regex rgx = new Regex(@"window.atob\(\\'(?<base64>.*)\\'\)");
-            Match m = rgx.Match(data);
-            if (m.Success)
+            try
             {
-                string base64 = m.Groups["base64"].Value;
-                byte[] bytes = Convert.FromBase64String(base64);
-                data = Encoding.UTF8.GetString(bytes);
-            }
-            rgx = new Regex(@"video_link:\s*'.*?oid=(?<oid>\d+).*?[^o]id=(?<id>\d+).*?hash=(?<hash>[0-9a-f]*)");
-            m = rgx.Match(data);
-            if (m.Success)
-            {
-                string format = @"https://api.vk.com/method/video.getEmbed?oid={0}&video_id={1}&embed_hash={2}&callback=callbackFunc";
-                string vkUrl = string.Format(format, m.Groups["oid"].Value, m.Groups["id"].Value, m.Groups["hash"].Value);
-                return HosterFactory.GetHoster("vk").GetPlaybackOptions(vkUrl);
-            }
-            else
-            {
-                rgx = new Regex(@"<iframe.*src=""(?<url>[^""]*).*?</iframe");
-                m = rgx.Match(data);
+                string data = GetWebData(url, referer: refUrl);
+                playbackOptions = GetPlaybackOptionsFromIFrame(data, refUrl);
+                if (playbackOptions.Count < 1)
+                {
+                    Regex rgx = new Regex(@"changeSource\('(?<source>[^']*)");
+                    foreach (Match sMatch in rgx.Matches(data))
+                    {
+                        if (sMatch.Success)
+                        {
+                            bool qOrAmp = url.Contains("?");
+                            string source = sMatch.Groups["source"].Value;
+                            string sUrl = url + (qOrAmp ? "&" : "?") + "source=" + source;
+                            Dictionary<string, string> tmpPbos = GetPlaybackOptionsFromIFrame(GetWebData(sUrl, referer: refUrl), refUrl);
+                            if (tmpPbos.Count > 0)
+                            {
+                                foreach (KeyValuePair<string, string> kvp in tmpPbos)
+                                {
+                                    playbackOptions.Add(kvp.Key + " " + source, kvp.Value);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                string subUrl = "";
+
+                Regex regex = new Regex(@"(?<sub>http[^&]*?.\.vtt)");
+                Match m = regex.Match(url);
                 if (m.Success)
                 {
-                    data = GetWebData(m.Groups["url"].Value, referer: url);
+                    subUrl = m.Groups["sub"].Value;
                 }
-
-                rgx = new Regex(@"{file:""(?<url>[^""]*).*?label:""(?<label>[^""]*).*?type:\s*?""mp4""");
-                foreach (Match match in rgx.Matches(data))
+                if (!string.IsNullOrWhiteSpace(subUrl))
                 {
-                    string vUrl = match.Groups["url"].Value;
-                    playbackOptions.Add(match.Groups["label"].Value, vUrl);
+                    try
+                    {
+                        subtitleText = WebCache.Instance.GetWebData(subUrl, forceUTF8: true);
+                        int index = subtitleText.IndexOf("WEBVTT\r\n\r\n");
+                        if (index >= 0)
+                            subtitleText = subtitleText.Substring(index).Replace("WEBVTT\r\n\r\n", "");
+                        if (!subtitleText.StartsWith("1\r\n"))
+                        {
+                            string oldSub = subtitleText;
+                            regex = new Regex(@"(?<time>\d\d:\d\d:\d\d.\d\d\d -->)");
+                            int i = 1;
+                            foreach (Match match in regex.Matches(oldSub))
+                            {
+                                string time = match.Groups["time"].Value;
+                                subtitleText = subtitleText.Replace(time, "\r\n" + i.ToString() + "\r\n" + time);
+                                i++;
+                            }
+                            subtitleText = subtitleText.TrimStart();
+                        }
+                    }
+                    catch { }
                 }
             }
-            string subUrl = "";
-            rgx = new Regex(@"file:\s*?'(?<url>[^']*).*?kind:\s*?'captions'.*?label:\s*?'(?<label>[^']*)");
-            foreach(Match match in rgx.Matches(data))
-            {
-                string label = match.Groups["label"].Value;
-                if (label.ToLower() == "swedish" || label.ToLower() == "svenska")
-                {
-                    subUrl = match.Groups["url"].Value;
-                    break;
-                }
-                else if (label.ToLower() == "english" || label.ToLower() == "engelska")
-                {
-                    subUrl = match.Groups["url"].Value;
-                }
-                else if (string.IsNullOrEmpty(subUrl))
-                {
-                    subUrl = match.Groups["url"].Value;
-                }
-            }
-            if (!string.IsNullOrWhiteSpace(subUrl))
-            {
-                try
-                {
-                    subtitleText = WebCache.Instance.GetWebData(subUrl, forceUTF8: true);
-                    int index = subtitleText.IndexOf("WEBVTT\r\n\r\n");
-                    if (index >= 0)
-                        subtitleText = subtitleText.Substring(index).Replace("WEBVTT\r\n\r\n", "");
-                }
-                catch { }
-            }
-
+            catch { }
             return playbackOptions;
         }
 

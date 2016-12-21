@@ -1,9 +1,6 @@
 ﻿using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
 
 namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
 {
@@ -16,12 +13,12 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
         public WebBrowserPlayerCallbackServiceHost()
             : base(typeof(WebBrowserPlayerCallbackService), new Uri[] { new Uri("net.pipe://localhost/") })
         {
-            var binding = new NetNamedPipeBinding()
-                            {
-                                SendTimeout = TimeSpan.FromMilliseconds(100),
-                                ReceiveTimeout = TimeSpan.MaxValue
-                            };
-            binding.Security.Mode = NetNamedPipeSecurityMode.None;
+            var binding = new NetNamedPipeBinding
+            {
+                SendTimeout = TimeSpan.FromMilliseconds(100),
+                ReceiveTimeout = TimeSpan.MaxValue,
+                Security = {Mode = NetNamedPipeSecurityMode.None}
+            };
             AddServiceEndpoint(typeof(IWebBrowserPlayerCallbackService), 
                 binding,
                 "WebBrowserPlayerCallbackService");

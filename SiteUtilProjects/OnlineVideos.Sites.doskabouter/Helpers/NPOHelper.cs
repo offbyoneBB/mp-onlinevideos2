@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using System.Net;
 using System.Web;
 
 namespace OnlineVideos.Sites.Doskabouter.Helpers
 {
     internal class NPOHelper
     {
-        public static string GetToken(string url)
+        public static string GetToken(string url, WebProxy proxy = null)
         {
-            string webData = WebCache.Instance.GetWebData(@"http://ida.omroep.nl/npoplayer/i.js?s=" + HttpUtility.UrlEncode(url));
+            string webData = WebCache.Instance.GetWebData(@"http://ida.omroep.nl/npoplayer/i.js?s=" + HttpUtility.UrlEncode(url), proxy: proxy);
             string result = String.Empty;
 
             Match m = Regex.Match(webData, @"token\s*=\s*""(?<token>[^""]*)""");

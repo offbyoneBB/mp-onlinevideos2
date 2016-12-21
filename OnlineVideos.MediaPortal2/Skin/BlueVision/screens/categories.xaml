@@ -5,29 +5,25 @@
     Source="screens\master_menu.xaml">
     <Include.Resources>
 
-        <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
-
-        <!-- Header -->
-      <!--ResourceWrapper x:Key="Header_Text" EnableBindings="True" Resource="{Binding Source={StaticResource OnlineVideosModel}, Path=SelectedSite.Name, Mode=OneTime}"/-->
+      <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
+      <!-- Header -->
+      <ResourceWrapper x:Key="Header_Text" Resource="OnlineVideos"/>
 
         <!-- Contents -->
         <ControlTemplate x:Key="Contents_Template">
-            <DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}" LastChildFill="true">
-
-                <ListView x:Name="categorieslist" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center" 
-                          Style="{ThemeResource ovsCategoriesListViewStyle}" Margin="-40, 0,-40,-5"
-                          CurrentItem="{Binding Path=FocusedSite, Mode=OneWayToSource}"
-                          ItemsSource="{Binding Path=CategoriesList}" SetFocusPrio="RestoreState"/>
-
-              <StackPanel Orientation="Vertical" DockPanel.Dock="Bottom" VerticalAlignment="Bottom" Margin="-20,625,0,-625" >
-                  <Label Content="{Binding Path=SelectedSite.Name}" Color="{ThemeResource TextColor}"> </Label>
-                  <Label Color="{ThemeResource TextColor}" Opacity="0.6"
-                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Wrap="True" Scroll="Auto"
-                         DataContext="{Binding ElementName=categorieslist,Path=CurrentItem}"
-                         Content="{Binding Path=Name}" />
-                </StackPanel>
-              
-            </DockPanel>
+          <DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}" Margin="-20,0,0,0">
+            <ListView x:Name="categorylist" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center" 
+                      Style="{ThemeResource ovsCategoriesListViewStyle}" Margin="-20,-18,-70,-8"
+                      CurrentItem="{Binding Path=FocusedCategory, Mode=OneWayToSource}" 
+                      ItemsSource="{Binding Path=CategoriesList}"/>
+            <StackPanel Orientation="Vertical" DockPanel.Dock="Bottom" VerticalAlignment="Top" Margin="0,625,0,-425">
+              <Label Color="{ThemeResource TextColor}"
+                     VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Scroll="Auto"
+                     DataContext="{Binding ElementName=categorylist,Path=CurrentItem}"
+                     Content="{Binding Path=Name}" />
+              <Label Content="{Binding Path=SelectedSite.Name}" Color="{ThemeResource TextColor}" Margin="0,0,0,5" Opacity="0.6"/>
+            </StackPanel>
+          </DockPanel>
         </ControlTemplate>
     </Include.Resources>
 </Include>
