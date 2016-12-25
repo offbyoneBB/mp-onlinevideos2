@@ -20,3 +20,5 @@ ipch/*
 **/Debug/*
 **/Release/*
 *sdf
+/*.db
+/.vs
