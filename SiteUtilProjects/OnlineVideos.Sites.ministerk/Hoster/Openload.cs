@@ -77,4 +77,12 @@ namespace OnlineVideos.Hoster
             return "openload.io";
         }
     }
+
+    public class Oload : Openload
+    {
+        public override string GetHosterUrl()
+        {
+            return "oload.tv";
+        }
+    }
 }
