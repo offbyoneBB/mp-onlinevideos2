@@ -642,13 +642,20 @@ namespace OnlineVideos.Sites
 
         protected virtual List<VideoInfo> Parse(string url, string data)
         {
+            return Parse(url, data, null);
+        }
+
+        protected virtual List<VideoInfo> Parse(string url, string data, Regex matcher)
+        {
             List<VideoInfo> videoList = new List<VideoInfo>();
             if (string.IsNullOrEmpty(data)) data = GetWebData<string>(url, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
             if (data.Length > 0)
             {
-                if (regEx_VideoList != null)
+                if (matcher == null)
+                    matcher = regEx_VideoList;
+                if (matcher != null)
                 {
-                    Match m = regEx_VideoList.Match(data);
+                    Match m = matcher.Match(data);
                     while (m.Success)
                     {
                         VideoInfo videoInfo = CreateVideoInfo();
@@ -661,6 +668,10 @@ namespace OnlineVideos.Sites
                         videoInfo.Length = Helpers.StringUtils.PlainTextFromHtml(m.Groups["Duration"].Value);
                         videoInfo.Airdate = Helpers.StringUtils.PlainTextFromHtml(m.Groups["Airdate"].Value);
                         videoInfo.Description = m.Groups["Description"].Value;
+                        if (string.IsNullOrEmpty(videoInfo.Length))
+                            videoInfo.Length = "00:00";
+                        if (string.IsNullOrEmpty(videoInfo.Airdate))
+                            videoInfo.Length = "unknown";
                         ExtraVideoMatch(videoInfo, m.Groups);
                         videoList.Add(videoInfo);
                         m = m.NextMatch();
