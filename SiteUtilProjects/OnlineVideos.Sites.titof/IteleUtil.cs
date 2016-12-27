@@ -114,18 +114,22 @@ namespace OnlineVideos.Sites
 
             foreach (JObject item in tlist[sArry])
             {
-                VideoInfo vid = new VideoInfo()
+                try
                 {
-                    Airdate = (string)item["date"],
-                    Other = (string)item["video"],
-                    Title = (string)item["title"],
-                    Description = (string)item["description"],
-                    Thumb = (string)item["preview"],
-                    VideoUrl = (string)item["video_urlhd"]
-                };
+                    VideoInfo vid = new VideoInfo()
+                    {
+                        Airdate = (string)item["date"],
+                        Other = (string)item["video"],
+                        Title = (string)item["title"],
+                        Description = (string)item["description"],
+                        Thumb = (string)item["preview"],
+                        VideoUrl = (string)item["video_urlhd"]
+                    };
 
-                if (!string.IsNullOrEmpty(vid.VideoUrl))
-                    tVideos.Add(vid);
+                    if (!string.IsNullOrEmpty(vid.VideoUrl))
+                        tVideos.Add(vid);
+                }
+                catch { }
             }
 
             return tVideos;

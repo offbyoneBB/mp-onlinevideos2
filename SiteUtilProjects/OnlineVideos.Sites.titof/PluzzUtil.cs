@@ -23,12 +23,14 @@ namespace OnlineVideos.Sites
             Settings.Categories.Clear();
             RssLink cat = null;
 
-            cat = new RssLink();
-            cat.Url = "%DIRECT%";
-            cat.Name = "En Direct";
-            cat.Other = "root";
-            cat.Thumb = "";
-            cat.HasSubCategories = true;
+            cat = new RssLink()
+            {
+                Url = "%DIRECT%",
+                Name = "En Direct",
+                Other = "root",
+                Thumb = "",
+                HasSubCategories = true,
+            };
             Settings.Categories.Add(cat);
             
             
@@ -190,8 +192,8 @@ namespace OnlineVideos.Sites
 
                 cat = new Category();
                 cat.Other = "http://ftviflivehdz-f.akamaihd.net/i/zouzous_live@88958/index_832_av-p.m3u8";
-                //cat.Thumb = "http://www.francetelevisions.fr/sites/default/files/images/2015/07/08/FO.png";
-                cat.Name = "Zouzou TV";
+                cat.Thumb = "http://www.zouzous.fr/zouzous_og_600x315.jpg";
+                cat.Name = "Zouzous TV";
                 cat.HasSubCategories = false;
                 parent.SubCategories.Add(cat);
 
@@ -386,15 +388,32 @@ namespace OnlineVideos.Sites
                     }
                     catch { }
 
+                    string accroche = string.Empty;
+                    try
+                    {
+                        accroche = (string)item["accroche"];
+                    }
+                    catch { }
+                    
+                    if (string.IsNullOrEmpty(accroche))
+                    {
+                        accroche = (string)item["accroche_programme"];
+                    }
+
+                    string datediff = (string)item["date_diffusion"];
+                    string[] tDate = datediff.Split('T');
+                    datediff = "(" + tDate[0] + " " + tDate[1] +")";
+
                     VideoInfo nfo = new VideoInfo()
                     {
-                        Title = (string)item["titre_programme"],
+                        Title = (string)item["titre_programme"] + " " + datediff ,
                         Thumb = (thumb ?? String.Empty),
                         Other = siddiff,
                         StartTime = (string)item["date_diffusion"],
-                        Description = (string)item["accroche_programme"]
+                        Description = accroche
                     };
                     tReturn.Add(nfo);
+
                 }
                 catch { }
             }
