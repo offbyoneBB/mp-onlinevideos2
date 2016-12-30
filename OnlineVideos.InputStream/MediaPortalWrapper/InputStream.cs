@@ -12,11 +12,6 @@ namespace MediaPortalWrapper
   public class InputStream : AbstractStream
   {
     public const string KEY_INPUTSTREAM_ADDON = "inputstreamaddon";
-    public const string KEY_INPUTSTREAM_LIC_TYPE = "inputstream.mpd.license_type";
-    public const string KEY_INPUTSTREAM_LIC_URL = "inputstream.mpd.license_key";
-
-    public const string INPUTSTREAM_ADDON_MPD = "inputstream.mpd";
-    public const string INPUTSTREAM_ADDON_SMOOTH = "inputstream.smoothstream";
 
     public struct StreamPreferences
     {
