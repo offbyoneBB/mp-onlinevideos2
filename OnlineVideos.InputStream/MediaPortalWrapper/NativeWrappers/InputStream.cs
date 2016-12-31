@@ -237,7 +237,7 @@ namespace MediaPortalWrapper.NativeWrappers
 
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
   [return: MarshalAs(UnmanagedType.I1)]
-  public delegate bool DemuxSeekTimeDlg(int time, [MarshalAs(UnmanagedType.I1)] bool backwards, ref double startpts);
+  public delegate bool DemuxSeekTimeDlg(double time, [MarshalAs(UnmanagedType.I1)] bool backwards, ref double startpts);
 
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
   public delegate void DemuxSetSpeedDlg(int speed);

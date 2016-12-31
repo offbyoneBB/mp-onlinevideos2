@@ -257,13 +257,11 @@ namespace OnlineVideos.Sites.JSurf
 
             properties = new Dictionary<string, string>
               {
-                { "inputstreamaddon", "inputstream.mpd" },
-                { "inputstream.mpd.license_type", "com.widevine.alpha" },
-                { "inputstream.mpd.license_key", licenseUrl },
+                { "inputstreamaddon", "inputstream.adaptive" },
+                { "inputstream.adaptive.manifest_type", "mpd" },
+                { "inputstream.adaptive.license_type", "com.widevine.alpha" },
+                { "inputstream.adaptive.license_key", licenseUrl },
                 { "inputstream.streamurl", streamUrl }
-                //{ InputStream.KEY_INPUTSTREAM_ADDON, InputStream.INPUTSTREAM_ADDON_MPD },
-                //{ InputStream.KEY_INPUTSTREAM_LIC_TYPE, "com.widevine.alpha" },
-                //{ InputStream.KEY_INPUTSTREAM_LIC_URL, licUrl }
               };
 
             // Copy over all additional tags

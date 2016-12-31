@@ -123,8 +123,13 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
             streamUrl = playbackData.SelectToken("audioVideoUrls.avCdnUrlSets[0].avUrlInfoList[0].url").Value<string>(); // Cloudfront
 
             // Fix for missing DD+ audio streams, remove DeviceTypeID(?) part in url
-            Regex reCleanUrl = new Regex("(/d.*/).*/(video)");
-            streamUrl = reCleanUrl.Replace(streamUrl, "$1$2");
+            Regex reCleanUrl1 = new Regex("~");
+            Regex reCleanUrl2 = new Regex("/[1-9][$].*?/");
+            var cleaned = reCleanUrl1.Replace(streamUrl, "");
+            if (string.Equals(cleaned, streamUrl))
+                cleaned = reCleanUrl2.Replace(streamUrl, "/");
+
+            streamUrl = cleaned;
 
             additionalTags = new Dictionary<string, string>();
             for (int s = 0; ; s++)
