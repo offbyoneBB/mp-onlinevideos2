@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml;
 using HtmlAgilityPack;
 
@@ -64,7 +65,7 @@ namespace OnlineVideos.Sites
         private List<VideoInfo> myParse2(HtmlNode node)
         {
             List<VideoInfo> result = new List<VideoInfo>();
-            var res = node.SelectNodes(".//div[@data-content-type='video']");//tested data-content-type="video"
+            var res = node.SelectNodes(".//div[@data-content-type='video' or @data-content-type='episode']");//tested data-content-type="video"
             if (res != null)//normal
             {
                 foreach (var vid2 in res)
@@ -144,6 +145,7 @@ namespace OnlineVideos.Sites
                     Url = FormatDecodeAbsolutifyUrl(baseUrl, node.Attributes["href"].Value, "", UrlDecoding.None),
                     Other = RuType.Ohjelmat
                 };
+                cat.Name = Regex.Replace(cat.Name.Replace('\n', ' '), @"  +", " ", RegexOptions.Multiline);
                 res.Add(cat);
             }
 
@@ -223,7 +225,7 @@ namespace OnlineVideos.Sites
             var thumbNode = baseNode.SelectSingleNode(".//img");//tested
             if (thumbNode != null)
             {
-                foreach(var src in thumbNode.Attributes)
+                foreach (var src in thumbNode.Attributes)
                     if (src.Name == "src" && src.Value.StartsWith("http"))
                         return src.Value;
 
@@ -237,7 +239,7 @@ namespace OnlineVideos.Sites
         private int DiscoverSubs(Category parentCategory, HtmlDocument doc)
         {
             parentCategory.SubCategories = new List<Category>();
-            var nodes = doc.DocumentNode.SelectNodes(@"//section[div/h2[@class='header-title']]");//tested
+            var nodes = doc.DocumentNode.SelectNodes(@"//section[div[h2[@class='header-title']|h3[@class='header-title'] ]]");//tested
             foreach (var node in nodes)
             {
                 var videos = myParse2(node);
@@ -248,10 +250,13 @@ namespace OnlineVideos.Sites
                             ParentCategory = parentCategory,
                             Other = videos
                         };
-                    if (node.SelectSingleNode(".//h2[@class='header-title']/a/text()") != null)
-                        cat.Name = node.SelectSingleNode(".//h2[@class='header-title']/a/text()").InnerText.Trim();
+                    var hNode = node.SelectSingleNode(@".//h2[@class='header-title']");
+                    if (hNode == null)
+                        hNode = node.SelectSingleNode(@".//h3[@class='header-title']");
+                    if (hNode.SelectSingleNode("a/text()") != null)
+                        cat.Name = hNode.SelectSingleNode("a/text()").InnerText.Trim();
                     else
-                        cat.Name = node.SelectSingleNode(".//h2[@class='header-title']").InnerText.Trim();
+                        cat.Name = hNode.InnerText.Trim();
 
                     parentCategory.SubCategories.Add(cat);
                 }
