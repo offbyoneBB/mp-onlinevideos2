@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
-using System.Text;
-using RssToolkit.Rss;
-using OnlineVideos.MPUrlSourceFilter;
 using System.Text.RegularExpressions;
+using HtmlAgilityPack;
 
 namespace OnlineVideos.Sites
 {
@@ -15,86 +13,76 @@ namespace OnlineVideos.Sites
         {
             int n = base.DiscoverDynamicCategories();
             foreach (Category cat in Settings.Categories)
-                cat.HasSubCategories = (cat.Name != "Latest" && cat.Name != "Last Chance" && cat.Name != "Live");
+            {
+                cat.HasSubCategories = (cat.Name != "Latest" && cat.Name != "Most Popular" && cat.Name != "Live");
+                if (((RssLink)cat).Url.Contains(@"/a-z/"))
+                    cat.Other = true;
+            }
             return n;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            XmlDocument doc = new XmlDocument();
-            string xmlData = GetWebData(((RssLink)parentCategory).Url, forceUTF8: true);
-            doc.LoadXml(xmlData);
-            XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
-            nsmgr.AddNamespace("a", "http://www.w3.org/2005/Atom");
-            parentCategory.SubCategories = new List<Category>();
-            foreach (XmlNode node in doc.SelectNodes(@"a:feed/a:entry", nsmgr))
+            if (true.Equals(parentCategory.Other))
             {
-                RssLink cat = new RssLink();
-                cat.ParentCategory = parentCategory;
-                cat.Name = node.SelectSingleNode("a:title", nsmgr).InnerText;
-                cat.Url = node.SelectSingleNode("a:id", nsmgr).InnerText;
-                if (String.IsNullOrEmpty(cat.Url))
-                    cat.Url = String.Format(@"http://dj.rte.ie/vodfeeds/feedgenerator/az/?id={0}", cat.Name);
-
-                parentCategory.SubCategories.Add(cat);
+                var oldRegex = regEx_dynamicSubCategories;
+                regEx_dynamicSubCategories = new Regex(@"<td\sclass=""[^""]*""><a\shref=""(?<url>[^""]*)"">(?<title>[^<]*)</a></td>", defaultRegexOptions);
+                int r = base.DiscoverSubCategories(parentCategory);
+                regEx_dynamicSubCategories = oldRegex;
+                foreach (var s in parentCategory.SubCategories)
+                    s.HasSubCategories = true;
+                return r;
             }
-            parentCategory.SubCategoriesDiscovered = true;
-            return parentCategory.SubCategories.Count;
+            int n = base.DiscoverSubCategories(parentCategory);
+
+            foreach (var subcat in parentCategory.SubCategories)
+            {
+                if (subcat.Description.Contains("Programmes"))
+                    subcat.HasSubCategories = true;
+            }
+            return n;
         }
 
         public override List<VideoInfo> GetVideos(Category category)
         {
-            if (category is Group)
-                return base.GetVideos(category);
-
-            string xmlData = GetWebData(((RssLink)category).Url, forceUTF8: true);
-            List<VideoInfo> videoList = new List<VideoInfo>();
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(xmlData);
-            XmlNamespaceManager nsmgr = GetNameSpaceManager(doc);
-            foreach (XmlNode node in doc.SelectNodes("//a:feed/a:entry", nsmgr))
+            var res = base.GetVideos(category);
+            res.RemoveAll(t => t.Airdate.Contains("episode"));
+            if (res.Count == 0)
             {
-                VideoInfo video = new VideoInfo();
-                video.Title = node.SelectSingleNode("a:title", nsmgr).InnerText;
-                video.VideoUrl = node.SelectSingleNode("a:id", nsmgr).InnerText;
-                video.Thumb = node.SelectSingleNode("m:thumbnail", nsmgr).Attributes["url"].InnerText;
-                video.Length = node.SelectSingleNode("r:duration", nsmgr).Attributes["formatted"].Value;
-                DateTime airdate = DateTime.Parse(node.SelectSingleNode("a:published", nsmgr).InnerText);
-                video.Airdate = airdate.ToString("g", OnlineVideoSettings.Instance.Locale);
-                video.Description = node.SelectSingleNode("a:content", nsmgr).InnerText;
-                videoList.Add(video);
+                //probably one video
+                var data = GetWebData(((RssLink)category).Url);
+                HtmlDocument htmlDoc = new HtmlDocument();
+                htmlDoc.LoadHtml(data);
+                HtmlNode vidNode = htmlDoc.DocumentNode.SelectSingleNode("//article[@class='video-content']");
+                var video = new VideoInfo();
+                video.Title = vidNode.SelectSingleNode(".//header/h1[@id='show-title']").InnerText;
+                video.Airdate = vidNode.SelectSingleNode(".//ul/li[@class='broadcast-date']/span").InnerText;
+                video.Thumb = vidNode.SelectSingleNode(".//meta[@itemprop='thumbnailUrl']").Attributes["content"].Value;
+                video.VideoUrl = ((RssLink)category).Url;
+                video.Length = vidNode.SelectSingleNode(".//li[strong[text()='Duration']]/text()").InnerText;
+                res.Add(video);
             }
-            return videoList;
+            return res;
         }
 
-        public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
+        public override string GetVideoUrl(VideoInfo video)
         {
-            List<string> result = new List<string>();
-            if ("livestream".Equals(video.Other))
+            string playListUrl = GetPlaylistUrl(video.VideoUrl);
+            var xml = new XmlDocument();
+            xml.LoadXml(GetWebData(playListUrl));
+            var nsmgr = GetNameSpaceManager(xml);
+            string feedUrl = xml.SelectSingleNode("//m:content", nsmgr).Attributes["url"].Value;
+            xml = new XmlDocument();
+            xml.LoadXml(GetWebData(feedUrl).Replace(@"xmlns=""http://ns.adobe.com/f4m/2.0""", ""));
+            video.PlaybackOptions = new Dictionary<string, string>();
+            foreach (XmlNode node in xml.SelectNodes("//media[@href]"))
             {
-                result.Add(video.VideoUrl + "&swfVfy=http://www.rte.ie/player/assets/player_403.swf");
-                return result;
+                var qual = node.Attributes["bitrate"].Value;
+                var s = node.Attributes["href"].Value;
+                s = FormatDecodeAbsolutifyUrl(feedUrl, s, null, UrlDecoding.None);
+                video.PlaybackOptions.Add(qual, s);
             }
-            string xmlData = GetWebData(video.VideoUrl);
-            xmlData = Regex.Replace(xmlData, @"url=""http[^""]*""", @"url=""""");
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(xmlData);
-            XmlNamespaceManager nsmgr = GetNameSpaceManager(doc);
-            XmlNode nd = doc.SelectSingleNode("//a:feed/a:entry/m:group", nsmgr);
-            foreach (XmlNode node in doc.SelectNodes("//a:feed/a:entry/m:group/m:content[@r:format!='advertising']", nsmgr))
-            {
-                string s = node.Attributes["url"].Value;
-
-                RtmpUrl rtmpUrl = new RtmpUrl(s)
-                {
-                    SwfVerify = true,
-                    App = "rtevod",
-                    SwfUrl = @"http://www.rte.ie/player/assets/player_403.swf"
-                };
-
-                result.Add(rtmpUrl.ToString());
-            }
-            return result;
+            return video.PlaybackOptions.Last().Value;
         }
 
         private XmlNamespaceManager GetNameSpaceManager(XmlDocument doc)
