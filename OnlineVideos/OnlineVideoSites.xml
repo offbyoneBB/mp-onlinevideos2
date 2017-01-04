@@ -1202,7 +1202,7 @@
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<article\sclass="thumbnail-module[^>]*>\s*<a\sclass="thumbnail-programme-link"\shref="(?<url>[^"]*)">\s*<div\sclass="image-container">\s*<img\salt="[^"]*"\sclass="thumbnail"\ssrc="(?<thumb>[^"]*)">\s*<div\sclass="grad"></div>\s*</div>\s*<[^>]*>\s*<span\sclass="thumbnail-title">(?<title>[^<]*)</span>\s*<span\sclass="thumbnail-date">(?<description>[^<]*)</span>\s*</[^>]*>\s*</a>\s*</article>]]></item>
         <item key="videoListRegEx"><![CDATA[<article\sclass="thumbnail-module[^"]*">\s*<a\s*(?:class="thumbnail-programme-link"\s*)?href="(?<VideoUrl>[^"]*)"\s*(?:class="thumbnail-programme-link"\s*)?>\s*<div\sclass="image-container">\s*<img\s*(?:alt="[^"]*"\sclass="thumbnail"\s*)?src="(?<ImageUrl>[^"]*)"\s*(?:class="thumbnail"\salt="[^"]*"\s*)?>\s*<div\sclass="grad"></div>\s*</div>\s*<[^>]*>\s*<span\sclass="thumbnail-title">(?<Title>[^<]*)</span>\s*<span\sclass="thumbnail-date">(?<Airdate>[^<]*)</span>\s*</[^>]*>\s*</a>\s*</article>]]></item>
         <item key="playlistUrlRegEx"><![CDATA[&feedUrl=(?<url>[^"]*)"]]></item>
-        <item key="baseUrl"><![CDATA[http://www.rte.ie/player/nl/]]></item>
+        <item key="baseUrl"><![CDATA[http://www.rte.ie/player/]]></item>
       </Configuration>
     </Site>
     <Site name="RTL XL" util="RTLXL" agecheck="false" enabled="true" lang="nl" player="WMP">
