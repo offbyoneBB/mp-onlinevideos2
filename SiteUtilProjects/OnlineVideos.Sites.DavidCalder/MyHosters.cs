@@ -50,7 +50,7 @@ namespace OnlineVideos.Sites.DavidCalder
                 Match noFile = Regex.Match(data, @"<p\sid=""content"">(?<msg>[^<]*)</p>");
                 if (noFile.Success)
                     throw new OnlineVideosException(noFile.Groups["msg"].Value.ToUpperInvariant());
-                
+
             }
             return url;
         }
@@ -214,17 +214,17 @@ namespace OnlineVideos.Sites.DavidCalder
                     postData += match.Groups["name"].Value + "=" + match.Groups["value"].Value;
                     match = match.NextMatch();
                 }
-                postData += "&referer=&method_free=Continue";
+                postData += "&method_free=Continue";
 
                 data = WebCache.Instance.GetWebData(url, postData, cc, url);
-                System.Threading.Thread.Sleep(Convert.ToInt32(5) * 1001);
-                data = WebCache.Instance.GetWebData(url, postData, cc, url);
 
-                Match n = Regex.Match(data, @"config:{file:'(?<url>[^']+)','provider':'http'}");
+                Match n = Regex.Match(data, @"setup\({\s*file:\s*""(?<url>[^']+)"",\s*flashplayer");
                 if (n.Success)
-
-                    return WebCache.Instance.GetRedirectedUrl(n.Groups["url"].Value, Referer);
-
+                    return n.Groups["url"].Value;
+                //<h1 class="alt lightbg lh42">File is no longer available!</h1>
+                Match noFile = Regex.Match(data, @"<h1\sclass=""alt\slightbg\slh42"">(?<msg>[^']+)""</h1>");
+                if (noFile.Success)
+                    throw new OnlineVideosException(noFile.Groups["msg"].Value.ToUpperInvariant());
             }
             return url;
         }
@@ -261,7 +261,7 @@ namespace OnlineVideos.Sites.DavidCalder
                 System.Threading.Thread.Sleep(1 * 1001);
                 Match n = Regex.Match(data, @"{\s*file:\s*""(?<url>[^""]*)""");
                 if (n.Success)
-                    return WebCache.Instance.GetRedirectedUrl(n.Groups["url"].Value, Referer);
+                    return n.Groups["url"].Value;
             }
             return url;
         }
@@ -308,7 +308,7 @@ namespace OnlineVideos.Sites.DavidCalder
                 if (n.Success)
                     return n.Groups["url"].Value;
 
-                        //<p id="content">File was deleted</p>
+                //<p id="content">File was deleted</p>
                 Match noFile = Regex.Match(data, @"<span[^>]*>(?<msg>[^<]*)</span>");
                 if (noFile.Success)
                     throw new OnlineVideosException(noFile.Groups["msg"].Value.ToUpperInvariant());

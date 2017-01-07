@@ -43,7 +43,7 @@ namespace OnlineVideos.Sites.DavidCalder
                 }
                 string[] parts;
 
-                parts = hosterUrl.Split(new[] { "http://tinklepad.is/stream.php?" }, StringSplitOptions.None);
+                parts = hosterUrl.Split(new[] { "http://tinklepad.ag/stream.php?" }, StringSplitOptions.None);
 
                 if (parts.Length == 2)
                 {
