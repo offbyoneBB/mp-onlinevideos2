@@ -17,17 +17,18 @@ namespace OnlineVideos.Hoster
 
             string data = GetWebData<string>(url);
             sub = "";
-            Regex rgx = new Regex(@"<span\s+id=""[a-zA-Z0-9]*x"">(?<enc>\d*)<");
+            Regex rgx = new Regex(@"<span[^>]+id=""[^""]*""[^>]*>(?<enc>\d+)</span>");
             Match m = rgx.Match(data);
             if (m.Success)
             {
                 string enc = m.Groups["enc"].Value;
-                int firstTwo = int.Parse(enc.Substring(0, 2));
+                int x = int.Parse(enc.Substring(0, 3));
+                int y = int.Parse(enc.Substring(3, 2));
                 string decoded = "";
-                int num = 2;
+                int num = 5;
                 while (num < enc.Length)
                 {
-                    decoded += (char)(int.Parse(enc.Substring(num, 3)) - firstTwo * int.Parse(enc.Substring(num + 3, 2)));
+                    decoded += (char)(int.Parse(enc.Substring(num, 3)) - x - y * int.Parse(enc.Substring(num + 3, 2)));
                     num += 5;
                 }
                 SetSub(data);
