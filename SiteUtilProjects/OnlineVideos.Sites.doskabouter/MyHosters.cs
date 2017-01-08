@@ -706,6 +706,12 @@ namespace OnlineVideos.Hoster
 
             string file = Helpers.StringUtils.GetSubString(webdata, @"file: """, @"""");
             string streamer = Helpers.StringUtils.GetSubString(webdata, @"streamer: """, @"""");
+            if (String.IsNullOrEmpty(streamer))
+            {
+                Match m = Regex.Match(webdata, @"<title>File\sRemoved</title>\s*<b>(?<message>[^<]*)</b>");
+                if (m.Success)
+                throw new OnlineVideosException(m.Groups["message"].Value);
+            }
             RtmpUrl rtmpUrl = new RtmpUrl(streamer)
             {
                 PlayPath = file
