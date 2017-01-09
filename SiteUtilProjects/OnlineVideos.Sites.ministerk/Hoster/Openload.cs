@@ -16,6 +16,8 @@ namespace OnlineVideos.Hoster
         {
 
             string data = GetWebData<string>(url);
+            if (data.Contains("<h3>We’re Sorry!</h3>"))
+                throw new OnlineVideosException("The video maybe got deleted by the owner or was removed due a copyright violation.");
             sub = "";
             Regex rgx = new Regex(@"<span[^>]+id=""[^""]*""[^>]*>(?<enc>\d+)</span>");
             Match m = rgx.Match(data);
