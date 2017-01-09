@@ -79,7 +79,6 @@
     <Compile Include="Hoster\Streamplay.cs" />
     <Compile Include="Hoster\VideozBz.cs" />
     <Compile Include="Hoster\VidziTv.cs" />
-    <Compile Include="Hoster\FileHoot.cs" />
     <Compile Include="Hoster\Zstream.cs" />
     <Compile Include="LastFmUtil.cs" />
     <Compile Include="LosMoviesUtil.cs" />
