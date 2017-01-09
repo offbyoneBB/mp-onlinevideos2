@@ -14,7 +14,7 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
-
+            url = url.Replace("/f/", "/embed/");
             string data = GetWebData<string>(url);
             if (data.Contains("<h3>We’re Sorry!</h3>"))
                 throw new OnlineVideosException("The video maybe got deleted by the owner or was removed due a copyright violation.");
