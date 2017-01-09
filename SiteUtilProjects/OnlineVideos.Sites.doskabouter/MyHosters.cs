@@ -96,6 +96,27 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class CloudTime : MyHosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "cloudtime.to";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            string page = WebCache.Instance.GetWebData(url);
+            if (!string.IsNullOrEmpty(page))
+            {
+                page = GetFromPost(url, page, true);
+                Match m = Regex.Match(page, @"<source\ssrc=""(?<url>[^""]*)""\stype='video/mp4'>");
+                if (m.Success)
+                    return m.Groups["url"].Value;
+            }
+            return null;
+        }
+    }
+
     public class DailyMotion : HosterBase
     {
         public override string GetHosterUrl()
