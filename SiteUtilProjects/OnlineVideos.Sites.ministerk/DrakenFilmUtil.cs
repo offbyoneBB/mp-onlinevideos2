@@ -293,31 +293,45 @@ namespace OnlineVideos.Sites
             string srt = string.Empty;
             try
             {
-                string url = json["asset"]["resources"].FirstOrDefault(resource => resource["type"].Value<string>() == "subtitle" && resource["renditions"].FirstOrDefault()["links"].FirstOrDefault()["mimeType"].Value<string>() == "text/ttml")["renditions"].FirstOrDefault()["links"].FirstOrDefault()["href"].Value<string>();
-                if (!string.IsNullOrWhiteSpace(url))
+                string jString = json.ToString();
+                if (jString.Contains("text/ttml"))
                 {
-                    XmlDocument xDoc = GetWebData<XmlDocument>(url, encoding: System.Text.Encoding.UTF8);
-                    string srtFormat = "{0}\r\n{1} --> {2}\r\n{3}\r\n";
-                    string begin;
-                    string end;
-                    string text;
-                    string textPart;
-                    int line;
-                    foreach (XmlElement p in xDoc.GetElementsByTagName("p"))
+                    var url = json["asset"]["resources"].Where(r => r["type"].Value<string>() == "subtitle" && r["renditions"].Any(rend => rend["links"].Any(l => l["mimeType"].Value<string>() == "text/ttml"))).FirstOrDefault()["renditions"].Where(r => r["links"].Any(l => l["mimeType"].Value<string>() == "text/ttml")).FirstOrDefault()["links"].FirstOrDefault()["href"].Value<string>();
+                    if (!string.IsNullOrWhiteSpace(url))
                     {
-                        text = string.Empty;
-                        begin = p.GetAttribute("begin");
-
-                        end = p.GetAttribute("end");
-                        line = int.Parse(p.GetAttribute("xml:id")) + 1;
-                        XmlNodeList textNodes = p.SelectNodes(".//text()");
-                        foreach (XmlNode textNode in textNodes)
+                        XmlDocument xDoc = GetWebData<XmlDocument>(url, encoding: System.Text.Encoding.UTF8);
+                        string srtFormat = "{0}\r\n{1} --> {2}\r\n{3}\r\n";
+                        string begin;
+                        string end;
+                        string text;
+                        string textPart;
+                        int line;
+                        foreach (XmlElement p in xDoc.GetElementsByTagName("p"))
                         {
-                            textPart = textNode.InnerText;
-                            textPart.Trim();
-                            text += string.IsNullOrEmpty(textPart) ? "" : textPart.Replace("<br />", "\r\n") + "\r\n";
+                            text = string.Empty;
+                            begin = p.GetAttribute("begin");
+
+                            end = p.GetAttribute("end");
+                            line = int.Parse(p.GetAttribute("xml:id")) + 1;
+                            XmlNodeList textNodes = p.SelectNodes(".//text()");
+                            foreach (XmlNode textNode in textNodes)
+                            {
+                                textPart = textNode.InnerText;
+                                textPart.Trim();
+                                text += string.IsNullOrEmpty(textPart) ? "" : textPart.Replace("<br />", "\r\n") + "\r\n";
+                            }
+                            srt += string.Format(srtFormat, line, begin.Replace(".", ","), end.Replace(".", ","), text);
                         }
-                        srt += string.Format(srtFormat, line, begin.Replace(".", ","), end.Replace(".", ","), text);
+                    }
+                }
+                else if (jString.Contains("text/vtt"))
+                {
+
+                    string url = json["asset"]["resources"].Where(r => r["type"].Value<string>() == "subtitle" && r["renditions"].Any(rend => rend["links"].Any(l => l["mimeType"].Value<string>() == "text/vtt"))).FirstOrDefault()["renditions"].Where(r => r["links"].Any(l => l["mimeType"].Value<string>() == "text/vtt")).FirstOrDefault()["links"].FirstOrDefault()["href"].Value<string>();
+                    if (!string.IsNullOrWhiteSpace(url))
+                    {
+                        srt = GetWebData(url, encoding: System.Text.Encoding.UTF8);
+                        srt = srt.Replace("WEBVTT", "").Trim();
                     }
                 }
             }
