@@ -9,15 +9,78 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
+using System;
 
 namespace OnlineVideos.Sites
 {
-    public class DrakenFilmUtil : LatestVideosSiteUtilBase
+    public class DrakenFilmUtil : LatestVideosSiteUtilBase, IChoice
     {
+
+        public enum DrakenCategorySelector
+        {
+            countries_of_origin_list,
+            director_list,
+            genre_list,
+            recommended,
+            spoken_language_list,
+            year_of_release,
+            none
+        }
 
         public class DrakenVideo : VideoInfo
         {
-            public string Director { get; set; }
+            public List<string> Directors { get; set; }
+            public List<string> Countries { get; set; }
+            public List<string> Genres { get; set; }
+            public List<string> Languages { get; set; }
+            public bool Recommended { get; set; }
+            public string TrailerUrl { get; set; }
+            public List<string> getListFromSelector(DrakenCategorySelector selector)
+            {
+                List<string> list;
+                switch (selector)
+                {
+                    case DrakenCategorySelector.countries_of_origin_list:
+                        list = Countries;
+                        break;
+                    case DrakenCategorySelector.director_list:
+                        list = Directors;
+                        break;
+                    case DrakenCategorySelector.genre_list:
+                        list = Genres;
+                        break;
+                    case DrakenCategorySelector.spoken_language_list:
+                        list = Languages;
+                        break;
+                    case DrakenCategorySelector.year_of_release:
+                        list = new List<string>() { Airdate };
+                        break;
+                    default:
+                        list = new List<string>();
+                        break;
+                }
+                return list;
+            }
+        }
+
+        public class DrakenCategory : RssLink
+        {
+            public const string A_TO_Z = "Filmer A-Ö";
+            public const string NEW = "Nytt på Draken Film";
+            public const string RECOMMENDED = "Rekommenderat";
+            public const string GENRES = "Genrer";
+            public const string DIRECTORS = "Regisörer";
+            public const string YEAR = "Årtal";
+            public const string COUNTRY = "Land";
+            public const string LANGUAGE = "Språk";
+            public DrakenCategorySelector Selector { get; set; }
+            public bool SortVideosByLetter
+            {
+                get
+                {
+                    return Name != NEW && Name != RECOMMENDED;
+                }
+            }
         }
 
         #region Configuration
@@ -29,13 +92,30 @@ namespace OnlineVideos.Sites
 
         #endregion
 
+        #region Urls
+
+        private const string youtubeVideoUrl = "https://www.youtube.com/watch?v={0}";
+        private const string vimeoVideoUrl = "https://player.vimeo.com/video/{0}";
+        private const string drakenVideosUrl = "https://www.drakenfilm.se/films_search?query={0}&size={1}";
+        private const string drakenVideoUrl = "https://www.drakenfilm.se/film/{0}";
+        private const string drakenResourceUrl = "https://video.arkena.com/api/v1/public/accounts/571358/medias/{0}";
+
+        #endregion
+        
         #region Session/login
 
+        private bool HaveCredentials
+        {
+            get
+            {
+                return !string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password);
+            }
+        }
         private CookieContainer Cookies
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(username))
+                if (!HaveCredentials)
                     throw new OnlineVideosException("Kontrollera dina inloggningsuppgifter");
                 CookieContainer cc = new CookieContainer();
                 Dictionary<string, Dictionary<string, string>> d = new Dictionary<string, Dictionary<string, string>>();
@@ -52,34 +132,37 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
-            Settings.Categories.Add(new RssLink() { Name = "Filmer A-Ö", Url = "https://www.drakenfilm.se/films?size=1024" });
-            Settings.Categories.Add(new RssLink() { Name = "Regisörer", Url = "https://www.drakenfilm.se/films?size=1024", HasSubCategories = true });
-            Settings.Categories.Add(new RssLink() { Name = "Årtal", Url = "https://www.drakenfilm.se/films?size=1024", HasSubCategories = true });
-            Settings.Categories.Add(new RssLink() { Name = "Nytt på Draken Film", Url = "https://www.drakenfilm.se/films?size=20" });
+            Settings.Categories.Add(new DrakenCategory() { Name = DrakenCategory.A_TO_Z, Selector = DrakenCategorySelector.none});
+            Settings.Categories.Add(new DrakenCategory() { Name = DrakenCategory.NEW, Selector = DrakenCategorySelector.none });
+            Settings.Categories.Add(new DrakenCategory() { Name = DrakenCategory.RECOMMENDED, Selector = DrakenCategorySelector.recommended });
+            Settings.Categories.Add(new DrakenCategory() { Name = DrakenCategory.GENRES, HasSubCategories = true, Selector = DrakenCategorySelector.genre_list });
+            Settings.Categories.Add(new DrakenCategory() { Name = DrakenCategory.DIRECTORS, HasSubCategories = true, Selector = DrakenCategorySelector.director_list });
+            Settings.Categories.Add(new DrakenCategory() { Name = DrakenCategory.YEAR, HasSubCategories = true, Selector = DrakenCategorySelector.year_of_release });
+            Settings.Categories.Add(new DrakenCategory() { Name = DrakenCategory.COUNTRY, HasSubCategories = true, Selector = DrakenCategorySelector.countries_of_origin_list });
+            Settings.Categories.Add(new DrakenCategory() { Name = DrakenCategory.LANGUAGE, HasSubCategories = true, Selector = DrakenCategorySelector.spoken_language_list });
             Settings.DynamicCategoriesDiscovered = true;
-            return 4;
+            return 8;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
             parentCategory.SubCategories = new List<Category>();
-            List<DrakenVideo> videos = GetVideos((parentCategory as RssLink).Url);
-            if (parentCategory.Name == "Regisörer")
-                videos = videos.OrderBy(v => v.Director).ToList();
-            if (parentCategory.Name == "Årtal")
-                videos = videos.OrderByDescending(v => int.Parse(v.Airdate)).ToList();
-            string currentName = "";
-            foreach(DrakenVideo video in videos)
+            DrakenCategory dc = parentCategory as DrakenCategory;
+            foreach (DrakenVideo video in GetVideos())
             {
-                string name = parentCategory.Name == "Regisörer" ? video.Director : video.Airdate;
-                if (currentName != name)
+                foreach (string name in video.getListFromSelector(dc.Selector).Where(n => !parentCategory.SubCategories.Any(c => c.Name == n)))
                 {
-                    currentName = name;
-                    parentCategory.SubCategories.Add(new RssLink() { Name = name, ParentCategory = parentCategory, Other = new List<VideoInfo>(), EstimatedVideoCount = 0});
+                    parentCategory.SubCategories.Add(
+                        new DrakenCategory()
+                        {
+                            Name = name,
+                            ParentCategory = parentCategory,
+                            Selector = dc.Selector,
+                        }
+                    );
                 }
-                (parentCategory.SubCategories.Last() as RssLink).EstimatedVideoCount++;
-                (parentCategory.SubCategories.Last().Other as List<VideoInfo>).Add(video);
             }
+            parentCategory.SubCategories = parentCategory.SubCategories.OrderBy(c => c.Name).ToList<Category>();
             parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
             return parentCategory.SubCategories.Count;
         }
@@ -87,27 +170,46 @@ namespace OnlineVideos.Sites
 
         #region Videos
 
-        private List<DrakenVideo> GetVideos(string url)
+        private List<DrakenVideo> GetVideos(DrakenCategorySelector selector = DrakenCategorySelector.none, string categoryNameSelector = null, uint size = 1024, string query = "", bool cache = true)
         {
-            string data = ExtendedWebCache.Instance.GetWebData(url);
+            string url = string.Format(drakenVideosUrl, query, size);
+            JObject data = ExtendedWebCache.Instance.GetWebData<JObject>(url, cache: cache);
             List<DrakenVideo> videos = new List<DrakenVideo>();
-            Regex rgx = new Regex(@"<img\s*src=""(?<ImageUrl>[^""]*)(?:(?!<a\s*class=""title""\s*).)*<a\s*class=""title""\s*href=""(?<VideoUrl>/film/[^""]*)[^>]*>(?<Title>[^<]*)(?:(?!role=""button""><span>).)*role=""button""><span>(?<Director>.*?),\s(?<Airdate>\d\d\d\d)(?:(?!<span\sclass=""summary"">).)*<span\sclass=""summary"">(?<Description>[^<]*)", RegexOptions.Singleline);
-            foreach (Match m in rgx.Matches(data))
+            foreach (JToken vt in data["hits"].Value<JArray>())
             {
-                string description = HttpUtility.HtmlDecode(m.Groups["Director"].Value) + ", " + m.Groups["Airdate"].Value + "\r\n" + HttpUtility.HtmlDecode(m.Groups["Description"].Value);
-                DrakenVideo video = new DrakenVideo() { Title = HttpUtility.HtmlDecode(m.Groups["Title"].Value), Description = description, Thumb = m.Groups["ImageUrl"].Value, VideoUrl = "https://www.drakenfilm.se" + m.Groups["VideoUrl"].Value, Airdate = m.Groups["Airdate"].Value, Director = HttpUtility.HtmlDecode(m.Groups["Director"].Value) };
+                DrakenVideo video = new DrakenVideo();
+                video.Airdate = vt["year_of_release"].Value<string>();
+                video.Countries = vt["countries_of_origin_list"].Value<string>().Split(',').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()).ToList();
+                video.Description = vt["summary"].Value<string>();
+                video.Directors = vt["director_list"].Value<string>().Split(',').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()).ToList();
+                video.Genres = vt["genre_list"].Value<string>().Split(',').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()).ToList();
+                video.Languages = vt["spoken_language_list"].Value<string>().Split(',').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()).ToList();
+                video.Recommended = vt["recommended"] != null && vt["recommended"].Type == JTokenType.Boolean && vt["recommended"].Value<bool>();
+                video.Thumb = vt["image_background"].Value<string>();
+                video.Title = vt["title"].Value<string>();
+                string trailerPovider = (vt["trailer_provider"] == null || vt["trailer_provider"].Type != JTokenType.String) ? string.Empty : vt["trailer_provider"].Value<string>();
+                if (trailerPovider == "vimeo")
+                    video.TrailerUrl = string.Format(vimeoVideoUrl, vt["trailer_id"].Value<string>());
+                else if (trailerPovider == "youtube")
+                    video.TrailerUrl = string.Format(youtubeVideoUrl, vt["trailer_id"].Value<string>());
+                else
+                    video.HasDetails = false;
+                video.VideoUrl = string.Format(drakenVideoUrl, vt["search_title"].Value<string>());
                 videos.Add(video);
             }
+            if (selector == DrakenCategorySelector.recommended)
+                videos = videos.Where(v => v.Recommended).ToList();
+            else if (selector != DrakenCategorySelector.none && !string.IsNullOrWhiteSpace(categoryNameSelector))
+                videos = videos.Where(v => v.getListFromSelector(selector).Any(t => t == categoryNameSelector)).ToList();
             return videos;
         }
 
         public override List<VideoInfo> GetVideos(Category category)
         {
-            if (category.Other is List<VideoInfo>)
-                return category.Other as List<VideoInfo>;
-            List<VideoInfo> videos = new List<VideoInfo>();
-            List<DrakenVideo> drakenVideos = GetVideos((category as RssLink).Url);
-            if (category.Name.Contains("A-Ö"))
+            List<VideoInfo> videos;
+            DrakenCategory dc = category as DrakenCategory;
+            List<DrakenVideo> drakenVideos = GetVideos(dc.Selector, dc.Name, (uint)(dc.Name == DrakenCategory.NEW ? 20 : 1024));
+            if (dc.SortVideosByLetter)
                 videos = drakenVideos.OrderBy(v => v.Title).ToList<VideoInfo>();
             else
                 videos = drakenVideos.ToList<VideoInfo>();
@@ -116,52 +218,73 @@ namespace OnlineVideos.Sites
 
         public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
-            string url = "";
+            bool isVimeo = video.VideoUrl.Contains("vimeo.com");
+            bool isYoutube = video.VideoUrl.Contains("youtube.com");
             video.PlaybackOptions = new Dictionary<string, string>();
-            string data = ExtendedWebCache.Instance.GetWebData(video.VideoUrl, cookies: Cookies);
-            Regex r = new Regex(@"playMovie\('[^']*','(?<id>[^']*)'\s*?\)"">");
-            //Regex r = new Regex(@";media_id&quot;:&quot;(?<id>.*?)&quot;"); //super secret regex...
-            Match m = r.Match(data);
-            if (m.Success)
+            if (isVimeo || isYoutube)
             {
-                JObject json = ExtendedWebCache.Instance.GetWebData<JObject>("https://video.arkena.com/api/v1/public/accounts/571358/medias/" + m.Groups["id"].Value);
-                JToken videoRenditions = json["asset"]?["resources"]?.FirstOrDefault(resource => resource["type"].Value<string>() == "video")?["renditions"];
-                if (videoRenditions != null)
-                {
-                    foreach (JToken rendition in videoRenditions)
+                Hoster.HosterBase hoster = Hoster.HosterFactory.GetAllHosters().FirstOrDefault(h => video.VideoUrl.ToLowerInvariant().Contains(h.GetHosterUrl().ToLowerInvariant()));
+                if (hoster != null)
+                    video.PlaybackOptions = hoster.GetPlaybackOptions(video.VideoUrl);
+                if (isYoutube)
+                    video.PlaybackOptions = video.PlaybackOptions.Reverse().ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+                else if (isVimeo)
+                    video.PlaybackOptions = video.PlaybackOptions.OrderByDescending((p) =>
                     {
-                        string key = (rendition["videos"].First()["bitrate"].Value<int>() / 1000) + "kbps";
-                        if (!video.PlaybackOptions.ContainsKey(key))
-                        {
-                            video.PlaybackOptions.Add(key, rendition["links"].First()["href"].Value<string>());
-                        }
-                    }
-                    if (video.PlaybackOptions.Count > 0)
-                    {
-                        video.PlaybackOptions = video.PlaybackOptions.OrderByDescending((p) =>
-                        {
-                            string resKey = p.Key.Replace("kbps", "");
-                            int parsedRes = 0;
-                            int.TryParse(resKey, out parsedRes);
-                            return parsedRes;
-                        }).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-                        url = video.PlaybackOptions.First().Value;
-                        if (inPlaylist)
-                            video.PlaybackOptions.Clear();
-                        video.SubtitleText = GetSubtitle(json);
-                        r = new Regex(@"http://www.imdb.com/title/(?<imdb>tt\d+)");
-                        m = r.Match(data);
-                        if (m.Success)
-                        {
-                            video.Other = new TrackingInfo() { VideoKind = VideoKind.Movie, ID_IMDB = m.Groups["imdb"].Value };
-                        }
-                    }
-                }
+                        string resKey = p.Key.Replace("p", "");
+                        int parsedRes = 0;
+                        int.TryParse(resKey, out parsedRes);
+                        return parsedRes;
+                    }).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             }
             else
             {
-                throw new OnlineVideosException("Kontrollera dina inloggningsuppgifter");
+                string data = ExtendedWebCache.Instance.GetWebData(video.VideoUrl, cookies: Cookies);
+                Regex r = new Regex(@"playMovie\('[^']*','(?<id>[^']*)'\s*?\)"">");
+                //Regex r = new Regex(@";media_id&quot;:&quot;(?<id>.*?)&quot;"); //super secret regex...
+                Match m = r.Match(data);
+                if (m.Success)
+                {
+                    JObject json = ExtendedWebCache.Instance.GetWebData<JObject>("https://video.arkena.com/api/v1/public/accounts/571358/medias/" + m.Groups["id"].Value);
+                    JToken videoRenditions = json["asset"]?["resources"]?.FirstOrDefault(resource => resource["type"].Value<string>() == "video")?["renditions"];
+                    if (videoRenditions != null)
+                    {
+                        foreach (JToken rendition in videoRenditions)
+                        {
+                            string key = (rendition["videos"].First()["bitrate"].Value<int>() / 1000) + "kbps";
+                            if (!video.PlaybackOptions.ContainsKey(key))
+                            {
+                                video.PlaybackOptions.Add(key, rendition["links"].First()["href"].Value<string>());
+                            }
+                        }
+                        if (video.PlaybackOptions.Count > 0)
+                        {
+                            video.PlaybackOptions = video.PlaybackOptions.OrderByDescending((p) =>
+                            {
+                                string resKey = p.Key.Replace("kbps", "");
+                                int parsedRes = 0;
+                                int.TryParse(resKey, out parsedRes);
+                                return parsedRes;
+                            }).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+                            video.SubtitleText = GetSubtitle(json);
+                            r = new Regex(@"http://www.imdb.com/title/(?<imdb>tt\d+)");
+                            m = r.Match(data);
+                            if (m.Success)
+                            {
+                               video.Other = new TrackingInfo() { VideoKind = VideoKind.Movie, ID_IMDB = m.Groups["imdb"].Value };
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    throw new OnlineVideosException("Kontrollera dina inloggningsuppgifter");
+                }
             }
+            
+            string url = video.PlaybackOptions.First().Value;
+            if (inPlaylist)
+                video.PlaybackOptions.Clear();
             return new List<string>() { url };
         }
 
@@ -217,7 +340,7 @@ namespace OnlineVideos.Sites
         public override List<SearchResultItem> Search(string query, string category = null)
         {
             List<SearchResultItem> result = new List<SearchResultItem>();
-            List<DrakenVideo> videos = GetVideos("https://www.drakenfilm.se/films?size=1024&utf8=✓&button=&query=" + HttpUtility.UrlEncode(query));
+            List<DrakenVideo> videos = GetVideos(query: HttpUtility.UrlEncode(query));
             videos.ForEach(v => result.Add(v));
             return result;
         }
@@ -244,11 +367,27 @@ namespace OnlineVideos.Sites
 
         #endregion
 
-        #region Latest
+        #region Latest Videos
 
         public override List<VideoInfo> GetLatestVideos()
         {
-            return GetVideos("https://www.drakenfilm.se/films?size=" + LatestVideosCount).ToList<VideoInfo>();
+            return GetVideos(size: LatestVideosCount, cache: false).ToList<VideoInfo>();
+        }
+
+        #endregion
+
+        #region IChoice
+
+        List<DetailVideoInfo> IChoice.GetVideoChoices(VideoInfo video)
+        {
+            DrakenVideo dv = video as DrakenVideo;
+            DetailVideoInfo movie = new DetailVideoInfo(video);
+            movie.Title2 = dv.Title + (HaveCredentials ? string.Empty : " [Inloggning krävs]");
+            DetailVideoInfo trailer = new DetailVideoInfo(video);
+            trailer.Title2 = "Trailer";
+            trailer.VideoUrl = dv.TrailerUrl;
+            List<DetailVideoInfo> videos = new List<DetailVideoInfo>() { movie, trailer };
+            return videos;
         }
 
         #endregion
