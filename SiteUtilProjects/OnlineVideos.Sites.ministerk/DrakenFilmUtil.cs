@@ -178,10 +178,10 @@ namespace OnlineVideos.Sites
                 DrakenVideo video = new DrakenVideo();
                 video.Airdate = vt["year_of_release"].Value<string>();
                 video.Countries = vt["countries_of_origin_list"].Value<string>().Split(',').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()).ToList();
-                video.Description = vt["summary"].Value<string>();
                 video.Directors = vt["director_list"].Value<string>().Split(',').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()).ToList();
                 video.Genres = vt["genre_list"].Value<string>().Split(',').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()).ToList();
                 video.Languages = vt["spoken_language_list"].Value<string>().Split(',').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()).ToList();
+                video.Description = string.Format( "{0} | {1} | {2}\n{3}", string.Join(", ", video.Genres), string.Join(", ", video.Directors), string.Join(", ", video.Countries), vt["summary"].Value<string>());
                 video.Recommended = vt["recommended"] != null && vt["recommended"].Type == JTokenType.Boolean && vt["recommended"].Value<bool>();
                 video.Thumb = vt["image_background"].Value<string>();
                 video.Title = vt["title"].Value<string>();
