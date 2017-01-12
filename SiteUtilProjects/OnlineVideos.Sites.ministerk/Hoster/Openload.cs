@@ -30,7 +30,7 @@ namespace OnlineVideos.Hoster
                 int num = 5;
                 while (num < enc.Length)
                 {
-                    decoded += (char)(int.Parse(enc.Substring(num, 3)) - x - y * int.Parse(enc.Substring(num + 3, 2)));
+                    decoded += (char)(int.Parse(enc.Substring(num, 3)) + x - y * int.Parse(enc.Substring(num + 3, 2)));
                     num += 5;
                 }
                 SetSub(data);
