@@ -276,8 +276,33 @@ namespace OnlineVideos.Sites
                         {
                             Name = "Populärt",
                             ParentCategory = parentCategory,
-                            Videos = GetVideos(jArray)
+                            HasSubCategories = true,
+                            SubCategories = new List<Category>(),
+                            SubCategoriesDiscovered = true
                         };
+                        foreach (JToken token in jArray)
+                        {
+                            RssLink popSubCategory;
+                            bool isVideoEpisode = token["contentType"] != null && token["contentType"].Type == JTokenType.String && token["contentType"].Value<string>() == "videoEpisod";
+                            if (!isVideoEpisode)
+                                popSubCategory = new RssLink();
+                            else
+                                popSubCategory = new SvtCategory();
+                            popSubCategory.ParentCategory = popular;
+                            popSubCategory.Name = token["programTitle"].Value<string>();
+                            if (token["description"] != null && token["description"].Type != JTokenType.Null)
+                                popSubCategory.Description = token["description"].Value<string>();
+                            if (token["poster"] != null && token["poster"].Type != JTokenType.Null)
+                                popSubCategory.Thumb = token["poster"].Value<string>().Replace("{format}", "medium");
+                            popSubCategory.HasSubCategories = !isVideoEpisode;
+                            if (!isVideoEpisode)
+                                popSubCategory.Url = token["contentUrl"].Value<string>().Replace("/", "");
+                            else if (popSubCategory is SvtCategory)
+                                (popSubCategory as SvtCategory).Videos = GetVideos(new JArray() { token });
+                            if (!isVideoEpisode)
+                                popSubCategory.Other = (Func<List<Category>>)(() => GetProgramCategoriesAndVideos(popSubCategory));
+                            popular.SubCategories.Add(popSubCategory);
+                        }
                         cats.Add(popular);
                     }
                 }
