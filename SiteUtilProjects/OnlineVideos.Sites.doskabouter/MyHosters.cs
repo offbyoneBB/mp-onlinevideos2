@@ -110,8 +110,21 @@ namespace OnlineVideos.Hoster
             {
                 page = GetFromPost(url, page, true);
                 Match m = Regex.Match(page, @"<source\ssrc=""(?<url>[^""]*)""\stype='video/mp4'>");
+                if (!m.Success)
+                    m = Regex.Match(page, @"<a\shref=""(?<url>[^""]*)""\starget=""""\sclass=""btn\sdwlBtn""");
                 if (m.Success)
-                    return m.Groups["url"].Value;
+                {
+                    string result = m.Groups["url"].Value;
+                    if (!Uri.IsWellFormedUriString(result, UriKind.Absolute))
+                    {
+                        Uri uri = null;
+                        if (Uri.TryCreate(new Uri(url), result, out uri))
+                            result = uri.ToString();
+                        else
+                            result = string.Empty;
+                    }
+                    return result;
+                }
             }
             return null;
         }
@@ -604,7 +617,7 @@ namespace OnlineVideos.Hoster
                                           "&rand=" + rand +
                                           "&referer=" + referer +
                                           "&method_free=" + HttpUtility.UrlEncode(method_free) +
-                            //"&method_premium=" + method_premium +
+                                          //"&method_premium=" + method_premium +
                                           "&down_direct=1";
 
                         //System.Threading.Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
@@ -731,7 +744,7 @@ namespace OnlineVideos.Hoster
             {
                 Match m = Regex.Match(webdata, @"<title>File\sRemoved</title>\s*<b>(?<message>[^<]*)</b>");
                 if (m.Success)
-                throw new OnlineVideosException(m.Groups["message"].Value);
+                    throw new OnlineVideosException(m.Groups["message"].Value);
             }
             RtmpUrl rtmpUrl = new RtmpUrl(streamer)
             {
