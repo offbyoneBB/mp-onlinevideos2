@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.ComponentModel;
 using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Web;
 using System.Text.RegularExpressions;
 using OnlineVideos.Helpers;
+using OnlineVideos.Sites.Utils;
 
 namespace OnlineVideos.Sites
 {
@@ -161,16 +161,16 @@ namespace OnlineVideos.Sites
                 switch (Settings.Language)
                 {
                     case "sv":
-                        apiUrl = @"https://content.viaplay.se/androidnodrmv2-se";
+                        apiUrl = @"https://content.viaplay.se/ios-se";
                         break;
                     case "da":
-                        apiUrl = @"https://content.viaplay.dk/androidnodrmv2-dk";
+                        apiUrl = @"https://content.viaplay.dk/ios-dk";
                         break;
                     case "fi":
-                        apiUrl = @"https://content.viaplay.fi/androidnodrmv2-fi";
+                        apiUrl = @"https://content.viaplay.fi/ios-fi";
                         break;
                     case "no":
-                        apiUrl = @"https://content.viaplay.no/androidnodrmv2-no";
+                        apiUrl = @"https://content.viaplay.no/ios-no";
                         break;
                     default:
                         apiUrl = string.Empty;
@@ -860,29 +860,17 @@ namespace OnlineVideos.Sites
                 string m3u8 = MyGetWebStringData(url);
                 if (!m3u8.Contains("#EXT-X-VERSION:4")) //Not supported, use Browser
                 {
-
-                    Regex rgx = new Regex(@"RESOLUTION=(?<res>\d+x\d+).*?[\r|\n]+(?<url>.*?m3u8)");
-                    foreach (Match m in rgx.Matches(m3u8))
+                    MyHlsPlaylistParser playlist = new MyHlsPlaylistParser(m3u8, url);
+                    video.PlaybackOptions = new Dictionary<string, string>();
+                    if (playlist.StreamInfos.Count > 0)
                     {
-                        string newUrl = m.Groups["url"].Value;
-                        string res = m.Groups["res"].Value;
-                        int resCount = 2;
-                        while (video.PlaybackOptions.ContainsKey(res))
+                        foreach (MyHlsStreamInfo si in playlist.StreamInfos)
                         {
-                            res = m.Groups["res"].Value + " " + resCount;
-                            resCount++;
+                            string key = string.Format("{0}x{1} ({2})", si.Width, si.Height, si.Bandwidth);
+                            if (!video.PlaybackOptions.ContainsKey(key))
+                                video.PlaybackOptions.Add(key, si.Url);
                         }
-                        if (newUrl.StartsWith("http"))
-                        {
-                            video.PlaybackOptions.Add(res, newUrl);
-                        }
-                        else
-                        {
-                            video.PlaybackOptions.Add(res, Regex.Replace(url, @"([^/]*)?\?", delegate(Match match)
-                            {
-                                return m.Groups["url"].Value + "?";
-                            }));
-                        }
+                        url = video.PlaybackOptions.First().Value;
                     }
                 }
                 if (video.PlaybackOptions.Count < 1)
@@ -890,17 +878,6 @@ namespace OnlineVideos.Sites
                     video.PlaybackOptions.Clear();
                     return string.Empty;
                 }
-                video.PlaybackOptions = video.PlaybackOptions.OrderByDescending((p) =>
-                {
-                    string[] size = p.Key.Split('x');
-                    string width = "0";
-                    int parsedWidth = 0;
-                    if (size.Count() == 2)
-                        width = size[0];
-                    int.TryParse(width, out parsedWidth);
-                    return parsedWidth;
-                }).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-                url = video.PlaybackOptions.First().Value;
                 if (inPlaylist)
                     video.PlaybackOptions.Clear();
                 // Subtitle
