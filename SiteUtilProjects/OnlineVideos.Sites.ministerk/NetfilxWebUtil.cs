@@ -103,148 +103,133 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 if (m.Success)
                 {
                     i18n = new Dictionary<string, string>();
-                    i18n.Add("Browse", m.Groups["val"].Value.Trim());
+                    i18n.Add("Browse", Regex.Unescape(m.Groups["val"].Value.Trim()));
 
-                    rgx = new Regex(@"""navitem.mylist"":""(?<val>[^""]*)");
+                    rgx = new Regex(@"""navitem.my.list"":""(?<val>[^""]*)");
                     m = rgx.Match(data);
                     if (m.Success)
-                        i18n.Add("My List", m.Groups["val"].Value.Trim());
+                        i18n.Add("My List", Regex.Unescape(m.Groups["val"].Value.Trim()));
                     else
                         i18n.Add("My List", "My List");
 
-                    rgx = new Regex(@"""navitem.subnav.home"":""(?<val>[^""]*)");
+                    rgx = new Regex(@"""navitem.home"":""(?<val>[^""]*)");
                     m = rgx.Match(data);
                     if (m.Success)
-                        i18n.Add("Home", m.Groups["val"].Value.Trim());
+                        i18n.Add("Home", Regex.Unescape(m.Groups["val"].Value.Trim()));
                     else
                         i18n.Add("Home", "Home");
 
                     rgx = new Regex(@"""navitem.characters"":""(?<val>[^""]*)");
                     m = rgx.Match(data);
                     if (m.Success)
-                        i18n.Add("Characters", m.Groups["val"].Value.Trim());
+                        i18n.Add("Characters", Regex.Unescape(m.Groups["val"].Value.Trim()));
                     else
                         i18n.Add("Characters", "Characters");
 
                     rgx = new Regex(@"""billboard.actions.continueWatching"":""(?<val>[^""]*)");
                     m = rgx.Match(data);
                     if (m.Success)
-                        i18n.Add("Continue Watching", m.Groups["val"].Value.Trim());
+                        i18n.Add("Continue Watching", Regex.Unescape(m.Groups["val"].Value.Trim()));
                     else
                         i18n.Add("Continue Watching", "Continue Watching");
 
                     rgx = new Regex(@"""subgenres"":""(?<val>[^""]*)");
                     m = rgx.Match(data);
                     if (m.Success)
-                        i18n.Add("Subgenres", m.Groups["val"].Value.Trim());
+                        i18n.Add("Subgenres", Regex.Unescape(m.Groups["val"].Value.Trim()));
                     else
                         i18n.Add("Subgenres", "Subgenres");
 
                     rgx = new Regex(@"""tab.trailers"":""(?<val>[^""]*)");
                     m = rgx.Match(data);
                     if (m.Success)
-                        i18n.Add("Trailers", m.Groups["val"].Value.Trim());
+                        i18n.Add("Trailers", Regex.Unescape(m.Groups["val"].Value.Trim()));
                     else
                         i18n.Add("Trailers", "Trailers");
 
                     rgx = new Regex(@"""tab.show.details"":""(?<val>[^""]*)");
                     m = rgx.Match(data);
                     if (m.Success)
-                        i18n.Add("Details", m.Groups["val"].Value.Trim());
+                        i18n.Add("Details", Regex.Unescape(m.Groups["val"].Value.Trim()));
                     else
                         i18n.Add("Details", "Details");
 
                     rgx = new Regex(@"""details.creator"":""[^""]*\{(?<val>[^\}]+?)\}\}");
                     m = rgx.Match(data);
                     if (m.Success)
-                        i18n.Add("Creator", m.Groups["val"].Value.Trim());
+                        i18n.Add("Creator", Regex.Unescape(m.Groups["val"].Value.Trim()));
                     else
                         i18n.Add("Creator", "Creator");
 
                     rgx = new Regex(@"""details.director"":""[^""]*\{(?<val>[^\}]+?)\}\}");
                     m = rgx.Match(data);
                     if (m.Success)
-                        i18n.Add("Director", m.Groups["val"].Value.Trim());
+                        i18n.Add("Director", Regex.Unescape(m.Groups["val"].Value.Trim()));
                     else
                         i18n.Add("Director", "Director");
 
                     rgx = new Regex(@"""details.cast"":""[^""]*\{(?<val>[^\}]+?)\}\}");
                     m = rgx.Match(data);
                     if (m.Success)
-                        i18n.Add("Cast", m.Groups["val"].Value.Trim());
+                        i18n.Add("Cast", Regex.Unescape(m.Groups["val"].Value.Trim()));
                     else
                         i18n.Add("Cast", "Cast");
 
                     rgx = new Regex(@"""details.genres"":""(?<val>[^""]*)");
                     m = rgx.Match(data);
                     if (m.Success)
-                        i18n.Add("Genres", m.Groups["val"].Value.Trim());
+                        i18n.Add("Genres", Regex.Unescape(m.Groups["val"].Value.Trim()));
                     else
                         i18n.Add("Genres", "Genres");
 
                     rgx = new Regex(@"""details.this.show.is"":""(?<val>[^""]*)");
                     m = rgx.Match(data);
                     if (m.Success)
-                        i18n.Add("This show is", m.Groups["val"].Value.Trim());
+                        i18n.Add("This show is", Regex.Unescape(m.Groups["val"].Value.Trim()));
                     else
                         i18n.Add("This show is", "This show is");
 
                     rgx = new Regex(@"""details.this.movie.is"":""(?<val>[^""]*)");
                     m = rgx.Match(data);
                     if (m.Success)
-                        i18n.Add("This movie is", m.Groups["val"].Value.Trim());
+                        i18n.Add("This movie is", Regex.Unescape(m.Groups["val"].Value.Trim()));
                     else
                         i18n.Add("This movie is", "This movie is");
 
                     rgx = new Regex(@"""tab.more.like.this"":""(?<val>[^""]*)");
                     m = rgx.Match(data);
                     if (m.Success)
-                        i18n.Add("More like this", m.Groups["val"].Value.Trim());
+                        i18n.Add("More like this", Regex.Unescape(m.Groups["val"].Value.Trim()));
                     else
                         i18n.Add("More like this", "More like this");
 
                     rgx = new Regex(@"""billboard.actions.play"":""(?<val>[^""]*)");
                     m = rgx.Match(data);
                     if (m.Success)
-                        i18n.Add("Play", m.Groups["val"].Value.Trim());
+                        i18n.Add("Play", Regex.Unescape(m.Groups["val"].Value.Trim()));
                     else
                         i18n.Add("Play", "Play");
 
                     rgx = new Regex(@"""my.list.add"":""(?<val>[^""]*)");
                     m = rgx.Match(data);
                     if (m.Success)
-                        i18n.Add("My List Add", m.Groups["val"].Value.Trim());
+                        i18n.Add("My List Add", Regex.Unescape(m.Groups["val"].Value.Trim()));
                     else
                         i18n.Add("My List Add", "My List Add");
 
                     rgx = new Regex(@"""my.list.remove"":""(?<val>[^""]*)");
                     m = rgx.Match(data);
                     if (m.Success)
-                        i18n.Add("My List Remove", m.Groups["val"].Value.Trim());
+                        i18n.Add("My List Remove", Regex.Unescape(m.Groups["val"].Value.Trim()));
                     else
                         i18n.Add("My List Remove", "My List Remove");
 
-                    rgx = new Regex(@"""rating.rated.label"":""(?<val>[^""]*)");
+                    rgx = new Regex(@"""overview.rating.label.rated"":""(?<val>[^""]*)");
                     m = rgx.Match(data);
                     if (m.Success)
-                        i18n.Add("User rating", m.Groups["val"].Value.Trim());
+                        i18n.Add("User rating", Regex.Unescape(m.Groups["val"].Value.Trim()));
                     else
                         i18n.Add("User rating", "User rating");
-
-                    rgx = new Regex(@"""rating.avg.label"":""(?<val>[^""]*)");
-                    m = rgx.Match(data);
-                    if (m.Success)
-                        i18n.Add("Avg. rating", m.Groups["val"].Value.Trim());
-                    else
-                        i18n.Add("Avg. rating", "Avg. rating");
-
-                    rgx = new Regex(@"""rating.predicted.label"":""(?<val>[^""]*)");
-                    m = rgx.Match(data);
-                    if (m.Success)
-                        i18n.Add("Predicted rating for {0}", m.Groups["val"].Value.Trim().Replace("{profileName}", "{0}"));
-                    else
-                        i18n.Add("Predicted rating for {0}", "Predicted rating for {0}");
-
                 }
             }
             return data;
@@ -252,7 +237,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         private string GetPathData(string postData)
         {
-            return MyGetWebData(ShaktiApi + "/pathEvaluator/" + PathEvaluatorId + "?withSize=true&materialize=true&model=harris&esn=www", postData: postData, contentType: "application/json");
+            return MyGetWebData(ShaktiApi + "/" + BuildId + "/pathEvaluator" + "?withSize=true&materialize=true&model=harris&esn=www", postData: postData, contentType: "application/json");
         }
 
         #endregion
@@ -313,7 +298,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             if (profiles == null || profiles.Count == 0)
             {
                 string data = MyGetWebData(homeUrl);
-                Regex rgx = new Regex(@"netflix\.falkorCache = (.*)?;</script><script>window\.netflix");
+                Regex rgx = new Regex(@"netflix\.falkorCache\s*=\s*(.*)?;</script>");
                 Match m = rgx.Match(data);
                 if (m.Success)
                 {
@@ -358,6 +343,19 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
         }
 
+        private string _buildId = "";
+        private string BuildId
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_buildId))
+                {
+                    SetApiAndIds();
+                }
+                return _buildId;
+            }
+        }
+
         private string _profileSwitchId = "";
         private string ProfileSwitchId
         {
@@ -368,19 +366,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     SetApiAndIds();
                 }
                 return _profileSwitchId;
-            }
-        }
-
-        private string _pathEvaluatorId = "";
-        private string PathEvaluatorId
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_pathEvaluatorId))
-                {
-                    SetApiAndIds();
-                }
-                return _pathEvaluatorId;
             }
         }
 
@@ -407,7 +392,14 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             Match m = rgx.Match(data);
             if (m.Success)
             {
-                _shaktiApi = m.Groups[1].Value.Replace("http:", "https:").Replace("\\x2F","/");
+                _shaktiApi = m.Groups[1].Value.Replace("http:", "https:").Replace("\\x2F", "/");
+            }
+
+            rgx = new Regex(@"\""BUILD_IDENTIFIER\"":""([^\""]*)");
+            m = rgx.Match(data);
+            if (m.Success)
+            {
+                _buildId= m.Groups[1].Value;
             }
 
             rgx = new Regex(@"(?:\\x2F|/)profiles(?:\\x2F|/)switch"":""([^""]*)");
@@ -415,12 +407,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             if (m.Success)
             {
                 _profileSwitchId = m.Groups[1].Value;
-            }
-            rgx = new Regex(@"(?:\\x2F|/)pathEvaluator"":""([^""]*)");
-            m = rgx.Match(data);
-            if (m.Success)
-            {
-                _pathEvaluatorId = m.Groups[1].Value;
             }
             rgx = new Regex(@"(?:\\x2F|/)playlistop"":""([^""]*)");
             m = rgx.Match(data);
@@ -554,6 +540,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             currentProfile = profile;
             MyGetWebData(string.Format(switchProfileUrl, ShaktiApi, ProfileSwitchId, ProfileToken, LatestAuthUrl), referer: homeUrl);
+            i18n = null;
+            MyGetWebData(homeUrl);
             List<Category> cats = new List<Category>();
 
             RssLink home = new RssLink() { Name = Translate("Home"), HasSubCategories = true, ParentCategory = parentCategory };
@@ -809,9 +797,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     if (!string.IsNullOrWhiteSpace(userRating["userRating"].ToString()))
                         cat.Description += "\r\n" + Translate("User rating") + ": " + userRating["userRating"].ToString();
                     else if (!string.IsNullOrWhiteSpace(userRating["predicted"].ToString()))
-                        cat.Description += "\r\n" + string.Format(Translate("Predicted rating for {0}"), ProfileName) + ": " + userRating["predicted"].ToString();
-                    if (!string.IsNullOrWhiteSpace(userRating["average"].ToString()))
-                        cat.Description += "\r\n" + Translate("Avg. rating") + ": " + userRating["average"].ToString();
+                        cat.Description += "\r\n" + Translate("User rating") + ": " + userRating["predicted"].ToString();
                     cat.Runtime = cat.IsShow ? 0 : item["runtime"].Value<int>();
                     cat.Thumb = item["boxarts"]["_342x192"]["jpg"]["url"].Value<string>();
                     cat.Url = summary["id"].Value<UInt32>().ToString();
@@ -876,9 +862,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     if (!string.IsNullOrWhiteSpace(userRating["userRating"].ToString()))
                         cat.Description += "\r\n" + Translate("User rating") + ": " + userRating["userRating"].ToString();
                     else if (!string.IsNullOrWhiteSpace(userRating["predicted"].ToString()))
-                        cat.Description += "\r\n" + string.Format(Translate("Predicted rating for {0}"), ProfileName) + ": " + userRating["predicted"].ToString();
-                    if (!string.IsNullOrWhiteSpace(userRating["average"].ToString()))
-                        cat.Description += "\r\n" + Translate("Avg. rating") + ": " + userRating["average"].ToString();
+                        cat.Description += "\r\n" + Translate("User rating") + ": " + userRating["predicted"].ToString();
                     cat.Runtime = cat.IsShow ? 0 : item["runtime"].Value<int>();
                     cat.Thumb = item["boxarts"]["_342x192"]["jpg"]["url"].Value<string>();
                     cat.Url = summary["id"].Value<UInt32>().ToString();
