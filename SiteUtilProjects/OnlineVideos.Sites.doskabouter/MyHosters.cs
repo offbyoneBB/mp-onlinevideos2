@@ -742,6 +742,17 @@ namespace OnlineVideos.Hoster
             string streamer = Helpers.StringUtils.GetSubString(webdata, @"streamer: """, @"""");
             if (String.IsNullOrEmpty(streamer))
             {
+                string packed = Helpers.StringUtils.GetSubString(webdata, @"return p}", @"</script>");
+                packed = packed.Replace(@"\'", @"'");
+                string unpacked = Helpers.StringUtils.UnPack(packed);
+
+                Match m = Regex.Match(unpacked, @"file:\s*""(?<url>[^""]*)""");
+                if (m.Success)
+                    return m.Groups["url"].Value;
+
+            }
+            if (String.IsNullOrEmpty(streamer))
+            {
                 Match m = Regex.Match(webdata, @"<title>File\sRemoved</title>\s*<b>(?<message>[^<]*)</b>");
                 if (m.Success)
                     throw new OnlineVideosException(m.Groups["message"].Value);
