@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using OnlineVideos.Sites.Interfaces;
 using OnlineVideos.Sites.Utils;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using System.Web;
 namespace OnlineVideos.Sites.BrowserUtilConnectors
 {
 
-    public class NetfilxWebUtil : SiteUtilBase, IBrowserSiteUtil
+    public class NetfilxWebUtil : SiteUtilBase, IBrowserVersionEmulation
     {
 
         #region Helper classes
@@ -31,7 +32,9 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Username"), Description("Netflix email")]
         protected string username = null;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("Netflix password"), PasswordPropertyText(true)]
-        protected string password = null;
+        protected string password = null; 
+        //[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Use OV2.2.0.0 Mode"), Description("")]
+        protected bool use2200Mode = true;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show loading spinner"), Description("Show the loading spinner in the Browser Player")]
         protected bool showLoadingSpinner = true;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable Netflix Info/Stat OSD"), Description("Enable info and statistics OSD. Toggle OSD with 0 when video is playing. Do not enable this if you need to enter 0 in parental control pin")]
@@ -40,8 +43,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         protected int noOfCatsInHome = 20;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Number of categories per page in other listings"), Description("Change only if necessary. Number of items in listings. Default 100")]
         protected uint noOfItems = 100;
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Use alternative profile picker"), Description("Use this if you have problems selecting profile in browser player")]
-        protected bool useAlternativeProfilePicker = false;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable verbose logging"), Description("DEBUG only! Enable only if you have problems. Very verbose logging, generates a lot of data in log.")]
         protected bool enableVerboseLog = false;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Disable browser logging"), Description("Change only if necessary/nothing else helps. If browser player fails. Change back if it does not help!")]
@@ -56,7 +57,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private string loginUrl = @"https://www.netflix.com/Login";
         private string homeUrl = @"https://www.netflix.com/";
         private string playerUrl = @"http://www.netflix.com/watch/{0}";
-        private string loginPostData = "email={0}&password={1}&rememberMe=true&flow=websiteSignUp&mode=login&action=loginAction&withFields=email%2Cpassword%2CrememberMe%2CnextPage&authURL={2}&nextPage=";
+//        private string loginPostData = "email={0}&password={1}&rememberMe=true&flow=websiteSignUp&mode=login&action=loginAction&withFields=email%2Cpassword%2CrememberMe%2CnextPage&authURL={2}&nextPage=";
+        private string loginPostData = "emailOrPhoneNumber={0}&password={1}&rememberMe=true&flow=websiteSignUp&mode=universalLogin&action=loginAction&withFields=emailOrPhoneNumber%2Cpassword%2CrememberMe%2CnextPage&authURL={2}&nextPage=";
         private string switchProfileUrl = @"{0}/profiles/switch/{1}?switchProfileGuid={2}&authURL={3}";
 
         #endregion
@@ -266,6 +268,15 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
         }
 
+        private int ProfileNumber
+        {
+            get
+            {
+                if (currentProfile == null)
+                    return 0;
+                return profiles.FindIndex(p => p["summary"]["guid"].Value<string>() == currentProfile["summary"]["guid"].Value<string>());
+            }
+        }
         private bool IsKidsProfile
         {
             get
@@ -1129,12 +1140,36 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         string IBrowserSiteUtil.UserName
         {
-            get { return username + "¥" + ProfileToken + (showLoadingSpinner ? "SHOWLOADING" : "") + (useAlternativeProfilePicker ? "PROFILEPICKER" : "") + (enableNetflixOsd ? "ENABLENETFLIXOSD" : "") + (disableLogging ? "DISABLELOGGING" : ""); }
+            get
+            {
+                return username;
+            }
         }
 
         string IBrowserSiteUtil.Password
         {
-            get { return password; }
+            get
+            {
+                Dictionary<string, string> p = new Dictionary<string, string>();
+                p.Add("password", password);
+                p.Add("switchUrl", string.Format(switchProfileUrl, ShaktiApi, ProfileSwitchId, ProfileToken, ""));
+                p.Add("profileIndex", ProfileNumber.ToString());
+                p.Add("showLoadingSpinner", showLoadingSpinner.ToString());
+                p.Add("enableNetflixOsd", enableNetflixOsd.ToString());
+                p.Add("disableLogging", disableLogging.ToString());
+                p.Add("use2200Mode", use2200Mode.ToString());
+                string json = JsonConvert.SerializeObject(p);
+                string base64 = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(json));
+                return base64;
+            }
+        }
+
+        int IBrowserVersionEmulation.EmulatedVersion
+        {
+            get
+            {
+                return use2200Mode ? 10000 : 11000;
+            }
         }
 
         #endregion
