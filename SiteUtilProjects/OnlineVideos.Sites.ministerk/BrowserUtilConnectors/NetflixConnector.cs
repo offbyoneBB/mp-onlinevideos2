@@ -220,8 +220,16 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                         {
                             timer.Stop();
                             timer.Dispose();
+                            Regex rgx = new Regex(@"""authURL"":""(?<authURL>[^""]*)");
+                            Match m = rgx.Match(Browser.DocumentText);
+                            string authUrl = "";
+                            if (m.Success)
+                            {
+                                authUrl = m.Groups["authURL"].Value;
+                                authUrl = HttpUtility.UrlDecode(authUrl.Replace("\\x", "%"));
+                            }
                             InvokeScript(Properties.Resources.NetflixJs);
-                            InvokeScript("switchProfile('" + _profileUrl + "'," + _profileIndex + ");");
+                            InvokeScript("switchProfile('" + _profileUrl + HttpUtility.UrlEncode(authUrl) + "'," + _profileIndex + ");");
                             _currentState = State.ReadyToPlay;
                         };
                         timer.Interval = 2000;
