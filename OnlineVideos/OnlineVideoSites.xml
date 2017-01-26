@@ -796,6 +796,17 @@
     <Site name="Last.fm" util="LastFm" agecheck="false" enabled="true" lang="--">
       <Description>Play your personal Last.fm YouTube Radio in OnlineVideos</Description>
     </Site>
+    <Site name="Tiny Desk" util="TinyDesk" agecheck="false" enabled="true" lang="en">
+      <Description>NPR Music - Intimate video performances, recorded live at the desk of All Songs Considered host Bob Boilen.</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li>(?:(?!<a).)*<a\shref="(?<url>/series/tiny-desk-concerts/archive[^"]*)(?:(?!>).)*>(?<title>[^<]*)]]></item>
+        <item key="dynamicCategoryUrlFormatString"><![CDATA[{0}&_pjax=main]]></item>
+        <item key="videoListRegEx"><![CDATA[<article(?:(?!<a).)*<a\shref="(?<VideoUrl>[^"]*)(?:(?!<img).)*<img\ssrc="(?<ImageUrl>[^"]*)(?:(?!<h1).)*<h1(?:(?!'\s>).)*'\s>(?<Title>[^<]*)(?:(?!"date">).)*"date">(?<Airdate>[^&]*)(?:(?!</time>).)*</time>(?<Description>[^<]*)]]></item>
+        <item key="fileUrlRegEx"><![CDATA["(?<m0>(?:http|rtmp)[^"]*?(?:mp4|flv))","label":"{0,1}(?<n0>[^(?:"|,]*)]]></item>
+        <item key="fileUrlDecoding"><![CDATA[None]]></item>
+        <item key="baseUrl"><![CDATA[http://www.npr.org/series/tiny-desk-concerts/archive?_pjax=main]]></item>
+      </Configuration>
+    </Site>
     <Site name="Pokémon TV" util="PokemonTv" agecheck="false" enabled="true" lang="--">
       <Description>Pokémon TV</Description>
     </Site>

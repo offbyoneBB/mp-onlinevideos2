@@ -83,6 +83,7 @@
     <Compile Include="LastFmUtil.cs" />
     <Compile Include="LosMoviesUtil.cs" />
     <Compile Include="PokemonTvUtil.cs" />
+    <Compile Include="TinyDeskUtil.cs" />
     <Compile Include="Utils\ExtendedWebCache.cs" />
     <Compile Include="Hoster\IReferer.cs" />
     <Compile Include="Hoster\MailRu.cs" />
