@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 
@@ -123,8 +121,15 @@ namespace OnlineVideos.Hoster
         public override Dictionary<string, string> GetPlaybackOptions(string url)
         {
             string data = GetWebData(url);
-            JArray episodeIds = JArray.Parse(data);
-            return base.GetPlaybackOptions(string.Format("http://api.svt.se/videoplayer-api/video/{0}", episodeIds.Count > 0 ? episodeIds.First().ToString() : url.Replace("http://www.svtplay.se/api/episodeIds?ids=", "")));
+            if (data.Count() == 0)
+            {
+                url = url.Replace("http://www.svtplay.se/api/episode?id=", "");
+            }
+            else
+            {
+                url = JObject.Parse(data)["versions"].First()["id"].Value<string>();
+            }
+            return base.GetPlaybackOptions(string.Format("http://api.svt.se/videoplayer-api/video/{0}", url));
         }
     }
 

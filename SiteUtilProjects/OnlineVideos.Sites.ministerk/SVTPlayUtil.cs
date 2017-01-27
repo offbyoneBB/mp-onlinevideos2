@@ -1,15 +1,10 @@
 using Newtonsoft.Json.Linq;
-using OnlineVideos;
-using OnlineVideos.CrossDomain;
 using OnlineVideos.Helpers;
 using OnlineVideos.Hoster;
 using OnlineVideos.Sites.Utils;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Web;
 
@@ -465,7 +460,7 @@ namespace OnlineVideos.Sites
                         string url = contentUrl;
                         if (m.Success)
                         {
-                            url = string.Format("http://www.svtplay.se/api/episodeIds?ids={0}", m.Groups["id"].Value);
+                            url = string.Format("http://www.svtplay.se/api/episode?id={0}", m.Groups["id"].Value);
                         }
                         if (url.StartsWith("//")) url = url.Replace("//", "http://");
                         VideoInfo video = new VideoInfo();
