@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace OnlineVideos.Sites
 {
@@ -9,7 +7,7 @@ namespace OnlineVideos.Sites
     {
         public override Dictionary<string, string> GetPlaybackOptions(string playlistUrl)
         {
-            return base.GetPlaybackOptions(playlistUrl).ToDictionary(p => p.Key, p => p.Value.Replace("\\/", "/"));
+            return base.GetPlaybackOptions(playlistUrl).OrderBy(p => p.Key).ToDictionary(p => p.Key, p => p.Value.Replace("\\/", "/"));
         }
     }
 }
