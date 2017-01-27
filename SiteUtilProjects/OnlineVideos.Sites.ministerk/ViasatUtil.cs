@@ -255,28 +255,40 @@ namespace OnlineVideos.Sites
         {
 
             JObject data = GetWebData<JObject>(video.VideoUrl);
-
-            string playstr = data["streams"]["medium"].Value<string>();
-            if (playstr.ToLower().StartsWith("rtmp"))
+            string playstr;
+            if (data["streams"]["medium"].Type != JTokenType.Null)
             {
-                int mp4IndexFlash = playstr.ToLower().IndexOf("mp4:");
-                int mp4Index = mp4IndexFlash >= 0 ? mp4IndexFlash : playstr.ToLower().IndexOf("flv:"); 
-                if (mp4Index > 0)
+                 playstr = data["streams"]["medium"].Value<string>();
+                if (playstr.ToLower().StartsWith("rtmp"))
                 {
-                    playstr = new MPUrlSourceFilter.RtmpUrl(playstr.Substring(0, mp4Index)) { PlayPath = playstr.Substring(mp4Index), SwfUrl = redirectedSwfUrl, SwfVerify = true }.ToString();
+                    int mp4IndexFlash = playstr.ToLower().IndexOf("mp4:");
+                    int mp4Index = mp4IndexFlash >= 0 ? mp4IndexFlash : playstr.ToLower().IndexOf("flv:");
+                    if (mp4Index > 0)
+                    {
+                        playstr = new MPUrlSourceFilter.RtmpUrl(playstr.Substring(0, mp4Index)) { PlayPath = playstr.Substring(mp4Index), SwfUrl = redirectedSwfUrl, SwfVerify = true }.ToString();
+                    }
+                    else
+                    {
+                        playstr = new MPUrlSourceFilter.RtmpUrl(playstr) { SwfUrl = redirectedSwfUrl, SwfVerify = true }.ToString();
+                    }
                 }
-                else
+                else if (playstr.ToLower().EndsWith(".f4m"))
                 {
-                    playstr = new MPUrlSourceFilter.RtmpUrl(playstr) { SwfUrl = redirectedSwfUrl, SwfVerify = true }.ToString();
+                    playstr += "?hdcore=3.3.0" + "&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12);
+                }
+                else if (playstr.ToLower().Contains(".f4m?"))
+                {
+                    playstr += "&hdcore=3.3.0" + "&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12);
                 }
             }
-            else if (playstr.ToLower().EndsWith(".f4m"))
+            else
             {
-                playstr += "?hdcore=3.3.0" + "&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12);
-            }
-            else if (playstr.ToLower().Contains(".f4m?"))
-            {
-                playstr += "&hdcore=3.3.0" + "&g=" + OnlineVideos.Sites.Utils.HelperUtils.GetRandomChars(12);
+                playstr = data["streams"]["hls"].Value<string>();
+                video.PlaybackOptions = new Dictionary<string, string>();
+                OnlineVideos.Sites.Utils.MyHlsPlaylistParser parser = new OnlineVideos.Sites.Utils.MyHlsPlaylistParser(GetWebData(playstr), playstr);
+                foreach (OnlineVideos.Sites.Utils.MyHlsStreamInfo streamInfo in parser.StreamInfos)
+                    video.PlaybackOptions.Add(streamInfo.Width + "x" + streamInfo.Height + " (" + streamInfo.Bandwidth / 1000 + " kbps)", streamInfo.Url);
+                playstr = video.PlaybackOptions.Last().Value;
             }
 
             if (!string.IsNullOrEmpty(video.SubtitleUrl) && string.IsNullOrEmpty(video.SubtitleText))
