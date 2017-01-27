@@ -288,7 +288,7 @@ namespace OnlineVideos.Sites
                 OnlineVideos.Sites.Utils.MyHlsPlaylistParser parser = new OnlineVideos.Sites.Utils.MyHlsPlaylistParser(GetWebData(playstr), playstr);
                 foreach (OnlineVideos.Sites.Utils.MyHlsStreamInfo streamInfo in parser.StreamInfos)
                     video.PlaybackOptions.Add(streamInfo.Width + "x" + streamInfo.Height + " (" + streamInfo.Bandwidth / 1000 + " kbps)", streamInfo.Url);
-                playstr = video.PlaybackOptions.Last().Value;
+                playstr = video.PlaybackOptions.First().Value;
             }
 
             if (!string.IsNullOrEmpty(video.SubtitleUrl) && string.IsNullOrEmpty(video.SubtitleText))
