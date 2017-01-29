@@ -918,18 +918,15 @@ namespace OnlineVideos.Sites
 
         public override ITrackingInfo GetTrackingInfo(VideoInfo video)
         {
-            if (Settings.Player == PlayerType.Internal)
-            {//tracking
-                if(video.Other is Dictionary<string,string>)
+            if (video.Other is Dictionary<string, string>)
+            {
+                Dictionary<string, string> d = video.Other as Dictionary<string, string>;
+                if (d.ContainsKey("tracking"))
                 {
-                    Dictionary<string, string> d = video.Other as Dictionary<string, string>;
-                    if(d.ContainsKey("tracking"))
-                    {
-                        Regex rgx = new Regex(@"(?<VideoKind>[^\|]*)\|(?<Title>[^\|]*)\|(?<Year>[^\|]*)\|(?<ID_IMDB>[^\|]*)\|(?<Season>[^\|]*)\|(?<Episode>.*)");
-                        Match m = rgx.Match(d["tracking"]);
-                        ITrackingInfo ti = new TrackingInfo() { Regex = m };
-                        return ti;
-                    }
+                    Regex rgx = new Regex(@"(?<VideoKind>[^\|]*)\|(?<Title>[^\|]*)\|(?<Year>[^\|]*)\|(?<ID_IMDB>[^\|]*)\|(?<Season>[^\|]*)\|(?<Episode>.*)");
+                    Match m = rgx.Match(d["tracking"]);
+                    ITrackingInfo ti = new TrackingInfo() { Regex = m };
+                    return ti;
                 }
             }
             return base.GetTrackingInfo(video);
