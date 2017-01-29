@@ -80,7 +80,10 @@ namespace OnlineVideos.Sites
                     {
                         VideoInfo video = CreateVideoInfo();
 
-                        video.Title = vid.SelectSingleNode(".//h4 | .//h3").InnerText;
+                        if (vid.SelectSingleNode(".//h3") != null)
+                            video.Title = vid.SelectSingleNode(".//h3").InnerText;
+                        else
+                            video.Title = vid.SelectSingleNode(".//h4").InnerText;
                         video.Description = getDescription(vid);
                         video.VideoUrl = FormatDecodeAbsolutifyUrl(baseUrl, node2.Attributes["href"].Value, "", UrlDecoding.None);
                         video.Thumb = getImageUrl(vid);
@@ -246,10 +249,10 @@ namespace OnlineVideos.Sites
                 if (videos.Count > 0)
                 {
                     Category cat = new Category()
-                        {
-                            ParentCategory = parentCategory,
-                            Other = videos
-                        };
+                    {
+                        ParentCategory = parentCategory,
+                        Other = videos
+                    };
                     var hNode = node.SelectSingleNode(@".//h2[@class='header-title']");
                     if (hNode == null)
                         hNode = node.SelectSingleNode(@".//h3[@class='header-title']");
