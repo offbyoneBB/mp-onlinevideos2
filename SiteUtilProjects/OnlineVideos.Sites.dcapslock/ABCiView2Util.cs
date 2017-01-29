@@ -18,7 +18,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("iView Home URL, relative off the Base URL")]
         string iViewURLHome = @"navigation/mobile/2/";
 
-        [Category("OnlineVideosConfiguration"), Description("iView TV Feed URL. This is used to look up Description information and Play URLs.")]
+        [Category("OnlineVideosConfiguration"), Description("User agent string used for testing and development")]
         string iViewUserAgent = @"ABC iview/3.9.4 (iPad; iOS 8.2; Scale/2.00)";
 
         [Category("OnlineVideosConfiguration"), Description("iView Device that allows best user experience with Online Videos")]
@@ -27,8 +27,25 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("iView Tablet App Version that was used for testing and development")]
         string iViewAppver = @"3.9.4-7";
 
-        [Category("OnlineVideosConfiguration"), Description("iView TV Feed URL. This is used to look up Description information and Play URLs.")]
-        string iViewTVFeedURL = @"https://tviview.abc.net.au/iview/feed/sony/?keyword=0-Z";
+        [Category("OnlineVideosConfiguration"), Description("iView TV Feed URL. This is the base URL used to look up Description information and Play URLs.")]
+        string iViewTVFeedURL = @"https://tviview.abc.net.au/iview/feed/samsung/?keyword=";
+
+        [Category("OnlineVideosConfiguration"), Description("iView TV Feed URL Subsets. This is the subsets to break up the time to retrieve TV feed from server.")]
+        string iViewTVFeedURLSubsets = @"a-g,h-m,n-t,u-z";
+
+        [Category("OnlineVideosConfiguration"), Description("iView TV Feed URL Subsets. This is the subsets to break up the time to retrieve TV feed from server.")]
+        string iViewTVFeedURLUsername = @"feedtest";
+
+        [Category("OnlineVideosConfiguration"), Description("iView TV Feed URL Subsets. This is the subsets to break up the time to retrieve TV feed from server.")]
+        string iViewTVFeedURLPassword = @"abc123";
+
+        public struct TVFeed
+        {
+            public string URL;
+            public List<string> URLSubsets;
+            public string Username;
+            public string Password;
+        }
 
         public struct ProgramData
         {
@@ -47,7 +64,9 @@ namespace OnlineVideos.Sites
             //Note: These are always metered. 
             //TODO: Play F4M manifest files which will allow unmetered playback.
 
-            new System.Threading.Thread(FeedSyncWorker) { IsBackground = true, Name = "TVFeedDownload" }.Start(iViewTVFeedURL);
+            List<string> TVFeedURLSubsets = new List<string>(iViewTVFeedURLSubsets.Split(','));
+            TVFeed ivewTVFeed = new TVFeed() { URL = iViewTVFeedURL, URLSubsets = TVFeedURLSubsets, Username = iViewTVFeedURLUsername, Password = iViewTVFeedURLPassword };
+            new System.Threading.Thread(FeedSyncWorker) { IsBackground = true, Name = "TVFeedDownload" }.Start(ivewTVFeed);
             
             List<Category> dynamicCategories = new List<Category>();
 
@@ -343,6 +362,12 @@ namespace OnlineVideos.Sites
             return GetWebData(url: iViewURLBase + url, userAgent: iViewUserAgent);
         }
 
+        private static string Base64Encode(string plainText)
+        {
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+            return System.Convert.ToBase64String(plainTextBytes);
+        }
+
         private List<VideoInfo> GetRelatedVideos(VideoInfo video, string indexTitleSearch)
         {
             List<VideoInfo> RelatedVideos = new List<VideoInfo>();
@@ -417,31 +442,43 @@ namespace OnlineVideos.Sites
             ThreadFeedSync.WaitOne();
 
             XmlDocument doc = new XmlDocument();
+            TVFeed FeedData = (TVFeed)o;
+            string Base64Auth = Base64Encode(String.Format("{0}:{1}", FeedData.Username, FeedData.Password));
+            string Authorization = String.Format("Basic {0}", Base64Auth);
+            System.Collections.Specialized.NameValueCollection headers = new System.Collections.Specialized.NameValueCollection() { { "Authorization", Authorization } };
 
             Log.Debug("ABCiView2Util: FeedSync Worker Thread Begin");
-            string feedData = GetWebData(o as String);
 
-            // TVFeed has been known to contain invalid characters.
-            // Need to convert to spaces
+            // We break up the TV Feed requests as when we ask for teh full a-z the server can crash
+            // with exception that the request is too long
 
-            
-            doc.LoadXml(SanitizeXml(feedData));
-            XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
-            nsmRequest.AddNamespace("a", "http://namespace.feedsync");
-
-            XmlNodeList nodes = doc.GetElementsByTagName("asset");
-            foreach (XmlNode node in nodes)
+            foreach (string Subset in FeedData.URLSubsets)
             {
-                if (node["type"].InnerText == "video")
+                Log.Debug("ABCiView2Util: Downloaidng TV Feed: " + FeedData.URL + Subset);
+
+                string feedData = GetWebData(url: FeedData.URL + Subset, headers: headers);
+
+                // TVFeed has been known to contain invalid characters.
+                // Need to convert to spaces
+
+                doc.LoadXml(SanitizeXml(feedData));
+                XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
+                nsmRequest.AddNamespace("a", "http://namespace.feedsync");
+
+                XmlNodeList nodes = doc.GetElementsByTagName("item");
+                foreach (XmlNode node in nodes)
                 {
                     ProgramData programData;
                     programData.title = node["title"].InnerText;
                     programData.description = node["description"].InnerText;
-                    programData.playURL = node["assetUrl"].InnerText;
+                    programData.playURL = node["abc:videoAsset"].InnerText;
 
-                    if (!ProgramDictionary.ContainsKey(node["id"].InnerText))
+                    List<string> guidParts = new List<string>(node["guid"].InnerText.Split('/'));
+                    string episodeHouseNumber = guidParts[guidParts.Count - 1];
+
+                    if (!ProgramDictionary.ContainsKey(episodeHouseNumber))
                     {
-                        ProgramDictionary.Add(node["id"].InnerText, programData);
+                        ProgramDictionary.Add(episodeHouseNumber, programData);
                     }
                 }
             }
