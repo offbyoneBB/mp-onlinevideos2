@@ -2,37 +2,83 @@
 <Include
     xmlns="www.team-mediaportal.com/2008/mpf/directx"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ovs="clr-namespace:OnlineVideos.MediaPortal2;assembly=OnlineVideos.MediaPortal2"
     Source="screens\master_menu.xaml">
     <Include.Resources>
-
       <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
+      <ovs:ExtendedInfoConverter x:Key="ExtendedInfoConverter"/>
+
       <!-- Header -->
-      <ResourceWrapper x:Key="Header_Text" Resource="OnlineVideos"/>
-        <!-- Contents -->
-        <ControlTemplate x:Key="Contents_Template">
-          <DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}" Margin="-74,21,-74,50">
-            <Rectangle Fill="Black" Opacity="0.5" DockPanel.Dock="Center" Margin="-9,-9,-9,-9">
-              <Rectangle.Effect>
-                <ZoomBlurEffect BlurAmount="0.01" CenterX="0.5" CenterY="1" />
-              </Rectangle.Effect>
-            </Rectangle>
-            <Border BorderThickness="0" Background="#D9777777" DockPanel.Dock="Center"/>
-            <ListView x:Name="videolist" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center" 
-                      Style="{ThemeResource ovsVideosListViewStyle}" Margin="0,0,-15,0"
-                      CurrentItem="{Binding Path=FocusedVideo, Mode=OneWayToSource}" 
-                      ItemsSource="{Binding Path=VideosList}"/>
-            <StackPanel Orientation="Vertical" DockPanel.Dock="Bottom" VerticalAlignment="Top" Margin="0,625,0,-425"  >
-              <StackPanel Orientation="Horizontal"> 
-                <Label Content="{Binding Path=SelectedSite.Name}" Color="{ThemeResource TextColor}"/>
-                <Label Content=" • " Color="{ThemeResource TextColor}"/>
-                <Label Content="{Binding Path=SelectedCategory.Name}" Color="{ThemeResource TextColor}"/>
-              </StackPanel>
-              <Label Color="{ThemeResource TextColor}" Opacity="0.6"
-                     VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Wrap="True" Scroll="Auto"
-                     DataContext="{Binding ElementName=videolist,Path=CurrentItem}"
-                     Content="{Binding Path=Title}" />
-            </StackPanel>           
+      <ResourceWrapper x:Key="Header_Text" Resource="[OnlineVideos.Videos]"/>
+
+      <!-- Contents -->
+      <ControlTemplate x:Key="Contents_Template">
+        <DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}">
+
+          <Rectangle Fill="Black" Opacity="0.5" Margin="-89,-14,-84,75" DockPanel.Dock="Center" >
+            <Rectangle.Effect>
+              <ZoomBlurEffect BlurAmount="0.01" CenterX="0.5" CenterY="1" />
+            </Rectangle.Effect>
+          </Rectangle>
+          <Border BorderThickness="0" Background="#CC777777" Margin="-80,-5,-75,75" DockPanel.Dock="Center"/>
+
+          <ListView x:Name="videolist" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center" 
+                    Style="{ThemeResource ovsVideosListViewStyle}" Margin="-75,6,-85,87"
+                    CurrentItem="{Binding Path=FocusedVideo, Mode=OneWayToSource}" 
+                    ItemsSource="{Binding Path=VideosList}"/>
+
+          <!-- Actual Item / Total items -->
+          <DockPanel DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Left" LastChildFill="false"
+                     IsVisible="{Binding IsItemsValid}">
+            <StackPanel DockPanel.Dock="Left" Margin="20,-120,25,100" Orientation="Horizontal">
+              <Label HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,10,0" FontFamily="DefaultBold"
+                 Color="{ThemeResource TextColor}" FontSize="{ThemeResource SmallerFontSize}">
+                <Label.Content>
+                  <MultiBinding Converter="{StaticResource GetIndexMultiConverter}" ConverterParameter="1">
+                    <Binding ElementName="videolist" Path="CurrentItem"/>
+                    <Binding ElementName="videolist" Path="ItemsSource"/>
+                  </MultiBinding>
+                </Label.Content>
+              </Label>
+              <Label Color="{ThemeResource TextColor}" Content="| " FontSize="{ThemeResource SmallerFontSize}" FontFamily="DefaultBold"/>
+              <Label Color="{ThemeResource TextColor}" FontSize="{ThemeResource SmallerFontSize}" FontFamily="DefaultBold">
+                <Label.Content>
+                  <Binding ElementName="videolist" Path="ItemsSource.Count" />
+                </Label.Content>
+              </Label>
+            </StackPanel>
           </DockPanel>
-        </ControlTemplate>
-    </Include.Resources>
+
+          <DockPanel DockPanel.Dock="Bottom" VerticalAlignment="Bottom" Margin="-80,600,-70,-720" >
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="200">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="400"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*"/>
+              </Grid.ColumnDefinitions>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+              </Grid.RowDefinitions>
+
+              <Label DataContext="{Binding ElementName=videolist,Path=CurrentItem}" Content="{Binding Path=Title}" Grid.ColumnSpan="3"
+                     FontFamily="DefaultBold" Color="{ThemeResource TextColor}"/>
+              <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Vertical">
+                <Label DataContext="{Binding ElementName=videolist,Path=CurrentItem}" Content="{Binding Path=Airdate}" 
+                       Width="250" Color="{ThemeResource TextColor}" Opacity="0.6"/>
+                <Label DataContext="{Binding ElementName=videolist,Path=CurrentItem}" Content="{Binding Path=Length}" 
+                       Color="{ThemeResource TextColor}" Opacity="0.6"/>
+                <Label DataContext="{Binding ElementName=videolist}" Color="{ThemeResource TextColor}" Opacity="0.6"
+                       Content="{Binding Path=CurrentItem, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Certificate}"/>
+                <Label DataContext="{Binding ElementName=videolist}" Color="{ThemeResource TextColor}" Opacity="0.6"
+                       Content="{Binding Path=CurrentItem, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Progress}"/>
+              </StackPanel>            
+              <Label Grid.Row="1" Grid.Column="2" Color="{ThemeResource TextColor}" Opacity="0.6" Height="180"
+                     VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Wrap="True" Content="{Binding Path=Description}"
+                     DataContext="{Binding ElementName=videolist,Path=CurrentItem}" TextTrimming="WordEllipsis"/>
+            </Grid>
+          </DockPanel>
+        </DockPanel>
+     </ControlTemplate>
+  </Include.Resources>
 </Include>

@@ -5,12 +5,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Source="screens\master_bare.xaml"
     xmlns:mp_special_controls="clr-namespace:MediaPortal.UI.SkinEngine.SpecialElements.Controls;assembly=SkinEngine"
+    xmlns:ovs="clr-namespace:OnlineVideos.MediaPortal2;assembly=OnlineVideos.MediaPortal2"
     >
   <Include.Resources>
 
     <!-- Header -->
     <ResourceWrapper x:Key="Header_Text" Resource="[OnlineVideos.Videos]"/>
     <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
+    <ovs:ExtendedInfoConverter x:Key="ExtendedInfoConverter"/>
 
     <!-- Background -->
     <ControlTemplate x:Key="FanArtBackground_Template">
@@ -42,6 +44,7 @@
             <ColumnDefinition Width="480"/>
             <ColumnDefinition Width="20"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="400"/>
           </Grid.ColumnDefinitions>
           <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -51,7 +54,7 @@
           <Label Grid.ColumnSpan="3" Color="{ThemeResource TextColor}" Content="{Binding Title}" FontFamily="SegoeUIBold"
                  VerticalAlignment="Top" Wrap="True" FontSize="{ThemeResource SmallFontSize}"
                  DataContext="{Binding ElementName=videoslist,Path=CurrentItem}" TextTrimming="WordEllipsis"/>
-          
+
           <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="0" DataContext="{Binding Source={StaticResource OnlineVideosModel}}">
             <Label Content="{Binding Path=SelectedCategory.Name}" Opacity="1.3" 
                    Color="{ThemeResource MenuTextBackground}" FontSize="{ThemeResource SmallFontSize}"/>
@@ -66,12 +69,21 @@
           <Label Height="170" Grid.Row="1" Grid.Column="2" Opacity="1.3" Color="{ThemeResource MenuTextBackground}" Margin="0,5,0,0"
                  HorizontalAlignment="Stretch" VerticalAlignment="Top" Wrap="True" FontSize="{ThemeResource SmallFontSize}"
                  DataContext="{Binding ElementName=videoslist,Path=CurrentItem}" TextTrimming="WordEllipsis"
-                 Content="{Binding Description}" />
-          <!--Image Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" DataContext="{Binding ElementName=siteslist,Path=CurrentItem}" Width="150" Stretch="Uniform"
-                 Source="{Binding Path=Site, Converter={ThemeResource ovsSiteUtilIconConverter}}" Margin="15"
-                 HorizontalAlignment="Stretch" VerticalAlignment="Top"/-->
+                 Content="{Binding Description}"/>
+
+          <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Vertical" Margin="25,0,0,0" HorizontalAlignment="Right">
+            <Label DataContext="{Binding ElementName=videoslist,Path=CurrentItem}" Content="{Binding Path=Airdate}" HorizontalAlignment="Right"
+                   Color="{ThemeResource MenuTextBackground}" Opacity="1.3" FontSize="{ThemeResource SmallFontSize}"/>
+            <Label DataContext="{Binding ElementName=videoslist,Path=CurrentItem}" Content="{Binding Path=Length}" HorizontalAlignment="Right"
+                   Color="{ThemeResource MenuTextBackground}" Opacity="1.3" FontSize="{ThemeResource SmallFontSize}"/>
+            <Label DataContext="{Binding ElementName=videoslist}" Color="{ThemeResource MenuTextBackground}" Opacity="1.3" FontSize="{ThemeResource SmallFontSize}"
+                   Content="{Binding Path=CurrentItem, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Certificate}" HorizontalAlignment="Right"/>
+            <Label DataContext="{Binding ElementName=videoslist}" Color="{ThemeResource MenuTextBackground}" Opacity="1.3" FontSize="{ThemeResource SmallFontSize}"
+                   Content="{Binding Path=CurrentItem, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Progress}" HorizontalAlignment="Right"/>
+          </StackPanel>
+
         </Grid>
-        
+
         <!-- Actual Item / Total items -->
         <DockPanel DockPanel.Dock="Center" VerticalAlignment="Bottom" HorizontalAlignment="Right" LastChildFill="false"
          IsVisible="{Binding IsItemsValid}">

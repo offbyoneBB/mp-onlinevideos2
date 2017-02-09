@@ -31,6 +31,16 @@
     <ResourceWrapper x:Key="ovsCategoriesPanelMargin720">0</ResourceWrapper>
     <ResourceWrapper x:Key="ovsVideosPanelMargin720">25,25,0,0</ResourceWrapper>
 
+  <!-- SiteGroup styles 1080p -->
+  <ResourceWrapper x:Key="ovsSiteGroupItemWidth1080">189</ResourceWrapper>
+  <ResourceWrapper x:Key="ovsSiteGroupItemHeight1080">113</ResourceWrapper>
+  <ResourceWrapper x:Key="ovsSiteGroupItemMargin1080">7</ResourceWrapper>
+  <ResourceWrapper x:Key="ovsSiteGroupItemContainerMargin1080">6</ResourceWrapper>
+  <ResourceWrapper x:Key="ovsSiteGroupItemThumbMargin1080">8</ResourceWrapper>
+  <ResourceWrapper x:Key="ovsSiteGroupsPanelMargin1080">20,20,20,0</ResourceWrapper>
+  <ResourceWrapper x:Key="ovsSiteGroupsPageLabelHeight1080">75</ResourceWrapper>
+  <ResourceWrapper x:Key="ovsSiteGroupsPageLabelMargin1080">100,0,100,5</ResourceWrapper>
+  
     <!-- Site styles 1080p -->
     <ResourceWrapper x:Key="ovsSiteItemWidth1080">194</ResourceWrapper>
     <ResourceWrapper x:Key="ovsSiteItemHeight1080">113</ResourceWrapper>

@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Include
+    xmlns="www.team-mediaportal.com/2008/mpf/directx"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Source="screens\master_menu.xaml">
+    <Include.Resources>
+      <!-- Header -->
+      <ResourceWrapper x:Key="Header_Text" Resource="[OnlineVideos.Groups]"/>
+      
+      <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
+      
+      <!-- Contents -->
+      <ControlTemplate x:Key="Contents_Template">
+        <DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}">
+          
+        <Rectangle Fill="Black" Opacity="0.5" Margin="-89,-14,-84,75" DockPanel.Dock="Center" >
+          <Rectangle.Effect>
+            <ZoomBlurEffect BlurAmount="0.01" CenterX="0.5" CenterY="1" />
+          </Rectangle.Effect>
+        </Rectangle>
+
+        <Border BorderThickness="0" Background="#CC777777" Margin="-80,-5,-75,75" DockPanel.Dock="Center"/>
+          
+          <ListView x:Name="siteGroupsList" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center"
+                    Style="{ThemeResource ovsSiteGroupsListViewStyle}" Margin="-75,6,-85,87"
+                    ItemsSource="{Binding Path=SiteGroupsList}" SetFocusPrio="RestoreState"/>
+
+          <!-- Actual Item / Total items -->
+          <DockPanel DockPanel.Dock="Top" VerticalAlignment="Top" HorizontalAlignment="Left" LastChildFill="false"
+                     IsVisible="{Binding IsItemsValid}">
+            <StackPanel DockPanel.Dock="Left" Margin="20,-120,25,100" Orientation="Horizontal">
+              <Label HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,0,10,0" FontFamily="DefaultBold"
+                     Color="{ThemeResource TextColor}" FontSize="{ThemeResource SmallerFontSize}">
+                <Label.Content>
+                  <MultiBinding Converter="{StaticResource GetIndexMultiConverter}" ConverterParameter="1">
+                    <Binding ElementName="siteGroupsList" Path="CurrentItem"/>
+                    <Binding ElementName="siteGroupsList" Path="ItemsSource"/>
+                  </MultiBinding>
+                </Label.Content>
+              </Label>
+              <Label Color="{ThemeResource TextColor}" Content="| " FontSize="{ThemeResource SmallerFontSize}" FontFamily="DefaultBold"/>
+              <Label Color="{ThemeResource TextColor}" FontSize="{ThemeResource SmallerFontSize}" FontFamily="DefaultBold">
+                <Label.Content>
+                  <Binding ElementName="siteGroupsList" Path="ItemsSource.Count" />
+                </Label.Content>
+              </Label>
+            </StackPanel>
+          </DockPanel>
+
+          <DockPanel DockPanel.Dock="Bottom" VerticalAlignment="Bottom" Margin="-80,600,-70,-720" >
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="200">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="400"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*"/>
+              </Grid.ColumnDefinitions>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+              </Grid.RowDefinitions>
+
+              <Label Grid.Row="0" Grid.Column="0" Color="{ThemeResource TextColor}" Grid.ColumnSpan="2"
+                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontFamily="DefaultBold"
+                     DataContext="{Binding ElementName=siteGroupsList,Path=CurrentItem}" Content="{Binding [Name]}"/>
+              <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0"
+                          DataContext="{Binding ElementName=siteGroupsList,Path=CurrentItem}"
+                          IsVisible="{Binding Path=Sites.Count, Converter={StaticResource ReferenceToBoolConverter}}">
+                <Label Margin="0,0,5,0" Content="{Binding Path=Sites.Count}"
+                        Opacity="0.7" Color="{ThemeResource TextColor}"/>
+                <Label Margin="0,0,5,0" Content="[OnlineVideos.Sites]"
+                       Opacity="0.7" Color="{ThemeResource TextColor}"/>
+              </StackPanel>
+              <Label Grid.Row="1" Grid.Column="1" Opacity="0.6" Color="{ThemeResource TextColor}"
+                     HorizontalAlignment="Stretch" VerticalAlignment="Top" Wrap="True"
+                     DataContext="{Binding ElementName=siteGroupsList,Path=CurrentItem}" TextTrimming="WordEllipsis"
+                     Content="{Binding Description}"/>
+          </Grid>
+        </DockPanel>
+      </DockPanel>
+    </ControlTemplate>
+  </Include.Resources>
+</Include>
