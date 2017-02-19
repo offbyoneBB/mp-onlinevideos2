@@ -100,7 +100,7 @@ namespace OnlineVideos.Sites
                         video.PlaybackOptions.Add(q, bareUrl);
                     else
                         if (!String.IsNullOrEmpty(q))
-                            video.PlaybackOptions.Add(q, bareUrl.Insert(inspos, '-' + q));
+                        video.PlaybackOptions.Add(q, bareUrl.Insert(inspos, '-' + q));
                 }
             }
 
@@ -152,6 +152,39 @@ namespace OnlineVideos.Sites
             else
                 return node.Value;
         }
+
+        #region ContextMenu
+
+        public override List<ContextMenuEntry> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
+        {
+            List<ContextMenuEntry> result = new List<ContextMenuEntry>();
+            if (selectedItem != null && !string.IsNullOrEmpty(selectedItem.VideoUrl) && string.IsNullOrEmpty(selectedItem.Description))
+            {
+                result.Add(new ContextMenuEntry() { DisplayText = "Get Description", Other = selectedItem.VideoUrl });
+            }
+            return result;
+        }
+
+        public override ContextMenuExecutionResult ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, ContextMenuEntry choice)
+        {
+            if (choice != null && choice.DisplayText.StartsWith("Get Description"))
+            {
+                string resultUrl = GetFormattedVideoUrl(selectedItem);
+                string data = GetWebData(resultUrl);
+                if (!String.IsNullOrEmpty(data))
+                {
+                    Match m = Regex.Match(data, @"<div\sclass=""imdbdatos"">\s*<i><a\shref=""(?<url>[^""]*)"">IMDb</a>\s<span\sclass=""icon-chevron-right2""></span></i>\s*<i>(?<stars>[^<]*)</i>\s*<i>(?<votes>[^<]*)</i>", defaultRegexOptions);
+                    if (m.Success)
+                        selectedItem.Description = m.Groups["stars"].Value + ' ' + m.Groups["votes"].Value + ' ';
+                    m = Regex.Match(data, @"<h2>Synopsis</h2>\s*<p>(?<description>[^<]*)</p>", defaultRegexOptions);
+                    if (m.Success)
+                        selectedItem.Description = selectedItem.Description + m.Groups["description"].Value;
+                }
+            }
+            return null;
+        }
+
+        #endregion
 
     }
 }
