@@ -43,7 +43,7 @@ namespace OnlineVideos.Sites.DavidCalder
                 }
                 string[] parts;
 
-                parts = hosterUrl.Split(new[] { "http://tinklepad.ag/stream.php?" }, StringSplitOptions.None);
+                parts = hosterUrl.Split(new[] { "stream.php?" }, StringSplitOptions.None);
 
                 if (parts.Length == 2)
                 {
@@ -133,14 +133,6 @@ namespace OnlineVideos.Sites.DavidCalder
                 }
             }
             return DetailedVideos;
-        }
-
-        public override List<SearchResultItem> Search(string query, string category = null)
-        {
-            List<SearchResultItem> videos = base.Search(query.Replace(" ","+"), category);
-            TMDB.BackgroundWorker worker = new TMDB.BackgroundWorker();
-            worker.start(videos.ConvertAll<VideoInfo>(v => v as VideoInfo));
-            return videos;
         }
 
         public override List<VideoInfo> GetNextPageVideos()
