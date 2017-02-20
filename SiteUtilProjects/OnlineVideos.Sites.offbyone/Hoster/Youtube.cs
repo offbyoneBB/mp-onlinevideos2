@@ -161,7 +161,17 @@ namespace OnlineVideos.Hoster
                         string playerUrl = "";
                         var jsPlayerMatch = Regex.Match(contents, "\"assets\":.+?\"js\":\\s*(\"[^\"]+\")");
                         if (jsPlayerMatch.Success)
+                        {
                             playerUrl = Newtonsoft.Json.Linq.JToken.Parse(jsPlayerMatch.Groups[1].Value).ToString();
+                            if (!Uri.IsWellFormedUriString(playerUrl, UriKind.Absolute))
+                            {
+                                Uri uri = null;
+                                if (Uri.TryCreate(new Uri(@"http://youtube.com"), playerUrl, out uri))
+                                    playerUrl = uri.ToString();
+                                else
+                                    playerUrl = string.Empty;
+                            }
+                        }
                         signature = DecryptSignature(playerUrl, urlOptions.Get("s"));
                     }
                     string finalUrl = urlOptions.Get("url");
