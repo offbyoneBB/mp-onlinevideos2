@@ -227,11 +227,11 @@ namespace OnlineVideos.Sites
                 {
                     string webData = GetWebData(String.Format(fileUrlFormatString, id) + newToken, proxy: GetProxy());
                     JObject contentData = (JObject)JObject.Parse(webData);
-                    JArray items = contentData["streams"] as JArray;
+                    JArray items = contentData["items"][0] as JArray;
                     List<KeyValuePair<string, string>> playbackOptions = new List<KeyValuePair<string, string>>();
                     foreach (JToken item in items)
                     {
-                        string s = item.Value<string>();
+                        string s = item.Value<string>("url");
 
                         Match m = Regex.Match(s, @"/ida/(?<quality>[^/]*)/");
                         if (m.Success)

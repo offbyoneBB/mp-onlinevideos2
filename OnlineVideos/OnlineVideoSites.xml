@@ -1312,7 +1312,7 @@
         ]]></item>
         <item key="searchUrl"><![CDATA[http://www.npo.nl/zoeken?utf8=%E2%9C%93&commit=Zoeken&q={0}]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[<div\sclass='image-container'>\s*<a\shref="(?<url>[^"]*)"><img\salt="[^"]*"\sclass="show-image"\ssrc="(?<thumb>[^"]*)"\s/>\s*</a></div>\s*</div>\s*<div\sclass='span8'>\s*<a[^>]*><h4>(?<title>[^<]*)<span\sclass='inactive[^>]*>[^<]*</span>\s*<span\sclass='av-icon'></span>\s*</h4>\s*<h5><span\sclass="inactive">[^<]*</span>\s<a[^>]*>[^<]*</a></h5>\s*<p\sclass='without-title\svisible-for-desktop'>(?:<span>)?(?<description>[^<]*)<]]></item>
-        <item key="fileUrlFormatString"><![CDATA[http://ida.omroep.nl/odi/?prid={0}&puboptions=adaptive,h264_bb,h264_sb,h264_std&adaptive=no&part=1&token=]]></item>
+        <item key="fileUrlFormatString"><![CDATA[http://ida.omroep.nl/app.php/{0}?adaptive=no&token=]]></item>
         <item key="cookies"><![CDATA[npo_cc=31]]></item>
         <item key="forceUTF8Encoding"><![CDATA[True]]></item>
       </Configuration>
