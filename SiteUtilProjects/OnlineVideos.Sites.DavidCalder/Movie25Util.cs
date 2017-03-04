@@ -41,19 +41,12 @@ namespace OnlineVideos.Sites.DavidCalder
                     parent.sh.WaitForSubtitleCompleted();
                     parent.lastPlaybackOptionUrl = PlaybackOptions[url];
                 }
-                string[] parts;
-
-                parts = hosterUrl.Split(new[] { "stream.php?" }, StringSplitOptions.None);
-
-                if (parts.Length == 2)
-                {
-                    byte[] tmp = Convert.FromBase64String(parts[1]);
-                    hosterUrl = Encoding.ASCII.GetString(tmp);              
-                }
-
-                string newUrl = hosterUrl.Substring(hosterUrl.LastIndexOf("&&")+ 2);
-
-                return GetVideoUrl(newUrl);
+                string data = WebCache.Instance.GetWebData(hosterUrl, @"chtc=Click+Here+to+Continue");
+                Match m = Regex.Match(data, @"<IFRAME\sid=""showvideo""\ssrc=""(?<url>[^""]*)""");
+                if (m.Success)
+                    return GetVideoUrl(m.Groups["url"].Value);
+                else
+                    return null;
             }
         }
 
@@ -98,10 +91,18 @@ namespace OnlineVideos.Sites.DavidCalder
         {
             if (playlistUrl.StartsWith("https://www.youtube.com/watch?v="))
                 return Hoster.HosterFactory.GetHoster("Youtube").GetPlaybackOptions(playlistUrl);
-            else return base.GetPlaybackOptions(playlistUrl);
-        }
+            else
+            {
+                var res = new Dictionary<string, string>();
+                foreach (var val in base.GetPlaybackOptions(playlistUrl))
+                    if (val.Value.StartsWith("http"))
+                        res.Add(val.Key, val.Value);
+                    else
+                        res.Add(val.Key, "http:" + val.Value);
+                return res;
+            }
 
-        public override bool CanSearch { get { return true; } }
+        }
 
         public override List<VideoInfo> GetVideos(Category category)
         {
