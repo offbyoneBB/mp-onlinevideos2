@@ -1,146 +1,150 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Web;
 using Newtonsoft.Json.Linq;
-using System.Xml.Linq;
 using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites
 {
-	/// <summary>
-	/// Twitch API docs can be found here: https://github.com/justintv/Twitch-API
-	/// </summary>
+    /// <summary>
+    /// Twitch API docs can be found here: https://github.com/justintv/Twitch-API
+    /// </summary>
     public class TwitchTVUtil : SiteUtilBase
-	{
-		string baseApiUrl = "https://api.twitch.tv/kraken";
-		string gamesUrl = "/games/top?limit=100";
-		string featuredStreamsUrl = "/streams/featured?limit=100";
-		string streamsUrl = "/streams?limit=100&game={0}";
-		string searchUrl = "/search/streams?limit=100&query={0}";
-		string tokenUrl = "http://api.twitch.tv/api/channels/{0}/access_token";
-		string playlistUrl = "http://usher.justin.tv/api/channel/hls/{0}.m3u8?allow_source=true&player=twitchweb&token={1}&segment_preference=2&sig={2}";
-		string swfUrl = "http://www-cdn.jtvnw.net/widgets/live_site_player.reecf0cca00fdb5cb6edc8e227c91702545504613.swf";
-		string pageUrlBase = "http://de.twitch.tv/";
-		string m3u8Regex = @"#EXT-X-STREAM-INF:PROGRAM-ID=\d,BANDWIDTH=(?<bitrate>\d+),(RESOLUTION=(\d+x\d+,))?VIDEO=""(?<quality>[^""]+)"".*?\n(?<url>.*)";
+    {
+        string baseApiUrl = "https://api.twitch.tv/kraken";
+        string gamesUrl = "/games/top?limit=100";
+        string featuredStreamsUrl = "/streams/featured?limit=100";
+        string streamsUrl = "/streams?limit=100&game={0}";
+        string searchUrl = "/search/streams?limit=100&query={0}";
+        string tokenUrl = "http://api.twitch.tv/api/channels/{0}/access_token";
+        string playlistUrl = "http://usher.justin.tv/api/channel/hls/{0}.m3u8?allow_source=true&player=twitchweb&token={1}&segment_preference=2&sig={2}";
+        string swfUrl = "http://www-cdn.jtvnw.net/widgets/live_site_player.reecf0cca00fdb5cb6edc8e227c91702545504613.swf";
+        string pageUrlBase = "http://de.twitch.tv/";
+        string m3u8Regex = @"#EXT-X-STREAM-INF:PROGRAM-ID=\d,BANDWIDTH=(?<bitrate>\d+),(RESOLUTION=(\d+x\d+,))?VIDEO=""(?<quality>[^""]+)"".*?\n(?<url>.*)";
 
-		string nextPageUrl;
+        string nextPageUrl;
 
-		public override int DiscoverDynamicCategories()
-		{
-			Settings.Categories.Clear();
-	
-			var games = GetWebData<JObject>(baseApiUrl + gamesUrl);
-			foreach (var game in from game in games["top"] select game)
-			{
-				Settings.Categories.Add(CategoryFromJsonGameObject(game));
-			}
-			Settings.DynamicCategoriesDiscovered = Settings.Categories.Count > 0;
+        private NameValueCollection customHeader;
 
-			string nextCategoriesPageUrl = games["_links"].Value<string>("next");
-			if (!string.IsNullOrEmpty(nextCategoriesPageUrl))
-			{
-				Settings.Categories.Add(new NextPageCategory() { Url = nextCategoriesPageUrl });
-			}
+        public override int DiscoverDynamicCategories()
+        {
+            customHeader = new NameValueCollection();
+            customHeader.Add("Client-ID", "");//fill clientid
+            Settings.Categories.Clear();
 
-			return Settings.Categories.Count - 1;
-		}
+            var games = GetWebData<JObject>(baseApiUrl + gamesUrl, headers: customHeader);
+            foreach (var game in from game in games["top"] select game)
+            {
+                Settings.Categories.Add(CategoryFromJsonGameObject(game));
+            }
+            Settings.DynamicCategoriesDiscovered = Settings.Categories.Count > 0;
 
-		public override int DiscoverNextPageCategories(NextPageCategory category)
-		{
-			Settings.Categories.Remove(category);
-			var games = GetWebData<JObject>(category.Url);
-			foreach (var game in from game in games["top"] select game)
-			{
-				Settings.Categories.Add(CategoryFromJsonGameObject(game));
-			}
+            string nextCategoriesPageUrl = games["_links"].Value<string>("next");
+            if (!string.IsNullOrEmpty(nextCategoriesPageUrl))
+            {
+                Settings.Categories.Add(new NextPageCategory() { Url = nextCategoriesPageUrl });
+            }
 
-			string nextCategoriesPageUrl = games["_links"].Value<string>("next");
-			if (!string.IsNullOrEmpty(nextCategoriesPageUrl))
-			{
-				Settings.Categories.Add(new NextPageCategory() { Url = nextCategoriesPageUrl });
-			}
+            return Settings.Categories.Count - 1;
+        }
 
-			return Settings.Categories.Count - 1;
-		}
+        public override int DiscoverNextPageCategories(NextPageCategory category)
+        {
+            Settings.Categories.Remove(category);
+            var games = GetWebData<JObject>(category.Url, headers: customHeader);
+            foreach (var game in from game in games["top"] select game)
+            {
+                Settings.Categories.Add(CategoryFromJsonGameObject(game));
+            }
 
-		public override List<VideoInfo> GetVideos(Category category)
-		{
-			return VideosFromApiUrl(baseApiUrl + string.Format(streamsUrl, HttpUtility.UrlEncode(category.Name)));
-		}
+            string nextCategoriesPageUrl = games["_links"].Value<string>("next");
+            if (!string.IsNullOrEmpty(nextCategoriesPageUrl))
+            {
+                Settings.Categories.Add(new NextPageCategory() { Url = nextCategoriesPageUrl });
+            }
 
-		public override List<VideoInfo> GetNextPageVideos()
-		{
-			return VideosFromApiUrl(nextPageUrl);
-		}
+            return Settings.Categories.Count - 1;
+        }
 
-		public override bool CanSearch
-		{
-			get { return true; }
-		}
+        public override List<VideoInfo> GetVideos(Category category)
+        {
+            return VideosFromApiUrl(baseApiUrl + string.Format(streamsUrl, HttpUtility.UrlEncode(category.Name)));
+        }
 
-		public override List<SearchResultItem> Search(string query, string category = null)
-		{
-			return VideosFromApiUrl(baseApiUrl + string.Format(searchUrl, HttpUtility.UrlEncode(query))).ConvertAll<SearchResultItem>(i => i as SearchResultItem);
-		}
+        public override List<VideoInfo> GetNextPageVideos()
+        {
+            return VideosFromApiUrl(nextPageUrl);
+        }
 
-		public override string GetVideoUrl(OnlineVideos.VideoInfo video)
-		{
+        public override bool CanSearch
+        {
+            get { return true; }
+        }
+
+        public override List<SearchResultItem> Search(string query, string category = null)
+        {
+            return VideosFromApiUrl(baseApiUrl + string.Format(searchUrl, HttpUtility.UrlEncode(query))).ConvertAll<SearchResultItem>(i => i as SearchResultItem);
+        }
+
+        public override string GetVideoUrl(OnlineVideos.VideoInfo video)
+        {
             video.PlaybackOptions = new Dictionary<string, string>();
-			var tokenDataJson = GetWebData<JToken>(string.Format(tokenUrl, video.VideoUrl));
-			var token= tokenDataJson["token"];
-			var sig = tokenDataJson["sig"];
+            var tokenDataJson = GetWebData<JToken>(string.Format(tokenUrl, video.VideoUrl), headers: customHeader);
+            var token = tokenDataJson["token"];
+            var sig = tokenDataJson["sig"];
             string hlsPlaylistUrl = string.Format(playlistUrl, video.VideoUrl, HttpUtility.UrlEncode(token.ToString()), sig);
             var m3u8Data = GetWebData(hlsPlaylistUrl);
-			foreach (Match match in Regex.Matches(m3u8Data, m3u8Regex))
-			{
-				video.PlaybackOptions.Add(
-					string.Format("{0} - {1} kbps", match.Groups["quality"].Value, int.Parse(match.Groups["bitrate"].Value) / 1000),
-					match.Groups["url"].Value);
-			}
+            foreach (Match match in Regex.Matches(m3u8Data, m3u8Regex))
+            {
+                video.PlaybackOptions.Add(
+                    string.Format("{0} - {1} kbps", match.Groups["quality"].Value, int.Parse(match.Groups["bitrate"].Value) / 1000),
+                    match.Groups["url"].Value);
+            }
 
             return video.PlaybackOptions.Select(p => p.Value).FirstOrDefault();
-		}
+        }
 
-		List<VideoInfo> VideosFromApiUrl(string url)
-		{
-			nextPageUrl = string.Empty;
-			HasNextPage = false;
+        List<VideoInfo> VideosFromApiUrl(string url)
+        {
+            nextPageUrl = string.Empty;
+            HasNextPage = false;
 
-			List<VideoInfo> result = new List<VideoInfo>();
+            List<VideoInfo> result = new List<VideoInfo>();
 
-			var streams = GetWebData<JObject>(url);
-			foreach (var stream in from stream in streams["streams"] select stream)
-			{
-				result.Add(VideoFromJsonStreamObject(stream));
-			}
+            var streams = GetWebData<JObject>(url, headers: customHeader);
+            foreach (var stream in from stream in streams["streams"] select stream)
+            {
+                result.Add(VideoFromJsonStreamObject(stream));
+            }
 
-			nextPageUrl = streams["_links"].Value<string>("next");
-			if (!string.IsNullOrEmpty(nextPageUrl)) HasNextPage = true;
+            nextPageUrl = streams["_links"].Value<string>("next");
+            if (!string.IsNullOrEmpty(nextPageUrl)) HasNextPage = true;
 
-			return result;
-		}
+            return result;
+        }
 
-		Category CategoryFromJsonGameObject(JToken game)
-		{
-			return new Category()
-			{
-				Name = game["game"].Value<string>("name"),
-				Thumb = game["game"]["box"].Value<string>("medium"),
-				Description = string.Format("Channels: {0} / Viewers: {1}", game.Value<string>("channels"), game.Value<string>("viewers"))
-			};
-		}
+        Category CategoryFromJsonGameObject(JToken game)
+        {
+            return new Category()
+            {
+                Name = game["game"].Value<string>("name"),
+                Thumb = game["game"]["box"].Value<string>("medium"),
+                Description = string.Format("Channels: {0} / Viewers: {1}", game.Value<string>("channels"), game.Value<string>("viewers"))
+            };
+        }
 
-		VideoInfo VideoFromJsonStreamObject(JToken stream)
-		{
-			return new VideoInfo()
-			{
-				Title = (stream["channel"].Value<string>("status") ?? stream["channel"].Value<string>("display_name")).Replace('\n', ' ' ),
+        VideoInfo VideoFromJsonStreamObject(JToken stream)
+        {
+            return new VideoInfo()
+            {
+                Title = (stream["channel"].Value<string>("status") ?? stream["channel"].Value<string>("display_name")).Replace('\n', ' '),
                 Thumb = stream["preview"].Value<string>("large"),
-				Description = string.Format("{0} Viewers on {1}", stream.Value<string>("viewers"), stream["channel"].Value<string>("name")),
-				Airdate = stream["channel"].Value<DateTime>("created_at").ToString("g", OnlineVideoSettings.Instance.Locale),
-				VideoUrl = stream["channel"].Value<string>("name")
-			};
-		}
-	}
+                Description = string.Format("{0} Viewers on {1}", stream.Value<string>("viewers"), stream["channel"].Value<string>("name")),
+                Airdate = stream["channel"].Value<DateTime>("created_at").ToString("g", OnlineVideoSettings.Instance.Locale),
+                VideoUrl = stream["channel"].Value<string>("name")
+            };
+        }
+    }
 }
