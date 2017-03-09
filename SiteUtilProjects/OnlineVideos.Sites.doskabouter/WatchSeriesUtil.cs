@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Net;
 using System.IO;
+using System.Text;
 
 namespace OnlineVideos.Sites
 {
@@ -78,7 +79,6 @@ namespace OnlineVideos.Sites
                     if (cat.Name == "Series")
                     {
                         cat.Other = Depth.MainMenu;
-                        cat.Url = @"https://watchseriesfree.to/series";
                     }
                     else
                     {
@@ -119,13 +119,13 @@ namespace OnlineVideos.Sites
                     m = regex_Az.Match(webData);
                     break;
                 case Depth.Alfabet:
-                    webData = Helpers.StringUtils.GetSubString(webData, @"class=""listbig""", @"class=""clear""");
+                    //webData = Helpers.StringUtils.GetSubString(webData, @"class=""listbig""", @"class=""clear""");
                     m = regEx_dynamicSubCategories.Match(webData);
                     break;
                 case Depth.Series:
                     Match m2 = Regex.Match(webData, @"imdb\.com/title/(?<imdbId>[^/]*)/");
-                    webData = Helpers.StringUtils.GetSubString(webData, @"class=""lists"">", @"class=""clear""");
-                    string[] tmp = { @"class=""lists"">" };
+                    webData = Helpers.StringUtils.GetSubString(webData, @"class=""lists"" >", @"class=""clear""");
+                    string[] tmp = { @"class=""lists"" >" };
                     string[] seasons = webData.Split(tmp, StringSplitOptions.RemoveEmptyEntries);
                     foreach (string s in seasons)
                     {
@@ -133,7 +133,7 @@ namespace OnlineVideos.Sites
                         if (m2.Success)
                             cat.imDbId = m2.Groups["imdbId"].Value;
 
-                        cat.Name = HttpUtility.HtmlDecode(Helpers.StringUtils.GetSubString(s, ">", "<")).Trim();
+                        cat.Name = HttpUtility.HtmlDecode(Helpers.StringUtils.GetSubString(s, @"name"">", "<")).Trim();
                         cat.Url = s;
                         cat.SubCategoriesDiscovered = true;
                         cat.HasSubCategories = false;
@@ -188,19 +188,13 @@ namespace OnlineVideos.Sites
             if (category.Other.Equals(Depth.BareList))
             {
                 webData = GetWebData(url, cookies: cc, forceUTF8: true);
-                webData = Helpers.StringUtils.GetSubString(webData, @"class=""listbig""", @"class=""clear""");
-                string[] parts = url.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-                if (parts.Length >= 2)
+                if (regEx_NextPage != null)
                 {
-                    if (parts[parts.Length - 1] == "latest")
-                        nextVideoListPageUrl = url + "/1";
+                    Match mNext = regEx_NextPage.Match(webData);
+                    if (mNext.Success)
+                        nextVideoListPageUrl = FormatDecodeAbsolutifyUrl(url, mNext.Groups["url"].Value, nextPageRegExUrlFormatString, nextPageRegExUrlDecoding);
                     else
-                    {
-                        int pageNr;
-                        if (parts[parts.Length - 2] == "latest" && int.TryParse(parts[parts.Length - 1], out pageNr))
-                            if (pageNr + 1 <= 9)
-                                nextVideoListPageUrl = url.Substring(0, url.Length - 1) + (pageNr + 1).ToString();
-                    }
+                        nextVideoListPageUrl = null;
                 }
             }
             else
@@ -240,6 +234,10 @@ namespace OnlineVideos.Sites
                             tInfo.Regex = Regex.Match(parseString, @"(?<Title>.+?)\s+Season\s*?(?<Season>\d+).*?Episode\s*?(?<Episode>\d+)", RegexOptions.IgnoreCase);
                         }
 
+                        if (tInfo.Season == 0 && !String.IsNullOrEmpty(m.Groups["epid"].Value))
+                        {
+                            tInfo.Regex = Regex.Match(m.Groups["epid"].Value + ' ' + video.Title, @"(?<Season>\d+)x(?<Episode>\d+)\s(?<Title>.*)", RegexOptions.IgnoreCase);
+                        }
                         if (tInfo.Season != 0)
                         {
                             if (category is SeriesRssLink)
@@ -345,22 +343,15 @@ namespace OnlineVideos.Sites
 
         public override string ResolveVideoUrl(string url)
         {
-
-            string webData = GetWebData(url, cookies: cc, forceUTF8: true, referer: url, proxy: GetProxy());
-            Match m = Regex.Match(webData, @"<a\sclass=""myButton\sp2""\shref=""(?<url>[^""]*)""[^>]*>Click\sHere\sto\sPlay");
-            if (m.Success)
+            //http://onwatchseries.to/cale.html?r=aHR0cDovL2dvcmlsbGF2aWQuaW4vN2MzcGlzZmIybWgx
+            int p = url.IndexOf("?r=");
+            if (p >= 0)
             {
-                url = m.Groups["url"].Value;
-                Log.Debug("watcheries result: " + url);
+                string hoster = Encoding.ASCII.GetString(Convert.FromBase64String(url.Substring(p + 3)));
+                return GetVideoUrl(hoster);
             }
             else
-            {
-                Log.Debug("watcheries result: no match");
                 return String.Empty;
-            }
-            if (url.StartsWith(baseUrl))
-                return String.Empty;
-            return GetVideoUrl(url);
         }
 
     }
