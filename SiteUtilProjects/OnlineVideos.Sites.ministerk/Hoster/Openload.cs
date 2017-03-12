@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Hoster
 {
@@ -19,19 +20,38 @@ namespace OnlineVideos.Hoster
             if (data.Contains("<h3>We’re Sorry!</h3>"))
                 throw new OnlineVideosException("The video maybe got deleted by the owner or was removed due a copyright violation.");
             sub = "";
-            Regex rgx = new Regex(@"<span[^>]+id=""[^""]*""[^>]*>(?<enc>\d+)</span>");
+            Regex rgx = new Regex(@"<span[^>]+id=""[^""]+""[^>]*>(?<id>[0-9A-Za-z]+)</span>");
             Match m = rgx.Match(data);
             if (m.Success)
             {
-                string enc = m.Groups["enc"].Value;
-                int x = int.Parse(enc.Substring(0, 3));
-                int y = int.Parse(enc.Substring(3, 2));
+                string id = m.Groups["id"].Value;
                 string decoded = "";
-                int num = 5;
-                while (num < enc.Length)
+                int firstChar = (int)id[0];
+                int key = firstChar - 50;
+                int maxKey = System.Math.Max(2, key);
+                key = System.Math.Min(maxKey, id.Length - 22);
+                string t = id.Substring(key, 20);
+                int h = 0;
+                List<int> chars = new List<int>();
+                string v = id.Replace(t, "");
+                while (h < t.Length)
                 {
-                    decoded += (char)(int.Parse(enc.Substring(num, 3)) + x - y * int.Parse(enc.Substring(num + 3, 2)));
-                    num += 5;
+                    string f = t.Substring(h, 2);
+                    chars.Add(int.Parse(f, System.Globalization.NumberStyles.HexNumber));
+                    h += 2;
+                }
+
+                h = 0;
+                while (h < v.Length)
+                {
+                    string b = v.Substring(h, 2);
+                    int i = int.Parse(b, System.Globalization.NumberStyles.HexNumber);
+                    int index = (h / 2) % 10;
+                    int a = chars[index];
+                    i = i ^ 96;
+                    i = i ^ a;
+                    decoded += (char)i;
+                    h += 2;
                 }
                 SetSub(data);
                 return "https://openload.co/stream/" + decoded + "?mime=true";
@@ -71,8 +91,10 @@ namespace OnlineVideos.Hoster
         {
             get { return sub; }
         }
-    }
+        
 
+    }
+    
     public class OpenloadIo : Openload
     {
         public override string GetHosterUrl()
