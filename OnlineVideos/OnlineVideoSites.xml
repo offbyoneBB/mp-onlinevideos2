@@ -1142,17 +1142,15 @@
       <Categories>
         <Category xsi:type="Group" name="Live">
           <Channels>
-            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/263/logo/regular_logo-npo1.png" name="Nederland 1">http://livestreams.omroep.nl/live/npo/tvlive/ned1/ned1.isml/ned1.m3u8</Channel>
-            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/264/logo/regular_logo-npo2.png" name="Nederland 2">http://livestreams.omroep.nl/live/npo/tvlive/ned2/ned2.isml/ned2.m3u8</Channel>
-            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/265/logo/regular_npo3-logo.png" name="Nederland 3">http://livestreams.omroep.nl/live/npo/tvlive/ned3/ned3.isml/ned3.m3u8</Channel>
-            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/279/logo/regular_logonieuws.png" name="NPO Nieuws">http://livestreams.omroep.nl/live/npo/thematv/journaal24/journaal24.isml/journaal24.m3u8</Channel>
-            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/280/logo/regular_logocultura.png" name="NPO Cultura">http://livestreams.omroep.nl/live/npo/thematv/cultura24/cultura24.isml/cultura24.m3u8</Channel>
-            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/281/logo/regular_logo-101.png" name="NPO 101">http://livestreams.omroep.nl/live/npo/thematv/101tv/101tv.isml/101tv.m3u8</Channel>
-            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/282/logo/regular_logopolitiek.png" name="NPO Politiek">http://livestreams.omroep.nl/live/npo/thematv/politiek24/politiek24.isml/politiek24.m3u8</Channel>
-            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/283/logo/regular_logobest.png" name="NPO Best">http://livestreams.omroep.nl/live/npo/thematv/best24/best24.isml/best24.m3u8</Channel>
-            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/284/logo/regular_logodoc.png" name="NPO Doc">http://livestreams.omroep.nl/live/npo/thematv/hollanddoc24/hollanddoc24.isml/hollanddoc24.m3u8</Channel>
-            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/288/logo/regular_logozappxtra.png" name="NPO Zapp Xtra">http://livestreams.omroep.nl/live/npo/thematv/zappelin24/zappelin24.isml/zappelin24.m3u8</Channel>
-            <Channel thumb="http://www-assets.npo.nl/uploads/tv_channel/290/logo/regular_logohumor.png" name="NPO Humor tv">http://livestreams.omroep.nl/live/npo/thematv/humor24/humor24.isml/humor24.m3u8</Channel>
+            <Channel name="Nederland 1" thumb="http://www-assets.npo.nl/uploads/tv_channel/263/logo/regular_logo-npo1.png">http://ida.omroep.nl/app.php/LI_NL1_4188102?adaptive=yes&amp;token=</Channel>
+            <Channel name="Nederland 2" thumb="http://www-assets.npo.nl/uploads/tv_channel/264/logo/regular_logo-npo2.png">http://ida.omroep.nl/app.php/LI_NL2_4188105?adaptive=yes&amp;token=</Channel>
+            <Channel name="Nederland 3" thumb="http://www-assets.npo.nl/uploads/tv_channel/265/logo/regular_npo3-logo.png">http://ida.omroep.nl/app.php/LI_NL3_4188107?adaptive=yes&amp;token=</Channel>
+            <Channel name="Zappelin" thumb="http://www-assets.npo.nl/assets/logos/logo-npozappelin-regular-5af1c056c6465d1152b49582eafdc7340232b9af629437d43d55478405228efe.png">http://ida.omroep.nl/app.php/LI_NEDERLAND3_221687?adaptive=yes&amp;token=</Channel>
+            <Channel name="NPO Nieuws" thumb="http://www-assets.npo.nl/uploads/tv_channel/279/logo/regular_logonieuws.png">http://ida.omroep.nl/app.php/LI_NEDERLAND1_221673?adaptive=yes&amp;token=</Channel>
+            <Channel name="NPO Cultura" thumb="http://www-assets.npo.nl/uploads/tv_channel/280/logo/regular_logocultura.png">http://ida.omroep.nl/app.php/LI_NEDERLAND2_221679?adaptive=yes&amp;token=</Channel>
+            <Channel name="NPO 101" thumb="http://www-assets.npo.nl/uploads/tv_channel/281/logo/regular_logo-101.png">http://ida.omroep.nl/app.php/LI_NEDERLAND3_221683?adaptive=yes&amp;token=</Channel>
+            <Channel name="NPO Politiek" thumb="http://www-assets.npo.nl/uploads/tv_channel/282/logo/regular_logopolitiek.png">http://ida.omroep.nl/app.php/LI_NEDERLAND1_221675?adaptive=yes&amp;token=</Channel>
+            <Channel name="NPO Zapp Xtra" thumb="http://www-assets.npo.nl/uploads/tv_channel/288/logo/regular_logozappxtra.png">http://ida.omroep.nl/app.php/LI_NEDERLAND3_221687?adaptive=yes&amp;token=</Channel>
           </Channels>
         </Category>
       </Categories>
