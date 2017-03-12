@@ -594,7 +594,12 @@ namespace OnlineVideos.Sites
                             date = jVideo["publishDate"].Value<string>();
                         if (!string.IsNullOrEmpty(date))
                         {
-                            DateTime dateTime = DateTime.Parse(date);
+                            long t = 0;
+                            DateTime dateTime;
+                            if (long.TryParse(date, out t))
+                                dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(t);
+                            else
+                                dateTime = DateTime.Parse(date);
                             video.Airdate = dateTime.ToString(OnlineVideoSettings.Instance.Locale);
                         }
                         videos.Add(video);
@@ -719,7 +724,7 @@ namespace OnlineVideos.Sites
         {
             List<SearchResultItem> searchResultItems = new List<SearchResultItem>();
             List<Category> categories = new List<Category>();
-            JObject json = GetWebData<JObject>(string.Format("http://www.svtplay.se/api/search_page?q={0}", HttpUtility.UrlEncode(query)));
+            JObject json = GetWebData<JObject>(string.Format("http://www.svtplay.se/api/search?q={0}", HttpUtility.UrlEncode(query)));
             if (json["categories"] != null && json["categories"].Type == JTokenType.Array)
             {
                 Category genres = new Category()
@@ -734,8 +739,8 @@ namespace OnlineVideos.Sites
                     genres.SubCategories.Add(new RssLink()
                     {
                         Name = item["name"].Value<string>(),
-                        Url = item["urlPart"].Value<string>().Replace("genre/", "").Replace("/", ""),
-                        Thumb = item["posterImageUrl"].Value<string>(),
+                        Url = item["contentUrl"].Value<string>().Replace("genre/", "").Replace("/", ""),
+                        Thumb = item["thumbnailImage"] != null && item["thumbnailImage"].Type != JTokenType.Null ? item["thumbnailImage"].Value<string>() : "",
                         HasSubCategories = true,
                         SubCategories = new List<Category>()
                     });
@@ -760,7 +765,7 @@ namespace OnlineVideos.Sites
                     {
                         Name = item["programTitle"].Value<string>(),
                         Url = item["contentUrl"].Value<string>().Replace("/", ""),
-                        Thumb = item["image"].Value<string>().Replace("{format}", "medium"),
+                        Thumb = item["poster"] != null && item["poster"].Type != JTokenType.Null ? item["poster"].Value<string>().Replace("{format}", "medium") : "",
                         Description = item["description"].Value<string>(),
                         HasSubCategories = true,
                         SubCategories = new List<Category>()
