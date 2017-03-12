@@ -24,7 +24,7 @@ namespace OnlineVideos.Sites
                 webData = GetWebData(deJSONified);
                 m = Regex.Match(webData, @"\#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=(?<bw>[^,]*),CODECS=""[^""]*"",RESOLUTION=(?<reso>[^(,|\s)]*)(?:,AUDIO[^\s]*)?\s(?<url>.*)");
                 video.PlaybackOptions = new Dictionary<string, string>();
-                while (m.Success)//(?:title="[^"]*")?
+                while (m.Success)
                 {
                     string newurl = m.Groups["url"].Value;
                     url = FormatDecodeAbsolutifyUrl(deJSONified, newurl, "", UrlDecoding.None);
