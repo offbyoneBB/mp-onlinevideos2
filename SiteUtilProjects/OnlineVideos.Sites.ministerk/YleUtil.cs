@@ -21,21 +21,12 @@ namespace OnlineVideos.Sites
         public string AppKey { get; set; }
     }
 
-    public enum Kieli
-    {
-        Kaikki,
-        Suomi,
-        Ruotsi
-    }
-
     public class YleUtil : LatestVideosSiteUtilBase
     {
         #region OnlineVideosUserConfiguration
 
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Vain ulkomailla katsottavat"), Description("Rajaa tarkemmin: Vain ulkomailla katsottavat")]
         protected bool onlyNonGeoblockedContent = false;
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Kieli"), Description("Rajaa tarkemmin: Kieli")]
-        protected Kieli contentLanguage = Kieli.Kaikki;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("På svenska"), Description("Arenan: På svenska")]
         protected bool inSwedish = false;
 
@@ -43,7 +34,7 @@ namespace OnlineVideos.Sites
 
         #region Variables and constants
 
-        private YleAppInfo appInfo = null;
+        private YleAppInfo appInfo = new YleAppInfo() { AppId = "89868a18", AppKey = "54bb4ea4d92854a2a45e98f961f0d7da" };
 
         //Translations
         private Dictionary<string, string> dictionary;
@@ -72,7 +63,7 @@ namespace OnlineVideos.Sites
 
         //Urls
         //Api urls
-        private const string cUrlCategoryFormat = @"{0}api/v1/programs/tv?app_id={1}&app_key={2}&service=tv&category={3}&o={4}&region={5}&olang={6}{7}&limit={8}&offset={9}";
+        private const string cUrlCategoryFormat = @"{0}api/v1/programs/tv?app_id={1}&app_key={2}&service=tv&category={3}&o={4}&region={5}&olang={6}&limit={7}&offset={8}";
         private const string cUrlEpisodesFormat = @"{0}api/programs/v1/items.json?series={1}&type={2}&availability=ondemand&order=ondemand.publication.starttime%3Adesc&app_id={3}&app_key={4}&limit={5}&offset={6}";
         private const string cUrlProgramFormat = @"{0}api/programs/v1/id/{1}.json?app_id={2}&app_key={3}";
         private const string cUrlSearchFormat = @"{0}api/v1/search?language={1}&service=tv&query={2}";
@@ -94,21 +85,6 @@ namespace OnlineVideos.Sites
         {
             get
             {
-                if (appInfo == null)
-                {
-                    string data = GetWebData(AppUrl);
-                    Regex r = new Regex(@"window.ohjelmat.*?(?<json>{[^<]*)");
-                    Match m = r.Match(data);
-                    if (m.Success)
-                    {
-                        JToken json = JConstructor.Parse(m.Groups["json"].Value);
-                        appInfo = new YleAppInfo()
-                        {
-                            AppId = json["api"]["applicationId"].Value<string>(),
-                            AppKey = json["api"]["applicationKey"].Value<string>()
-                        };
-                    }
-                }
                 return appInfo;
             }
         }
@@ -159,24 +135,6 @@ namespace OnlineVideos.Sites
             get
             {
                 return inSwedish ? "fi" : "sv";
-            }
-        }
-
-        private string ApiContentLanguage
-        {
-            get
-            {
-                string langParam = string.Empty;
-                switch (contentLanguage)
-                {
-                    case Kieli.Ruotsi:
-                        langParam = "&l=sv";
-                        break;
-                    case Kieli.Suomi:
-                        langParam = "&l=fi";
-                        break;
-                }
-                return langParam;
             }
         }
 
@@ -283,15 +241,15 @@ namespace OnlineVideos.Sites
             Settings.Categories.Add(channelsCatergory);
 
             // Live categories
-            Category liveCatergory = new Category() { Name = dictionary[cLiveCategory], HasSubCategories = false, Other = cApiContentTypeTvLive };
-            Settings.Categories.Add(liveCatergory);
+            // Category liveCatergory = new Category() { Name = dictionary[cLiveCategory], HasSubCategories = false, Other = cApiContentTypeTvLive };
+            // Settings.Categories.Add(liveCatergory);
 
             //Archive Category
             if (!inSwedish)
             {
-                Category archiveCategory = new Category() { Name = dictionary[cArchiveCategory], HasSubCategories = true };
-                archiveCategory.Other = (Func<List<Category>>)(() => GetArchiveProgramsSubCategories(archiveCategory));
-                Settings.Categories.Add(archiveCategory);
+                // Category archiveCategory = new Category() { Name = dictionary[cArchiveCategory], HasSubCategories = true };
+                // archiveCategory.Other = (Func<List<Category>>)(() => GetArchiveProgramsSubCategories(archiveCategory));
+                // Settings.Categories.Add(archiveCategory);
             }
 
             Settings.DynamicCategoriesDiscovered = true;
@@ -329,7 +287,7 @@ namespace OnlineVideos.Sites
             List<Category> subCategories = new List<Category>();
             string categoryKey = (parentCategory.ParentCategory as RssLink).Url;
             string sortOrder = (parentCategory as RssLink).Url;
-            string url = string.Format(cUrlCategoryFormat, BaseUrl, AppInfo.AppId, AppInfo.AppKey, categoryKey, sortOrder, ApiRegion, ApiLanguage, ApiContentLanguage, cApiLimit, offset);
+            string url = string.Format(cUrlCategoryFormat, BaseUrl, AppInfo.AppId, AppInfo.AppKey, categoryKey, sortOrder, ApiRegion, ApiLanguage, cApiLimit, offset);
             JObject json = GetWebData<JObject>(url);
             JArray data = json["data"].Value<JArray>();
             foreach (JToken item in data)
@@ -661,7 +619,7 @@ namespace OnlineVideos.Sites
             List<VideoInfo> videos = new List<VideoInfo>();
             try
             {
-                string url = string.Format(cUrlCategoryFormat, BaseUrl, AppInfo.AppId, AppInfo.AppKey, "*", "", ApiRegion, ApiLanguage, ApiContentLanguage, latestVideosCount, 0);
+                string url = string.Format(cUrlCategoryFormat, BaseUrl, AppInfo.AppId, AppInfo.AppKey, "*", "", ApiRegion, ApiLanguage, latestVideosCount, 0);
                 JObject json = GetWebData<JObject>(url);
                 foreach(JToken item in json["data"].Value<JArray>())
                 {
@@ -889,7 +847,7 @@ namespace OnlineVideos.Sites
         {
             get
             {
-                return true;
+                return false;
             }
         }
 
@@ -903,20 +861,20 @@ namespace OnlineVideos.Sites
                 RssLink program = new RssLink();
                 program.Url = t["id"].Value<string>();
                 program.Name = t["title"][ApiLanguage] == null ? t["title"][ApiOtherLanguage].Value<string>() : t["title"][ApiLanguage].Value<string>();
-                program.Description = (t["description"] == null || !t["description"].HasValues) ? string.Empty : ( t["description"][ApiLanguage] == null ? t["description"][ApiOtherLanguage].Value<string>() : t["description"][ApiLanguage].Value<string>());
+                program.Description = (t["description"] == null || !t["description"].HasValues) ? string.Empty : (t["description"][ApiLanguage] == null ? t["description"][ApiOtherLanguage].Value<string>() : t["description"][ApiLanguage].Value<string>());
                 JToken imageJson = t["image"];
                 string image = string.Empty;
                 if (imageJson != null && imageJson.Count() > 0 && imageJson["available"] != null && imageJson["available"].Value<bool>())
                 {
                     program.Thumb = (imageJson["id"] != null) ? string.Format(cUrlImageFormat, imageJson["id"].Value<string>()) : image;
+                    program.HasSubCategories = true;
+                    program.Other = (Func<List<Category>>)(() => GetProgramSubCategories(program));
+                    results.Add(program);
                 }
-                program.HasSubCategories = true;
-                program.Other = (Func<List<Category>>)(() => GetProgramSubCategories(program));
-                results.Add(program);
             }
-            
             return results;
         }
+        
 
         #endregion
 
