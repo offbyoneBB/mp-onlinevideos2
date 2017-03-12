@@ -57,9 +57,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private string loginUrl = @"https://www.netflix.com/Login";
         private string homeUrl = @"https://www.netflix.com/";
         private string playerUrl = @"http://www.netflix.com/watch/{0}";
-//        private string loginPostData = "email={0}&password={1}&rememberMe=true&flow=websiteSignUp&mode=login&action=loginAction&withFields=email%2Cpassword%2CrememberMe%2CnextPage&authURL={2}&nextPage=";
         private string loginPostData = "emailOrPhoneNumber={0}&password={1}&rememberMe=true&flow=websiteSignUp&mode=universalLogin&action=loginAction&withFields=emailOrPhoneNumber%2Cpassword%2CrememberMe%2CnextPage&authURL={2}&nextPage=";
-        private string switchProfileUrl = @"{0}/profiles/switch/{1}?switchProfileGuid={2}&authURL={3}";
+        private string switchProfileUrl = @"{0}/{1}/profiles/switch?switchProfileGuid={2}&authURL={3}";
 
         #endregion
 
@@ -367,19 +366,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
         }
 
-        private string _profileSwitchId = "";
-        private string ProfileSwitchId
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_profileSwitchId))
-                {
-                    SetApiAndIds();
-                }
-                return _profileSwitchId;
-            }
-        }
-
         private string _playlistOpId = "";
         private string PlaylistOpId
         {
@@ -413,12 +399,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 _buildId= m.Groups[1].Value;
             }
 
-            rgx = new Regex(@"(?:\\x2F|/)profiles(?:\\x2F|/)switch"":""([^""]*)");
-            m = rgx.Match(data);
-            if (m.Success)
-            {
-                _profileSwitchId = m.Groups[1].Value;
-            }
             rgx = new Regex(@"(?:\\x2F|/)playlistop"":""([^""]*)");
             m = rgx.Match(data);
             if (m.Success)
@@ -550,7 +530,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private List<Category> GetProfileSubCategories(Category parentCategory, JToken profile)
         {
             currentProfile = profile;
-            MyGetWebData(string.Format(switchProfileUrl, ShaktiApi, ProfileSwitchId, ProfileToken, LatestAuthUrl), referer: homeUrl);
+            MyGetWebData(string.Format(switchProfileUrl, ShaktiApi, BuildId, ProfileToken, LatestAuthUrl), referer: homeUrl);
             i18n = null;
             MyGetWebData(homeUrl);
             List<Category> cats = new List<Category>();
@@ -1152,7 +1132,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             {
                 Dictionary<string, string> p = new Dictionary<string, string>();
                 p.Add("password", password);
-                p.Add("switchUrl", string.Format(switchProfileUrl, ShaktiApi, ProfileSwitchId, ProfileToken, ""));
+                p.Add("switchUrl", string.Format(switchProfileUrl, ShaktiApi, BuildId, ProfileToken, ""));
                 p.Add("profileIndex", ProfileNumber.ToString());
                 p.Add("showLoadingSpinner", showLoadingSpinner.ToString());
                 p.Add("enableNetflixOsd", enableNetflixOsd.ToString());
