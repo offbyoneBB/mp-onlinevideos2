@@ -118,6 +118,7 @@ namespace OnlineVideos.Sites
                     cat.Other = UgType.Series;
                 //always assume next page, no reliable detection possible
                 string nextCatPageUrl;
+                url = WebCache.Instance.GetRedirectedUrl(url);
                 if (url.Contains('?'))
                     nextCatPageUrl = url + "&page=" + pageNr.ToString();
                 else
