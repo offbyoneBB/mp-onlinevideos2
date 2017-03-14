@@ -44,14 +44,16 @@ namespace OnlineVideos.Hoster
                 h = 0;
                 while (h < v.Length)
                 {
-                    string b = v.Substring(h, 2);
+                    string b = v.Substring(h, 3);
                     int i = int.Parse(b, System.Globalization.NumberStyles.HexNumber);
-                    int index = (h / 2) % 10;
+                    if ((h / 3) % 3 == 0)
+                        i = System.Convert.ToInt32(b, 8);
+                    int index = (h / 3) % 10;
                     int a = chars[index];
-                    i = i ^ 96;
+                    i = i ^ 47;
                     i = i ^ a;
                     decoded += (char)i;
-                    h += 2;
+                    h += 3;
                 }
                 SetSub(data);
                 return "https://openload.co/stream/" + decoded + "?mime=true";
