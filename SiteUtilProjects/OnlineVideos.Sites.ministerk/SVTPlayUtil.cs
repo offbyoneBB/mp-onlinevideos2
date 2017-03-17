@@ -12,7 +12,7 @@ using System.Web;
 namespace OnlineVideos.Sites
 {
 
-    public class SvtPlayUtil : LatestVideosSiteUtilBase
+    public class SvtPlayUtil : LatestVideosSiteUtilBase, IChoice
     {
         #region Svt classes
 
@@ -25,16 +25,10 @@ namespace OnlineVideos.Sites
             }
         }
 
-        public enum JaNej { Ja, Nej };
-
-
         #endregion
 
         #region Configuration
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Spela upp livesändningar från start"), Description("Spela upp livesändningar från start")]
-        protected JaNej startFromStart = JaNej.Nej;
-        protected bool StartFromStart { get { return startFromStart == JaNej.Ja; } }
 
         #endregion
 
@@ -88,6 +82,7 @@ namespace OnlineVideos.Sites
             {
                 Name = "Livesändningar",
                 Url = "http://www.svtplay.se/api/live?page={0}",
+                Other = "isLive",
                 HasSubCategories = false
             };
             Settings.Categories.Add(liveCategory);
@@ -454,23 +449,25 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> GetVideos(Category category)
         {
             HasNextPage = false;
+            List<VideoInfo> videos;
             if (category is SvtCategory)
             {
-                return (category as SvtCategory).Videos;
+                videos = (category as SvtCategory).Videos;
             }
             else if (category.GetOtherAsString() != "isChannels")
             {
                 currentVideosUrl = (category as RssLink).Url;
                 currentVideosPage = 1;
                 bool hasNext = false;
-                List<VideoInfo> videos = GetVideos(currentVideosUrl, currentVideosPage, out hasNext);
+                videos = GetVideos(currentVideosUrl, currentVideosPage, out hasNext);
                 HasNextPage = hasNext;
-                return videos;
             }
             else
             {
-                return GetChannelVideos();
+                videos = GetChannelVideos();
             }
+            videos.ForEach(v => v.HasDetails = (category.GetOtherAsString() == "isLive"));
+            return videos;
         }
 
         public override List<VideoInfo> GetNextPageVideos()
@@ -686,7 +683,7 @@ namespace OnlineVideos.Sites
             }
             if (video.PlaybackOptions.Count == 0)
                 return new List<string>();
-            if (!StartFromStart)
+            if (video.HasDetails && (video as DetailVideoInfo).Title2 == "Live")
             {
                 video.PlaybackOptions = video.PlaybackOptions.ToDictionary(p => p.Key, p => p.Value.Replace("start=", "dummy="));
             }
@@ -834,7 +831,23 @@ namespace OnlineVideos.Sites
             List<VideoInfo> videos = GetVideos("http://www.svtplay.se/api/latest?page={0}", 1, out dummy);
             return (videos.Count >= LatestVideosCount ? videos.GetRange(0, (int)LatestVideosCount) : new List<VideoInfo>());
         }
+
         #endregion
 
+        #region IChoice
+
+        List<DetailVideoInfo> IChoice.GetVideoChoices(VideoInfo video)
+        {
+            List<DetailVideoInfo> videos = new List<DetailVideoInfo>();
+            DetailVideoInfo live = new DetailVideoInfo(video);
+            live.Title2 = "Live";
+            videos.Add(live);
+            DetailVideoInfo fromStart = new DetailVideoInfo(video);
+            fromStart.Title2 = "Spela upp sändningen från början";
+            videos.Add(fromStart);
+            return videos;
+        }
+
+        #endregion
     }
 }
