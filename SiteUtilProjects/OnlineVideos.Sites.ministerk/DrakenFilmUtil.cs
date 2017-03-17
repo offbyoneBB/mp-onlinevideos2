@@ -19,6 +19,7 @@ namespace OnlineVideos.Sites
             countries_of_origin_list,
             director_list,
             genre_list,
+            keyword_list,
             recommended,
             spoken_language_list,
             year_of_release,
@@ -30,6 +31,7 @@ namespace OnlineVideos.Sites
             public List<string> Directors { get; set; }
             public List<string> Countries { get; set; }
             public List<string> Genres { get; set; }
+            public List<string> Keywords { get; set; }
             public List<string> Languages { get; set; }
             public bool Recommended { get; set; }
             public string TrailerUrl { get; set; }
@@ -46,6 +48,9 @@ namespace OnlineVideos.Sites
                         break;
                     case DrakenCategorySelector.genre_list:
                         list = Genres;
+                        break;
+                    case DrakenCategorySelector.keyword_list:
+                        list = Keywords;
                         break;
                     case DrakenCategorySelector.spoken_language_list:
                         list = Languages;
@@ -66,11 +71,12 @@ namespace OnlineVideos.Sites
             public const string A_TO_Z = "Filmer A-Ö";
             public const string NEW = "Nytt på Draken Film";
             public const string RECOMMENDED = "Rekommenderat";
-            public const string GENRES = "Genrer";
-            public const string DIRECTORS = "Regisörer";
-            public const string YEAR = "Årtal";
+            public const string DIRECTOR = "Regisör";
+            public const string GENRE = "Genre";
             public const string COUNTRY = "Land";
             public const string LANGUAGE = "Språk";
+            public const string KEYWORD = "Ketegori";
+            public const string YEAR = "Årtal";
             public DrakenCategorySelector Selector { get; set; }
             public bool SortVideosByLetter
             {
@@ -133,13 +139,14 @@ namespace OnlineVideos.Sites
             Settings.Categories.Add(new DrakenCategory() { Name = DrakenCategory.A_TO_Z, Selector = DrakenCategorySelector.none});
             Settings.Categories.Add(new DrakenCategory() { Name = DrakenCategory.NEW, Selector = DrakenCategorySelector.none });
             Settings.Categories.Add(new DrakenCategory() { Name = DrakenCategory.RECOMMENDED, Selector = DrakenCategorySelector.recommended });
-            Settings.Categories.Add(new DrakenCategory() { Name = DrakenCategory.GENRES, HasSubCategories = true, Selector = DrakenCategorySelector.genre_list });
-            Settings.Categories.Add(new DrakenCategory() { Name = DrakenCategory.DIRECTORS, HasSubCategories = true, Selector = DrakenCategorySelector.director_list });
-            Settings.Categories.Add(new DrakenCategory() { Name = DrakenCategory.YEAR, HasSubCategories = true, Selector = DrakenCategorySelector.year_of_release });
+            Settings.Categories.Add(new DrakenCategory() { Name = DrakenCategory.DIRECTOR, HasSubCategories = true, Selector = DrakenCategorySelector.director_list });
+            Settings.Categories.Add(new DrakenCategory() { Name = DrakenCategory.GENRE, HasSubCategories = true, Selector = DrakenCategorySelector.genre_list });
             Settings.Categories.Add(new DrakenCategory() { Name = DrakenCategory.COUNTRY, HasSubCategories = true, Selector = DrakenCategorySelector.countries_of_origin_list });
             Settings.Categories.Add(new DrakenCategory() { Name = DrakenCategory.LANGUAGE, HasSubCategories = true, Selector = DrakenCategorySelector.spoken_language_list });
+            Settings.Categories.Add(new DrakenCategory() { Name = DrakenCategory.KEYWORD, HasSubCategories = true, Selector = DrakenCategorySelector.keyword_list });
+            Settings.Categories.Add(new DrakenCategory() { Name = DrakenCategory.YEAR, HasSubCategories = true, Selector = DrakenCategorySelector.year_of_release });
             Settings.DynamicCategoriesDiscovered = true;
-            return 8;
+            return 9;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
@@ -180,10 +187,13 @@ namespace OnlineVideos.Sites
                 video.Countries = vt["countries_of_origin_list"].Value<string>().Split(',').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()).ToList();
                 video.Directors = vt["director_list"].Value<string>().Split(',').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()).ToList();
                 video.Genres = vt["genre_list"].Value<string>().Split(',').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()).ToList();
+                video.Keywords = vt["keyword_list"].Value<string>().Split(',').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()).ToList();
                 video.Languages = vt["spoken_language_list"].Value<string>().Split(',').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()).ToList();
                 video.Description = string.Format( "{0} | {1} | {2}\n{3}", string.Join(", ", video.Genres), string.Join(", ", video.Directors), string.Join(", ", video.Countries), vt["summary"].Value<string>());
                 video.Recommended = vt["recommended"] != null && vt["recommended"].Type == JTokenType.Boolean && vt["recommended"].Value<bool>();
                 video.Thumb = vt["image_background"].Value<string>();
+                if (video.Thumb.StartsWith("//"))
+                    video.Thumb = "http:" + video.Thumb;
                 video.Title = vt["title"].Value<string>();
                 string trailerPovider = (vt["trailer_provider"] == null || vt["trailer_provider"].Type != JTokenType.String) ? string.Empty : vt["trailer_provider"].Value<string>();
                 if (trailerPovider == "vimeo")
