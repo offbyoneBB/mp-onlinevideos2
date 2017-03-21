@@ -77,29 +77,20 @@ namespace OnlineVideos.Sites.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to function fillPassword(pwd) {
-        ///    var field = jQuery(&quot;input[name=password]:visible&quot;);
-        ///    if (field !== null &amp;&amp; field.length &gt; 0) {
-        ///        field.val(pwd).change();
-        ///        return true;
-        ///    };
-        ///    return false;
-        ///}
-        ///
-        ///function fillUser(user) {
-        ///    var field = jQuery(&quot;input[name=email]:visible&quot;);
-        ///    if (field !== null &amp;&amp; field.length &gt; 0) {
-        ///        field.val(user).change();
-        ///        return true;
-        ///    };
-        ///    return false;
-        ///}
-        ///
-        ///function doClick() {
-        ///    jQuery(&quot;.login-button:visible&quot;).click();
-        ///}
-        ///
-        /// [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to function switchProfile(switchUrl, index) {
+        ///    if (document.querySelectorAll(&apos;a.profile-link&apos;).length &gt; index) {
+        ///        setTimeout(function () {
+        ///            document.querySelectorAll(&apos;a.profile-link&apos;)[index].click();
+        ///            setTimeout(function () {
+        ///                switchProfileCallback(&quot;{}&quot;);
+        ///            }, 1500);
+        ///        }, 500);
+        ///    } else if (window.jQuery) {
+        ///        jQuery.ajax({
+        ///            url: switchUrl,
+        ///            dataType: &apos;json&apos;,
+        ///            cache: false,
+        ///            type: &apos;GET [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string NetflixJs {
             get {
@@ -108,16 +99,36 @@ namespace OnlineVideos.Sites.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to //Created by NitroXenon
+        /////Github: https://github.com/NitroXenon/Terrarium-Public/blob/gh-pages/openload2.js
+        /////This script hooks all the browser functions used in the descryption script
+        ///
+        /////The output decoded value
+        ///var decodedValue = &quot;&quot;;
+        /////This is our custom variable of r. It can be any string value.
+        /////Still needs some tweaks because they can change the variable name (r) in their script
+        ///var r = &quot;r&quot;;
+        /////Custom document object (because document only presents in browsers)
+        ///var document = {};
+        /////Hook jQue [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string OpenloadDecode {
+            get {
+                return ResourceManager.GetString("OpenloadDecode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to function myLogin(u, p) {
         ///    $(&apos;#LoginForm_email&apos;).val(u);
         ///    $(&apos;#LoginForm_password&apos;).val(p);
-        ///    $(&apos;#login-btn&apos;).click();
+        ///    $(&apos;#submit-login-password&apos;).click();
         ///}
         ///
         ///var __url = &quot;dummy&quot;;
         ///
         ///function myPlay() {
-        ///    var __m = $(&apos;a[href$=&quot;&apos; + __url + &apos;&quot;]&apos;).first();
+        ///    var __m = $(&apos;a[class=&quot;play-link large&quot;]&apos;).first();
         ///    if (__m.length &gt; 0) {
         ///        __m.click();
         ///    } else {

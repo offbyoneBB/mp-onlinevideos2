@@ -136,6 +136,9 @@
   <ItemGroup>
     <None Include="Resources\Netflix.js" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\OpenloadDecode.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

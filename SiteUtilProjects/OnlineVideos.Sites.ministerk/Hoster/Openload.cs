@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using Jurassic;
 using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Hoster
@@ -20,43 +20,20 @@ namespace OnlineVideos.Hoster
             if (data.Contains("<h3>We’re Sorry!</h3>"))
                 throw new OnlineVideosException("The video maybe got deleted by the owner or was removed due a copyright violation.");
             sub = "";
-            Regex rgx = new Regex(@"<span[^>]+id=""[^""]+""[^>]*>(?<id>[0-9A-Za-z]+)</span>");
+            Regex rgx = new Regex(@"<span[^>]+id=""[^""]+""[^>]*>(?<encoded>[0-9A-Za-z]{2,})</span>.*?(?<script>\$\(document\)\[.*?break;\}\}\);)",RegexOptions.Singleline);
             Match m = rgx.Match(data);
             if (m.Success)
             {
-                string id = m.Groups["id"].Value;
-                string decoded = "";
-                int firstChar = (int)id[0];
-                int key = firstChar - 50;
-                int maxKey = System.Math.Max(2, key);
-                key = System.Math.Min(maxKey, id.Length - 22);
-                string t = id.Substring(key, 20);
-                int h = 0;
-                List<int> chars = new List<int>();
-                string v = id.Replace(t, "");
-                while (h < t.Length)
-                {
-                    string f = t.Substring(h, 2);
-                    chars.Add(int.Parse(f, System.Globalization.NumberStyles.HexNumber));
-                    h += 2;
-                }
-
-                h = 0;
-                while (h < v.Length)
-                {
-                    string b = v.Substring(h, 3);
-                    int i = int.Parse(b, System.Globalization.NumberStyles.HexNumber);
-                    if ((h / 3) % 3 == 0)
-                        i = System.Convert.ToInt32(b, 8);
-                    int index = (h / 3) % 10;
-                    int a = chars[index];
-                    i = i ^ 47;
-                    i = i ^ a;
-                    decoded += (char)i;
-                    h += 3;
-                }
-                SetSub(data);
-                return "https://openload.co/stream/" + decoded + "?mime=true";
+                string script = "var encoded = \"" + m.Groups["encoded"].Value;
+                script += "\";\r\n";
+                script += OnlineVideos.Sites.Properties.Resources.OpenloadDecode;
+                script += "\r\n";
+                script += m.Groups["script"].Value;
+                script += "\r\n;";
+                ScriptEngine engine = new ScriptEngine();
+                engine.Execute(script);
+                string decoded = engine.CallGlobalFunction("getDecodedValue").ToString();
+                return decoded;
             }
             return "";
         }
