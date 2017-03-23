@@ -290,6 +290,7 @@
     <Compile Include="Helpers\DotNetFrameworkHelper.cs" />
     <Compile Include="Helpers\EncryptionUtils.cs" />
     <Compile Include="Helpers\FileUtils.cs" />
+    <Compile Include="Helpers\HlsPlaylistParser.cs" />
     <Compile Include="Helpers\RssUtils.cs" />
     <Compile Include="Helpers\StringHash.cs" />
     <Compile Include="Helpers\StringUtils.cs" />
