@@ -155,6 +155,7 @@ namespace OnlineVideos
                 request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate; // turn on automatic decompression of both formats (adds header "AcceptEncoding: gzip,deflate" to the request)
                 if (cookies != null) request.CookieContainer = cookies; // set cookies if given
                 if (proxy != null) request.Proxy = proxy; // send the request over a proxy if given
+                bool contentTypeSet = false;
                 if (headers != null) // set user defined headers
                 {
                     foreach (var headerName in headers.AllKeys)
@@ -170,17 +171,23 @@ namespace OnlineVideos
                             case "referer":
                                 request.Referer = headers[headerName];
                                 break;
+                            case "content-type":
+                                request.ContentType = headers[headerName];
+                                contentTypeSet = true;
+                                break;
                             default:
                                 request.Headers.Set(headerName, headers[headerName]);
                                 break;
                         }
                     }
                 }
+
                 if (postData != null)
                 {
                     byte[] data = encoding != null ? encoding.GetBytes(postData) : Encoding.UTF8.GetBytes(postData);
                     request.Method = "POST";
-                    request.ContentType = "application/x-www-form-urlencoded";
+                    if (!contentTypeSet)
+                        request.ContentType = "application/x-www-form-urlencoded";
                     request.ContentLength = data.Length;
                     request.ProtocolVersion = HttpVersion.Version10;
                     Stream requestStream = request.GetRequestStream();
