@@ -643,7 +643,7 @@
       </Categories>
     </Site>
     <Site name="TV4Play" util="TV4Play" agecheck="false" enabled="true" lang="sv">
-      <Description>Gratis och premiuminnehåll från TV4 Play</Description>
+      <Description>Det fria innehållet från TV4 Play</Description>
     </Site>
     <Site name="Dplay.se" util="Dplay" agecheck="false" enabled="true" lang="sv">
       <Description>Gratis och premiuminnehåll från Dplay.se. Dplay är en streamingtjänst som samlar det bästa innehållet från några av Sveriges – och världens – största tv-kanaler. Dplay erbjuder program från bland annat Kanal 5, Discovery Channel och Eurosport. Det betyder innehåll i världsklass i kategorier som underhållning, dokumentärer och sport. Alla svenska program visas gratis men för att se utländska serier, direktsänd sport eller livesända kanaler behöver du ett Premiumabonnemang.</Description>

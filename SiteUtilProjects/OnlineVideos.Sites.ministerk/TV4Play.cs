@@ -1,79 +1,56 @@
 ﻿using HtmlAgilityPack;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using OnlineVideos.Sites.Interfaces;
 using OnlineVideos.Sites.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Web;
 using System.Xml;
 
 namespace OnlineVideos.Sites
 {
-    public class TV4Play : SiteUtilBase, IBrowserVersionEmulation
+    public class TV4Play : SiteUtilBase
     {
         #region Config
 
-        public enum BrowserVersion : int { IE10 = 10000, IE11 = 11000, EDGE = 12000 };
         [Category("OnlineVideosUserConfiguration"), Description("TV4Play username"), LocalizableDisplayName("Username")]
         protected string username = null;
         [Category("OnlineVideosUserConfiguration"), Description("TV4Play password"), LocalizableDisplayName("Password"), PasswordPropertyText(true)]
         protected string password = null;
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable BrowserPlayer"), Description("Enable BrowserPlayer for DRM content, will only work with a non released version of OV")]
-        protected bool enableBrowser = false;
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show loading spinner"), Description("Show the loading spinner in the Browser Player")]
-        protected bool showLoadingSpinner = true;
-        //[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Browser version"), Description("Use edge, nothing else works!!!")]
-        protected BrowserVersion browserVersion = BrowserVersion.IE11;
-        //[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Prefer internal player"), Description("Try to play videos in Mediaportal. If not possible use browser player as fallback")]
-        protected bool preferInternal = true;
 
         #endregion
 
         #region constants, vars and properties
 
-        protected const string loginUrl = "https://www.tv4play.se/session/new";
         protected const string loginPostUrl = "https://account.services.tv4play.se/session/authenticate";
-        protected const string showsUrl = "http://www.tv4play.se/api/programs?per_page=40&order_by=&page={0}&tags={1}";
-        protected const string helaProgramUrl = "http://www.tv4play.se/videos/episodes_search?per_page=100&sort_order=desc&is_live=false&type=video&nodes_mode=any&page={0}&node_nids=";
-        protected const string klippUrl = "http://www.tv4play.se/videos/search?node_nids_mode=any&per_page=100&sort_order=desc&type=clip&page={0}&node_nids=";
-        protected const string liveUrl = "http://www.tv4play.se/videos/episodes_search?per_page=100&sort_order=asc&is_live=true&type=video&nodes_mode=any&page={0}&node_nids=";
+        protected const string showsUrl = "http://www.tv4play.se/api/programs?per_page=40&is_cmore=false&order_by=&page={0}&tags={1}";
+        protected const string videosOfShowUrl = "http://www.tv4play.se/videos/search?node_nids_mode=any&per_page=100&sort_order=desc&page={0}";
+        protected const string liveUrls = "http://www.tv4play.se/videos/search?node_nids_mode=any&per_page=100&sort_order=asc&page={0}&is_live=true&type=video";
         protected const string videoPlayUrl = "https://prima.tv4play.se/api/web/asset/{0}/play";
-        protected const string videoAssetUrl = "https://www.tv4play.se/player/assets/common/{0}.json";
-        protected const string filmerUrl = "http://www.tv4play.se/film/tags?order_by=name";
-        protected const string barnUrl = "http://www.tv4play.se/barn";
-        protected const string barnFilmerUrl = "http://www.tv4play.se/film/tags?genre=barn&order_by=name";
-        protected const string familjFilmerUrl = "http://www.tv4play.se/film/tags?genre=familj&order_by=name";
         protected const string episodeSearchUrl = "http://www.tv4play.se/videos/search?is_channel=false&type=episode&per_page=100&page={0}&q=";
 
         private Dictionary<string, string> tvCategories = new Dictionary<string, string>()
         {
             { "Alla program", "" },
-            { "Drama", "drama" },
-            { "Dokumentärer", "dokument%C3%A4rer" },
-            { "Hem & fritid", "hem%20%26%20fritid" },
-            { "Humor", "humor" },
-            { "Nyheter & debatt", "nyheter%20%26%20debatt" },
-            { "Nöje", "n%C3%B6je" },
-            { "Sport", "sport" },
             { "Deckare", "deckare" },
-            { "Mat & dryck", "mat%20%26%20dryck" },
-            { "Kändisar", "k%C3%A4ndisar" },
-            { "Musik", "musik" },
-            { "Reality", "reality" },
+            { "Djur", "djur" },
+            { "Dokumentärt", "dokument%C3%A4rt" },
+            { "Drama", "drama" },
+            { "Humor", "humor" },
+            { "Hus & hem", "hus%20%26%20hem" },
+            { "Livsstil", "livsstil" },
+            { "Mat & bakning", "mat%20%26%20bakning" },
+            { "Nöje", "n%C3%B6je" },
+            { "Relationer", "relationer" },
+            { "Samhälle & fakta", "samh%C3%A4lle%20%26%20fakta" },
+            { "Sport", "sport" },
             { "Övernaturligt", "%C3%B6vernaturligt" }
         };
 
         private int currentPage = 1;
         private string currentUrl = "";
-        private string currentVideoId = "";
         protected CookieContainer cc = new CookieContainer();
-
-        bool showPremium = false;
 
         protected bool HasLogin
         {
@@ -93,7 +70,7 @@ namespace OnlineVideos.Sites
         {
             if (!HasLogin)
             {
-                throw new OnlineVideosException("Fyll i inloggningsuppgifter");                
+                throw new OnlineVideosException("Fyll i inloggningsuppgifter");
             }
             else if (!isLoggedIn)
             {
@@ -111,7 +88,6 @@ namespace OnlineVideos.Sites
                     cc.Add(new Cookie("JSESSIONID", HttpUtility.UrlEncode(json["vimond_session_token"].Value<string>()), "/", ".tv4play.se"));
                     cc.Add(new Cookie("pSessionToken", HttpUtility.UrlEncode(json["vimond_remember_me"].Value<string>()), "/", ".tv4play.se"));
                     isLoggedIn = true;
-                    showPremium = json["active_subscriptions"].Values() != null && (json["active_subscriptions"].Values().Count() > 0 && json["active_subscriptions"].Any(sub => sub["product_group_nid"].Value<string>() == "premium"));
                 }
                 catch
                 {
@@ -127,50 +103,22 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             login();
-            if (!showPremium)
+            Category tv = new Category() { Name = "Program", SubCategories = new List<Category>(), HasSubCategories = true, SubCategoriesDiscovered = true };
+            foreach (KeyValuePair<string, string> keyValuePair in tvCategories)
             {
-                GetShows(page: 1).ForEach((Category s) => Settings.Categories.Add(s));
+                Category category = new Category();
+                category.Name = keyValuePair.Key;
+                category.HasSubCategories = true;
+                category.ParentCategory = tv;
+                category.Other = (Func<List<Category>>)(() => GetShows(1, category, keyValuePair.Value));
+                tv.SubCategories.Add(category);
             }
-            else
-            {
-                Category tv = new Category() { Name = "TV", SubCategories = new List<Category>(), HasSubCategories = true, SubCategoriesDiscovered = true };
-                foreach (KeyValuePair<string, string> keyValuePair in tvCategories)
-                {
-                    Category category = new Category();
-                    category.Name = keyValuePair.Key;
-                    category.HasSubCategories = true;
-                    category.ParentCategory = tv;
-                    category.Other = (Func<List<Category>>)(() => GetShows(1, category, keyValuePair.Value));
-                    tv.SubCategories.Add(category);
-                }
-                Settings.Categories.Add(tv);
-                Category film = new Category() { Name = "Film", HasSubCategories = false };
-                film.Other = (Func<List<VideoInfo>>)(() => GetFilmer(filmerUrl));
-                Settings.Categories.Add(film);
-                Category sport = new Category() { Name = "Sport", HasSubCategories = false };
-                sport.Other = (Func<List<VideoInfo>>)(() => GetSport());
-                Settings.Categories.Add(sport);
-                RssLink nyheter = new RssLink() { Name = "Nyheter", Url = "nyheterna", SubCategories = new List<Category>(), HasSubCategories = true };
-                nyheter.Other = (Func<List<Category>>)(() => GetShow(nyheter));
-                Settings.Categories.Add(nyheter);
-                Category barn = new Category() { Name = "Barn", SubCategories = new List<Category>(), HasSubCategories = true, SubCategoriesDiscovered = true };
-                Category barnprogram = new Category() { Name = "Alla barnprogram", HasSubCategories = true, ParentCategory = barn };
-                barnprogram.Other = (Func<List<Category>>)(() => GetShows(1, barnprogram, "barn"));
-                barn.SubCategories.Add(barnprogram);
-                Category barnserier = new Category() { Name = "Barnserier", HasSubCategories = true, ParentCategory = barn };
-                barnserier.Other = (Func<List<Category>>)(() => GetBarnserier(barnserier));
-                barn.SubCategories.Add(barnserier);
-                Category barnFilmer = new Category() { Name = "Barnfilm", HasSubCategories = false, ParentCategory = barn };
-                barnFilmer.Other = (Func<List<VideoInfo>>)(() => GetFilmer(barnFilmerUrl));
-                barn.SubCategories.Add(barnFilmer);
-                Category familjFilmer = new Category() { Name = "Familjefilm", HasSubCategories = false, ParentCategory = barn };
-                familjFilmer.Other = (Func<List<VideoInfo>>)(() => GetFilmer(familjFilmerUrl));
-                barn.SubCategories.Add(familjFilmer);
-                Settings.Categories.Add(barn);
-                Category kanaler = new Category() { Name = "Kanaler", HasSubCategories = false };
-                kanaler.Other = (Func<List<VideoInfo>>)(() => GetKanaler());
-                Settings.Categories.Add(kanaler);
-            }
+            Settings.Categories.Add(tv);
+            RssLink nyheter = new RssLink() { Name = "Nyheter", Url = "nyheterna", SubCategories = new List<Category>(), HasSubCategories = true };
+            nyheter.Other = (Func<List<Category>>)(() => GetShow(nyheter));
+            Settings.Categories.Add(nyheter);
+            RssLink live = new RssLink() { Name = "Livesändningar", Url = liveUrls, SubCategories = new List<Category>(), HasSubCategories = false };
+            Settings.Categories.Add(live);
             Settings.DynamicCategoriesDiscovered = Settings.Categories.Count > 0;
             return Settings.Categories.Count;
         }
@@ -217,70 +165,30 @@ namespace OnlineVideos.Sites
             return 0;
         }
 
-        private List<Category> GetBarnserier(Category barnserier)
-        {
-            List<Category> categories = new List<Category>();
-            HtmlNodeCollection nodes = GetWebData<HtmlDocument>(barnUrl).DocumentNode.SelectNodes("//section[@class='module']");
-            HtmlNode seriesNode = null;
-            foreach (HtmlNode node in nodes)
-            {
-                if (node.InnerText.ToLower().Contains("barnserier"))
-                {
-                    seriesNode = node;
-                    break;
-                }
-            }
-            if (seriesNode != null)
-            {
-                HtmlNodeCollection items = seriesNode.SelectNodes(".//li[@class='card']");
-                if (items != null)
-                {
-                    foreach (HtmlNode item in items)
-                    {
-                        RssLink cat = new RssLink();
-                        cat.ParentCategory = barnserier;
-                        HtmlNode imgNode = item.SelectSingleNode(".//img");
-                        cat.Thumb = imgNode != null ? imgNode.GetAttributeValue("src", "") : "";
-                        cat.Name = HttpUtility.HtmlDecode(imgNode != null ? imgNode.GetAttributeValue("alt", "") : "");
-                        HtmlNode aNode = item.SelectSingleNode(".//h3/a");
-                        cat.Url = "http://www.tv4play.se" + aNode.GetAttributeValue("href", "");
-                        cat.Other = (Func<List<VideoInfo>>)(() => GetFilmer(cat.Url));
-                        categories.Add(cat);
-                    }
-                }
-
-            }
-            return categories;
-        }
-
         private List<Category> GetShow(Category parentCategory)
         {
             List<Category> categories = new List<Category>();
-            RssLink helaProgram = new RssLink() { Name = "Hela program", HasSubCategories = false, ParentCategory = parentCategory, Url = helaProgramUrl + (parentCategory as RssLink).Url };
-            HtmlNodeCollection nodes = GetWebData<HtmlDocument>(string.Format(helaProgram.Url, 1)).DocumentNode.SelectNodes("//li[contains(@class,'episode')]");
+            RssLink helaProgram = new RssLink() { Name = "Hela program", HasSubCategories = false, ParentCategory = parentCategory, Url = videosOfShowUrl + "&node_nids=" + (parentCategory as RssLink).Url + "&type=episode" };
+            HtmlNodeCollection nodes = GetWebData<HtmlDocument>(string.Format(helaProgram.Url, 1)).DocumentNode.SelectNodes("//li[contains(@class,'card')]");
             if (nodes != null && nodes.Count > 0)
                 categories.Add(helaProgram);
-            RssLink klipp = new RssLink() { Name = "Klipp", HasSubCategories = false, ParentCategory = parentCategory, Url = klippUrl + (parentCategory as RssLink).Url };
-            nodes = GetWebData<HtmlDocument>(string.Format(klipp.Url, 1)).DocumentNode.SelectNodes("//li[contains(@class,'clip')]");
+            RssLink klipp = new RssLink() { Name = "Klipp", HasSubCategories = false, ParentCategory = parentCategory, Url = videosOfShowUrl + "&node_nids=" + (parentCategory as RssLink).Url + "&type=clip" };
+            nodes = GetWebData<HtmlDocument>(string.Format(klipp.Url, 1)).DocumentNode.SelectNodes("//li[contains(@class,'card')]");
             if (nodes != null && nodes.Count > 0)
                 categories.Add(klipp);
-            RssLink live = new RssLink() { Name = "Live", HasSubCategories = false, ParentCategory = parentCategory, Url = liveUrl + (parentCategory as RssLink).Url };
-            nodes = GetWebData<HtmlDocument>(string.Format(live.Url, 1)).DocumentNode.SelectNodes("//li[contains(@class,'episode')]");
-            if (nodes != null && nodes.Count > 0)
-                categories.Add(live);
             return categories;
         }
 
         private List<Category> GetShows(int page, Category parentCategory = null, string tag = "")
         {
             List<Category> shows = new List<Category>();
-            string url = string.Concat(string.Concat(string.Format(showsUrl, page, tag), (showPremium ? "" : "&is_free=true")));
+            string url = string.Format(showsUrl, page, tag);
             JArray items = JArray.Parse(GetWebData<string>(url));
             foreach (JToken item in items)
             {
                 RssLink show = new RssLink();
 
-                show.Name = (item["name"] == null) ? "": item["name"].Value<string>();
+                show.Name = (item["name"] == null) ? "" : item["name"].Value<string>();
                 show.Url = (item["nid"] == null) ? "" : item["nid"].Value<string>();
                 show.Description = (item["description"] == null) ? "" : item["description"].Value<string>();
                 show.Thumb = (item["program_image"] == null) ? "" : item["program_image"].Value<string>();
@@ -305,44 +213,6 @@ namespace OnlineVideos.Sites
 
         #region Videos
 
-        private List<VideoInfo> GetKanaler()
-        {
-            List<VideoInfo> videos = new List<VideoInfo>();
-            HtmlNodeCollection nodes = GetWebData<HtmlDocument>("http://www.tv4play.se/kanaler/tv4").DocumentNode.SelectNodes("//li[contains(@class,'js-channel-info')]");
-            foreach (HtmlNode node in nodes)
-            {
-                JObject json = JObject.Parse(HttpUtility.HtmlDecode(node.GetAttributeValue("data-asset", "")));
-                VideoInfo video = new VideoInfo();
-                video.VideoUrl = json["id"].Value<string>();
-                video.Title = HttpUtility.HtmlDecode(json["title"].Value<string>());
-                video.Description = HttpUtility.HtmlDecode(json["description"].Value<string>());
-                video.Thumb = json["image"].Value<string>();
-                videos.Add(video);
-            }
-            return videos;
-        }
-
-        private List<VideoInfo> GetSport()
-        {
-            List<VideoInfo> videos = new List<VideoInfo>();
-            HtmlNodeCollection nodes = GetWebData<HtmlDocument>("http://www.tv4play.se/sport").DocumentNode.SelectNodes("//li[contains(@class,'sport_listing')]");
-            foreach (HtmlNode node in nodes)
-            {
-                VideoInfo video = new VideoInfo();
-                HtmlNode a = node.SelectSingleNode(".//a");
-                video.VideoUrl = a.GetAttributeValue("href", "").Replace("/sport/", "");
-                video.Title = HttpUtility.HtmlDecode(node.SelectSingleNode(".//span[contains(@class,'sport_listing-sport')]").InnerText.Trim());
-                video.Airdate = node.SelectSingleNode(".//span[contains(@class,'time')]").InnerText.Trim();
-                video.Description = node.SelectSingleNode(".//div[contains(@class,'sports-game-info')]").InnerText.Trim();
-                video.Description += " - " + node.SelectSingleNode(".//span[contains(@class,'ports-league-info')]").InnerText.Trim();
-                if (node.SelectSingleNode(".//span[contains(@class,'premium_sport-badge')]") != null)
-                    video.Description += " - C More Sport";
-                video.Description = HttpUtility.HtmlDecode(video.Description);
-                videos.Add(video);
-            }
-            return videos;
-        }
-
         private List<VideoInfo> GetVideos()
         {
             List<VideoInfo> videos = new List<VideoInfo>();
@@ -353,55 +223,25 @@ namespace OnlineVideos.Sites
                 foreach (HtmlNode item in items)
                 {
                     VideoInfo video = new VideoInfo();
-                    HtmlNodeCollection premium = item.SelectNodes(".//span[contains(@class,'premium-badge')]");
-                    if ((showPremium || premium == null || premium.Count == 0))
+                    HtmlNode titleNode = item.SelectSingleNode(".//h3");
+                    video = new VideoInfo();
+                    video.VideoUrl = item.GetAttributeValue("data-video-id", "");
+                    video.Title = HttpUtility.HtmlDecode(titleNode != null ? titleNode.InnerText.Trim() : "");
+                    HtmlNode imgNode = item.SelectSingleNode(".//img");
+                    video.Thumb = imgNode != null ? imgNode.GetAttributeValue("src", "") : "";
+                    if (string.IsNullOrWhiteSpace(video.Thumb))
                     {
-                        HtmlNode titleNode = item.SelectSingleNode(".//h3");
-                        video = new VideoInfo();
-                        video.VideoUrl = item.GetAttributeValue("data-video-id", "");
-                        video.Title = HttpUtility.HtmlDecode(titleNode != null ? titleNode.InnerText.Trim() : "");
-                        HtmlNode imgNode = item.SelectSingleNode(".//img");
-                        video.Thumb = imgNode != null ? imgNode.GetAttributeValue("src", "") : "";
-                        if (string.IsNullOrWhiteSpace(video.Thumb))
-                        {
-                            video.Thumb = (imgNode != null ? imgNode.GetAttributeValue("data-original", "") : "");
-                        }
-                        HtmlNode descNode = item.SelectSingleNode(".//p[contains(@class,'description')]");
-                        video.Description = HttpUtility.HtmlDecode((descNode != null ? descNode.InnerText.Trim() : ""));
-                        HtmlNode airNode = item.SelectSingleNode(".//p[contains(@class,'broadcast')]/span");
-                        video.Airdate = (airNode != null ? airNode.InnerText.Trim() : "");
-                        videos.Add(video);
+                        video.Thumb = (imgNode != null ? imgNode.GetAttributeValue("data-original", "") : "");
                     }
+                    HtmlNode descNode = item.SelectSingleNode(".//div[contains(@class,'card__info-description')]");
+                    video.Description = HttpUtility.HtmlDecode((descNode != null ? descNode.InnerText.Trim() : ""));
+                    HtmlNode airNode = item.SelectSingleNode(".//span[contains(@class,'card__info-published')]/span");
+                    video.Airdate = (airNode != null ? airNode.InnerText.Trim() : "");
+                    videos.Add(video);
                 }
             }
             HasNextPage = doc.DocumentNode.SelectNodes("//footer/p/a") != null;
             return videos;
-        }
-
-        private List<VideoInfo> GetFilmer(string url)
-        {
-            List<VideoInfo> videos = new List<VideoInfo>();
-            HtmlDocument doc = GetWebData<HtmlDocument>(url);
-            HtmlNodeCollection items = doc.DocumentNode.SelectNodes("//li[@class='card']");
-            if (items != null)
-            {
-                foreach (HtmlNode item in items)
-                {
-                    VideoInfo video = new VideoInfo();
-                    HtmlNode imgNode = item.SelectSingleNode(".//img");
-                    video.Thumb = imgNode != null ? imgNode.GetAttributeValue("src", "") : "";
-                    video.Title = HttpUtility.HtmlDecode(imgNode != null ? imgNode.GetAttributeValue("alt", "") : "");
-                    HtmlNode aNode = item.SelectSingleNode(".//h3/a");
-                    video.VideoUrl = aNode.GetAttributeValue("href", "").Replace("/film/", "");
-                    HtmlNode lengthNode = item.SelectSingleNode(".//span[contains(@class,'length')]");
-                    video.Length = (lengthNode != null ? lengthNode.InnerText.Replace(",", "").Trim() : "");
-                    HtmlNode airNode = item.SelectSingleNode(".//span[contains(@class,'year')]");
-                    video.Airdate = (airNode != null ? airNode.InnerText.Replace(",", "").Trim() : "");
-                    videos.Add(video);
-                }
-            }
-            return videos;
-
         }
 
         public override List<VideoInfo> GetVideos(Category category)
@@ -433,7 +273,6 @@ namespace OnlineVideos.Sites
         public override string GetVideoUrl(VideoInfo video)
         {
             login();
-            Settings.Player = PlayerType.Internal;
             string url = string.Format(videoPlayUrl, video.VideoUrl);
             XmlDocument xDoc = GetWebData<XmlDocument>(url, cookies: cc);
             XmlNode errorElement = xDoc.SelectSingleNode("//error");
@@ -442,14 +281,9 @@ namespace OnlineVideos.Sites
                 throw new OnlineVideosException(errorElement.SelectSingleNode("./description/text()").InnerText);
             }
             XmlNode drm = xDoc.SelectSingleNode("//drmProtected");
-            if (!preferInternal || (drm == null ? false : drm.InnerText.Trim().ToLower() == "true"))
+            if (drm != null && drm.InnerText.Trim().ToLower() == "true")
             {
-                if (!enableBrowser)
-                    throw new OnlineVideosException("DRM protected content :/ Enable browserplayer in settings if you have an non released version of OV");
-                Settings.Player = PlayerType.Browser;
-                JObject json = GetWebData<JObject>(string.Format(videoAssetUrl, video.VideoUrl), cookies: cc);
-                currentVideoId = video.VideoUrl;
-                return json["share_url"].Value<string>();
+                    throw new OnlineVideosException("DRM protected content, sorry! :/");
             }
             foreach (XmlElement item in xDoc.SelectNodes("//items/item"))
             {
@@ -495,31 +329,5 @@ namespace OnlineVideos.Sites
 
         #endregion
 
-        #region Browser
-
-        string IBrowserSiteUtil.ConnectorEntityTypeName
-        {
-            get { return "OnlineVideos.Sites.BrowserUtilConnectors.TV4PlayConnector"; }
-        }
-
-        string IBrowserSiteUtil.UserName
-        {
-            get { return username + "¥" + currentVideoId +(showLoadingSpinner ? "SHOWLOADING" : "") + (showPremium ? "PREMIUM" : ""); }
-        }
-
-        string IBrowserSiteUtil.Password
-        {
-            get 
-            {
-                return password;
-            }
-        }
-
-        #endregion
-
-        int IBrowserVersionEmulation.EmulatedVersion
-        {
-            get { return (int)browserVersion; }
-        }
     }
 }
