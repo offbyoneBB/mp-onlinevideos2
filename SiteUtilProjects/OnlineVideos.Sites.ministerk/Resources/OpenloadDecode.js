@@ -1,30 +1,20 @@
-﻿//Created by NitroXenon
-//Github: https://github.com/NitroXenon/Terrarium-Public/blob/gh-pages/openload2.js
-var decodedValue = "";
-var r = "r";
-var document = {};
-var $ = function (selector) {
-    if (selector == '#streamurl') {
-        return {
-            text: function (result) {
-                result = 'https://openload.co/stream/' + result + '?mime=true';
-                decodedValue = result;
+﻿var decoded;
+var document;
+var window = this;
+$ = function () {
+    return {
+        text: function (a) {
+            if (a) {
+                decoded = a;
+            } else {
+                return id;
             }
-        }
-    } else if (selector == '#' + r) {
-        return {
-            text: function () {
-                return encoded;
-            }
-        }
-    } else if (selector == document) {
-        return {
-            ready: function (func) {
-                func();
-            }
+        },
+        ready: function (a) {
+            a()
         }
     }
-}
-function getDecodedValue() {
-    return decodedValue;
+};
+function getUrl() {
+    return 'https://openload.co/stream/' + decoded + '?mime=true';
 }
