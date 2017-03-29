@@ -14,6 +14,30 @@ using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Hoster
 {
+
+    public class AuroraVid : MyHosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "auroravid.to";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            url = WebCache.Instance.GetRedirectedUrl(url);
+            string page = WebCache.Instance.GetWebData(url);
+            if (!string.IsNullOrEmpty(page))
+            {
+                page = GetFromPost(url, page, true);
+                Match m = Regex.Match(page, @"<source\s*src=""(?<url>[^""]*)""");
+                if (m.Success)
+                    return m.Groups["url"].Value;
+            }
+            return null;
+        }
+    }
+
+
     public class BlipTv : HosterBase
     {
         public override string GetHosterUrl()
