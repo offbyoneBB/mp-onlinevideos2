@@ -20,7 +20,7 @@ namespace OnlineVideos.Hoster
             if (data.Contains("<h3>We’re Sorry!</h3>"))
                 throw new OnlineVideosException("The video maybe got deleted by the owner or was removed due a copyright violation.");
             sub = "";
-            Regex rgx = new Regex(@"<span[^>]+id=""[^""]+""[^>]*>(?<encoded>[0-9A-Za-z]+)</span>.*?(?<script>ﾟ.*?\('_'\);.*?)ﾟ", RegexOptions.Singleline);
+            Regex rgx = new Regex(@"<span[^>]+id=""[^""]+""[^>]*>(?<encoded>[0-9A-Za-z]+)</span>.*?(?<aascript>ﾟ.*?\('_'\);)(?<script>.*?)ﾟ", RegexOptions.Singleline);
             Match m = rgx.Match(data);
             if (m.Success)
             {
@@ -28,8 +28,8 @@ namespace OnlineVideos.Hoster
                 script += "\";\r\n";
                 script += OnlineVideos.Sites.Properties.Resources.OpenloadDecode;
                 script += "\r\n";
+                script += Sites.Utils.HelperUtils.AaDecode(m.Groups["aascript"].Value);
                 script += m.Groups["script"].Value;
-                script += "\r\n;";
                 ScriptEngine engine = new ScriptEngine();
                 engine.Execute(script);
                 string decoded = engine.CallGlobalFunction("getUrl").ToString();

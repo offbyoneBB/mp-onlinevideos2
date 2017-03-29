@@ -1,5 +1,7 @@
 ﻿var decoded;
-var document;
+var document = {
+    getElementById: true
+};
 var window = this;
 $ = function () {
     return {
@@ -17,4 +19,4 @@ $ = function () {
 };
 function getUrl() {
     return 'https://openload.co/stream/' + decoded + '?mime=true';
-}
+};
