@@ -26,16 +26,45 @@ namespace OnlineVideos.Helpers
             PopulateStreamInfo(playlist, originalUrl);
         }
 
-        public static Dictionary<string, string> GetPlaybackOptions(string url, string playlist)
+        /// <summary>
+        /// Parse a m3u8 playlist into a dictionary with streamname and streamurl
+        /// Sorting is done for low to high bandwidth, and streamname is like "1024x768 (200 Kbps)"
+        /// </summary>
+        /// <param name="playlist">the m3u8 data</param>
+        /// <param name="url">url to use if the m3u8 data contains relative urls</param>
+        /// <returns>Dictionary with the streamnames and urls</returns>
+        public static Dictionary<string, string> GetPlaybackOptions(string playlist, string url)
         {
-            return GetPlaybackOptions(url, playlist, (x, y) => x.Bandwidth.CompareTo(y.Bandwidth), (x) => x.Width + "x" + x.Height + " (" + x.Bandwidth / 1000 + " Kbps)");
+            return GetPlaybackOptions(playlist, url, (x, y) => x.Bandwidth.CompareTo(y.Bandwidth), (x) => x.Width + "x" + x.Height + " (" + x.Bandwidth / 1000 + " Kbps)");
         }
 
-        public static Dictionary<string, string> GetPlaybackOptions(string url, string playlist, Comparison<HlsStreamInfo> sortcompare, Func<HlsStreamInfo, string> formatter)
+        /// <summary>
+        /// Parse a m3u8 playlist into a dictionary with streamname and streamurl
+        /// Sorting is done for low to high bandwidth, and streamname is customizable
+        /// </summary>
+        /// <param name="playlist">the m3u8 data</param>
+        /// <param name="url">url to use if the m3u8 data contains relative urls</param>
+        /// <param name="formatter">delegate returning the formatted string for a given HlsStreamInfo</param>
+        /// <returns>Dictionary with the streamnames and urls</returns>
+        public static Dictionary<string, string> GetPlaybackOptions(string playlist, string url, Func<HlsStreamInfo, string> formatter)
+        {
+            return GetPlaybackOptions(playlist, url, (x, y) => x.Bandwidth.CompareTo(y.Bandwidth), formatter);
+        }
+
+        /// <summary>
+        /// Parse a m3u8 playlist into a dictionary with streamname and streamurl
+        /// Sorting and streamname are customizable
+        /// </summary>
+        /// <param name="playlist">the m3u8 data</param>
+        /// <param name="url">url to use if the m3u8 data contains relative urls</param>
+        /// <param name="sortcomparer">delegate for comparing two HlsStreamInfo used in the sorting</param>
+        /// <param name="formatter">delegate returning the formatted string for a given HlsStreamInfo</param>
+        /// <returns>Dictionary with the streamnames and urls</returns>
+        public static Dictionary<string, string> GetPlaybackOptions(string playlist, string url, Comparison<HlsStreamInfo> sortcomparer, Func<HlsStreamInfo, string> formatter)
         {
             Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
             var tmp = new HlsPlaylistParser(playlist, url);
-            tmp.streamInfos.Sort(sortcompare);
+            tmp.streamInfos.Sort(sortcomparer);
             foreach (var streamInfo in tmp.StreamInfos)
             {
                 var streamName = formatter(streamInfo);
@@ -89,6 +118,9 @@ namespace OnlineVideos.Helpers
                 }
                 else if (line != string.Empty && !line.StartsWith("#"))
                 {
+                    int p = line.IndexOf('#');
+                    if (p >= 0)
+                        line = line.Substring(0, p);
                     Uri streamUrl;
                     if (!Uri.TryCreate(line, UriKind.RelativeOrAbsolute, out streamUrl) || !streamUrl.IsAbsoluteUri)
                         streamUrl = new Uri(baseUrl, line);
