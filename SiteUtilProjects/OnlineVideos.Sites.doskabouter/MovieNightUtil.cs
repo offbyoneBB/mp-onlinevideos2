@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using HtmlAgilityPack;
+using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Sites
 {
@@ -97,10 +98,18 @@ namespace OnlineVideos.Sites
                 {
                     var q = quality.Trim(new[] { '"', ' ' });
                     if (q == defaultQuality)
-                        video.PlaybackOptions.Add(q, bareUrl);
+                    {
+                        HttpUrl final = new HttpUrl(bareUrl);
+                        final.Referer = playListUrl;
+                        video.PlaybackOptions.Add(q, final.ToString());
+                    }
                     else
                         if (!String.IsNullOrEmpty(q))
-                        video.PlaybackOptions.Add(q, bareUrl.Insert(inspos, '-' + q));
+                    {
+                        HttpUrl final = new HttpUrl(bareUrl.Insert(inspos, '-' + q));
+                        final.Referer = playListUrl;
+                        video.PlaybackOptions.Add(q, final.ToString());
+                    }
                 }
             }
 
