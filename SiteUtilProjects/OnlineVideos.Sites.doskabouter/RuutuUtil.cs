@@ -116,6 +116,39 @@ namespace OnlineVideos.Sites
             return result;
         }
 
+        private List<VideoInfo> myParse3(HtmlNodeCollection nodes)
+        {
+            List<VideoInfo> result = new List<VideoInfo>();
+            var res = nodes;
+            if (res != null)//normal
+            {
+                foreach (var vid in res)
+                {
+                    var node2 = vid.SelectSingleNode(".//a[@href]");
+                    if (node2 != null)
+                    {
+                        VideoInfo video = CreateVideoInfo();
+
+                        if (vid.SelectSingleNode(@".//span[@class='mdc-list-item__text__primary']") != null)
+                            video.Title = vid.SelectSingleNode(@".//span[@class='mdc-list-item__text__primary']").InnerText;
+                        video.Description = getDescription(vid);
+                        video.VideoUrl = FormatDecodeAbsolutifyUrl(baseUrl, node2.Attributes["href"].Value, "", UrlDecoding.None);
+                        video.Thumb = getImageUrl(vid);
+                        var airDateNode = vid.SelectSingleNode(@".//span[@class='prefix-piece']");
+                        if (airDateNode != null)
+                            video.Airdate = Helpers.StringUtils.PlainTextFromHtml(airDateNode.InnerText);
+                        var durationNode = vid.SelectSingleNode(@".//span[@class='prefix-piece prefix-piece--duration']");
+                        if (durationNode != null)
+                            video.Length = Helpers.StringUtils.PlainTextFromHtml(durationNode.InnerText);
+
+                        video.Title = cleanup(video.Title);
+                        result.Add(video);
+                    }
+                }
+            }
+            return result;
+        }
+
         private int AddKaikki(HtmlDocument doc, Category parentCategory)
         {
             var nodes = doc.DocumentNode.SelectNodes(@"//ul[@class='mdc-list--grid']");
@@ -264,6 +297,12 @@ namespace OnlineVideos.Sites
                         cat.Name = hNode.InnerText.Trim();
 
                     parentCategory.SubCategories.Add(cat);
+
+                    if (videos.Count >= 12)
+                    {
+                        var extravids = doc.DocumentNode.SelectNodes(@".//section[@class='player-sidebar-video-thumbnails component-container']//li[@data-index > 11]");
+                        videos.AddRange(myParse3(extravids));
+                    }
                 }
             }
             parentCategory.SubCategoriesDiscovered = true;
