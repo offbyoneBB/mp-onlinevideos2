@@ -1,6 +1,7 @@
 ﻿using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
 using System;
 using System.ServiceModel;
+using OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation;
 
 namespace OnlineVideos.Sites.Proxy.WebBrowserPlayerService
 {
@@ -20,7 +21,7 @@ namespace OnlineVideos.Sites.Proxy.WebBrowserPlayerService
                     SendTimeout = TimeSpan.FromMilliseconds(300), // We don't care about waiting for responses, so we'll ignore timeouts
                     ReceiveTimeout = TimeSpan.MaxValue // Basically this is the connection idle timeout
                 }, 
-                    new EndpointAddress("net.pipe://localhost/WebBrowserPlayerService"))
+                    new EndpointAddress(WebBrowserPlayerServiceHost.PIPE_ROOT + "WebBrowserPlayerService"))
         {
             Open();
         }

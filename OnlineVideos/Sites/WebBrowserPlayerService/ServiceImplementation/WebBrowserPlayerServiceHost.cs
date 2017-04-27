@@ -9,9 +9,10 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
     /// </summary>
     public class WebBrowserPlayerServiceHost : ServiceHost
     {
+        public const string PIPE_ROOT = "net.pipe://localhost/MediaPortal/OnlineVideos/";
 
         public WebBrowserPlayerServiceHost()
-            : base(typeof(WebBrowserPlayerService), new Uri[] { new Uri("net.pipe://localhost/") })
+            : base(typeof(WebBrowserPlayerService), new Uri[] { new Uri(PIPE_ROOT) })
         {
             var binding = new NetNamedPipeBinding
             {

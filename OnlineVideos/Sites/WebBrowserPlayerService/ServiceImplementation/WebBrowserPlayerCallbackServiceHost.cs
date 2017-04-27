@@ -11,7 +11,7 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
     {
 
         public WebBrowserPlayerCallbackServiceHost()
-            : base(typeof(WebBrowserPlayerCallbackService), new Uri[] { new Uri("net.pipe://localhost/") })
+            : base(typeof(WebBrowserPlayerCallbackService), new Uri[] { new Uri(WebBrowserPlayerServiceHost.PIPE_ROOT) })
         {
             var binding = new NetNamedPipeBinding
             {
