@@ -409,7 +409,7 @@ namespace OnlineVideos.AMF
             {
                 List<object> objs = new List<object>();
                 result = new AMFArray(objs);
-                for (int i = 0; i < v >> 1; i++)
+                for (int i = 0; i < (v >> 1); i++)
                     objs.Add(ReadParamValue());
             }
             else
