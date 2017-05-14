@@ -143,7 +143,11 @@ namespace OnlineVideos.Sites
                 sh.SetSubtitleText(video, this.GetTrackingInfo);
             }
             if (video.PlaybackOptions == null)
-                return bareUrl;
+            {
+                HttpUrl final = new HttpUrl(bareUrl);
+                final.Referer = playListUrl;
+                return final.ToString();
+            }
             return video.PlaybackOptions.Values.Last();
         }
 

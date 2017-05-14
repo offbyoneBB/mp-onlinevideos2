@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
-using System.Text;
 using System.Net;
 using System.Linq;
 using System.Xml;
-using System.IO;
 using System.Web;
 using Newtonsoft.Json.Linq;
 
@@ -37,9 +35,9 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
-            if (tld == null || emailAddress == null || password == null)
+            if (tld == null || emailAddress == null || password == null || languageId == null)
                 return 0;
-            Log.Debug("tld, emailaddress and password != null");
+            Log.Debug("tld, emailaddress, password and languageid != null");
 
             SubcatRegex = new Regex(@"<li\sclass=""vod-menu-element-sports-element""\sdata-sporturl=""(?<url>[^""]*)""\sdata-filter=""sports"">(?<title>[^<]*)</li>");
             baseUrl = String.Format(@"https://{0}.eurosportplayer.com/", tld);
@@ -57,6 +55,7 @@ namespace OnlineVideos.Sites
             {
                 Log.Error("Eurosport: login unsuccessfull");
                 Log.Debug("login unsuccessfull");// so it's in mediaportal.log as wel ass onlinevideos.log
+                Log.Debug("result: " + res);
             }
 
             CookieCollection ccol = cc.GetCookies(new Uri(baseUrl));
@@ -274,46 +273,9 @@ namespace OnlineVideos.Sites
             headers["Content-type"] = "application/json";
             headers.Add("Accept", "*/*");
             headers.Add("User-Agent", OnlineVideoSettings.Instance.UserAgent);
-            return WebCache.Instance.GetWebData(url, postData, cookies: cc, headers: headers);
-
             Log.Debug("get webdata from {0}", url);
             Log.Debug("postdata = " + postData);
-
-            // request the data
-            byte[] data = Encoding.UTF8.GetBytes(postData);
-
-            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
-            if (request == null) return "";
-            request.Method = "POST";
-            request.ContentType = "application/json";
-            request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
-            request.Timeout = 15000;
-            request.ContentLength = data.Length;
-            request.ProtocolVersion = HttpVersion.Version10;
-            request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
-            request.CookieContainer = cc;
-
-            Stream requestStream = request.GetRequestStream();
-            requestStream.Write(data, 0, data.Length);
-            requestStream.Close();
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            {
-                Stream responseStream;
-                if (response.ContentEncoding.ToLower().Contains("gzip"))
-                    responseStream = new System.IO.Compression.GZipStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
-                else if (response.ContentEncoding.ToLower().Contains("deflate"))
-                    responseStream = new System.IO.Compression.DeflateStream(response.GetResponseStream(), System.IO.Compression.CompressionMode.Decompress);
-                else
-                    responseStream = response.GetResponseStream();
-
-                Encoding encoding = Encoding.UTF8;
-                encoding = Encoding.GetEncoding(response.CharacterSet.Trim(new char[] { ' ', '"' }));
-
-                StreamReader reader = new StreamReader(responseStream, encoding, true);
-                string str = reader.ReadToEnd();
-                return str.Trim();
-            }
-
+            return WebCache.Instance.GetWebData(url, postData, cookies: cc, headers: headers);
         }
 
         public string GetToken()
