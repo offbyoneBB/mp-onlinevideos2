@@ -29,6 +29,7 @@
   <!--D-->
   <string name="Date">Datum</string>
   <string name="DateOfRelease">Utkomstdatum</string>
+  <string name="Details">Information</string>
   <string name="Directors">Regi</string>
   <string name="Download">Ladda ner</string>
   <string name="DownloadUserdefined">Ladda ner till förvald katalog</string>
@@ -113,6 +114,7 @@
   <string name="Queued">köad</string>
   <!--R-->
   <string name="RateVideo">Betygsätt videon ...</string>
+  <string name="Rating">Betyg</string>
   <string name="Recommendations">Rekommendationer</string>
   <string name="RemoveFromFavorites">Ta bort från favoriter</string>
   <string name="RemoveFromPlaylist">Ta bort från spellistan</string>

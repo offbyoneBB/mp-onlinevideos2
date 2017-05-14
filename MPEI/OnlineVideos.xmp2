@@ -2397,6 +2397,20 @@
               <ZipFileName>Installer{CopyFile}\{c85d21e8-b656-40d1-9f76-5a98d707390c}-en-us.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Langs\en-us.png</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\Tiny Desk.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{1f4ed12a-6b89-4aeb-b157-7a4c5c93b913}-Tiny Desk.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Tiny Desk.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\Tiny Desk.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{4a599421-0e79-40aa-a3fb-16d5dc0a77c4}-Tiny Desk.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tiny Desk.png</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -3543,7 +3557,7 @@ public class Script
                     <Description>Global Id of the extension package - it will be downloaded when no file is set.</Description>
                   </SectionParam>
                   <SectionParam Name="Extension Version">
-                    <Value>2.2.13.5980</Value>
+                    <Value>2.2.19.6136</Value>
                     <ValueType>String</ValueType>
                     <Description>Minimum Version of the extension package - older versions will be updated (only used when downloading via Id).</Description>
                   </SectionParam>
@@ -3575,7 +3589,7 @@ public class Script
                     <Description>Global Id of the extension package - it will be downloaded when no file is set.</Description>
                   </SectionParam>
                   <SectionParam Name="Extension Version">
-                    <Value>0.68.1.0</Value>
+                    <Value>0.69.0.0</Value>
                     <ValueType>String</ValueType>
                     <Description>Minimum Version of the extension package - older versions will be updated (only used when downloading via Id).</Description>
                   </SectionParam>
@@ -3763,8 +3777,8 @@ public class Script
     <VersionDescription>added options to configure remote server authentication or proxy server authentication for HTTP, AFHS, MSHS and M3U8 protocols
 BrowserPlayer changes to support MediaPortal2</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
-    <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=10&amp;cf_id=80</OnlineLocation>
-    <ReleaseDate>2016-08-27T15:00:00</ReleaseDate>
+    <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=10&amp;cf_id=82</OnlineLocation>
+    <ReleaseDate>2017-05-14T15:00:00</ReleaseDate>
     <Tags>online,videos,youtube,netflix</Tags>
     <Location>..\MPEI\[Name][Version].mpe1</Location>
     <Params>
@@ -6187,6 +6201,20 @@ BrowserPlayer changes to support MediaPortal2</VersionDescription>
         <LocalFileName>..\SiteImages\Langs\en-us.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{c85d21e8-b656-40d1-9f76-5a98d707390c}-en-us.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Langs\en-us.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\Tiny Desk.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{1f4ed12a-6b89-4aeb-b157-7a4c5c93b913}-Tiny Desk.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Tiny Desk.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\Tiny Desk.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{4a599421-0e79-40aa-a3fb-16d5dc0a77c4}-Tiny Desk.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tiny Desk.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
