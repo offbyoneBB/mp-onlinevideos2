@@ -134,7 +134,7 @@ namespace OnlineVideos.Sites
                     var tvStation = broadcast.Value<string>("tvService");
                     var desc = broadcast.Value<string>("text");
                     var img = video_page_teaser["teaserImageRef"]?["layouts"]?.Value<string>("384x216");
-                    var url = "http://api.zdf.de" + mainVideoContent["http://zdf.de/rels/target"].Value<string>("http://zdf.de/rels/streams/ptmd-template").Replace("{playerId}", "portal");
+                    var url = mainVideoContent["http://zdf.de/rels/target"].Value<string>("http://zdf.de/rels/streams/ptmd-template")?.Replace("{playerId}", "portal")?.Insert(0, "http://api.zdf.de");
 
                     list.Add(new VideoInfo
                     {
@@ -153,9 +153,10 @@ namespace OnlineVideos.Sites
                 foreach (var result in json["http://zdf.de/rels/search/results"])
                 {
                     var obj = result["http://zdf.de/rels/target"];
-                    var videoContent = obj["mainContent"].First["videoContent"].First["http://zdf.de/rels/target"];
 
                     if (!obj.Value<bool>("hasVideo")) continue;
+
+                    var videoContent = obj["mainVideoContent"]["http://zdf.de/rels/target"];
 
                     var title = obj.Value<string>("teaserHeadline");
                     var start = obj.Value<DateTime>("editorialDate");
@@ -180,6 +181,9 @@ namespace OnlineVideos.Sites
         {
             if (video.PlaybackOptions == null)
             {
+                if (string.IsNullOrWhiteSpace(video.VideoUrl))
+                    throw new OnlineVideosException("Video nicht verfügbar!");
+
                 var json = GetWebData<JObject>(video.VideoUrl, headers: headers);
                 var sortedPlaybackOptions = new SortedDictionary<string, Dictionary<string, string>>();
                 foreach (var formitaet in json["priorityList"].SelectMany(l=>l["formitaeten"]))
