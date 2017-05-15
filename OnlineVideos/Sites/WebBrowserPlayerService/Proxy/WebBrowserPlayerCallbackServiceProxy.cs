@@ -1,6 +1,7 @@
 ﻿using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
 using System;
 using System.ServiceModel;
+using OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation;
 
 namespace OnlineVideos.Sites.Proxy.WebBrowserPlayerService
 {
@@ -32,7 +33,7 @@ namespace OnlineVideos.Sites.Proxy.WebBrowserPlayerService
         public WebBrowserPlayerCallbackServiceProxy(IWebBrowserPlayerCallback callback)
             : base(new InstanceContext(callback),
                     GetBinding(),
-                    new EndpointAddress("net.pipe://localhost/WebBrowserPlayerCallbackService"))
+                    new EndpointAddress(WebBrowserPlayerServiceHost.PIPE_ROOT + "WebBrowserPlayerCallbackService"))
         {
             Open();
             Channel.Subscribe();
