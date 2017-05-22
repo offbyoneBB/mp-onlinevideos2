@@ -62,11 +62,11 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                     dvMetaInfo.NavigatePath(new[] { 0 }).GetInnerTextTrim(),
                     dvMetaInfo.NavigatePath(new[] { 1 }).GetInnerTextTrim());
 
-                var imageUrlNode = doc.GetElementbyId("dv-dp-left-content").GetNodeByClass("dp-meta-icon-container");
+                var imageUrlNode = detailNode.GetNodeByClass("dp-meta-icon-container");
                 video.Thumb = imageUrlNode == null ? string.Empty : imageUrlNode.SelectSingleNode(".//img").Attributes["src"].Value;
                 video.Airdate = detailNode.GetNodeByClass("release-year").GetInnerTextTrim();
                 video.Length = dvMetaInfo.NavigatePath(new[] { 3 }).GetInnerTextTrim();
-                video.Other = doc.GetElementbyId("ASIN").Attributes["value"].Value;
+                video.Other = detailNode.GetNodeByClass("dv-play-btn-content")?.Attributes["data-asin"].Value;
                 results.Add(video);
             }
             else
