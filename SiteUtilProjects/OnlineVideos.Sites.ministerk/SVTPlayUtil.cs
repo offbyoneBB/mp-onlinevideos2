@@ -605,55 +605,21 @@ namespace OnlineVideos.Sites
 
         private List<VideoInfo> GetChannelVideos()
         {
-            DateTime dateTime;
-            List<VideoInfo> videos = new List<VideoInfo>();
-            JObject json = GetWebData<JObject>("http://www.svtplay.se/api/channel_page");
-            foreach (JToken channel in (IEnumerable<JToken>)json["channels"])
+            List<VideoInfo> videos = new List<VideoInfo>()
             {
-                VideoInfo video = new VideoInfo();
-                video.Title = channel["name"].Value<string>();
-                
-                if (channel["videoReferences"] != null && channel["videoReferences"].Type == JTokenType.Array && channel["videoReferences"].Any<JToken>((JToken vr) => vr["playerType"].Value<string>() == "ios"))
-                    video.VideoUrl = channel["videoReferences"].First<JToken>((JToken vr) => vr["playerType"].Value<string>() == "ios")["url"].Value<string>();
-                if (channel["title"] != null && channel["title"].Type == JTokenType.String)
-                    video.Thumb = string.Format("http://www.svtplay.se/public/images/channels/posters/{0}.png", channel["title"].Value<string>());
-                video.Description = "";
-                bool isFirst = true;
-                foreach (JToken show in channel["schedule"])
-                {
-                    string start = "";
-                    if (show["broadcastStartTime"] != null && show["broadcastStartTime"].Type != JTokenType.Null)
-                    {
-                        dateTime = DateTime.Parse(show["broadcastStartTime"].Value<string>());
-                        start = dateTime.ToString("t", OnlineVideoSettings.Instance.Locale);
-                    }
-                    string end = "";
-                    if (show["broadcastEndTime"] != null && show["broadcastEndTime"].Type != JTokenType.Null)
-                    {
-                        dateTime = DateTime.Parse(show["broadcastEndTime"].Value<string>());
-                        end = dateTime.ToString("t", OnlineVideoSettings.Instance.Locale);
-                    }
-                    string title = "";
-                    if (show["title"] != null && show["title"].Type == JTokenType.String)
-                        title = show["title"].Value<string>();
-                    string description = "";
-                    if (show["description"] != null  && show["description"].Type == JTokenType.String)
-                        description = show["description"].Value<string>();
-                    video.Description += string.Format("{0}-{1}\n{2}\n{3}\n\n", start, end, title, description);
-                    if (isFirst)
-                    {
-                        video.Title = string.Format("{0} - {1}", video.Title, title);
-                        if (show["broadcastStartTime"] != null && show["broadcastStartTime"].Type != JTokenType.Null)
-                        {
-                            dateTime = DateTime.Parse(show["broadcastStartTime"].Value<string>());
-                            video.Airdate = dateTime.ToString(OnlineVideoSettings.Instance.Locale);
-                        }
-                        if (show["titlePage"] != null && show["titlePage"].Type != JTokenType.Null &&  show["titlePage"]["thumbnailMedium"] != null && show["titlePage"]["thumbnailMedium"].Type == JTokenType.String)
-                            video.Thumb = show["titlePage"]["thumbnailMedium"].Value<string>();
-                        isFirst = false;
-                    }
-                }
-                videos.Add(video);
+                new VideoInfo() { Title = "SVT1", Other = "https://api.svt.se/videoplayer-api/video/ch-svt1"},
+                new VideoInfo() { Title = "SVT2", Other = "https://api.svt.se/videoplayer-api/video/ch-svt2"},
+                new VideoInfo() { Title = "SVT24", Other = "https://api.svt.se/videoplayer-api/video/ch-svt24"},
+                new VideoInfo() { Title = "Barnkanalen", Other = "https://api.svt.se/videoplayer-api/video/ch-barnkanalen"},
+                new VideoInfo() { Title = "Kunskapskanalen", Other = "https://api.svt.se/videoplayer-api/video/ch-kunskapskanalen"},
+            };
+
+            foreach (VideoInfo channel in videos)
+            {
+                JObject json = GetWebData<JObject>(channel.GetOtherAsString());
+                JToken videoReference = json["videoReferences"].FirstOrDefault<JToken>((JToken vr) => vr["format"].Value<string>() == "hls");
+                if (videoReference != null)
+                    channel.VideoUrl = videoReference["url"].Value<string>();
             }
             return videos;
         }
