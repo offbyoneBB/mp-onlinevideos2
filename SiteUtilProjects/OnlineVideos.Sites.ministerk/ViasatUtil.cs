@@ -285,7 +285,14 @@ namespace OnlineVideos.Sites
             else
             {
                 playstr = data["streams"]["hls"].Value<string>();
-                video.PlaybackOptions =  HlsPlaylistParser.GetPlaybackOptions(GetWebData(playstr), playstr, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height + " (" + x.Bandwidth / 1000 + " Kbps)");
+                video.PlaybackOptions = new Dictionary<string, string>();
+                foreach (KeyValuePair<string,string> pair in HlsPlaylistParser.GetPlaybackOptions(GetWebData(playstr), playstr, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height + " (" + x.Bandwidth / 1000 + " Kbps)"))
+                {
+                    MPUrlSourceFilter.HttpUrl httpUrl = new MPUrlSourceFilter.HttpUrl(pair.Value);
+                    httpUrl.Referer = video.VideoUrl;
+                    httpUrl.UserAgent = "Mozilla/5.0 (Windows NT 6.1)";
+                    video.PlaybackOptions.Add(pair.Key, httpUrl.ToString());
+                }
                 playstr = video.PlaybackOptions.First().Value;
             }
 
