@@ -561,9 +561,12 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
 
             //My List
-            RssLink myList = new RssLink() { Name = Translate("My List"), HasSubCategories = true, ParentCategory = parentCategory };
-            myList.Other = (Func<List<Category>>)(() => GetListCategories(myList, "mylist", 0));
-            cats.Add(myList);
+            if (!IsKidsProfile)
+            {
+                RssLink myList = new RssLink() { Name = Translate("My List"), HasSubCategories = true, ParentCategory = parentCategory };
+                myList.Other = (Func<List<Category>>)(() => GetListCategories(myList, "mylist", 0));
+                cats.Add(myList);
+            }
 
             //continueWatching
             RssLink continueWatching = new RssLink() { Name = Translate("Continue Watching"), HasSubCategories = true, ParentCategory = parentCategory };
@@ -951,10 +954,13 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             cats.Add(detailsCat);
 
             //Manage My List
-            RssLink myListCat = new RssLink() { Thumb = parentCategory.Thumb, HasSubCategories = true, ParentCategory = parentCategory, Url = id };
-            myListCat.Name = Translate("My List Add") + "/" + Translate("My List Remove");
-            myListCat.Other = (Func<List<Category>>)(() => AddToMyListCategories(myListCat));
-            cats.Add(myListCat);
+            if (!IsKidsProfile)
+            {
+                RssLink myListCat = new RssLink() { Thumb = parentCategory.Thumb, HasSubCategories = true, ParentCategory = parentCategory, Url = id };
+                myListCat.Name = Translate("My List Add") + "/" + Translate("My List Remove");
+                myListCat.Other = (Func<List<Category>>)(() => AddToMyListCategories(myListCat));
+                cats.Add(myListCat);
+            }
 
 
             parentCategory.SubCategoriesDiscovered = true;
@@ -1085,7 +1091,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         public override List<ContextMenuEntry> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
         {
             List<ContextMenuEntry> result = new List<ContextMenuEntry>();
-            if (selectedCategory != null && selectedCategory is NetflixCategory)
+            if (!IsKidsProfile && selectedCategory != null && selectedCategory is NetflixCategory)
             {
                 ContextMenuEntry entry = new ContextMenuEntry() { DisplayText = (selectedCategory as NetflixCategory).InQueue ? Translate("My List Remove") : Translate("My List Add") };
                 result.Add(entry);
