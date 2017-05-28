@@ -585,26 +585,23 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private List<Category> GetHomeCategories(Category parentCategory)
         {
             List<Category> cats = new List<Category>();
-            string lolomoType = IsKidsProfile ? "kidslolomo" : "lolomo";
-            string data = GetPathData(@"{""paths"":[[""" + lolomoType + @""",{""from"":0,""to"":" + noOfCatsInHome + @"},[""summary"",""title"",""playListEvidence"",""bookmark"",""queue"",""displayName"",""context""]]],""authURL"":""" + LatestAuthUrl + @"""}");
+            string data = GetPathData(@"{""paths"":[[""lolomo"",{""from"":0,""to"":" + noOfCatsInHome + @"},[""summary"",""title"",""playListEvidence"",""bookmark"",""queue"",""displayName"",""context""]]],""authURL"":""" + LatestAuthUrl + @"""}");
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
-            String lolmoGuid = json["value"][lolomoType].Values().Last().ToString();
+            String lolmoGuid = json["value"]["lolomo"].Values().Last().ToString();
             if (enableVerboseLog) Log.Debug("lolmoGuid: {0}", lolmoGuid);
             for (int i = 0; i < (noOfCatsInHome + 1); i++)
             {
-                JToken token = json["value"]["lolomos"][lolmoGuid][i.ToString()];
-                if (token != null)
+                if (json["value"]["lolomos"][lolmoGuid][i.ToString()].Type == JTokenType.Array)
                 {
-                    if (enableVerboseLog) Log.Debug("token: {0}", token);
-                    if (token.Values().Count() > 1)
+                    JArray array = json["value"]["lolomos"][lolmoGuid][i.ToString()].Value<JArray>();
+                    if (enableVerboseLog) Log.Debug("array: {0}", array.ToString());
+                    if (array.Count() == 2)
                     {
-                        JToken item = token.First();
-                        if (enableVerboseLog) Log.Debug("item: {0}", item);
-                        string list = token.Values().Last().ToString();
+                        string list = array.Last().ToString();
                         if (json["value"]["lists"][list] == null)
                             break;
                         if (enableVerboseLog) Log.Debug("list: {0}", list);
-                        if (enableVerboseLog) Log.Debug("context: {0}", json["value"]["lists"][list]["context"]);
+                        if (enableVerboseLog) Log.Debug("context: {0}", json["value"]["lists"][list]["context"].ToString());
                         if (json["value"]["lists"][list]["context"].Value<string>() != "queue" && json["value"]["lists"][list]["context"].Value<string>() != "continueWatching" && !string.IsNullOrWhiteSpace(json["value"]["lists"][list]["displayName"].Value<string>()) && json["value"]["lists"][list]["context"].Value<string>() != "character")
                         {
                             RssLink cat = new RssLink() { ParentCategory = parentCategory, Name = json["value"]["lists"][list]["displayName"].Value<string>(), Url = "\"" + list + "\"", HasSubCategories = true };
@@ -614,7 +611,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     }
                 }
             }
-
             parentCategory.SubCategoriesDiscovered = true;
             return cats;
         }
