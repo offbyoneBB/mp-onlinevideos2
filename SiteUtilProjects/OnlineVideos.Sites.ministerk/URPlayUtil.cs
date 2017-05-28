@@ -84,13 +84,6 @@ namespace OnlineVideos.Sites
                 SubCategoriesDiscovered = true,
                 HasSubCategories = true,
             };
-            RssLink spelistor = new RssLink()
-            {
-                Name = "Spellistor",
-                Url = "http://urplay.se/sok?age=&product_type=playlists&query=&type=programtv",
-                HasSubCategories = true,
-                Other = episodeVideosState
-            };
 
             foreach(KeyValuePair<string,string> genre in tvCategories)
             {
@@ -125,7 +118,6 @@ namespace OnlineVideos.Sites
             }
             Settings.Categories.Add(series);
             Settings.Categories.Add(programs);
-            Settings.Categories.Add(spelistor);
             Settings.DynamicCategoriesDiscovered = Settings.Categories.Count > 0;
             return Settings.Categories.Count;
         }
@@ -180,7 +172,7 @@ namespace OnlineVideos.Sites
             HtmlDocument doc = GetWebData<HtmlDocument>(url);
             HtmlNode docNode = doc.DocumentNode;
             HtmlNodeCollection items;
-            HtmlNode episodes = docNode.SelectSingleNode("//section[@id='episodes']");
+            HtmlNode episodes = docNode.SelectSingleNode("//div[@class='series-page']");
             if (episodes != null)
                 items = episodes.SelectNodes("div/div/article");
             else
@@ -190,43 +182,47 @@ namespace OnlineVideos.Sites
             {
                 foreach (HtmlNode item in items)
                 {
-                    List<string> descriptions = new List<string>();
-                    HtmlNode categoryNode = item.SelectSingleNode(".//p[@class='category']");
-                    if (categoryNode != null && !string.IsNullOrWhiteSpace(categoryNode.InnerText))
-                        descriptions.Add(HttpUtility.HtmlDecode(categoryNode.InnerText.Trim()));
-                    HtmlNode descNode = item.SelectSingleNode(".//p[@class='description']");
-                    if (descNode != null && !string.IsNullOrWhiteSpace(descNode.InnerText))
-                        descriptions.Add(HttpUtility.HtmlDecode(descNode.InnerText.Trim()));
-
-                    List<string> titleInfos = new List<string>();
-                    HtmlNode seriesTitle = item.SelectSingleNode(".//p[@class='series-title']");
-                    if (seriesTitle != null && !string.IsNullOrWhiteSpace(seriesTitle.InnerText))
-                        titleInfos.Add(HttpUtility.HtmlDecode(seriesTitle.InnerText.Trim()));
-                    HtmlNode episodeNum = item.SelectSingleNode(".//span[@class='episode-number']");
-                    if (episodeNum != null && !string.IsNullOrWhiteSpace(episodeNum.InnerText))
-                        titleInfos.Add(HttpUtility.HtmlDecode(episodeNum.InnerText.Trim()));
-
-                    string description = descriptions.Count > 0 ? string.Join("\r\n", descriptions) : "";
-                    string titleInfo = titleInfos.Count > 0 ? string.Format(" ({0})", string.Join(" ", titleInfos)) : "";
-
-                    string thumb = item.SelectSingleNode(".//img").GetAttributeValue("data-src", "").Replace("_t.", "_l.");
-                    if (string.IsNullOrWhiteSpace(thumb))
-                        thumb = item.SelectSingleNode(".//img").GetAttributeValue("src", "").Replace("_t.","_l.");
-                    if (!string.IsNullOrWhiteSpace(thumb) && thumb.StartsWith("/"))
-                        thumb = "http://urplay.se" + thumb;
-
-                    string videoUrl = item.SelectSingleNode("a").GetAttributeValue("href", "");
-                    if (!string.IsNullOrWhiteSpace(videoUrl) && videoUrl.StartsWith("/"))
-                        videoUrl = "http://urplay.se" + videoUrl;
-
-                    videos.Add(new VideoInfo()
+                    HtmlNode a = item.SelectSingleNode("a");
+                    if (a != null)
                     {
-                        Title = HttpUtility.HtmlDecode(item.SelectSingleNode(".//h3").InnerText.Trim()) + titleInfo,
-                        VideoUrl = videoUrl ,
-                        Thumb = thumb,
-                        Description = description,
-                        Length = HttpUtility.HtmlDecode(item.SelectSingleNode(".//span[@class='duration']").InnerText.Trim())
-                    });
+                        string videoUrl = a.GetAttributeValue("href", "");
+                        if (videoUrl.StartsWith("/"))
+                            videoUrl = "http://urplay.se" + videoUrl;
+
+                        List<string> descriptions = new List<string>();
+                        HtmlNode categoryNode = item.SelectSingleNode(".//p[@class='category']");
+                        if (categoryNode != null && !string.IsNullOrWhiteSpace(categoryNode.InnerText))
+                            descriptions.Add(HttpUtility.HtmlDecode(categoryNode.InnerText.Trim()));
+                        HtmlNode descNode = item.SelectSingleNode(".//p[@class='description']");
+                        if (descNode != null && !string.IsNullOrWhiteSpace(descNode.InnerText))
+                            descriptions.Add(HttpUtility.HtmlDecode(descNode.InnerText.Trim()));
+
+                        List<string> titleInfos = new List<string>();
+                        HtmlNode seriesTitle = item.SelectSingleNode(".//p[@class='series-title']");
+                        if (seriesTitle != null && !string.IsNullOrWhiteSpace(seriesTitle.InnerText))
+                            titleInfos.Add(HttpUtility.HtmlDecode(seriesTitle.InnerText.Trim()));
+                        HtmlNode episodeNum = item.SelectSingleNode(".//span[@class='episode-number']");
+                        if (episodeNum != null && !string.IsNullOrWhiteSpace(episodeNum.InnerText))
+                            titleInfos.Add(HttpUtility.HtmlDecode(episodeNum.InnerText.Trim()));
+
+                        string description = descriptions.Count > 0 ? string.Join("\r\n", descriptions) : "";
+                        string titleInfo = titleInfos.Count > 0 ? string.Format(" ({0})", string.Join(" ", titleInfos)) : "";
+
+                        string thumb = item.SelectSingleNode(".//img").GetAttributeValue("data-src", "").Replace("_t.", "_l.");
+                        if (string.IsNullOrWhiteSpace(thumb))
+                            thumb = item.SelectSingleNode(".//img").GetAttributeValue("src", "").Replace("_t.", "_l.");
+                        if (!string.IsNullOrWhiteSpace(thumb) && thumb.StartsWith("/"))
+                            thumb = "http://urplay.se" + thumb;
+
+                        videos.Add(new VideoInfo()
+                        {
+                            Title = HttpUtility.HtmlDecode(item.SelectSingleNode(".//h3").InnerText.Trim()) + titleInfo,
+                            VideoUrl = videoUrl,
+                            Thumb = thumb,
+                            Description = description,
+                            Length = HttpUtility.HtmlDecode(item.SelectSingleNode(".//span[@class='duration']").InnerText.Trim())
+                        });
+                    }
                 }
             }
             return videos;
