@@ -87,7 +87,6 @@
     <Compile Include="Utils\ExtendedWebCache.cs" />
     <Compile Include="Hoster\IReferer.cs" />
     <Compile Include="Hoster\MailRu.cs" />
-    <Compile Include="Hoster\Openload.cs" />
     <Compile Include="Hoster\SVTPlay.cs" />
     <Compile Include="Hoster\Videomega.cs" />
     <Compile Include="Hoster\VkPass.cs" />
@@ -135,9 +134,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Netflix.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Resources\OpenloadDecode.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
