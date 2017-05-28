@@ -173,41 +173,44 @@ namespace OnlineVideos.Sites
                 HasSubCategories = true,
                 ParentCategory = parentCategory
             };
-            aToZCategory.Other = (Func<List<Category>>)(() => GetCategoriesFromRecomendationJson(aToZCategory, false));
+            aToZCategory.Other = (Func<List<Category>>)(() => GetAZProgramCatsFromJson(aToZCategory));
             cats.Add(aToZCategory);
-            string data = GetWebData("http://www.svtplay.se/ajax/sok/forslag.json");
-            foreach (JToken recomendationToken in JArray.Parse(data))
-            {
-                if ((recomendationToken["isGenre"] != null && recomendationToken["isGenre"].Type != JTokenType.Null && recomendationToken["isGenre"].Value<string>() == "genre"))
-                {
-                    string url = recomendationToken["url"].Value<string>().Replace("/genre/", string.Empty).Replace("/", string.Empty);
-                    string title = recomendationToken["title"].Value<string>();
-                    string thumbnail = recomendationToken["thumbnail"].Value<string>();
-                    RssLink tagCategory = new RssLink()
-                    {
-                        Name = title,
-                        Url = url,
-                        Thumb = thumbnail,
-                        HasSubCategories = true,
-                        ParentCategory = parentCategory
-                    };
-                    tagCategory.Other = (Func<List<Category>>)(() => GetTagCategories(tagCategory));
-                    if (tagCategory.Url != "oppetarkiv"  && tagCategory.Url != "barn")
-                        cats.Add(tagCategory);
-                    else
-                        cats.Insert(1, tagCategory);
-                }
-                else
-                    break;
-            }
             Category allTags = new Category()
             {
-                Name = "Visa alla genrer",
+                Name = "Genrer",
                 HasSubCategories = true,
+                SubCategoriesDiscovered = true,
+                SubCategories = new List<Category>(),
                 ParentCategory = parentCategory
             };
-            allTags.Other = (Func<List<Category>>)(() => GetCategoriesFromRecomendationJson(allTags, true));
             cats.Add(allTags);
+            string data = GetWebData("https://www.svtplay.se/api/active_clusters");
+            RssLink oppetArkivCategory = new RssLink()
+            {
+                Name = "Öppet arkiv",
+                Url = "oppetarkiv",
+                HasSubCategories = true,
+                ParentCategory = allTags
+            };
+            oppetArkivCategory.Other = (Func<List<Category>>)(() => GetTagCategories(oppetArkivCategory));
+            allTags.SubCategories.Add(oppetArkivCategory);
+            foreach (JToken clusterToken in JArray.Parse(data))
+            {
+                string url = clusterToken["slug"].Value<string>();
+                string title = clusterToken["name"].Value<string>();
+                RssLink tagCategory = new RssLink()
+                {
+                    Name = title,
+                    Url = url,
+                    HasSubCategories = true,
+                    ParentCategory = allTags
+                };
+                tagCategory.Other = (Func<List<Category>>)(() => GetTagCategories(tagCategory));
+                if (tagCategory.Url != "barn")
+                    allTags.SubCategories.Add(tagCategory);
+                else
+                    allTags.SubCategories.Insert(1, tagCategory);
+            }
             return cats;
         }
 
@@ -413,35 +416,29 @@ namespace OnlineVideos.Sites
             return cats;
         }
 
-        private List<Category> GetCategoriesFromJArray(Category parentCategory, JArray array, bool getGenres)
+        private List<Category> GetAZProgramCatsFromJson(Category parentCategory)
         {
+            string data = GetWebData<string>("https://www.svtplay.se/api/all_titles_and_singles");
+            JArray array = JArray.Parse(data);
+
             List<Category> categories = new List<Category>();
-            foreach (JToken element in array.Where(e => (!getGenres && e["isGenre"].Value<string>() != "genre" && !e["url"].Value<string>().StartsWith("/video/")) || (getGenres && e["isGenre"].Value<string>() == "genre")))
+            foreach (JToken element in array.Where(e => !e["contentUrl"].Value<string>().StartsWith("/video/")))
             {
                 RssLink category = new RssLink()
                 {
-                    Name = element["title"].Value<string>(),
-                    Thumb = element["thumbnail"].Value<string>(),
-                    Url = element["url"].Value<string>().Replace("genre/", "").Replace("/", ""),
+                    Name = element["programTitle"].Value<string>(),
+                    Url = element["contentUrl"].Value<string>().Replace("/",""),
                     ParentCategory = parentCategory,
                     SubCategories = new List<Category>(),
                     HasSubCategories = true
                 };
-                category.Thumb = (category.Thumb.StartsWith("/") ? string.Concat("http://www.svtplay.se", category.Thumb) : category.Thumb);
-                category.Other = (getGenres ? (Func<List<Category>>)(() => GetTagCategories(category)) : (Func<List<Category>>)(() => GetProgramCategoriesAndVideos(category)));
+                category.Other = (Func<List<Category>>)(() => GetProgramCategoriesAndVideos(category));
                 categories.Add(category);
             }
             categories = categories.OrderBy(c => c.Name).ToList<Category>();
             return categories;
         }
         
-        private List<Category> GetCategoriesFromRecomendationJson(Category parentCategory, bool getGenres)
-        {
-            string data = GetWebData<string>("http://www.svtplay.se/ajax/sok/forslag.json");
-            JArray array = JArray.Parse(data);
-            return GetCategoriesFromJArray(parentCategory, array, getGenres);
-        }
-
         #endregion
 
         #region Videos
