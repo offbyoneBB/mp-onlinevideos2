@@ -338,6 +338,12 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         }
         #endregion
 
+        #region List ids
+
+        private string LatestKidsCharacterList { set; get; }
+
+        #endregion
+
         #region Shakti Api
 
         private string _shaktiApi = "";
@@ -397,6 +403,13 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             if (m.Success)
             {
                 _buildId= m.Groups[1].Value;
+            }
+
+            rgx = new Regex(@"""([^""]*)"":\{""0"":\[""characters""");
+            m = rgx.Match(data);
+            if (m.Success)
+            {
+                LatestKidsCharacterList = m.Groups[1].Value;
             }
 
             rgx = new Regex(@"(?:\\x2F|/)playlistop"":""([^""]*)");
@@ -606,20 +619,16 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private List<Category> GetCharactersCategories(RssLink parentCategory)
         {
             List<Category> cats = new List<Category>();
-            string data = GetPathData(@"{""paths"":[[""kidslolomo"",{""from"":0,""to"":50},[""context""]]],""authURL"":""" + LatestAuthUrl + @"""}");
+            string data = GetPathData(@"{""paths"":[[""lists"",""" + LatestKidsCharacterList + @""",{""from"":0,""to"":100},""summary""],[""lists"",""" + LatestKidsCharacterList + @""",{""from"":0,""to"":100},""artwork"",""SQUAREHEADSHOT_1000x1000"",""png"",""_400x400""]],""authURL"":""" + LatestAuthUrl + @"""}");
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
-            JProperty prop = json["value"]["lists"].Values<JProperty>().FirstOrDefault(p => !p.Name.Contains("size") && p.Value["context"].Value<string>() == "character");
-            string lolmoGuid = prop.Name;
-            data = GetPathData(@"{""paths"":[[""lists"",""" + lolmoGuid + @""",{""from"":0,""to"":100},""summary""],[""lists"",""" + lolmoGuid + @""",{""from"":0,""to"":100},""artwork"",""character_square"",""png"",""_400x400""]],""authURL"":""" + LatestAuthUrl + @"""}");
-            json = (JObject)JsonConvert.DeserializeObject(data);
             for (int i = 0; i <= 100 ; i++)
             {
-                JToken token = json["value"]["lists"][lolmoGuid][i.ToString()];
+                JToken token = json["value"]["lists"][LatestKidsCharacterList][i.ToString()];
                 if (token != null && token.Values().Count() == 2)
                 {
                     string characterId = token.Values().Last().ToString();
                     JToken character = json["value"]["characters"][characterId];
-                    RssLink cat = new RssLink() { ParentCategory = parentCategory, Name = character["summary"]["name"].Value<string>(), Thumb = character["artwork"]["character_square"]["png"]["_400x400"]["url"].Value<string>(), Url = characterId + @",""gallery""", HasSubCategories = true };
+                    RssLink cat = new RssLink() { ParentCategory = parentCategory, Name = character["summary"]["name"].Value<string>(), Thumb = character["artwork"]["SQUAREHEADSHOT_1000x1000"]["png"]["_400x400"]["url"].Value<string>(), Url = characterId + @",""gallery""", HasSubCategories = true };
                     cat.Other = (Func<List<Category>>)(() => GetSubCategories(cat, "characters", 0));
                     cats.Add(cat);
                 }
