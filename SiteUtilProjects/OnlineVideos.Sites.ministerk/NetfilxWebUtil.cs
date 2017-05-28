@@ -57,7 +57,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private string loginUrl = @"https://www.netflix.com/Login";
         private string homeUrl = @"https://www.netflix.com/";
         private string playerUrl = @"http://www.netflix.com/watch/{0}";
-        private string loginPostData = "emailOrPhoneNumber={0}&password={1}&rememberMe=true&flow=websiteSignUp&mode=universalLogin&action=loginAction&withFields=emailOrPhoneNumber%2Cpassword%2CrememberMe%2CnextPage&authURL={2}&nextPage=";
+        private string loginPostData = "email={0}&password={1}&rememberMe=true&flow=websiteSignUp&mode=login&action=loginAction&withFields=email%2Cpassword%2CrememberMe%2CnextPage%2CshowPassword&authURL={2}&nextPage=&showPassword=";
         private string switchProfileUrl = @"{0}/{1}/profiles/switch?switchProfileGuid={2}&authURL={3}";
 
         #endregion
@@ -445,7 +445,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 {
                     _cc = new CookieContainer();
                     // No caching in this case.
-                    string data = ExtendedWebCache.Instance.GetWebData<string>(loginUrl, cookies: _cc, cache: false);
+                    string redirUrl = ExtendedWebCache.Instance.GetRedirectedUrl(loginUrl).Replace("entrytrap", "Login");
+                    string data = ExtendedWebCache.Instance.GetWebData<string>(redirUrl, cookies: _cc, cache: false);
 
                     Regex rgx = new Regex(@"""authURL"":""(?<authURL>[^""]*)");
                     Match m = rgx.Match(data);
@@ -470,7 +471,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                         }
 
                     }
-                    data = ExtendedWebCache.Instance.GetWebData<string>(loginUrl, string.Format(loginPostData, HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password), HttpUtility.UrlEncode(LatestAuthUrl)), _cc, cache: false);
+                    data = ExtendedWebCache.Instance.GetWebData<string>(redirUrl, string.Format(loginPostData, HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password), HttpUtility.UrlEncode(LatestAuthUrl)), _cc, cache: false);
                 }
                 return _cc;
             }
