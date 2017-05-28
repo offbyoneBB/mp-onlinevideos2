@@ -236,9 +236,9 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             return data;
         }
 
-        private string GetPathData(string postData)
+        private string GetPathData(string postData, bool useCallMethod = false)
         {
-            return MyGetWebData(ShaktiApi + "/" + BuildId + "/pathEvaluator" + "?withSize=true&materialize=true&model=harris&esn=www", postData: postData, contentType: "application/json");
+            return MyGetWebData(ShaktiApi + "/" + BuildId + "/pathEvaluator" + "?withSize=true&materialize=true&model=harris&" + (useCallMethod ? "method=call" : "esn=www"), postData: postData, contentType: "application/json");
         }
 
         #endregion
@@ -342,6 +342,10 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         private string LatestKidsCharacterList { set; get; }
 
+        //Return null at the moment, generates error in call but gets the job done removing and adding to my list
+        private string LatestListRoot { get { return null; } }
+        private string LatestList0 { get { return null; } }
+
         #endregion
 
         #region Shakti Api
@@ -372,19 +376,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
         }
 
-        private string _playlistOpId = "";
-        private string PlaylistOpId
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_playlistOpId))
-                {
-                    SetApiAndIds();
-                }
-                return _playlistOpId;
-            }
-        }
-
         private void SetApiAndIds(string data = "")
         {
             if (string.IsNullOrEmpty(data))
@@ -405,6 +396,9 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 _buildId= m.Groups[1].Value;
             }
 
+            // Add/remove mylist using null at the moment
+            /*
+            
             rgx = new Regex(@"""([^""]*)"":\{""0"":\[""characters""");
             m = rgx.Match(data);
             if (m.Success)
@@ -412,12 +406,14 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 LatestKidsCharacterList = m.Groups[1].Value;
             }
 
-            rgx = new Regex(@"(?:\\x2F|/)playlistop"":""([^""]*)");
+            rgx = new Regex(@"""([^""]*)"":{""0"":\[""lists"",""([^""]*)""\]");
             m = rgx.Match(data);
             if (m.Success)
             {
-                _playlistOpId = m.Groups[1].Value;
+                LatestListRoot = m.Groups[1].Value;
+                LatestList0 = m.Groups[2].Value;
             }
+            */
         }
 
         #endregion
@@ -966,12 +962,10 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private List<Category> AddToMyListCategories(Category parentCategory)
         {
             bool inQ = (parentCategory.ParentCategory as NetflixCategory).InQueue;
-            string addRemove = inQ ? "remove" : "add";
+            string addRemove = inQ ? "removeFromList" : "addToList";
             string videoId = (parentCategory.ParentCategory as NetflixCategory).Url;
             string title = parentCategory.ParentCategory.Name;
-            string data = MyGetWebData(ShaktiApi + "/playlistop/" + PlaylistOpId + "?fallbackEsn=NFCDSF-01-",
-                postData: @"{""operation"":""" + addRemove + @""",""videoId"":" + videoId + @",""trackId"":0,""authURL"":""" + LatestAuthUrl + @"""}",
-                contentType: "application/json");
+            string data = GetPathData(@"{""callPath"":[""lolomos"",""" + LatestListRoot + @""",""" + addRemove + @"""],""params"":[""" + LatestList0 + @""",0,[""videos""," + videoId + @"],null,null,null],""authURL"":""" + LatestAuthUrl + @"""}", true);
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
             //Do something with the result json...
             (parentCategory.ParentCategory as NetflixCategory).InQueue = !inQ;
@@ -1101,12 +1095,10 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             {
                 ContextMenuExecutionResult result = new ContextMenuExecutionResult();
                 bool inQ = (selectedCategory as NetflixCategory).InQueue;
-                string addRemove = inQ ? "remove" : "add";
+                string addRemove = inQ ? "removeFromList" : "addToList";
                 string videoId = (selectedCategory as NetflixCategory).Url;
                 string title = selectedCategory.Name;
-                string data = MyGetWebData(ShaktiApi + "/playlistop/" + PlaylistOpId + "?fallbackEsn=NFCDSF-01-",
-                        postData: @"{""operation"":""" + addRemove + @""",""videoId"":" + videoId + @",""trackId"":0,""authURL"":""" + LatestAuthUrl + @"""}",
-                    contentType: "application/json");
+                string data = GetPathData(@"{""callPath"":[""lolomos"",""" + LatestListRoot + @""",""" + addRemove + @"""],""params"":[""" + LatestList0 + @""",0,[""videos""," + videoId + @"],null,null,null],""authURL"":""" + LatestAuthUrl + @"""}", true);
                 JObject json = (JObject)JsonConvert.DeserializeObject(data);
                 //Do something with the result json...
                 (selectedCategory as NetflixCategory).InQueue = !inQ;
