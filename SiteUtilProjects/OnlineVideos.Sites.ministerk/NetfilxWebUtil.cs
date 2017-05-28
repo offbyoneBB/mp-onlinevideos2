@@ -225,12 +225,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     else
                         i18n.Add("My List Remove", "My List Remove");
 
-                    rgx = new Regex(@"""overview.rating.label.rated"":""(?<val>[^""]*)");
-                    m = rgx.Match(data);
-                    if (m.Success)
-                        i18n.Add("User rating", Regex.Unescape(m.Groups["val"].Value.Trim()));
-                    else
-                        i18n.Add("User rating", "User rating");
                 }
             }
             return data;
@@ -790,10 +784,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     JToken userRating = item["userRating"];
                     NetflixCategory cat = new NetflixCategory() { ParentCategory = parentCategory, Name = item["title"].Value<string>(), HasSubCategories = true, InQueue = item["queue"]["inQueue"].Value<bool>(), IsShow = summary["type"].Value<string>() == "show" };
                     cat.Description = item["synopsis"].Value<string>() + "\r\n" + item["releaseYear"].Value<string>();
-                    if (!string.IsNullOrWhiteSpace(userRating["userRating"].ToString()))
-                        cat.Description += "\r\n" + Translate("User rating") + ": " + userRating["userRating"].ToString();
-                    else if (!string.IsNullOrWhiteSpace(userRating["predicted"].ToString()))
-                        cat.Description += "\r\n" + Translate("User rating") + ": " + userRating["predicted"].ToString();
                     cat.Runtime = cat.IsShow ? 0 : item["runtime"].Value<int>();
                     cat.Thumb = item["boxarts"]["_342x192"]["jpg"]["url"].Value<string>();
                     cat.Url = summary["id"].Value<UInt32>().ToString();
@@ -855,10 +845,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     JToken userRating = item["userRating"];
                     NetflixCategory cat = new NetflixCategory() { ParentCategory = parentCategory, Name = item["title"].Value<string>(), HasSubCategories = true, InQueue = item["queue"]["inQueue"].Value<bool>(), IsShow = summary["type"].Value<string>() == "show" };
                     cat.Description = item["synopsis"].Value<string>() + "\r\n " + item["releaseYear"].Value<string>();
-                    if (!string.IsNullOrWhiteSpace(userRating["userRating"].ToString()))
-                        cat.Description += "\r\n" + Translate("User rating") + ": " + userRating["userRating"].ToString();
-                    else if (!string.IsNullOrWhiteSpace(userRating["predicted"].ToString()))
-                        cat.Description += "\r\n" + Translate("User rating") + ": " + userRating["predicted"].ToString();
                     cat.Runtime = cat.IsShow ? 0 : item["runtime"].Value<int>();
                     cat.Thumb = item["boxarts"]["_342x192"]["jpg"]["url"].Value<string>();
                     cat.Url = summary["id"].Value<UInt32>().ToString();
