@@ -1,4 +1,4 @@
-﻿using OnlineVideos.Sites.Utils;
+﻿using OnlineVideos.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -236,18 +236,8 @@ namespace OnlineVideos.Sites
             if (m.Success)
             {
                 string playlistUrl = m.Groups["url"].Value;
-                MyHlsPlaylistParser playlist = new MyHlsPlaylistParser(GetWebData(playlistUrl), playlistUrl);
-                video.PlaybackOptions = new Dictionary<string, string>();
-                if (playlist.StreamInfos.Count > 0)
-                {
-                    foreach (MyHlsStreamInfo si in playlist.StreamInfos)
-                    {
-                        string key = "Bitrate: " + si.Bandwidth;
-                        if (!video.PlaybackOptions.ContainsKey(key))
-                            video.PlaybackOptions.Add("Bitrate: " + si.Bandwidth, si.Url);
-                    }
-                    url = video.PlaybackOptions.First().Value;
-                }
+                video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(GetWebData(playlistUrl), playlistUrl, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => "Bitrate: " + x.Bandwidth);
+                url = video.PlaybackOptions.First().Value;
                 if (inPlaylist)
                     video.PlaybackOptions.Clear();
             }

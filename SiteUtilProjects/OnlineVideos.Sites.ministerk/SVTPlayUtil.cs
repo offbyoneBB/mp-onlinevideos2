@@ -629,9 +629,7 @@ namespace OnlineVideos.Sites
             string videoUrl = video.VideoUrl;
             if (videoUrl.EndsWith(".m3u8"))
             {
-                MyHlsPlaylistParser parser = new MyHlsPlaylistParser(GetWebData(videoUrl), videoUrl);
-                foreach (MyHlsStreamInfo streamInfo in parser.StreamInfos)
-                    video.PlaybackOptions.Add(string.Format("{0}x{1} ({2}kbps)", streamInfo.Width, streamInfo.Height, streamInfo.Bandwidth), streamInfo.Url);
+                video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(GetWebData(videoUrl), videoUrl, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height + " (" + x.Bandwidth/1000 + " Kbps)");
             }
             else
             {

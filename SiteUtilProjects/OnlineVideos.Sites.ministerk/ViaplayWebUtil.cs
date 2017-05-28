@@ -860,18 +860,8 @@ namespace OnlineVideos.Sites
                 string m3u8 = MyGetWebStringData(url);
                 if (!m3u8.Contains("#EXT-X-VERSION:4")) //Not supported, use Browser
                 {
-                    MyHlsPlaylistParser playlist = new MyHlsPlaylistParser(m3u8, url);
-                    video.PlaybackOptions = new Dictionary<string, string>();
-                    if (playlist.StreamInfos.Count > 0)
-                    {
-                        foreach (MyHlsStreamInfo si in playlist.StreamInfos)
-                        {
-                            string key = string.Format("{0}x{1} ({2})", si.Width, si.Height, si.Bandwidth);
-                            if (!video.PlaybackOptions.ContainsKey(key))
-                                video.PlaybackOptions.Add(key, si.Url);
-                        }
-                        url = video.PlaybackOptions.First().Value;
-                    }
+                    video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(m3u8, url, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height + " (" + x.Bandwidth/1000 + " kbps)");
+                    url = video.PlaybackOptions.First().Value;
                 }
                 if (video.PlaybackOptions.Count < 1)
                 {

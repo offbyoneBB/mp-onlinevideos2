@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using OnlineVideos.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -73,9 +74,7 @@ namespace OnlineVideos.Hoster
             if (videoReference != null)
             {
                 url = videoReference["url"].Value<string>();
-                OnlineVideos.Sites.Utils.MyHlsPlaylistParser parser = new OnlineVideos.Sites.Utils.MyHlsPlaylistParser(GetWebData(url), url);
-                foreach (OnlineVideos.Sites.Utils.MyHlsStreamInfo streamInfo in parser.StreamInfos)
-                    playbackOptions.Add(streamInfo.Width + "x" + streamInfo.Height + " (" + streamInfo.Bandwidth / 1000 + " kbps)", streamInfo.Url);
+                playbackOptions = HlsPlaylistParser.GetPlaybackOptions(GetWebData(url), url, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height + " (" + x.Bandwidth / 1000 + " Kbps)");
             }
             else
             {
