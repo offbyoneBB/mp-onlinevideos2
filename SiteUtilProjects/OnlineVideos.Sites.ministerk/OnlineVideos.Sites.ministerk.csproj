@@ -75,6 +75,8 @@
     <Compile Include="DplayUtil.cs" />
     <Compile Include="DrakenFilmUtil.cs" />
     <Compile Include="DreamfilmHDUtil.cs" />
+    <Compile Include="Hoster\123movieshd.cs" />
+    <Compile Include="Hoster\Hollymoviehd.cs" />
     <Compile Include="Hoster\NowVideoSx.cs" />
     <Compile Include="Hoster\Streamplay.cs" />
     <Compile Include="Hoster\VideozBz.cs" />
