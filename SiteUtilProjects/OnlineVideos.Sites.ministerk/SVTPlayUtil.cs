@@ -183,7 +183,7 @@ namespace OnlineVideos.Sites
                 ParentCategory = parentCategory
             };
             cats.Add(allTags);
-            string data = GetWebData("https://www.svtplay.se/api/active_clusters");
+            string data = GetWebData("https://www.svtplay.se/api/clusters");
             RssLink oppetArkivCategory = new RssLink()
             {
                 Name = "Öppet arkiv",
