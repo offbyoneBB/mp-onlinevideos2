@@ -14,13 +14,16 @@ namespace OnlineVideos.Sites
     public class EuroSportUtil : SiteUtilBase
     {
 
-        [Category("OnlineVideosUserConfiguration"), Description("The tld for the eurosportplayer url, e.g. nl, co.uk or de")]
-        string tld = null;
+        [Category("OnlineVideosUserConfiguration"), Description("The tld for the eurosportplayer url, e.g. nl, uk or de")]
+        private string tld = null;
+
+        [Category("OnlineVideosUserConfiguration"), Description("The country for the eurosportplayer url, usually the same as the tld, but for some reason the uk needs to fill in 'gb' here")]
+        private string country = null;
 
         [Category("OnlineVideosUserConfiguration"), Description("Email address of your eurosport account")]
-        string emailAddress = null;
+        private string emailAddress = null;
         [Category("OnlineVideosUserConfiguration"), Description("Password of your eurosport account")]
-        string password = null;
+        private string password = null;
         [Category("OnlineVideosUserConfiguration"), Description("Language id (5 for dutch, others: ask doskabouter)")]
         private string languageId = null;
 
@@ -35,9 +38,9 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
-            if (tld == null || emailAddress == null || password == null || languageId == null)
+            if (tld == null || emailAddress == null || password == null || languageId == null || country == null)
                 return 0;
-            Log.Debug("tld, emailaddress, password and languageid != null");
+            Log.Debug("tld, emailaddress, password, languageid and country != null");
 
             SubcatRegex = new Regex(@"<li\sclass=""vod-menu-element-sports-element""\sdata-sporturl=""(?<url>[^""]*)""\sdata-filter=""sports"">(?<title>[^<]*)</li>");
             baseUrl = String.Format(@"https://{0}.eurosportplayer.com/", tld);
@@ -45,7 +48,7 @@ namespace OnlineVideos.Sites
             CookieContainer cc = new CookieContainer();
 
             string url = baseUrl + "_wsplayerxrm_/PlayerCrmApi_v6.svc/Login";
-            context = @"{""g"":""" + tld.ToUpperInvariant() + @""",""d"":""1"",""s"":""1"",""p"":""1"",""b"":""apple""," +
+            context = @"{""g"":""" + country.ToUpperInvariant() + @""",""d"":""1"",""s"":""1"",""p"":""1"",""b"":""apple""," +
                 @"""bp"":"""",""st"":""Eurosport"",""li"":""" + languageId + @""",""pc"":""ply"",""drp"":""171""}";
             string postData = @"{""data"":""{\""l\"":\""" + emailAddress + @"\"",\""p\"":\""" + password + @"\"",\""r\"":false}""," +
                 @"""context"":""" + context.Replace(@"""", @"\""") + @"""}";
@@ -105,10 +108,11 @@ namespace OnlineVideos.Sites
         {
             // currently: only for Videos
             string urlPart = @"{""userid"":""" + userId + @""",""hkey"":""" + hkey + @""",""languageid"":""" + languageId + @"""}";
-            var context2 = @"{""p"": ""1"", ""s"": ""1"", ""b"": ""apple"", ""d"": ""2"", ""g"": """ + tld.ToUpperInvariant() + @"""}";
+            var context2 = @"{""p"": ""1"", ""s"": ""1"", ""b"": ""apple"", ""d"": ""2"", ""g"": """ + country.ToUpperInvariant() + @"""}";
 
             var jData = GetWebData<JObject>(@"http://videoshop.ws.eurosport.com/JsonProductService.svc/GetAllCatchupCache?data=" + HttpUtility.UrlEncode(urlPart) +
                 @"&context=" + HttpUtility.UrlEncode(context2), cookies: newcc);
+            Log.Debug("discsubcats " + jData.ToString());
 
             parentCategory.SubCategories = new List<Category>();
             Dictionary<int, Category> cats = new Dictionary<int, Category>();
@@ -189,11 +193,7 @@ namespace OnlineVideos.Sites
             string webData = GetWebData(((RssLink)category).Url, cookies: newcc);
             string data = @"{""languageid"":""" + getValue(webData, "languageid") + @""",""withouttvscheduleliveevents"":true,""guest"":false}";
             string url2 = baseUrl + @"_wsvideoshop_/JsonProductService.svc/GetAllChannelsCache?data=" + HttpUtility.UrlEncode(data) + "&context=" + HttpUtility.UrlEncode(context);
-            string url3 = @"http://videoshop.ext.eurosport.com/JsonProductService.svc/GetAllProductsByDeviceMobile?data=" + HttpUtility.UrlEncode(data) + "&context=" + HttpUtility.UrlEncode(context);
 
-            string url = baseUrl + String.Format(@"_wsvideoshop_/JsonProductService.svc/GetAllProducts?device=1&isocode={0}&languageid={1}&hkey={2}&userid={3}",
-                tld.ToUpperInvariant(), getValue(webData, "languageid"),
-                getValue(webData, "hashkey"), getValue(webData, "userid"));
             webData = GetWebData(url2, cookies: newcc);
 
             JToken alldata = JObject.Parse(webData) as JToken;
@@ -226,10 +226,12 @@ namespace OnlineVideos.Sites
 
             var tokenData = GetWebData<JObject>(@"http://videoshop.ws.eurosport.com/JsonProductService.svc/GetToken?data=" + HttpUtility.UrlEncode(urlPart) +
                 @"&context=" + HttpUtility.UrlEncode(context), cookies: newcc);
+            Log.Debug("tokendata " + tokenData.ToString());
 
             string token = tokenData["PlayerObj"].Value<string>("token");
 
             string getData = GetWebData(video.VideoUrl + '&' + token, cookies: newcc);
+            Log.Debug("GetUrlFromVideo " + getData);
 
             video.PlaybackOptions = Helpers.HlsPlaylistParser.GetPlaybackOptions(getData, video.VideoUrl);
             if (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0) return null;
