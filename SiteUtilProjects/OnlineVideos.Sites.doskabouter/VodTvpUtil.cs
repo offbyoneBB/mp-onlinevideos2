@@ -66,7 +66,7 @@ namespace OnlineVideos.Sites
                         {
                             VideoInfo video = new VideoInfo();
                             video.Title = item.Value<string>("title");
-                            video.VideoUrl = String.Format(videoListRegExFormatString, item.Value<string>("_id"));
+                            video.VideoUrl = String.Format(videoListRegExFormatString, item.Value<string>("asset_id"));
                             video.Description = item.Value<string>("description_root");
                             video.Thumb = getImageUrl(item);
                             video.Airdate = item.Value<string>("publication_start_dt") + ' ' + item.Value<string>("publication_start_hour");
