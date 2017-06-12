@@ -85,22 +85,14 @@ namespace OnlineVideos.Hoster
                 {
                     try
                     {
-                        subtitleText = WebCache.Instance.GetWebData(subUrl, forceUTF8: true);
-                        int index = subtitleText.IndexOf("WEBVTT\r\n\r\n");
-                        if (index >= 0)
-                            subtitleText = subtitleText.Substring(index).Replace("WEBVTT\r\n\r\n", "");
-                        if (!subtitleText.StartsWith("1\r\n"))
+                        string tmpTxt = WebCache.Instance.GetWebData(subUrl, forceUTF8: true);
+                        tmpTxt = Regex.Replace(tmpTxt, @"[^\u0000-\u00FF]", "");
+                        Regex rgx = new Regex(@"(?<text>\d\d:\d\d:\d\d\.\d\d\d\s*?-->\s*?\d\d:\d\d:\d\d\.\d\d\d\n.*?\n\n)", RegexOptions.Singleline);
+                        int i = 0;
+                        foreach (Match match in rgx.Matches(tmpTxt))
                         {
-                            string oldSub = subtitleText;
-                            regex = new Regex(@"(?<time>\d\d:\d\d:\d\d.\d\d\d -->)");
-                            int i = 1;
-                            foreach (Match match in regex.Matches(oldSub))
-                            {
-                                string time = match.Groups["time"].Value;
-                                subtitleText = subtitleText.Replace(time, "\r\n" + i.ToString() + "\r\n" + time);
-                                i++;
-                            }
-                            subtitleText = subtitleText.TrimStart();
+                            i++;
+                            subtitleText += i + "\n" + match.Groups["text"].Value;
                         }
                     }
                     catch { }
