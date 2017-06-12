@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using OnlineVideos.Hoster;
+using OnlineVideos.Subtitles;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -11,11 +12,39 @@ namespace OnlineVideos.Sites
 {
     public class DreamfilmHDUtil : SiteUtilBase
     {
+        protected enum SubtitleSource
+        {
+            None,
+            OpenSubtitles,
+            Podnapisi,
+            Subscene,
+            TvSubtitles
+        }
+
+        protected enum Language
+        {
+            eng,
+            swe
+        }
+
         [Category("OnlineVideosConfiguration"), Description("Url used for prepending relative links.")]
         protected string baseUrl;
         [Category("OnlineVideosConfiguration"), Description("Token used for vkpass video urls")]
         protected string vkpassToken;
-        
+
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Backup subtitle source"), Description("Try to download subtiles from this subtitle source if no subtitles from hoster")]
+        protected SubtitleSource subtitleSource = SubtitleSource.None;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Backup subtitle source language"), Description("Select subtitle language preferences")]
+        protected Language subtitleLanguage = Language.swe;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Always use the backup subtitle source"), Description("Always use the backup subtitle source")]
+        protected bool forceSubtitle = false;
+
+        private SubtitleHandler sh = null;
+        public override void Initialize(SiteSettings siteSettings)
+        {
+            base.Initialize(siteSettings);
+            sh = new SubtitleHandler(subtitleSource == SubtitleSource.None ? "" : subtitleSource.ToString(), subtitleLanguage.ToString());
+        }
         public override int DiscoverDynamicCategories()
         {
             string data = GetWebData(baseUrl, encoding: Encoding.UTF8);
@@ -172,7 +201,7 @@ namespace OnlineVideos.Sites
                             video.PlaybackOptions.Add((hoster.GetType().Name != key ? hoster.GetType().Name + " " : "") + key, hosterPo[key]);
                     }
                 }
-                if (hoster is ISubtitle)
+                if (!forceSubtitle && hoster is ISubtitle)
                     video.SubtitleText = (hoster as ISubtitle).SubtitleText;
             }
             else
@@ -182,6 +211,9 @@ namespace OnlineVideos.Sites
             url = video.PlaybackOptions.Count == 0 ? "" : video.PlaybackOptions.FirstOrDefault().Value;
             if (inPlaylist)
                 video.PlaybackOptions.Clear();
+            if (!string.IsNullOrWhiteSpace(url) && subtitleSource != SubtitleSource.None)
+                sh.SetSubtitleText(video, GetTrackingInfo, false);
+
             return new List<string>() { url };
         }
 
