@@ -85,8 +85,9 @@ namespace OnlineVideos.Hoster
                 {
                     try
                     {
+                        subtitleText = "";
                         string tmpTxt = WebCache.Instance.GetWebData(subUrl, forceUTF8: true);
-                        tmpTxt = Regex.Replace(tmpTxt, @"[^\u0000-\u00FF]", "");
+                        tmpTxt = Regex.Replace(tmpTxt, @"[^\u0000-\u00FF]", "").Replace("\r", "");
                         Regex rgx = new Regex(@"(?<text>\d\d:\d\d:\d\d\.\d\d\d\s*?-->\s*?\d\d:\d\d:\d\d\.\d\d\d\n.*?\n\n)", RegexOptions.Singleline);
                         int i = 0;
                         foreach (Match match in rgx.Matches(tmpTxt))
