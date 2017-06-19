@@ -57,7 +57,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private string loginUrl = @"https://www.netflix.com/Login";
         private string homeUrl = @"https://www.netflix.com/";
         private string playerUrl = @"http://www.netflix.com/watch/{0}";
-        private string loginPostData = "emailOrPhoneNumber={0}&password={1}&rememberMe=true&flow=websiteSignUp&mode=universalLogin&action=loginAction&withFields=emailOrPhoneNumber%2Cpassword%2CrememberMe%2CnextPage&authURL={2}&nextPage=";
+        private string loginPostData = "email={0}&password={1}&rememberMe=true&flow=websiteSignUp&mode=login&action=loginAction&withFields=email%2Cpassword%2CrememberMe%2CnextPage%2CshowPassword&authURL={2}&nextPage=&showPassword=";
         private string switchProfileUrl = @"{0}/{1}/profiles/switch?switchProfileGuid={2}&authURL={3}";
 
         #endregion
@@ -225,20 +225,14 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     else
                         i18n.Add("My List Remove", "My List Remove");
 
-                    rgx = new Regex(@"""overview.rating.label.rated"":""(?<val>[^""]*)");
-                    m = rgx.Match(data);
-                    if (m.Success)
-                        i18n.Add("User rating", Regex.Unescape(m.Groups["val"].Value.Trim()));
-                    else
-                        i18n.Add("User rating", "User rating");
                 }
             }
             return data;
         }
 
-        private string GetPathData(string postData)
+        private string GetPathData(string postData, bool useCallMethod = false)
         {
-            return MyGetWebData(ShaktiApi + "/" + BuildId + "/pathEvaluator" + "?withSize=true&materialize=true&model=harris&esn=www", postData: postData, contentType: "application/json");
+            return MyGetWebData(ShaktiApi + "/" + BuildId + "/pathEvaluator" + "?withSize=true&materialize=true&model=harris&" + (useCallMethod ? "method=call" : "esn=www"), postData: postData, contentType: "application/json");
         }
 
         #endregion
@@ -338,6 +332,16 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         }
         #endregion
 
+        #region List ids
+
+        private string LatestKidsCharacterList { set; get; }
+
+        //Return null at the moment, generates error in call but gets the job done removing and adding to my list
+        private string LatestListRoot { get { return null; } }
+        private string LatestList0 { get { return null; } }
+
+        #endregion
+
         #region Shakti Api
 
         private string _shaktiApi = "";
@@ -366,19 +370,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
         }
 
-        private string _playlistOpId = "";
-        private string PlaylistOpId
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_playlistOpId))
-                {
-                    SetApiAndIds();
-                }
-                return _playlistOpId;
-            }
-        }
-
         private void SetApiAndIds(string data = "")
         {
             if (string.IsNullOrEmpty(data))
@@ -399,12 +390,24 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 _buildId= m.Groups[1].Value;
             }
 
-            rgx = new Regex(@"(?:\\x2F|/)playlistop"":""([^""]*)");
+            // Add/remove mylist using null at the moment
+            /*
+            
+            rgx = new Regex(@"""([^""]*)"":\{""0"":\[""characters""");
             m = rgx.Match(data);
             if (m.Success)
             {
-                _playlistOpId = m.Groups[1].Value;
+                LatestKidsCharacterList = m.Groups[1].Value;
             }
+
+            rgx = new Regex(@"""([^""]*)"":{""0"":\[""lists"",""([^""]*)""\]");
+            m = rgx.Match(data);
+            if (m.Success)
+            {
+                LatestListRoot = m.Groups[1].Value;
+                LatestList0 = m.Groups[2].Value;
+            }
+            */
         }
 
         #endregion
@@ -445,7 +448,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 {
                     _cc = new CookieContainer();
                     // No caching in this case.
-                    string data = ExtendedWebCache.Instance.GetWebData<string>(loginUrl, cookies: _cc, cache: false);
+                    string redirUrl = ExtendedWebCache.Instance.GetRedirectedUrl(loginUrl).Replace("entrytrap", "Login");
+                    string data = ExtendedWebCache.Instance.GetWebData<string>(redirUrl, cookies: _cc, cache: false);
 
                     Regex rgx = new Regex(@"""authURL"":""(?<authURL>[^""]*)");
                     Match m = rgx.Match(data);
@@ -470,7 +474,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                         }
 
                     }
-                    data = ExtendedWebCache.Instance.GetWebData<string>(loginUrl, string.Format(loginPostData, HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password), HttpUtility.UrlEncode(LatestAuthUrl)), _cc, cache: false);
+                    data = ExtendedWebCache.Instance.GetWebData<string>(redirUrl, string.Format(loginPostData, HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password), HttpUtility.UrlEncode(LatestAuthUrl)), _cc, cache: false);
                 }
                 return _cc;
             }
@@ -547,9 +551,12 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
 
             //My List
-            RssLink myList = new RssLink() { Name = Translate("My List"), HasSubCategories = true, ParentCategory = parentCategory };
-            myList.Other = (Func<List<Category>>)(() => GetListCategories(myList, "mylist", 0));
-            cats.Add(myList);
+            if (!IsKidsProfile)
+            {
+                RssLink myList = new RssLink() { Name = Translate("My List"), HasSubCategories = true, ParentCategory = parentCategory };
+                myList.Other = (Func<List<Category>>)(() => GetListCategories(myList, "mylist", 0));
+                cats.Add(myList);
+            }
 
             //continueWatching
             RssLink continueWatching = new RssLink() { Name = Translate("Continue Watching"), HasSubCategories = true, ParentCategory = parentCategory };
@@ -568,26 +575,23 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private List<Category> GetHomeCategories(Category parentCategory)
         {
             List<Category> cats = new List<Category>();
-            string lolomoType = IsKidsProfile ? "kidslolomo" : "lolomo";
-            string data = GetPathData(@"{""paths"":[[""" + lolomoType + @""",{""from"":0,""to"":" + noOfCatsInHome + @"},[""summary"",""title"",""playListEvidence"",""bookmark"",""queue"",""displayName"",""context""]]],""authURL"":""" + LatestAuthUrl + @"""}");
+            string data = GetPathData(@"{""paths"":[[""lolomo"",{""from"":0,""to"":" + noOfCatsInHome + @"},[""summary"",""title"",""playListEvidence"",""bookmark"",""queue"",""displayName"",""context""]]],""authURL"":""" + LatestAuthUrl + @"""}");
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
-            String lolmoGuid = json["value"][lolomoType].Values().Last().ToString();
+            String lolmoGuid = json["value"]["lolomo"].Values().Last().ToString();
             if (enableVerboseLog) Log.Debug("lolmoGuid: {0}", lolmoGuid);
             for (int i = 0; i < (noOfCatsInHome + 1); i++)
             {
-                JToken token = json["value"]["lolomos"][lolmoGuid][i.ToString()];
-                if (token != null)
+                if (json["value"]["lolomos"][lolmoGuid][i.ToString()].Type == JTokenType.Array)
                 {
-                    if (enableVerboseLog) Log.Debug("token: {0}", token);
-                    if (token.Values().Count() > 1)
+                    JArray array = json["value"]["lolomos"][lolmoGuid][i.ToString()].Value<JArray>();
+                    if (enableVerboseLog) Log.Debug("array: {0}", array.ToString());
+                    if (array.Count() == 2)
                     {
-                        JToken item = token.First();
-                        if (enableVerboseLog) Log.Debug("item: {0}", item);
-                        string list = token.Values().Last().ToString();
+                        string list = array.Last().ToString();
                         if (json["value"]["lists"][list] == null)
                             break;
                         if (enableVerboseLog) Log.Debug("list: {0}", list);
-                        if (enableVerboseLog) Log.Debug("context: {0}", json["value"]["lists"][list]["context"]);
+                        if (enableVerboseLog) Log.Debug("context: {0}", json["value"]["lists"][list]["context"].ToString());
                         if (json["value"]["lists"][list]["context"].Value<string>() != "queue" && json["value"]["lists"][list]["context"].Value<string>() != "continueWatching" && !string.IsNullOrWhiteSpace(json["value"]["lists"][list]["displayName"].Value<string>()) && json["value"]["lists"][list]["context"].Value<string>() != "character")
                         {
                             RssLink cat = new RssLink() { ParentCategory = parentCategory, Name = json["value"]["lists"][list]["displayName"].Value<string>(), Url = "\"" + list + "\"", HasSubCategories = true };
@@ -597,7 +601,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     }
                 }
             }
-
             parentCategory.SubCategoriesDiscovered = true;
             return cats;
         }
@@ -605,20 +608,16 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private List<Category> GetCharactersCategories(RssLink parentCategory)
         {
             List<Category> cats = new List<Category>();
-            string data = GetPathData(@"{""paths"":[[""kidslolomo"",{""from"":0,""to"":50},[""context""]]],""authURL"":""" + LatestAuthUrl + @"""}");
+            string data = GetPathData(@"{""paths"":[[""lists"",""" + LatestKidsCharacterList + @""",{""from"":0,""to"":100},""summary""],[""lists"",""" + LatestKidsCharacterList + @""",{""from"":0,""to"":100},""artwork"",""SQUAREHEADSHOT_1000x1000"",""png"",""_400x400""]],""authURL"":""" + LatestAuthUrl + @"""}");
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
-            JProperty prop = json["value"]["lists"].Values<JProperty>().FirstOrDefault(p => !p.Name.Contains("size") && p.Value["context"].Value<string>() == "character");
-            string lolmoGuid = prop.Name;
-            data = GetPathData(@"{""paths"":[[""lists"",""" + lolmoGuid + @""",{""from"":0,""to"":100},""summary""],[""lists"",""" + lolmoGuid + @""",{""from"":0,""to"":100},""artwork"",""character_square"",""png"",""_400x400""]],""authURL"":""" + LatestAuthUrl + @"""}");
-            json = (JObject)JsonConvert.DeserializeObject(data);
             for (int i = 0; i <= 100 ; i++)
             {
-                JToken token = json["value"]["lists"][lolmoGuid][i.ToString()];
+                JToken token = json["value"]["lists"][LatestKidsCharacterList][i.ToString()];
                 if (token != null && token.Values().Count() == 2)
                 {
                     string characterId = token.Values().Last().ToString();
                     JToken character = json["value"]["characters"][characterId];
-                    RssLink cat = new RssLink() { ParentCategory = parentCategory, Name = character["summary"]["name"].Value<string>(), Thumb = character["artwork"]["character_square"]["png"]["_400x400"]["url"].Value<string>(), Url = characterId + @",""gallery""", HasSubCategories = true };
+                    RssLink cat = new RssLink() { ParentCategory = parentCategory, Name = character["summary"]["name"].Value<string>(), Thumb = character["artwork"]["SQUAREHEADSHOT_1000x1000"]["png"]["_400x400"]["url"].Value<string>(), Url = characterId + @",""gallery""", HasSubCategories = true };
                     cat.Other = (Func<List<Category>>)(() => GetSubCategories(cat, "characters", 0));
                     cats.Add(cat);
                 }
@@ -785,10 +784,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     JToken userRating = item["userRating"];
                     NetflixCategory cat = new NetflixCategory() { ParentCategory = parentCategory, Name = item["title"].Value<string>(), HasSubCategories = true, InQueue = item["queue"]["inQueue"].Value<bool>(), IsShow = summary["type"].Value<string>() == "show" };
                     cat.Description = item["synopsis"].Value<string>() + "\r\n" + item["releaseYear"].Value<string>();
-                    if (!string.IsNullOrWhiteSpace(userRating["userRating"].ToString()))
-                        cat.Description += "\r\n" + Translate("User rating") + ": " + userRating["userRating"].ToString();
-                    else if (!string.IsNullOrWhiteSpace(userRating["predicted"].ToString()))
-                        cat.Description += "\r\n" + Translate("User rating") + ": " + userRating["predicted"].ToString();
                     cat.Runtime = cat.IsShow ? 0 : item["runtime"].Value<int>();
                     cat.Thumb = item["boxarts"]["_342x192"]["jpg"]["url"].Value<string>();
                     cat.Url = summary["id"].Value<UInt32>().ToString();
@@ -850,10 +845,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     JToken userRating = item["userRating"];
                     NetflixCategory cat = new NetflixCategory() { ParentCategory = parentCategory, Name = item["title"].Value<string>(), HasSubCategories = true, InQueue = item["queue"]["inQueue"].Value<bool>(), IsShow = summary["type"].Value<string>() == "show" };
                     cat.Description = item["synopsis"].Value<string>() + "\r\n " + item["releaseYear"].Value<string>();
-                    if (!string.IsNullOrWhiteSpace(userRating["userRating"].ToString()))
-                        cat.Description += "\r\n" + Translate("User rating") + ": " + userRating["userRating"].ToString();
-                    else if (!string.IsNullOrWhiteSpace(userRating["predicted"].ToString()))
-                        cat.Description += "\r\n" + Translate("User rating") + ": " + userRating["predicted"].ToString();
                     cat.Runtime = cat.IsShow ? 0 : item["runtime"].Value<int>();
                     cat.Thumb = item["boxarts"]["_342x192"]["jpg"]["url"].Value<string>();
                     cat.Url = summary["id"].Value<UInt32>().ToString();
@@ -941,10 +932,13 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             cats.Add(detailsCat);
 
             //Manage My List
-            RssLink myListCat = new RssLink() { Thumb = parentCategory.Thumb, HasSubCategories = true, ParentCategory = parentCategory, Url = id };
-            myListCat.Name = Translate("My List Add") + "/" + Translate("My List Remove");
-            myListCat.Other = (Func<List<Category>>)(() => AddToMyListCategories(myListCat));
-            cats.Add(myListCat);
+            if (!IsKidsProfile)
+            {
+                RssLink myListCat = new RssLink() { Thumb = parentCategory.Thumb, HasSubCategories = true, ParentCategory = parentCategory, Url = id };
+                myListCat.Name = Translate("My List Add") + "/" + Translate("My List Remove");
+                myListCat.Other = (Func<List<Category>>)(() => AddToMyListCategories(myListCat));
+                cats.Add(myListCat);
+            }
 
 
             parentCategory.SubCategoriesDiscovered = true;
@@ -954,12 +948,10 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private List<Category> AddToMyListCategories(Category parentCategory)
         {
             bool inQ = (parentCategory.ParentCategory as NetflixCategory).InQueue;
-            string addRemove = inQ ? "remove" : "add";
+            string addRemove = inQ ? "removeFromList" : "addToList";
             string videoId = (parentCategory.ParentCategory as NetflixCategory).Url;
             string title = parentCategory.ParentCategory.Name;
-            string data = MyGetWebData(ShaktiApi + "/playlistop/" + PlaylistOpId + "?fallbackEsn=NFCDSF-01-",
-                postData: @"{""operation"":""" + addRemove + @""",""videoId"":" + videoId + @",""trackId"":0,""authURL"":""" + LatestAuthUrl + @"""}",
-                contentType: "application/json");
+            string data = GetPathData(@"{""callPath"":[""lolomos"",""" + LatestListRoot + @""",""" + addRemove + @"""],""params"":[""" + LatestList0 + @""",0,[""videos""," + videoId + @"],null,null,null],""authURL"":""" + LatestAuthUrl + @"""}", true);
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
             //Do something with the result json...
             (parentCategory.ParentCategory as NetflixCategory).InQueue = !inQ;
@@ -1075,7 +1067,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         public override List<ContextMenuEntry> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
         {
             List<ContextMenuEntry> result = new List<ContextMenuEntry>();
-            if (selectedCategory != null && selectedCategory is NetflixCategory)
+            if (!IsKidsProfile && selectedCategory != null && selectedCategory is NetflixCategory)
             {
                 ContextMenuEntry entry = new ContextMenuEntry() { DisplayText = (selectedCategory as NetflixCategory).InQueue ? Translate("My List Remove") : Translate("My List Add") };
                 result.Add(entry);
@@ -1089,12 +1081,10 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             {
                 ContextMenuExecutionResult result = new ContextMenuExecutionResult();
                 bool inQ = (selectedCategory as NetflixCategory).InQueue;
-                string addRemove = inQ ? "remove" : "add";
+                string addRemove = inQ ? "removeFromList" : "addToList";
                 string videoId = (selectedCategory as NetflixCategory).Url;
                 string title = selectedCategory.Name;
-                string data = MyGetWebData(ShaktiApi + "/playlistop/" + PlaylistOpId + "?fallbackEsn=NFCDSF-01-",
-                        postData: @"{""operation"":""" + addRemove + @""",""videoId"":" + videoId + @",""trackId"":0,""authURL"":""" + LatestAuthUrl + @"""}",
-                    contentType: "application/json");
+                string data = GetPathData(@"{""callPath"":[""lolomos"",""" + LatestListRoot + @""",""" + addRemove + @"""],""params"":[""" + LatestList0 + @""",0,[""videos""," + videoId + @"],null,null,null],""authURL"":""" + LatestAuthUrl + @"""}", true);
                 JObject json = (JObject)JsonConvert.DeserializeObject(data);
                 //Do something with the result json...
                 (selectedCategory as NetflixCategory).InQueue = !inQ;

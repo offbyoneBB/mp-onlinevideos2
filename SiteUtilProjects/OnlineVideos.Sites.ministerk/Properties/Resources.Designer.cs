@@ -99,26 +99,6 @@ namespace OnlineVideos.Sites.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to //Created by NitroXenon
-        /////Github: https://github.com/NitroXenon/Terrarium-Public/blob/gh-pages/openload2.js
-        /////This script hooks all the browser functions used in the descryption script
-        ///
-        /////The output decoded value
-        ///var decodedValue = &quot;&quot;;
-        /////This is our custom variable of r. It can be any string value.
-        /////Still needs some tweaks because they can change the variable name (r) in their script
-        ///var r = &quot;r&quot;;
-        /////Custom document object (because document only presents in browsers)
-        ///var document = {};
-        /////Hook jQue [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string OpenloadDecode {
-            get {
-                return ResourceManager.GetString("OpenloadDecode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to function myLogin(u, p) {
         ///    $(&apos;#LoginForm_email&apos;).val(u);
         ///    $(&apos;#LoginForm_password&apos;).val(p);
@@ -128,7 +108,7 @@ namespace OnlineVideos.Sites.Properties {
         ///var __url = &quot;dummy&quot;;
         ///
         ///function myPlay() {
-        ///    var __m = $(&apos;a[class=&quot;play-link large&quot;]&apos;).first();
+        ///    var __m = $(&apos;div[class=&quot;react-play-button large&quot;]&apos;).first();
         ///    if (__m.length &gt; 0) {
         ///        __m.click();
         ///    } else {

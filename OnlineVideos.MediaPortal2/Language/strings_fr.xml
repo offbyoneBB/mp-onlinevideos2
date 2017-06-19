@@ -29,6 +29,7 @@
   <!--D-->
   <string name="OnlineVideos.Date">Date</string>
   <string name="OnlineVideos.DateOfRelease">Date de sortie</string>
+  <string name="OnlineVideos.Details">Détails</string>
   <string name="OnlineVideos.Directors">Réalisateurs</string>
   <string name="OnlineVideos.Download">Télécharger</string>
   <string name="OnlineVideos.DownloadUserdefined">Téléchargement vers le répertoire de l\'utilisateur</string>
@@ -81,6 +82,7 @@
   <string name="OnlineVideos.LayoutIcons">Disposition : Icônes</string>
   <string name="OnlineVideos.LayoutBigIcons">Disposition : Grandes icônes</string>
   <!--M-->
+  <string name="OnlineVideos.Main.Help">Ce plugin permet de parcourir et lire des vidéos hébergées sur différents sites.</string>
   <string name="OnlineVideos.ManageSites">Gérer les sites</string>
   <string name="OnlineVideos.MaxResults">Nombre de Résultats?</string>
   <!--N-->
@@ -112,6 +114,7 @@
   <string name="OnlineVideos.Queued">Mettre en file d\'attente</string>
   <!--R-->
   <string name="OnlineVideos.RateVideo">Notez la vidéo</string>
+  <string name="OnlineVideos.Rating">Notation</string>
   <string name="OnlineVideos.Recommendations">Recommandation</string>
   <string name="OnlineVideos.RemoveFromFavorites">Supprimer le fichier des favoris</string>
   <string name="OnlineVideos.RemoveFromPlaylist">Enlever de la Playlist</string>

@@ -29,6 +29,7 @@
   <!--D-->
   <string name="OnlineVideos.Date">Datum</string>
   <string name="OnlineVideos.DateOfRelease">Utkomstdatum</string>
+  <string name="OnlineVideos.Details">Information</string>
   <string name="OnlineVideos.Directors">Regi</string>
   <string name="OnlineVideos.Download">Ladda ner</string>
   <string name="OnlineVideos.DownloadUserdefined">Ladda ner till förvald katalog</string>
@@ -113,6 +114,7 @@
   <string name="OnlineVideos.Queued">köad</string>
   <!--R-->
   <string name="OnlineVideos.RateVideo">Betygsätt videon ...</string>
+  <string name="OnlineVideos.Rating">Betyg</string>
   <string name="OnlineVideos.Recommendations">Rekommendationer</string>
   <string name="OnlineVideos.RemoveFromFavorites">Ta bort från favoriter</string>
   <string name="OnlineVideos.RemoveFromPlaylist">Ta bort från spellistan</string>

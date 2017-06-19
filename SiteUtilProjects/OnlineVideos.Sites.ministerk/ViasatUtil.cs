@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using OnlineVideos.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -285,9 +286,13 @@ namespace OnlineVideos.Sites
             {
                 playstr = data["streams"]["hls"].Value<string>();
                 video.PlaybackOptions = new Dictionary<string, string>();
-                OnlineVideos.Sites.Utils.MyHlsPlaylistParser parser = new OnlineVideos.Sites.Utils.MyHlsPlaylistParser(GetWebData(playstr), playstr);
-                foreach (OnlineVideos.Sites.Utils.MyHlsStreamInfo streamInfo in parser.StreamInfos)
-                    video.PlaybackOptions.Add(streamInfo.Width + "x" + streamInfo.Height + " (" + streamInfo.Bandwidth / 1000 + " kbps)", streamInfo.Url);
+                foreach (KeyValuePair<string,string> pair in HlsPlaylistParser.GetPlaybackOptions(GetWebData(playstr), playstr, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height + " (" + x.Bandwidth / 1000 + " Kbps)"))
+                {
+                    MPUrlSourceFilter.HttpUrl httpUrl = new MPUrlSourceFilter.HttpUrl(pair.Value);
+                    httpUrl.Referer = video.VideoUrl;
+                    httpUrl.UserAgent = "Mozilla/5.0 (Windows NT 6.1)";
+                    video.PlaybackOptions.Add(pair.Key, httpUrl.ToString());
+                }
                 playstr = video.PlaybackOptions.First().Value;
             }
 

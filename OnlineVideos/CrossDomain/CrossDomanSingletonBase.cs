@@ -8,10 +8,10 @@ namespace OnlineVideos.CrossDomain
     /// <typeparam name="T"></typeparam>
     public class CrossDomainSingleton<T> : MarshalByRefObject where T : class
     {
-        protected static T _instance = null;
+        protected static T _Instance = null;
         public static T Instance
         {
-            get { return _instance ?? (_instance = (T) OnlineVideosAppDomain.GetCrossDomainSingleton(typeof (T))); }
+            get { return _Instance ?? (_Instance = (T) OnlineVideosAppDomain.GetCrossDomainSingleton(typeof (T))); }
         }
 
         public override object InitializeLifetimeService()
