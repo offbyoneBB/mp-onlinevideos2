@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -76,6 +75,7 @@ namespace OnlineVideos.Sites
         private const string cUrlLiveServiceFormat = @"http://player.yle.fi/api/v1/services.jsonp?id={0}&region={1}";
         private const string cUrlArchiveEmbedFormat = @"http://yle.fi/elavaarkisto/embed/{0}.jsonp?callback=yleEmbed.eaJsonpCallback&instance=1&id={1}&lang=fi";
         private const string cUrlHdsFormat = @"http://player.yle.fi/api/v1/media.jsonp?protocol=HDS&client=areena-flash-player&id={0}";
+        private const string cUrlHlsFormat = @"http://player.yle.fi/api/v1/media.jsonp?protocol=HLS&client=areena-flash-player&id={0}";
         #endregion
 
         #region Properties
@@ -531,6 +531,35 @@ namespace OnlineVideos.Sites
             return GetSeriesVideos();
         }
 
+        private string DecryptData(string data)
+        {
+            byte[] bytes = Convert.FromBase64String(data);
+            RijndaelManaged rijndael = new RijndaelManaged();
+            byte[] iv = new byte[16];
+            Array.Copy(bytes, iv, 16);
+            rijndael.IV = iv;
+            rijndael.Key = Encoding.ASCII.GetBytes("yjuap4n5ok9wzg43");
+            rijndael.Mode = CipherMode.CFB;
+            rijndael.Padding = PaddingMode.Zeros;
+            ICryptoTransform decryptor = rijndael.CreateDecryptor(rijndael.Key, rijndael.IV);
+            int padLen = 16 - bytes.Length % 16;
+            byte[] newbytes = new byte[bytes.Length - 16 + padLen];
+            Array.Copy(bytes, 16, newbytes, 0, bytes.Length - 16);
+            Array.Clear(newbytes, newbytes.Length - padLen, padLen);
+            string result = null;
+            using (MemoryStream msDecrypt = new MemoryStream(newbytes))
+            {
+                using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                {
+                    using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                    {
+                        result = srDecrypt.ReadToEnd();
+                    }
+                }
+            }
+            return result;
+        }
+
         public override string GetVideoUrl(VideoInfo video)
         {
             bool isArchive = video.GetOtherAsString() == cArchiveCategory;
@@ -564,52 +593,50 @@ namespace OnlineVideos.Sites
                 if (subtitle != null && subtitle["uri"] != null) video.SubtitleUrl = subtitle["uri"].Value<string>();
             }
             string data = hdsStream["url"].Value<string>();
-            byte[] bytes = Convert.FromBase64String(data);
-            RijndaelManaged rijndael = new RijndaelManaged();
-            byte[] iv = new byte[16];
-            Array.Copy(bytes, iv, 16);
-            rijndael.IV = iv;
-            rijndael.Key = Encoding.ASCII.GetBytes("yjuap4n5ok9wzg43");
-            rijndael.Mode = CipherMode.CFB;
-            rijndael.Padding = PaddingMode.Zeros;
-            ICryptoTransform decryptor = rijndael.CreateDecryptor(rijndael.Key, rijndael.IV);
-            int padLen = 16 - bytes.Length % 16;
-            byte[] newbytes = new byte[bytes.Length - 16 + padLen];
-            Array.Copy(bytes, 16, newbytes, 0, bytes.Length - 16);
-            Array.Clear(newbytes, newbytes.Length - padLen, padLen);
-            string result = null;
-            using (MemoryStream msDecrypt = new MemoryStream(newbytes))
+            string result = DecryptData(data);
+            Regex r;
+            bool useHls = !result.Contains(".f4m") && !result.Contains("*~hmac");
+            if (useHls)
             {
-                using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                url = string.Format(cUrlHlsFormat, isArchive ? archiveUrl : video.VideoUrl);
+                json = GetWebData<JObject>(url, cache: false);
+                data = json["data"]["media"]["HLS"].First["url"].Value<string>();
+                result = DecryptData(data);
+                r = new Regex(@"(?<url>.*\.m3u8)");
+                Match m = r.Match(result);
+                if (m.Success)
                 {
-                    using (StreamReader srDecrypt = new StreamReader(csDecrypt))
-                    {
-                        result = srDecrypt.ReadToEnd();
-                    }
+                    result = m.Groups["url"].Value;
+                    video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(GetWebData(result), result);
+                    result = video.PlaybackOptions.Last().Value;
+
                 }
             }
-            Regex r;
-            if (video.GetOtherAsString() == cApiContentTypeTvLive)
-                r = new Regex(@"(?<url>.*\.f4m)");
             else
-                r = new Regex(@"(?<url>.*hmac=[a-z0-9]*)");
-            Match m = r.Match(result);
-            if (m.Success)
             {
-                result = m.Groups["url"].Value;
-            }
-            if (video.GetOtherAsString() == cApiContentTypeTvLive)
-            {
-                result += "?g=" + HelperUtils.GetRandomChars(12) + "&hdcore=3.3.0&plugin=flowplayer-3.3.0.0";
-                MPUrlSourceFilter.AfhsManifestUrl f4mUrl = new MPUrlSourceFilter.AfhsManifestUrl(result)
+
+                if (video.GetOtherAsString() == cApiContentTypeTvLive)
+                    r = new Regex(@"(?<url>.*\.f4m)");
+                else
+                    r = new Regex(@"(?<url>.*hmac=[a-z0-9]*)");
+                Match m = r.Match(result);
+                if (m.Success)
                 {
-                    LiveStream = true
-                };
-                result = f4mUrl.ToString();
-            }
-            else
-            {
-                result += "&g=" + HelperUtils.GetRandomChars(12) + "&hdcore=3.3.0&plugin=flowplayer-3.3.0.0";
+                    result = m.Groups["url"].Value;
+                }
+                if ((video.GetOtherAsString() == cApiContentTypeTvLive))
+                {
+                    result += "?g=" + HelperUtils.GetRandomChars(12) + "&hdcore=3.8.0&plugin=flowplayer-3.8.0.0";
+                    MPUrlSourceFilter.AfhsManifestUrl f4mUrl = new MPUrlSourceFilter.AfhsManifestUrl(result)
+                    {
+                        LiveStream = true
+                    };
+                    result = f4mUrl.ToString();
+                }
+                else
+                {
+                    result += "&g=" + HelperUtils.GetRandomChars(12) + "&hdcore=3.8.0&plugin=flowplayer-3.8.0.0";
+                }
             }
             return result;
         }
