@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Web;
 using Newtonsoft.Json.Linq;
 using HtmlAgilityPack;
 
@@ -18,20 +19,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Preferred Format"), Description("Prefer this format when there are more than one for the desired quality.")]
         VideoQuality preferredQuality = VideoQuality.H264_std;
 
-        private enum UgType { None, MostViewed, Recent, Omroepen, Genres, AtoZ, Type1, Series };
-        private Regex regEx_AtoZ;
-
-        private UgType currenttype = UgType.None;
-        private int pageNr = 0;
-        private string baseVideoListUrl = null;
-
-        string matchaz = @"<li\sclass='a-z-scrubber-item'><a(?:\sclass=""active"")?\shref=""(?<url>[^""]*)"">(?<title>[^<]*)</a></li>";
-        string matchRecent = @"(?<=<span\sclass='[^']*'>Datum</span>.*)<li><a\sdata-scorecard=""[^""]*""\shref=""(?<url>[^""]*)"">(?<title>[^<]*)</a></li>";
-
         private WebProxy webProxy = null;
-        private Regex regex_Az;
-
-        private Regex regex_Recent;
         #region singleton
         public WebProxy GetProxy()
         {
@@ -43,177 +31,145 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
-            regEx_AtoZ = new Regex(matchaz, defaultRegexOptions);
-            regex_Recent = new Regex(matchRecent, defaultRegexOptions);
+            HtmlDocument data = GetWebData<HtmlDocument>(baseUrl);
+            var nodes = data.DocumentNode.SelectNodes(@"//div[@class='npo-dropdown-container']");
 
-            Settings.Categories.Add(new RssLink() { Name = "Meest bekeken", Url = @"http://www.npo.nl/uitzending-gemist", Other = UgType.MostViewed });
-            Settings.Categories.Add(new RssLink() { Name = "Op datum", Url = @"http://www.npo.nl/uitzending-gemist", Other = UgType.Recent });
-            //Settings.Categories.Add(new RssLink() { Name = "Omroepen", Url = @"http://www.npo.nl/series", Other = UgType.Omroepen });
-            //Settings.Categories.Add(new RssLink() { Name = "Genres", Url = @"http://www.npo.nl/series", Other = UgType.Genres });
-            Settings.Categories.Add(new RssLink() { Name = "Programma’s A-Z", Url = @"http://www.npo.nl/a-z", Other = UgType.AtoZ });
-            foreach (RssLink cat in Settings.Categories)
-                cat.HasSubCategories = true;
+            foreach (var node in nodes)
+            {
 
+                var cat = new Category()
+                {
+                    Name = node.SelectSingleNode(@"div[@class='dropdown-text']").InnerText,
+                    HasSubCategories = true,
+                    SubCategoriesDiscovered = true,
+                    SubCategories = new List<Category>()
+                };
+                Settings.Categories.Add(cat);
+                var subnodes = node.SelectNodes(".//li/a");
+                foreach (var subnode in subnodes)
+                {
+                    var subcat = new RssLink() { Name = subnode.InnerText, ParentCategory = cat, HasSubCategories = true };
+                    var arg = subnode.Attributes["data-argument"].Value;
+                    var val = subnode.Attributes["data-value"].Value;
+                    if (!String.IsNullOrEmpty(val))
+                    {
+                        subcat.Url = "https://www.npo.nl/media/series?" + arg + '=' + val + "&tilemapping=normal&tiletype=teaser&page=1";
+                        cat.SubCategories.Add(subcat);
+                    }
+                }
+            }
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
         }
 
-        public override int DiscoverSubCategories(Category parentCategory)
-        {
-            switch ((UgType)parentCategory.Other)
-            {
-                case UgType.MostViewed: return getSubcats(parentCategory, UgType.None, @"most-viewed-date-range", @"http://www.npo.nl/uitzending-gemist/meest-bekeken?date={0}");
-                case UgType.Recent: return getRecent(parentCategory);
-                case UgType.Omroepen: return getSubcats(parentCategory, UgType.Type1, @"broadcaster", @"http://www.npo.nl/series?utf8=%E2%9C%93&genre=&broadcaster={0}&av_type=video");
-                case UgType.Genres: return getSubcats(parentCategory, UgType.Type1, @"genre", @"http://www.npo.nl/series?utf8=%E2%9C%93&genre={0}&broadcaster=&av_type=video");
-                case UgType.AtoZ: return getAtoZSubcats(parentCategory);
-                case UgType.Type1: return getType1Subcats(parentCategory);
-            }
-            return 0;
-        }
-
-        private int getAtoZSubcats(Category parentCat)
-        {
-            Regex sav = regEx_dynamicSubCategories;
-            regEx_dynamicSubCategories = regEx_AtoZ;
-            int res = base.DiscoverSubCategories(parentCat);
-            foreach (Category cat in parentCat.SubCategories)
-            {
-                cat.Other = UgType.Type1;
-                cat.HasSubCategories = true;
-            }
-            regEx_dynamicSubCategories = sav;
-            return res;
-        }
-
-        private int getRecent(Category parentCat)
-        {
-            Regex sav = regEx_dynamicSubCategories;
-            regEx_dynamicSubCategories = regex_Recent;
-            int res = base.DiscoverSubCategories(parentCat);
-            foreach (Category cat in parentCat.SubCategories)
-                cat.Other = UgType.None;
-            regEx_dynamicSubCategories = sav;
-            return res;
-        }
-
-        private string getSubcatWebData(string url)
+        private void addSubcats(Category parentCategory, string url)
         {
             NameValueCollection headers = new NameValueCollection();
             headers.Add("Accept", "*/*"); // accept any content type
             headers.Add("User-Agent", OnlineVideoSettings.Instance.UserAgent);
             headers.Add("X-Requested-With", "XMLHttpRequest");
-            return GetWebData(url, cookies: GetCookie(), forceUTF8: true, headers: headers);
+
+            JObject data = GetWebData<JObject>(url, headers: headers);
+            foreach (var jnode in data["tiles"])
+            {
+                var html = jnode.Value<String>();
+                var doc = new HtmlDocument();
+                doc.LoadHtml(html);
+                var subcat = new RssLink()
+                {
+                    Name = HttpUtility.HtmlDecode(doc.DocumentNode.SelectSingleNode("//h2").InnerText),
+                    ParentCategory = parentCategory,
+                    HasSubCategories = true,
+                    Url = doc.DocumentNode.SelectSingleNode("//a").Attributes["href"].Value,
+                    Other = true
+                };
+                var img = doc.DocumentNode.SelectSingleNode("//div[@style]");
+                if (img != null)
+                    subcat.Thumb = Helpers.StringUtils.GetSubString(img.Attributes["style"].Value, "url('", "')");
+                parentCategory.SubCategories.Add(subcat);
+            }
+            if (!String.IsNullOrEmpty(data["nextLink"].Value<String>()))
+                parentCategory.SubCategories.Add(new NextPageCategory()
+                {
+                    ParentCategory = parentCategory,
+                    Url = FormatDecodeAbsolutifyUrl(baseUrl, data["nextLink"].Value<String>() + "&tilemapping=normal&tiletype=teaser", "", UrlDecoding.None)
+                }
+                );
+
+            parentCategory.SubCategoriesDiscovered = true;
         }
 
-
-        public override int ParseSubCategories(Category parentCategory, string data)
+        public override int DiscoverSubCategories(Category parentCategory)
         {
-            string url = (parentCategory as RssLink).Url;
-            int res = base.ParseSubCategories(parentCategory, data);
-            if (res > 0)
+            parentCategory.SubCategories = new List<Category>();
+            if (parentCategory.Other == null)
             {
-                pageNr++;
-                foreach (Category cat in parentCategory.SubCategories)
-                    cat.Other = UgType.Series;
-                //always assume next page, no reliable detection possible
-                string nextCatPageUrl;
-                url = WebCache.Instance.GetRedirectedUrl(url);
-                if (url.Contains('?'))
-                    nextCatPageUrl = url + "&page=" + pageNr.ToString();
-                else
-                    nextCatPageUrl = url + "?page=" + pageNr.ToString();
-                if (!Uri.IsWellFormedUriString(nextCatPageUrl, System.UriKind.Absolute)) nextCatPageUrl = new Uri(new Uri(baseUrl), nextCatPageUrl).AbsoluteUri;
-                parentCategory.SubCategories.Add(new NextPageCategory() { Url = nextCatPageUrl, ParentCategory = parentCategory });
+                addSubcats(parentCategory, ((RssLink)parentCategory).Url);
+                return parentCategory.SubCategories.Count;
             }
-            return res;
+            else
+            {
+                var data = GetWebData<HtmlDocument>(((RssLink)parentCategory).Url);
 
+                var episodesNode = data.DocumentNode.SelectSingleNode(@"//div[@id='component-grid-episodes']");
+                if (episodesNode != null)
+                {
+                    var afleveringen = new RssLink() { Name = "Afleveringen", ParentCategory = parentCategory };
+                    parentCategory.SubCategories.Add(afleveringen);
+                    afleveringen.Url = "https://www.npo.nl" + episodesNode.SelectSingleNode(".//input[@name='selfLink']").Attributes["value"].Value + "?tilemapping=dedicated&tiletype=asset";
+                }
+
+                var clipsNode = data.DocumentNode.SelectSingleNode(@"//div[@id='component-grid-clips']");
+                if (clipsNode != null)
+                {
+                    //add extras
+                    var sub = new Category() { Name = "Extra's", ParentCategory = parentCategory };
+                    parentCategory.SubCategories.Add(sub);
+                    sub.Other = base.Parse(baseUrl, clipsNode.InnerHtml);
+                }
+
+                parentCategory.SubCategoriesDiscovered = true;
+                return parentCategory.SubCategories.Count;
+            }
         }
 
         public override int DiscoverNextPageCategories(NextPageCategory category)
         {
-            string data = getSubcatWebData(category.Url);
 
             category.ParentCategory.SubCategories.Remove(category);
+            addSubcats(category.ParentCategory, ((RssLink)category).Url);
             int oldAmount = category.ParentCategory.SubCategories.Count;
-            return ParseSubCategories(category.ParentCategory, data);
-        }
-
-        private int getType1Subcats(Category parentCat)
-        {
-            pageNr = 1;
-            string data = GetWebData((parentCat as RssLink).Url, cookies: GetCookie(), forceUTF8: true);
-            return ParseSubCategories(parentCat, data);
-        }
-
-        private int getSubcats(Category parentCat, UgType subType, string id, string format)
-        {
-            HtmlDocument data = GetWebData<HtmlDocument>(((RssLink)parentCat).Url, cookies: GetCookie(), forceUTF8: true);
-            var node = data.DocumentNode.Descendants("select").Where(sel => sel.GetAttributeValue("id", "") == id).FirstOrDefault();
-            var options = node.Descendants("option").Where(option => option.GetAttributeValue("disabled", "") != "disabled");
-            parentCat.SubCategories = new List<Category>();
-            foreach (var option in options)
-            {
-                parentCat.SubCategories.Add(new RssLink()
-                {
-                    Name = option.NextSibling.InnerText,
-                    Url = String.Format(format, option.GetAttributeValue("value", "")),
-                    HasSubCategories = subType != UgType.None,
-                    Other = subType,
-                    ParentCategory = parentCat
-                });
-            }
-            parentCat.SubCategoriesDiscovered = true;
-            return parentCat.SubCategories.Count;
+            return category.ParentCategory.SubCategories.Count;
         }
 
         public override List<VideoInfo> GetVideos(Category category)
         {
-            pageNr = 1;
-            baseVideoListUrl = ((RssLink)category).Url;
-            currenttype = (UgType)category.Other;
-            return lowGetVideoList(baseVideoListUrl, currenttype);
+            if (category.Other is List<VideoInfo>)
+                return (List<VideoInfo>)category.Other;
+
+            return Parse(((RssLink)category).Url, null);
         }
 
-        private List<VideoInfo> lowGetVideoList(string url, UgType type)
+        protected override List<VideoInfo> Parse(string url, string data)
         {
-            string data = GetWebData(url, cookies: GetCookie(), forceUTF8: true);
 
-            List<VideoInfo> res = base.Parse(url, data);
-            foreach (VideoInfo video in res)
-            {
-                int p = video.Airdate.LastIndexOf('·');
-                if (p >= 0)
-                {
-                    video.Length = video.Airdate.Substring(p + 1).Trim();
-                    video.Airdate = video.Airdate.Substring(0, p).Trim();
-                }
-            }
+            NameValueCollection headers = new NameValueCollection();
+            headers.Add("Accept", "*/*"); // accept any content type
+            headers.Add("User-Agent", OnlineVideoSettings.Instance.UserAgent);
+            headers.Add("X-Requested-With", "XMLHttpRequest");
 
-            pageNr++;
 
-            if (type == UgType.None)
+            JObject jdata = GetWebData<JObject>(url, headers: headers);
+
+            nextPageAvailable = false;
+            if (!String.IsNullOrEmpty(jdata["nextLink"].Value<String>()))
             {
                 nextPageAvailable = true;
-                nextPageUrl = baseVideoListUrl + "&page=" + pageNr.ToString();
+                nextPageUrl = FormatDecodeAbsolutifyUrl(baseUrl, jdata["nextLink"].Value<String>() + "&tilemapping=dedicated&tiletype=asset", "", UrlDecoding.None);
+
             }
-            if (type == UgType.Series)
-            {
-                nextPageAvailable = data.Contains(@"<span>Meer afleveringen</span>");
-                if (nextPageAvailable)
-                    nextPageUrl = baseVideoListUrl + "/search?media_type=broadcast&start_date=&end_date=&start=" + (pageNr * 8 - 8).ToString() + "&rows=8";
-                else
-                    nextPageUrl = String.Empty;
-            }
-
-            return res;
+            return base.Parse(url, jdata["tiles"].Value<String>());
         }
-
-        public override List<VideoInfo> GetNextPageVideos()
-        {
-            return lowGetVideoList(nextPageUrl, currenttype);
-        }
-
 
         public override string GetVideoUrl(VideoInfo video)
         {
@@ -235,6 +191,8 @@ namespace OnlineVideos.Sites
                         string s = item.Value<string>("url");
 
                         Match m = Regex.Match(s, @"/ida/(?<quality>[^/]*)/");
+                        if (!m.Success)
+                            m = Regex.Match(s, @"(?<quality>\d+x\d+)_");
                         if (m.Success)
                         {
                             string quality = m.Groups["quality"].Value;
@@ -275,10 +233,7 @@ namespace OnlineVideos.Sites
 
         public override List<SearchResultItem> Search(string query, string category = null)
         {
-            pageNr = 1;
-            baseVideoListUrl = string.Format(searchUrl, query);
-            currenttype = UgType.None;
-            return lowGetVideoList(baseVideoListUrl, currenttype).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
+            return Parse(string.Format(searchUrl, query), null).ConvertAll<SearchResultItem>(v => v as SearchResultItem);
         }
 
         public override VideoInfo CreateVideoInfo()
