@@ -426,7 +426,7 @@ namespace OnlineVideos.Sites
 
         RssLink createAlternateCategory(HtmlNode programme)
         {
-            var titleNode = programme.SelectSingleNode(@".//h1[contains(@class, 'list-item__title')]");
+            var titleNode = programme.SelectSingleNode(@".//h2[contains(@class, 'list-item__title')]");
             if (titleNode == null)
                 return null;
 
