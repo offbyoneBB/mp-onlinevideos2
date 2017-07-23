@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Web;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 
@@ -30,7 +29,7 @@ namespace OnlineVideos.Hoster
         public override Dictionary<string, string> GetPlaybackOptions(string url)
         {
             subtitleText = null;
-            Dictionary<string, string> result = new Dictionary<string, string>();
+            var result = new SortedList<int, Tuple<string, string>>();
             Match u = Regex.Match(url, @"https?://(?:www\.)?vimeo.com/moogaloop.swf\?clip_id=(?<url>[^&]*)&");
             if (!u.Success)
                 u = Regex.Match(url, @"https?://player.vimeo.com/video/(?<url>\d+)");
@@ -40,10 +39,11 @@ namespace OnlineVideos.Hoster
             string page = WebCache.Instance.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
-                Match n = Regex.Match(page, @"\(""GET"",""(?<url>[^""]+)""");
+                Match n = Regex.Match(page, @"""config_url"":(?<url>[^,]*),");
                 if (n.Success)
                 {
-                    page = WebCache.Instance.GetWebData(HttpUtility.HtmlDecode(n.Groups["url"].Value));
+                    string deJSONified = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(n.Groups["url"].Value);
+                    page = WebCache.Instance.GetWebData(deJSONified);
                     JToken jt = JObject.Parse(page) as JToken;
                     JToken video = jt["video"];
                     JToken request = jt["request"];
@@ -53,7 +53,12 @@ namespace OnlineVideos.Hoster
                     {
                         string quality = item.Value<string>("quality");
                         string vidUrl = item.Value<string>("url");
-                        result.Add(quality, vidUrl);
+
+                        int i = 0;
+                        while (i < quality.Length && quality[i] >= '0' && quality[i] <= '9') i++;
+                        int q;
+                        if (i <= 0 || !int.TryParse(quality.Substring(0, i - 1), out q)) q = 0;
+                        result.Add(q, new Tuple<string, string>(quality, vidUrl));
                     }
 
                     if (!String.IsNullOrEmpty(subtitleLanguages))
@@ -67,7 +72,7 @@ namespace OnlineVideos.Hoster
                     }
                 }
             }
-            return result;
+            return result.ToDictionary(v => v.Value.Item1, v => v.Value.Item2);
         }
 
         private string getSubUrl(JArray textTracks, string languages)
