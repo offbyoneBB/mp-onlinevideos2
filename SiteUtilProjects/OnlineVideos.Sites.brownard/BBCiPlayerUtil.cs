@@ -21,6 +21,8 @@ namespace OnlineVideos.Sites
         const string ATOZ_URL = "http://www.bbc.co.uk/iplayer/a-z/";
         static readonly string[] atoz = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0-9" };
 
+        static readonly Uri BASE_URL = new Uri("http://www.bbc.co.uk");
+
         #endregion
 
         #region Settings
@@ -497,7 +499,7 @@ namespace OnlineVideos.Sites
 
             return new VideoInfo()
             {
-                VideoUrl = "http://www.bbc.co.uk" + urlNode.GetAttributeValue("href", ""),
+                VideoUrl = GetAbsoluteUri(urlNode.GetAttributeValue("href", ""), BASE_URL).ToString(),
                 Title = title,
                 Description = videoNode.SelectSingleNode(@".//p[contains(@class, 'synopsis')]").GetCleanInnerText(),
                 Airdate = videoNode.SelectSingleNode(@".//span[contains(@class, 'release')]").GetCleanInnerText().Replace("First shown:", "").Trim(),
@@ -582,7 +584,7 @@ namespace OnlineVideos.Sites
 
         #region Utils
         
-        string getNextPageUrl(HtmlDocument document, string originalUrl)
+        static string getNextPageUrl(HtmlDocument document, string originalUrl)
         {
             var nextPageNode = document.DocumentNode.SelectSingleNode(@"//span[contains(@class, 'next txt')]/a");
             if (nextPageNode != null)
@@ -595,7 +597,7 @@ namespace OnlineVideos.Sites
             return null;
         }
 
-        string getImageUrl(HtmlNode sourceNode)
+        static string getImageUrl(HtmlNode sourceNode)
         {
             if (sourceNode != null)
             {
@@ -604,6 +606,12 @@ namespace OnlineVideos.Sites
                     return srcMatch[srcMatch.Count - 1].Value.Trim();
             }
             return null;
+        }
+
+        static Uri GetAbsoluteUri(string possibleAbsoluteUrl, Uri baseUrl)
+        {
+            Uri uri = new Uri(possibleAbsoluteUrl, UriKind.RelativeOrAbsolute);
+            return uri.IsAbsoluteUri ? uri : new Uri(baseUrl, uri);
         }
 
         #endregion
