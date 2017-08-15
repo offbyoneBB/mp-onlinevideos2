@@ -379,6 +379,7 @@ namespace OnlineVideos.Sites
         public override string GetVideoUrl(VideoInfo video)
         {
             string url = string.Format("http://player.yle.fi/api/v1/media.jsonp?protocol=HDS&client=areena-flash-player&id={0}", video.VideoUrl);
+            string subtitleUrl = string.Empty;
             JObject json = GetWebData<JObject>(url, cache: false);
             JToken hdsStream = json["data"]["media"]["HDS"].FirstOrDefault(h => h["subtitles"] != null && h["subtitles"].Count() > 0);
             if (hdsStream == null)
@@ -388,8 +389,13 @@ namespace OnlineVideos.Sites
             else
             {
                 JToken subtitle = hdsStream["subtitles"].FirstOrDefault(s => s["lang"].Value<string>() == ApiLanguage);
+                if (subtitle == null && ApiLanguage == "fi") subtitle = hdsStream["subtitles"].FirstOrDefault(s => s["lang"].Value<string>() == "fih"); //Hearing impaired
                 if (subtitle == null) subtitle = hdsStream["subtitles"].FirstOrDefault(s => s["lang"].Value<string>() == ApiOtherLanguage);
-                if (subtitle != null && subtitle["uri"] != null) video.SubtitleUrl = subtitle["uri"].Value<string>();
+                if (subtitle != null && subtitle["uri"] != null) subtitleUrl = subtitle["uri"].Value<string>();
+            }
+            if (!string.IsNullOrEmpty(subtitleUrl))
+            {
+                video.SubtitleText = GetWebData(subtitleUrl, encoding: Encoding.UTF8, forceUTF8: true);
             }
             string data = hdsStream["url"].Value<string>();
             string result = DecryptData(data);
