@@ -38,6 +38,8 @@ namespace OnlineVideos.Sites
         #endregion
 
         #region Consts
+        const string SWF_URL = "http://www.itv.com/mercury/Mercury_VideoPlayer.swf";
+
         const string SOAP_TEMPLATE = @"<?xml version='1.0' encoding='utf-8'?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
     <SOAP-ENV:Body>
@@ -354,7 +356,7 @@ namespace OnlineVideos.Sites
                     string url = new MPUrlSourceFilter.RtmpUrl(rtmpUrl)
                     {
                         PlayPath = mediaFile.InnerText,
-                        SwfUrl = "http://mediaplayer.itv.com/2.18.5%2Bbuild.ad408a9c67/ITVMediaPlayer.swf",
+                        SwfUrl = SWF_URL,
                         SwfVerify = true,
                         Live = live
                     }.ToString();
