@@ -17,6 +17,14 @@ namespace OnlineVideos.Sites
             return res;
         }
 
+        protected override List<VideoInfo> Parse(string url, string data)
+        {
+            var res = base.Parse(url, data);
+            foreach (var vid in res)
+                vid.Thumb = ApplyUrlDecoding(vid.Thumb, UrlDecoding.HtmlDecode).Replace("https://", "http://");
+            return res;
+        }
+
         public override string GetVideoUrl(VideoInfo video)
         {
             video.PlaybackOptions = new Dictionary<string, string>();
@@ -25,7 +33,7 @@ namespace OnlineVideos.Sites
             if (talkDetailsMatch.Success)
             {
                 JObject talkDetails = JsonConvert.DeserializeObject(talkDetailsMatch.Groups["json"].Value) as JObject;
-                foreach (JProperty htmlStream in talkDetails["talks"][0]["nativeDownloads"])
+                foreach (JProperty htmlStream in talkDetails["__INITIAL_DATA__"]["talks"][0]["downloads"]["nativeDownloads"])
                 {
                     video.PlaybackOptions.Add(htmlStream.Name, htmlStream.Value.ToString());
                 }
