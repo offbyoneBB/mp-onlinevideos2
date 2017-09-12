@@ -23,7 +23,7 @@ namespace OnlineVideos.Hoster
             List<Hoster.HosterBase> hosters = Hoster.HosterFactory.GetAllHosters();
 
             Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
-            Regex rgx = new Regex(@"<iframe[^>]*?src='(?<url>[^']*)");
+            Regex rgx = new Regex(@"<iframe[^>]*?src=['""](?<url>[^""']*)");
             Match m = rgx.Match(data);
             if (m.Success)
             {

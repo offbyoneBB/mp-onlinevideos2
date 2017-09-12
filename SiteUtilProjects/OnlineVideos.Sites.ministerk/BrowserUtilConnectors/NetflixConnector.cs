@@ -166,7 +166,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                                 {
                                     authUrl = m.Groups["authURL"].Value;
                                     authUrl = HttpUtility.UrlDecode(authUrl.Replace("\\x", "%"));
-                                    string loginPostDataFormat = "emailOrPhoneNumber={0}&password={1}&rememberMe=true&flow=websiteSignUp&mode=universalLogin&action=loginAction&withFields=emailOrPhoneNumber%2Cpassword%2CrememberMe%2CnextPage&authURL={2}&nextPage=";
+                                    string loginPostDataFormat = "email={0}&password={1}&rememberMe=true&flow=websiteSignUp&mode=login&action=loginAction&withFields=email%2Cpassword%2CrememberMe%2CnextPage%2CshowPassword&authURL={2}&nextPage=&showPassword=";
                                     string loginPostData = string.Format(loginPostDataFormat, HttpUtility.UrlEncode(_username), HttpUtility.UrlEncode(_password), HttpUtility.UrlEncode(authUrl));
                                     Browser.Navigate(Url, "", Encoding.UTF8.GetBytes(loginPostData), "Referer: " + Url + "\r\nContent-Type: application/x-www-form-urlencoded\r\n");
                                 }
