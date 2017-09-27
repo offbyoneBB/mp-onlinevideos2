@@ -5,40 +5,72 @@
     xmlns:ovs="clr-namespace:OnlineVideos.MediaPortal2;assembly=OnlineVideos.MediaPortal2"
     Source="screens\master_menu.xaml">
   <Include.Resources>
-
+    <!-- Header -->
+    <ResourceWrapper x:Key="Header_Text" Resource="[OnlineVideos.Sites]"/>
+    
     <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
     <ovs:SiteUtilIconConverter x:Key="ovsSiteUtilIconConverter"/>
+
     <!-- Contents -->
     <ControlTemplate x:Key="Contents_Template">
       <DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}" >
 
         <ListView x:Name="siteslist" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center"
-                  Style="{ThemeResource ovsSitesListViewStyle}" Margin="-50, -18,-70,-8"
+                  Style="{ThemeResource ovsSitesListViewStyle}" Margin="-40, -18,-70,-8"
                   CurrentItem="{Binding Path=FocusedSite, Mode=OneWayToSource}" 
                   ItemsSource="{Binding Path=SitesList}" SetFocusPrio="RestoreState"/>
 
-        <Grid DockPanel.Dock="Bottom" VerticalAlignment="Top" Margin="-20,630,0,-400">
+        <!-- Actual Item / Total items -->
+        <DockPanel DockPanel.Dock="Center" VerticalAlignment="Top" HorizontalAlignment="Left" LastChildFill="false"
+                   IsVisible="{Binding IsItemsValid}">
+          <StackPanel DockPanel.Dock="Left" Margin="10,-85,25,85" Orientation="Horizontal">
+            <Label HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,10,0" FontFamily="DefaultBold"
+               Color="{ThemeResource TextColor}" FontSize="{ThemeResource SmallerFontSize}">
+              <Label.Content>
+                <MultiBinding Converter="{StaticResource GetIndexMultiConverter}" ConverterParameter="1">
+                  <Binding ElementName="siteslist" Path="CurrentItem"/>
+                  <Binding ElementName="siteslist" Path="ItemsSource"/>
+                </MultiBinding>
+              </Label.Content>
+            </Label>
+            <Label Color="{ThemeResource TextColor}" Content="| " FontSize="{ThemeResource SmallerFontSize}" FontFamily="DefaultBold"/>
+            <Label Color="{ThemeResource TextColor}" FontSize="{ThemeResource SmallerFontSize}" FontFamily="DefaultBold">
+              <Label.Content>
+                <Binding ElementName="siteslist" Path="ItemsSource.Count" />
+              </Label.Content>
+            </Label>
+          </StackPanel>
+        </DockPanel>
+        
+        <Grid DockPanel.Dock="Bottom" VerticalAlignment="Top" Margin="-30,630,0,-250">
           <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="400"/>
             <ColumnDefinition Width="20"/>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
           </Grid.ColumnDefinitions>
           <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
           </Grid.RowDefinitions>
-          <Label Grid.Row="0" Grid.Column="0" Color="{ThemeResource TextColor}"
+          <Label Grid.Row="0" Grid.ColumnSpan="2" Color="{ThemeResource TextColor}" FontFamily="DefaultBold"
                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                 DataContext="{Binding ElementName=siteslist,Path=CurrentItem}" Content="{Binding Path=Name}" />
-          <Label Height="170" Grid.Row="1" Grid.Column="0" Color="{ThemeResource TextColor}" Opacity="0.6"
-                 HorizontalAlignment="Stretch" VerticalAlignment="Top" Wrap="True" Scroll="Auto"
-                 DataContext="{Binding ElementName=siteslist,Path=CurrentItem}"
-                 Content="{Binding Description}" />
-          <Image Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" DataContext="{Binding ElementName=siteslist,Path=CurrentItem}" Width="180" Stretch="Uniform"
-                 Source="{Binding Path=Site, Converter={ThemeResource ovsSiteUtilIconConverter}}" Margin="15"
-                 HorizontalAlignment="Stretch" VerticalAlignment="Top"/>           
-        </Grid>
+                 DataContext="{Binding ElementName=siteslist,Path=CurrentItem}" Content="{Binding Path=Name}"/>
+          <StackPanel Grid.Row="1" Grid.Column="0">
+            <!--Label FontSize="{ThemeResource SmallFontSize}" Margin="0,0,5,0" Content="{Binding Path=Sites.Count}"
+                   Color="{ThemeResource TextColor}" DataContext="{Binding ElementName=siteslist,Path=CurrentItem}"/-->
+            <Image Width="{ResolutionResource ovsLanguageImageWidth}" Stretch="Uniform" Margin="0,2,0,2" DataContext="{Binding ElementName=siteslist,Path=CurrentItem}"
+                   HorizontalAlignment="Left" VerticalAlignment="Top" Source="{Binding Path=Language, Converter={StaticResource ovsLanguageIconConverter}}"/>
+            <Image DataContext="{Binding ElementName=siteslist,Path=CurrentItem}" Height="75" Stretch="Uniform"
+                   Source="{Binding Path=Site, Converter={ThemeResource ovsSiteUtilIconConverter}}" Margin="0,5,10,0"
+                   HorizontalAlignment="Left" VerticalAlignment="Top"/>            
+          </StackPanel>
 
+          <Label Height="170" Grid.Row="1" Grid.Column="2" Color="{ThemeResource TextColor}" Opacity="0.6"
+                 HorizontalAlignment="Stretch" VerticalAlignment="Top" Wrap="True"
+                 DataContext="{Binding ElementName=siteslist,Path=CurrentItem}" TextTrimming="WordEllipsis"
+                 Content="{Binding Description}" />         
+        </Grid>
+        
       </DockPanel>
     </ControlTemplate>
   </Include.Resources>

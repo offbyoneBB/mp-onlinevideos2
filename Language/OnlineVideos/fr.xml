@@ -29,6 +29,7 @@
   <!--D-->
   <string name="Date">Date</string>
   <string name="DateOfRelease">Date de sortie</string>
+  <string name="Details">Détails</string>
   <string name="Directors">Réalisateurs</string>
   <string name="Download">Télécharger</string>
   <string name="DownloadUserdefined">Téléchargement vers le répertoire de l\'utilisateur</string>
@@ -81,6 +82,7 @@
   <string name="LayoutIcons">Disposition : Icônes</string>
   <string name="LayoutBigIcons">Disposition : Grandes icônes</string>
   <!--M-->
+  <string name="Main.Help">Ce plugin permet de parcourir et lire des vidéos hébergées sur différents sites.</string>
   <string name="ManageSites">Gérer les sites</string>
   <string name="MaxResults">Nombre de Résultats?</string>
   <!--N-->
@@ -112,6 +114,7 @@
   <string name="Queued">Mettre en file d\'attente</string>
   <!--R-->
   <string name="RateVideo">Notez la vidéo</string>
+  <string name="Rating">Notation</string>
   <string name="Recommendations">Recommandation</string>
   <string name="RemoveFromFavorites">Supprimer le fichier des favoris</string>
   <string name="RemoveFromPlaylist">Enlever de la Playlist</string>

@@ -121,11 +121,8 @@ namespace OnlineVideos.MediaPortal2
             // with just one option set, resolve it and call handler
             else if (VideoInfo.PlaybackOptions.Count == 1)
             {
-                BackgroundTask.Instance.Start<string>(
-                    () =>
-                    {
-                        return VideoInfo.GetPlaybackOptionUrl(VideoInfo.PlaybackOptions.First().Key);
-                    },
+                BackgroundTask.Instance.Start(
+                    () => VideoInfo.GetPlaybackOptionUrl(VideoInfo.PlaybackOptions.First().Key),
                     (success, url) =>
                     {
                         if (success)
@@ -139,11 +136,8 @@ namespace OnlineVideos.MediaPortal2
                 {
                     var defaultOption = VideoInfo.PlaybackOptions.FirstOrDefault(p => p.Value == defaultUrl).Key;
                     if (string.IsNullOrEmpty(defaultOption)) defaultOption = VideoInfo.PlaybackOptions.First().Key;
-                    BackgroundTask.Instance.Start<string>(
-                        () =>
-                        {
-                            return VideoInfo.GetPlaybackOptionUrl(defaultOption);
-                        },
+                    BackgroundTask.Instance.Start(
+                        () => VideoInfo.GetPlaybackOptionUrl(defaultOption),
                         (success, url) =>
                         {
                             if (success)
@@ -179,11 +173,8 @@ namespace OnlineVideos.MediaPortal2
         void SelectPlaybackOption(ListItem option)
         {
             var resultHandler = (Action<string>)option.AdditionalProperties[Constants.KEY_HANDLER];
-            BackgroundTask.Instance.Start<string>(
-                () =>
-                {
-                    return VideoInfo.GetPlaybackOptionUrl(option[Consts.KEY_NAME]);
-                },
+            BackgroundTask.Instance.Start(
+                () => VideoInfo.GetPlaybackOptionUrl(option[Consts.KEY_NAME]),
                 (success, url) =>
                 {
                     if (success)
@@ -244,19 +235,21 @@ namespace OnlineVideos.MediaPortal2
                     ctxEntries.Add(
                         new ListItem(Consts.KEY_NAME, string.Format("{0} ({1})", Translation.Instance.Download, Translation.Instance.Concurrent))
                         {
-                            Command = new MethodDelegateCommand(() => DownloadConcurrent())
+                            Command = new MethodDelegateCommand(DownloadConcurrent)
                         });
                     ctxEntries.Add(
                         new ListItem(Consts.KEY_NAME, string.Format("{0} ({1})", Translation.Instance.Download, Translation.Instance.Queued))
                         {
-                            Command = new MethodDelegateCommand(() => DownloadQueued())
+                            Command = new MethodDelegateCommand(DownloadQueued)
                         });
                 }
                 foreach (var entry in site.GetContextMenuEntries(Category, VideoInfo))
                 {
-                    var entry_for_closure = entry;
-                    var item = new ListItem(Consts.KEY_NAME, entry.DisplayText);
-                    item.Command = new MethodDelegateCommand(() => HandleCustomContextMenuEntry(entry_for_closure));
+                    var entryForClosure = entry;
+                    var item = new ListItem(Consts.KEY_NAME, entry.DisplayText)
+                    {
+                        Command = new MethodDelegateCommand(() => HandleCustomContextMenuEntry(entryForClosure))
+                    };
                     ctxEntries.Add(item);
                 }
             }
@@ -290,7 +283,7 @@ namespace OnlineVideos.MediaPortal2
                     break;
                 case Sites.ContextMenuEntry.UIAction.PromptYesNo:
                     var dialogHandleId = ServiceRegistration.Get<IDialogManager>().ShowDialog(entry.DisplayText, entry.PromptText, DialogType.YesNoDialog, false, DialogButtonType.No);
-                    var dialogCloseWatcher = new DialogCloseWatcher(this, dialogHandleId, (dialogResult) =>
+                    var dialogCloseWatcher = new DialogCloseWatcher(this, dialogHandleId, dialogResult =>
                     {
                         if (dialogResult == DialogResult.Yes)
                         {
@@ -313,7 +306,7 @@ namespace OnlineVideos.MediaPortal2
                             AdditionalContextVariables = new Dictionary<string, object>
                             {
                                 { Constants.CONTEXT_VAR_ITEMS, menuItems },
-                                { Constants.CONTEXT_VAR_COMMAND, new CommandContainer<ListItem>((li)=>HandleCustomContextMenuEntry(li.AdditionalProperties[Consts.KEY_MEDIA_ITEM] as Sites.ContextMenuEntry)) }
+                                { Constants.CONTEXT_VAR_COMMAND, new CommandContainer<ListItem>(li=>HandleCustomContextMenuEntry(li.AdditionalProperties[Consts.KEY_MEDIA_ITEM] as Sites.ContextMenuEntry)) }
                             }
                         });
 
@@ -325,11 +318,8 @@ namespace OnlineVideos.MediaPortal2
         {
             var ovMainModel = ServiceRegistration.Get<IWorkflowManager>().GetModel(Guids.WorkFlowModelOV) as OnlineVideosWorkflowModel;
             var site = OnlineVideoSettings.Instance.SiteUtilsList[SiteName];
-            BackgroundTask.Instance.Start<OnlineVideos.Sites.ContextMenuExecutionResult>(
-                () =>
-                {
-                    return site.ExecuteContextMenuEntry(Category, VideoInfo, entry);
-                },
+            BackgroundTask.Instance.Start(
+                () => site.ExecuteContextMenuEntry(Category, VideoInfo, entry),
                 (success, result) =>
                 {
                     if (success)
@@ -341,11 +331,8 @@ namespace OnlineVideos.MediaPortal2
                         if (result.RefreshCurrentItems)
                         {
                             // discover and show videos of this category
-                            BackgroundTask.Instance.Start<List<VideoInfo>>(
-                                () =>
-                                {
-                                    return site.GetVideos(Category);
-                                },
+                            BackgroundTask.Instance.Start(
+                                () => site.GetVideos(Category),
                                 (success2, videos) =>
                                 {
                                     if (success2)
@@ -354,7 +341,7 @@ namespace OnlineVideos.MediaPortal2
                                         videos.ForEach(r => { r.CleanDescriptionAndTitle(); ovMainModel.VideosList.Add(new VideoViewModel(r, Category, SiteSettings, false)); });
                                         if (site.HasNextPage) ovMainModel.VideosList.Add(new VideoViewModel(Translation.Instance.NextPage, "NextPage.png"));
                                         ovMainModel.VideosList.FireChange();
-                                        ImageDownloader.GetImages<VideoInfo>(videos);
+                                        ImageDownloader.GetImages(videos);
                                     }
                                 },
                                 Translation.Instance.GettingCategoryVideos);
@@ -427,32 +414,32 @@ namespace OnlineVideos.MediaPortal2
                 foreach (string url in urls)
                 {
                     VideoInfo vi = saveItems.CurrentItem.VideoInfo.CloneForPlaylist(url, url == urls[0]);
-                    string url_new = url;
+                    string urlNew = url;
                     if (url == urls[0])
                     {
-                        url_new = saveItems.CurrentItem.Util.GetPlaylistItemVideoUrl(vi, string.Empty);
+                        urlNew = saveItems.CurrentItem.Util.GetPlaylistItemVideoUrl(vi, string.Empty);
                     }
                     DownloadInfo pli = DownloadInfo.Create(vi, saveItems.CurrentItem.Category, saveItems.CurrentItem.Util);
                     pli.Title = string.Format("{0} - {1} / {2}", vi.Title, (saveItems.DownloadItems.Count + 1).ToString(), urls.Count);
-                    pli.Url = url_new;
+                    pli.Url = urlNew;
                     pli.OverrideFolder = saveItems.CurrentItem.OverrideFolder;
                     pli.OverrideFileName = saveItems.CurrentItem.OverrideFileName;
                     saveItems.DownloadItems.Add(pli);
                 }
                 // make the first item the current to be saved now
                 saveItems.CurrentItem = saveItems.DownloadItems[0];
-                urls = new List<string>(new string[] { saveItems.CurrentItem.Url });
+                urls = new List<string>(new[] { saveItems.CurrentItem.Url });
             }
             // show selection dialog for playback options
             VideoViewModel tempVi = new VideoViewModel(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, saveItems.CurrentItem.Util.Settings, false);
-            tempVi.ChoosePlaybackOptions(urls[0], (url) => { SaveVideo_Step3(saveItems, url, enque); }, enque == null); // skip dialog when downloading an item of a queue
+            tempVi.ChoosePlaybackOptions(urls[0], url => { SaveVideo_Step3(saveItems, url, enque); }, enque == null); // skip dialog when downloading an item of a queue
         }
 
         static void SaveVideo_Step3(DownloadList saveItems, string url, bool? enque)
         {
             // check for valid url and cut off additional parameter
             if (String.IsNullOrEmpty(url) ||
-                !Helpers.UriUtils.IsValidUri((url.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? url.Substring(0, url.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : url))
+                !Helpers.UriUtils.IsValidUri(url.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0 ? url.Substring(0, url.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : url))
             {
                 ServiceRegistration.Get<IDialogManager>().ShowDialog("[OnlineVideos.Error]", "[OnlineVideos.UnableToDownloadVideo]", DialogType.OkDialog, false, DialogButtonType.Ok);
                 return;
@@ -463,10 +450,10 @@ namespace OnlineVideos.MediaPortal2
 
             if (!string.IsNullOrEmpty(saveItems.CurrentItem.OverrideFolder))
             {
-                if (!string.IsNullOrEmpty(saveItems.CurrentItem.OverrideFileName))
-                    saveItems.CurrentItem.LocalFile = Path.Combine(saveItems.CurrentItem.OverrideFolder, saveItems.CurrentItem.OverrideFileName);
-                else
-                    saveItems.CurrentItem.LocalFile = Path.Combine(saveItems.CurrentItem.OverrideFolder, saveItems.CurrentItem.Util.GetFileNameForDownload(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, url));
+                saveItems.CurrentItem.LocalFile = Path.Combine(saveItems.CurrentItem.OverrideFolder, 
+                    !string.IsNullOrEmpty(saveItems.CurrentItem.OverrideFileName) ? 
+                    saveItems.CurrentItem.OverrideFileName : 
+                    saveItems.CurrentItem.Util.GetFileNameForDownload(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, url));
             }
             else
             {
@@ -478,8 +465,8 @@ namespace OnlineVideos.MediaPortal2
                 saveItems.CurrentItem.LocalFile = string.Format(@"{0}\{1} - {2}#{3}{4}",
                     Path.GetDirectoryName(saveItems.CurrentItem.LocalFile),
                     Path.GetFileNameWithoutExtension(saveItems.CurrentItem.LocalFile),
-                    (saveItems.DownloadItems.IndexOf(saveItems.CurrentItem) + 1).ToString().PadLeft((saveItems.DownloadItems.Count).ToString().Length, '0'),
-                    (saveItems.DownloadItems.Count).ToString(),
+                    (saveItems.DownloadItems.IndexOf(saveItems.CurrentItem) + 1).ToString().PadLeft(saveItems.DownloadItems.Count.ToString().Length, '0'),
+                    saveItems.DownloadItems.Count,
                     Path.GetExtension(saveItems.CurrentItem.LocalFile));
             }
 
@@ -487,7 +474,7 @@ namespace OnlineVideos.MediaPortal2
             saveItems.CurrentItem.ThumbFile = string.IsNullOrEmpty(saveItems.CurrentItem.VideoInfo.ThumbnailImage) ? saveItems.CurrentItem.VideoInfo.Thumb : saveItems.CurrentItem.VideoInfo.ThumbnailImage;
 
             // make sure the target dir exists
-            if (!(Directory.Exists(Path.GetDirectoryName(saveItems.CurrentItem.LocalFile))))
+            if (!Directory.Exists(Path.GetDirectoryName(saveItems.CurrentItem.LocalFile)))
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(saveItems.CurrentItem.LocalFile));
             }
@@ -497,7 +484,7 @@ namespace OnlineVideos.MediaPortal2
             else if (enque == false)
                 DownloadManager.Instance.Add(null, saveItems);
 
-            System.Threading.Thread downloadThread = new System.Threading.Thread((System.Threading.ParameterizedThreadStart)delegate(object o)
+            System.Threading.Thread downloadThread = new System.Threading.Thread(delegate(object o)
             {
                 DownloadList dlList = o as DownloadList;
                 try
@@ -567,7 +554,7 @@ namespace OnlineVideos.MediaPortal2
             {
                 if (saveItems.CurrentItem != null && saveItems.CurrentItem.Util != null)
                 {
-                    saveItems.CurrentItem.Util.OnDownloadEnded(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Url, (double)saveItems.CurrentItem.PercentComplete / 100.0d, error != null);
+                    saveItems.CurrentItem.Util.OnDownloadEnded(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Url, saveItems.CurrentItem.PercentComplete / 100.0d, error != null);
                 }
             }
             catch (Exception ex)
@@ -575,7 +562,7 @@ namespace OnlineVideos.MediaPortal2
                 Log.Warn("Error on Util.OnDownloadEnded: {0}", ex.ToString());
             }
 
-            bool preventMessageDuetoAdult = (saveItems.CurrentItem.Util != null && saveItems.CurrentItem.Util.Settings.ConfirmAge && OnlineVideoSettings.Instance.UseAgeConfirmation && !OnlineVideoSettings.Instance.AgeConfirmed);
+            bool preventMessageDuetoAdult = saveItems.CurrentItem.Util != null && saveItems.CurrentItem.Util.Settings.ConfirmAge && OnlineVideoSettings.Instance.UseAgeConfirmation && !OnlineVideoSettings.Instance.AgeConfirmed;
 
             if (error != null && !saveItems.CurrentItem.Downloader.Cancelled)
             {
@@ -623,7 +610,7 @@ namespace OnlineVideos.MediaPortal2
                 int fileSize = saveItems.CurrentItem.KbTotal;
                 if (fileSize <= 0)
                 {
-                    try { fileSize = (int)((new FileInfo(saveItems.CurrentItem.LocalFile)).Length / 1024); }
+                    try { fileSize = (int)(new FileInfo(saveItems.CurrentItem.LocalFile).Length / 1024); }
                     catch { }
                 }
 

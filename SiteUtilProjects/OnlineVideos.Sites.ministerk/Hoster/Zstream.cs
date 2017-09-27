@@ -25,6 +25,8 @@ namespace OnlineVideos.Hoster
             }
 
             string data = GetWebData<string>(url);
+            if (data.Contains("File was deleted"))
+                throw new OnlineVideosException("File was deleted");
             sub = "";
             Regex rgx = new Regex(@"""(?<u>http[^""]*?.mp4[^""]*)""");
             Match m = rgx.Match(data);

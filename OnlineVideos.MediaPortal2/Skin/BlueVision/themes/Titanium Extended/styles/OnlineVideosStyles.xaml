@@ -17,8 +17,26 @@
             <ItemsPresenter VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0"/>
         </ScrollViewer>
     </ControlTemplate>
-  
-    <DataTemplate x:Key="ovsSiteItemDataTemplate" DataType="{x:Type ovs:SiteViewModel}">
+
+  <DataTemplate x:Key="ovsSiteGroupItemDataTemplate" DataType="{x:Type ovs:SiteGroupViewModel}">
+    <Grid Width="{ResolutionResource ovsSiteGroupItemWidth}" Height="{ResolutionResource ovsSiteGroupItemHeight}" Margin="{ResolutionResource ovsSiteGroupItemMargin}">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+      <Border CornerRadius="8" Background="White" Opacity="0.23" Margin="-9"> </Border>
+      <Image x:Name="thumb" Stretch="Uniform" Margin="{ResolutionResource ovsSiteGroupItemThumbMargin}" Source="{Binding Path=Thumb}"/>
+      <Label x:Name="ItemLabelBig" HorizontalAlignment="Center" VerticalAlignment="Center" Wrap="true" Content="{Binding [Name]}"
+             IsVisible="{Binding ElementName=thumb, Path=!HasImage}" Color="{ThemeResource TextColor}"/>
+      <Image Source="episode_thumb_focus.png" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Fill" Margin="-16,-16,-16,-16"
+             IsVisible="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Button}},Path=HasFocus}">
+      </Image>
+    </Grid>
+  </DataTemplate>
+
+  <DataTemplate x:Key="ovsSiteItemDataTemplate" DataType="{x:Type ovs:SiteViewModel}">
       <Grid Width="{ResolutionResource ovsSiteItemWidth}" Height="{ResolutionResource ovsSiteItemHeight}" Margin="{ResolutionResource ovsSiteItemMargin}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -122,7 +140,26 @@
        </Grid>
     </DataTemplate>
 
-    <Style x:Key="ovsSiteItemContainerStyle" TargetType="{x:Type ListViewItem}">
+  <Style x:Key="ovsSiteGroupItemContainerStyle" TargetType="{x:Type ListViewItem}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListViewItem}">
+          <Button x:Name="ovsGrowControl" Style="{ThemeResource ButtonMediaItemCoverStyle}" RenderTransformOrigin="0.5,0.5" Margin="{ResolutionResource ovsSiteGroupItemContainerMargin}">
+            <Button.Command>
+              <Command Source="{DynamicResource OnlineVideosModel}" Path="SelectSiteGroup" Parameters="{LateBoundValue BindingValue={Binding}}"/>
+            </Button.Command>
+          </Button>
+          <ControlTemplate.Triggers>
+            <Trigger Property="Selected" Value="True">
+              <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="ovsSiteItemContainerStyle" TargetType="{x:Type ListViewItem}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListViewItem}">
@@ -225,12 +262,42 @@
         </Setter>
     </Style>
 
-    <Style x:Key="ovsSitesListViewStyle" TargetType="{x:Type ListView}">
+  <Style x:Key="ovsSiteGroupsListViewStyle" TargetType="{x:Type ListView}">
+    <Setter Property="Template" Value="{ThemeResource ovsListViewTemplate}"/>
+    <Setter Property="ItemsPanel">
+      <Setter.Value>
+        <ItemsPanelTemplate>
+          <WrapPanel IsItemsHost="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="{ResolutionResource ovsSitesPanelMargin}"/>
+        </ItemsPanelTemplate>
+      </Setter.Value>
+    </Setter>
+    <Setter Property="ItemTemplate" Value="{ThemeResource ovsSiteGroupItemDataTemplate}"/>
+    <Setter Property="ItemContainerStyle" Value="{ThemeResource ovsSiteGroupItemContainerStyle}"/>
+    <Setter Property="DataStringProvider" Value="{ThemeResource DefaultItemDataStringProvider}"/>
+  </Style>
+
+  <Style x:Key="ovsSitesListViewStyle" TargetType="{x:Type ListView}">
         <Setter Property="Template" Value="{ThemeResource ovsListViewTemplate}"/>
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
-                    <WrapPanel IsItemsHost="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="{ResolutionResource ovsSitesPanelMargin}"/>
+                  <!--WrapPanel IsItemsHost="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="{ResolutionResource ovsSitesPanelMargin}"/-->
+                  <AnimatedWrapPanel x:Name="GridItemsHost" IsItemsHost="True" Orientation="Horizontal" LoopScroll="False"
+                                     Margin="{ResolutionResource ovsSitesPanelMargin}">
+                    <AnimatedWrapPanel.Resources>
+                      <Storyboard x:Key="ScrollAnimation" FillBehavior="HoldEnd">
+                        <DoubleAnimation BeginTime="00:00:00" From="0" To="1" Duration="00:00:00.300"
+                                                 FillBehavior="HoldEnd" Storyboard.TargetName="GridItemsHost" Storyboard.TargetProperty="ScrollOffsetMultiplier"/>
+                      </Storyboard>
+                    </AnimatedWrapPanel.Resources>
+                    <AnimatedWrapPanel.Triggers>
+                      <EventTrigger RoutedEvent="AnimatedWrapPanel.Scroll">
+                        <EventTrigger.Actions>
+                          <BeginStoryboard Storyboard="{ThemeResource ScrollAnimation}"/>
+                        </EventTrigger.Actions>
+                      </EventTrigger>
+                    </AnimatedWrapPanel.Triggers>
+                  </AnimatedWrapPanel>
                 </ItemsPanelTemplate>
             </Setter.Value>
         </Setter>

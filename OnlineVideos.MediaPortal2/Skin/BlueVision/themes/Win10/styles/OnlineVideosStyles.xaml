@@ -3,7 +3,7 @@
     xmlns="www.team-mediaportal.com/2008/mpf/directx"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ovs="clr-namespace:OnlineVideos.MediaPortal2;assembly=OnlineVideos.MediaPortal2"
-    DependsOnStyleResources="Buttons,Colors,Consts,OnlineVideosConsts">
+    DependsOnStyleResources="Buttons,Colors,Consts,OnlineVideosConsts,OtherControls">
 
     <ovs:SiteUtilIconConverter x:Key="ovsSiteUtilIconConverter"/>
     <ovs:LanguageIconConverter x:Key="ovsLanguageIconConverter"/>
@@ -11,35 +11,65 @@
     <ovs:SiteStateColorConverter x:Key="ovsSiteStateColorConverter"/>
 
     <ControlTemplate x:Key="ovsListViewTemplate" TargetType="{x:Type ListView}">
-        <ScrollViewer Style="{ThemeResource DefaultScrollViewerStyle}" CanContentScroll="true" HorizontalScrollBarVisibility="Disabled"
-                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-            <ItemsPresenter VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,-18,0"/>
-        </ScrollViewer>
+      <ScrollViewer CanContentScroll="True" Margin="0" Style="{ThemeResource GradientListScrollViewerStyle}"
+                    HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <ItemsPresenter VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+      </ScrollViewer>
     </ControlTemplate>
 
+    <DataTemplate x:Key="ovsSiteGroupItemDataTemplate" DataType="{x:Type ovs:SiteGroupViewModel}">
+      <Grid Width="{ResolutionResource ovsSiteGroupItemWidth}" Height="{ResolutionResource ovsSiteGroupItemHeight}"
+            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="1">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Border x:Name="BackgroundBorder" Grid.Column="0" Grid.Row="0" CornerRadius="0" Background="#454545" Margin="0">
+          <Border.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}, Path=HasFocus}" Value="True">
+              <Setter TargetName="BackgroundBorder" Property="Background" Value="#003366"/>
+            </DataTrigger>
+          </Border.Triggers>
+        </Border>
+        <Image x:Name="thumb" Stretch="Uniform" Margin="{ResolutionResource ovsSiteGroupItemThumbMargin}" Source="{Binding Path=Thumb}"/>
+        <Label x:Name="ItemLabelBig" HorizontalAlignment="Center" VerticalAlignment="Center" Wrap="true" Content="{Binding [Name]}" IsVisible="{Binding ElementName=thumb, Path=!HasImage}" Color="{ThemeResource TextColor}"/>
+        <!--Label x:Name="ItemLabel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="{Binding [Name]}" FontSize="{ThemeResource SmallerFontSize}" IsVisible="{Binding ElementName=thumb, Path=HasImage}"
+               Color="{ThemeResource TextColor}" Background="#A0000000"/-->
+        <!--Label VerticalAlignment="Bottom" HorizontalAlignment="Right" FontSize="{ThemeResource LittleFontSize}" Margin="0,0,2,2" Content="{Binding Path=Sites.Count}"
+               Color="{ThemeResource TextColor}"/-->
+      </Grid>
+    </DataTemplate>
+    
     <DataTemplate x:Key="ovsSiteItemDataTemplate" DataType="{x:Type ovs:SiteViewModel}">
-        <Grid Width="{ResolutionResource ovsSiteItemWidth}" Height="{ResolutionResource ovsSiteItemHeight}" Margin="{ResolutionResource ovsSiteItemMargin}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Border CornerRadius="0" Background="Black" Opacity="0.2" Margin="-11"> </Border>
-            <Image x:Name="thumb" Stretch="Uniform" Margin="{ResolutionResource ovsSiteItemThumbMargin}" 
+      <Grid Width="{ResolutionResource ovsSiteItemWidth}" Height="{ResolutionResource ovsSiteItemHeight}" 
+            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="1">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Border x:Name="BackgroundBorder" Grid.Column="0" Grid.Row="0" CornerRadius="0" Background="#454545" Margin="0">
+          <Border.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}, Path=HasFocus}" Value="True">
+              <Setter TargetName="BackgroundBorder" Property="Background" Value="#003366"/>
+            </DataTrigger>
+          </Border.Triggers>
+        </Border>
+        <Image x:Name="thumb" Stretch="Uniform" Margin="{ResolutionResource ovsSiteItemThumbMargin}" 
                    Source="{Binding Path=Site, Converter={StaticResource ovsSiteUtilIconConverter}}"/>
-            <Image Width="{ResolutionResource ovsLanguageImageWidth}" Stretch="Uniform" Margin="0,2,3,0" 
-                   HorizontalAlignment="Right" VerticalAlignment="Top" 
-                   Source="{Binding Path=Language, Converter={StaticResource ovsLanguageIconConverter}}"/>
-            <Label x:Name="ItemLabelBig" HorizontalAlignment="Center" VerticalAlignment="Center" Wrap="true" Scroll="Auto"
-                   Content="{Binding Path=Name}" IsVisible="{Binding ElementName=thumb, Path=!HasImage}" Color="{ThemeResource TextColor}"/>
-          <!-->Label x:Name="ItemLabel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="{Binding Path=Name}" FontSize="{ThemeResource SmallerFontSize}" IsVisible="{Binding ElementName=thumb, Path=HasImage}"
-                   Color="{ThemeResource TextColor}" Background="#A0000000"/-->
-        </Grid>
+        <!--Image Width="{ResolutionResource ovsLanguageImageWidth}" Stretch="Uniform" Margin="0,2,3,0" 
+               HorizontalAlignment="Right" VerticalAlignment="Top" 
+               Source="{Binding Path=Language, Converter={StaticResource ovsLanguageIconConverter}}"/-->
+        <Label x:Name="ItemLabelBig" HorizontalAlignment="Center" VerticalAlignment="Center" Wrap="true" Scroll="None"
+               Content="{Binding Path=Name}" IsVisible="{Binding ElementName=thumb, Path=!HasImage}" Color="{ThemeResource TextColor}"/>
+      </Grid>
     </DataTemplate>
 
     <DataTemplate x:Key="ovsCategoryItemDataTemplate" DataType="{x:Type ovs:CategoryViewModel}">
-      <Grid Width="{ResolutionResource ovsCategoryItemWidth}" Height="{ResolutionResource ovsCategoryItemHeight}" Margin="3">
+      <Grid Width="{ResolutionResource ovsCategoryItemWidth}" Height="{ResolutionResource ovsCategoryItemHeight}" Margin="1">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
@@ -47,33 +77,30 @@
           <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid Name="PosterGrid" HorizontalAlignment="Center" VerticalAlignment="Center"
+        <Border x:Name="BackgroundBorder" CornerRadius="0" Background="#454545" Margin="0">
+          <Border.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}, Path=HasFocus}" Value="True">
+              <Setter TargetName="BackgroundBorder" Property="Background" Value="#003366"/>
+            </DataTrigger>
+          </Border.Triggers>
+        </Border>
+
+        <Grid Name="PosterGrid" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"
               MaxHeight="{ResolutionResource ovsCategoryItemHeight}" MaxWidth="{ResolutionResource ovsCategoryItemWidth}">
-         <Grid.Opacity>
-           <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} ? {1} : {2}">
-             <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type Button}}" Path="HasFocus"/>
-             <Binding Source="1.0"/>
-             <Binding Source="0.8"/>
-           </MultiBinding>
-         </Grid.Opacity>
          <DockPanel>
-           <Image DockPanel.Dock="Center" x:Name="thumb" Stretch="Uniform" 
-                  Source="{Binding Path=Thumb}">
-           </Image>
-           <Image DockPanel.Dock="Center" Stretch="Fill"
-                  Source="Container.png" IsVisible="{Binding ElementName=thumb, Path=!HasImage}" />
+           <Image DockPanel.Dock="Center" x:Name="thumb" Stretch="Uniform" Source="{Binding Path=Thumb}"/>
            <Label DockPanel.Dock="Bottom" x:Name="ItemLabel" IsVisible="{Binding ElementName=thumb, Path=!HasImage}"
-                  VerticalAlignment="Bottom" Wrap="False" Scroll="Auto" Margin="20,90,20,20" HorizontalAlignment="Center"
+                  VerticalAlignment="Bottom" Wrap="False" Scroll="None" ScrollDelay="0" Margin="20,90,20,20" HorizontalAlignment="Right"
                   FontSize="{ThemeResource SmallFontSize}" Content="{Binding Path=Name}" Color="{ThemeResource TextColor}" />
          </DockPanel>
-         <Label VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="{ThemeResource SmallerFontSize}" Margin="20,4,20,20" 
-                 Content="{Binding Path=EstimatedChildren}" Color="Black" IsVisible="{Binding ElementName=thumb, Path=!HasImage}"/>
+         <Label VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="{ThemeResource SmallFontSize}" Margin="20,18,20,20" 
+                 Content="{Binding Path=EstimatedChildren}" Color="{ThemeResource TextColor}" IsVisible="{Binding ElementName=thumb, Path=!HasImage}"/>
         </Grid>
       </Grid>
     </DataTemplate>
 
     <DataTemplate x:Key="ovsVideoItemDataTemplate" DataType="{x:Type ovs:VideoViewModel}">
-      <Grid Width="{ResolutionResource ovsVideoItemWidth}" Height="{ResolutionResource ovsVideoItemHeight}" Margin="3">
+      <Grid Width="{ResolutionResource ovsVideoItemWidth}" Height="{ResolutionResource ovsVideoItemHeight}" Margin="1">
          <Grid.ColumnDefinitions>
            <ColumnDefinition Width="*"/>
          </Grid.ColumnDefinitions>
@@ -81,107 +108,121 @@
             <RowDefinition Height="*"/>
          </Grid.RowDefinitions>
 
-        <Grid Name="PosterGrid" HorizontalAlignment="Center" VerticalAlignment="Center"
-              MaxHeight="{ResolutionResource ovsVideoItemHeight}" MaxWidth="{ResolutionResource ovsVideoItemWidth}">
-           <Grid.Opacity>
-             <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} ? {1} : {2}">
-               <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type Button}}" Path="HasFocus"/>
-               <Binding Source="1.0"/>
-               <Binding Source="0.8"/>
-             </MultiBinding>
-           </Grid.Opacity>
-           <Image x:Name="thumb" Stretch="Uniform" VerticalAlignment="Center" 
-                  Source="{Binding Path=ThumbnailImage}">
-           </Image>
-           <!--Image x:Name="thumb" Stretch="Uniform" VerticalAlignment="Center" Margin="{ResolutionResource ovsSiteItemThumbMargin}" 
-                   MaxHeight="{ResolutionResource ovsVideoItemThumbMaxHeight}" Source="{Binding Path=ThumbnailImage}"/-->
-           <Image Stretch="Fill" Source="Container.png" IsVisible="{Binding ElementName=thumb, Path=!HasImage}" />
-           <Label x:Name="ItemLabel"  IsVisible="{Binding ElementName=thumb, Path=!HasImage}"
-                   VerticalAlignment="Bottom" Wrap="False" Scroll="Auto" Margin="20,90,20,20" HorizontalAlignment="Center"
-                   FontSize="{ThemeResource SmallFontSize}" Content="{Binding Path=Title}" Color="{ThemeResource TextColor}" />
+        <Border x:Name="BackgroundBorder" CornerRadius="0" Background="#454545" Margin="0">
+          <Border.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Button}, Path=HasFocus}" Value="True">
+              <Setter TargetName="BackgroundBorder" Property="Background" Value="#003366"/>
+            </DataTrigger>
+          </Border.Triggers>
+        </Border>
+        
+        <Grid Name="PosterGrid" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"
+              MaxWidth="{ResolutionResource ovsVideoItemWidth}" MaxHeight="{ResolutionResource ovsVideoItemHeight}">
+          <Image x:Name="thumb" Stretch="Uniform" VerticalAlignment="Center" Source="{Binding Path=ThumbnailImage}"/>
+          <Label x:Name="ItemLabel"  IsVisible="{Binding ElementName=thumb, Path=!HasImage}"
+                 VerticalAlignment="Bottom" Wrap="False" Scroll="None" ScrollDelay="0" Margin="20,90,20,20" HorizontalAlignment="Center"
+                 FontSize="{ThemeResource SmallFontSize}" Content="{Binding Path=Title}" Color="{ThemeResource TextColor}" />
          </Grid>     
        </Grid>
     </DataTemplate>
 
+    <Style x:Key="ovsSiteGroupItemContainerStyle" TargetType="{x:Type ListViewItem}">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type ListViewItem}">
+            <Button x:Name="ovsGrowControl" Style="{ThemeResource MediaItemButtonCoverStyle}">
+              <Button.Command>
+                <Command Source="{DynamicResource OnlineVideosModel}" Path="SelectSiteGroup" Parameters="{LateBoundValue BindingValue={Binding}}"/>
+              </Button.Command>
+            </Button>
+            <ControlTemplate.Triggers>
+              <Trigger Property="Selected" Value="True">
+                <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    
     <Style x:Key="ovsSiteItemContainerStyle" TargetType="{x:Type ListViewItem}">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ListViewItem}">
-                    <Button x:Name="ovsGrowControl" Style="{ThemeResource MediaItemButtonCoverStyle}" RenderTransformOrigin="0.5,0.5" Margin="{ResolutionResource ovsSiteItemContainerMargin}">
-                        <Button.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform x:Name="frameScale" ScaleX="1" ScaleY="1"/>
-                            </TransformGroup>
-                        </Button.RenderTransform>
-                        <Button.Command>
-                            <Command Source="{DynamicResource OnlineVideosModel}" Path="SelectSite" Parameters="{LateBoundValue BindingValue={Binding}}"/>
-                        </Button.Command>
-                        <Button.ContextMenuCommand>
-                            <Command Source="{Service ScreenManager}" Path="ShowDialog" Parameters="ovsDialogItemContextMenu"/>
-                        </Button.ContextMenuCommand>
-                    </Button>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="Selected" Value="True">
-                            <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type ListViewItem}">
+            <Button x:Name="ovsGrowControl" Style="{ThemeResource MediaItemButtonCoverStyle}">
+              <Button.Command>
+                <Command Source="{DynamicResource OnlineVideosModel}" Path="SelectSite" Parameters="{LateBoundValue BindingValue={Binding}}"/>
+              </Button.Command>
+              <Button.Triggers>
+                <Trigger Property="HasFocus" Value="True">
+                  <Setter TargetName="ItemLabel" Property="Scroll" Value="Auto"/>
+                </Trigger>
+              </Button.Triggers>
+              <Button.ContextMenuCommand>
+                <Command Source="{Service ScreenManager}" Path="ShowDialog" Parameters="ovsDialogItemContextMenu"/>
+              </Button.ContextMenuCommand>
+            </Button>
+            <ControlTemplate.Triggers>
+              <Trigger Property="Selected" Value="True">
+                <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
     </Style>
 
     <Style x:Key="ovsCategoryItemContainerStyle" TargetType="{x:Type ListViewItem}">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ListViewItem}">
-                    <Button x:Name="ovsGrowControl" RenderTransformOrigin="0.5,0.5" Style="{ThemeResource MediaItemButtonCoverStyle}"
-                            SetFocusPrio="{Binding Path=Selected, Mode=OneTime, Converter={StaticResource ovsBoolFocusPrioConverter}}"
-                            Margin="{ResolutionResource ovsCategoryItemContainerMargin}">
-                        <Button.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform x:Name="frameScale" ScaleX="1" ScaleY="1"/>
-                            </TransformGroup>
-                        </Button.RenderTransform>
-                        <Button.Command>
-                            <Command Source="{DynamicResource OnlineVideosModel}" Path="SelectCategory" Parameters="{LateBoundValue BindingValue={Binding}}"/>
-                        </Button.Command>
-                    </Button>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="Selected" Value="True">
-                            <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="{x:Type ListViewItem}">
+            <Button x:Name="ovsGrowControl" Style="{ThemeResource MediaItemButtonCoverStyle}"
+                    SetFocusPrio="{Binding Path=Selected, Mode=OneTime, Converter={StaticResource ovsBoolFocusPrioConverter}}">
+              <Button.Command>
+                <Command Source="{DynamicResource OnlineVideosModel}" Path="SelectCategory" Parameters="{LateBoundValue BindingValue={Binding}}"/>
+              </Button.Command>
+              <Button.Triggers>
+                <Trigger Property="HasFocus" Value="True">
+                  <Setter TargetName="ItemLabel" Property="Scroll" Value="Auto"/>
+                </Trigger>
+              </Button.Triggers>
+            </Button>
+            <ControlTemplate.Triggers>
+              <Trigger Property="Selected" Value="True">
+               <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
     </Style>
 
     <Style x:Key="ovsVideoItemContainerStyle" TargetType="{x:Type ListViewItem}">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ListViewItem}">
-                    <Button x:Name="ovsGrowControl" RenderTransformOrigin="0.5,0.5" SetFocusPrio="{Binding Path=Selected, Mode=OneTime, Converter={StaticResource ovsBoolFocusPrioConverter}}"
-                             Margin="{ResolutionResource ovsVideoItemContainerMargin}" Style="{ThemeResource MediaItemButtonCoverStyle}">
-                        <Button.RenderTransform>
-                            <TransformGroup>
-                                <ScaleTransform x:Name="frameScale" ScaleX="1" ScaleY="1"/>
-                            </TransformGroup>
-                        </Button.RenderTransform>
-                        <Button.Command>
-                            <Command Source="{DynamicResource OnlineVideosModel}" Path="SelectVideo" Parameters="{LateBoundValue BindingValue={Binding}}"/>
-                        </Button.Command>
-                        <Button.ContextMenuCommand>
-                            <Command Source="{Service ScreenManager}" Path="ShowDialog" Parameters="ovsDialogItemContextMenu"/>
-                        </Button.ContextMenuCommand>
-                    </Button>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="Selected" Value="True">
-                            <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+       <Setter Property="Template">
+          <Setter.Value>
+             <ControlTemplate TargetType="{x:Type ListViewItem}">
+                <Button x:Name="ovsGrowControl" SetFocusPrio="{Binding Path=Selected, Mode=OneTime, Converter={StaticResource ovsBoolFocusPrioConverter}}"
+                        Style="{ThemeResource MediaItemButtonCoverStyle}">
+                  <Button.Command>
+                    <Command Source="{DynamicResource OnlineVideosModel}" Path="SelectVideo" Parameters="{LateBoundValue BindingValue={Binding}}"/>
+                  </Button.Command>
+                  <Button.ContextMenuCommand>
+                    <Command Source="{Service ScreenManager}" Path="ShowDialog" Parameters="ovsDialogItemContextMenu"/>
+                  </Button.ContextMenuCommand>
+                  <Button.Triggers>
+                    <Trigger Property="HasFocus" Value="True">
+                      <Setter TargetName="ItemLabel" Property="Scroll" Value="Auto"/>
+                    </Trigger>
+                  </Button.Triggers>
+                </Button>
+              <ControlTemplate.Triggers>
+                <Trigger Property="Selected" Value="True">
+                  <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
+                </Trigger>
+              </ControlTemplate.Triggers>
+            </ControlTemplate>
+          </Setter.Value>
+       </Setter>
     </Style>
 
     <Style x:Key="ovsDetailsVideoItemContainerStyle" TargetType="{x:Type ListViewItem}">
@@ -206,14 +247,58 @@
         </Setter>
     </Style>
 
+    <Style x:Key="ovsSiteGroupsListViewStyle" TargetType="{x:Type ListView}">
+      <Setter Property="Template" Value="{ThemeResource ovsListViewTemplate}"/>
+      <Setter Property="ItemsPanel">
+        <Setter.Value>
+          <ItemsPanelTemplate>
+            <AnimatedWrapPanel x:Name="GridItemsHost" IsItemsHost="True" Orientation="Horizontal" LoopScroll="False"
+                               ScrollMargin="0,200" Margin="0,-100,0,-150">
+              <AnimatedWrapPanel.Resources>
+                <Storyboard x:Key="ScrollAnimation" FillBehavior="HoldEnd">
+                  <DoubleAnimation BeginTime="00:00:00" From="0" To="1" Duration="00:00:00.300" 
+                                   FillBehavior="HoldEnd" Storyboard.TargetName="GridItemsHost" Storyboard.TargetProperty="ScrollOffsetMultiplier"/>
+                </Storyboard>
+              </AnimatedWrapPanel.Resources>
+              <AnimatedWrapPanel.Triggers>
+                <EventTrigger RoutedEvent="AnimatedWrapPanel.Scroll">
+                  <EventTrigger.Actions>
+                    <BeginStoryboard Storyboard="{ThemeResource ScrollAnimation}"/>
+                  </EventTrigger.Actions>
+                </EventTrigger>
+              </AnimatedWrapPanel.Triggers>
+            </AnimatedWrapPanel>
+          </ItemsPanelTemplate>
+        </Setter.Value>
+      </Setter>
+      <Setter Property="ItemTemplate" Value="{ThemeResource ovsSiteGroupItemDataTemplate}"/>
+      <Setter Property="ItemContainerStyle" Value="{ThemeResource ovsSiteGroupItemContainerStyle}"/>
+      <Setter Property="DataStringProvider" Value="{ThemeResource DefaultItemDataStringProvider}"/>
+    </Style>
+    
     <Style x:Key="ovsSitesListViewStyle" TargetType="{x:Type ListView}">
         <Setter Property="Template" Value="{ThemeResource ovsListViewTemplate}"/>
         <Setter Property="ItemsPanel">
-            <Setter.Value>
-                <ItemsPanelTemplate>
-                    <WrapPanel IsItemsHost="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="{ResolutionResource ovsSitesPanelMargin}"/>
-                </ItemsPanelTemplate>
-            </Setter.Value>
+          <Setter.Value>
+            <ItemsPanelTemplate>
+              <AnimatedWrapPanel x:Name="GridItemsHost" IsItemsHost="True" Orientation="Horizontal" LoopScroll="False"
+                                 ScrollMargin="0,200" Margin="0,-100,0,-150">
+                <AnimatedWrapPanel.Resources>
+                  <Storyboard x:Key="ScrollAnimation" FillBehavior="HoldEnd">
+                    <DoubleAnimation BeginTime="00:00:00" From="0" To="1" Duration="00:00:00.300" 
+                                           FillBehavior="HoldEnd" Storyboard.TargetName="GridItemsHost" Storyboard.TargetProperty="ScrollOffsetMultiplier"/>
+                  </Storyboard>
+                </AnimatedWrapPanel.Resources>
+                <AnimatedWrapPanel.Triggers>
+                  <EventTrigger RoutedEvent="AnimatedWrapPanel.Scroll">
+                    <EventTrigger.Actions>
+                      <BeginStoryboard Storyboard="{ThemeResource ScrollAnimation}"/>
+                    </EventTrigger.Actions>
+                  </EventTrigger>
+                </AnimatedWrapPanel.Triggers>
+              </AnimatedWrapPanel>
+            </ItemsPanelTemplate>
+          </Setter.Value>
         </Setter>
         <Setter Property="ItemTemplate" Value="{ThemeResource ovsSiteItemDataTemplate}"/>
         <Setter Property="ItemContainerStyle" Value="{ThemeResource ovsSiteItemContainerStyle}"/>
@@ -221,31 +306,61 @@
     </Style>
 
     <Style x:Key="ovsCategoriesListViewStyle" TargetType="{x:Type ListView}">
-        <Setter Property="Template" Value="{ThemeResource ovsListViewTemplate}"/>
-        <Setter Property="ItemsPanel">
-            <Setter.Value>
-                <ItemsPanelTemplate>
-                    <WrapPanel IsItemsHost="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="{ResolutionResource ovsCategoriesPanelMargin}"/>
-                </ItemsPanelTemplate>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="ItemTemplate" Value="{ThemeResource ovsCategoryItemDataTemplate}"/>
-        <Setter Property="ItemContainerStyle" Value="{ThemeResource ovsCategoryItemContainerStyle}"/>
-        <Setter Property="DataStringProvider" Value="{ThemeResource DefaultItemDataStringProvider}"/>
+      <Setter Property="Template" Value="{ThemeResource ovsListViewTemplate}"/>
+      <Setter Property="ItemsPanel">
+        <Setter.Value>
+          <ItemsPanelTemplate>
+            <AnimatedWrapPanel x:Name="GridItemsHost" IsItemsHost="True" Orientation="Horizontal" LoopScroll="False"
+                               ScrollMargin="0,200" Margin="0,-100,0,-150">
+              <AnimatedWrapPanel.Resources>
+                <Storyboard x:Key="ScrollAnimation" FillBehavior="HoldEnd">
+                  <DoubleAnimation BeginTime="00:00:00" From="0" To="1" Duration="00:00:00.300" 
+                                           FillBehavior="HoldEnd" Storyboard.TargetName="GridItemsHost" Storyboard.TargetProperty="ScrollOffsetMultiplier"/>
+                </Storyboard>
+              </AnimatedWrapPanel.Resources>
+              <AnimatedWrapPanel.Triggers>
+                <EventTrigger RoutedEvent="AnimatedWrapPanel.Scroll">
+                  <EventTrigger.Actions>
+                    <BeginStoryboard Storyboard="{ThemeResource ScrollAnimation}"/>
+                  </EventTrigger.Actions>
+                </EventTrigger>
+              </AnimatedWrapPanel.Triggers>
+            </AnimatedWrapPanel>
+          </ItemsPanelTemplate>
+        </Setter.Value>
+      </Setter>
+      <Setter Property="ItemTemplate" Value="{ThemeResource ovsCategoryItemDataTemplate}"/>
+      <Setter Property="ItemContainerStyle" Value="{ThemeResource ovsCategoryItemContainerStyle}"/>
+      <Setter Property="DataStringProvider" Value="{ThemeResource DefaultItemDataStringProvider}"/>
     </Style>
 
     <Style x:Key="ovsVideosListViewStyle" TargetType="{x:Type ListView}">
-        <Setter Property="Template" Value="{ThemeResource ovsListViewTemplate}"/>
-        <Setter Property="ItemsPanel">
-            <Setter.Value>
-                <ItemsPanelTemplate>
-                    <WrapPanel IsItemsHost="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="{ResolutionResource ovsVideosPanelMargin}"/>
-                </ItemsPanelTemplate>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="ItemTemplate" Value="{ThemeResource ovsVideoItemDataTemplate}"/>
-        <Setter Property="ItemContainerStyle" Value="{ThemeResource ovsVideoItemContainerStyle}"/>
-        <Setter Property="DataStringProvider" Value="{ThemeResource DefaultItemDataStringProvider}"/>
+      <Setter Property="Template" Value="{ThemeResource ovsListViewTemplate}"/>
+      <Setter Property="ItemsPanel">
+        <Setter.Value>
+          <ItemsPanelTemplate>
+            <AnimatedWrapPanel x:Name="GridItemsHost" IsItemsHost="True" Orientation="Horizontal" LoopScroll="False"
+                               ScrollMargin="0,200" Margin="0,-100,0,-150">
+              <AnimatedWrapPanel.Resources>
+                <Storyboard x:Key="ScrollAnimation" FillBehavior="HoldEnd">
+                  <DoubleAnimation BeginTime="00:00:00" From="0" To="1" Duration="00:00:00.300" 
+                                           FillBehavior="HoldEnd" Storyboard.TargetName="GridItemsHost" Storyboard.TargetProperty="ScrollOffsetMultiplier"/>
+                </Storyboard>
+              </AnimatedWrapPanel.Resources>
+              <AnimatedWrapPanel.Triggers>
+                <EventTrigger RoutedEvent="AnimatedWrapPanel.Scroll">
+                  <EventTrigger.Actions>
+                    <BeginStoryboard Storyboard="{ThemeResource ScrollAnimation}"/>
+                  </EventTrigger.Actions>
+                </EventTrigger>
+              </AnimatedWrapPanel.Triggers>
+            </AnimatedWrapPanel>
+          </ItemsPanelTemplate>
+        </Setter.Value>
+      </Setter>
+      <Setter Property="ItemTemplate" Value="{ThemeResource ovsVideoItemDataTemplate}"/>
+      <Setter Property="ItemContainerStyle" Value="{ThemeResource ovsVideoItemContainerStyle}"/>
+      <Setter Property="DataStringProvider" Value="{ThemeResource DefaultItemDataStringProvider}"/>
     </Style>
 
     <Style x:Key="ovsDetailsVideosListViewStyle" BasedOn="{ThemeResource MenuListViewStyle}">
@@ -290,8 +405,8 @@
             <Label Grid.Column="2" Content="{Binding [Name]}"
                    HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="{ThemeResource SmallFontSize}"
                    Color="{ThemeResource TextColor}"/>
-            <Label Grid.Column="3" Color="{ThemeResource TextColor}"
-                HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="{ThemeResource SmallFontSize}" Margin="2">
+            <Label Grid.Column="3" Color="{ThemeResource HintTextColor}"
+                HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="{ThemeResource SmallerFontSize}" Margin="2">
                 <Label.Content>
                     <Binding Path="LastUpdated" Converter="{StaticResource StringFormatConverter}" ConverterParameter="{}{0:g}"/>
                 </Label.Content>

@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using OnlineVideos.Hoster;
+using OnlineVideos.Subtitles;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -8,7 +11,6 @@ namespace OnlineVideos.Sites
 
     public class LosMoviesUtil : LatestVideosSiteUtilBase
     {
-
         public class LosMoviesVideoInfo : VideoInfo
         {
             public string LatestOption { get; private set; }
@@ -20,28 +22,31 @@ namespace OnlineVideos.Sites
                 Hoster.HosterBase hoster = Hoster.HosterFactory.GetAllHosters().FirstOrDefault(h => u.ToLowerInvariant().Contains(h.GetHosterUrl().ToLowerInvariant()));
                 if (hoster != null)
                 {
-                    return hoster.GetVideoUrl(u);
+                    string theUrl = hoster.GetVideoUrl(u);
+                    if (hoster is ISubtitle && string.IsNullOrWhiteSpace(SubtitleText))
+                        this.SubtitleText = (hoster as ISubtitle).SubtitleText;
+                    return theUrl;
                 }
                 return "";
             }
         }
 
-       // [Category("OnlineVideosUserConfiguration"), Description("Select subtitle source, for example: TvSubtitles")]
-       // [TypeConverter(typeof(SubtitleSourceConverter))]
-       // protected string subtitleSource = "";
-       // [Category("OnlineVideosUserConfiguration"), Description("Select subtitle language preferences (; separated and ISO 639-2), for example: eng;ger")]
-       // protected string subtitleLanguages = "";
+        [Category("OnlineVideosUserConfiguration"), Description("Select subtitle source, for example: TvSubtitles")]
+        [TypeConverter(typeof(SubtitleSourceConverter))]
+        protected string subtitleSource = "";
+        [Category("OnlineVideosUserConfiguration"), Description("Select subtitle language preferences (; separated and ISO 639-2), for example: eng;ger")]
+        protected string subtitleLanguages = "";
 
-        private const string baseUrl = "http://losmovies.club";
+        private const string baseUrl = "http://losmovies.cc";
         private string nextPageUrl = "";
         private string currentCategoryThumb = "";
 
-       // private SubtitleHandler sh = null;
+        private SubtitleHandler sh = null;
 
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
-            //sh = new SubtitleHandler(subtitleSource, subtitleLanguages);
+            sh = new SubtitleHandler(subtitleSource, subtitleLanguages);
         }
 
         public override int DiscoverDynamicCategories()
@@ -52,9 +57,9 @@ namespace OnlineVideos.Sites
                 HasSubCategories = true,
                 SubCategoriesDiscovered = true,
             };
-            movies.SubCategories = new List<Category>() 
+            movies.SubCategories = new List<Category>()
             {
-                new RssLink() 
+                new RssLink()
                 {
                     Name = "Genres",
                     HasSubCategories = true,
@@ -62,15 +67,15 @@ namespace OnlineVideos.Sites
                     ParentCategory = movies,
                     Other = "movies"
                 },
-                new RssLink() 
+                new RssLink()
                 {
                     Name = "Countries",
                     HasSubCategories = true,
                     Url = "/countries",
                     ParentCategory = movies,
                     Other = "movies"
-                },                
-                new RssLink() 
+                },
+                new RssLink()
                 {
                     Name = "Popular",
                     HasSubCategories = false,
@@ -114,9 +119,9 @@ namespace OnlineVideos.Sites
                 HasSubCategories = true,
                 SubCategoriesDiscovered = true,
             };
-            shows.SubCategories = new List<Category>() 
+            shows.SubCategories = new List<Category>()
             {
-                 new RssLink() 
+                 new RssLink()
                 {
                     Name = "Genres",
                     HasSubCategories = true,
@@ -124,15 +129,15 @@ namespace OnlineVideos.Sites
                     ParentCategory = shows,
                     Other = "shows"
                 },
-                new RssLink() 
+                new RssLink()
                 {
                     Name = "Countries",
                     HasSubCategories = true,
                     Url = "/countries",
                     ParentCategory = shows,
                     Other = "shows"
-                },                
-                new RssLink() 
+                },
+                new RssLink()
                 {
                     Name = "Popular",
                     HasSubCategories = true,
@@ -217,7 +222,7 @@ namespace OnlineVideos.Sites
                 {
                     Name = m.Groups["n"].Value,
                     Thumb = m.Groups["i"].Value,
-                    Url =  m.Groups["u"].Value,
+                    Url = m.Groups["u"].Value,
                     Description = "Quality: " + m.Groups["q"].Value.Trim(),
                     HasSubCategories = false
                 };
@@ -372,7 +377,7 @@ namespace OnlineVideos.Sites
         {
             HasNextPage = false;
             List<VideoInfo> videos = GetVideos(nextPageUrl, true);
-            videos.ForEach((v) => 
+            videos.ForEach((v) =>
             {
                 if (string.IsNullOrEmpty(v.Thumb))
                     v.Thumb = currentCategoryThumb;
@@ -393,6 +398,8 @@ namespace OnlineVideos.Sites
             foreach (Match m in r.Matches(data))
             {
                 string u = m.Groups["u"].Value;
+                if (u.StartsWith("//"))
+                    u = "http:" + u;
                 Hoster.HosterBase hoster = hosters.FirstOrDefault(h => u.ToLowerInvariant().Contains(h.GetHosterUrl().ToLowerInvariant()));
                 if (hoster != null)
                 {
@@ -422,7 +429,7 @@ namespace OnlineVideos.Sites
                     ID_IMDB = GetImdbId(data)
                 };
             }
-            //sh.SetSubtitleText(video, GetTrackingInfo, false);
+            sh.SetSubtitleText(video, GetTrackingInfo, false);
             string latestOption = (video is LosMoviesVideoInfo) ? (video as LosMoviesVideoInfo).LatestOption : "";
             if (string.IsNullOrEmpty(latestOption))
                 return d.First().Value;

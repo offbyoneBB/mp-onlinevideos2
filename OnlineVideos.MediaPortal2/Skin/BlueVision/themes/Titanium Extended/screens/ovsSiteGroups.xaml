@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Include
+    xmlns="www.team-mediaportal.com/2008/mpf/directx"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Source="screens\master_menu.xaml">
+    <Include.Resources>
+      <!-- Header -->
+      <ResourceWrapper x:Key="Header_Text" Resource="[OnlineVideos.Groups]"/>
+      
+      <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
+      
+      <!-- Contents -->
+      <ControlTemplate x:Key="Contents_Template">
+        <DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}" LastChildFill="true">
+          <ListView x:Name="siteGroupsList" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center"
+                    Style="{ThemeResource ovsSiteGroupsListViewStyle}" Margin="-40,-8,-40,-8"
+                    ItemsSource="{Binding Path=SiteGroupsList}" SetFocusPrio="RestoreState"/>
+
+          <!-- Actual Item / Total items>
+          <DockPanel DockPanel.Dock="Center" VerticalAlignment="Top" HorizontalAlignment="Left" LastChildFill="false"
+                     IsVisible="{Binding IsItemsValid}">
+            <StackPanel DockPanel.Dock="Left" Margin="10,-85,25,85" Orientation="Horizontal">
+              <Label HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,10,0" FontFamily="DefaultBold"
+                     Color="{ThemeResource TextColor}" FontSize="{ThemeResource SmallerFontSize}">
+                <Label.Content>
+                  <MultiBinding Converter="{StaticResource GetIndexMultiConverter}" ConverterParameter="1">
+                    <Binding ElementName="siteGroupsList" Path="CurrentItem"/>
+                    <Binding ElementName="siteGroupsList" Path="ItemsSource"/>
+                  </MultiBinding>
+                </Label.Content>
+              </Label>
+              <Label Color="{ThemeResource TextColor}" Content="| " FontSize="{ThemeResource SmallerFontSize}" FontFamily="DefaultBold"/>
+              <Label Color="{ThemeResource TextColor}" FontSize="{ThemeResource SmallerFontSize}" FontFamily="DefaultBold">
+                <Label.Content>
+                  <Binding ElementName="siteGroupsList" Path="ItemsSource.Count" />
+                </Label.Content>
+              </Label>
+            </StackPanel>
+          </DockPanel-->
+
+          <Grid DockPanel.Dock="Bottom" VerticalAlignment="Top" Margin="0,630,0,-400">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="280"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Label Grid.Column="1" Color="Black" Content="{Binding [Name]}" FontSize="{ThemeResource NormalFontSize}"
+                   HorizontalAlignment="Center" VerticalAlignment="Stretch"
+                   DataContext="{Binding ElementName=siteGroupsList,Path=CurrentItem}" />
+            
+            <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0"
+                        DataContext="{Binding ElementName=siteGroupsList,Path=CurrentItem}"
+                        IsVisible="{Binding Path=Sites.Count, Converter={StaticResource ReferenceToBoolConverter}}">
+              <Label Margin="0,0,5,0" Content="{Binding Path=Sites.Count}" FontSize="{ThemeResource NormalFontSize}"
+                      Opacity="0.7" Color="Black"/>
+              <Label Margin="0,0,5,0" Content="[OnlineVideos.Sites]" FontSize="{ThemeResource NormalFontSize}"
+                     Opacity="0.7" Color="Black"/>
+            </StackPanel>
+        </Grid>
+      </DockPanel>
+    </ControlTemplate>
+  </Include.Resources>
+</Include>

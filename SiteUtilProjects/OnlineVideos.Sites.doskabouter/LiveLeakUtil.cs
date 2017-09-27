@@ -1,5 +1,6 @@
-﻿using System;
-using OnlineVideos.MPUrlSourceFilter;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites
 {
@@ -8,14 +9,17 @@ namespace OnlineVideos.Sites
         public override string GetVideoUrl(VideoInfo video)
         {
             string res = base.GetVideoUrl(video);
-            if (!String.IsNullOrEmpty(res) && res.StartsWith("rtmp:"))
+            if (res.Contains(@"www.liveleak.com/ll_embed"))
             {
-                RtmpUrl theUrl = new RtmpUrl(res);
-                int p = res.IndexOf('/', 9);
-                int q = res.LastIndexOf('/');
-                theUrl.App = res.Substring(p + 1, q - p);
-                theUrl.PlayPath = "mp4:" + res.Substring(q + 1);
-                return theUrl.ToString();
+                var data = GetWebData(res);
+                video.PlaybackOptions = new Dictionary<string, string>();
+                Match m = Regex.Match(data, @"<source\ssrc=""(?<url>[^""]*)""\s(?:default\s)?res=""[^""]*""\slabel=""(?<label>[^""]*)""\stype=""video/mp4"">");
+                while (m.Success)
+                {
+                    video.PlaybackOptions.Add(m.Groups["label"].Value, m.Groups["url"].Value);
+                    m = m.NextMatch();
+                }
+                return video.PlaybackOptions.First().Value;
             }
             return res;
         }

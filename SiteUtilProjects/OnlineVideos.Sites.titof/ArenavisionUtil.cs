@@ -110,14 +110,14 @@ namespace OnlineVideos.Sites
                                 
                             }
                         }
-
+                        tStream = null;
                     } 
                 }
             }
             else
             {
                 
-                for (int idx = 1; idx <= 20; idx++)
+                for (int idx = 1; idx <= 30; idx++)
                 {
                     VideoInfo item = new VideoInfo()
                     {
@@ -151,7 +151,9 @@ namespace OnlineVideos.Sites
             int stop = webdata.IndexOf("\"",start );
             string sContentId = webdata.Substring(start, stop-start );
 
-            string surl = string.Format("http://127.0.0.1:6878/ace/getstream?id={0}&hlc=1&spv=0&transcode_audio=0&transcode_mp3=0&transcode_ac3=0&preferred_audio_language=eng", sContentId);
+            string nfo = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+
+            string surl = string.Format("http://127.0.0.1:6878/ace/getstream?id={0}&hlc=1&spv=0&transcode_audio=0&transcode_mp3=0&transcode_ac3=0&preferred_audio_language={1}", sContentId,nfo);
                                     
             return surl;
         }
@@ -162,36 +164,47 @@ namespace OnlineVideos.Sites
 
         private void ReadEPG()
         {
-            string agendaurl = "http://arenavision.in/agenda";
+            string agendaurl = "http://arenavision.in/schedule";
             string content = GetWebData(agendaurl);
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-            doc.LoadHtml(content);
-            var table = doc.DocumentNode.SelectSingleNode("//table");
-            _Epg.Clear();
-            for (int idx = 1; idx < table.ChildNodes.Count(); idx++)
+
+            try
             {
-                try 
+                doc.LoadHtml(content);
+                var table = doc.DocumentNode.SelectSingleNode("//table");
+                _Epg.Clear();
+                for (int idx = 1; idx < table.ChildNodes.Count(); idx++)
                 {
-                    var element = table.ChildNodes[idx];
-
-                    string date = element.ChildNodes[0].InnerText;
-                    string hour = element.ChildNodes[2].InnerText.Replace("CET", "");
-                    DateTime dte;
-                    DateTime.TryParse(date + " " + hour, out dte);
-
-                    ArenaVisionEPG item = new ArenaVisionEPG()
+                    try
                     {
-                        Date = dte,
-                        Competition = element.ChildNodes[6].InnerText,
-                        Sport = element.ChildNodes[4].InnerText,
-                        Event = element.ChildNodes[8].InnerText,
-                        Stream = "-" + element.ChildNodes[10].InnerText.Replace(" ", "-").Replace("\t", "-").Replace("\n", "-"),
-                    };
+                        var element = table.ChildNodes[idx];
 
-                    _Epg.Add(item);
+                        string date = element.ChildNodes[0].InnerText;
+                        string hour = element.ChildNodes[2].InnerText.Replace("CET", "");
+                        DateTime dte;
+                        DateTime.TryParse(date + " " + hour, out dte);
+
+                        ArenaVisionEPG item = new ArenaVisionEPG()
+                        {
+                            Date = dte,
+                            Competition = element.ChildNodes[6].InnerText,
+                            Sport = element.ChildNodes[4].InnerText,
+                            Event = element.ChildNodes[8].InnerText,
+                            Stream = "-" + element.ChildNodes[10].InnerText.Replace(" ", "-").Replace("\t", "-").Replace("\n", "-"),
+                        };
+
+                        _Epg.Add(item);
+                    }
+                    catch { }
                 }
-                catch { }
+
             }
+            catch (Exception ex)
+            {
+
+            }
+            
+            doc = null;
         }
 
         #endregion Private Methods

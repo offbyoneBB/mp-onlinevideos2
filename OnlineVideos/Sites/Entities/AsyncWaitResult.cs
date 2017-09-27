@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace OnlineVideos.Sites.Entities
+﻿namespace OnlineVideos.Sites.Entities
 {
     /// <summary>
     /// Result of an sasynchronous call

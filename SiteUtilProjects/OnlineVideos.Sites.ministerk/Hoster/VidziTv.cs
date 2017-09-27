@@ -21,6 +21,8 @@ namespace OnlineVideos.Hoster
                 url += ".html";
             }
             string data = GetWebData<string>(url);
+            if (data.Contains("File was deleted or expired."))
+                throw new OnlineVideosException("File was deleted or expired.");
             Regex rgx = new Regex(@">eval(?<js>.*?)</script>", RegexOptions.Singleline);
             Match m = rgx.Match(data);
             if (m.Success)

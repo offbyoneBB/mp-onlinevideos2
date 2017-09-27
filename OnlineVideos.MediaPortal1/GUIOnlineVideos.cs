@@ -2687,6 +2687,9 @@ namespace OnlineVideos.MediaPortal1
             saveItems.CurrentItem.Url = url;
             if (string.IsNullOrEmpty(saveItems.CurrentItem.Title)) saveItems.CurrentItem.Title = saveItems.CurrentItem.VideoInfo.Title;
 
+            // Replace illegal chars
+            saveItems.CurrentItem.VideoInfo.Title = FileUtils.GetSaveFilename(saveItems.CurrentItem.Title);
+
             if (!string.IsNullOrEmpty(saveItems.CurrentItem.OverrideFolder))
             {
                 if (!string.IsNullOrEmpty(saveItems.CurrentItem.OverrideFileName))

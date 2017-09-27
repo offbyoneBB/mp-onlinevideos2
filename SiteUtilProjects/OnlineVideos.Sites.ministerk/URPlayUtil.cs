@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using HtmlAgilityPack;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json.Linq;
-using System.Xml;
-using HtmlAgilityPack;
 using System.Web;
 
 namespace OnlineVideos.Sites
@@ -85,13 +84,6 @@ namespace OnlineVideos.Sites
                 SubCategoriesDiscovered = true,
                 HasSubCategories = true,
             };
-            RssLink spelistor = new RssLink()
-            {
-                Name = "Spellistor",
-                Url = "http://urplay.se/sok?age=&product_type=playlists&query=&type=programtv",
-                HasSubCategories = true,
-                Other = episodeVideosState
-            };
 
             foreach(KeyValuePair<string,string> genre in tvCategories)
             {
@@ -126,7 +118,6 @@ namespace OnlineVideos.Sites
             }
             Settings.Categories.Add(series);
             Settings.Categories.Add(programs);
-            Settings.Categories.Add(spelistor);
             Settings.DynamicCategoriesDiscovered = Settings.Categories.Count > 0;
             return Settings.Categories.Count;
         }
@@ -181,7 +172,7 @@ namespace OnlineVideos.Sites
             HtmlDocument doc = GetWebData<HtmlDocument>(url);
             HtmlNode docNode = doc.DocumentNode;
             HtmlNodeCollection items;
-            HtmlNode episodes = docNode.SelectSingleNode("//section[@id='episodes']");
+            HtmlNode episodes = docNode.SelectSingleNode("//div[@class='series-page']");
             if (episodes != null)
                 items = episodes.SelectNodes("div/div/article");
             else
@@ -191,43 +182,47 @@ namespace OnlineVideos.Sites
             {
                 foreach (HtmlNode item in items)
                 {
-                    List<string> descriptions = new List<string>();
-                    HtmlNode categoryNode = item.SelectSingleNode(".//p[@class='category']");
-                    if (categoryNode != null && !string.IsNullOrWhiteSpace(categoryNode.InnerText))
-                        descriptions.Add(HttpUtility.HtmlDecode(categoryNode.InnerText.Trim()));
-                    HtmlNode descNode = item.SelectSingleNode(".//p[@class='description']");
-                    if (descNode != null && !string.IsNullOrWhiteSpace(descNode.InnerText))
-                        descriptions.Add(HttpUtility.HtmlDecode(descNode.InnerText.Trim()));
-
-                    List<string> titleInfos = new List<string>();
-                    HtmlNode seriesTitle = item.SelectSingleNode(".//p[@class='series-title']");
-                    if (seriesTitle != null && !string.IsNullOrWhiteSpace(seriesTitle.InnerText))
-                        titleInfos.Add(HttpUtility.HtmlDecode(seriesTitle.InnerText.Trim()));
-                    HtmlNode episodeNum = item.SelectSingleNode(".//span[@class='episode-number']");
-                    if (episodeNum != null && !string.IsNullOrWhiteSpace(episodeNum.InnerText))
-                        titleInfos.Add(HttpUtility.HtmlDecode(episodeNum.InnerText.Trim()));
-
-                    string description = descriptions.Count > 0 ? string.Join("\r\n", descriptions) : "";
-                    string titleInfo = titleInfos.Count > 0 ? string.Format(" ({0})", string.Join(" ", titleInfos)) : "";
-
-                    string thumb = item.SelectSingleNode(".//img").GetAttributeValue("data-src", "").Replace("_t.", "_l.");
-                    if (string.IsNullOrWhiteSpace(thumb))
-                        thumb = item.SelectSingleNode(".//img").GetAttributeValue("src", "").Replace("_t.","_l.");
-                    if (!string.IsNullOrWhiteSpace(thumb) && thumb.StartsWith("/"))
-                        thumb = "http://urplay.se" + thumb;
-
-                    string videoUrl = item.SelectSingleNode("a").GetAttributeValue("href", "");
-                    if (!string.IsNullOrWhiteSpace(videoUrl) && videoUrl.StartsWith("/"))
-                        videoUrl = "http://urplay.se" + videoUrl;
-
-                    videos.Add(new VideoInfo()
+                    HtmlNode a = item.SelectSingleNode("a");
+                    if (a != null)
                     {
-                        Title = HttpUtility.HtmlDecode(item.SelectSingleNode(".//h3").InnerText.Trim()) + titleInfo,
-                        VideoUrl = videoUrl ,
-                        Thumb = thumb,
-                        Description = description,
-                        Length = HttpUtility.HtmlDecode(item.SelectSingleNode(".//span[@class='duration']").InnerText.Trim())
-                    });
+                        string videoUrl = a.GetAttributeValue("href", "");
+                        if (videoUrl.StartsWith("/"))
+                            videoUrl = "http://urplay.se" + videoUrl;
+
+                        List<string> descriptions = new List<string>();
+                        HtmlNode categoryNode = item.SelectSingleNode(".//p[@class='category']");
+                        if (categoryNode != null && !string.IsNullOrWhiteSpace(categoryNode.InnerText))
+                            descriptions.Add(HttpUtility.HtmlDecode(categoryNode.InnerText.Trim()));
+                        HtmlNode descNode = item.SelectSingleNode(".//p[@class='description']");
+                        if (descNode != null && !string.IsNullOrWhiteSpace(descNode.InnerText))
+                            descriptions.Add(HttpUtility.HtmlDecode(descNode.InnerText.Trim()));
+
+                        List<string> titleInfos = new List<string>();
+                        HtmlNode seriesTitle = item.SelectSingleNode(".//p[@class='series-title']");
+                        if (seriesTitle != null && !string.IsNullOrWhiteSpace(seriesTitle.InnerText))
+                            titleInfos.Add(HttpUtility.HtmlDecode(seriesTitle.InnerText.Trim()));
+                        HtmlNode episodeNum = item.SelectSingleNode(".//span[@class='episode-number']");
+                        if (episodeNum != null && !string.IsNullOrWhiteSpace(episodeNum.InnerText))
+                            titleInfos.Add(HttpUtility.HtmlDecode(episodeNum.InnerText.Trim()));
+
+                        string description = descriptions.Count > 0 ? string.Join("\r\n", descriptions) : "";
+                        string titleInfo = titleInfos.Count > 0 ? string.Format(" ({0})", string.Join(" ", titleInfos)) : "";
+
+                        string thumb = item.SelectSingleNode(".//img").GetAttributeValue("data-src", "").Replace("_t.", "_l.");
+                        if (string.IsNullOrWhiteSpace(thumb))
+                            thumb = item.SelectSingleNode(".//img").GetAttributeValue("src", "").Replace("_t.", "_l.");
+                        if (!string.IsNullOrWhiteSpace(thumb) && thumb.StartsWith("/"))
+                            thumb = "http://urplay.se" + thumb;
+
+                        videos.Add(new VideoInfo()
+                        {
+                            Title = HttpUtility.HtmlDecode(item.SelectSingleNode(".//h3").InnerText.Trim()) + titleInfo,
+                            VideoUrl = videoUrl,
+                            Thumb = thumb,
+                            Description = description,
+                            Length = HttpUtility.HtmlDecode(item.SelectSingleNode(".//span[@class='duration']").InnerText.Trim())
+                        });
+                    }
                 }
             }
             return videos;
@@ -302,7 +297,7 @@ namespace OnlineVideos.Sites
 
         private string GetSubtitle(JObject json, string language = null)
         {
-            JArray subtitles = (JArray)json["tracks"];
+            JArray subtitles = (JArray)json["subtitles"];
             JToken subtitle = null;
             string srt = string.Empty;
             if (language != null)
@@ -319,31 +314,44 @@ namespace OnlineVideos.Sites
             }
             if (subtitle != null)
             {
-                XmlDocument xDoc = GetWebData<XmlDocument>(subtitle["file"].Value<string>());
-                XmlNodeList errorElements = xDoc.SelectNodes("//meta[@name = 'error']");
-                if (errorElements == null || errorElements.Count <= 0)
+                string subUrl = subtitle["file"].Value<string>();
+                if (subUrl.StartsWith("//")) subUrl = "http:" + subUrl;
+                srt = GetWebData(subUrl);
+                
+                Regex rgx;
+                //Remove WEBVTT stuff
+                rgx = new Regex(@"WEBVTT");
+                srt = rgx.Replace(srt, new MatchEvaluator((Match m) =>
                 {
-                    string srtFormat = "{0}\r\n{1}0 --> {2}0\r\n{3}\r\n\r\n";
-                    string begin;
-                    string end;
-                    string text;
-                    string textPart;
-                    int line = 1;
-                    foreach (XmlElement p in xDoc.GetElementsByTagName("p"))
-                    {
-                        text = string.Empty;
-                        begin = p.GetAttribute("begin");
-                        end = p.GetAttribute("end");
-                        XmlNodeList textNodes = p.SelectNodes(".//text()");
-                        foreach (XmlNode textNode in textNodes)
-                        {
-                            textPart = textNode.InnerText;
-                            textPart.Trim();
-                            text += string.IsNullOrEmpty(textPart) ? "" : textPart + "\r\n";
-                        }
-                        srt += string.Format(srtFormat, line++, begin, end, text);
-                    }
+                    return string.Empty;
+                }));
+
+                //Add hours
+                rgx = new Regex(@"(\d\d:\d\d\.\d\d\d)\s*-->\s*(\d\d:\d\d\.\d\d\d).*?\n", RegexOptions.Multiline);
+                srt = rgx.Replace(srt, new MatchEvaluator((Match m) =>
+                {
+                    return "00:" + m.Groups[1].Value + " --> 00:" + m.Groups[2].Value + "\n";
+                }));
+                // Remove all trailing stuff, ie in 00:45:21.960 --> 00:45:25.400 A:end L:82%
+                rgx = new Regex(@"(\d\d:\d\d:\d\d\.\d\d\d)\s*-->\s*(\d\d:\d\d:\d\d\.\d\d\d).*\n", RegexOptions.Multiline);
+                srt = rgx.Replace(srt, new MatchEvaluator((Match m) =>
+                {
+                    return m.Groups[1].Value + " --> " + m.Groups[2].Value + "\n";
+                }));
+
+                //Remove all tags
+                rgx = new Regex(@"</{0,1}[^>]+>");
+                srt = rgx.Replace(srt, string.Empty);
+                //Add index
+                rgx = new Regex(@"(?<time>\d\d:\d\d:\d\d\.\d\d\d\s*?-->\s*?\d\d:\d\d:\d\d\.\d\d\d)");
+                int i = 0;
+                foreach (Match m in rgx.Matches(srt))
+                {
+                    i++;
+                    string time = m.Groups["time"].Value;
+                    srt = srt.Replace(time, i + "\n" + time);
                 }
+                srt = HttpUtility.HtmlDecode(srt).Trim();
             }
             return srt;
         }
@@ -363,7 +371,7 @@ namespace OnlineVideos.Sites
                 if (m != null)
                 {
                     var json = JObject.Parse(m.Groups[1].Value);
-                    JArray subtitles = (JArray)json["tracks"];
+                    JArray subtitles = (JArray)json["subtitles"];
                     if (subtitles != null && subtitles.Count() > 0)
                     {
                         ContextMenuEntry textningssprak = new ContextMenuEntry();
@@ -373,10 +381,10 @@ namespace OnlineVideos.Sites
                         ContextMenuEntry entry = new ContextMenuEntry();
                         entry.DisplayText = string.Format(_ingenTextning);
                         textningssprak.SubEntries.Add(entry);
-                        foreach (JToken subtitle in subtitles)
+                        foreach (JToken subtitle in subtitles.Where(s => s["label"] != null))
                         {
                             entry = new ContextMenuEntry();
-                            entry.DisplayText = string.Format(subtitle["label"].Value<string>());
+                            entry.DisplayText = subtitle["label"].Value<string>();
                             textningssprak.SubEntries.Add(entry);
                         }
                         entries.Add(textningssprak);

@@ -29,6 +29,7 @@
   <!--D-->
   <string name="Date">Datum</string>
   <string name="DateOfRelease">Erscheinungsdatum</string>
+  <string name="Details">Details</string>
   <string name="Directors">Regisseure</string>
   <string name="Download">Herunterladen</string>
   <string name="DownloadUserdefined">Herunterladen (spezieller Ordner)</string>
@@ -113,6 +114,7 @@
   <string name="Queued">Nacheinander</string>
   <!--R-->
   <string name="RateVideo">Video bewerten ...</string>
+  <string name="Rating">Altersfreigabe</string>
   <string name="Recommendations">Empfehlungen</string>
   <string name="RemoveFromFavorites">Von den Favoriten entfernen</string>
   <string name="RemoveFromPlaylist">Von Playlist entfernen</string>

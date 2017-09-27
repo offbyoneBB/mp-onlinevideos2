@@ -34,8 +34,8 @@ namespace OnlineVideos.Sites
         protected string username = null;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("Last.fm password"), PasswordPropertyText(true)]
         protected string password = null;
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Filter out unplayable content"), Description("Filter out unplayable content, much slower.")]
-        protected bool filterUnplayable = true;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Filter out unplayable content"), Description("Filter out unplayable content. Not recommended much slower")]
+        protected bool filterOutUnplayable = false;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Scrobble to Last.fm"), Description("Scrobble to Last.fm if 75% of the track has been played")]
         protected bool scrobbleToLastFm = true;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Publish now playing to Last.fm"), Description("Publish now playing to Last.fm")]
@@ -420,7 +420,7 @@ namespace OnlineVideos.Sites
             string refererUrl = "http://www.last.fm/user/" + category.User + "/" + category.Url;
             string url = refererUrl + "?_pjax=%23content&page=" + page;
             string data = GetWebData(url, cookies: Cookies, referer: refererUrl);
-            Regex regex = new Regex(@"<a href=""/user/(?<user>[^""]*)""[^>]*?title=""[^""]*?user""[^<]*<img.*?src=""(?<img>[^""]*)", RegexOptions.Singleline);
+            Regex regex = new Regex(@"<a[^>]*?href=""/user/(?<user>[^/""]*)[^>]*?user-list-link[^>]*?>.*?</a>\s*?</h4>\s*?<img\s*src=""(?<img>[^""]*)", RegexOptions.Singleline);
             foreach (Match m in regex.Matches(data))
             {
                 LastFmCategory user = new LastFmCategory()
@@ -549,7 +549,7 @@ namespace OnlineVideos.Sites
             string data = GetWebData(url, cookies: Cookies, referer: refererUrl);
             string rString;
             if (url.Contains("+albums"))
-                rString = @"album-grid-album-art"" src=""(?<img>[^""]*).*?""album-grid-item-main-text"">(?<name>[^<]*).*?data-station-url=""(?<url>[^""]*)";
+                rString = @"album-grid-album-art""\s+src=""(?<img>[^""]*).*?""album-grid-item-main-text""[^>]*>(?<name>[^<]*).*?data-station-url=""(?<url>[^""]*)";
             else
                 rString = @"chartlist-play-image""[^<]*<img src=""(?<img>[^""]*).*?alt=""(?<name>[^""]*)[^<]*<button.*?data-station-url=""(?<url>[^""]*)";
             Regex regex = new Regex(rString, RegexOptions.Singleline);
@@ -623,7 +623,7 @@ namespace OnlineVideos.Sites
                 {
                     bool addVideo = true;
                     LastFmVideo track = new LastFmVideo();
-                    if (filterUnplayable)
+                    if (filterOutUnplayable)
                     {
                         Dictionary<string, string> pbos = Hoster.HosterFactory.GetHoster("youtube").GetPlaybackOptions(m.Groups["url"].Value);
                         track.Other = pbos;
@@ -679,7 +679,7 @@ namespace OnlineVideos.Sites
                     {
                         bool addVideo = true;
                         LastFmVideo video = new LastFmVideo();
-                        if (filterUnplayable)
+                        if (filterOutUnplayable)
                         {
                             Dictionary<string, string> pbos = Hoster.HosterFactory.GetHoster("youtube").GetPlaybackOptions(playlink["url"].Value<string>());
                             video.Other = pbos;
@@ -725,7 +725,7 @@ namespace OnlineVideos.Sites
 
         public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
-            if (filterUnplayable)
+            if (filterOutUnplayable)
             {
                 video.PlaybackOptions = new Dictionary<string, string>();
                 foreach (KeyValuePair<string, string> pbo in video.Other as Dictionary<string, string>)

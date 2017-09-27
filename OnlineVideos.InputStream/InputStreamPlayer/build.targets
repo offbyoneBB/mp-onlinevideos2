@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+
+  <PropertyGroup>
+      <PluginDestination>$(SolutionDir)..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\$(ProjectName)\</PluginDestination>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PluginFiles Include="$(TargetDir)$(ProjectName).dll" />
+    <PluginFiles Include="$(TargetDir)InputStreamSourceFilter.dll" />
+    <PluginFiles Include="$(TargetDir)MediaPortalWrapper.dll" />
+    <PluginFiles Include="$(ProjectDir)plugin.xml" />
+  </ItemGroup>
+
+  <Target Name="AfterBuild">
+    <ItemGroup>
+      <References Include="$(TargetDir)InputStream.*\**\*.*" />
+    </ItemGroup>
+    <ItemGroup>
+      <CppCliReferences Include="$(SolutionDir)bin\library.*\libKODI*.dll" />
+      <CppCliReferences Include="$(SolutionDir)bin\library.*\libXBMC*.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginDestination)" />
+    <Copy SourceFiles="@(References)" DestinationFiles="@(References->'$(PluginDestination)%(RecursiveDir)%(Filename)%(Extension)')"  />
+    <Copy SourceFiles="@(CppCliReferences)" DestinationFiles="@(CppCliReferences->'$(PluginDestination)%(RecursiveDir)\%(Filename)%(Extension)')"  />
+  </Target>
+
+</Project>

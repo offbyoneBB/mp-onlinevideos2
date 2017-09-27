@@ -17,8 +17,8 @@ using MediaPortal.Common.Utils;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("09b42e26-4a7f-46a7-b0a9-adda8a5099b0")]
 
-// Define that our plugin is designed for MediaPortal 1.7 - the MP dlls have been slightly restructured and it's using .net 4 now, so not backward compatible
-[assembly: CompatibleVersion("1.6.100.0", "1.6.100.0")]
+// Define that our plugin is designed for MediaPortal 1.16 Pre - a new Video Renderer was added, so not backward compatible
+[assembly: CompatibleVersion("1.15.100.0", "1.15.100.0")]
 
 // Tell MediaPortal which subsystems this plugin will use, so it can check for compatiblity
 [assembly: UsesSubsystem("MP.SkinEngine")]

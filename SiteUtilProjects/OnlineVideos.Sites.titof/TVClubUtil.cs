@@ -15,6 +15,7 @@ namespace OnlineVideos.Sites
         private string _m3uparser = "#EXTINF:-[0-9]+ tvg-id=\"[\\w -.]*\" tvg-name=\"(?<name>[\\w -.]*)\" tvg-logo=\"(?<logo>[0-9.png]*)\"";
         private string _streamparser= @"http:\/\/(?<url>[a-z0-9.\/]*)";
         #endregion<<PRIVATE>>
+        //%APPDATA%\ACEStream\engine\ace_engine.exe
 
         [Category("OnlineVideosConfiguration"), Description("site identifier")]
         protected string siteIdentifier = "tvclub";

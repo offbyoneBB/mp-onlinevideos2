@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -290,6 +290,7 @@
     <Compile Include="Helpers\DotNetFrameworkHelper.cs" />
     <Compile Include="Helpers\EncryptionUtils.cs" />
     <Compile Include="Helpers\FileUtils.cs" />
+    <Compile Include="Helpers\HlsPlaylistParser.cs" />
     <Compile Include="Helpers\RssUtils.cs" />
     <Compile Include="Helpers\StringHash.cs" />
     <Compile Include="Helpers\StringUtils.cs" />
@@ -1022,6 +1023,7 @@
     <Compile Include="Sites\Base\SiteUtilBase.cs" />
     <Compile Include="Sites\Base\SiteUtilFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sites\Interfaces\IInputStreamSite.cs" />
     <Compile Include="Sites\Updater.cs" />
     <Compile Include="Sites\WebBrowserPlayerService\Proxy\WebBrowserPlayerServiceProxy.cs" />
     <Compile Include="Sites\WebBrowserPlayerService\Interfaces\IWebBrowserPlayerCallback.cs" />

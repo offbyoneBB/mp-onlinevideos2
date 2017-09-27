@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -61,6 +61,9 @@
       <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\SkinEngine\SharpDX.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="SharpDX.Direct3D9">
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\SkinEngine\SharpDX.Direct3D9.dll</HintPath>
+    </Reference>
     <Reference Include="SkinEngine">
       <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\SkinEngine\SkinEngine.dll</HintPath>
       <Private>False</Private>
@@ -79,6 +82,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OnlineVideos.InputStream\InputStreamPlayer\InputStreamPlayer.csproj">
+      <Project>{3171D2FF-4E7F-4413-B7A9-03AA7355DC68}</Project>
+      <Name>InputStreamPlayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OnlineVideos.InputStream\MediaPortalWrapper\MediaPortalWrapper.csproj">
+      <Project>{47731721-BA8A-4295-BCCE-399E5C289B4E}</Project>
+      <Name>MediaPortalWrapper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OnlineVideos.MediaPortal2.Interfaces\OnlineVideos.MediaPortal2.Interfaces.csproj">
+      <Project>{F54CFB16-1599-4676-BED6-2AB1C6F4DE53}</Project>
+      <Name>OnlineVideos.MediaPortal2.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OnlineVideos\OnlineVideos.csproj">
       <Project>{E0D9D390-CDD6-4B98-86F3-6EB04A958882}</Project>
       <Name>OnlineVideos</Name>
@@ -100,8 +115,6 @@
     <Compile Include="OnlineVideosPlugin.cs" />
     <Compile Include="Player\OnlineVideoPlayerBuilder.cs" />
     <Compile Include="Player\WebBrowserVideoPlayer.cs" />
-    <Compile Include="ResourceAccess\RawTokenResourceAccessor.cs" />
-    <Compile Include="ResourceAccess\RawTokenResourceProvider.cs" />
     <Compile Include="ViewModels\CategoryViewModel.cs" />
     <Compile Include="Guids.cs" />
     <Compile Include="LogDelegator.cs" />
@@ -208,7 +221,6 @@
     <Content Include="Skin\default\screens\ovsDialogItemContextMenu.xaml" />
     <Content Include="Skin\default\themes\default\styles\OnlineVideosConsts.xaml" />
     <Content Include="Skin\default\themes\default\styles\OnlineVideosStyles.xaml" />
-    <Content Include="Skin\Reflexion\themes\default\styles\OnlineVideosStyles.xaml" />
     <Content Include="Skin\default\screens\ovsSiteSettings.xaml" />
     <Content Include="Skin\Titanium\themes\default\styles\OnlineVideosStyles.xaml" />
     <Content Include="Skin\default\screens\ovsDialogSiteSettingText.xaml" />
@@ -260,6 +272,116 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Skin\default\screens\ovsSiteGroups.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\WMCSkin\screens\categories.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\WMCSkin\screens\CurrentlyPlayingOV.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\WMCSkin\screens\details.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\WMCSkin\screens\FullScreenContentOV.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\WMCSkin\screens\ovsSiteGroups.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\WMCSkin\screens\ovsSiteManagement.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\WMCSkin\screens\ovsSiteSettings.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\WMCSkin\screens\sites.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\WMCSkin\screens\videos.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\WMCSkin\themes\default\styles\OnlineVideosConsts.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\WMCSkin\themes\default\styles\OnlineVideosStyles.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\BlueVision\screens\ovsSiteGroups.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\Reflexion\themes\default\styles\OnlineVideosConsts.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\Titanium\screens\ovsSiteManagement.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\Titanium\screens\ovsSiteSettings.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Skin\BlueVision\themes\Titanium Extended\screens\categories.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\BlueVision\themes\Titanium Extended\screens\details.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\BlueVision\themes\Titanium Extended\screens\ovsSiteGroups.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\BlueVision\themes\Titanium Extended\screens\ovsSiteManagement.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\BlueVision\themes\Titanium Extended\screens\ovsSiteSettings.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\BlueVision\themes\Titanium Extended\screens\sites.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\BlueVision\themes\Titanium Extended\screens\videos.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\BlueVision\themes\Titanium Extended\styles\OnlineVideosConsts.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\BlueVision\themes\Titanium Extended\styles\OnlineVideosStyles.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\BlueVision\themes\Win10\screens\categories.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\BlueVision\themes\Win10\screens\details.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\BlueVision\themes\Win10\screens\ovsDialogGenericItems.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\BlueVision\themes\Win10\screens\ovsDialogItemContextMenu.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\BlueVision\themes\Win10\screens\ovsSiteGroups.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\BlueVision\themes\Win10\screens\ovsSiteManagement.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\BlueVision\themes\Win10\screens\sites.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\BlueVision\themes\Win10\screens\videos.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\BlueVision\themes\Win10\styles\OnlineVideosConsts.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Skin\BlueVision\themes\Win10\styles\OnlineVideosStyles.xaml">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>

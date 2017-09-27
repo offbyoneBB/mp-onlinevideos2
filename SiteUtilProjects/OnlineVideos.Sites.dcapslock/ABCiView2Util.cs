@@ -18,7 +18,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("iView Home URL, relative off the Base URL")]
         string iViewURLHome = @"navigation/mobile/2/";
 
-        [Category("OnlineVideosConfiguration"), Description("iView TV Feed URL. This is used to look up Description information and Play URLs.")]
+        [Category("OnlineVideosConfiguration"), Description("User agent string used for testing and development")]
         string iViewUserAgent = @"ABC iview/3.9.4 (iPad; iOS 8.2; Scale/2.00)";
 
         [Category("OnlineVideosConfiguration"), Description("iView Device that allows best user experience with Online Videos")]
@@ -27,8 +27,16 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosConfiguration"), Description("iView Tablet App Version that was used for testing and development")]
         string iViewAppver = @"3.9.4-7";
 
-        [Category("OnlineVideosConfiguration"), Description("iView TV Feed URL. This is used to look up Description information and Play URLs.")]
-        string iViewTVFeedURL = @"https://tviview.abc.net.au/iview/feed/sony/?keyword=0-Z";
+        [Category("OnlineVideosConfiguration"), Description("Device used in the ?device= part of the query")]
+        string iViewHTTPDevice = @"hbb";
+
+        public struct TVFeed
+        {
+            public string URL;
+            public List<string> URLSubsets;
+            public string Username;
+            public string Password;
+        }
 
         public struct ProgramData
         {
@@ -42,13 +50,7 @@ namespace OnlineVideos.Sites
         private System.Threading.Mutex FeedSync = new System.Threading.Mutex(false, "FeedSyncMutex");
 
         public override int DiscoverDynamicCategories()
-        {
-            //Download the Master TV Feed List from which we get unrestricted play URLs
-            //Note: These are always metered. 
-            //TODO: Play F4M manifest files which will allow unmetered playback.
-
-            new System.Threading.Thread(FeedSyncWorker) { IsBackground = true, Name = "TVFeedDownload" }.Start(iViewTVFeedURL);
-            
+        {          
             List<Category> dynamicCategories = new List<Category>();
 
             string webData = "{items:" + GetiViewWebData(iViewURLHome + "?device=" + iViewDevice + "?appver=" + iViewAppver) + "}";
@@ -207,50 +209,6 @@ namespace OnlineVideos.Sites
             return res;
         }
 
-        public override string GetVideoUrl(VideoInfo video)
-        {
-            string playURL = "";
-            
-            if (!FeedSync.WaitOne(60000))
-            {
-                Log.Error("ABCiViewUtil2: Wait for FeedSync Thread failed");
-            }
-            else
-            {
-                ProgramData programData;
-
-                if (ProgramDictionary.TryGetValue(video.Other.ToString(), out programData))
-                {
-                    playURL = programData.playURL;
-                }
-                else
-                {
-                    //Try and get the Feed Again as it may be out of date
-                    Log.Debug("ABCiView2Util: Cannot find episode in TV Feed. Refresh");
-
-                    new System.Threading.Thread(FeedSyncWorker) { IsBackground = true, Name = "TVFeedDownload" }.Start(iViewTVFeedURL);
-                    if (!FeedSync.WaitOne(60000))
-                    {
-                        if (ProgramDictionary.TryGetValue(video.Other.ToString(), out programData))
-                        {
-                            playURL = programData.playURL;
-                        }
-                        else
-                        {
-                            Log.Debug("ABCiView2Util: Cannot find episode in TV Feed after refresh");
-                        }
-                    }
-                    else
-                    {
-                        Log.Error("ABCiViewUtil2: Wait for FeedSync Thread failed");
-                    }
-                }
-                FeedSync.ReleaseMutex();
-            }
-
-            return playURL;
-        }
-
         #region Search
 
         public override bool CanSearch { get { return true; } }
@@ -319,25 +277,6 @@ namespace OnlineVideos.Sites
         
         #region API Helper
 
-        private static string SanitizeXml(string message)
-        {
-            // Invalid XML will stymie the XmlDocument.Load method, so we'll check for possible problems
-
-            System.Text.StringBuilder sanitized = new System.Text.StringBuilder(message);
-
-            for (int i = 0; i < sanitized.Length; ++i)
-            {
-                if (  sanitized[i] >= 0x00 && sanitized[i] <= 0x08 ||
-                      sanitized[i] >= 0x0B && sanitized[i] <= 0x0C ||
-                      sanitized[i] >= 0x0E && sanitized[i] <= 0x19    )
-                {
-                    sanitized.Remove(i, 1);
-                }
-            }
-
-            return sanitized.ToString();
-        }
-
         private string GetiViewWebData(string url)
         {
             return GetWebData(url: iViewURLBase + url, userAgent: iViewUserAgent);
@@ -385,69 +324,45 @@ namespace OnlineVideos.Sites
                 video.Title += ": " + item.Value<string>("title");
             }
 
-            video.Description = "";
-            if (FeedSync.WaitOne(0))
-            {
-                ProgramData programData;
-
-                if (ProgramDictionary.TryGetValue(item.Value<string>("episodeHouseNumber"), out programData))
-                {
-                    video.Description = programData.description;
-                }
-                else
-                {
-                    video.Description = "<" + Translation.Instance.GettingVideoDetails + ">";
-                }
-
-                FeedSync.ReleaseMutex();
-            }
-
-            video.VideoUrl = item.Value<string>("href");
             video.Thumb = item.Value<string>("thumbnail");
             video.Length = Helpers.TimeUtils.TimeFromSeconds(item.Value<string>("duration"));
             video.Airdate = item.Value<string>("pubDate");
             video.Other = item.Value<string>("episodeHouseNumber");
 
-            return video;
-        }
+            // Description and video come form the reading the json returned by href
+            // If ?device=hbb (Hybrid Broadcast Broadband) is used then http URLs are returned for playback
+            // TODO: Work with f4m manifest files etc. to support unmetered playback.
+            string webData = GetiViewWebData(url: item.Value<string>("href") + "?device=" + iViewHTTPDevice);
+            JObject programData = (JObject)JObject.Parse(webData);
 
-        private void FeedSyncWorker(object o)
-        {
-            System.Threading.Mutex ThreadFeedSync = System.Threading.Mutex.OpenExisting("FeedSyncMutex");
-            ThreadFeedSync.WaitOne();
-
-            XmlDocument doc = new XmlDocument();
-
-            Log.Debug("ABCiView2Util: FeedSync Worker Thread Begin");
-            string feedData = GetWebData(o as String);
-
-            // TVFeed has been known to contain invalid characters.
-            // Need to convert to spaces
-
-            
-            doc.LoadXml(SanitizeXml(feedData));
-            XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
-            nsmRequest.AddNamespace("a", "http://namespace.feedsync");
-
-            XmlNodeList nodes = doc.GetElementsByTagName("asset");
-            foreach (XmlNode node in nodes)
+            if (programData != null)
             {
-                if (node["type"].InnerText == "video")
+                string description = programData.Value<string>("description");
+                if (!String.IsNullOrEmpty(description))
                 {
-                    ProgramData programData;
-                    programData.title = node["title"].InnerText;
-                    programData.description = node["description"].InnerText;
-                    programData.playURL = node["assetUrl"].InnerText;
+                    video.Description = description;
+                }
 
-                    if (!ProgramDictionary.ContainsKey(node["id"].InnerText))
+                JArray playlist = programData["playlist"] as JArray;
+                if (playlist != null)
+                {
+                    foreach (JToken playlistItem in playlist)
                     {
-                        ProgramDictionary.Add(node["id"].InnerText, programData);
+                        if (playlistItem.Value<string>("type").Equals("program"))
+                        {
+                            string stream = playlistItem.Value<string>("http");
+                            if (!String.IsNullOrEmpty(stream))
+                            {
+                                video.VideoUrl = stream;
+                            }
+                        }
                     }
                 }
             }
 
-            ThreadFeedSync.ReleaseMutex();
+            return video;
         }
+
         #endregion
     }
 }

@@ -13,7 +13,7 @@ namespace OnlineVideos.Reflection
             {
                 var attr = FieldPropertyDescriptor.Attributes[typeof(LocalizableDisplayNameAttribute)];
                 if (attr != null && ((LocalizableDisplayNameAttribute)attr).LocalizedDisplayName != null) return ((LocalizableDisplayNameAttribute)attr).LocalizedDisplayName;
-                else return FieldPropertyDescriptor.DisplayName;
+                return FieldPropertyDescriptor.DisplayName;
             }
         }
 
@@ -32,7 +32,7 @@ namespace OnlineVideos.Reflection
             get
             {
                 var pwAttr = FieldPropertyDescriptor.Attributes[typeof(PasswordPropertyTextAttribute)];
-                return pwAttr != null ? ((PasswordPropertyTextAttribute)pwAttr).Password : false;
+                return pwAttr != null && ((PasswordPropertyTextAttribute)pwAttr).Password;
             }
         }
 

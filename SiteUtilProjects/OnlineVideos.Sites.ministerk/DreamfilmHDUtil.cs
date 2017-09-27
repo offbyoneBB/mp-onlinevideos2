@@ -1,7 +1,6 @@
 ﻿using HtmlAgilityPack;
-using Newtonsoft.Json.Linq;
 using OnlineVideos.Hoster;
-using System;
+using OnlineVideos.Subtitles;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -13,11 +12,39 @@ namespace OnlineVideos.Sites
 {
     public class DreamfilmHDUtil : SiteUtilBase
     {
+        protected enum SubtitleSource
+        {
+            None,
+            OpenSubtitles,
+            Podnapisi,
+            Subscene,
+            TvSubtitles
+        }
+
+        protected enum Language
+        {
+            eng,
+            swe
+        }
+
         [Category("OnlineVideosConfiguration"), Description("Url used for prepending relative links.")]
         protected string baseUrl;
         [Category("OnlineVideosConfiguration"), Description("Token used for vkpass video urls")]
         protected string vkpassToken;
-        
+
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Backup subtitle source"), Description("Try to download subtiles from this subtitle source if no subtitles from hoster")]
+        protected SubtitleSource subtitleSource = SubtitleSource.None;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Backup subtitle source language"), Description("Select subtitle language preferences")]
+        protected Language subtitleLanguage = Language.swe;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Always use the backup subtitle source"), Description("Always use the backup subtitle source")]
+        protected bool forceSubtitle = false;
+
+        private SubtitleHandler sh = null;
+        public override void Initialize(SiteSettings siteSettings)
+        {
+            base.Initialize(siteSettings);
+            sh = new SubtitleHandler(subtitleSource == SubtitleSource.None ? "" : subtitleSource.ToString(), subtitleLanguage.ToString());
+        }
         public override int DiscoverDynamicCategories()
         {
             string data = GetWebData(baseUrl, encoding: Encoding.UTF8);
@@ -97,6 +124,13 @@ namespace OnlineVideos.Sites
                         {
                             episodeNo = uint.Parse(m.Groups[1].Value);
                         }
+                        string href = episode.GetAttributeValue("href", "");
+                        rgx = new Regex(@",\s*?'(?<url>[^']*)");
+                        m = rgx.Match(href);
+                        if (m.Success)
+                        {
+                            href = GetIframeUrl(m.Groups["url"].Value);
+                        }
                         ITrackingInfo ti = new TrackingInfo() { Title = category.Name, VideoKind = VideoKind.TvSeries, Season = seasonNo, Episode = episodeNo };
                         videos.Add(new VideoInfo()
                             {
@@ -104,7 +138,7 @@ namespace OnlineVideos.Sites
                                 Other = ti,
                                 Description = episodeName,
                                 Thumb = category.Thumb,
-                                VideoUrl = episode.GetAttributeValue("rel","")
+                                VideoUrl = href
                             });
                     }
                 }
@@ -150,46 +184,36 @@ namespace OnlineVideos.Sites
         public override List<string> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
             List<Hoster.HosterBase> hosters = Hoster.HosterFactory.GetAllHosters();
-            string url = null;
+            string url = video.VideoUrl; ;
             video.PlaybackOptions = new Dictionary<string, string>();
-            if ((video.Other as ITrackingInfo).VideoKind == VideoKind.Movie)
+            url = url.Replace("ok.ru/", string.Format("vkpass.com/token/{0}/", vkpassToken));
+            Hoster.HosterBase hoster = hosters.FirstOrDefault(h => url.ToLower().Contains(h.GetHosterUrl().ToLower()));
+            if (hoster != null)
             {
-                url = video.VideoUrl;
-            }
-            else if ((video.Other as ITrackingInfo).VideoKind == VideoKind.TvSeries)
-            {
-                JObject json = GetWebData<JObject>(string.Format("{0}CMS/modules/series/ajax.php", baseUrl), string.Format("action=showmovie&id={0}", video.VideoUrl));
-                string iframe = json["url"].Value<string>();
-                url = GetIframeUrl(iframe);
-            }
-            if (!string.IsNullOrEmpty(url))
-            {
-                url = url.Replace("ok.ru/", string.Format("vkpass.com/token/{0}/", vkpassToken));
-                Hoster.HosterBase hoster = hosters.FirstOrDefault(h => url.ToLower().Contains(h.GetHosterUrl().ToLower()));
-                if (hoster != null)
+                if (hoster is IReferer)
+                    (hoster as IReferer).RefererUrl = baseUrl;
+                Dictionary<string, string> hosterPo = hoster.GetPlaybackOptions(url);
+                if (hosterPo != null)
                 {
-                    if (hoster is IReferer)
-                        (hoster as IReferer).RefererUrl = baseUrl;
-                    Dictionary<string, string> hosterPo = hoster.GetPlaybackOptions(url);
-                    if (hosterPo != null)
+                    foreach (string key in hosterPo.Keys)
                     {
-                        foreach (string key in hosterPo.Keys)
-                        {
-                            if (!string.IsNullOrEmpty(hosterPo[key]))
-                                video.PlaybackOptions.Add((hoster.GetType().Name != key ? hoster.GetType().Name + " " : "") + key, hosterPo[key]);
-                        }
+                        if (!string.IsNullOrEmpty(hosterPo[key]))
+                            video.PlaybackOptions.Add((hoster.GetType().Name != key ? hoster.GetType().Name + " " : "") + key, hosterPo[key]);
                     }
-                    if (hoster is ISubtitle)
-                        video.SubtitleText = (hoster as ISubtitle).SubtitleText;
                 }
-                else
-                {
-                    Log.Debug("Dreamfilm, no hoster found for url: {0}", url);
-                }
+                if (!forceSubtitle && hoster is ISubtitle)
+                    video.SubtitleText = (hoster as ISubtitle).SubtitleText;
+            }
+            else
+            {
+                Log.Debug("Dreamfilm, no hoster found for url: {0}", url);
             }
             url = video.PlaybackOptions.Count == 0 ? "" : video.PlaybackOptions.FirstOrDefault().Value;
             if (inPlaylist)
                 video.PlaybackOptions.Clear();
+            if (!string.IsNullOrWhiteSpace(url) && subtitleSource != SubtitleSource.None)
+                sh.SetSubtitleText(video, GetTrackingInfo, false);
+
             return new List<string>() { url };
         }
 

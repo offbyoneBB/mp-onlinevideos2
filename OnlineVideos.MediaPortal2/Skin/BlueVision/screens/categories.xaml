@@ -7,22 +7,76 @@
 
       <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
       <!-- Header -->
-      <ResourceWrapper x:Key="Header_Text" Resource="OnlineVideos"/>
+      <ResourceWrapper x:Key="Header_Text" Resource="[OnlineVideos.Category]"/>
 
         <!-- Contents -->
         <ControlTemplate x:Key="Contents_Template">
-          <DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}" Margin="-20,0,0,0">
+          <DockPanel DataContext="{Binding Source={StaticResource OnlineVideosModel}}">
             <ListView x:Name="categorylist" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DockPanel.Dock="Center" 
-                      Style="{ThemeResource ovsCategoriesListViewStyle}" Margin="-20,-18,-70,-8"
+                      Style="{ThemeResource ovsCategoriesListViewStyle}" Margin="-40,-18,-70,-8"
                       CurrentItem="{Binding Path=FocusedCategory, Mode=OneWayToSource}" 
                       ItemsSource="{Binding Path=CategoriesList}"/>
-            <StackPanel Orientation="Vertical" DockPanel.Dock="Bottom" VerticalAlignment="Top" Margin="0,625,0,-425">
-              <Label Color="{ThemeResource TextColor}"
-                     VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Scroll="Auto"
+
+            <!-- Actual Item / Total items -->
+            <DockPanel DockPanel.Dock="Center" VerticalAlignment="Top" HorizontalAlignment="Left" LastChildFill="false"
+                       IsVisible="{Binding IsItemsValid}">
+              <StackPanel DockPanel.Dock="Left" Margin="10,-85,25,85" Orientation="Horizontal">
+                <Label HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,10,0" FontFamily="DefaultBold"
+                   Color="{ThemeResource TextColor}" FontSize="{ThemeResource SmallerFontSize}">
+                  <Label.Content>
+                    <MultiBinding Converter="{StaticResource GetIndexMultiConverter}" ConverterParameter="1">
+                      <Binding ElementName="categorylist" Path="CurrentItem"/>
+                      <Binding ElementName="categorylist" Path="ItemsSource"/>
+                    </MultiBinding>
+                  </Label.Content>
+                </Label>
+                <Label Color="{ThemeResource TextColor}" Content="| " FontSize="{ThemeResource SmallerFontSize}" FontFamily="DefaultBold"/>
+                <Label Color="{ThemeResource TextColor}" FontSize="{ThemeResource SmallerFontSize}" FontFamily="DefaultBold">
+                  <Label.Content>
+                    <Binding ElementName="categorylist" Path="ItemsSource.Count" />
+                  </Label.Content>
+                </Label>
+              </StackPanel>
+            </DockPanel>
+
+            <!-- Footer -->
+            <Grid DockPanel.Dock="Bottom" VerticalAlignment="Top" Margin="-30,630,0,-250">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="480"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*"/>
+              </Grid.ColumnDefinitions>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+              </Grid.RowDefinitions>
+
+              <Label Color="{ThemeResource TextColor}" FontFamily="DefaultBold" Grid.ColumnSpan="2"
+                     VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TextTrimming="WordEllipsis"
                      DataContext="{Binding ElementName=categorylist,Path=CurrentItem}"
                      Content="{Binding Path=Name}" />
-              <Label Content="{Binding Path=SelectedSite.Name}" Color="{ThemeResource TextColor}" Margin="0,0,0,5" Opacity="0.6"/>
-            </StackPanel>
+              <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="0" DataContext="{Binding Source={StaticResource OnlineVideosModel}}">
+                <Label Content="{Binding Path=SelectedSite.Name}" Opacity="0.6" Color="{ThemeResource TextColor}"/>
+                <StackPanel Orientation="Horizontal" DataContext="{Binding ElementName=categorylist,Path=CurrentItem}"
+                            IsVisible="{Binding Path=EstimatedChildren, Converter={StaticResource ReferenceToBoolConverter}}">
+                  <Label Margin="0,0,5,0" Content="{Binding Path=EstimatedChildren}"
+                         Opacity="0.6" Color="{ThemeResource TextColor}"/>
+                  <Label Content="[OnlineVideos.Videos]"
+                         Opacity="0.6" Color="{ThemeResource TextColor}"/>
+                </StackPanel>
+
+                <Image Width="{ResolutionResource ovsLanguageImageWidth}" Stretch="Uniform" Margin="0"
+                       HorizontalAlignment="Left" VerticalAlignment="Top" Source="{Binding Path=SelectedSite.Name, Converter={StaticResource ovsLanguageIconConverter}}"/>
+                <Image Height="75"  HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform"
+                       Source="{Binding Path=SelectedSite.Site, Converter={ThemeResource ovsSiteUtilIconConverter}}" Margin="0,5,0,0"/>
+              </StackPanel>
+
+              <Label Height="170" Grid.Row="1" Grid.Column="2" Opacity="0.6" Color="{ThemeResource TextColor}"
+                     HorizontalAlignment="Stretch" VerticalAlignment="Top" Wrap="True"
+                     DataContext="{Binding ElementName=categorylist,Path=CurrentItem}" TextTrimming="WordEllipsis"
+                     Content="{Binding Description}" />
+            </Grid>
+            
           </DockPanel>
         </ControlTemplate>
     </Include.Resources>

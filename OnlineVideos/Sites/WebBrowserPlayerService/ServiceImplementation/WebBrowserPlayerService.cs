@@ -1,11 +1,6 @@
 ﻿using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
-using OnlineVideos.Sites.WebBrowserPlayerService;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
-using System.Windows.Forms;
 
 namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
 {
@@ -28,8 +23,7 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
         /// <param name="action"></param>
         public void OnNewAction(string action)
         {
-            OnNewActionReceived.Invoke(action);
+            if (OnNewActionReceived != null) OnNewActionReceived.Invoke(action);
         }
-
     }
 }

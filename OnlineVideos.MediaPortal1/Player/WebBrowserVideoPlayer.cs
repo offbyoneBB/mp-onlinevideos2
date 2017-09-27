@@ -22,6 +22,9 @@ namespace OnlineVideos.MediaPortal1.Player
     /// </summary>
     public class WebBrowserVideoPlayer : IPlayer, OVSPLayer
     {
+        protected const string HOST_PROCESS_NAME = "OnlineVideos.WebAutomation.BrowserHost";
+        protected const string HOST_PROCESS_NAME_IE = "iexplore";
+
         private IntPtr _mpWindowHandle = IntPtr.Zero;
         private bool _mpWindowHidden = false;
         private Process _browserProcess;
@@ -29,6 +32,9 @@ namespace OnlineVideos.MediaPortal1.Player
         private string _username;
         private string _password;
         private string _lastError;
+        private int _emulationLevel = 10000; //10000 IE10, 11000 IE11, 12000 Edge
+        private string _hostProcessName = HOST_PROCESS_NAME;
+
         private WebBrowserPlayerCallbackServiceProxy _callbackServiceProxy;
         private WebBrowserPlayerCallback _callback = new WebBrowserPlayerCallback();
         private WebBrowserPlayerServiceProxy _serviceProxy;
@@ -51,6 +57,12 @@ namespace OnlineVideos.MediaPortal1.Player
                 _username = browserConfig.UserName;
                 _password = browserConfig.Password;
             }
+            var emulationSite = util as OnlineVideos.Sites.Interfaces.IBrowserVersionEmulation;
+            if (emulationSite != null)
+            {
+                _emulationLevel = emulationSite.EmulatedVersion;
+                _hostProcessName = _emulationLevel > 10000 ? HOST_PROCESS_NAME_IE : HOST_PROCESS_NAME;
+            }
             _lastError = string.Empty;
 
             _callback.OnBrowserClosing += _callback_OnBrowserHostClosing;
@@ -58,11 +70,29 @@ namespace OnlineVideos.MediaPortal1.Player
             _callback.OnBrowserWndProc += _callback_OnBrowserWndProc;
 
             // Wire up to an existing browser process if one exists
-            var processes = System.Diagnostics.Process.GetProcessesByName("OnlineVideos.WebAutomation.BrowserHost");
-            if (processes != null && processes.Count() > 0)
-                _browserProcess = processes[0];
+            GetRunningProcess(_hostProcessName);
         }
-        
+
+        private void GetRunningProcess(string processName)
+        {
+            // Wire up to an existing browser process if one exists
+            foreach (var process in System.Diagnostics.Process.GetProcessesByName(processName))
+            {
+                try
+                {
+                    // We need to check for the actual location of the running process to make sure
+                    // that this is really our process.
+                    // Accessing MainModule will fail for x64 processes (from our x86 process)!
+                    if (string.Equals(process.MainModule.FileName, Path.Combine(OnlineVideoSettings.Instance.DllsDir, _hostProcessName + ".exe"), StringComparison.OrdinalIgnoreCase))
+                    {
+                        _browserProcess = process;
+                        return;
+                    }
+                }
+                catch { }
+            }
+        }
+
         /// <summary>
         /// Initialise the connection to the service
         /// </summary>
@@ -101,13 +131,14 @@ namespace OnlineVideos.MediaPortal1.Player
             //_browserProcess.StartInfo.FileName = "plugins\\Windows\\OnlineVideos\\OnlineVideos.Sites.WebAutomation.BrowserHost.exe";
             var dir = MediaPortal.Configuration.Config.GetFolder(MediaPortal.Configuration.Config.Dir.Base);
             
-            _browserProcess.StartInfo.FileName = Path.Combine(OnlineVideoSettings.Instance.DllsDir, "OnlineVideos.WebAutomation.BrowserHost.exe");
-            _browserProcess.StartInfo.Arguments = string.Format("\"{0} \" \"{1}\" \"{2}\" \"{3}\" \"{4}\"",
+            _browserProcess.StartInfo.FileName = Path.Combine(OnlineVideoSettings.Instance.DllsDir, _hostProcessName + ".exe");
+            _browserProcess.StartInfo.Arguments = string.Format("\"{0} \" \"{1}\" \"{2}\" \"{3}\" \"{4}\" \"{5}\"",
                                             dir,
                                             strFile,
                                             _automationType,
                                             EncryptionUtils.SymEncryptLocalPC(string.IsNullOrEmpty(_username) ? "_" : _username),
-                                            EncryptionUtils.SymEncryptLocalPC(string.IsNullOrEmpty(_password) ? "_" : _password));
+                                            EncryptionUtils.SymEncryptLocalPC(string.IsNullOrEmpty(_password) ? "_" : _password),
+                                            _emulationLevel);
             _browserProcess.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;
             
             // Restart MP or Restore MP Window if needed

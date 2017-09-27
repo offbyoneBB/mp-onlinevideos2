@@ -11,6 +11,7 @@ namespace OnlineVideos.MediaPortal2
 {
     public class OnlineVideosPlayer : VideoPlayer
     {
+        private FilterFileWrapper _filterWrapper;
         public const string ONLINEVIDEOS_MIMETYPE = "video/online";
 
         protected override void AddSourceFilter()
@@ -23,9 +24,10 @@ namespace OnlineVideos.MediaPortal2
                 {
                     if (sourceFilterName == MPUrlSourceFilter.Downloader.FilterName)
                     {
-                        sourceFilter = FilterLoader.LoadFilterFromDll(
-                            Path.Combine(Path.GetDirectoryName(this.GetType().Assembly.Location), @"MPUrlSourceSplitter\MPUrlSourceSplitter.ax"),
-                            new Guid(MPUrlSourceFilter.Downloader.FilterCLSID), false);
+                        _filterWrapper = FilterLoader.LoadFilterFromDll(
+                            Path.Combine(Path.GetDirectoryName(GetType().Assembly.Location), @"MPUrlSourceSplitter\MPUrlSourceSplitter.ax"),
+                            new Guid(MPUrlSourceFilter.Downloader.FilterCLSID));
+                        sourceFilter = _filterWrapper.GetFilter();
                         if (sourceFilter != null)
                         {
                             _graphBuilder.AddFilter(sourceFilter, MPUrlSourceFilter.Downloader.FilterName);
@@ -62,6 +64,12 @@ namespace OnlineVideos.MediaPortal2
             {
                 base.AddSourceFilter();
             }
+        }
+
+        protected override void FreeCodecs()
+        {
+            base.FreeCodecs();
+            FilterGraphTools.TryDispose(ref _filterWrapper);
         }
 
         void LoadAndWaitForMPUrlSourceFilter(MPUrlSourceFilter.IFilterStateEx filterStateEx)

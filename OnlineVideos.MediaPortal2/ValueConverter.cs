@@ -125,7 +125,7 @@ namespace OnlineVideos.MediaPortal2
     {
         public bool Convert(object value, Type targetType, object parameter, CultureInfo culture, out object result)
         {
-            result = (bool)value ? SetFocusPriority.Highest : SetFocusPriority.Default;
+            result = (bool)value ? SetFocusPriority.Highest : SetFocusPriority.None;
             return true;
         }
 

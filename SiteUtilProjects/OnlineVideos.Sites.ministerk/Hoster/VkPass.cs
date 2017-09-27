@@ -18,6 +18,27 @@ namespace OnlineVideos.Hoster
             return "vkpass.com";
         }
 
+        private Dictionary<string, string> GetPlaybackOptionsFromIFrame(string data, string refUrl)
+        {
+            List<Hoster.HosterBase> hosters = Hoster.HosterFactory.GetAllHosters();
+
+            Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
+            Regex rgx = new Regex(@"<iframe[^>]*?src=['""](?<url>[^""']*)");
+            Match m = rgx.Match(data);
+            if (m.Success)
+            {
+                string url = m.Groups["url"].Value;
+                Hoster.HosterBase hoster = hosters.FirstOrDefault(h => url.ToLower().StartsWith("http://" + h.GetHosterUrl().ToLower()));
+                if (hoster != null)
+                {
+                    if (hoster is IReferer)
+                        (hoster as IReferer).RefererUrl = refUrl;
+                    playbackOptions = hoster.GetPlaybackOptions(url);
+                }
+            }
+            return playbackOptions;
+        }
+
         public override Dictionary<string, string> GetPlaybackOptions(string url)
         {
             subtitleText = null;
@@ -29,68 +50,50 @@ namespace OnlineVideos.Hoster
             try
             {
                 string data = GetWebData(url, referer: refUrl);
-                Regex rgx = new Regex(@"<script>(?<js>eval.*?\|vkpass\|.*?)</script>");
-                string js = null;
-                Match m = rgx.Match(data);
-                if (m.Success)
+                playbackOptions = GetPlaybackOptionsFromIFrame(data, refUrl);
+                if (playbackOptions.Count < 1)
                 {
-                    js = m.Groups["js"].Value;
-                }
-                if (!string.IsNullOrEmpty(js))
-                {
-                    js = "var document={s:'',write:function(s){this.s=s;return;},read:function(){return this.s;}};function html(){return document.read();}; " + js;
-                    var engine = new Jurassic.ScriptEngine();
-                    engine.Execute(js);
-                    data = engine.CallGlobalFunction("html").ToString();
-                    rgx = new Regex(@"<source.*?src=""(?<url>[^""]*).*?label=""(?<label>[^""]*)");
-                    foreach (Match match in rgx.Matches(data))
+                    Regex rgx = new Regex(@"changeSource\('(?<source>[^']*)");
+                    foreach (Match sMatch in rgx.Matches(data))
                     {
-                        MPUrlSourceFilter.HttpUrl hurl = new MPUrlSourceFilter.HttpUrl(match.Groups["url"].Value);
-                        hurl.Referer = "http://vkpass.com";
-                        playbackOptions.Add(match.Groups["label"].Value, hurl.ToString());
+                        if (sMatch.Success)
+                        {
+                            bool qOrAmp = url.Contains("?");
+                            string source = sMatch.Groups["source"].Value;
+                            string sUrl = url + (qOrAmp ? "&" : "?") + "source=" + source;
+                            Dictionary<string, string> tmpPbos = GetPlaybackOptionsFromIFrame(GetWebData(sUrl, referer: refUrl), refUrl);
+                            if (tmpPbos.Count > 0)
+                            {
+                                foreach (KeyValuePair<string, string> kvp in tmpPbos)
+                                {
+                                    playbackOptions.Add(kvp.Key + " " + source, kvp.Value);
+                                }
+                            }
+                        }
                     }
-
                 }
+
                 string subUrl = "";
 
-                rgx = new Regex(@"<track.*?src=""(?<url>[^""]*).*?label=""(?<label>[^""]*)");
-                foreach (Match match in rgx.Matches(data))
+                Regex regex = new Regex(@"(?<sub>http[^&]*?.\.vtt)");
+                Match m = regex.Match(url);
+                if (m.Success)
                 {
-                    string label = match.Groups["label"].Value;
-                    if (label.ToLower() == "swedish" || label.ToLower() == "svenska")
-                    {
-                        subUrl = match.Groups["url"].Value;
-                        break;
-                    }
-                    else if (label.ToLower() == "english" || label.ToLower() == "engelska")
-                    {
-                        subUrl = match.Groups["url"].Value;
-                    }
-                    else if (string.IsNullOrEmpty(subUrl))
-                    {
-                        subUrl = match.Groups["url"].Value;
-                    }
+                    subUrl = m.Groups["sub"].Value;
                 }
                 if (!string.IsNullOrWhiteSpace(subUrl))
                 {
                     try
                     {
-                        subtitleText = WebCache.Instance.GetWebData(subUrl, forceUTF8: true);
-                        int index = subtitleText.IndexOf("WEBVTT\r\n\r\n");
-                        if (index >= 0)
-                            subtitleText = subtitleText.Substring(index).Replace("WEBVTT\r\n\r\n", "");
-                        if (!subtitleText.StartsWith("1\r\n"))
+                        subtitleText = "";
+                        string tmpTxt = WebCache.Instance.GetWebData(subUrl, forceUTF8: true);
+                        tmpTxt = Regex.Replace(tmpTxt, @"[^\u0000-\u00FF]", "").Replace("\r", "");
+                        Regex rgx = new Regex(@"(?<text>\d\d:\d\d:\d\d\.\d\d\d\s*?-->\s*?\d\d:\d\d:\d\d\.\d\d\d\n.*?\n\n)", RegexOptions.Singleline);
+                        int i = 0;
+                        foreach (Match match in rgx.Matches(tmpTxt))
                         {
-                            string oldSub = subtitleText;
-                            rgx = new Regex(@"(?<time>\d\d:\d\d:\d\d.\d\d\d -->)");
-                            int i = 1;
-                            foreach (Match match in rgx.Matches(oldSub))
-                            {
-                                string time = match.Groups["time"].Value;
-                                subtitleText = subtitleText.Replace(time, "\r\n" + i.ToString() + "\r\n" + time);
-                                i++;
-                            }
-                            subtitleText = subtitleText.TrimStart();
+                            i++;
+                            subtitleText += i + "\n" + match.Groups["text"].Value;
                         }
                     }
                     catch { }

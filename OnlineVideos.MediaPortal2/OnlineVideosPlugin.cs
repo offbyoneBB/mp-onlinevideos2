@@ -2,6 +2,7 @@
 using MediaPortal.Common.Localization;
 using MediaPortal.Common.Messaging;
 using MediaPortal.Common.PathManager;
+using MediaPortal.Common.MediaManagement;
 using MediaPortal.Common.PluginManager;
 using MediaPortal.Common.Services.Settings;
 using MediaPortal.Common.Settings;
@@ -9,6 +10,7 @@ using MediaPortal.Common.Threading;
 using MediaPortal.UI.Presentation.Workflow;
 using OnlineVideos.CrossDomain;
 using OnlineVideos.Downloading;
+using OnlineVideos.MediaPortal2.Interfaces.Metadata;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,7 +25,7 @@ namespace OnlineVideos.MediaPortal2
         private IIntervalWork _autoUpdateTask;
         private AsynchronousMessageQueue _messageQueue;
         private SettingsChangeWatcher<Configuration.Settings> _settingsWatcher;
-        
+
         #region IPluginStateTracker implementation
 
         public void Activated(PluginRuntime pluginRuntime)
@@ -32,6 +34,11 @@ namespace OnlineVideos.MediaPortal2
                 return;
 
             _isInitialized = true;
+
+
+            // All non-default media item aspects must be registered
+            var miatr = ServiceRegistration.Get<IMediaItemAspectTypeRegistration>();
+            miatr.RegisterLocallyKnownMediaItemAspectType(OnlineVideosAspect.Metadata);
 
             InitializeOnlineVideoSettings();
 
@@ -118,7 +125,7 @@ namespace OnlineVideos.MediaPortal2
                 // delete old cached thumbs (todo : no better place to do this for now, should be configurable)
                 ImageDownloader.DeleteOldThumbs(30, r => { return true; });
             }
-            
+
             // instantiate and initialize all siteutils
             OnlineVideoSettings.Instance.BuildSiteUtilsList();
         }
@@ -150,7 +157,7 @@ namespace OnlineVideos.MediaPortal2
 
             var settingsManager = ServiceRegistration.Get<ISettingsManager>();
             var ovMP2Settings = settingsManager.Load<Configuration.Settings>();
-            
+
             // if the current version is compatible and automatic update is enabled and due, run it now
             if (Sites.Updater.VersionCompatible &&
                 ovMP2Settings.AutomaticUpdate &&
@@ -159,7 +166,7 @@ namespace OnlineVideos.MediaPortal2
                 var updateResult = Sites.Updater.UpdateSites();
                 ovMP2Settings.LastAutomaticUpdate = DateTime.Now;
                 settingsManager.Save(ovMP2Settings);
-                
+
                 if (updateResult == true)
                 {
                     Log.Info("Reloading SiteUtil Dlls at runtime.");
@@ -173,7 +180,7 @@ namespace OnlineVideos.MediaPortal2
                 {
                     OnlineVideoSettings.Instance.BuildSiteUtilsList();
                     ServiceRegistration.Get<IMessageBroker>().Send(OnlineVideosMessaging.CHANNEL, new SystemMessage(OnlineVideosMessaging.MessageType.RebuildSites));
-                }             
+                }
             }
         }
 

@@ -82,12 +82,12 @@ namespace OnlineVideos.Sites
                     if(eInfo != null)
                     {
                         videoInfo.Title = String.Format("{0} {1}", eInfo.Value<string>("name"), vid.Value<string>("title"));
-                        videoInfo.Description = String.Format("{0}\n{1}\n{2}", vid["classname"].Value<string>(), eInfo["synopsis"].Value<string>(), vid["synopsis"].Value<string>());
+                        videoInfo.Description = String.Format("{0}\n{1}\n{2}", getFullClassname(vid["classname"].Value<string>()), eInfo["synopsis"].Value<string>(), vid["synopsis"].Value<string>());
                     }
                     else
                     {
-                        videoInfo.Title = vid.Value<string>("title");
-                        videoInfo.Description = String.Format("{0}\n{1}", vid["classname"].Value<string>(), vid["synopsis"].Value<string>());
+                        videoInfo.Title = String.Format("{0}", vid.Value<string>("title"));
+                        videoInfo.Description = String.Format("{0}\n{1}", getFullClassname(vid["classname"].Value<string>()), vid["synopsis"].Value<string>());
                     }
                     videoInfo.VideoUrl = String.Format("http://www.rtl.nl/system/s4m/vfd/version=2/d=a3t/fmt=progressive/fun=abstract/uuid={0}/output=json/", vid["uuid"].Value<string>());
                     videoInfo.Thumb = String.Format("{0}{1}", jsonEpsData["meta"]["poster_base_url"].Value<string>(), vid["uuid"].Value<string>());
@@ -135,7 +135,7 @@ namespace OnlineVideos.Sites
             
         }
 
-        public IEnumerable<JToken> getEpisodeVideos(string key, JObject jsonEpsData)
+        private IEnumerable<JToken> getEpisodeVideos(string key, JObject jsonEpsData)
         {
             var episodes =
                 from e in (JArray)jsonEpsData["material"]
@@ -145,7 +145,7 @@ namespace OnlineVideos.Sites
             return episodes;
         }
 
-        public JToken getEpisodeInfo(string key, JObject jsonEpsData)
+        private JToken getEpisodeInfo(string key, JObject jsonEpsData)
         {
             Log.Debug("Find episode with key {0}", key);
             var episodes =
@@ -159,7 +159,7 @@ namespace OnlineVideos.Sites
                 return null;
         }
 
-        public JToken getEpisodeData(string key, JObject jsonEpsData)
+        private JToken getEpisodeData(string key, JObject jsonEpsData)
         {
             var episodes =
                 from e in (JArray)jsonEpsData["material"]
@@ -170,6 +170,23 @@ namespace OnlineVideos.Sites
                 return episodes.First();
             else
                 return getEpisodeVideos(key, jsonEpsData).First();
+        }
+
+        private String getFullClassname(string classname)
+        {
+            Dictionary<string, string> Classnames = new Dictionary<string, string>();
+            Classnames.Add("uitzending", "Uitzending");
+            Classnames.Add("eps_fragment", "Fragment");
+            Classnames.Add("onlineonly", "Bonusmateriaal");
+            Classnames.Add("entertainment", "Entertainment");
+            Classnames.Add("multi_fragment", "Week Samenvatting");
+
+            String prettyClass;
+
+            if(Classnames.TryGetValue(classname, out prettyClass))
+                return prettyClass;
+            else
+                return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(classname);
         }
 
         public static DateTime UnixTimeToDateTime(string text)

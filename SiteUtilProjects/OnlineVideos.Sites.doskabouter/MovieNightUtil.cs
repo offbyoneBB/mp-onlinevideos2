@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using HtmlAgilityPack;
+using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Sites
 {
@@ -97,10 +98,18 @@ namespace OnlineVideos.Sites
                 {
                     var q = quality.Trim(new[] { '"', ' ' });
                     if (q == defaultQuality)
-                        video.PlaybackOptions.Add(q, bareUrl);
+                    {
+                        HttpUrl final = new HttpUrl(bareUrl);
+                        final.Referer = playListUrl;
+                        video.PlaybackOptions.Add(q, final.ToString());
+                    }
                     else
                         if (!String.IsNullOrEmpty(q))
-                            video.PlaybackOptions.Add(q, bareUrl.Insert(inspos, '-' + q));
+                    {
+                        HttpUrl final = new HttpUrl(bareUrl.Insert(inspos, '-' + q));
+                        final.Referer = playListUrl;
+                        video.PlaybackOptions.Add(q, final.ToString());
+                    }
                 }
             }
 
@@ -134,7 +143,11 @@ namespace OnlineVideos.Sites
                 sh.SetSubtitleText(video, this.GetTrackingInfo);
             }
             if (video.PlaybackOptions == null)
-                return bareUrl;
+            {
+                HttpUrl final = new HttpUrl(bareUrl);
+                final.Referer = playListUrl;
+                return final.ToString();
+            }
             return video.PlaybackOptions.Values.Last();
         }
 
@@ -152,6 +165,39 @@ namespace OnlineVideos.Sites
             else
                 return node.Value;
         }
+
+        #region ContextMenu
+
+        public override List<ContextMenuEntry> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
+        {
+            List<ContextMenuEntry> result = new List<ContextMenuEntry>();
+            if (selectedItem != null && !string.IsNullOrEmpty(selectedItem.VideoUrl) && string.IsNullOrEmpty(selectedItem.Description))
+            {
+                result.Add(new ContextMenuEntry() { DisplayText = "Get Description", Other = selectedItem.VideoUrl });
+            }
+            return result;
+        }
+
+        public override ContextMenuExecutionResult ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, ContextMenuEntry choice)
+        {
+            if (choice != null && choice.DisplayText.StartsWith("Get Description"))
+            {
+                string resultUrl = GetFormattedVideoUrl(selectedItem);
+                string data = GetWebData(resultUrl);
+                if (!String.IsNullOrEmpty(data))
+                {
+                    Match m = Regex.Match(data, @"<div\sclass=""imdbdatos"">\s*<i><a\shref=""(?<url>[^""]*)"">IMDb</a>\s<span\sclass=""icon-chevron-right2""></span></i>\s*<i>(?<stars>[^<]*)</i>\s*<i>(?<votes>[^<]*)</i>", defaultRegexOptions);
+                    if (m.Success)
+                        selectedItem.Description = m.Groups["stars"].Value + ' ' + m.Groups["votes"].Value + ' ';
+                    m = Regex.Match(data, @"<h2>Synopsis</h2>\s*<p>(?<description>[^<]*)</p>", defaultRegexOptions);
+                    if (m.Success)
+                        selectedItem.Description = selectedItem.Description + m.Groups["description"].Value;
+                }
+            }
+            return null;
+        }
+
+        #endregion
 
     }
 }

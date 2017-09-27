@@ -14,6 +14,30 @@ using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Hoster
 {
+
+    public class AuroraVid : MyHosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "auroravid.to";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            url = WebCache.Instance.GetRedirectedUrl(url);
+            string page = WebCache.Instance.GetWebData(url);
+            if (!string.IsNullOrEmpty(page))
+            {
+                page = GetFromPost(url, page, true);
+                Match m = Regex.Match(page, @"<source\s*src=""(?<url>[^""]*)""");
+                if (m.Success)
+                    return m.Groups["url"].Value;
+            }
+            return null;
+        }
+    }
+
+
     public class BlipTv : HosterBase
     {
         public override string GetHosterUrl()
@@ -93,6 +117,40 @@ namespace OnlineVideos.Hoster
             webData = WebCache.Instance.GetWebData(tmp);
             tmp = Helpers.StringUtils.GetSubString(webData, @"<param name=""src"" value=""", @"""");
             return WebCache.Instance.GetRedirectedUrl(tmp);
+        }
+    }
+
+    public class CloudTime : MyHosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "cloudtime.to";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            string page = WebCache.Instance.GetWebData(url);
+            if (!string.IsNullOrEmpty(page))
+            {
+                page = GetFromPost(url, page, true);
+                Match m = Regex.Match(page, @"<source\ssrc=""(?<url>[^""]*)""\stype='video/mp4'>");
+                if (!m.Success)
+                    m = Regex.Match(page, @"<a\shref=""(?<url>[^""]*)""\starget=""""\sclass=""btn\sdwlBtn""");
+                if (m.Success)
+                {
+                    string result = m.Groups["url"].Value;
+                    if (!Uri.IsWellFormedUriString(result, UriKind.Absolute))
+                    {
+                        Uri uri = null;
+                        if (Uri.TryCreate(new Uri(url), result, out uri))
+                            result = uri.ToString();
+                        else
+                            result = string.Empty;
+                    }
+                    return result;
+                }
+            }
+            return null;
         }
     }
 
@@ -583,7 +641,7 @@ namespace OnlineVideos.Hoster
                                           "&rand=" + rand +
                                           "&referer=" + referer +
                                           "&method_free=" + HttpUtility.UrlEncode(method_free) +
-                            //"&method_premium=" + method_premium +
+                                          //"&method_premium=" + method_premium +
                                           "&down_direct=1";
 
                         //System.Threading.Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
@@ -706,6 +764,23 @@ namespace OnlineVideos.Hoster
 
             string file = Helpers.StringUtils.GetSubString(webdata, @"file: """, @"""");
             string streamer = Helpers.StringUtils.GetSubString(webdata, @"streamer: """, @"""");
+            if (String.IsNullOrEmpty(streamer))
+            {
+                string packed = Helpers.StringUtils.GetSubString(webdata, @"return p}", @"</script>");
+                packed = packed.Replace(@"\'", @"'");
+                string unpacked = Helpers.StringUtils.UnPack(packed);
+
+                Match m = Regex.Match(unpacked, @"file:\s*""(?<url>[^""]*)""");
+                if (m.Success)
+                    return m.Groups["url"].Value;
+
+            }
+            if (String.IsNullOrEmpty(streamer))
+            {
+                Match m = Regex.Match(webdata, @"<title>File\sRemoved</title>\s*<b>(?<message>[^<]*)</b>");
+                if (m.Success)
+                    throw new OnlineVideosException(m.Groups["message"].Value);
+            }
             RtmpUrl rtmpUrl = new RtmpUrl(streamer)
             {
                 PlayPath = file

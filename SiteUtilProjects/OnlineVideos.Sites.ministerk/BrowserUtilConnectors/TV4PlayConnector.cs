@@ -21,7 +21,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         bool showLoading = true;
         bool isPremium = false;
 
-        private const string loginUrl = "https://www.tv4play.se/";
+        private const string loginUrl = "https://www.tv4play.se/sso/asset_splash/session/new?id={0}&partner=tv4play.se";
 
         private bool HaveCredentials
         {
@@ -42,6 +42,9 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             username = username.Replace("SHOWLOADING", string.Empty);
             isPremium = username.Contains("PREMIUM");
             username = username.Replace("PREMIUM", string.Empty);
+            string[] userStrings = username.Split('¥');
+            username = userStrings[0];
+            string videoId = userStrings[1];
             if (showLoading) ShowLoading();
             this.username = username;
             this.password = password;
@@ -51,7 +54,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 ProcessComplete.Success = false;
                 return EventResult.Error("No login credantials");
             }
-            Url = loginUrl;
+            Url = string.Format(loginUrl, videoId);
             ProcessComplete.Finished = false;
             ProcessComplete.Success = false;
             return EventResult.Complete();
@@ -141,14 +144,11 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 {
                     if (!clicked)
                     {
-                        InvokeScript("function openLogin() { $(\"a[href='https://www.tv4play.se/session/new']\")[0].click(); }; setTimeout(\"openLogin()\", 1500); ");
                         string js = " function doLogin() { ";
-                        js += "var iframe = $('iframe.cboxIframe')[0].contentDocument; ";
-                        js += "iframe.getElementById('user-name').value = '" + username + "'; ";
-                        js += "iframe.getElementById('password').value = '" + password + "'; ";
-                        js += "iframe.getElementById('remember_me').checked = false; ";
-                        js += "iframe.getElementsByClassName('btn')[0].click(); }; ";
-                        js += "setTimeout(\"doLogin()\", 4000); ";
+                        js += "document.getElementsByName('username')[0].value = '" + username + "'; ";
+                        js += "document.getElementsByName('password')[0].value = '" + password + "'; ";
+                        js += "document.getElementsByClassName('btn')[0].click(); }; ";
+                        js += "setTimeout(\"doLogin()\", 1500); ";
                         InvokeScript(js);
                         clicked = true;
                         System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
@@ -157,15 +157,17 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                             refreshed = true;
                             timer.Stop();
                             timer.Dispose();
-                            Browser.Refresh();
+                            //Browser.Refresh();
+                            Url = "https://www.tv4play.se/";
                         };
-                        timer.Interval = 7000;
+                        timer.Interval = 3000;
                         timer.Start();
                     }
                 }
             }
             else
             {
+                
                 InvokeScript("setTimeout(\"document.getElementById('player').setAttribute('style', 'position: fixed; z-index: 11000; top: 0px; left: 0px; width: 100%; height: 100%')\", 1000);");
                 if (startTimer)
                 {

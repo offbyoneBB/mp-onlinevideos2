@@ -6,6 +6,8 @@ using System.Xml;
 using OnlineVideos.Sites.Brownard.Extensions;
 using System.Net;
 using OnlineVideos.Sites.Utils;
+using System.Linq;
+using HtmlAgilityPack;
 
 namespace OnlineVideos.Sites
 {
@@ -19,10 +21,14 @@ namespace OnlineVideos.Sites
         const string ATOZ_URL = "http://www.bbc.co.uk/iplayer/a-z/";
         static readonly string[] atoz = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0-9" };
 
+        static readonly Uri BASE_URL = new Uri("http://www.bbc.co.uk");
+
         #endregion
 
         #region Settings
 
+        [Category("OnlineVideosUserConfiguration"), Description("Select stream automatically?")]
+        protected bool AutoSelectStream = false;
         [Category("OnlineVideosUserConfiguration"), Description("Proxy to use for WebRequests (must be in the UK). Define like this: 83.84.85.86:8116")]
         string proxy = null;
         [Category("OnlineVideosUserConfiguration"), Description("If your proxy requires a username, set it here.")]
@@ -47,21 +53,10 @@ namespace OnlineVideos.Sites
         #endregion
 
         #region Regex
-
-        static readonly Regex seriesRegex = new Regex(@"<li class=""list-item[^""]*""\s+data-ip-id=""([^""]*)"">.*?<div class=""title top-title"">([^<]*)</div>.*?data-ip-src=""([^""]*)"">", RegexOptions.Singleline);
-        static readonly Regex aToZRegex = new Regex(@"<li>\s*<a href=""/iplayer/brand/([^""]*)"".*?<span class=""title"">([^<]*)", RegexOptions.Singleline);
-        static readonly Regex nextPageRegex = new Regex(@"<span class=""next txt"">\s*<a href=""([^""]*)""[^>]*>\s*Next", RegexOptions.Singleline);
-
-        static readonly Regex episodeInfoRegex = new Regex(@"<li class=""list-item[^>]*>(.*?)</li>", RegexOptions.Singleline);
-        static readonly Regex episodeUrlRegex = new Regex(@"href=""([^""]*)");
-        static readonly Regex episodeImageRegex = new Regex(@"data-ip-src=""([^""]*)");
-        static readonly Regex episodeTitleRegex = new Regex(@"class=""subtitle"">([^<]*)");
-        static readonly Regex episodeParentTitleRegex = new Regex(@"class=""title"">([^<]*)");
-        static readonly Regex episodeDescriptionRegex = new Regex(@"class=""synopsis"">([^<]*)");
-        static readonly Regex episodeAirDateRegex = new Regex(@"class=""release"">([^<]*)");
-        static readonly Regex episodeDurationRegex = new Regex(@"Duration\s*</span>([^<]*)");
-
-        static readonly Regex videoPidRegex = new Regex(@"vpid"":""([^""]*)");
+        
+        static readonly Regex urlVpidRegex = new Regex(@"/iplayer/(episodes?|brand)/([^/""]*)");
+        static readonly Regex srcsetRegex = new Regex(@"http[^\s""]*");
+        static readonly Regex videoPidRegex = new Regex(@"""versions"":.*?""id"":""([^""]*)");
 
         #endregion
 
@@ -88,9 +83,14 @@ namespace OnlineVideos.Sites
 
         public override string GetVideoUrl(VideoInfo video)
         {
-            if (video.Other == "livestream")
+            if (video.Other as string == "livestream")
                 return getLiveUrls(video);
+            else
+                return getCatchupUrls(video);
+        }
 
+        string getCatchupUrls(VideoInfo video)
+        {
             WebProxy proxyObj = getProxy();
             Match m = videoPidRegex.Match(GetWebData(video.VideoUrl, proxy: proxyObj));
             if (!m.Success)
@@ -119,7 +119,7 @@ namespace OnlineVideos.Sites
                 }
             }
 
-            SortedList<string, string> sortedPlaybackOptions = new SortedList<string, string>(new QualityComparer());
+            SortedList<string, string> sortedPlaybackOptions = new SortedList<string, string>(new StreamComparer());
             foreach (XmlElement mediaElem in doc.SelectNodes("//ns1:media[@kind='video']", nsmRequest))
             {
                 string info = "";
@@ -177,36 +177,42 @@ namespace OnlineVideos.Sites
                 }
             }
 
-            if (sortedPlaybackOptions.Count == 0)
-            {
-                //Fallback to HLS streams
-                string hlsUrl = GetHLSVideoUrl(video, vpid, proxyObj);
-                if (!string.IsNullOrEmpty(hlsUrl))
-                    return hlsUrl;
-
-                var errorNodes = doc.SelectNodes("//ns1:error", nsmRequest);
-                if (errorNodes.Count > 0) throw new OnlineVideosException(string.Format("BBC says: {0}", ((XmlElement)errorNodes[0]).GetAttribute("id")));
-            }
-
-            string lastUrl = "";
             video.PlaybackOptions = new Dictionary<string, string>();
-            var enumer = sortedPlaybackOptions.GetEnumerator();
-            while (enumer.MoveNext())
+            if (sortedPlaybackOptions.Count > 0)
             {
-                if (lastUrl == "" || !enumer.Current.Key.Contains("2800"))
-                    lastUrl = enumer.Current.Value;
-                video.PlaybackOptions.Add(enumer.Current.Key, enumer.Current.Value);
+                if (AutoSelectStream)
+                {
+                    var last = sortedPlaybackOptions.Last();
+                    video.PlaybackOptions.Add(last.Key, last.Value);
+                    return last.Value;
+                }
+                else
+                {
+                    foreach (var option in sortedPlaybackOptions)
+                        video.PlaybackOptions.Add(option.Key, option.Value);
+                    return sortedPlaybackOptions.Last().Value;
+                }
             }
-            return lastUrl;
+
+            //Fallback to HLS streams
+            string url = getHLSVideoUrls(video, vpid, proxyObj);
+            if (!string.IsNullOrEmpty(url))
+                return url;
+
+            var errorNodes = doc.SelectNodes("//ns1:error", nsmRequest);
+            if (errorNodes.Count > 0)
+                throw new OnlineVideosException(string.Format("BBC says: {0}", ((XmlElement)errorNodes[0]).GetAttribute("id")));
+            return null;
         }
 
-        string GetHLSVideoUrl(VideoInfo video, string vpid, WebProxy proxyObj)
+        string getHLSVideoUrls(VideoInfo video, string vpid, WebProxy proxyObj)
         {
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(GetWebData(HLS_MEDIA_SELECTOR_URL + vpid, proxy: proxyObj)); //uk only
             XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");
-                        
+
+            video.PlaybackOptions = new Dictionary<string, string>();
             foreach (XmlElement mediaElem in doc.SelectNodes("//ns1:media[@kind='video']", nsmRequest))
             {
                 foreach (XmlElement connectionElem in mediaElem.SelectNodes("ns1:connection", nsmRequest))
@@ -214,18 +220,8 @@ namespace OnlineVideos.Sites
                     string playlistUrl = connectionElem.Attributes["href"].Value;
                     string playlistStr = GetWebData(playlistUrl, proxy: proxyObj, userAgent: HlsPlaylistParser.APPLE_USER_AGENT);
                     HlsPlaylistParser playlist = new HlsPlaylistParser(playlistStr, playlistUrl);
-                    if (playlist.StreamInfos.Count == 0)
-                        continue;
-
-                    video.PlaybackOptions = new Dictionary<string, string>();
-                    string lastUrl = "";
-                    foreach (HlsStreamInfo streamInfo in playlist.StreamInfos)
-                    {
-                        lastUrl = streamInfo.Url;
-                        string name = string.Format("{0}x{1} | {2} kbps", streamInfo.Width, streamInfo.Height, streamInfo.Bandwidth / 1024);
-                        video.PlaybackOptions.Add(name, lastUrl);
-                    }
-                    return lastUrl;
+                    if (playlist.StreamInfos.Count > 0)
+                        return populateHlsPlaybackOptions(video, playlist.StreamInfos);
                 }
             }
             return null;
@@ -236,6 +232,7 @@ namespace OnlineVideos.Sites
             WebProxy proxyObj = getProxy();
             string playlistStr = GetWebData(video.VideoUrl, proxy: proxyObj, userAgent: HlsPlaylistParser.APPLE_USER_AGENT);
             HlsPlaylistParser playlist = new HlsPlaylistParser(playlistStr, video.VideoUrl);
+
             video.PlaybackOptions = new Dictionary<string, string>();
             if (playlist.StreamInfos.Count == 0)
             {
@@ -243,14 +240,27 @@ namespace OnlineVideos.Sites
                 return video.VideoUrl;
             }
 
-            string lastUrl = "";
-            foreach (HlsStreamInfo streamInfo in playlist.StreamInfos)
+            return populateHlsPlaybackOptions(video, playlist.StreamInfos);
+        }
+
+        string populateHlsPlaybackOptions(VideoInfo video, List<HlsStreamInfo> streamInfos)
+        {
+            if (AutoSelectStream)
             {
-                lastUrl = streamInfo.Url;
+                HlsStreamInfo streamInfo = streamInfos.Last();
                 string name = string.Format("{0}x{1} | {2} kbps", streamInfo.Width, streamInfo.Height, streamInfo.Bandwidth / 1024);
-                video.PlaybackOptions.Add(name, lastUrl);
+                video.PlaybackOptions.Add(name, streamInfo.Url);
+                return streamInfo.Url;
             }
-            return lastUrl;
+            else
+            {
+                foreach (HlsStreamInfo streamInfo in streamInfos)
+                {
+                    string name = string.Format("{0}x{1} | {2} kbps", streamInfo.Width, streamInfo.Height, streamInfo.Bandwidth / 1024);
+                    video.PlaybackOptions.Add(name, streamInfo.Url);
+                }
+                return streamInfos.Last().Url;
+            }
         }
 
         public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
@@ -329,53 +339,114 @@ namespace OnlineVideos.Sites
         public override int DiscoverSubCategories(Category parentCategory)
         {
             string url = (parentCategory as RssLink).Url;
-            if (url.StartsWith(ATOZ_URL))
-            {
-                parentCategory.SubCategories = new List<Category>();
-                string html = GetWebData(url);
-                foreach (Match m in aToZRegex.Matches(html))
-                {
-                    parentCategory.SubCategories.Add(new RssLink()
-                    {
-                        Url = "http://www.bbc.co.uk/iplayer/episodes/" + m.Groups[1].Value,
-                        Name = m.Groups[2].Value.HtmlCleanup(),
-                        Thumb = defaultThumb,
-                        ParentCategory = parentCategory
-                    });
-                }
-            }
-            else
-            {
-                parentCategory.SubCategories = discoverSubCategoriesLocal(parentCategory, url);
-            }
-
+            parentCategory.SubCategories = url.StartsWith(ATOZ_URL) ?
+                discoverAtoZSubCategories(parentCategory, url) :
+                discoverSubCategoriesLocal(parentCategory, url);
             parentCategory.SubCategoriesDiscovered = true;
             return parentCategory.SubCategories.Count;
         }
 
+        List<Category> discoverAtoZSubCategories(Category parentCategory, string url)
+        {
+            List<Category> categories = new List<Category>();
+            HtmlDocument document = GetWebData<HtmlDocument>(url);
+            var programmes = document.DocumentNode.SelectNodes(@"//ol[contains(@class, 'tleo-list')]/li");
+            foreach (var programme in programmes)
+            {
+                var urlNode = programme.SelectSingleNode(@"./a");
+                if (urlNode == null)
+                    continue;
+
+                Match vpidMatch = urlVpidRegex.Match(urlNode.GetAttributeValue("href", ""));
+                if (!vpidMatch.Success)
+                    continue;
+
+                categories.Add(new RssLink()
+                {
+                    Url = "http://www.bbc.co.uk/iplayer/episodes/" + vpidMatch.Groups[2].Value,
+                    Name = urlNode.SelectSingleNode(@"./span").GetCleanInnerText(),
+                    Thumb = defaultThumb,
+                    ParentCategory = parentCategory
+                });
+            }
+            return categories;
+        }
+
         List<Category> discoverSubCategoriesLocal(Category parentCategory, string url)
         {
-            List<Category> cats = new List<Category>();
-            while (true)
+            List<Category> categories = new List<Category>();
+            string pageUrl = url;
+            while (!string.IsNullOrEmpty(pageUrl))
             {
-                string html = GetWebData(url);
-                foreach (Match m in seriesRegex.Matches(html))
+                HtmlDocument document = GetWebData<HtmlDocument>(pageUrl);
+
+                bool isAlternate = false;
+                var programmes = document.DocumentNode.SelectNodes(@"//li[contains(@class, 'list-item programme')]");
+                if (programmes == null)
                 {
-                    cats.Add(new RssLink()
-                    {
-                        Url = "http://www.bbc.co.uk/iplayer/episodes/" + m.Groups[1].Value,
-                        Name = m.Groups[2].Value.HtmlCleanup(),
-                        Thumb = m.Groups[3].Value,
-                        ParentCategory = parentCategory
-                    });
+                    programmes = document.DocumentNode.SelectNodes(@"//li[contains(@class, 'list-item--programme')]");
+                    if (programmes == null)
+                        return categories;
+                    isAlternate = true;
                 }
 
-                Match nextPage = nextPageRegex.Match(html);
-                if (!nextPage.Success)
-                    break;
-                url = "http://www.bbc.co.uk" + nextPage.Groups[1].Value.Replace("&amp;", "&");
+                int count = 0;
+                foreach (var programme in programmes)
+                {
+                    RssLink category = isAlternate ?
+                        createAlternateCategory(programme) :
+                        createCategory(programme);
+
+                    if (category != null)
+                    {
+                        category.Thumb = getImageUrl(programme.SelectSingleNode(@".//source"));
+                        category.ParentCategory = parentCategory;
+                        categories.Add(category);
+                        count++;
+                    }
+                }
+                pageUrl = getNextPageUrl(document, url);
             }
-            return cats;
+            return categories;
+        }
+
+        RssLink createCategory(HtmlNode programme)
+        {
+            string vpid = programme.GetAttributeValue("data-ip-id", "");
+            if (string.IsNullOrEmpty(vpid))
+                return null;
+            var titleNode = programme.SelectSingleNode(@".//div[contains(@class, 'top-title')]");
+            if (titleNode == null)
+                return null;
+
+            return new RssLink()
+            {
+                Url = "http://www.bbc.co.uk/iplayer/episodes/" + vpid,
+                Name = titleNode.InnerText.HtmlCleanup()
+            };
+        }
+
+        RssLink createAlternateCategory(HtmlNode programme)
+        {
+            var titleNode = programme.SelectSingleNode(@".//h2[contains(@class, 'list-item__title')]");
+            if (titleNode == null)
+                return null;
+
+            var episodesNode = programme.SelectSingleNode(@".//div[contains(@class, 'list-item__episodes-button')]//a");
+            if (episodesNode == null)
+                episodesNode = programme.SelectSingleNode(@".//a[contains(@class, 'list-item__main-link')]");
+            if (episodesNode == null)
+                return null;
+
+            Match vpidMatch = urlVpidRegex.Match(episodesNode.GetAttributeValue("href", ""));
+            if (!vpidMatch.Success)
+                return null;
+
+            return new RssLink()
+            {
+                Url = "http://www.bbc.co.uk/iplayer/episodes/" + vpidMatch.Groups[2].Value,
+                Name = titleNode.GetCleanInnerText()
+            };
         }
 
         #endregion
@@ -387,61 +458,54 @@ namespace OnlineVideos.Sites
             if (category is Group)
                 return getLiveVideoList((Group)category);
 
+            return getVideos(category);
+        }
+
+        List<VideoInfo> getVideos(Category category)
+        {
             List<VideoInfo> videos = new List<VideoInfo>();
             string url = (category as RssLink).Url;
+            string pageUrl = url;
             bool isMostPopular = url == MOST_POPULAR_URL;
-            while (true)
+
+            while (!string.IsNullOrEmpty(pageUrl))
             {
-                string html = GetWebData(url);
-                foreach (Match m in episodeInfoRegex.Matches(html))
+                HtmlDocument document = GetWebData<HtmlDocument>(pageUrl);
+                var videoNodes = document.DocumentNode.SelectNodes(@"//li[contains(@class, 'list-item episode')]");
+                foreach (var videoNode in videoNodes)
                 {
-                    VideoInfo video = new VideoInfo();
-                    string episodeHtml = m.Groups[1].Value;
-
-                    string series = episodeParentTitleRegex.Match(episodeHtml).Groups[1].Value.HtmlCleanup();
-                    Match n = episodeTitleRegex.Match(episodeHtml);
-                    string episode = n.Success ? n.Groups[1].Value.HtmlCleanup() : null;
-                    video.Other = new TrackingDetails() { SeriesTitle = series, EpisodeTitle = episode };
-
-                    if (isMostPopular)
-                    {
-                        //Most Popular category jumps straight to videos so need to include series title
-                        video.Title = series;
-                        if (!string.IsNullOrEmpty(episode))
-                            video.Title += ": " + episode;
-                    }
-                    else
-                    {
-                        if (!string.IsNullOrEmpty(episode))
-                            video.Title = episode;
-                        else
-                            video.Title = series;
-                    }
-
-                    if ((n = episodeUrlRegex.Match(episodeHtml)).Success)
-                        video.VideoUrl = "http://www.bbc.co.uk" + n.Groups[1].Value;
-                    if ((n = episodeDescriptionRegex.Match(episodeHtml)).Success)
-                        video.Description = n.Groups[1].Value.HtmlCleanup();
-                    if ((n = episodeAirDateRegex.Match(episodeHtml)).Success)
-                        video.Airdate = n.Groups[1].Value.Replace("First shown:", "").HtmlCleanup();
-                    if ((n = episodeDurationRegex.Match(episodeHtml)).Success)
-                        video.Length = n.Groups[1].Value.HtmlCleanup();
-
-                    if ((n = episodeImageRegex.Match(episodeHtml)).Success)
-                    {
-                        video.Thumb = n.Groups[1].Value;
-                        if (!string.IsNullOrEmpty(thumbReplaceRegExPattern))
-                            video.Thumb = Regex.Replace(video.Thumb, thumbReplaceRegExPattern, thumbReplaceString);
-                    }
-                    videos.Add(video);
+                    VideoInfo video = createVideo(videoNode, isMostPopular);
+                    if (video != null)
+                        videos.Add(video);
                 }
-
-                Match nextPage = nextPageRegex.Match(html);
-                if (!nextPage.Success)
-                    break;
-                url = "http://www.bbc.co.uk" + nextPage.Groups[1].Value;
+                pageUrl = getNextPageUrl(document, url);
             }
             return videos;
+        }
+
+        VideoInfo createVideo(HtmlNode videoNode, bool includeSeriesTitle)
+        {
+            var urlNode = videoNode.SelectSingleNode(@".//a");
+            if (urlNode == null)
+                return null;
+
+            string seriesTitle = videoNode.SelectSingleNode(@".//div[contains(@class, 'top-title')]").GetCleanInnerText();
+            string episodeTitle = videoNode.SelectSingleNode(@".//div[contains(@class, 'subtitle')]").GetCleanInnerText();
+            string title;
+            if (includeSeriesTitle && !string.IsNullOrEmpty(seriesTitle))
+                title = seriesTitle + (string.IsNullOrEmpty(episodeTitle) ? "" : ": " + episodeTitle);
+            else
+                title = string.IsNullOrEmpty(episodeTitle) ? seriesTitle : episodeTitle;
+
+            return new VideoInfo()
+            {
+                VideoUrl = GetAbsoluteUri(urlNode.GetAttributeValue("href", ""), BASE_URL).ToString(),
+                Title = title,
+                Description = videoNode.SelectSingleNode(@".//p[contains(@class, 'synopsis')]").GetCleanInnerText(),
+                Airdate = videoNode.SelectSingleNode(@".//span[contains(@class, 'release')]").GetCleanInnerText().Replace("First shown:", "").Trim(),
+                Length = videoNode.SelectSingleNode(@".//span[@class='duration']").GetCleanInnerText().Replace("Duration", "").Trim(),
+                Thumb = getImageUrl(videoNode.SelectSingleNode(@".//source"))                
+            };
         }
 
         List<VideoInfo> getLiveVideoList(Group category)
@@ -453,19 +517,15 @@ namespace OnlineVideos.Sites
                 video.Title = channel.StreamName;
                 video.Other = "livestream";
                 video.Thumb = channel.Thumb;
-
+                string url = channel.Url;
                 string guideId;
-                if (iPlayerTVGuide.TryGetId(channel.Url, out guideId))
+                if (TVGuideGrabber.TryGetIdAndRemove(ref url, out guideId))
                 {
-                    video.VideoUrl = iPlayerTVGuide.RemoveId(channel.Url);
-                    NowNextInfo guide;
-                    if (retrieveTVGuide && iPlayerTVGuide.TryGetNowNextForChannel(guideId, out guide))
+                    NowNextDetails guide;
+                    if (retrieveTVGuide && TVGuideGrabber.TryGetNowNext(guideId, out guide))
                         video.Description = guide.Format(tvGuideFormatString);
                 }
-                else
-                {
-                    video.VideoUrl = channel.Url;
-                }
+                video.VideoUrl = url;
                 videos.Add(video);
             }
             return videos;
@@ -521,22 +581,40 @@ namespace OnlineVideos.Sites
         }
 
         #endregion
-    }
 
-    class QualityComparer : IComparer<string>
-    {
-        public int Compare(string x, string y)
+        #region Utils
+        
+        static string getNextPageUrl(HtmlDocument document, string originalUrl)
         {
-            int x_kbps = 0;
-            if (!int.TryParse(Regex.Match(x, @"(\d+) kbps").Groups[1].Value, out x_kbps)) return 1;
-            int y_kbps = 0;
-            if (!int.TryParse(Regex.Match(y, @"(\d+) kbps").Groups[1].Value, out y_kbps)) return -1;
+            var nextPageNode = document.DocumentNode.SelectSingleNode(@"//span[contains(@class, 'next txt')]/a");
+            if (nextPageNode != null)
+                return "http://www.bbc.co.uk" + nextPageNode.GetAttributeValue("href", "").ParamsCleanup();
 
-            int compare = x_kbps.CompareTo(y_kbps);
-            if (compare == 0) //if bitrates same, sort alphabetically
-                compare = x.CompareTo(y);
-            return compare;
+            nextPageNode = document.DocumentNode.SelectSingleNode(@"//li[contains(@class, 'pagination__item--next')]/a");
+            if (nextPageNode != null)
+                return originalUrl + nextPageNode.GetAttributeValue("href", "").ParamsCleanup();
+
+            return null;
         }
+
+        static string getImageUrl(HtmlNode sourceNode)
+        {
+            if (sourceNode != null)
+            {
+                MatchCollection srcMatch = srcsetRegex.Matches(sourceNode.GetAttributeValue("srcset", ""));
+                if (srcMatch.Count > 0)
+                    return srcMatch[srcMatch.Count - 1].Value.Trim();
+            }
+            return null;
+        }
+
+        static Uri GetAbsoluteUri(string possibleAbsoluteUrl, Uri baseUrl)
+        {
+            Uri uri = new Uri(possibleAbsoluteUrl, UriKind.RelativeOrAbsolute);
+            return uri.IsAbsoluteUri ? uri : new Uri(baseUrl, uri);
+        }
+
+        #endregion
     }
 
     class TrackingDetails

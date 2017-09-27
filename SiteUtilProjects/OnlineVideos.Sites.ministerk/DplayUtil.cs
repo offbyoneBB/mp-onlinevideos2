@@ -335,7 +335,7 @@ namespace OnlineVideos.Sites
                     throw new OnlineVideosException("Unable to play video");
             }
             url = json["hds"].Value<string>();
-            if (url.EndsWith("master.f4m"))
+            if (url.Contains("master.f4m"))
             {
                 //Need to use HLS... Why?
                 url = string.Format("{0}secure/api/v2/user/authorization/stream/{1}?stream_type=hls", secureUrl, video.VideoUrl);

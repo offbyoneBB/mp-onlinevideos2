@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -83,7 +82,7 @@ namespace OnlineVideos
 
         public VideoInfo CloneForPlaylist(string videoUrl, bool withPlaybackOptions)
         {
-            VideoInfo newVideoInfo = MemberwiseClone(false) as VideoInfo;
+            VideoInfo newVideoInfo = (VideoInfo)MemberwiseClone(false);
             if (withPlaybackOptions)
             {
                 if (PlaybackOptions != null) newVideoInfo.PlaybackOptions = new Dictionary<string, string>(PlaybackOptions);

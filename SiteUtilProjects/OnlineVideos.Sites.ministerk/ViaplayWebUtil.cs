@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.ComponentModel;
 using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Web;
 using System.Text.RegularExpressions;
 using OnlineVideos.Helpers;
+using OnlineVideos.Sites.Utils;
 
 namespace OnlineVideos.Sites
 {
@@ -161,16 +161,16 @@ namespace OnlineVideos.Sites
                 switch (Settings.Language)
                 {
                     case "sv":
-                        apiUrl = @"https://content.viaplay.se/androidnodrmv2-se";
+                        apiUrl = @"https://content.viaplay.se/ios-se";
                         break;
                     case "da":
-                        apiUrl = @"https://content.viaplay.dk/androidnodrmv2-dk";
+                        apiUrl = @"https://content.viaplay.dk/ios-dk";
                         break;
                     case "fi":
-                        apiUrl = @"https://content.viaplay.fi/androidnodrmv2-fi";
+                        apiUrl = @"https://content.viaplay.fi/ios-fi";
                         break;
                     case "no":
-                        apiUrl = @"https://content.viaplay.no/androidnodrmv2-no";
+                        apiUrl = @"https://content.viaplay.no/ios-no";
                         break;
                     default:
                         apiUrl = string.Empty;
@@ -860,47 +860,14 @@ namespace OnlineVideos.Sites
                 string m3u8 = MyGetWebStringData(url);
                 if (!m3u8.Contains("#EXT-X-VERSION:4")) //Not supported, use Browser
                 {
-
-                    Regex rgx = new Regex(@"RESOLUTION=(?<res>\d+x\d+).*?[\r|\n]+(?<url>.*?m3u8)");
-                    foreach (Match m in rgx.Matches(m3u8))
-                    {
-                        string newUrl = m.Groups["url"].Value;
-                        string res = m.Groups["res"].Value;
-                        int resCount = 2;
-                        while (video.PlaybackOptions.ContainsKey(res))
-                        {
-                            res = m.Groups["res"].Value + " " + resCount;
-                            resCount++;
-                        }
-                        if (newUrl.StartsWith("http"))
-                        {
-                            video.PlaybackOptions.Add(res, newUrl);
-                        }
-                        else
-                        {
-                            video.PlaybackOptions.Add(res, Regex.Replace(url, @"([^/]*)?\?", delegate(Match match)
-                            {
-                                return m.Groups["url"].Value + "?";
-                            }));
-                        }
-                    }
+                    video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(m3u8, url, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height + " (" + x.Bandwidth/1000 + " kbps)");
+                    url = video.PlaybackOptions.First().Value;
                 }
                 if (video.PlaybackOptions.Count < 1)
                 {
                     video.PlaybackOptions.Clear();
                     return string.Empty;
                 }
-                video.PlaybackOptions = video.PlaybackOptions.OrderByDescending((p) =>
-                {
-                    string[] size = p.Key.Split('x');
-                    string width = "0";
-                    int parsedWidth = 0;
-                    if (size.Count() == 2)
-                        width = size[0];
-                    int.TryParse(width, out parsedWidth);
-                    return parsedWidth;
-                }).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-                url = video.PlaybackOptions.First().Value;
                 if (inPlaylist)
                     video.PlaybackOptions.Clear();
                 // Subtitle
@@ -941,18 +908,15 @@ namespace OnlineVideos.Sites
 
         public override ITrackingInfo GetTrackingInfo(VideoInfo video)
         {
-            if (Settings.Player == PlayerType.Internal)
-            {//tracking
-                if(video.Other is Dictionary<string,string>)
+            if (video.Other is Dictionary<string, string>)
+            {
+                Dictionary<string, string> d = video.Other as Dictionary<string, string>;
+                if (d.ContainsKey("tracking"))
                 {
-                    Dictionary<string, string> d = video.Other as Dictionary<string, string>;
-                    if(d.ContainsKey("tracking"))
-                    {
-                        Regex rgx = new Regex(@"(?<VideoKind>[^\|]*)\|(?<Title>[^\|]*)\|(?<Year>[^\|]*)\|(?<ID_IMDB>[^\|]*)\|(?<Season>[^\|]*)\|(?<Episode>.*)");
-                        Match m = rgx.Match(d["tracking"]);
-                        ITrackingInfo ti = new TrackingInfo() { Regex = m };
-                        return ti;
-                    }
+                    Regex rgx = new Regex(@"(?<VideoKind>[^\|]*)\|(?<Title>[^\|]*)\|(?<Year>[^\|]*)\|(?<ID_IMDB>[^\|]*)\|(?<Season>[^\|]*)\|(?<Episode>.*)");
+                    Match m = rgx.Match(d["tracking"]);
+                    ITrackingInfo ti = new TrackingInfo() { Regex = m };
+                    return ti;
                 }
             }
             return base.GetTrackingInfo(video);

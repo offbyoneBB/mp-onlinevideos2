@@ -66,7 +66,7 @@ namespace OnlineVideos.Sites
                         {
                             VideoInfo video = new VideoInfo();
                             video.Title = item.Value<string>("title");
-                            video.VideoUrl = String.Format(videoListRegExFormatString, item.Value<string>("_id"));
+                            video.VideoUrl = String.Format(videoListRegExFormatString, item.Value<string>("asset_id"));
                             video.Description = item.Value<string>("description_root");
                             video.Thumb = getImageUrl(item);
                             video.Airdate = item.Value<string>("publication_start_dt") + ' ' + item.Value<string>("publication_start_hour");
@@ -83,7 +83,7 @@ namespace OnlineVideos.Sites
             string webData = GetWebData(video.VideoUrl);
             if (!webData.StartsWith("{")) // videos in serwisy informacyjne
             {
-                Match m = Regex.Match(webData, @"<iframe\s*src=""http://www\.tvp\.pl/sess/tvplayer\.php\?object_id=(?<id>[^&]*)&amp;autoplay=true""", defaultRegexOptions);
+                Match m = Regex.Match(webData, @"<iframe\s*src=""//www\.tvp\.pl/sess/tvplayer\.php\?object_id=(?<id>[^&]*)&amp;autoplay=true""", defaultRegexOptions);
                 if (m.Success)
                 {
                     string newUrl = String.Format(videoListRegExFormatString, m.Groups["id"].Value);

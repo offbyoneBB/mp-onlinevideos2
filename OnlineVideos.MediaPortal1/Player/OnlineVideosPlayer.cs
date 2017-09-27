@@ -53,7 +53,7 @@ namespace OnlineVideos.MediaPortal1.Player
                             RefreshRateHelper.ChangeRefreshRateToMatchedFps(matchedFps, cacheFile);
                             try
                             {
-                                if (GUIGraphicsContext.IsEvr)
+                                if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR)
                                     EVRUpdateDisplayFPS();
                             }
                             catch (EntryPointNotFoundException)
@@ -88,7 +88,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
         void AdaptRefreshRateFromVideoRenderer()
         {
-            if (GUIGraphicsContext.IsEvr)
+            if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR)
             {
                 if (!refreshRateAdapted && m_state == PlayState.Playing)
                 {
@@ -244,6 +244,8 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 graphBuilder = (IGraphBuilder)new FilterGraph();
                 _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
+
+                basicVideo = graphBuilder as IBasicVideo2;
 
                 Vmr9 = new VMR9Util();
                 Vmr9.AddVMR9(graphBuilder);
@@ -690,44 +692,40 @@ namespace OnlineVideos.MediaPortal1.Player
             }
             if (videoWin != null)
             {
-                videoWin.put_Owner(GUIGraphicsContext.ActiveForm);
-                videoWin.put_WindowStyle(
-                  (WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
+                videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipChildren + (int)WindowStyle.ClipSiblings));
                 videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
-            }
-            if (basicVideo != null)
-            {
-                hr = basicVideo.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
-                if (hr < 0)
-                {
-                    Error.SetError("Unable to play movie", "Can not find movie width/height");
-                    m_strCurrentFile = "";
-                    CloseInterfaces();
-                    return false;
-                }
             }
 
             DirectShowUtil.SetARMode(graphBuilder, AspectRatioMode.Stretched);
 
             try
             {
-                hr = mediaCtrl.Run();
-                DsError.ThrowExceptionForHR(hr);
-                if (hr == 1) // S_FALSE from IMediaControl::Run means: The graph is preparing to run, but some filters have not completed the transition to a running state.
+                if (protocol == "file")
                 {
-                    // wait max. 20 seconds for the graph to transition to the running state
-                    DateTime startTime = DateTime.Now;
-                    FilterState filterState;
-                    do
+                    if (Vmr9 != null) Vmr9.StartMediaCtrl(mediaCtrl);
+                }
+                else
+                {
+                    hr = mediaCtrl.Run();
+                    DsError.ThrowExceptionForHR(hr);
+                    if (hr == 1)
+                        // S_FALSE from IMediaControl::Run means: The graph is preparing to run, but some filters have not completed the transition to a running state.
                     {
-                        Thread.Sleep(100);
-                        hr = mediaCtrl.GetState(100, out filterState); // check with timeout max. 10 times a second if the state changed
-                    }
-                    while ((hr != 0) && ((DateTime.Now - startTime).TotalSeconds <= 20));
-                    if (hr != 0) // S_OK
-                    {
-                        DsError.ThrowExceptionForHR(hr);
-                        throw new Exception(string.Format("IMediaControl.GetState after 20 seconds: 0x{0} - '{1}'", hr.ToString("X8"), DsError.GetErrorText(hr)));
+                        // wait max. 20 seconds for the graph to transition to the running state
+                        DateTime startTime = DateTime.Now;
+                        FilterState filterState;
+                        do
+                        {
+                            Thread.Sleep(100);
+                            hr = mediaCtrl.GetState(100, out filterState);
+                            // check with timeout max. 10 times a second if the state changed
+                        } while ((hr != 0) && ((DateTime.Now - startTime).TotalSeconds <= 20));
+                        if (hr != 0) // S_OK
+                        {
+                            DsError.ThrowExceptionForHR(hr);
+                            throw new Exception(string.Format("IMediaControl.GetState after 20 seconds: 0x{0} - '{1}'",
+                                hr.ToString("X8"), DsError.GetErrorText(hr)));
+                        }
                     }
                 }
             }
@@ -741,6 +739,11 @@ namespace OnlineVideos.MediaPortal1.Player
                 m_strCurrentFile = "";
                 CloseInterfaces();
                 return false;
+            }
+
+            if (basicVideo != null)
+            {
+              basicVideo.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
             }
 
             if (GoFullscreen) GUIWindowManager.ActivateWindow(GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
