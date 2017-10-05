@@ -13,7 +13,7 @@ namespace OnlineVideos.Sites
     {
         #region constants, vars and properties
 
-        protected const string showsUrl = "http://www.tv4play.se/api/programs?per_page=1000&is_cmore=false&order_by=&page=0&tags=";
+        protected const string showsUrl = "http://webapi.tv4play.se/play/programs?platform=tablet&category=&fl=nid,name,program_image,category,logo,is_premium&per_page=1000&is_active=true&start=0";
         protected const string episodesAndClipsUrl = "http://webapi.tv4play.se/play/video_assets?per_page=100&is_live=false&type={0}&page=1&node_nids={1}&start=0";
         protected const string videoPlayUrl = "https://prima.tv4play.se/api/web/asset/{0}/play";
         protected const string episodeSearchUrl = "http://webapi.tv4play.se/play/video_assets?per_page=100&is_live=false&page=1&sort_order=desc&type=episode&q={0}&start=0";
@@ -26,7 +26,10 @@ namespace OnlineVideos.Sites
         {
             NameValueCollection nvc = new NameValueCollection();
             nvc.Add("Accept-Language", "sv-SE,sv;q=0.8,en-US;q=0.6,en;q=0.4");
-            JArray items = JArray.Parse(GetWebData<string>(showsUrl, headers: nvc));
+            
+            JObject objects = JObject.Parse(GetWebData<string>(showsUrl, headers: nvc));
+            JArray items = (JArray)objects["results"];
+            
             foreach (JToken item in items)
             {
                 RssLink show = new RssLink();
