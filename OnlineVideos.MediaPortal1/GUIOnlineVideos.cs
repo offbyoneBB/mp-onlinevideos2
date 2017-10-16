@@ -502,12 +502,12 @@ namespace OnlineVideos.MediaPortal1
                                         currentPlaylist = null;
                                         currentPlayingItem = null;
                                         Play_Step1(new PlayListItem(null, null)
-                                                {
-                                                    Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
-                                                    Video = aVideo,
-                                                    Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(selectedVideo as FavoriteDbVideoInfo).SiteName] : selectedSite,
-                                                    ForcedPlayer = forcedPlayer
-                                                }, true);
+                                        {
+                                            Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
+                                            Video = aVideo,
+                                            Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(selectedVideo as FavoriteDbVideoInfo).SiteName] : selectedSite,
+                                            ForcedPlayer = forcedPlayer
+                                        }, true);
                                     }
                                     break;
                                 case "PlayAll":
@@ -607,11 +607,11 @@ namespace OnlineVideos.MediaPortal1
                 }
                 if (execute)
                 {
-                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
                     {
                         return SelectedSite.ExecuteContextMenuEntry(aCategory, aVideo, currentEntry);
                     },
-                    delegate(bool success, object result)
+                    delegate (bool success, object result)
                     {
                         if (success && result is Sites.ContextMenuExecutionResult)
                         {
@@ -896,13 +896,13 @@ namespace OnlineVideos.MediaPortal1
                                 }
                                 else if (categoryToDisplay is Sites.FavoriteUtil.FavoriteCategory)
                                 {
-                                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
                                     {
                                         var favCat = categoryToDisplay as Sites.FavoriteUtil.FavoriteCategory;
                                         if (favCat.SiteCategory == null) favCat.DiscoverSiteCategory();
                                         return favCat;
                                     },
-                                    delegate(bool success, object result)
+                                    delegate (bool success, object result)
                                     {
                                         if (success)
                                         {
@@ -981,11 +981,11 @@ namespace OnlineVideos.MediaPortal1
                                     currentPlayingItem = null;
 
                                     Play_Step1(new PlayListItem(null, null)
-                                            {
-                                                Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
-                                                Video = selectedVideo,
-                                                Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(selectedVideo as FavoriteDbVideoInfo).SiteName] : selectedSite
-                                            }, true);
+                                    {
+                                        Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
+                                        Video = selectedVideo,
+                                        Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(selectedVideo as FavoriteDbVideoInfo).SiteName] : selectedSite
+                                    }, true);
                                 }
                             }
                             break;
@@ -1103,7 +1103,7 @@ namespace OnlineVideos.MediaPortal1
                 Sites.SiteUtilBase aSite = null;
                 if (OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(Translation.Instance.DownloadedVideos, out aSite))
                 {
-                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
                     {
                         if (!aSite.Settings.DynamicCategoriesDiscovered)
                         {
@@ -1113,7 +1113,7 @@ namespace OnlineVideos.MediaPortal1
                         }
                         return aSite.Settings.Categories;
                     },
-                    delegate(bool success, object result)
+                    delegate (bool success, object result)
                     {
                         if (success)
                         {
@@ -1361,14 +1361,14 @@ namespace OnlineVideos.MediaPortal1
             {
                 if (!SelectedSite.Settings.DynamicCategoriesDiscovered)
                 {
-                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
                     {
                         Log.Instance.Info("Looking for dynamic categories for site '{0}'", SelectedSite.Settings.Name);
                         int foundCategories = SelectedSite.DiscoverDynamicCategories();
                         Log.Instance.Info("Found {0} dynamic categories for site '{1}'", foundCategories, SelectedSite.Settings.Name);
                         return SelectedSite.Settings.Categories;
                     },
-                    delegate(bool success, object result)
+                    delegate (bool success, object result)
                     {
                         if (success)
                         {
@@ -1386,14 +1386,14 @@ namespace OnlineVideos.MediaPortal1
             {
                 if (!parentCategory.SubCategoriesDiscovered)
                 {
-                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
                     {
                         Log.Instance.Info("Looking for subcategories in '{0}' on site '{1}'", parentCategory.Name, SelectedSite.Settings.Name);
                         int foundCategories = SelectedSite.DiscoverSubCategories(parentCategory);
                         Log.Instance.Info("Found {0} subcategories in '{1}' on site '{2}'", foundCategories, parentCategory.Name, SelectedSite.Settings.Name);
                         return parentCategory.SubCategories;
                     },
-                    delegate(bool success, object result)
+                    delegate (bool success, object result)
                     {
                         if (success)
                         {
@@ -1411,11 +1411,11 @@ namespace OnlineVideos.MediaPortal1
 
         private void DisplayCategories_NextPage(NextPageCategory cat)
         {
-            Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+            Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
             {
                 return SelectedSite.DiscoverNextPageCategories(cat);
             },
-            delegate(bool success, object result)
+            delegate (bool success, object result)
             {
                 if (success) SetCategoriesToFacade(cat.ParentCategory, cat.ParentCategory == null ? SelectedSite.Settings.Categories as IList<Category> : cat.ParentCategory.SubCategories, false, true);
             },
@@ -1532,11 +1532,11 @@ namespace OnlineVideos.MediaPortal1
 
         private void DisplayDetails()
         {
-            Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+            Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
             {
                 return ((IChoice)SelectedSite).GetVideoChoices(selectedVideo);
             },
-            delegate(bool success, object result)
+            delegate (bool success, object result)
             {
                 if (success)
                 {
@@ -1592,11 +1592,11 @@ namespace OnlineVideos.MediaPortal1
 
         private void DisplayVideos_Category(Category category, bool displayCategoriesOnError)
         {
-            Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+            Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
             {
                 return SelectedSite.GetVideos(category);
             },
-            delegate(bool success, object result)
+            delegate (bool success, object result)
             {
                 Category categoryToRestoreOnError = selectedCategory;
                 selectedCategory = category;
@@ -1756,7 +1756,7 @@ namespace OnlineVideos.MediaPortal1
             if (query != String.Empty)
             {
                 lastSearchQuery = query;
-                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
                 {
                     if (moSupportedSearchCategoryList != null && moSupportedSearchCategoryList.Count > 1 && GUI_btnSearchCategories.SelectedLabel != Translation.Instance.All
                         && !string.IsNullOrEmpty(GUI_btnSearchCategories.SelectedLabel) && moSupportedSearchCategoryList.ContainsKey(GUI_btnSearchCategories.SelectedLabel))
@@ -1772,7 +1772,7 @@ namespace OnlineVideos.MediaPortal1
                         return SelectedSite.Search(query);
                     }
                 },
-                delegate(bool success, object result)
+                delegate (bool success, object result)
                 {
                     List<SearchResultItem> resultList = (result as List<SearchResultItem>);
                     // set videos to the facade -> if none were found and an empty facade is currently shown, go to previous menu
@@ -1854,7 +1854,7 @@ namespace OnlineVideos.MediaPortal1
             }
             catch (Exception) { }
 
-            Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+            Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
             {
                 if (currentVideosDisplayMode == VideosMode.Search)
                 {
@@ -1878,7 +1878,7 @@ namespace OnlineVideos.MediaPortal1
                 }
                 return null;
             },
-            delegate(bool success, object result)
+            delegate (bool success, object result)
             {
                 if (success) SetVideosToFacade(result as List<VideoInfo>, currentVideosDisplayMode);
             }
@@ -1887,11 +1887,11 @@ namespace OnlineVideos.MediaPortal1
 
         private void DisplayVideos_NextPage()
         {
-            Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+            Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
             {
                 return SelectedSite.GetNextPageVideos();
             },
-            delegate(bool success, object result)
+            delegate (bool success, object result)
             {
                 if (success) SetVideosToFacade(result as List<VideoInfo>, currentVideosDisplayMode, true);
             },
@@ -2193,7 +2193,8 @@ namespace OnlineVideos.MediaPortal1
                     var myItem = item as PlayListItem;
                     ITrackingInfo info = myItem.Util.GetTrackingInfo(myItem.Video);
                     if (info.VideoKind == VideoKind.TvSeries || info.VideoKind == VideoKind.Movie) TrackVideoPlayback(info, percent);
-                }) { IsBackground = true, Name = "OnlineVideosTracking" }.Start(currentPlayingItem);
+                })
+                { IsBackground = true, Name = "OnlineVideosTracking" }.Start(currentPlayingItem);
             }
         }
 
@@ -2201,11 +2202,11 @@ namespace OnlineVideos.MediaPortal1
         {
             if (!string.IsNullOrEmpty(playItem.FileName))
             {
-                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
                 {
                     return SelectedSite.GetPlaylistItemVideoUrl(playItem.Video, currentPlaylist[0].ChosenPlaybackOption, currentPlaylist.IsPlayAll);
                 },
-                delegate(bool success, object result)
+                delegate (bool success, object result)
                 {
                     if (success) Play_Step2(playItem, new List<String>() { result as string }, goFullScreen, skipPlaybackOptionsDialog);
                     else if (currentPlaylist != null && currentPlaylist.Count > 1) PlayNextPlaylistItem();
@@ -2214,11 +2215,11 @@ namespace OnlineVideos.MediaPortal1
             }
             else
             {
-                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
                 {
                     return SelectedSite.GetMultipleVideoUrls(playItem.Video, currentPlaylist != null && currentPlaylist.Count > 1);
                 },
-                delegate(bool success, object result)
+                delegate (bool success, object result)
                 {
                     if (success) Play_Step2(playItem, result as List<String>, goFullScreen, skipPlaybackOptionsDialog);
                     else if (currentPlaylist != null && currentPlaylist.Count > 1) PlayNextPlaylistItem();
@@ -2242,7 +2243,7 @@ namespace OnlineVideos.MediaPortal1
             // create playlist entries if more than one url
             if (loUrlList.Count > 1)
             {
-                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
                 {
                     Player.PlayList playbackItems = new Player.PlayList();
                     foreach (string url in loUrlList)
@@ -2274,7 +2275,7 @@ namespace OnlineVideos.MediaPortal1
                     loUrlList = new List<string>(new string[] { playItem.FileName });
                     return null;
                 },
-                delegate(bool success, object result)
+                delegate (bool success, object result)
                 {
                     if (success) Play_Step3(playItem, loUrlList, goFullScreen, skipPlaybackOptionsDialog);
                     else currentPlaylist = null;
@@ -2297,11 +2298,11 @@ namespace OnlineVideos.MediaPortal1
             {
                 playItem.ChosenPlaybackOption = lsUrl;
                 // display wait cursor as GetPlaybackOptionUrl might do webrequests when overridden
-                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
                 {
                     return playItem.Video.GetPlaybackOptionUrl(lsUrl);
                 },
-                delegate(bool success, object result)
+                delegate (bool success, object result)
                 {
                     if (success)
                     {
@@ -2360,7 +2361,7 @@ namespace OnlineVideos.MediaPortal1
                 switch (prepareResult)
                 {
                     case true:// buffer in background
-                        Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                        Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
                         {
                             try
                             {
@@ -2382,7 +2383,7 @@ namespace OnlineVideos.MediaPortal1
                                 BufferingPlayerFactory = null;
                             }
                         },
-                        delegate(bool success, object result)
+                        delegate (bool success, object result)
                         {
                             // success false means BufferFile threw an exception that was shown to the user - pass it as showMessage
                             Play_Step5(playItem, lsUrl, goFullScreen, factory, result as bool?, success);
@@ -2420,7 +2421,7 @@ namespace OnlineVideos.MediaPortal1
                 if (!string.IsNullOrEmpty(playItem.Video.SubtitleText) || (validUri && !subtitleUri.IsFile))
                 {
                     // download subtitle file before starting playback
-                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
                     {
                         string subs = string.IsNullOrEmpty(playItem.Video.SubtitleText) ? WebCache.Instance.GetWebData(playItem.Video.SubtitleUrl) : playItem.Video.SubtitleText;
                         if (!string.IsNullOrEmpty(subs))
@@ -2431,7 +2432,7 @@ namespace OnlineVideos.MediaPortal1
                         }
                         return true;
                     },
-                    delegate(bool success, object result)
+                    delegate (bool success, object result)
                     {
                         Play_Step6(playItem, lsUrl, factory);
                     },
@@ -2571,11 +2572,11 @@ namespace OnlineVideos.MediaPortal1
             }
             if (!string.IsNullOrEmpty(saveItems.CurrentItem.Url))
             {
-                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
                 {
                     return saveItems.CurrentItem.Util.GetPlaylistItemVideoUrl(saveItems.CurrentItem.VideoInfo, saveItems.ChosenPlaybackOption);
                 },
-                delegate(bool success, object result)
+                delegate (bool success, object result)
                 {
                     if (success) SaveVideo_Step2(saveItems, new List<string>() { result as string }, enque);
                 },
@@ -2583,11 +2584,11 @@ namespace OnlineVideos.MediaPortal1
             }
             else
             {
-                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
                 {
                     return saveItems.CurrentItem.Util.GetMultipleVideoUrls(saveItems.CurrentItem.VideoInfo);
                 },
-                delegate(bool success, object result)
+                delegate (bool success, object result)
                 {
                     if (success) SaveVideo_Step2(saveItems, result as List<String>, enque);
                 },
@@ -2651,11 +2652,11 @@ namespace OnlineVideos.MediaPortal1
                 else
                 {
                     // display wait cursor as GetPlaybackOptionUrl might do webrequests when overridden
-                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate()
+                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
                     {
                         return saveItems.CurrentItem.VideoInfo.GetPlaybackOptionUrl(lsUrl);
                     },
-                    delegate(bool success, object result)
+                    delegate (bool success, object result)
                     {
                         if (success) SaveVideo_Step3(saveItems, result as string, enque);
                     }
@@ -2730,7 +2731,7 @@ namespace OnlineVideos.MediaPortal1
 
             GUIPropertyManager.SetProperty("#OnlineVideos.currentDownloads", DownloadManager.Instance.Count.ToString());
 
-            System.Threading.Thread downloadThread = new System.Threading.Thread((System.Threading.ParameterizedThreadStart)delegate(object o)
+            System.Threading.Thread downloadThread = new System.Threading.Thread((System.Threading.ParameterizedThreadStart)delegate (object o)
             {
                 DownloadList dlList = o as DownloadList;
                 try
@@ -2785,10 +2786,10 @@ namespace OnlineVideos.MediaPortal1
             }
             else
                 if (validUri && subtitleUri.IsFile)
-                {
-                    Log.Instance.Info("Downloading subtitles to " + destinationFileName);
-                    File.Copy(subtitleUri.AbsolutePath, destinationFileName);
-                }
+            {
+                Log.Instance.Info("Downloading subtitles to " + destinationFileName);
+                File.Copy(subtitleUri.AbsolutePath, destinationFileName);
+            }
         }
 
         private void OnDownloadFileCompleted(DownloadList saveItems, Exception error)
@@ -3259,7 +3260,7 @@ namespace OnlineVideos.MediaPortal1
 
             // start a thread that will set the properties in 2 seconds (otherwise MediaPortal core logic would overwrite them)
             if (playItem == null || playItem.Video == null) return;
-            new System.Threading.Thread(delegate(object o)
+            new System.Threading.Thread(delegate (object o)
             {
                 try
                 {
@@ -3295,7 +3296,8 @@ namespace OnlineVideos.MediaPortal1
                 {
                     Log.Instance.Warn("Error setting playing video properties: {0}", ex.ToString());
                 }
-            }) { IsBackground = true, Name = "OVPlaying" }.Start(playItem);
+            })
+            { IsBackground = true, Name = "OVPlaying" }.Start(playItem);
 
             TrackPlayback();
         }
