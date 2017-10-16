@@ -156,7 +156,7 @@
       <posX>180</posX>
       <posY>425</posY>
       <width>460</width>
-      <label>#selecteditem</label>
+      <label>#OnlineVideos.title</label>
       <font>font14</font>
       <textcolor>White</textcolor>
       <visible>!Control.IsVisible(51)</visible>

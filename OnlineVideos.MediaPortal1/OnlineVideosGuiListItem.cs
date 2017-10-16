@@ -98,6 +98,35 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 		
+        public string Title
+        {
+            get
+            {
+                string title = null;
+                if (Item != null)
+                {
+                    SitesGroup group = Item as SitesGroup;
+                    if (group != null) title = group.Name;
+                    else
+                    {
+                        Sites.SiteUtilBase site = Item as Sites.SiteUtilBase;
+                        if (site != null) title = site.Settings.Name;
+                        else
+                        {
+                            Category cat = Item as Category;
+                            if (cat != null) title = cat.Name;
+                            else
+                            {
+                                VideoInfo vid = Item as VideoInfo;
+                                if (vid != null) title = vid.Title;
+                            }
+                        }
+                    }
+                }
+                return title ?? string.Empty;
+            }
+        }
+
         public string Description
         {
             get

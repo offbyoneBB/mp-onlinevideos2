@@ -255,6 +255,7 @@ namespace OnlineVideos.MediaPortal1
 
             bool result = Load(GUIGraphicsContext.Skin + @"\myonlinevideos.xml");
 
+            GUIPropertyManager.SetProperty("#OnlineVideos.title", " "); GUIPropertyManager.SetProperty("#OnlineVideos.title", string.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.desc", " "); GUIPropertyManager.SetProperty("#OnlineVideos.desc", string.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.length", " "); GUIPropertyManager.SetProperty("#OnlineVideos.length", string.Empty);
             GUIPropertyManager.SetProperty("#OnlineVideos.aired", " "); GUIPropertyManager.SetProperty("#OnlineVideos.aired", string.Empty);
@@ -2089,6 +2090,7 @@ namespace OnlineVideos.MediaPortal1
             else
             {
                 SetGuiProperties_ExtendedVideoInfo(ovItem != null ? ovItem.Item as VideoInfo : null, false);
+                GUIPropertyManager.SetProperty("#OnlineVideos.title", ovItem != null ? ovItem.Title : string.Empty); 
                 GUIPropertyManager.SetProperty("#OnlineVideos.desc", ovItem != null ? ovItem.Description : string.Empty);
                 GUIPropertyManager.SetProperty("#OnlineVideos.length", ovItem != null && ovItem.Item is VideoInfo ? Helpers.TimeUtils.TimeFromSeconds((ovItem.Item as VideoInfo).Length) : string.Empty);
                 GUIPropertyManager.SetProperty("#OnlineVideos.aired", ovItem != null && ovItem.Item is VideoInfo ? (ovItem.Item as VideoInfo).Airdate : string.Empty);
