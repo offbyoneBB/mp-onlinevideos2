@@ -834,6 +834,12 @@
         <item key="resolveHoster"><![CDATA[FromUrl]]></item>
       </Configuration>
     </Site>
+    <Site name="ArrowTV" util="ArrowTV" agecheck="false" enabled="true" lang="nl">
+      <Description>ARROW.TV Rock | 24/7 jouw favoriete Rockvideo's! Curated, all devices, full screen.</Description>
+      <Categories>
+        <Category xsi:type="RssLink" name="Rock"/>
+      </Categories>
+    </Site>
     <Site name="CBC.ca" util="CBC" agecheck="false" enabled="true" lang="en">
       <Description>CBC.ca is the English-language online service of the Canadian Broadcasting Corporation. It was introduced in 1996. Under its previous names, the CBC's online service first went live in 1993.</Description>
     </Site>
