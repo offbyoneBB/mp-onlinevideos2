@@ -115,10 +115,11 @@ namespace OnlineVideos.Sites
                 {
                     VideoInfo video = new VideoInfo();
                     string season_number = (string)source.SelectToken("season_number");
-                    string episode_name = (string)localizable_titles.SelectToken("title_sort_name");
+                    string episode_number = (string)localizable_titles.SelectToken("title_sort_name");
+                    string episode_name = (string)localizable_titles.SelectToken("title_medium");
                     if (season_number != null)
                     {
-                        video.Title = string.Format("Temporada {0} - {1}", season_number, episode_name);
+                        video.Title = string.Format("Temporada {0} - {1} - {2}", season_number, episode_number, episode_name);
                     }
                     else
                     {
@@ -126,14 +127,14 @@ namespace OnlineVideos.Sites
                     }
                     
                     video.Description = (string)localizable_titles.SelectToken("summary_long");
-                    //video.Airdate = (string)source.SelectToken("linear_broadcast_date");
+                    video.Airdate = source.SelectToken("linear_broadcast_date").ToString();
                     video.Thumb = (string)source.SelectToken("thumbnail.url");
                     string embed_code = (string)source.SelectToken("offers[0].embed_codes[0]"); ;
                     video.VideoUrl = string.Format(videosBaseUrl, embed_code);
                     videoList.Add(video);
                 }
             }
-            videoList = videoList.OrderByDescending(o => o.Title).ToList();
+            videoList = videoList.OrderByDescending(o => Convert.ToDateTime(o.Airdate).Ticks).ToList();
             return videoList;
         }
 
