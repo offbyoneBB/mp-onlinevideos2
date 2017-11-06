@@ -588,7 +588,7 @@ namespace OnlineVideos.Sites
         {
             var nextPageNode = document.DocumentNode.SelectSingleNode(@"//span[contains(@class, 'next txt')]/a");
             if (nextPageNode != null)
-                return "http://www.bbc.co.uk" + nextPageNode.GetAttributeValue("href", "").ParamsCleanup();
+                return "https://www.bbc.co.uk" + nextPageNode.GetAttributeValue("href", "").ParamsCleanup();
 
             nextPageNode = document.DocumentNode.SelectSingleNode(@"//li[contains(@class, 'pagination__item--next')]/a");
             if (nextPageNode != null)
