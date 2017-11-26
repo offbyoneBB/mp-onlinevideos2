@@ -1,6 +1,6 @@
 ﻿using System;
-using OnlineVideos.Sites;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace OnlineVideos.Hoster
 {
@@ -23,6 +23,8 @@ namespace OnlineVideos.Hoster
                     if (!int.TryParse(sWaitTime, out iWaitTime))
                         iWaitTime = 5;
                 }
+
+                Thread.Sleep(iWaitTime * 1001);
 
                 page = GetFromPost(url, page, true);
 
