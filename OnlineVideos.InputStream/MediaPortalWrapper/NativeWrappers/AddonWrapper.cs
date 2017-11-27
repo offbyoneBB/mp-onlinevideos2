@@ -117,6 +117,11 @@ namespace MediaPortalWrapper.NativeWrappers
       }
     }
 
+    public IntPtr StructPtr
+    {
+      get { return _ptrStruct; }
+    }
+
     public GetAddonDlg GetAddon { get; private set; }
     public CreateDlg Create { get; private set; }
     public StopDlg Stop { get; private set; }

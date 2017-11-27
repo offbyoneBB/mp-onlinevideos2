@@ -46,12 +46,16 @@ namespace MediaPortalWrapper
     /// </summary>
     public List<string> SubtitlePaths { get; private set; }
 
-    public InputStreamAddonFunctions Functions { get { lock (_syncObj) return _addonFunctions; } }
+    public AddonToHostFuncTableInputStream ToHostFunctions { get { lock (_syncObj) return _toHostFunctions; } }
+    public HostToAddonFuncTableInputStream ToAddonFunctions { get { lock (_syncObj) return _toAddonFunctions; } }
+
     public InputstreamCapabilities Caps { get { return _caps; } }
 
-    private readonly DllAddonWrapper<InputStreamAddonFunctions> _wrapper;
+    private readonly DllAddonWrapper<AddonInstance_InputStream> _wrapper;
     private Dictionary<uint, InputstreamInfo> _inputstreamInfos;
-    private readonly InputStreamAddonFunctions _addonFunctions;
+    private readonly AddonInstance_InputStream _addonFunctions;
+    private readonly AddonToHostFuncTableInputStream _toHostFunctions;
+    private readonly HostToAddonFuncTableInputStream _toAddonFunctions;
     private readonly StreamPreferences _preferences;
     private List<int> _enabledStreams;
     private readonly InputstreamCapabilities _caps;
@@ -64,7 +68,7 @@ namespace MediaPortalWrapper
         throw new ArgumentException("Missing inputstreamaddon key", "addonProperties");
 
       _preferences = preferences;
-      _wrapper = new DllAddonWrapper<InputStreamAddonFunctions>();
+      _wrapper = new DllAddonWrapper<AddonInstance_InputStream>();
 
       var pluginRoot = Path.GetDirectoryName(GetType().Assembly.Location);
       // Add to windows DLL search path to find widevine dll
@@ -78,6 +82,8 @@ namespace MediaPortalWrapper
         throw new Exception("Failed to create addon.");
 
       _addonFunctions = _wrapper.Addon;
+      _toHostFunctions = Marshal.PtrToStructure<AddonToHostFuncTableInputStream>(_addonFunctions.ToHost);
+      _toAddonFunctions = Marshal.PtrToStructure<HostToAddonFuncTableInputStream>(_addonFunctions.ToAddon);
 
       // The path contains 2 dummy folders, because the InputStream.mpd plugin creates the cdm folder 2 levels higher.
       string profileFolder = Path.Combine(Path.GetDirectoryName(OnlineVideos.OnlineVideoSettings.Instance.DllsDir), string.Format("InputStream\\addons\\{0}\\", addonName));
@@ -103,11 +109,11 @@ namespace MediaPortalWrapper
       inputStreamConfig.CountInfoValues = (uint)idx;
 
       if (preferences.Width.HasValue && preferences.Height.HasValue)
-        Functions.SetVideoResolution(preferences.Width.Value, preferences.Height.Value);
+        ToAddonFunctions.SetVideoResolution(_wrapper.StructPtr, preferences.Width.Value, preferences.Height.Value);
 
-      Functions.Open(ref inputStreamConfig);
+      ToAddonFunctions.Open(_wrapper.StructPtr, ref inputStreamConfig);
 
-      _caps = Functions.GetCapabilities();
+      _caps = ToAddonFunctions.GetCapabilities(_wrapper.StructPtr);
 
       UpdateStreams();
 
@@ -121,7 +127,7 @@ namespace MediaPortalWrapper
     {
       lock (_syncObj)
       {
-        Functions.Close();
+        ToAddonFunctions.Close(_wrapper.StructPtr);
         _wrapper.Dispose();
       }
     }
@@ -144,7 +150,7 @@ namespace MediaPortalWrapper
         }
 
         if (changed)
-          Functions.EnableStream(streamId, isEnabled);
+          ToAddonFunctions.EnableStream(_wrapper.StructPtr, streamId, isEnabled);
 
         return changed;
       }
@@ -153,19 +159,19 @@ namespace MediaPortalWrapper
     private void EnableStreams()
     {
       foreach (var inputstreamInfo in _inputstreamInfos)
-        Functions.EnableStream((int)inputstreamInfo.Key, _enabledStreams.Contains((int)inputstreamInfo.Key));
+        ToAddonFunctions.EnableStream(_wrapper.StructPtr, (int)inputstreamInfo.Key, _enabledStreams.Contains((int)inputstreamInfo.Key));
     }
 
     private void UpdateStreams()
     {
-      InputstreamIds ids = Functions.GetStreamIds();
+      InputstreamIds ids = ToAddonFunctions.GetStreamIds(_wrapper.StructPtr);
 
       List<InputstreamInfo> streamInfos = new List<InputstreamInfo>();
       unsafe
       {
         for (int i = 0; i < ids.StreamCount; i++)
         {
-          var info = Functions.GetStream((int)ids.StreamIds[i]);
+          var info = ToAddonFunctions.GetStream(_wrapper.StructPtr, (int)ids.StreamIds[i]);
           streamInfos.Add(info);
           Logger.Info("Stream {1}:", i, info);
         }
@@ -220,7 +226,7 @@ namespace MediaPortalWrapper
     {
       lock (_syncObj)
       {
-        IntPtr demuxPacketPtr = Functions.DemuxRead();
+        IntPtr demuxPacketPtr = ToAddonFunctions.DemuxRead(_wrapper.StructPtr);
         // If there is no more data, DemuxRead returns 0
         if (demuxPacketPtr == IntPtr.Zero)
           return new DemuxPacketWrapper(); // EOS indicator
