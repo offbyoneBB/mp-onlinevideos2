@@ -15,7 +15,58 @@ namespace MediaPortalWrapper.NativeWrappers
     Teletext
   }
 
+  public enum CodecFeatures
+  {
+    Decode = 1
+  }
+
+  [Flags]
+  public enum StreamFlags
+  {
+    None = 0x0000,
+    Default = 0x0001,
+    Dub = 0x0002,
+    Original = 0x0004,
+    Comment = 0x0008,
+    Lyrics = 0x0010,
+    Karaoke = 0x0020,
+    Forced = 0x0040,
+    HearingImpaired = 0x0080,
+    VisualImpaired = 0x0100
+  }
+
+  public enum StreamcodecProfile
+  {
+    CodecProfileUnknown = 0,
+    CodecProfileNotNeeded,
+    H264CodecProfileBaseline,
+    H264CodecProfileMain,
+    H264CodecProfileExtended,
+    H264CodecProfileHigh,
+    H264CodecProfileHigh10,
+    H264CodecProfileHigh422,
+    H264CodecProfileHigh444Predictive
+  }
+
+  public enum CryptoKeySystem
+  {
+    None = 0,
+    Widevine,
+    PlayReady,
+    Count
+  }
+
   #region structs
+
+  [StructLayout(LayoutKind.Sequential, Pack = 1)]
+  public struct CryptoInfo
+  {
+    public CryptoKeySystem CryptoKeySystem;                 /*!< @brief keysystem for encrypted media, KEY_SYSTEM_NONE for unencrypted media */
+    public byte Flags;
+    public short CryptoSessionIdSize;      /*!< @brief The size of the crypto session key id */
+    [MarshalAs(UnmanagedType.LPStr)]
+    public string CryptoSessionId;       /*!< @brief The crypto session key id */
+  }
 
   [StructLayout(LayoutKind.Sequential, Pack = 1)]
   public struct ListItemProperty
@@ -55,21 +106,20 @@ namespace MediaPortalWrapper.NativeWrappers
     public int dummy;
   }
 
+  [Flags]
+  public enum MaskType
+  {
+    SupportsIDemux = 1,
+    SupportsIPosTime = 2,
+    SupportsIDisplayTime = 4,
+    SupportsSeek = 8,
+    SupportsPause = 16
+  }
+
   [StructLayout(LayoutKind.Sequential)]
   public struct InputstreamCapabilities
   {
-    public byte SupportsIDemux;/*!< @brief supports interface IDemux */
-    public byte SupportsIPosTime; /*!< @brief supports interface IPosTime */
-    public byte SupportsIDisplayTime; /*!< @brief supports interface IDisplayTime */
-    public byte SupportsSeek; /*!< @brief supports seek */
-    public byte SupportsPause; /*!< @brief supports pause */
-
-    // NOTE: Although the unmanaged types are only "bool" (1 byte), marshalling calls without having exact the double size crashes
-    public byte Padding0;
-    public byte Padding1;
-    public byte Padding2;
-    public byte Padding3;
-    public byte Padding4;
+    public MaskType Mask;
   }
 
   [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -143,15 +193,17 @@ namespace MediaPortalWrapper.NativeWrappers
     }
 
     public StreamType StreamType;
+    public CodecFeatures CodecFeatures;
+    public StreamFlags Flags;
 
     public fixed byte m_codecName[32];                /*!< @brief (required) name of codec according to ffmpeg */
     public fixed byte m_codecInternalName[32];        /*!< @brief (optional) internal name of codec (selectionstream info) */
 
+    public StreamcodecProfile CodecProfile;  /*!< @brief (optional) the profile of the codec */
+
     public uint StreamId;                  /*!< @brief (required) physical index */
-    public int Bandwidth;            /*!< @brief (optional) bandwidth of the stream (selectionstream info) */
 
-    public IntPtr m_ExtraData;
-
+    public IntPtr m_ExtraData; // TODO: Attention uint8_t* -> 8 bit vs. 32 bit?!
     public uint ExtraSize;
 
     public fixed byte m_language[4];                  /*!< @brief ISO 639 3-letter language code (empty string if undefined) */
@@ -166,7 +218,8 @@ namespace MediaPortalWrapper.NativeWrappers
     public uint SampleRate;           /*!< @brief (required) sample rate */
     public uint BitRate;              /*!< @brief (required) bit rate */
     public uint BitsPerSample;        /*!< @brief (required) bits per sample */
-    public int BlockAlign;
+    public uint BlockAlign;
+    public CryptoInfo CryptoInfo;
 
     public override string ToString()
     {
@@ -184,95 +237,127 @@ namespace MediaPortalWrapper.NativeWrappers
     }
   }
 
+  [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+  public struct AddonToHostFuncTableInputStream /* internal */
+  {
+    public IntPtr /*KODI_HANDLE*/ HostInstance;
+    public AllocateDemuxPacketDlg AllocateDemuxPacket;
+    public AllocateEncryptedDemuxPacketDlg AllocateEncryptedDemuxPacket;
+    public FreeDemuxPacketDlg FreeDemuxPacket;
+  }
+
+  [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+  public unsafe struct AddonInstance_InputStream /* internal */
+  {
+    public InputstreamProps Props;
+    public IntPtr /*AddonToHostFuncTableInputStream* */ ToHost;
+    public IntPtr /*HostToAddonFuncTableInputStream* */ ToAddon;
+  }
+
   #endregion
 
   #region delegates
 
+  // Returns "DemuxPacket*" where DemuxPacket is a struct.
+  [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+  public delegate IntPtr AllocateDemuxPacketDlg(IntPtr hostInstance, int dataSize);
+
+  // Returns "DemuxPacket*" where DemuxPacket is a struct.
+  [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+  public delegate IntPtr AllocateEncryptedDemuxPacketDlg(IntPtr hostInstance, uint dataSize, uint encryptedSubSampleCount);
+
+  [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+  public delegate void FreeDemuxPacketDlg(IntPtr hostInstance, IntPtr demuxPacket);
+
   // InputstreamCapabilities (INPUTSTREAM_CAPABILITIES)
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
   [return: MarshalAs(UnmanagedType.Struct)]
-  public delegate InputstreamCapabilities GetCapabilitiesDlg();
+  public delegate InputstreamCapabilities GetCapabilitiesDlg(IntPtr addonInstance);
 
   // INPUTSTREAM_IDS
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
   [return: MarshalAs(UnmanagedType.Struct)]
-  public delegate InputstreamIds GetStreamIdsDlg();
+  public delegate InputstreamIds GetStreamIdsDlg(IntPtr addonInstance);
 
   // INPUTSTREAM_INFO
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
   [return: MarshalAs(UnmanagedType.Struct)]
-  public delegate InputstreamInfo GetStreamDlg(int streamIdx);
-
-  #endregion
+  public delegate InputstreamInfo GetStreamDlg(IntPtr addonInstance, int streamIdx);
 
   // Returns "DemuxPacket*" where DemuxPacket is a struct.
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-  public delegate IntPtr DemuxDlg();
+  public delegate IntPtr DemuxDlg(IntPtr addonInstance);
 
   // The inputStream parameter is actually a reference, not a pointer.
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
   [return: MarshalAs(UnmanagedType.I1)]
-  public delegate bool OpenDlg(ref InputStreamConfig inputStreamConfig);
+  public delegate bool OpenDlg(IntPtr addonInstance, ref InputStreamConfig inputStreamConfig);
 
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-  public delegate void VoidDlg();
+  [return: MarshalAs(UnmanagedType.I1)]
+  public delegate bool OpenStreamDlg(IntPtr addonInstance, int streamId);
+
+  [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+  public delegate void VoidDlg(IntPtr addonInstance);
 
   // Cannot directly return a string, because the marshaller will automatically
   // free the associated memory, which is not always the right thing to do.
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-  public delegate IntPtr StringDlg();
+  public delegate IntPtr StringDlg(IntPtr addonInstance);
 
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-  public delegate int IntDlg();
-
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-  [return: MarshalAs(UnmanagedType.I1)]
-  public delegate bool BoolDlg();
-
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-  public delegate long LongDlg();
-
-  [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-  public delegate void EnableStreamDlg(int streamIdx, [MarshalAs(UnmanagedType.I1)] bool enable);
+  public delegate int IntDlg(IntPtr addonInstance);
 
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
   [return: MarshalAs(UnmanagedType.I1)]
-  public delegate bool DemuxSeekTimeDlg(double time, [MarshalAs(UnmanagedType.I1)] bool backwards, ref double startpts);
+  public delegate bool BoolDlg(IntPtr addonInstance);
 
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-  public delegate void DemuxSetSpeedDlg(int speed);
+  public delegate long LongDlg(IntPtr addonInstance);
 
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-  public delegate void SetVideoResolutionDlg(int width, int height);
+  public delegate void EnableStreamDlg(IntPtr addonInstance, int streamIdx, [MarshalAs(UnmanagedType.I1)] bool enable);
 
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
   [return: MarshalAs(UnmanagedType.I1)]
-  public delegate bool PosTimeDlg(int pos);
+  public delegate bool DemuxSeekTimeDlg(IntPtr addonInstance, double time, [MarshalAs(UnmanagedType.I1)] bool backwards, ref double startpts);
 
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-  public delegate int ReadStreamDlg(IntPtr buffer, int bufferSize);
+  public delegate void DemuxSetSpeedDlg(IntPtr addonInstance, int speed);
 
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-  public delegate long SeekStreamDlg(long post, int iWhence);
+  public delegate void SetVideoResolutionDlg(IntPtr addonInstance, int width, int height);
 
   [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-  public delegate void PauseStreamDlg(double rate);
+  [return: MarshalAs(UnmanagedType.I1)]
+  public delegate bool PosTimeDlg(IntPtr addonInstance, int pos);
 
+  [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+  public delegate int ReadStreamDlg(IntPtr addonInstance, IntPtr buffer, int bufferSize);
 
+  [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+  public delegate long SeekStreamDlg(IntPtr addonInstance, long post, int iWhence);
+
+  [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+  public delegate void PauseStreamDlg(IntPtr addonInstance, double rate);
+
+  #endregion
 
   [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
-  public struct InputStreamAddonFunctions
+  public unsafe struct HostToAddonFuncTableInputStream
   {
+    public AddonInstance_InputStream* addonInstance; // TODO
+
     public OpenDlg Open;
     public VoidDlg Close;
     public StringDlg GetPathList;
     public GetCapabilitiesDlg GetCapabilities;
-    public StringDlg GetApiVersion;
 
     // IDemux
     public GetStreamIdsDlg GetStreamIds;
     public GetStreamDlg GetStream;
     public EnableStreamDlg EnableStream;
+    public OpenStreamDlg OpenStream;
     public VoidDlg DemuxReset;
     public VoidDlg DemuxAbort;
     public VoidDlg DemuxFlush;
@@ -304,5 +389,6 @@ namespace MediaPortalWrapper.NativeWrappers
   {
     public const int DMX_SPECIALID_STREAMINFO = -10;
     public const int DMX_SPECIALID_STREAMCHANGE = -11;
+    public const byte FLAG_SECURE_DECODER = 1; /*!< @brief is set in flags if decoding has to be done in TEE environment */
   }
 }
