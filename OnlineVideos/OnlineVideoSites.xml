@@ -1235,17 +1235,17 @@
     <Site name="Ruutu.fi" util="Ruutu" agecheck="false" enabled="true" lang="fi">
       <Description>Ruutu - Nelonen, Liv, Jim ja Nelonen Pro. Viihdettä, draamaa, uutisia, urheilua ja lastenohjelmia - katso missä haluat ja milloin haluat.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.ruutu.fi/]]></item>
+        <item key="baseUrl"><![CDATA[https://www.ruutu.fi/]]></item>
         <item key="fileUrlRegEx"><![CDATA[<HTTPMediaFile\slabel="(?<n0>[^"]*)"\stype="[^"]*"\sbitrate="[^"]*"\sresolution="[^"]*">(?<m0>[^<]*)</HTTPMediaFile>]]></item>
-        <item key="videoUrlRegEx"><![CDATA[http://www.ruutu.fi/video/(?<m0>.*)]]></item>
+        <item key="videoUrlRegEx"><![CDATA[https://www.ruutu.fi/video/(?<m0>.*)]]></item>
         <item key="videoUrlFormatString"><![CDATA[http://gatling.nelonenmedia.fi/media-xml-cache?id={0}]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="Ohjelmat">http://www.ruutu.fi/ohjelmat</Category>
-        <Category xsi:type="RssLink" name="Urheilu">http://www.ruutu.fi/urheilu</Category>
-        <Category xsi:type="RssLink" name="Uutiset">http://www.ruutu.fi/ohjelmat/uutiset</Category>
-        <Category xsi:type="RssLink" name="Lapset">http://www.ruutu.fi/lapset</Category>
-        <Category xsi:type="RssLink" name="Kaikki ohjelmat">http://www.ruutu.fi/ohjelmat/kaikki</Category>
+        <Category xsi:type="RssLink" name="Ohjelmat">https://www.ruutu.fi/ohjelmat</Category>
+        <Category xsi:type="RssLink" name="Urheilu">https://www.ruutu.fi/urheilu</Category>
+        <Category xsi:type="RssLink" name="Uutiset">https://www.ruutu.fi/ohjelmat/uutiset</Category>
+        <Category xsi:type="RssLink" name="Lapset">https://www.ruutu.fi/lapset</Category>
+        <Category xsi:type="RssLink" name="Kaikki ohjelmat">https://www.ruutu.fi/ohjelmat/kaikki</Category>
       </Categories>
     </Site>
     <Site name="Telewizjada" util="Telewizjada" agecheck="false" enabled="true" lang="pl">
