@@ -3789,7 +3789,7 @@ BrowserPlayer changes to support MediaPortal2</VersionDescription>
           <Description>The icon file of the package (jpg,png,bmp)</Description>
         </SectionParam>
         <SectionParam Name="Online Icon">
-          <Value>http://mp-onlinevideos2.googlecode.com/svn/trunk/OnlineVideos.MediaPortal1/OnlineVideos.png</Value>
+          <Value>https://raw.githubusercontent.com/offbyoneBB/mp-onlinevideos2/master/OnlineVideos.MediaPortal1/OnlineVideos.png</Value>
           <ValueType>String</ValueType>
           <Description>The icon file of the package stored online (jpg,png,bmp)</Description>
         </SectionParam>
@@ -3801,7 +3801,7 @@ BrowserPlayer changes to support MediaPortal2</VersionDescription>
  If have .dll extension used like MP plugin configuration</Description>
         </SectionParam>
         <SectionParam Name="Online Screenshots">
-          <Value>http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_AutoGroupByLanguage.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories.png;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Categories_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_DetailsView_AppleTrailers.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_ListView.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Sites_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_ContextMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_LargeIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SideMenu.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_B3W_Videos_SmallIcons.jpg;http://mp-onlinevideos2.googlecode.com/svn/wiki/ScreenShots/Screenshot_Configuration.png</Value>
+          <Value>https://github.com/offbyoneBB/mp-onlinevideos2/wiki/Screenshots/Screenshot_B3W_AutoGroupByLanguage.jpg;https://github.com/offbyoneBB/mp-onlinevideos2/wiki/Screenshots/Screenshot_B3W_Categories.png;https://github.com/offbyoneBB/mp-onlinevideos2/wiki/Screenshots/Screenshot_B3W_Categories_SideMenu.jpg;https://github.com/offbyoneBB/mp-onlinevideos2/wiki/Screenshots/Screenshot_B3W_DetailsView_AppleTrailers.jpg;https://github.com/offbyoneBB/mp-onlinevideos2/wiki/Screenshots/Screenshot_B3W_Sites_ListView.jpg;https://github.com/offbyoneBB/mp-onlinevideos2/wiki/Screenshots/Screenshot_B3W_Sites_SmallIcons.jpg;https://github.com/offbyoneBB/mp-onlinevideos2/wiki/Screenshots/Screenshot_B3W_Videos_ContextMenu.jpg;https://github.com/offbyoneBB/mp-onlinevideos2/wiki/Screenshots/Screenshot_B3W_Videos_LargeIcons.jpg;https://github.com/offbyoneBB/mp-onlinevideos2/wiki/Screenshots/Screenshot_B3W_Videos_SideMenu.jpg;https://github.com/offbyoneBB/mp-onlinevideos2/wiki/Screenshots/Screenshot_B3W_Videos_SmallIcons.jpg;https://github.com/offbyoneBB/mp-onlinevideos2/wiki/Screenshots/Screenshot_Configuration.png</Value>
           <ValueType>String</ValueType>
           <Description>Online stored screenshot urls separated by ; </Description>
         </SectionParam>

@@ -62,6 +62,7 @@
     <Compile Include="..\..\Build\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
+    <Compile Include="ArrowTVUtil.cs" />
     <Compile Include="BrassBandTubeUtil.cs" />
     <Compile Include="CollegeHumorUtil.cs" />
     <Compile Include="DeferredResolveUtil.cs" />

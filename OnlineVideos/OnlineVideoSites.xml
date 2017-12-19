@@ -834,6 +834,12 @@
         <item key="resolveHoster"><![CDATA[FromUrl]]></item>
       </Configuration>
     </Site>
+    <Site name="ArrowTV" util="ArrowTV" agecheck="false" enabled="true" lang="nl">
+      <Description>ARROW.TV Rock | 24/7 jouw favoriete Rockvideo's! Curated, all devices, full screen.</Description>
+      <Categories>
+        <Category xsi:type="RssLink" name="Rock"/>
+      </Categories>
+    </Site>
     <Site name="CBC.ca" util="CBC" agecheck="false" enabled="true" lang="en">
       <Description>CBC.ca is the English-language online service of the Canadian Broadcasting Corporation. It was introduced in 1996. Under its previous names, the CBC's online service first went live in 1993.</Description>
     </Site>
@@ -1229,17 +1235,17 @@
     <Site name="Ruutu.fi" util="Ruutu" agecheck="false" enabled="true" lang="fi">
       <Description>Ruutu - Nelonen, Liv, Jim ja Nelonen Pro. Viihdettä, draamaa, uutisia, urheilua ja lastenohjelmia - katso missä haluat ja milloin haluat.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.ruutu.fi/]]></item>
+        <item key="baseUrl"><![CDATA[https://www.ruutu.fi/]]></item>
         <item key="fileUrlRegEx"><![CDATA[<HTTPMediaFile\slabel="(?<n0>[^"]*)"\stype="[^"]*"\sbitrate="[^"]*"\sresolution="[^"]*">(?<m0>[^<]*)</HTTPMediaFile>]]></item>
-        <item key="videoUrlRegEx"><![CDATA[http://www.ruutu.fi/video/(?<m0>.*)]]></item>
+        <item key="videoUrlRegEx"><![CDATA[https://www.ruutu.fi/video/(?<m0>.*)]]></item>
         <item key="videoUrlFormatString"><![CDATA[http://gatling.nelonenmedia.fi/media-xml-cache?id={0}]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="Ohjelmat">http://www.ruutu.fi/ohjelmat</Category>
-        <Category xsi:type="RssLink" name="Urheilu">http://www.ruutu.fi/urheilu</Category>
-        <Category xsi:type="RssLink" name="Uutiset">http://www.ruutu.fi/ohjelmat/uutiset</Category>
-        <Category xsi:type="RssLink" name="Lapset">http://www.ruutu.fi/lapset</Category>
-        <Category xsi:type="RssLink" name="Kaikki ohjelmat">http://www.ruutu.fi/ohjelmat/kaikki</Category>
+        <Category xsi:type="RssLink" name="Ohjelmat">https://www.ruutu.fi/ohjelmat</Category>
+        <Category xsi:type="RssLink" name="Urheilu">https://www.ruutu.fi/urheilu</Category>
+        <Category xsi:type="RssLink" name="Uutiset">https://www.ruutu.fi/ohjelmat/uutiset</Category>
+        <Category xsi:type="RssLink" name="Lapset">https://www.ruutu.fi/lapset</Category>
+        <Category xsi:type="RssLink" name="Kaikki ohjelmat">https://www.ruutu.fi/ohjelmat/kaikki</Category>
       </Categories>
     </Site>
     <Site name="Telewizjada" util="Telewizjada" agecheck="false" enabled="true" lang="pl">
@@ -1304,7 +1310,7 @@
         <item key="videoListRegEx"><![CDATA[
         (<div\sclass="npo-asset-tile-container\snpo-tile\s*"\sid="[^"]*">\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*>\s*<div\sclass="npo-asset-tile\s">\s*<div[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-image">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-new">nieuw</div>\s*<div\sclass="npo-asset-tile-play"></div>\s*<div\sclass="npo-asset-tile-watched">bekeken</div>\s*<div\sclass="npo-asset-tile-progress">\s*<div\sclass="npo-asset-tile-progress-bar"\sstyle="width:\s%"></div>\s*</div>\s*</div>\s*<h2>(?<Title>[^<]*)</h2>\s*<p>(?<Airdate>[^<]*)</p>\s*</a>\s*</div>)(?#videos of extras)
         |
-        (<div\sclass="npo-asset-tile-container\snpo-tile\s*"\sid="[^"]*">\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*>\s*<div\sclass="npo-asset-tile\s">\s*<div[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-timer">(?<Duration>[^<]*)</div>\s*<div\sclass="npo-asset-tile-image">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-new">nieuw</div>\s*<div\sclass="npo-asset-tile-play"></div>\s*<div\sclass="npo-asset-tile-watched">bekeken</div>\s*<div\sclass="npo-asset-tile-progress">\s*<div\sclass="npo-asset-tile-progress-bar"\sstyle="width:\s%"></div>\s*</div>\s*</div>\s*<h2>(?<Title>[^<]*)</h2>\s*<p>(?<Airdate>[^<]*)</p>\s*</a>\s*</div>)(?#videos of afleveringen)
+        (<div\sclass="npo-asset-tile-container\snpo-tile\s*"\sid="[^"]*"\s*>\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*>\s*<div\sclass="npo-asset-tile\s">\s*<div[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-timer">(?<Duration>[^<]*)</div>\s*<div\sclass="npo-asset-tile-image">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-new">nieuw</div>\s*<div\sclass="npo-asset-tile-play"></div>\s*<div\sclass="npo-asset-tile-watched">bekeken</div>\s*<div\sclass="npo-asset-tile-progress">\s*<div\sclass="npo-asset-tile-progress-bar"\sstyle="width:\s%"></div>\s*</div>\s*</div>\s*<h2>(?<Title>[^<]*)</h2>\s*<p>(?<Airdate>[^<]*)</p>\s*</a>\s*</div>)(?#videos of afleveringen)
         ]]></item>
         <item key="searchUrl"><![CDATA[https://www.npo.nl/search/extended?pageSize=20&query={0}&filter=episodes&dateFrom=2014-01-01&tilemapping=search&tiletype=asset]]></item>
         <item key="fileUrlFormatString"><![CDATA[http://ida.omroep.nl/app.php/{0}?adaptive=no&token=]]></item>

@@ -309,7 +309,7 @@
 			<posX>1040</posX>
 			<posY>332</posY>
 			<width>700</width>
-			<label>#selecteditem</label>
+			<label>#OnlineVideos.title</label>
 			<font>fontB16</font>
 			<textcolor>FF00b7ff</textcolor>
 			<shadowAngle>120</shadowAngle>
