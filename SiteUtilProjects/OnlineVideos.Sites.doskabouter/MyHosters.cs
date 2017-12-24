@@ -1038,6 +1038,30 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class VidLox : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "vidlox.tv";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            string s = WebCache.Instance.GetWebData(url);
+            s = Helpers.StringUtils.GetSubString(s, "sources: [", "]");
+            var m = Regex.Match(s, @"""(?<url>[^""]*)""");
+            string theUrl = null;
+            while (m.Success)
+            {
+                theUrl = m.Groups["url"].Value;
+                if (theUrl.EndsWith("mp4"))
+                    return theUrl;
+                m = m.NextMatch();
+            }
+            return theUrl;
+        }
+    }
+
     public class Vureel : HosterBase
     {
         public override string GetHosterUrl()
