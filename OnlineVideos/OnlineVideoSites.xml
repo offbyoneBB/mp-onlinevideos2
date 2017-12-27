@@ -914,6 +914,16 @@
         <Category xsi:type="RssLink" name="A..Z">http://www.gamersnet.nl/movies</Category>
       </Categories>
     </Site>
+    <Site name="VRT Nu" util="VRT" agecheck="false" enabled="true" lang="nl">
+      <Description>please fill</Description>
+      <Configuration>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\shref="/vrtnu/categorieen/(?<url>[^/]*)/"\sclass="tile\stile--category">\s*<div\sclass="tile__image-wrapper">\s*<div\sclass="tile__image">\s*<picture\sclass="\simage--loading">\s*<!--\[if\sIE\s9]><video\sstyle="display:\snone"><!\[endif]-->\s*<source[^>]*>\s*<!--\[if\sIE\s9]></video><!\[endif]-->\s*<img\ssrcset="//(?<thumb>[^\s]*)\s1x[^>]*>\s*</picture>\s*</div>\s*</div>\s*<div\sclass="tile__content-wrapper">\s*<h3\sclass="tile__title">(?<title>[^<]*)</h3>\s*</div>\s*</a>]]></item>
+        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[https://search.vrt.be/suggest?facets[categories]={0}]]></item>
+        <item key="azRegex"><![CDATA[<a\shref="(?<url>[^"]*)"\sclass="tile">\s*<div\sclass="tile__image-wrapper">\s*<div\sclass="tile__image">\s*<picture\sclass="\simage--loading">\s*<!--\[if\sIE\s9]><video\sstyle="display:\snone"><!\[endif]-->\s*<source[^>]*>\s*<!--\[if\sIE\s9]></video><!\[endif]-->\s*<img\ssrcset="(?<thumb>[^\s]*)\s[^>]*>\s*</picture>\s*</div>\s*</div>\s*<div\sclass="tile__content-wrapper">\s*<h3\sclass="tile__title">(?<title>[^<]*)</h3>\s*<hr\sclass="tile__divider"\saria-hidden="true"/>\s*<div\sclass="tile__description"\sid="[^"]*"\saria-hidden="true">(?:<p>)?(?<description>[^<]*)(?:</p>)?</div>\s*</div>]]></item>
+        <item key="baseUrl"><![CDATA[https://www.vrt.be]]></item>
+        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]*)"\sclass="tile">\s*<div\sclass="tile__image-wrapper">\s*<div\sclass="tile__image">\s*<picture\sclass="\simage--loading">\s*<!--\[if\sIE\s9]><video\sstyle="display:\snone"><!\[endif]-->\s*<source[^>]*>\s*<!--\[if\sIE\s9]></video><!\[endif]-->\s*<img\ssrcset="(?<ImageUrl>[^\s]*)\s[^>]*>\s*</picture>\s*</div>\s*</div>\s*<div\sclass="tile__content-wrapper">\s*<h3\sclass="tile__title"\sid="(?<id>[^"]*)">(?<Title>[^<]*)</h3>]]></item>
+      </Configuration>
+    </Site>
     <Site name="DR TV" util="DRTV" agecheck="false" enabled="true" lang="da">
       <Description>Se 5 af DRs kanaler live, hent aktuelle og arkiverede udsendelser i DR NU og udforsk Bonanza-arkivet, der indholder tv og radioklip fra hele DRS historie.</Description>
     </Site>
