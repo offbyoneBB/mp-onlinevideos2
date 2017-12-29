@@ -458,6 +458,9 @@ namespace OnlineVideos.Sites
             if (category is Group)
                 return getLiveVideoList((Group)category);
 
+            if ((category as RssLink).Url == MOST_POPULAR_URL)
+                return getMostPopularVideos(category);
+
             return getVideos(category);
         }
 
@@ -475,6 +478,28 @@ namespace OnlineVideos.Sites
                 foreach (var videoNode in videoNodes)
                 {
                     VideoInfo video = createVideo(videoNode, isMostPopular);
+                    if (video != null)
+                        videos.Add(video);
+                }
+                pageUrl = getNextPageUrl(document, url);
+            }
+            return videos;
+        }
+
+        List<VideoInfo> getMostPopularVideos(Category category)
+        {
+            List<VideoInfo> videos = new List<VideoInfo>();
+            string url = (category as RssLink).Url;
+            string pageUrl = url;
+            bool isMostPopular = url == MOST_POPULAR_URL;
+
+            while (!string.IsNullOrEmpty(pageUrl))
+            {
+                HtmlDocument document = GetWebData<HtmlDocument>(pageUrl);
+                var videoNodes = document.DocumentNode.SelectNodes(@"//div[contains(@class, 'content-item')]");
+                foreach (var videoNode in videoNodes)
+                {
+                    VideoInfo video = createMostPopularVideo(videoNode, isMostPopular);
                     if (video != null)
                         videos.Add(video);
                 }
@@ -505,6 +530,31 @@ namespace OnlineVideos.Sites
                 Airdate = videoNode.SelectSingleNode(@".//span[contains(@class, 'release')]").GetCleanInnerText().Replace("First shown:", "").Trim(),
                 Length = videoNode.SelectSingleNode(@".//span[@class='duration']").GetCleanInnerText().Replace("Duration", "").Trim(),
                 Thumb = getImageUrl(videoNode.SelectSingleNode(@".//source"))                
+            };
+        }
+
+        VideoInfo createMostPopularVideo(HtmlNode videoNode, bool includeSeriesTitle)
+        {
+            var urlNode = videoNode.SelectSingleNode(@".//a");
+            if (urlNode == null)
+                return null;
+
+            string seriesTitle = videoNode.SelectSingleNode(@".//div[contains(@class, 'content-item__title')]").GetCleanInnerText();
+            string episodeTitle = videoNode.SelectSingleNode(@".//div[contains(@class, 'content-item__info__primary')]").GetCleanInnerText();
+            string title;
+            if (includeSeriesTitle && !string.IsNullOrEmpty(seriesTitle))
+                title = seriesTitle + (string.IsNullOrEmpty(episodeTitle) ? "" : ": " + episodeTitle);
+            else
+                title = string.IsNullOrEmpty(episodeTitle) ? seriesTitle : episodeTitle;
+
+            return new VideoInfo()
+            {
+                VideoUrl = GetAbsoluteUri(urlNode.GetAttributeValue("href", ""), BASE_URL).ToString(),
+                Title = title,
+                Description = videoNode.SelectSingleNode(@".//div[contains(@class, 'content-item__info__secondary')]").GetCleanInnerText(),
+                //Airdate = videoNode.SelectSingleNode(@".//span[contains(@class, 'release')]").GetCleanInnerText().Replace("First shown:", "").Trim(),
+                Length = videoNode.SelectSingleNode(@".//div[@class='content-item__sublabels']/span").GetCleanInnerText().Trim(),
+                Thumb = getImageUrl(videoNode.SelectSingleNode(@".//source"))
             };
         }
 
