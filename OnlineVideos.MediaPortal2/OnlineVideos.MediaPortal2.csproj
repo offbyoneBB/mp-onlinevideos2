@@ -57,12 +57,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\MediaPortal.Utilities.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX">
-      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\SkinEngine\SharpDX.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="SharpDX, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\Packages\SharpDX.4.0.1\lib\net45\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct3D9">
       <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\SkinEngine\SharpDX.Direct3D9.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Mathematics, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\Packages\SharpDX.Mathematics.4.0.1\lib\net45\SharpDX.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="SkinEngine">
       <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\SkinEngine\SkinEngine.dll</HintPath>
