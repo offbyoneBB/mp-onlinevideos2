@@ -1106,7 +1106,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MSBuildTasks">
-      <Version>1.4.0.88</Version>
+      <Version>1.5.0.235</Version>
     </PackageReference>
     <PackageReference Include="SubtitleDownloader">
       <Version>3.0.16</Version>
