@@ -989,7 +989,7 @@ namespace OnlineVideos.Hoster
 
     }
 
-    public class VidTo : HosterBase
+    public class VidTo : MyHosterBase
     {
         public override string GetHosterUrl()
         {
@@ -1007,28 +1007,14 @@ namespace OnlineVideos.Hoster
         {
             Dictionary<string, string> res = new Dictionary<string, string>();
             string webData = WebCache.Instance.GetWebData(url);
-            string postData = String.Empty;
-            Match m = Regex.Match(webData, @"<input\stype=""hidden""\sname=""(?<m0>[^""]*)""\svalue=""(?<m1>[^""]*)");
-            while (m.Success)
-            {
-                if (!String.IsNullOrEmpty(postData))
-                    postData += "&";
-                postData += m.Groups["m0"].Value + "=" + m.Groups["m1"].Value;
-                m = m.NextMatch();
-            }
-            //if (String.IsNullOrEmpty(postData))
-            //return null;
 
             string timeToWait = Regex.Match(webData, @"<span\sid=""countdown_str"">[^>]*>(?<time>[^<]+)</span>").Groups["time"].Value;
             if (!String.IsNullOrEmpty(timeToWait) && Convert.ToInt32(timeToWait) < 10)
                 Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
 
-            if (!String.IsNullOrEmpty(postData))
-                webData = WebCache.Instance.GetWebData(url, postData);
-            string packed = Helpers.StringUtils.GetSubString(webData, @"return p}", @"</script>");
-            packed = packed.Replace(@"\'", @"'");
-            string unpacked = Helpers.StringUtils.UnPack(packed);
-            m = Regex.Match(unpacked, @"{label:""(?<n0>[^""]*)"",file:""(?<m0>[^""]*)""}");
+            webData = GetFromPost(url, webData);
+
+            var m = Regex.Match(webData, @"{file:""(?<m0>[^""]*)"",label:""(?<n0>[^""]*)""}");
             while (m.Success)
             {
                 res.Add(m.Groups["n0"].Value, m.Groups["m0"].Value);
