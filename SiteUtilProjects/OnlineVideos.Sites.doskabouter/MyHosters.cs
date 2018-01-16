@@ -1048,6 +1048,41 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class Vidzi : HosterBase  //copied from ministerk, there it's called VidziTv and therefore could not be found by a regular gethoster call
+    {
+        public override string GetHosterUrl()
+        {
+            return "vidzi.tv";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            if (!url.Contains("embed-"))
+            {
+                url = url.Replace("vidzi.tv/", "vidzi.tv/embed-");
+            }
+            if (!url.EndsWith(".html"))
+            {
+                url += ".html";
+            }
+            string data = GetWebData<string>(url);
+            if (data.Contains("File was deleted or expired."))
+                throw new OnlineVideosException("File was deleted or expired.");
+            string packed = Helpers.StringUtils.GetSubString(data, @"return p}", @"</script>");
+            if (!String.IsNullOrEmpty(packed))
+            {
+                string unpacked = Helpers.StringUtils.UnPack(packed.Replace(@"\'", @"'"));
+                var rgx = new Regex(@"file:""(?<url>[^""]*?.mp4[^""]*)");
+                var m = rgx.Match(unpacked);
+                if (m.Success)
+                {
+                    return m.Groups["url"].Value;
+                }
+            }
+            return "";
+        }
+    }
+
     public class Vureel : HosterBase
     {
         public override string GetHosterUrl()
