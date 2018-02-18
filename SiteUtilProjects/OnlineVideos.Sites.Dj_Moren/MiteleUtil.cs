@@ -106,34 +106,42 @@ namespace OnlineVideos.Sites
                 string url = "https://cdn-search-mediaset.carbyne.ps.ooyala.com/search/v1/full/providers/104951/docs/{0}?&product_name=test&format=full";
                 episodes = GetWebDataJArray(String.Format(url, id));
             }
+            
             foreach (JToken episode in episodes)
             {
-                JToken source = episode.SelectToken("_source");
-                JToken localizable_titles = source.SelectToken("localizable_titles[0]");
-                string showType = (string)source.SelectToken("show_type");
-                if ("Episode".Equals(showType) || "Movie".Equals(showType))
+                try
                 {
-                    VideoInfo video = new VideoInfo();
-                    string season_number = (string)source.SelectToken("season_number");
-                    string episode_name = (string)localizable_titles.SelectToken("title_sort_name");
-                    if (season_number != null)
+                    JToken source = episode.SelectToken("_source");
+                    JToken localizable_titles = source.SelectToken("localizable_titles[0]");
+                    string showType = (string)source.SelectToken("show_type");
+                    if ("Episode".Equals(showType) || "Movie".Equals(showType))
                     {
-                        video.Title = string.Format("Temporada {0} - {1}", season_number, episode_name);
+                        VideoInfo video = new VideoInfo();
+                        string season_number = (string)source.SelectToken("season_number");
+                        string episode_number = (string)localizable_titles.SelectToken("title_sort_name");
+                        string episode_name = (string)localizable_titles.SelectToken("title_medium");
+                        if (season_number != null)
+                        {
+                            video.Title = string.Format("Temporada {0} - {1} - {2}", season_number, episode_number, episode_name);
+                        }
+                        else
+                        {
+                            video.Title = episode_name;
+                        }
+                        video.Description = (string)localizable_titles.SelectToken("summary_long");
+                        video.Airdate = (source.SelectToken("linear_broadcast_date") == null? source.SelectToken("created_at") : source.SelectToken("linear_broadcast_date")).ToString();
+                        video.Thumb = (string)source.SelectToken("thumbnail.url");
+                        string embed_code = (string)source.SelectToken("offers[0].embed_codes[0]"); ;
+                        video.VideoUrl = string.Format(videosBaseUrl, embed_code);
+                        videoList.Add(video);
                     }
-                    else
-                    {
-                        video.Title = episode_name;
-                    }
-                    
-                    video.Description = (string)localizable_titles.SelectToken("summary_long");
-                    //video.Airdate = (string)source.SelectToken("linear_broadcast_date");
-                    video.Thumb = (string)source.SelectToken("thumbnail.url");
-                    string embed_code = (string)source.SelectToken("offers[0].embed_codes[0]"); ;
-                    video.VideoUrl = string.Format(videosBaseUrl, embed_code);
-                    videoList.Add(video);
                 }
-            }
-            videoList = videoList.OrderByDescending(o => o.Title).ToList();
+                catch
+                {
+                    Log.Debug("mitele: error getting episodes {0}", episode);
+                }
+            } 
+            videoList = videoList.OrderByDescending(o => Convert.ToDateTime(o.Airdate).Ticks).ToList();
             return videoList;
         }
 

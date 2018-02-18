@@ -374,35 +374,35 @@
         <item key="tvGuideFormatString"><![CDATA[Now: <nowtitle> - <nowstart> - <nowend><newline>Next: <nexttitle> - <nextstart> - <nextend><newline><nowdescription>]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="Most Popular">http://www.bbc.co.uk/iplayer/group/most-popular</Category>
-        <Category xsi:type="RssLink" name="A - Z">http://www.bbc.co.uk/iplayer/a-z/</Category>
-        <Category xsi:type="RssLink" name="Arts" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01n4zyb.jpg">http://www.bbc.co.uk/iplayer/categories/arts/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="CBBC" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p02984mp.jpg">http://www.bbc.co.uk/iplayer/categories/cbbc/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="CBeebies" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p027dlmb.jpg">http://www.bbc.co.uk/iplayer/categories/cbeebies/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Comedy" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p020dl2m.jpg">http://www.bbc.co.uk/iplayer/categories/comedy/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Documentaries" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01l8l4c.jpg">http://www.bbc.co.uk/iplayer/categories/documentaries/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Drama &amp; Soaps" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0295f60.jpg">http://www.bbc.co.uk/iplayer/categories/drama-and-soaps/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Entertainment" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01tlxfz.jpg">http://www.bbc.co.uk/iplayer/categories/entertainment/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Films" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01h6zpj.jpg">http://www.bbc.co.uk/iplayer/categories/films/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Food" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p023w4qg.jpg">http://www.bbc.co.uk/iplayer/categories/food/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="History" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01jykx1.jpg">http://www.bbc.co.uk/iplayer/categories/history/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Lifestyle" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01zxkgz.jpg">http://www.bbc.co.uk/iplayer/categories/lifestyle/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Music" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01lccbf.jpg">http://www.bbc.co.uk/iplayer/categories/music/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="News" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p029fqtd.jpg">http://www.bbc.co.uk/iplayer/categories/news/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Science &amp; Nature" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p027s8wj.jpg">http://www.bbc.co.uk/iplayer/categories/science-and-nature/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Sport" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p024q1kt.jpg">http://www.bbc.co.uk/iplayer/categories/sport/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="BBC One" thumb="http://tv.sky.com/logo/256/256/skychb2002.png">http://www.bbc.co.uk/bbcone/a-z</Category>
-        <Category xsi:type="RssLink" name="BBC Two" thumb="http://tv.sky.com/logo/256/256/skychb2006.png">http://www.bbc.co.uk/bbctwo/a-z</Category>
-        <Category xsi:type="RssLink" name="BBC Three" thumb="https://upload.wikimedia.org/wikipedia/en/thumb/d/dd/BBC_Three_logo.svg/100px-BBC_Three_logo.svg.png">http://www.bbc.co.uk/tv/bbcthree/a-z</Category>
-        <Category xsi:type="RssLink" name="BBC Four" thumb="http://tv.sky.com/logo/256/256/skychb2018.png">http://www.bbc.co.uk/bbcfour/a-z</Category>
-        <Category xsi:type="RssLink" name="BBC News" thumb="http://tv.sky.com/logo/256/256/skychb2011.png">http://www.bbc.co.uk/tv/bbcnews/a-z</Category>
-        <Category xsi:type="RssLink" name="BBC Parliament" thumb="http://tv.sky.com/logo/256/256/skychb2072.png">http://www.bbc.co.uk/tv/bbcparliament/a-z</Category>
-        <Category xsi:type="RssLink" name="BBC ALBA" thumb="http://tv.sky.com/logo/256/256/skychb2012.png">http://www.bbc.co.uk/tv/bbcalba/a-z</Category>
-        <Category xsi:type="RssLink" name="Audio Described" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0276wg9.jpg">http://www.bbc.co.uk/iplayer/categories/audio-described/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Signed" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01x0kbv.jpg">http://www.bbc.co.uk/iplayer/categories/signed/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Northern Ireland" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p027lsl4.jpg">http://www.bbc.co.uk/iplayer/categories/northern-ireland/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Scotland" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p025h74g.jpg">http://www.bbc.co.uk/iplayer/categories/scotland/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Wales" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0295zvd.jpg">http://www.bbc.co.uk/iplayer/categories/wales/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Most Popular">https://www.bbc.co.uk/iplayer/group/most-popular</Category>
+        <Category xsi:type="RssLink" name="A - Z">https://www.bbc.co.uk/iplayer/a-z/</Category>
+        <Category xsi:type="RssLink" name="Arts" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01n4zyb.jpg">https://www.bbc.co.uk/iplayer/categories/arts/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="CBBC" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p02984mp.jpg">https://www.bbc.co.uk/iplayer/categories/cbbc/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="CBeebies" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p027dlmb.jpg">https://www.bbc.co.uk/iplayer/categories/cbeebies/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Comedy" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p020dl2m.jpg">https://www.bbc.co.uk/iplayer/categories/comedy/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Documentaries" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01l8l4c.jpg">https://www.bbc.co.uk/iplayer/categories/documentaries/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Drama &amp; Soaps" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0295f60.jpg">https://www.bbc.co.uk/iplayer/categories/drama-and-soaps/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Entertainment" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01tlxfz.jpg">https://www.bbc.co.uk/iplayer/categories/entertainment/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Films" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01h6zpj.jpg">https://www.bbc.co.uk/iplayer/categories/films/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Food" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p023w4qg.jpg">https://www.bbc.co.uk/iplayer/categories/food/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="History" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01jykx1.jpg">https://www.bbc.co.uk/iplayer/categories/history/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Lifestyle" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01zxkgz.jpg">https://www.bbc.co.uk/iplayer/categories/lifestyle/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Music" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01lccbf.jpg">https://www.bbc.co.uk/iplayer/categories/music/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="News" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p029fqtd.jpg">https://www.bbc.co.uk/iplayer/categories/news/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Science &amp; Nature" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p027s8wj.jpg">https://www.bbc.co.uk/iplayer/categories/science-and-nature/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Sport" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p024q1kt.jpg">https://www.bbc.co.uk/iplayer/categories/sport/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="BBC One" thumb="http://tv.sky.com/logo/256/256/skychb2002.png">https://www.bbc.co.uk/bbcone/a-z</Category>
+        <Category xsi:type="RssLink" name="BBC Two" thumb="http://tv.sky.com/logo/256/256/skychb2006.png">https://www.bbc.co.uk/bbctwo/a-z</Category>
+        <Category xsi:type="RssLink" name="BBC Three" thumb="https://upload.wikimedia.org/wikipedia/en/thumb/d/dd/BBC_Three_logo.svg/100px-BBC_Three_logo.svg.png">https://www.bbc.co.uk/tv/bbcthree/a-z</Category>
+        <Category xsi:type="RssLink" name="BBC Four" thumb="http://tv.sky.com/logo/256/256/skychb2018.png">https://www.bbc.co.uk/bbcfour/a-z</Category>
+        <Category xsi:type="RssLink" name="BBC News" thumb="http://tv.sky.com/logo/256/256/skychb2011.png">https://www.bbc.co.uk/tv/bbcnews/a-z</Category>
+        <Category xsi:type="RssLink" name="BBC Parliament" thumb="http://tv.sky.com/logo/256/256/skychb2072.png">https://www.bbc.co.uk/tv/bbcparliament/a-z</Category>
+        <Category xsi:type="RssLink" name="BBC ALBA" thumb="http://tv.sky.com/logo/256/256/skychb2012.png">https://www.bbc.co.uk/tv/bbcalba/a-z</Category>
+        <Category xsi:type="RssLink" name="Audio Described" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0276wg9.jpg">https://www.bbc.co.uk/iplayer/categories/audio-described/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Signed" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01x0kbv.jpg">https://www.bbc.co.uk/iplayer/categories/signed/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Northern Ireland" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p027lsl4.jpg">https://www.bbc.co.uk/iplayer/categories/northern-ireland/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Scotland" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p025h74g.jpg">https://www.bbc.co.uk/iplayer/categories/scotland/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Wales" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0295zvd.jpg">https://www.bbc.co.uk/iplayer/categories/wales/all?sort=atoz</Category>
         <Category xsi:type="Group" name="Live TV">
           <Channels>
             <Channel name="BBC One" thumb="http://tv.sky.com/logo/256/256/skychb2002.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/ak/bbc_one_london.m3u8?guideid=94</Channel>
@@ -834,6 +834,12 @@
         <item key="resolveHoster"><![CDATA[FromUrl]]></item>
       </Configuration>
     </Site>
+    <Site name="ArrowTV" util="ArrowTV" agecheck="false" enabled="true" lang="nl">
+      <Description>ARROW.TV Rock | 24/7 jouw favoriete Rockvideo's! Curated, all devices, full screen.</Description>
+      <Categories>
+        <Category xsi:type="RssLink" name="Rock"/>
+      </Categories>
+    </Site>
     <Site name="CBC.ca" util="CBC" agecheck="false" enabled="true" lang="en">
       <Description>CBC.ca is the English-language online service of the Canadian Broadcasting Corporation. It was introduced in 1996. Under its previous names, the CBC's online service first went live in 1993.</Description>
     </Site>
@@ -907,6 +913,16 @@
         <Category xsi:type="RssLink" name="Recent">http://www.gamersnet.nl/movies</Category>
         <Category xsi:type="RssLink" name="A..Z">http://www.gamersnet.nl/movies</Category>
       </Categories>
+    </Site>
+    <Site name="VRT Nu" util="VRT" agecheck="false" enabled="true" lang="nl">
+      <Description>please fill</Description>
+      <Configuration>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\shref="/vrtnu/categorieen/(?<url>[^/]*)/"\sclass="tile\stile--category">\s*<div\sclass="tile__image-wrapper">\s*<div\sclass="tile__image">\s*<picture\sclass="\simage--loading">\s*<!--\[if\sIE\s9]><video\sstyle="display:\snone"><!\[endif]-->\s*<source[^>]*>\s*<!--\[if\sIE\s9]></video><!\[endif]-->\s*<img\ssrcset="//(?<thumb>[^\s]*)\s1x[^>]*>\s*</picture>\s*</div>\s*</div>\s*<div\sclass="tile__content-wrapper">\s*<h3\sclass="tile__title">(?<title>[^<]*)</h3>\s*</div>\s*</a>]]></item>
+        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[https://search.vrt.be/suggest?facets[categories]={0}]]></item>
+        <item key="azRegex"><![CDATA[<a\shref="(?<url>[^"]*)"\sclass="tile">\s*<div\sclass="tile__image-wrapper">\s*<div\sclass="tile__image">\s*<picture\sclass="\simage--loading">\s*<!--\[if\sIE\s9]><video\sstyle="display:\snone"><!\[endif]-->\s*<source[^>]*>\s*<!--\[if\sIE\s9]></video><!\[endif]-->\s*<img\ssrcset="(?<thumb>[^\s]*)\s[^>]*>\s*</picture>\s*</div>\s*</div>\s*<div\sclass="tile__content-wrapper">\s*<h3\sclass="tile__title">(?<title>[^<]*)</h3>\s*<hr\sclass="tile__divider"\saria-hidden="true"/>\s*<div\sclass="tile__description"\sid="[^"]*"\saria-hidden="true">(?:<p>)?(?<description>[^<]*)(?:</p>)?</div>\s*</div>]]></item>
+        <item key="baseUrl"><![CDATA[https://www.vrt.be]]></item>
+        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]*)"\sclass="tile">\s*<div\sclass="tile__image-wrapper">\s*<div\sclass="tile__image">\s*<picture\sclass="\simage--loading">\s*<!--\[if\sIE\s9]><video\sstyle="display:\snone"><!\[endif]-->\s*<source[^>]*>\s*<!--\[if\sIE\s9]></video><!\[endif]-->\s*<img\ssrcset="(?<ImageUrl>[^\s]*)\s[^>]*>\s*</picture>\s*</div>\s*</div>\s*<div\sclass="tile__content-wrapper">\s*<h3\sclass="tile__title"\sid="(?<id>[^"]*)">(?<Title>[^<]*)</h3>]]></item>
+      </Configuration>
     </Site>
     <Site name="DR TV" util="DRTV" agecheck="false" enabled="true" lang="da">
       <Description>Se 5 af DRs kanaler live, hent aktuelle og arkiverede udsendelser i DR NU og udforsk Bonanza-arkivet, der indholder tv og radioklip fra hele DRS historie.</Description>
@@ -1229,17 +1245,17 @@
     <Site name="Ruutu.fi" util="Ruutu" agecheck="false" enabled="true" lang="fi">
       <Description>Ruutu - Nelonen, Liv, Jim ja Nelonen Pro. Viihdettä, draamaa, uutisia, urheilua ja lastenohjelmia - katso missä haluat ja milloin haluat.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.ruutu.fi/]]></item>
+        <item key="baseUrl"><![CDATA[https://www.ruutu.fi/]]></item>
         <item key="fileUrlRegEx"><![CDATA[<HTTPMediaFile\slabel="(?<n0>[^"]*)"\stype="[^"]*"\sbitrate="[^"]*"\sresolution="[^"]*">(?<m0>[^<]*)</HTTPMediaFile>]]></item>
-        <item key="videoUrlRegEx"><![CDATA[http://www.ruutu.fi/video/(?<m0>.*)]]></item>
+        <item key="videoUrlRegEx"><![CDATA[https://www.ruutu.fi/video/(?<m0>.*)]]></item>
         <item key="videoUrlFormatString"><![CDATA[http://gatling.nelonenmedia.fi/media-xml-cache?id={0}]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="Ohjelmat">http://www.ruutu.fi/ohjelmat</Category>
-        <Category xsi:type="RssLink" name="Urheilu">http://www.ruutu.fi/urheilu</Category>
-        <Category xsi:type="RssLink" name="Uutiset">http://www.ruutu.fi/ohjelmat/uutiset</Category>
-        <Category xsi:type="RssLink" name="Lapset">http://www.ruutu.fi/lapset</Category>
-        <Category xsi:type="RssLink" name="Kaikki ohjelmat">http://www.ruutu.fi/ohjelmat/kaikki</Category>
+        <Category xsi:type="RssLink" name="Ohjelmat">https://www.ruutu.fi/ohjelmat</Category>
+        <Category xsi:type="RssLink" name="Urheilu">https://www.ruutu.fi/urheilu</Category>
+        <Category xsi:type="RssLink" name="Uutiset">https://www.ruutu.fi/ohjelmat/uutiset</Category>
+        <Category xsi:type="RssLink" name="Lapset">https://www.ruutu.fi/lapset</Category>
+        <Category xsi:type="RssLink" name="Kaikki ohjelmat">https://www.ruutu.fi/ohjelmat/kaikki</Category>
       </Categories>
     </Site>
     <Site name="Telewizjada" util="Telewizjada" agecheck="false" enabled="true" lang="pl">
@@ -1304,7 +1320,7 @@
         <item key="videoListRegEx"><![CDATA[
         (<div\sclass="npo-asset-tile-container\snpo-tile\s*"\sid="[^"]*">\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*>\s*<div\sclass="npo-asset-tile\s">\s*<div[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-image">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-new">nieuw</div>\s*<div\sclass="npo-asset-tile-play"></div>\s*<div\sclass="npo-asset-tile-watched">bekeken</div>\s*<div\sclass="npo-asset-tile-progress">\s*<div\sclass="npo-asset-tile-progress-bar"\sstyle="width:\s%"></div>\s*</div>\s*</div>\s*<h2>(?<Title>[^<]*)</h2>\s*<p>(?<Airdate>[^<]*)</p>\s*</a>\s*</div>)(?#videos of extras)
         |
-        (<div\sclass="npo-asset-tile-container\snpo-tile\s*"\sid="[^"]*">\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*>\s*<div\sclass="npo-asset-tile\s">\s*<div[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-timer">(?<Duration>[^<]*)</div>\s*<div\sclass="npo-asset-tile-image">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-new">nieuw</div>\s*<div\sclass="npo-asset-tile-play"></div>\s*<div\sclass="npo-asset-tile-watched">bekeken</div>\s*<div\sclass="npo-asset-tile-progress">\s*<div\sclass="npo-asset-tile-progress-bar"\sstyle="width:\s%"></div>\s*</div>\s*</div>\s*<h2>(?<Title>[^<]*)</h2>\s*<p>(?<Airdate>[^<]*)</p>\s*</a>\s*</div>)(?#videos of afleveringen)
+        (<div\sclass="npo-asset-tile-container\snpo-tile\s*"\sid="[^"]*"\s*>\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*>\s*<div\sclass="npo-asset-tile\s">\s*<div[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-timer">(?<Duration>[^<]*)</div>\s*<div\sclass="npo-asset-tile-image">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-new">nieuw</div>\s*<div\sclass="npo-asset-tile-play"></div>\s*<div\sclass="npo-asset-tile-watched">bekeken</div>\s*<div\sclass="npo-asset-tile-progress">\s*<div\sclass="npo-asset-tile-progress-bar"\sstyle="width:\s%"></div>\s*</div>\s*</div>\s*<h2>(?<Title>[^<]*)</h2>\s*<p>(?<Airdate>[^<]*)</p>\s*</a>\s*</div>)(?#videos of afleveringen)
         ]]></item>
         <item key="searchUrl"><![CDATA[https://www.npo.nl/search/extended?pageSize=20&query={0}&filter=episodes&dateFrom=2014-01-01&tilemapping=search&tiletype=asset]]></item>
         <item key="fileUrlFormatString"><![CDATA[http://ida.omroep.nl/app.php/{0}?adaptive=no&token=]]></item>

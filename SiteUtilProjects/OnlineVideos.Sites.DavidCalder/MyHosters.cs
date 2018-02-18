@@ -218,7 +218,7 @@ namespace OnlineVideos.Sites.DavidCalder
 
                 data = WebCache.Instance.GetWebData(url, postData, cc, url);
 
-                Match n = Regex.Match(data, @"setup\({\s*file:\s*""(?<url>[^']+)"",\s*flashplayer");
+                Match n = Regex.Match(data, @"<source\ssrc=""(?<url>[^""]*)""\stype=""video/mp4"">");
                 if (n.Success)
                     return n.Groups["url"].Value;
                 //<h1 class="alt lightbg lh42">File is no longer available!</h1>

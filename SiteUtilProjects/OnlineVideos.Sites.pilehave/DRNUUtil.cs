@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Web;
 using Newtonsoft.Json.Linq;
@@ -9,6 +10,12 @@ namespace OnlineVideos.Sites
 {
   public class DRTVUtil : SiteUtilBase
   {
+
+    public enum VideoSubtitles { Enabled, Disabled };
+
+    [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Subtitles"), Description("Choose if subtitles should be enabled or disabled.")]
+    VideoSubtitles subtitleState = VideoSubtitles.Disabled;
+
     private string baseUrlDrNu = "http://www.dr.dk/mu-online/api/1.3";
     string bonanza_url = "http://www.dr.dk/Bonanza/index.htm";
     string bonanzaKategori_regEx = @"<p><a\shref=""(?<url>/Bonanza/kategori[^""]+)"">(?<title>[^<]+)</a></p>";
@@ -58,6 +65,7 @@ namespace OnlineVideos.Sites
             playpath = "flv:" + paths[1].Substring(0, paths[1].Length - 4);
           }
           string vUrl = new MPUrlSourceFilter.RtmpUrl("rtmp://" + q_l[1]) { PlayPath = playpath }.ToString();
+          //vUrl = "rtmp://vod-bonanza.gss.dr.dk/bonanza/mp4:bonanza/12-04-2008/1901_720x540x1400K.mp4";
           video.PlaybackOptions.Add(q_l[0], vUrl);
         }
         return aUrl;
@@ -135,7 +143,7 @@ namespace OnlineVideos.Sites
       string[] lines = m3u8.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
       foreach (string line in lines)
       {
-        Log.Debug("DR TV m3u8 line: " + line);
+        Log.Debug("DR TV m3u8 loadLiveAsset line: " + line);
         if (line.StartsWith("#EXT-"))
         {
           parts = line.Split(',');
@@ -189,14 +197,16 @@ namespace OnlineVideos.Sites
           string[] lines = m3u8.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
           foreach (string line in lines)
           {
-            Log.Debug("DR TV m3u8 line: " + line);
+            Log.Debug("DR TV m3u8 loadAsset line: " + line);
             if (line.StartsWith("#EXT-"))
             {
+              Log.Debug("DR TV line starts with #EXT: " + line);
               parts = line.Split(',');
               foreach (string part in parts)
               {
                 if (part.StartsWith("BANDWIDTH="))
                 {
+                  Log.Debug("DR TV line starts with BANDWIDTH=: " + line);
                   Int32.TryParse(part.Substring(10), out new_bandwidth);
                   if (new_bandwidth > curr_bandwidth)
                   {
@@ -210,25 +220,33 @@ namespace OnlineVideos.Sites
                 }
               }
             }
-            if (line.StartsWith("http://") && selectnext == true)
+            if ((line.StartsWith("http://") || line.StartsWith("https://")) && selectnext == true)
             {
               assetLink = line;
+              Log.Debug("DR TV assetLink: " + line);
             }
           }
         }
       }
 
-
-      JArray subtitleLinks = (JArray)objuri["SubtitlesList"];
-      string subtitleText = "";
-      foreach (JObject link in subtitleLinks)
+      if (subtitleState.ToString() == "Enabled")
       {
-        Log.Debug("DR TV subtitle found:" + link.ToString());
-        string webDataUrl2 = (string)link["Uri"];
-        Log.Debug("DR TV subtitle uri:" + webDataUrl2);
-        subtitleText = Helpers.SubtitleUtils.Webvtt2SRT(GetWebData(webDataUrl2));
+
+        JArray subtitleLinks = (JArray)objuri["SubtitlesList"];
+        string subtitleText = "";
+        foreach (JObject link in subtitleLinks)
+        {
+          Log.Debug("DR TV subtitle found:" + link.ToString());
+          string webDataUrl2 = (string)link["Uri"];
+          Log.Debug("DR TV subtitle uri:" + webDataUrl2);
+          subtitleText = Helpers.SubtitleUtils.Webvtt2SRT(GetWebData(webDataUrl2));
+        }
+        return Tuple.Create(assetLink, subtitleText);
       }
-      return Tuple.Create(assetLink, subtitleText);
+      else
+      {
+        return Tuple.Create(assetLink, "");
+      }
     }
 
 

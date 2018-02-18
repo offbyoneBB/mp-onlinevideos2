@@ -86,14 +86,11 @@ namespace OnlineVideos.Sites
                     else
                         vid = vid2;
                     var node2 = vid.SelectSingleNode(".//a[@href]");
-                    if (node2 != null && vid.SelectSingleNode(".//h1 | .//h3") != null)
+                    if (node2 != null && vid.SelectSingleNode(".//h2") != null)
                     {
                         VideoInfo video = CreateVideoInfo();
 
-                        if (vid.SelectSingleNode(".//h1") != null)
-                            video.Title = vid.SelectSingleNode(".//h1").InnerText;
-                        else
-                            video.Title = vid.SelectSingleNode(".//h4").InnerText;
+                        video.Title = vid.SelectSingleNode(".//h2").InnerText;
                         video.Description = getDescription(vid);
                         video.VideoUrl = FormatDecodeAbsolutifyUrl(baseUrl, node2.Attributes["href"].Value, "", UrlDecoding.None);
                         video.Thumb = getImageUrl(vid);
@@ -229,7 +226,7 @@ namespace OnlineVideos.Sites
                         {
                             RssLink sub2 = new RssLink()
                             {
-                                Name = node2.SelectSingleNode(".//h1").InnerText.Trim(),
+                                Name = node2.SelectSingleNode(".//h2").InnerText.Trim(),
                                 ParentCategory = sub,
                                 Url = FormatDecodeAbsolutifyUrl(baseUrl, node2.SelectSingleNode(".//a[@href]").Attributes["href"].Value, "", UrlDecoding.None),
                                 HasSubCategories = true,

@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace OnlineVideos.Sites.Pondman.IMDb {
+namespace OnlineVideos.Sites.Pondman.IMDb
+{
 
     using HtmlAgilityPack;
     using Newtonsoft.Json;
@@ -13,7 +14,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
     using System.Web;
     using System.Globalization;
     using OnlineVideos.Sites.apondman.IMDb.DTO;
-    using OnlineVideos.Sites.Pondman.IMDb.Json;    
+    using OnlineVideos.Sites.Pondman.IMDb.Json;
 
     public static class IMDbAPI
     {
@@ -21,21 +22,21 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         #region Regular Expression Patterns
 
         static Regex videoTitleExpression = new Regex(@"^(?<filename>(.+?)_V1)(.+?)255,1_ZA(?<length>[\d:]+)(.+?)(?<ext>\.[^\.]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        static Regex videoFormatExpression = new Regex(@"case\s+'(?<format>[^']+)'\s+:\s+url = '(?<video>/video/[^']+)'", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex videoFileExpression = new Regex(@"IMDbPlayer.playerKey = ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex videoPlayerExpression = new Regex(@"IMDbPlayer.playerType = ['""](?<player>[^'""]+)['""]", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-		static Regex videoPlayerJsonExpression = new Regex(@"<script class=""imdb-player-data"" type=""text/imdb-video-player-json"">(?<json>.*?)</script>", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline);
+        static Regex videoPlayerJsonExpression = new Regex(@"<script class=""imdb-player-data"" type=""text/imdb-video-player-json"">(?<json>.*?)</script>", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline);
 
         // todo: create single expression for RTMP variables
         static Regex videoRTMPExpression = new Regex(@"so.addVariable\(""file"", ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex videoRTMPIdExpression = new Regex(@"so.addVariable\(""id"", ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex videoThunderExpression = new Regex(@"so.addVariable\(""releaseURL"", ""(?<video>[^\""]+)""", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        
+
         static Regex imdbIdExpression = new Regex(@"tt\d{7}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex trailerDataExpression = new Regex(@"<span class=.t-o-d-year.>\((?<year>\d{4})\)</span>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-		static Regex imdbTitleExpression = new Regex(@"(?<title>[^\(]+)\s*(\((?<type>[^\)]*)\))?\s*\((?<year>\d{4})[\/IVX]*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static Regex imdbTitleExpression = new Regex(@"(?<title>[^\(]+)\s*(\((?<type>[^\)]*)\))?\s*\((?<year>\d{4})[\/IVX]*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static Regex imdbImageExpression = new Regex(@"^(?<filename>(.+?)_V1)(.+?)(?<ext>\.[^\.]+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        static Regex VIdeoPropertiesExpression = new Regex(@"window\.IMDbReactInitialState\.push\((?<json>.*?)\);\s*</script>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         #endregion
 
@@ -70,18 +71,19 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             List<TitleReference> titles = new List<TitleReference>();
 
             HtmlNodeCollection nodes = root.SelectNodes("//div[@class='poster ']");
-            foreach(HtmlNode node in nodes) {
-                
+            foreach (HtmlNode node in nodes)
+            {
+
                 HtmlNode titleNode = node.SelectSingleNode("div[@class='label']/div[@class='title']/a[contains(@href,'title')]");
-                if (titleNode == null) 
+                if (titleNode == null)
                 {
                     continue;
                 }
-                
+
                 TitleReference title = new TitleReference();
                 title.session = session;
                 title.ID = titleNode.Attributes["href"].Value.Replace("/title/", "").Replace("/", "");
-               
+
                 ParseDisplayStringToTitleBase(title, titleNode.ParentNode.InnerText);
 
                 HtmlNode detailNode = node.SelectSingleNode("div[@class='label']/div[@class='detail']");
@@ -96,7 +98,8 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                 }
 
                 HtmlNode imageNode = node.DescendantNodes().Where(x => x.Name == "img").FirstOrDefault();
-                if (imageNode != null) {
+                if (imageNode != null)
+                {
                     Match match = imdbImageExpression.Match(imageNode.Attributes["src"].Value);
                     if (match.Success)
                     {
@@ -106,7 +109,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
                 titles.Add(title);
             }
-            
+
             // todo: this is abuse, need to split the title results using the h1 headers later
             results.Titles[ResultType.Exact] = titles;
 
@@ -119,10 +122,11 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         /// <param name="session">a session instance.</param>
         /// <param name="imdbID">IMDb ID</param>
         /// <returns></returns>
-        public static TitleDetails GetTitle(Session session, string imdbID) {
-            
+        public static TitleDetails GetTitle(Session session, string imdbID)
+        {
+
             string uri = string.Format(session.Settings.BaseUriMobile, session.Settings.TitleDetailsMobile, "/" + imdbID + "/");
-            
+
             HtmlNode root = GetResponseFromSite(session, uri);
 
             TitleDetails title = new TitleDetails();
@@ -134,7 +138,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             string titleInfo = node.SelectSingleNode("h1").InnerText;
 
             ParseDisplayStringToTitleBase(title, HttpUtility.HtmlDecode(titleInfo));
-  
+
             // Tagline
             node = node.SelectSingleNode("p");
             if (node != null)
@@ -166,7 +170,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
             // Genres
             title.Genres = root.SelectNodes("//span[@itemprop='genre']").Select(s => HttpUtility.HtmlDecode(s.InnerText)).ToList();
-            
+
 
             // Ratings / Votes
             // todo: fix this
@@ -180,7 +184,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                 if (votes.Contains("votes"))
                 {
                     votes = Regex.Replace(votes, @".+?([\d\,]+) votes.+", "$1", RegexOptions.Singleline);
-                    title.Votes = Convert.ToInt32(votes.Replace(",",""));
+                    title.Votes = Convert.ToInt32(votes.Replace(",", ""));
                 }
             }
 
@@ -209,24 +213,24 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                 foreach (HtmlNode n in nodes)
                 {
                     HtmlNode infoNode = n.SelectSingleNode("div[@class='text-center']/div[@class='ellipse']");
-                    if (infoNode == null) 
+                    if (infoNode == null)
                     {
                         continue;
                     }
 
                     // Character info
                     Character character = new Character();
-					character.Actor = new NameReference();
+                    character.Actor = new NameReference();
                     character.Actor.session = session;
-					character.Actor.Name = HttpUtility.HtmlDecode(infoNode.InnerText).Trim();
+                    character.Actor.Name = HttpUtility.HtmlDecode(infoNode.InnerText).Trim();
 
                     infoNode = n.SelectSingleNode("a");
                     if (infoNode != null)
-						character.Actor.ID = infoNode.Attributes["href"].Value.Replace("http://m.imdb.com/name/", "").Replace("/", "");
+                        character.Actor.ID = infoNode.Attributes["href"].Value.Replace("http://m.imdb.com/name/", "").Replace("/", "");
 
-					infoNode = n.Descendants("small").Last();
-					if (infoNode != null)
-						character.Name = HttpUtility.HtmlDecode(infoNode.InnerText).Trim();
+                    infoNode = n.Descendants("small").Last();
+                    if (infoNode != null)
+                        character.Name = HttpUtility.HtmlDecode(infoNode.InnerText).Trim();
 
                     infoNode = n.SelectSingleNode("a/img");
                     if (infoNode != null)
@@ -243,25 +247,25 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                 }
             }
 
-			nodes = root.SelectNodes("//div[@id='cast-and-crew']");
+            nodes = root.SelectNodes("//div[@id='cast-and-crew']");
             if (nodes != null)
             {
                 foreach (HtmlNode n in nodes.Elements("a"))
                 {
-					var itemprop = n.GetAttributeValue("itemprop", "");
-					if (itemprop == "director" || itemprop == "creator")
+                    var itemprop = n.GetAttributeValue("itemprop", "");
+                    if (itemprop == "director" || itemprop == "creator")
                     {
                         NameReference person = new NameReference();
                         person.session = session;
-						person.ID = n.Attributes["href"].Value.Replace("//m.imdb.com/name/", "").Replace("/", "");
-						person.ID = person.ID.Substring(0, person.ID.IndexOf("?"));
+                        person.ID = n.Attributes["href"].Value.Replace("//m.imdb.com/name/", "").Replace("/", "");
+                        person.ID = person.ID.Substring(0, person.ID.IndexOf("?"));
                         person.Name = HttpUtility.HtmlDecode(n.Descendants("span").First().InnerText).Trim();
 
-						if (itemprop == "director")
+                        if (itemprop == "director")
                         {
                             title.Directors.Add(person);
                         }
-						else if (itemprop == "creator") 
+                        else if (itemprop == "creator")
                         {
                             title.Writers.Add(person);
                         }
@@ -270,10 +274,10 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             }
 
             HtmlNode trailerNode = root.SelectSingleNode("//span[@data-trailer-id]");
-            if (trailerNode != null) 
+            if (trailerNode != null)
             {
                 string videoId = trailerNode.GetAttributeValue("data-trailer-id", string.Empty);
-                if (videoId != string.Empty) 
+                if (videoId != string.Empty)
                 {
                     title.trailer = videoId;
                 }
@@ -308,7 +312,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
             if (root != null)
             {
-				var nodes = root.SelectNodes("//div[contains(@class, 'results-item')]");
+                var nodes = root.SelectNodes("//div[contains(@class, 'results-item')]");
 
                 string movieTitle = root.SelectSingleNode("//h3/a").InnerText;
 
@@ -316,25 +320,25 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                 {
                     foreach (HtmlNode node in nodes)
                     {
-						HtmlNode imgNode = node.SelectSingleNode("a/img");
+                        HtmlNode imgNode = node.SelectSingleNode("a/img");
 
                         if (imgNode == null)
                             continue;
 
-						string href = node.SelectSingleNode("h2/a").GetAttributeValue("href", "");
-						if (href.Contains("/imdblink/"))
-							continue; // link to an external trailer
+                        string href = node.SelectSingleNode("h2/a").GetAttributeValue("href", "");
+                        if (href.Contains("/imdblink/"))
+                            continue; // link to an external trailer
 
-                        
+
                         string videoTitle = node.SelectSingleNode("h2/a").InnerText;
 
                         if (videoTitle.ToLower().Trim() == movieTitle.ToLower().Trim())
                         {
                             // if the title is the same as the movie title try the image's title
-							var title2 = imgNode.GetAttributeValue("title", "");
-							if (title2 != "")
-								videoTitle = title2;
-                        }                        
+                            var title2 = imgNode.GetAttributeValue("title", "");
+                            if (title2 != "")
+                                videoTitle = title2;
+                        }
 
                         // clean up the video title
                         int i = videoTitle.IndexOf(" -- ");
@@ -345,9 +349,9 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
                         videoTitle = videoTitle.Replace(movieTitle + ":", string.Empty).Trim();
 
-						VideoReference video = new VideoReference();
-						video.session = session;
-						video.Image = imgNode.GetAttributeValue("src", "");
+                        VideoReference video = new VideoReference();
+                        video.session = session;
+                        video.Image = imgNode.GetAttributeValue("src", "");
                         video.ID = imgNode.Attributes["viconst"].Value;
                         video.Title = HttpUtility.HtmlDecode(videoTitle);
 
@@ -386,53 +390,32 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
             details.Title = HttpUtility.HtmlDecode(title);
 
-            HtmlNode descNode = root.SelectSingleNode("//table[@id='video-details']/tr[1]/td[2]");
-            details.Description = HttpUtility.HtmlDecode(descNode.InnerText);
-
-            string[] formats = null;
-            
-            MatchCollection matches = videoFormatExpression.Matches(data);
-            foreach (Match m in matches)
+            Match tmp = VIdeoPropertiesExpression.Match(data);
+            if (tmp.Success)
             {
-                string format = m.Groups["format"].Value;
-                string video = m.Groups["video"].Value;
-
-				if (formats == null)
-				{
-					string videoPlayerHtml = session.MakeRequest(session.Settings.BaseUri + video);
-					var json = GetJsonForVideo(videoPlayerHtml);
-					if (json != null)
-					{
-						formats = json["titleObject"]["encoding"].Select(q => (q as JProperty).Name).Where(q => q != "selected").ToArray();
-					}
-				}
-
-				if (formats != null)
+                JObject contentData = JObject.Parse(tmp.Groups["json"].Value);
+                var vids = contentData["videos"]["videoMetadata"][imdbID];
+                details.Description = vids.Value<String>("description");
+                foreach (var enc in vids["encodings"])
                 {
+                    var format = enc.Value<String>("definition");
+                    var vidUrl = enc.Value<String>("videoUrl");
                     switch (format)
                     {
-						case "SD":
-							if (formats.Contains("240p"))
-								details.Files[VideoFormat.SD] = video;
+                        case "SD":
+                            details.Files[VideoFormat.SD] = vidUrl;
                             break;
                         case "480p":
-							if (formats.Contains("480p"))
-								details.Files[VideoFormat.HD480] = video;
+                            details.Files[VideoFormat.HD480] = vidUrl;
                             break;
                         case "720p":
-							if (formats.Contains("720p"))
-								details.Files[VideoFormat.HD720] = video;
+                            details.Files[VideoFormat.HD720] = vidUrl;
                             break;
-                    }
+                    };
 
-                    
-                }
-                else
-                {
-                    details.Files[VideoFormat.SD] = video;
-                    break;
                 }
             }
+
 
             if (details.Files.Count == 0)
             {
@@ -462,7 +445,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             if (match.Success)
             {
                 string player = match.Groups["player"].Value;
-                switch(player) 
+                switch (player)
                 {
                     case "thunder":
                         match = videoThunderExpression.Match(response);
@@ -478,16 +461,16 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                         }
                         break;
 
-                    // todo add more player types
+                        // todo add more player types
                 }
-            }            
+            }
 
             match = videoFileExpression.Match(response);
             if (match.Success)
             {
                 return match.Groups["video"].Value;
             }
-            
+
 
             match = videoRTMPExpression.Match(response);
             if (match.Success)
@@ -496,15 +479,15 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
                 match = videoRTMPIdExpression.Match(response);
                 string file = match.Groups["video"].Value;
-                
+
                 return System.Web.HttpUtility.UrlDecode(value + "/" + file);
             }
 
-			var json = GetJsonForVideo(response);
-			if (json != null)
-			{
-				return json["videoPlayerObject"]["video"].Value<string>("url");
-			}
+            var json = GetJsonForVideo(response);
+            if (json != null)
+            {
+                return json["videoPlayerObject"]["video"].Value<string>("url");
+            }
 
             return null;
         }
@@ -620,7 +603,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         public static List<TitleReference> GetFullLengthMovies(Session session, string index)
         {
             List<TitleReference> titles = new List<TitleReference>();
-            
+
             string uri = string.Format(session.Settings.FullLengthMovies, index);
             HtmlNode data = GetResponseFromSite(session, uri);
 
@@ -667,16 +650,16 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             return match.Value;
         }
 
-		static JObject GetJsonForVideo(string html)
-		{
-			var match = videoPlayerJsonExpression.Match(html);
-			if (match.Success)
-			{
-				string jsonText = match.Groups["json"].Value;
-				return Newtonsoft.Json.JsonConvert.DeserializeObject<JObject>(jsonText);
-			}
-			return null;
-		}
+        static JObject GetJsonForVideo(string html)
+        {
+            var match = videoPlayerJsonExpression.Match(html);
+            if (match.Success)
+            {
+                string jsonText = match.Groups["json"].Value;
+                return Newtonsoft.Json.JsonConvert.DeserializeObject<JObject>(jsonText);
+            }
+            return null;
+        }
 
         #endregion
 
@@ -908,7 +891,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         /// <param name="title">a TitleBase object instance</param>
         /// <param name="input">the display string.</param>
         /// <returns></returns>
-        internal static bool ParseDisplayStringToTitleBase(TitleBase title, string input) 
+        internal static bool ParseDisplayStringToTitleBase(TitleBase title, string input)
         {
             Match match = imdbTitleExpression.Match(input);
             if (match.Success)
@@ -934,7 +917,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                     default:
                         title.Type = TitleType.Unknown;
                         break;
-                    // todo: add more types
+                        // todo: add more types
                 }
             }
 
@@ -946,7 +929,8 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         /// </summary>
         /// <param name="url">the url of the image</param>
         /// <returns></returns>
-        internal static string ParseImageUrl(string url) {
+        internal static string ParseImageUrl(string url)
+        {
             if (url == null)
             {
                 return string.Empty;
@@ -970,12 +954,12 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
         internal static List<TitleReference> GetTrailers(Session session, string uri, int token)
         {
             string url = (token > 0) ? uri + "&token=" + token : uri;
-            
+
             List<TitleReference> titles = new List<TitleReference>();
             string response = session.MakeRequest(url);
             //JObject parsedResults = JObject.Parse(response);
 
-            
+
             var imdbResponse = JsonConvert.DeserializeObject<OnlineVideos.Sites.apondman.IMDb.DTO.IMDbResponse>(response);
 
             HashSet<string> duplicateFilter = new HashSet<string>();
@@ -988,7 +972,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
                 }
 
                 duplicateFilter.Add(titleId);
-                
+
                 TitleReference title = new TitleReference();
                 title.session = session;
                 title.FillFrom(item);
@@ -1081,7 +1065,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
 
             string uri = url;
             string query = CreateQuerystringFromDictionary(args);
-            
+
             // create the uri
             uri = string.Format(url, query);
 
@@ -1089,14 +1073,15 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             HtmlNode node = Utility.ToHtmlNode(data);
 
             return node;
-        }  
+        }
 
         internal static string GetResponseFromEndpoint(Session session, string target)
         {
             return GetResponseFromEndpoint(session, target, null);
         }
 
-        internal static string GetResponseFromEndpoint(Session session, string target, Dictionary<string, string> args) {
+        internal static string GetResponseFromEndpoint(Session session, string target, Dictionary<string, string> args)
+        {
 
             if (session == null)
             {
@@ -1109,7 +1094,7 @@ namespace OnlineVideos.Sites.Pondman.IMDb {
             // format the url
             //string url = string.Format(session.Settings.BaseApiUri, target, session.Settings.Locale, query);
             string url = string.Format(session.Settings.BaseUriMobile, target, query);
- 
+
             // make and return the request
             return session.MakeRequest(url);
         }

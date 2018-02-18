@@ -53,7 +53,7 @@ namespace OnlineVideos.Sites
                     var val = subnode.Attributes["data-value"].Value;
                     if (!String.IsNullOrEmpty(val))
                     {
-                        subcat.Url = "https://www.npo.nl/media/series?" + arg + '=' + val + "&tilemapping=normal&tiletype=teaser&page=1";
+                        subcat.Url = "https://www.npo.nl/media/series?" + arg + '=' + val + "&tilemapping=normal&tiletype=teaser&pageType=catalogue&page=1";
                         cat.SubCategories.Add(subcat);
                     }
                 }
@@ -92,7 +92,7 @@ namespace OnlineVideos.Sites
                 parentCategory.SubCategories.Add(new NextPageCategory()
                 {
                     ParentCategory = parentCategory,
-                    Url = FormatDecodeAbsolutifyUrl(baseUrl, data["nextLink"].Value<String>() + "&tilemapping=normal&tiletype=teaser", "", UrlDecoding.None)
+                    Url = FormatDecodeAbsolutifyUrl(baseUrl, data["nextLink"].Value<String>() + "&tilemapping=normal&tiletype=teaser&pageType=catalogue", "", UrlDecoding.None)
                 }
                 );
 
@@ -116,7 +116,7 @@ namespace OnlineVideos.Sites
                 {
                     var afleveringen = new RssLink() { Name = "Afleveringen", ParentCategory = parentCategory };
                     parentCategory.SubCategories.Add(afleveringen);
-                    afleveringen.Url = "https://www.npo.nl" + episodesNode.SelectSingleNode(".//input[@name='selfLink']").Attributes["value"].Value + "?tilemapping=dedicated&tiletype=asset";
+                    afleveringen.Url = "https://www.npo.nl" + episodesNode.SelectSingleNode(".//input[@name='selfLink']").Attributes["value"].Value + "?tilemapping=dedicated&pageType=catalogue&tiletype=asset";
                 }
 
                 var clipsNode = data.DocumentNode.SelectSingleNode(@"//div[@id='component-grid-clips']");
@@ -165,7 +165,7 @@ namespace OnlineVideos.Sites
             if (!String.IsNullOrEmpty(jdata["nextLink"].Value<String>()))
             {
                 nextPageAvailable = true;
-                nextPageUrl = FormatDecodeAbsolutifyUrl(baseUrl, jdata["nextLink"].Value<String>() + "&tilemapping=dedicated&tiletype=asset", "", UrlDecoding.None);
+                nextPageUrl = FormatDecodeAbsolutifyUrl(baseUrl, jdata["nextLink"].Value<String>() + "&tilemapping=dedicated&tiletype=asset&pageType=catalogue", "", UrlDecoding.None);
 
             }
             return base.Parse(url, jdata["tiles"].Value<String>());

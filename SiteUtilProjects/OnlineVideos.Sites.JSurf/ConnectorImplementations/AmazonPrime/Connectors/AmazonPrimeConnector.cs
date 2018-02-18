@@ -98,11 +98,14 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
                 case State.LoggingIn:
                     if (Url.EndsWith("nav_signin_btn"))
                     {
-                        var jsCode = @"document.getElementById('ap_email').value = '" + _username + @"';
-                                    var r=document.getElementById('ap_signin_existing_radio'); if (r)r.checked='checked';
-                                    document.getElementById('ap_password').value = '" + _password + @"';
+                        var jsCode = @"var u=document.getElementById('ap_email')||document.getElementById('ap-claim-autofill-hint');
+                                    var r=document.getElementById('ap_signin_existing_radio')||document.getElementById('rememberMe');
+                                    var p=document.getElementById('ap_password');
                                     var fm=document.getElementById('ap_signin_form')||document.forms['signIn'];
-                                    if(fm)fm.submit();";
+                                    if (u)u.value='" + _username + @"';
+                                    if (p)p.value='" + _password + @"';
+                                    if (r)r.checked='checked';
+                                    if (fm)fm.submit();";
                         InvokeScript(jsCode);
                         _currentState = State.LoginResult;
                     }
