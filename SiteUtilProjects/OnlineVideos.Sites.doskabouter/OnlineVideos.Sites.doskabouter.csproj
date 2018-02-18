@@ -141,6 +141,7 @@
     <Compile Include="TheEscapistUtil.cs" />
     <Compile Include="TVEUtil.cs" />
     <Compile Include="TVNZOnDemandUtil.cs" />
+    <Compile Include="VRTUtil.cs" />
     <Compile Include="WatchSeriesUtil.cs" />
   </ItemGroup>
   <ItemGroup>

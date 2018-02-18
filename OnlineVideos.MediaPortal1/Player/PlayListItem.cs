@@ -7,6 +7,8 @@ namespace OnlineVideos.MediaPortal1.Player
     public class PlayList : List<PlayListItem>
     {
         public bool IsPlayAll { get; set; }
+        public bool HasNextPage { get; set; }
+        public bool Random { get; set; }
     }
 
     public class PlayListItem : MePo.PlayListItem

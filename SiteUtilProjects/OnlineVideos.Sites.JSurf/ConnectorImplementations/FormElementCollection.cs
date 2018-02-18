@@ -51,7 +51,8 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations
                     if (!isChecked.Equals("unchecked")) this[name] = value;
                     break;
                 default:
-                    Add(name, value);
+                    if (!ContainsKey(name))
+                        Add(name, value);
                     break;
             }
         }
