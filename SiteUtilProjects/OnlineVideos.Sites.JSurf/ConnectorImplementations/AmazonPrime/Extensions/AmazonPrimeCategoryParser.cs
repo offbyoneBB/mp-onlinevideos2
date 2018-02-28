@@ -162,7 +162,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
             List<HtmlNode> listItems = null;
 
             // Attempt the URL up to 10 times as amazon wants us to use the api!
-            for (int i = 0; i <= 10; i++)
+            for (int i = 0; i < 2; i++)
             {
                 doc = tmpWeb.Load(url);
                 listItems = doc.DocumentNode.GetNodesByClass("dv-packshot");
@@ -184,12 +184,18 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                     var tmpCateg = new Category();
                     tmpCateg.ParentCategory = parent;
                     tmpCateg.HasSubCategories = false;
-                    tmpCateg.Name = item.GetNodeByClass("dv-core-title").InnerText;
-                    tmpCateg.Name = StringUtils.PlainTextFromHtml(tmpCateg.Name.Replace("\n", String.Empty).Trim());
-                    tmpCateg.Other = item.NavigatePath(new[] { 0 }).Attributes["href"].Value.Replace("&amp;", "&"); ;
-                    tmpCateg.Thumb = item.NavigatePath(new[] { 0, 0 }).Attributes["src"].Value;
-                    //var released = (item.GetNodeByClass("reg subt") == null ? string.Empty : item.GetNodeByClass("reg subt").FirstChild.GetInnerText());
-                    //var score = (item.GetNodeByClass("asinReviewsSummaryNoPopover") == null ? string.Empty : (item.GetNodeByClass("asinReviewsSummaryNoPopover").FindFirstChildElement() == null ? string.Empty : item.GetNodeByClass("asinReviewsSummaryNoPopover").FindFirstChildElement().Attributes["alt"].Value));
+                    var ahref = item.FindAllChildElementsRecursive(e => e.Name == "a").FirstOrDefault();
+                    var img = item.FindAllChildElementsRecursive(e => e.Name == "img").FirstOrDefault();
+                    if (ahref != null)
+                    {
+                        tmpCateg.Name = ahref.GetAttribute("aria-label");
+                        tmpCateg.Name = StringUtils.PlainTextFromHtml(tmpCateg?.Name.Replace("\n", String.Empty).Trim());
+                        tmpCateg.Other = Properties.Resources.AmazonRootUrl + ahref.Attributes["href"].Value.Replace("&amp;", "&");
+                    }
+                    if (img != null)
+                    {
+                        tmpCateg.Thumb = img.GetAttribute("src");
+                    }
                     tmpCateg.Description = tmpCateg.Name; //"Released: " + released + "\r\nReview Score: " + score;
                     results.Add(tmpCateg);
                 }

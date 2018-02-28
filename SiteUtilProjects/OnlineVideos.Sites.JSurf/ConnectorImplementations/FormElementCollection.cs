@@ -15,20 +15,25 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations
         /// Constructor. Parses the HtmlDocument to get all form input elements. 
         /// </summary>
         public FormElementCollection(HtmlDocument htmlDoc)
+            :this(htmlDoc.DocumentNode)
         {
-            var inputs = htmlDoc.DocumentNode.Descendants("input");
+        }
+
+        public FormElementCollection(HtmlNode htmlNode)
+        {
+            var inputs = htmlNode.Descendants("input");
             foreach (var element in inputs)
             {
                 AddInputElement(element);
             }
 
-            var menus = htmlDoc.DocumentNode.Descendants("select");
+            var menus = htmlNode.Descendants("select");
             foreach (var element in menus)
             {
                 AddMenuElement(element);
             }
 
-            var textareas = htmlDoc.DocumentNode.Descendants("textarea");
+            var textareas = htmlNode.Descendants("textarea");
             foreach (var element in textareas)
             {
                 AddTextareaElement(element);
