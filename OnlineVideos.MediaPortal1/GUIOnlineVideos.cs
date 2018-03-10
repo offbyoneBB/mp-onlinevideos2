@@ -2090,7 +2090,7 @@ namespace OnlineVideos.MediaPortal1
             else
             {
                 SetGuiProperties_ExtendedVideoInfo(ovItem != null ? ovItem.Item as VideoInfo : null, false);
-                GUIPropertyManager.SetProperty("#OnlineVideos.title", ovItem != null ? ovItem.Title : string.Empty); 
+                GUIPropertyManager.SetProperty("#OnlineVideos.title", ovItem != null ? ovItem.Title : string.Empty);
                 GUIPropertyManager.SetProperty("#OnlineVideos.desc", ovItem != null ? ovItem.Description : string.Empty);
                 GUIPropertyManager.SetProperty("#OnlineVideos.length", ovItem != null && ovItem.Item is VideoInfo ? Helpers.TimeUtils.TimeFromSeconds((ovItem.Item as VideoInfo).Length) : string.Empty);
                 GUIPropertyManager.SetProperty("#OnlineVideos.aired", ovItem != null && ovItem.Item is VideoInfo ? (ovItem.Item as VideoInfo).Airdate : string.Empty);
@@ -2157,10 +2157,33 @@ namespace OnlineVideos.MediaPortal1
             }
             else
             {
-                // if last item -> clear the list
-                TrackPlayback();
-                currentPlaylist = null;
-                currentPlayingItem = null;
+                if (currentPlaylist.IsPlayAll && currentPlaylist.HasNextPage)
+                {
+                    var nVideos = currentVideoList.Count;
+                    var videos = SelectedSite.GetNextPageVideos();
+                    currentPlaylist = VideosToPlayList(videos, currentPlaylist.Random, null);
+                    currentPlaylist.Insert(0, currentPlayingItem);//keep one for chosenplaybackoption
+                    if (currentPlaylist.Count > 1)
+                    {
+                        currentPlaylistIndex = 1;
+                        Play_Step1(currentPlaylist[1], true);
+                    }
+                    else
+                    {
+                        // if last item -> clear the list
+                        TrackPlayback();
+                        currentPlaylist = null;
+                        currentPlayingItem = null;
+                    }
+
+                }
+                else
+                {
+                    // if last item -> clear the list
+                    TrackPlayback();
+                    currentPlayingItem = null;
+                    currentPlaylist = null;
+                }
             }
         }
 
@@ -2292,7 +2315,18 @@ namespace OnlineVideos.MediaPortal1
         {
             // if multiple quality choices are available show a selection dialogue (also on playlist playback)
             string lsUrl = loUrlList[0];
-            bool resolve = DisplayPlaybackOptions(playItem.Video, ref lsUrl, skipPlaybackOptionsDialog); // resolve only when any playbackoptions were set
+            int currentPlaylistIndex = currentPlayingItem != null ? currentPlaylist.IndexOf(currentPlayingItem) : -1;
+            bool resolve;
+            //try to find previously chosen playbackoption in plaiItem.Video.Playbackoptiohs. If found, take that one and don't display dialog
+            if (!skipPlaybackOptionsDialog && currentPlaylistIndex >= 0 && playItem.Video.PlaybackOptions != null && playItem.Video.PlaybackOptions.Count > 1 &&
+                playItem.Video.PlaybackOptions.ContainsKey(currentPlaylist[currentPlaylistIndex].ChosenPlaybackOption))
+            {
+                resolve = true;
+                lsUrl = currentPlaylist[currentPlaylistIndex].ChosenPlaybackOption;
+            }
+
+            else
+                resolve = DisplayPlaybackOptions(playItem.Video, ref lsUrl, skipPlaybackOptionsDialog); // resolve only when any playbackoptions were set
             if (lsUrl == "-1") return; // the user did not chose an option but canceled the dialog
             if (resolve)
             {
@@ -2484,9 +2518,18 @@ namespace OnlineVideos.MediaPortal1
 
         private void PlayAll(bool random = false, VideoInfo startWith = null)
         {
-            currentPlaylist = new Player.PlayList() { IsPlayAll = true };
             currentPlayingItem = null;
             var videos = (SelectedSite is IChoice && currentState == State.details) ? currentTrailerList.ConvertAll(v => (VideoInfo)v) : currentVideoList;
+            currentPlaylist = VideosToPlayList(videos, random, startWith);
+            if (currentPlaylist.Count > 0)
+            {
+                Play_Step1(currentPlaylist[0], true);
+            }
+        }
+
+        private PlayList VideosToPlayList(List<VideoInfo> videos, bool random, VideoInfo startWith)
+        {
+            var result = new PlayList() { IsPlayAll = true, Random = random };
             bool startVideoFound = startWith == null;
             foreach (VideoInfo video in videos)
             {
@@ -2500,18 +2543,18 @@ namespace OnlineVideos.MediaPortal1
                 if (!startVideoFound && video != startWith) continue;
                 else startVideoFound = true;
 
-                currentPlaylist.Add(new Player.PlayListItem(video.Title, null)
+                result.Add(new Player.PlayListItem(video.Title, null)
                 {
                     Type = MediaPortal.Playlists.PlayListItem.PlayListItemType.VideoStream,
                     Video = video,
                     Util = selectedSite is Sites.FavoriteUtil ? OnlineVideoSettings.Instance.SiteUtilsList[(video as FavoriteDbVideoInfo).SiteName] : SelectedSite
                 });
             }
-            if (currentPlaylist.Count > 0)
-            {
-                if (random) ((List<PlayListItem>)currentPlaylist).Randomize();
-                Play_Step1(currentPlaylist[0], true);
-            }
+            result.HasNextPage = currentState == State.videos && SelectedSite.HasNextPage;
+            if (random && result.Count > 0)
+                result.Randomize();
+
+            return result;
         }
 
         private void DisplayUnableToPlayDialog()

@@ -21,6 +21,7 @@
   <string name="OnlineVideos.Category">Categoria</string>
   <string name="OnlineVideos.CategoryNotFound">Categoria non trovata</string>
   <string name="OnlineVideos.Categories">Categorie</string>
+  <string name="OnlineVideos.ChangeSettings">Modifica impostazioni</string>
   <string name="OnlineVideos.Creator">Autore</string>
   <string name="OnlineVideos.CreateNewPlaylist">Crea nuova Playlist...</string>
   <string name="OnlineVideos.CheckingForPluginUpdate">controllo in corso per nuove versioni dei plugin</string>
@@ -28,6 +29,7 @@
   <!--D-->
   <string name="OnlineVideos.Date">Data</string>
   <string name="OnlineVideos.DateOfRelease">Data di pubblicazione</string>
+  <string name="OnlineVideos.Details">Dettagli</string>
   <string name="OnlineVideos.Directors">Registi</string>
   <string name="OnlineVideos.Download">Download</string>
   <string name="OnlineVideos.DownloadUserdefined">Download nella Cartella Utente</string>
@@ -80,6 +82,7 @@
   <string name="OnlineVideos.LayoutIcons">Aspetto: icone</string>
   <string name="OnlineVideos.LayoutBigIcons">Aspetto: icone grandi</string>
   <!--M-->
+  <string name="OnlineVideos.Main.Help">Questo plugin offre un modo veloce e consistente di sfogliare e riprodurre video ospitati in vari siti web.</string>
   <string name="OnlineVideos.ManageSites">Gestione siti</string>
   <string name="OnlineVideos.MaxResults">Massimo numero di risultati</string>
   <!--N-->
@@ -97,11 +100,13 @@
   <string name="OnlineVideos.Others">Altro</string>
   <!--P-->
   <string name="OnlineVideos.PlayAll">Riproduci tutti</string>
+  <string name="OnlineVideos.PlayAllFromHere">Riproduci tutto (da qui)</string>
   <string name="OnlineVideos.PlayAllRandom">Play di tutti(ordine casuale)</string>
   <string name="OnlineVideos.PlayWith">Riproduci con ...</string>
   <string name="OnlineVideos.Playlists">Playlist</string>
   <string name="OnlineVideos.PlaybackWillBeStopped">Playback sarà fermato</string>
   <string name="OnlineVideos.PleaseEnterDescription">Perfavore aggiungi una breve descrizione</string>
+  <string name="OnlineVideos.PleaseUpdateLocalSite">Per piacere aggiorna e testa nuovamente il sito locale prima di segnalarlo come non funzionante</string>
   <string name="OnlineVideos.PlotOutline">Trama</string>
   <string name="OnlineVideos.PreviousPage">Pagina precedente</string>
   <string name="OnlineVideos.PerformAutomaticUpdate">Procedere con l\'aggiornamento automatico ?</string>
@@ -109,6 +114,7 @@
   <string name="OnlineVideos.Queued">accodato</string>
   <!--R-->
   <string name="OnlineVideos.RateVideo">Vota il video....</string>
+  <string name="OnlineVideos.Rating">Valutazione</string>
   <string name="OnlineVideos.Recommendations">Recommandazioni</string>
   <string name="OnlineVideos.RemoveFromFavorites">Rimuovi dai favoriti</string>
   <string name="OnlineVideos.RemoveFromPlaylist">Rimuovi dalla Playlist</string>
@@ -130,6 +136,7 @@
   <string name="OnlineVideos.SelectSource">Selezionare sorgente</string>
   <string name="OnlineVideos.Sites">Siti</string>
   <string name="OnlineVideos.Size">Dimensione</string>
+  <string name="OnlineVideos.SkipSingleCategory">Salta una singola categoria</string>
   <string name="OnlineVideos.SortOptions">Opzioni di ordinamento</string>
   <string name="OnlineVideos.Search">Ricerca</string>
   <string name="OnlineVideos.SetDownloadFolderInConfig">Selezionare una cartella per il download nel pannello di configurazione!</string>
@@ -139,6 +146,7 @@
   <string name="OnlineVideos.StartingPlayback">inizio riproduzione</string>
   <string name="OnlineVideos.Subscriptions">Sottoscrizioni</string>
   <string name="OnlineVideos.Success">Successo</string>
+  <string name="OnlineVideos.SearchRelatedKeywords">Parole chiave di ricerca</string>
   <!--T-->
   <string name="OnlineVideos.Timeframe">Arco di tempo</string>
   <string name="OnlineVideos.Timeout">Timeout</string>

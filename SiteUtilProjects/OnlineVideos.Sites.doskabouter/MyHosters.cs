@@ -989,7 +989,7 @@ namespace OnlineVideos.Hoster
 
     }
 
-    public class VidTo : HosterBase
+    public class VidTo : MyHosterBase
     {
         public override string GetHosterUrl()
         {
@@ -1007,34 +1007,79 @@ namespace OnlineVideos.Hoster
         {
             Dictionary<string, string> res = new Dictionary<string, string>();
             string webData = WebCache.Instance.GetWebData(url);
-            string postData = String.Empty;
-            Match m = Regex.Match(webData, @"<input\stype=""hidden""\sname=""(?<m0>[^""]*)""\svalue=""(?<m1>[^""]*)");
-            while (m.Success)
-            {
-                if (!String.IsNullOrEmpty(postData))
-                    postData += "&";
-                postData += m.Groups["m0"].Value + "=" + m.Groups["m1"].Value;
-                m = m.NextMatch();
-            }
-            //if (String.IsNullOrEmpty(postData))
-            //return null;
 
             string timeToWait = Regex.Match(webData, @"<span\sid=""countdown_str"">[^>]*>(?<time>[^<]+)</span>").Groups["time"].Value;
             if (!String.IsNullOrEmpty(timeToWait) && Convert.ToInt32(timeToWait) < 10)
                 Thread.Sleep(Convert.ToInt32(timeToWait) * 1001);
 
-            if (!String.IsNullOrEmpty(postData))
-                webData = WebCache.Instance.GetWebData(url, postData);
-            string packed = Helpers.StringUtils.GetSubString(webData, @"return p}", @"</script>");
-            packed = packed.Replace(@"\'", @"'");
-            string unpacked = Helpers.StringUtils.UnPack(packed);
-            m = Regex.Match(unpacked, @"{label:""(?<n0>[^""]*)"",file:""(?<m0>[^""]*)""}");
+            webData = GetFromPost(url, webData);
+
+            var m = Regex.Match(webData, @"{file:""(?<m0>[^""]*)"",label:""(?<n0>[^""]*)""}");
             while (m.Success)
             {
                 res.Add(m.Groups["n0"].Value, m.Groups["m0"].Value);
                 m = m.NextMatch();
             }
             return res;
+        }
+    }
+
+    public class VidLox : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "vidlox.tv";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            string s = WebCache.Instance.GetWebData(url);
+            s = Helpers.StringUtils.GetSubString(s, "sources: [", "]");
+            var m = Regex.Match(s, @"""(?<url>[^""]*)""");
+            string theUrl = null;
+            while (m.Success)
+            {
+                theUrl = m.Groups["url"].Value;
+                if (theUrl.EndsWith("mp4"))
+                    return theUrl;
+                m = m.NextMatch();
+            }
+            return theUrl;
+        }
+    }
+
+    public class Vidzi : HosterBase  //copied from ministerk, there it's called VidziTv and therefore could not be found by a regular gethoster call
+    {
+        public override string GetHosterUrl()
+        {
+            return "vidzi.tv";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            if (!url.Contains("embed-"))
+            {
+                url = url.Replace("vidzi.tv/", "vidzi.tv/embed-");
+            }
+            if (!url.EndsWith(".html"))
+            {
+                url += ".html";
+            }
+            string data = GetWebData<string>(url);
+            if (data.Contains("File was deleted or expired."))
+                throw new OnlineVideosException("File was deleted or expired.");
+            string packed = Helpers.StringUtils.GetSubString(data, @"return p}", @"</script>");
+            if (!String.IsNullOrEmpty(packed))
+            {
+                string unpacked = Helpers.StringUtils.UnPack(packed.Replace(@"\'", @"'"));
+                var rgx = new Regex(@"file:""(?<url>[^""]*?.mp4[^""]*)");
+                var m = rgx.Match(unpacked);
+                if (m.Success)
+                {
+                    return m.Groups["url"].Value;
+                }
+            }
+            return "";
         }
     }
 
