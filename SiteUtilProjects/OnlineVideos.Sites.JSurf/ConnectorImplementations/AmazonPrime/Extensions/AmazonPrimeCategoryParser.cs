@@ -125,7 +125,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                     var link = item.GetNodeByClass("s-access-detail-page");
                     tmpCateg.Name = link.GetAttribute("title");
                     tmpCateg.Name = StringUtils.PlainTextFromHtml(tmpCateg.Name.Replace("\n", String.Empty).Trim());
-                    tmpCateg.Other = link.GetAttribute("href"); ;
+                    tmpCateg.Other = CombineUrl(link);
                     tmpCateg.Thumb = item.GetNodeByClass("s-access-image").GetAttribute("src");
                     var released = link.ParentNode.NavigatePath(new int[] { 3 }).GetInnerText();
                     var score = item.GetNodeByClass("a-icon-star") == null ? String.Empty : item.GetNodeByClass("a-icon-star").FirstChild.GetInnerText();
@@ -190,7 +190,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                     {
                         tmpCateg.Name = ahref.GetAttribute("aria-label");
                         tmpCateg.Name = StringUtils.PlainTextFromHtml(tmpCateg?.Name.Replace("\n", String.Empty).Trim());
-                        tmpCateg.Other = Properties.Resources.AmazonRootUrl + ahref.Attributes["href"].Value.Replace("&amp;", "&");
+                        tmpCateg.Other = CombineUrl(ahref);
                     }
                     if (img != null)
                     {
@@ -213,6 +213,13 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
             return results;
         }
 
+        private static string CombineUrl(HtmlNode ahref)
+        {
+            var replaced = ahref.Attributes["href"].Value.Replace("&amp;", "&");
+            if (replaced.StartsWith("https://"))
+                return replaced;
+            return Properties.Resources.AmazonRootUrl + replaced;
+        }
 
         public static List<SearchResultItem> LoadAmazonPrimeSearchAsCategoriesFromUrl(this string url, string query, AmazonBrowserSession session)
         {
