@@ -1035,32 +1035,21 @@
         <Category xsi:type="RssLink" name="Video">http://www.leagueoflegendsstreams.com/home/stream.php</Category>
       </Categories>
     </Site>
-    <Site name="liveLEAK" util="LiveLeak" agecheck="false" enabled="true" lang="en">
+    <Site name="liveLEAK" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Redefining The Media</Description>
       <Configuration>
-        <item key="videoListRegEx"><![CDATA[(?<!</ul>\s<!--<ul\sclass="item_list">.*)(?<=<ul\sclass="item_list">.*)<img\sclass="thumbnail_image"\ssrc="(?<ImageUrl>[^"]*)"\s(?:(?!<img\sclass=).)*<img\sclass=(?:(?!<div\sclass="item_info_column">).)*<div\sclass="item_info_column">\s*<h2><a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a></h2>(?:(?!Leaked:).)*Leaked:(?<Airdate>[^i]*)in (?:(?!<!--item_info).)*<!--item_info_column-->]]></item>
-        <item key="nextPageRegEx"><![CDATA[(?<!title="Go\sto\snext\spage".*)(?<=ul\sclass="pagenav".*)<li><a\shref='(?<url>[^']*)'\s><img\ssrc=[^\s]*\stitle="Go\sto\snext\spage"]]></item>
-        <item key="fileUrlRegEx"><![CDATA[(file:\s"(?<m0>[^"]*)")|(<iframe\swidth="[^"]*"\sheight="[^"]*"\ssrc="(?<m0>[^"]*)"[^>]*></iframe>)]]></item>
-        <item key="forceUTF8Encoding"><![CDATA[true]]></item>
-        <item key="searchUrl"><![CDATA[http://www.liveleak.com/browse?q={0}/]]></item>
-        <item key="baseUrl"><![CDATA[http://www.liveleak.com/]]></item>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li(?:\sclass="visible-xs")?><a\shref="(?<url>https://www.liveleak.com/c[^"]*)"[^>]*>(?<title>[^<]*)</a></li>]]></item>
+        <item key="videoListRegEx"><![CDATA[<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*><div\sclass="pg_text">[^<]*</div></div></a>\s*<div[^>]*>\s*<h3>\s*<span[^>]*>\s*<samp\sclass="arrow_top"><i\sclass="fa\sfa-angle-up\srate_thing\suprate"\saria-hidden="true"></i></samp>\s*<samp\sclass="text_center_con\sthing_score">[^<]*</samp>\s*<samp\sclass="arrow_bottom"><i\sclass="fa\sfa-angle-down\srate_thing\sdownrate"\saria-hidden="true"></i></samp>\s*</span>\s*<a\shref="(?<VideoUrl>[^"]*)"\stitle="(?<Title>[^"]*)">(?<Title2>[^<]*)</a></h3>\s<p>(?<Description>[^<]*)</p>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\saria-label="Next">]]></item>
+        <item key="fileUrlRegEx"><![CDATA[(<source\ssrc="https://(?<m0>[^"]*)"\s*(?:default\s)?label="(?<n0>[^"]*)"\stype="video/mp4">)|(<iframe\swidth="[^"]*"\sheight="[^"]*"\ssrc="//(?<m0>[^\?]*)\?rel=0&autoplay)]]></item>
+        <item key="fileUrlFormatString"><![CDATA[https://{0}]]></item>
+        <item key="searchUrl"><![CDATA[https://www.liveleak.com/browse?q={0}/]]></item>
+        <item key="baseUrl"><![CDATA[https://www.liveleak.com/]]></item>
+        <item key="forceUTF8Encoding"><![CDATA[True]]></item>
         <item key="resolveHoster"><![CDATA[FromUrl]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/u/u/ll2/logo.gif" desc="Featured Items" name="Home">http://www.liveleak.com/</Category>
-        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/u/u/ll2/logo.gif" desc="Newest Leaks" name="Recent Items">http://www.liveleak.com/browse</Category>
-        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/s/s/10/media10/2011/Apr/17/9c62d8706ec5_channel_thumbnail_1303021014.jpg?d5e8cc8eccfb6039332f41f6249e92b06c91b4db65f5e99818bad69e4c45dfd721dc&amp;ec_rate=300" desc="Liveleak's official News Channe" name="News &amp; Politics">http://www.liveleak.com/c/news</Category>
-        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/s/s/10/media10/2011/Apr/16/a23d0244223a_channel_thumbnail_1303021660.png?d5e8cc8eccfb6039332f41f6249e92b06c91b4db65f5e99818bad69e4c45dfd72fd5&amp;ec_rate=300" desc="Liveleak's official YourSay channel!" name="Yoursay">http://www.liveleak.com/c/yoursay</Category>
-        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/s/s/18/media18/2011/Apr/27/3ea46fc9f9ec_channel_thumbnail_1303919638.png?d5e8cc8eccfb6039332f41f6249e92b06c91b4db65f5e99818bad69e4c45dfd42ea7&amp;ec_rate=300" desc="This channel contains hand picked items that deserve your attention" name="Must See">http://www.liveleak.com/c/must_see</Category>
-        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/s/s/10/media10/2011/Apr/17/656ede5f1c3a_channel_thumbnail_1303022118.png?d5e8cc8eccfb6039332f41f6249e92b06c91b4db65f5e99818bad69e4c45dfd42ca3&amp;ec_rate=300" desc="Liveleak's official Iraq channel" name="Iraq">http://www.liveleak.com/c/iraq</Category>
-        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/s/s/10/media10/2011/Apr/17/3825dc2aafe2_channel_thumbnail_1303022168.png?d5e8cc8eccfb6039332f41f6249e92b06c91b4db65f5e99818bad69e4c45dfd42da1&amp;ec_rate=300" desc="Liveleak's official Afghanistan channel" name="Afghanistan">http://www.liveleak.com/c/afghanistan</Category>
-        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/u/u/thumbs/2011/Jun/29/d9f4bb4260bb_thumb_1.jpg" desc="The 2011 Libyan civil war is an ongoing armed conflict in the North African state of Libya being fought between those seeking to depose Muammar Gaddafi and hold democratic elections, and pro Gaddafi forces." name="2011 Libyan civil war">http://www.liveleak.com/c/2011_Libyan_civil_war</Category>
-        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/s/s/10/media10/2011/Apr/16/ef0d91aaa07f_channel_thumbnail_1303021678.png?d5e8cc8eccfb6039332f41f6249e92b06c91b4db65f5e99818bad69e4c45dfd42aab&amp;ec_rate=300" desc="Liveleak's official entertainment channel!" name="Entertainment">http://www.liveleak.com/c/entertainment</Category>
-        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/s/s/10/media10/2011/Apr/16/f03bcd1854e0_channel_thumbnail_1303021680.png?d5e8cc8eccfb6039332f41f6249e92b06c91b4db65f5e99818bad69e4c45dfd428a6&amp;ec_rate=300" desc="Liveleak's official Liveleaks channel!" name="LiveLeaks">http://www.liveleak.com/c/liveleaks</Category>
-        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/u/u/ll2/logo.gif" desc="Today's top items based on number of views" name="Top Items (Today)">http://www.liveleak.com/browse?rank_by=day</Category>
-        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/u/u/ll2/logo.gif" desc="This week's items based on number of views" name="Top Items (This Week)">http://www.liveleak.com/browse?rank_by=week</Category>
-        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/u/u/ll2/logo.gif" desc="This month's top items based on number of views" name="Top Items (This Month)">http://www.liveleak.com/browse?rank_by=month</Category>
-        <Category xsi:type="RssLink" thumb="http://edge.liveleak.com/80281E/u/u/ll2/logo.gif" desc="Top items ever based on number of views" name="Top Items (All time)">http://www.liveleak.com/browse?rank_by=all_time</Category>
+        <Category xsi:type="RssLink" thumb="" desc="" name="Recent Items">https://www.liveleak.com/browse</Category>
       </Categories>
     </Site>
     <Site name="LuckyTV" util="GenericSite" agecheck="false" enabled="true" lang="nl">
