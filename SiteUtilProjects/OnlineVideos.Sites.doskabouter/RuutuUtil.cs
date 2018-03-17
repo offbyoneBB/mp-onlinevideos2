@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using Newtonsoft.Json.Linq;
 using HtmlAgilityPack;
+using OnlineVideos.Helpers;
 
 namespace OnlineVideos.Sites
 {
@@ -29,7 +30,15 @@ namespace OnlineVideos.Sites
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(data);
             var vidUrl = doc.SelectSingleNode(@"//Clip/SourceFile").InnerText;
-            return vidUrl;
+            if (vidUrl.ToLowerInvariant().Contains("[not-used]"))
+            {
+                vidUrl = doc.SelectSingleNode(@"//Clip/WebHLSMediaFiles/WebHLSMediaFile").InnerText;
+                data = GetWebData(vidUrl);
+                video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(data, vidUrl, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height);
+                return video.GetPreferredUrl(true);
+            }
+            else
+                return vidUrl;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
