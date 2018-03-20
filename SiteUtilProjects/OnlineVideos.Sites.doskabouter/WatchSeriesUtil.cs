@@ -124,8 +124,8 @@ namespace OnlineVideos.Sites
                     break;
                 case Depth.Series:
                     Match m2 = Regex.Match(webData, @"imdb\.com/title/(?<imdbId>[^/]*)/");
-                    webData = Helpers.StringUtils.GetSubString(webData, @"class=""lists"">", @"class=""clear""");
-                    string[] tmp = { @"class=""lists"">" };
+                    webData = Helpers.StringUtils.GetSubString(webData, @"class=""lists"" >", @"class=""clear"" ");
+                    string[] tmp = { @"class=""lists"" >" };
                     string[] seasons = webData.Split(tmp, StringSplitOptions.RemoveEmptyEntries);
                     foreach (string s in seasons)
                     {
