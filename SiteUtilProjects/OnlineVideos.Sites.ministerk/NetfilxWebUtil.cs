@@ -13,7 +13,7 @@ using System.Web;
 namespace OnlineVideos.Sites.BrowserUtilConnectors
 {
 
-    public class NetfilxWebUtil : SiteUtilBase, IBrowserVersionEmulation
+    public class NetfilxWebUtil : SiteUtilBase, IBrowserSiteUtil
     {
 
         #region Helper classes
@@ -33,8 +33,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         protected string username = null;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("Netflix password"), PasswordPropertyText(true)]
         protected string password = null; 
-        //[Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Use OV2.2.0.0 Mode"), Description("")]
-        protected bool use2200Mode = true;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show loading spinner"), Description("Show the loading spinner in the Browser Player")]
         protected bool showLoadingSpinner = true;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable Netflix Info/Stat OSD"), Description("Enable info and statistics OSD. Toggle OSD with 0 when video is playing. Do not enable this if you need to enter 0 in parental control pin")]
@@ -390,16 +388,15 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 _buildId= m.Groups[1].Value;
             }
 
-            // Add/remove mylist using null at the moment
-            /*
-            
-            rgx = new Regex(@"""([^""]*)"":\{""0"":\[""characters""");
+
+            rgx = new Regex(@"""([^""]*)"":\{""0"":\{""reference"":\[""characters""");
             m = rgx.Match(data);
             if (m.Success)
             {
                 LatestKidsCharacterList = m.Groups[1].Value;
             }
-
+            // Add/remove mylist using null at the moment
+            /*
             rgx = new Regex(@"""([^""]*)"":{""0"":\[""lists"",""([^""]*)""\]");
             m = rgx.Match(data);
             if (m.Success)
@@ -608,16 +605,16 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private List<Category> GetCharactersCategories(RssLink parentCategory)
         {
             List<Category> cats = new List<Category>();
-            string data = GetPathData(@"{""paths"":[[""lists"",""" + LatestKidsCharacterList + @""",{""from"":0,""to"":100},""summary""],[""lists"",""" + LatestKidsCharacterList + @""",{""from"":0,""to"":100},""artwork"",""SQUAREHEADSHOT_1000x1000"",""png"",""_400x400""]],""authURL"":""" + LatestAuthUrl + @"""}");
+            string data = GetPathData(@"{""paths"":[[""lists"",""" + LatestKidsCharacterList + @""",{""from"":0,""to"":100},""reference"",""summary""],[""lists"",""" + LatestKidsCharacterList + @""",{""from"":0,""to"":100},""reference"",""artwork"",""SQUAREHEADSHOT_1000x1000"",""png"",""_400x400""]],""authURL"":""" + LatestAuthUrl + @"""}");
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
             for (int i = 0; i <= 100 ; i++)
             {
-                JToken token = json["value"]["lists"][LatestKidsCharacterList][i.ToString()];
+                JToken token = json["value"]["lists"][LatestKidsCharacterList][i.ToString()]["reference"];
                 if (token != null && token.Values().Count() == 2)
                 {
                     string characterId = token.Values().Last().ToString();
                     JToken character = json["value"]["characters"][characterId];
-                    RssLink cat = new RssLink() { ParentCategory = parentCategory, Name = character["summary"]["name"].Value<string>(), Thumb = character["artwork"]["SQUAREHEADSHOT_1000x1000"]["png"]["_400x400"]["url"].Value<string>(), Url = characterId + @",""gallery""", HasSubCategories = true };
+                    RssLink cat = new RssLink() { ParentCategory = parentCategory, Name = String.Empty, Thumb = character["artwork"]["SQUAREHEADSHOT_1000x1000"]["png"]["_400x400"]["url"].Value<string>(), Url = characterId + @",""gallery""", HasSubCategories = true };
                     cat.Other = (Func<List<Category>>)(() => GetSubCategories(cat, "characters", 0));
                     cats.Add(cat);
                 }
@@ -772,7 +769,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             List<Category> cats = new List<Category>();
 
-            string data = GetPathData(@"{""paths"":[[""lolomo"",""summary""],[""lolomo"",""" + listType + @""",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},[""summary"",""title"",""synopsis"",""queue"",""userRating"",""runtime"",""releaseYear""]],[""lolomo"",""" + listType + @""",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},""boxarts"",""_342x192"",""jpg""],[""lolomo"",""" + listType + @""",[""context"",""id"",""length"",""name"",""trackIds"",""requestId""]]],""authURL"":""" + LatestAuthUrl + @"""}");
+            string data = GetPathData(@"{""paths"":[[""lolomo"",""" + listType + @""",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},""reference"",[""summary"",""title"",""synopsis"",""queue"",""userRating"",""runtime"",""releaseYear""]],[""lolomo"",""" + listType + @""",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},""reference"",""boxarts"",""_342x192"",""jpg""],[""lolomo"",""" + listType + @""",""reference"",[""context"",""id"",""length"",""name"",""trackIds"",""requestId""]]],""authURL"":""" + LatestAuthUrl + @"""}");
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
             if (json["value"] != null && json["value"]["videos"] != null)
             {
@@ -792,8 +789,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 }
 
                 //Paging
-                int length = json["value"]["lists"].First(t => t.Values().Count() > 1).First()["length"].Value<int>();
-                if (length > noOfItems + startIndex)
+                if (cats.Count >= noOfItems)
                 {
                     NextPageCategory next = new NextPageCategory() { ParentCategory = parentCategory };
                     next.Other = (Func<List<Category>>)(() => GetListCategories(parentCategory, listType, noOfItems + startIndex + 1));
@@ -811,6 +807,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             string id = (parentCategory as RssLink).Url;
             string data;
             JObject json;
+            bool isLists = categoryType == "lists";
             if (getSubGenres)
             {
                 try
@@ -833,8 +830,10 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 catch
                 { }
             }
-
-            data = GetPathData(@"{""paths"":[[""" + categoryType + @"""," + id + @",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},[""summary"",""title"",""synopsis"",""queue"",""userRating"",""runtime"",""releaseYear""]],[""" + categoryType + @"""," + id + @",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},""boxarts"",""_342x192"",""jpg""]],""authURL"":""" + LatestAuthUrl + @"""}");
+            if (isLists)
+                data = GetPathData(@"{""paths"":[[""" + categoryType + @"""," + id + @",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},""reference"",[""summary"",""title"",""synopsis"",""queue"",""userRating"",""runtime"",""releaseYear""]],[""" + categoryType + @"""," + id + @",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},""reference"",""boxarts"",""_342x192"",""jpg""]],""authURL"":""" + LatestAuthUrl + @"""}");
+            else
+                data = GetPathData(@"{""paths"":[[""" + categoryType + @"""," + id + @",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},[""summary"",""title"",""synopsis"",""queue"",""userRating"",""runtime"",""releaseYear""]],[""" + categoryType + @"""," + id + @",{""from"":" + startIndex + @",""to"":" + (startIndex + noOfItems) + @"},""boxarts"",""_342x192"",""jpg""]],""authURL"":""" + LatestAuthUrl + @"""}");
             json = (JObject)JsonConvert.DeserializeObject(data);
             if (json["value"] != null && json["value"]["videos"] != null)
             {
@@ -1034,34 +1033,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         #endregion
 
-        #region Search
-
-        public override bool CanSearch
-        {
-            get
-            {
-                return true;
-            }
-        }
-
-        public override List<SearchResultItem> Search(string query, string category = null)
-        {
-            List<SearchResultItem> results = new List<SearchResultItem>();
-            if (currentProfile != null)
-            {
-                RssLink cat = new RssLink() { Url = @"""" + HttpUtility.UrlEncode(query) + @""", ""titles""" };
-                cat.SubCategories = GetSubCategories(cat, "search", 0);
-                cat.SubCategories.ForEach(c => results.Add(c));
-            }
-            else
-            {
-                throw new OnlineVideosException("Please select a profile before searching.");
-            }
-            return results;
-        }
-
-        #endregion
-
         #region Context menu
 
         public override List<ContextMenuEntry> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
@@ -1127,18 +1098,9 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 p.Add("showLoadingSpinner", showLoadingSpinner.ToString());
                 p.Add("enableNetflixOsd", enableNetflixOsd.ToString());
                 p.Add("disableLogging", disableLogging.ToString());
-                p.Add("use2200Mode", use2200Mode.ToString());
                 string json = JsonConvert.SerializeObject(p);
                 string base64 = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(json));
                 return base64;
-            }
-        }
-
-        int IBrowserVersionEmulation.EmulatedVersion
-        {
-            get
-            {
-                return use2200Mode ? 10000 : 11000;
             }
         }
 
