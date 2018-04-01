@@ -37,7 +37,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), Description("Select subtitle language preferences (; separated and ISO 639-2), for example: eng;ger")]
         protected string subtitleLanguages = "";
 
-        private const string baseUrl = "http://losmovies.cc";
+        private const string baseUrl = "http://los-movies.com";
         private string nextPageUrl = "";
         private string currentCategoryThumb = "";
 
@@ -453,7 +453,7 @@ namespace OnlineVideos.Sites
         {
             string url = baseUrl + "/search?type=movies&q=" + HttpUtility.UrlEncode(query);
             List<SearchResultItem> result = new List<SearchResultItem>();
-            DiscoverSubCategoriesFromListing(url).ForEach(v => result.Add(v));
+            GetVideos(url, false).ForEach(v => result.Add(v));
             return result;
         }
 
