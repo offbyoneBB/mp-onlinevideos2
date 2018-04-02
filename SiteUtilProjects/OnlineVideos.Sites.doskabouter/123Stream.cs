@@ -32,7 +32,16 @@ namespace OnlineVideos.Sites
             }
             if (Match.Success)
             {
-                s = s + Match.Groups["val"].Value.Replace(@"""", "").Replace(",", "") + "dGVzPTEwMCZzdHJtX2xlbj0yMCZpZD04Ni45NS4xNC40NA==";
+                s = s + Match.Groups["val"].Value.Replace(@"""", "").Replace(",", "");
+                Match = Regex.Match(data, @"\+\sdocument\.getElementById\(""(?<docid>[^""]*)""\)\.innerHTML");
+            }
+            if (Match.Success)
+            {
+                Match = Regex.Match(data, "id=" + Match.Groups["docid"].Value + ">(?<val>[^<]*)</");
+            }
+            if (Match.Success)
+            {
+                s = s + Match.Groups["val"].Value;
                 var ddd = GetWebData(s).Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
                 string rest = ddd[ddd.Length - 1];
                 int i = s.IndexOf("playlist.m3u8?");
