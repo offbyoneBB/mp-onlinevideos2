@@ -1474,14 +1474,14 @@
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" thumb="http://s1.postimage.org/dkj7fvx5r/ITV1_logo.png" name="A - Z">https://www.itv.com/hub/shows</Category>
-        <Category xsi:type="RssLink" thumb="http://mercury.itv.com/browser/production/image?q=80&amp;format=jpg&amp;w=304&amp;h=174&amp;productionId=1%2F9855%2F0104%23001" name="Children">https://www.itv.com/hub/categories/children</Category>
-        <Category xsi:type="RssLink" thumb="http://mercury.itv.com/browser/production/image?q=80&amp;format=jpg&amp;w=304&amp;h=174&amp;productionId=2%2F4263%2F0055%23001" name="Comedy">https://www.itv.com/hub/categories/comedy</Category>
-        <Category xsi:type="RssLink" thumb="http://mercury.itv.com/browser/production/image?q=80&amp;format=jpg&amp;w=304&amp;h=174&amp;productionId=2%2F2759%2F0013%23001" name="Drama &amp; Soaps">https://www.itv.com/hub/categories/drama-soaps</Category>
-        <Category xsi:type="RssLink" thumb="http://mercury.itv.com/browser/production/image?q=80&amp;format=jpg&amp;w=304&amp;h=174&amp;productionId=1%2F6128%2F0035%23001" name="Entertainment">https://www.itv.com/hub/categories/entertainment</Category>
-        <Category xsi:type="RssLink" thumb="http://mercury.itv.com/browser/production/image?q=80&amp;format=jpg&amp;w=304&amp;h=174&amp;productionId=2%2F1635%2F0073%23001" name="Factual">https://www.itv.com/hub/categories/factual</Category>
-        <Category xsi:type="RssLink" thumb="http://mercury.itv.com/browser/production/image?q=80&amp;format=jpg&amp;w=304&amp;h=174&amp;productionId=CFD0113%2F0001%23001" name="Films">https://www.itv.com/hub/categories/films</Category>
-        <Category xsi:type="RssLink" thumb="http://mercury.itv.com/browser/production/image?q=80&amp;format=jpg&amp;w=304&amp;h=174&amp;productionId=2%2F3211%2F1739%23001" name="News">https://www.itv.com/hub/categories/news</Category>
-        <Category xsi:type="RssLink" thumb="http://mercury.itv.com/browser/production/image?q=80&amp;format=jpg&amp;w=304&amp;h=174&amp;productionId=1%2F7211%2F0213%23001" name="Sport">https://www.itv.com/hub/categories/sport</Category>
+        <Category xsi:type="RssLink" thumb="https://hubimages.itv.com/episode/1_9855_0039?w=304&amp;h=174&amp;q=80&amp;blur=0&amp;bg=false&amp;image_format=jpg" name="Children">https://www.itv.com/hub/categories/children</Category>
+        <Category xsi:type="RssLink" thumb="https://hubimages.itv.com/episode/2_4259_0368?w=304&amp;h=174&amp;q=80&amp;blur=0&amp;bg=false&amp;image_format=jpg" name="Comedy">https://www.itv.com/hub/categories/comedy</Category>
+        <Category xsi:type="RssLink" thumb="https://hubimages.itv.com/episode/1_0694_9444?w=304&amp;h=174&amp;q=80&amp;blur=0&amp;bg=false&amp;image_format=jpg" name="Drama &amp; Soaps">https://www.itv.com/hub/categories/drama-soaps</Category>
+        <Category xsi:type="RssLink" thumb="https://hubimages.itv.com/episode/1_6128_0049?w=304&amp;h=174&amp;q=80&amp;blur=0&amp;bg=false&amp;image_format=jpg" name="Entertainment">https://www.itv.com/hub/categories/entertainment</Category>
+        <Category xsi:type="RssLink" thumb="https://hubimages.itv.com/episode/1_2803_1099?w=304&amp;h=174&amp;q=80&amp;blur=0&amp;bg=false&amp;image_format=jpg" name="Factual">https://www.itv.com/hub/categories/factual</Category>
+        <Category xsi:type="RssLink" thumb="https://hubimages.itv.com/episode/ENT1369_0001?w=304&amp;h=174&amp;q=80&amp;blur=0&amp;bg=false&amp;image_format=jpg" name="Films">https://www.itv.com/hub/categories/films</Category>
+        <Category xsi:type="RssLink" thumb="https://hubimages.itv.com/episode/2_4545_0608?w=304&amp;h=174&amp;q=80&amp;blur=0&amp;bg=false&amp;image_format=jpg" name="News">https://www.itv.com/hub/categories/news</Category>
+        <Category xsi:type="RssLink" thumb="https://hubimages.itv.com/episode/1_7828_0110?w=304&amp;h=174&amp;q=80&amp;blur=0&amp;bg=false&amp;image_format=jpg" name="Sport">https://www.itv.com/hub/categories/sport</Category>
         <Category xsi:type="Group" thumb="http://s1.postimage.org/dkj7fvx5r/ITV1_logo.png" desc="Live TV" name="Live">
           <Channels>
             <Channel name="ITV1" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6000.png">sim1?guideid=26</Channel>

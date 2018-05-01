@@ -183,8 +183,8 @@ namespace OnlineVideos.Sites
             bool isLiveStream = video.VideoUrl.StartsWith("sim");
             string url = isLiveStream ? video.VideoUrl : getProductionId(video.VideoUrl);
             string videoUrl = populateUrlsFromXml(video, getPlaylistDocument(url, !isLiveStream), isLiveStream);
-            if (string.IsNullOrEmpty(videoUrl))
-                videoUrl = GetHlsUrls(video);
+            //if (string.IsNullOrEmpty(videoUrl))
+            //    videoUrl = GetHlsUrls(video);
             return videoUrl;
         }
 
