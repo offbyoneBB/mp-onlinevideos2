@@ -198,11 +198,11 @@ namespace OnlineVideos.Sites
                     }
                 }
 
-                if (extension.ToLowerInvariant() == "webm")
-                    extension = "mp4";// Downloaded videos section doesn't recognize webm extension
                 if (!String.IsNullOrEmpty(extension))
-                    return saveName + "." + extension;
-                return saveName + ".flv";
+                    extension = "." + extension;
+                if (String.IsNullOrEmpty(extension) || !OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(extension))
+                    extension = ".mp4";// Randomly chosen fallback
+                return saveName + extension;
             }
         }
 
