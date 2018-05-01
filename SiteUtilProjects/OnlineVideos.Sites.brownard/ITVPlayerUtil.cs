@@ -1,4 +1,7 @@
 ﻿using HtmlAgilityPack;
+using Newtonsoft.Json.Linq;
+using OnlineVideos.MPUrlSourceFilter;
+using OnlineVideos.MPUrlSourceFilter.Http;
 using OnlineVideos.Sites.Brownard.Extensions;
 using OnlineVideos.Sites.Utils;
 using System;
@@ -8,6 +11,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
@@ -17,6 +21,7 @@ namespace OnlineVideos.Sites
     public class ITVPlayerUtil : SiteUtilBase
     {
         #region Site Config
+
         [Category("OnlineVideosUserConfiguration"), Description("Select stream automatically?")]
         protected bool AutoSelectStream = false;
         [Category("OnlineVideosUserConfiguration"), Description("Proxy to use for WebRequests (must be in the UK). Define like this: 83.84.85.86:8116")]
@@ -35,43 +40,87 @@ namespace OnlineVideos.Sites
         protected bool retrieveTVGuide = true;
         [Category("OnlineVideosConfiguration"), Description("The layout to use to display TV Guide info, possible wildcards are <nowtitle>,<nowdescription>,<nowstart>,<nowend>,<nexttitle>,<nextstart>,<nextend>,<newline>")]
         protected string tvGuideFormatString;// = "Now: <nowtitle> - <nowstart> - <nowend><newline>Next: <nexttitle> - <nextstart> - <nextend><newline><nowdescription>";        
+        
         #endregion
 
         #region Consts
+
         const string SWF_URL = "http://www.itv.com/mercury/Mercury_VideoPlayer.swf";
 
         const string SOAP_TEMPLATE = @"<?xml version='1.0' encoding='utf-8'?>
-<SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
-    <SOAP-ENV:Body>
-	    <tem:GetPlaylist xmlns:tem='http://tempuri.org/' xmlns:itv='http://schemas.datacontract.org/2004/07/Itv.BB.Mercury.Common.Types' xmlns:com='http://schemas.itv.com/2009/05/Common'>
-	        <tem:request>
-                {0}
-		        <itv:RequestGuid>FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF</itv:RequestGuid>
-		        <itv:Vodcrid>
-		            <com:Id>{1}</com:Id>
-		            <com:Partition>itv.com</com:Partition>
-		        </itv:Vodcrid>
-	        </tem:request>
-	        <tem:userInfo>
-		        <itv:GeoLocationToken>
-		            <itv:Token/>
-		        </itv:GeoLocationToken>
-		        <itv:RevenueScienceValue>scc=true; svisit=1; sc4=Other</itv:RevenueScienceValue>
-	        </tem:userInfo>
-	        <tem:siteInfo>
-		        <itv:Area>ITVPLAYER.VIDEO</itv:Area>
-		        <itv:Platform>DotCom</itv:Platform>
-		        <itv:Site>ItvCom</itv:Site>
-	        </tem:siteInfo>
-            <tem:deviceInfo> 
-                <itv:ScreenSize>Big</itv:ScreenSize> 
-            </tem:deviceInfo>
-	    </tem:GetPlaylist>
-	</SOAP-ENV:Body>
-</SOAP-ENV:Envelope>";
+        <soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' xmlns:tem='http://tempuri.org/' xmlns:itv='http://schemas.datacontract.org/2004/07/Itv.BB.Mercury.Common.Types' xmlns:com='http://schemas.itv.com/2009/05/Common'>
+            <soapenv:Header/>
+            <soapenv:Body>
+                <tem:GetPlaylist>
+                    <tem:request>
+                        {0}
+                        <itv:RequestGuid>FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF</itv:RequestGuid>
+                        <itv:Vodcrid>
+                            <com:Id>{1}</com:Id>
+                            <com:Partition>itv.com</com:Partition>
+                        </itv:Vodcrid>
+                    </tem:request>
+                    <tem:userInfo>
+                        <itv:Broadcaster>Itv</itv:Broadcaster>
+                        <itv:GeoLocationToken>
+                            <itv:Token/>
+                        </itv:GeoLocationToken>
+                        <itv:RevenueScienceValue>ITVPLAYER.12.18.4</itv:RevenueScienceValue>
+                        <itv:SessionId/>
+                        <itv:SsoToken/>
+                        <itv:UserToken/>
+                    </tem:userInfo>
+                    <tem:siteInfo>
+                        <itv:AdvertisingRestriction>None</itv:AdvertisingRestriction>
+                        <itv:AdvertisingSite>ITV</itv:AdvertisingSite>
+                        <itv:AdvertisingType>Any</itv:AdvertisingType>
+                        <itv:Area>ITVPLAYER.VIDEO</itv:Area>
+                        <itv:Category/>
+                        <itv:Platform>DotCom</itv:Platform>
+                        <itv:Site>ItvCom</itv:Site>
+                    </tem:siteInfo>
+                    <tem:deviceInfo>
+                        <itv:ScreenSize>Big</itv:ScreenSize>
+                    </tem:deviceInfo>
+                    <tem:playerInfo>
+                        <itv:Version>2</itv:Version>
+                    </tem:playerInfo>
+                </tem:GetPlaylist>
+            </soapenv:Body>
+        </soapenv:Envelope>";
+
+        const string HLS_JSON_TEMPLATE = @"{
+                    'user': {
+                        'itvUserId': '',
+                        'entitlements': [],
+                        'token': ''
+                    },
+                    'device': {
+                        'manufacturer': 'Safari',
+                        'model': '5',
+                        'os': {
+                            'name': 'Windows NT',
+                            'version': '6.1',
+                            'type': 'desktop'
+                        }
+                    },
+                    'client': {
+                        'version': '4.1',
+                        'id': 'browser'
+                    },
+                    'variantAvailability': {
+                        'featureset': {
+                            'min': ['hls', 'aes', 'outband-webvtt'],
+                            'max': ['hls', 'aes', 'outband-webvtt']
+                        },
+                        'platformTag': 'dotcom'
+                    }
+                }";
+        
         #endregion
 
         #region Regex
+
         static readonly Regex imageRegex = new Regex(@"<source srcset=""([^""]*)""");
         static readonly Regex numberRegex = new Regex(@"\d+");
         static readonly Regex singleVideoImageRegex = new Regex(@"background-image: url\('(.*?)'\)");
@@ -80,10 +129,13 @@ namespace OnlineVideos.Sites
         static readonly Regex searchRegex = new Regex(@"<div class=""search-wrapper"">.*?<div class=""search-result-image"">[\s\n]*(<a.*?><img.*?src=""(.*?)"")?.*?<h4 class=""programme-title""><a href=""(.*?)"">(.*?)</a>.*?<div class=""programme-description"">[\s\n]*(.*?)</div>", RegexOptions.Singleline);
         //ProductionId
         static readonly Regex productionIdRegex = new Regex(@"data-video-production-id=""(.*?)""");  //new Regex(@"data-video-id=""(.*?)""");
+        
         #endregion
 
         #region SiteUtil Overrides
+
         DateTime lastRefresh = DateTime.MinValue;
+
         public override int DiscoverDynamicCategories()
         {
             if ((DateTime.Now - lastRefresh).TotalMinutes > 15)
@@ -126,19 +178,23 @@ namespace OnlineVideos.Sites
 
         public override string GetVideoUrl(VideoInfo video)
         {
+            video.PlaybackOptions = new Dictionary<string, string>();
+
             bool isLiveStream = video.VideoUrl.StartsWith("sim");
             string url = isLiveStream ? video.VideoUrl : getProductionId(video.VideoUrl);
-            return populateUrlsFromXml(video, getPlaylistDocument(url, !isLiveStream), isLiveStream);
+            string videoUrl = populateUrlsFromXml(video, getPlaylistDocument(url, !isLiveStream), isLiveStream);
+            if (string.IsNullOrEmpty(videoUrl))
+                videoUrl = GetHlsUrls(video);
+            return videoUrl;
         }
+
         #endregion
 
         #region Search
+
         public override bool CanSearch
         {
-            get
-            {
-                return false;
-            }
+            get { return false; }
         }
 
         public override List<SearchResultItem> Search(string query, string category = null)
@@ -157,9 +213,11 @@ namespace OnlineVideos.Sites
 
             return cats;
         }
+
         #endregion
 
         #region Shows
+
         int getShowsList(Category parentCategory)
         {
             List<Category> subCategories = new List<Category>();
@@ -284,9 +342,11 @@ namespace OnlineVideos.Sites
 
             videos.Add(video);
         }
+
         #endregion
 
         #region Live Streams
+
         List<VideoInfo> getLiveStreams(Group group)
         {
             List<VideoInfo> vids = new List<VideoInfo>();
@@ -308,9 +368,10 @@ namespace OnlineVideos.Sites
             }
             return vids;
         }
+
         #endregion
 
-        #region Playlist Methods
+        #region XML Playlist Methods
 
         string populateUrlsFromXml(VideoInfo video, XmlDocument streamPlaylist, bool live)
         {
@@ -370,8 +431,7 @@ namespace OnlineVideos.Sites
                 if (node != null && Helpers.UriUtils.IsValidUri(node.InnerText))
                     video.SubtitleText = SubtitleReader.TimedText2SRT(GetWebData(node.InnerText));
             }
-
-            video.PlaybackOptions = new Dictionary<string, string>();
+            
             if (options.Count == 0)
                 return null;
 
@@ -416,11 +476,12 @@ namespace OnlineVideos.Sites
 
             try
             {
-                HttpWebRequest req = (HttpWebRequest)WebRequest.Create("http://mercury.itv.com/PlaylistService.svc");
+                HttpWebRequest req = (HttpWebRequest)WebRequest.Create("https://secure-mercury.itv.com/PlaylistService.svc?wsdl");
                 req.Headers.Add("SOAPAction", "http://tempuri.org/PlaylistService/GetPlaylist");
-                req.Referer = "http://www.itv.com/mediaplayer/ITVMediaPlayer.swf?v=12.18.4/[[DYNAMIC]]/2";
+                req.Referer = "http://www.itv.com/Mercury/Mercury_VideoPlayer.swf?v=null";
                 req.ContentType = "text/xml;charset=\"utf-8\"";
                 req.Accept = "text/xml";
+                req.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36";
                 req.Method = "POST";
 
                 WebProxy proxy = getProxy();
@@ -464,9 +525,114 @@ namespace OnlineVideos.Sites
             }
             return null;
         }
+
+        #endregion
+
+        #region HLS Stream Methods
+        
+        protected string GetHlsUrls(VideoInfo video)
+        {
+            HtmlDocument videoDocument = GetWebData<HtmlDocument>(video.VideoUrl);
+            HtmlNode videoNode = videoDocument.DocumentNode.SelectSingleNode("//div[@id='video']");
+            if (videoNode == null)
+                return null;
+
+            string playlistUrl = videoNode.GetAttributeValue("data-video-playlist", null) ??
+                videoNode.GetAttributeValue("data-video-id", null);
+            if (playlistUrl == null)
+                return null;
+            string hmac = videoNode.GetAttributeValue("data-video-hmac", string.Empty);
+
+            string json = GetHlsJson(playlistUrl, hmac);
+            if (string.IsNullOrEmpty(json))
+                return null;
+
+            JObject jsonOb = JObject.Parse(json);
+            var videoOb = jsonOb["Playlist"]["Video"];
+
+            var baseUrl = (string)videoOb["Base"];
+
+            var mediaFiles = videoOb["MediaFiles"];
+            foreach (var mediaFile in mediaFiles)
+            {
+                string mediaUrl = baseUrl + (string)mediaFile["Href"];
+                string playlistStr = GetWebData(mediaUrl, proxy: null, userAgent: HlsPlaylistParser.APPLE_USER_AGENT);
+                HlsPlaylistParser playlist = new HlsPlaylistParser(playlistStr, mediaUrl);
+                if (playlist.StreamInfos.Count > 0)
+                    return populateHlsPlaybackOptions(video, playlist.StreamInfos);
+            }
+
+            return null;
+        }
+
+        protected string GetHlsJson(string url, string hmac)
+        {
+            try
+            {
+                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+                req.ContentType = "application/json";
+                req.Accept = "application/vnd.itv.vod.playlist.v2+json";
+                req.UserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 9_3_3 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13G34 Safari/601.1";
+                req.Headers["hmac"] = hmac.ToUpperInvariant();
+                //req.Referer = "CITV/1_9855_0035.001";
+                req.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+                req.Method = "POST";
+
+                //WebProxy proxy = getProxy();
+                //if (proxy != null)
+                //    req.Proxy = proxy;
+
+                var json = Newtonsoft.Json.JsonConvert.DeserializeObject(HLS_JSON_TEMPLATE);
+                byte[] data = Encoding.UTF8.GetBytes(Newtonsoft.Json.JsonConvert.SerializeObject(json));
+                req.ContentLength = data.Length;
+
+                Stream stream;
+                using (stream = req.GetRequestStream())
+                    stream.Write(data, 0, data.Length);
+
+                using (stream = req.GetResponse().GetResponseStream())
+                using (StreamReader sr = new StreamReader(stream))
+                {
+                    string responseXml = sr.ReadToEnd();
+                    Log.Debug("ITVPlayer: Playlist response:\r\n\t {0}", responseXml);
+                    return responseXml;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("ITVPlayer: Failed to get playlist - {0}\r\n{1}", ex.Message, ex.StackTrace);
+                return null;
+            }
+        }
+
+        string populateHlsPlaybackOptions(VideoInfo video, List<HlsStreamInfo> streamInfos)
+        {
+            if (AutoSelectStream)
+            {
+                HlsStreamInfo streamInfo = streamInfos.Last();
+                string name = string.Format("{0}x{1} | {2} kbps", streamInfo.Width, streamInfo.Height, streamInfo.Bandwidth / 1024);
+
+                video.PlaybackOptions.Add(name, streamInfo.Url);
+                return streamInfo.Url;
+            }
+            else
+            {
+                foreach (HlsStreamInfo streamInfo in streamInfos)
+                {
+                    string name = string.Format("{0}x{1} | {2} kbps", streamInfo.Width, streamInfo.Height, streamInfo.Bandwidth / 1024);
+                    var url = new HttpUrl(streamInfo.Url);
+                    //url.UserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 9_3_3 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13G34 Safari/601.1";
+                    //url.CustomHeaders.Add(new HttpHeader("X-Forwarded-For", "88.144.72.173"));
+                    video.PlaybackOptions.Add(name, streamInfo.Url);
+                }
+                return streamInfos.Last().Url;
+            }
+        }
+
         #endregion
 
         #region Utils
+
         static string cleanString(string s)
         {
             s = stripTags(s);
@@ -521,6 +687,7 @@ namespace OnlineVideos.Sites
             }
             return proxyObj;
         }
+
         #endregion
     }
 }
