@@ -1,17 +1,17 @@
 ﻿using HtmlAgilityPack;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OnlineVideos.MPUrlSourceFilter;
-using OnlineVideos.MPUrlSourceFilter.Http;
 using OnlineVideos.Sites.Brownard.Extensions;
 using OnlineVideos.Sites.Utils;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
@@ -89,7 +89,9 @@ namespace OnlineVideos.Sites
             </soapenv:Body>
         </soapenv:Envelope>";
 
-        const string HLS_JSON_TEMPLATE = @"{
+
+        static readonly string HLS_JSON_TEMPLATE = JsonConvert.SerializeObject(JsonConvert.DeserializeObject(
+                  @"{
                     'user': {
                         'itvUserId': '',
                         'entitlements': [],
@@ -115,8 +117,8 @@ namespace OnlineVideos.Sites
                         },
                         'platformTag': 'dotcom'
                     }
-                }";
-        
+                }"));
+
         #endregion
 
         #region Regex
@@ -129,7 +131,7 @@ namespace OnlineVideos.Sites
         static readonly Regex searchRegex = new Regex(@"<div class=""search-wrapper"">.*?<div class=""search-result-image"">[\s\n]*(<a.*?><img.*?src=""(.*?)"")?.*?<h4 class=""programme-title""><a href=""(.*?)"">(.*?)</a>.*?<div class=""programme-description"">[\s\n]*(.*?)</div>", RegexOptions.Singleline);
         //ProductionId
         static readonly Regex productionIdRegex = new Regex(@"data-video-production-id=""(.*?)""");  //new Regex(@"data-video-id=""(.*?)""");
-        
+
         #endregion
 
         #region SiteUtil Overrides
@@ -183,8 +185,8 @@ namespace OnlineVideos.Sites
             bool isLiveStream = video.VideoUrl.StartsWith("sim");
             string url = isLiveStream ? video.VideoUrl : getProductionId(video.VideoUrl);
             string videoUrl = populateUrlsFromXml(video, getPlaylistDocument(url, !isLiveStream), isLiveStream);
-            //if (string.IsNullOrEmpty(videoUrl))
-            //    videoUrl = GetHlsUrls(video);
+            if (string.IsNullOrEmpty(videoUrl))
+                videoUrl = GetHlsUrls(video);
             return videoUrl;
         }
 
@@ -543,89 +545,84 @@ namespace OnlineVideos.Sites
                 return null;
             string hmac = videoNode.GetAttributeValue("data-video-hmac", string.Empty);
 
-            string json = GetHlsJson(playlistUrl, hmac);
-            if (string.IsNullOrEmpty(json))
+            JObject json = GetHlsJson(playlistUrl, hmac);
+            if (json == null)
                 return null;
 
-            JObject jsonOb = JObject.Parse(json);
-            var videoOb = jsonOb["Playlist"]["Video"];
-
-            var baseUrl = (string)videoOb["Base"];
-
-            var mediaFiles = videoOb["MediaFiles"];
-            foreach (var mediaFile in mediaFiles)
+            var videoObject = json["Playlist"]["Video"];
+            var baseUrl = (string)videoObject["Base"];
+            foreach (var mediaFile in videoObject["MediaFiles"])
             {
-                string mediaUrl = baseUrl + (string)mediaFile["Href"];
-                string playlistStr = GetWebData(mediaUrl, proxy: null, userAgent: HlsPlaylistParser.APPLE_USER_AGENT);
-                HlsPlaylistParser playlist = new HlsPlaylistParser(playlistStr, mediaUrl);
-                if (playlist.StreamInfos.Count > 0)
-                    return populateHlsPlaybackOptions(video, playlist.StreamInfos);
+                string playbackUrl = populateHlsPlaybackOptions(video, baseUrl + (string)mediaFile["Href"]);
+                if (playbackUrl != null)
+                    return playbackUrl;
             }
-
             return null;
         }
 
-        protected string GetHlsJson(string url, string hmac)
+        string populateHlsPlaybackOptions(VideoInfo video, string playlistUrl)
+        {
+            //Use SafeUri as Uri unescapes the '/' in the query params which causes the request to fail
+            Uri url = new SafeUri(playlistUrl);
+            CookieContainer cookieContainer = new CookieContainer();
+            string playlistStr = GetHlsPlaylist(url, cookieContainer);
+            HlsPlaylistParser playlist = new HlsPlaylistParser(playlistStr, playlistUrl);
+            var streamInfos = playlist.StreamInfos.Where(s => s.Width > 0 && s.Height > 0).ToList();
+            if (streamInfos.Count == 0)
+                return null;
+
+            CookieCollection cookies = cookieContainer.GetCookies(url);
+            if (AutoSelectStream)
+                return addHlsPlaybackOption(streamInfos.Last(), cookies, video.PlaybackOptions);
+
+            string lastUrl = null;
+            foreach (HlsStreamInfo streamInfo in streamInfos)
+                lastUrl = addHlsPlaybackOption(streamInfo, cookies, video.PlaybackOptions);
+            return lastUrl;
+        }
+
+        string addHlsPlaybackOption(HlsStreamInfo streamInfo, CookieCollection cookies, Dictionary<string, string> playbackOptions)
+        {
+            HttpUrl url = new HttpUrl(streamInfo.Url);
+            url.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36";
+            url.Cookies.Add(cookies);
+            string urlString = url.ToString();
+            string name = string.Format("{0}x{1} | {2} kbps", streamInfo.Width, streamInfo.Height, streamInfo.Bandwidth / 1024);
+            playbackOptions[name] = url.ToString();
+            return urlString;
+        }
+
+        protected JObject GetHlsJson(string url, string hmac)
         {
             try
             {
-                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
-                req.ContentType = "application/json";
-                req.Accept = "application/vnd.itv.vod.playlist.v2+json";
-                req.UserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 9_3_3 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13G34 Safari/601.1";
-                req.Headers["hmac"] = hmac.ToUpperInvariant();
-                //req.Referer = "CITV/1_9855_0035.001";
-                req.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-                req.Method = "POST";
-
-                //WebProxy proxy = getProxy();
-                //if (proxy != null)
-                //    req.Proxy = proxy;
-
-                var json = Newtonsoft.Json.JsonConvert.DeserializeObject(HLS_JSON_TEMPLATE);
-                byte[] data = Encoding.UTF8.GetBytes(Newtonsoft.Json.JsonConvert.SerializeObject(json));
-                req.ContentLength = data.Length;
-
-                Stream stream;
-                using (stream = req.GetRequestStream())
-                    stream.Write(data, 0, data.Length);
-
-                using (stream = req.GetResponse().GetResponseStream())
-                using (StreamReader sr = new StreamReader(stream))
-                {
-                    string responseXml = sr.ReadToEnd();
-                    Log.Debug("ITVPlayer: Playlist response:\r\n\t {0}", responseXml);
-                    return responseXml;
-                }
+                string userAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36";
+                NameValueCollection headers = new NameValueCollection();
+                headers["Content-Type"] = "application/json";
+                headers["Accept"] = "application/vnd.itv.vod.playlist.v2+json";
+                headers["hmac"] = hmac.ToUpperInvariant();
+                return WebCache.Instance.GetWebData<JObject>(url, HLS_JSON_TEMPLATE, proxy: getProxy(), userAgent: userAgent, headers: headers, cache: false);
             }
             catch (Exception ex)
             {
-                Log.Warn("ITVPlayer: Failed to get playlist - {0}\r\n{1}", ex.Message, ex.StackTrace);
+                Log.Warn("ITVPlayer: Failed to get json - {0}\r\n{1}", ex.Message, ex.StackTrace);
                 return null;
             }
         }
 
-        string populateHlsPlaybackOptions(VideoInfo video, List<HlsStreamInfo> streamInfos)
+        protected string GetHlsPlaylist(Uri url, CookieContainer cookies)
         {
-            if (AutoSelectStream)
+            try
             {
-                HlsStreamInfo streamInfo = streamInfos.Last();
-                string name = string.Format("{0}x{1} | {2} kbps", streamInfo.Width, streamInfo.Height, streamInfo.Bandwidth / 1024);
-
-                video.PlaybackOptions.Add(name, streamInfo.Url);
-                return streamInfo.Url;
+                string userAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36";
+                NameValueCollection headers = new NameValueCollection();
+                headers["Accept"] = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+                return WebCache.Instance.GetWebData(url, cookies: cookies, proxy: null, userAgent: userAgent, headers: headers, cache: false);
             }
-            else
+            catch (Exception ex)
             {
-                foreach (HlsStreamInfo streamInfo in streamInfos)
-                {
-                    string name = string.Format("{0}x{1} | {2} kbps", streamInfo.Width, streamInfo.Height, streamInfo.Bandwidth / 1024);
-                    var url = new HttpUrl(streamInfo.Url);
-                    //url.UserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 9_3_3 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13G34 Safari/601.1";
-                    //url.CustomHeaders.Add(new HttpHeader("X-Forwarded-For", "88.144.72.173"));
-                    video.PlaybackOptions.Add(name, streamInfo.Url);
-                }
-                return streamInfos.Last().Url;
+                Log.Warn("ITVPlayer: Failed to get hls playlist - {0}\r\n{1}", ex.Message, ex.StackTrace);
+                return null;
             }
         }
 
@@ -686,6 +683,22 @@ namespace OnlineVideos.Sites
                     proxyObj.Credentials = new System.Net.NetworkCredential(proxyUsername, proxyPassword);
             }
             return proxyObj;
+        }
+
+        /// <summary>
+        /// Uri that doesn't decode encoded '/' characters in the query string. 
+        /// </summary>
+        class SafeUri : Uri
+        {
+            public SafeUri(string urlString)
+                : base(urlString)
+            {
+            }
+
+            public override string ToString()
+            {
+                return AbsoluteUri;
+            }
         }
 
         #endregion
