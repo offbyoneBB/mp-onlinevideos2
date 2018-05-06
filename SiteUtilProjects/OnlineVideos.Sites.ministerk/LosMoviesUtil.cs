@@ -352,7 +352,11 @@ namespace OnlineVideos.Sites
                             Thumb = m.Groups["i"].Value,
                             VideoUrl = baseUrl + m.Groups["u"].Value,
                             Description = "Quality: " + m.Groups["q"].Value.Trim(),
-                            TrackingInfo = null
+                            TrackingInfo = new TrackingInfo()
+                            {
+                                Title = m.Groups["n"].Value.Trim(),
+                                VideoKind = VideoKind.Movie
+                            }
                         };
                         videos.Add(video);
                     }
@@ -420,14 +424,14 @@ namespace OnlineVideos.Sites
             if (d.Count == 0)
                 return "";
             if ((video as LosMoviesVideoInfo).TrackingInfo == null)
+                (video as LosMoviesVideoInfo).TrackingInfo = new TrackingInfo();
+            var ti = (video as LosMoviesVideoInfo).TrackingInfo;
+            if (string.IsNullOrEmpty(ti.ID_IMDB))
             {
-                (video as LosMoviesVideoInfo).TrackingInfo = new TrackingInfo()
-                {
-                    VideoKind = VideoKind.Movie,
-                    Title = video.Title,
-                    Year = GetRelesaseYear(data),
-                    ID_IMDB = GetImdbId(data)
-                };
+                ti.VideoKind = VideoKind.Movie;
+                ti.Title = video.Title;
+                ti.Year = GetRelesaseYear(data);
+                ti.ID_IMDB = GetImdbId(data);
             }
             sh.SetSubtitleText(video, GetTrackingInfo, false);
             string latestOption = (video is LosMoviesVideoInfo) ? (video as LosMoviesVideoInfo).LatestOption : "";
