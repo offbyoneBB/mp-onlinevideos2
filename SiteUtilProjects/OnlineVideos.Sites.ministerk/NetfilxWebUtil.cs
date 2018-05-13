@@ -13,7 +13,7 @@ using System.Web;
 namespace OnlineVideos.Sites.BrowserUtilConnectors
 {
 
-    public class NetfilxWebUtil : SiteUtilBase, IBrowserSiteUtil
+    public class NetfilxWebUtil : SiteUtilBase, IBrowserVersionEmulation
     {
 
         #region Helper classes
@@ -1104,6 +1104,13 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
         }
 
+        public int EmulatedVersion
+        {
+            get
+            {
+                return 11000;
+            }
+        }
         #endregion
 
     }
