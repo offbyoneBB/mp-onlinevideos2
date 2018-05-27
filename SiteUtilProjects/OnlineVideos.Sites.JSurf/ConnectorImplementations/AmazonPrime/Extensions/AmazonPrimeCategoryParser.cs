@@ -98,19 +98,8 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
 
             List<HtmlNode> listItems = null;
 
-            // Attempt the URL up to 10 times as amazon wants us to use the api!
-            for (int i = 0; i <= 10; i++)
-            {
-                doc = tmpWeb.Load(url);
-                listItems = doc.DocumentNode.GetNodesByClass("result-item");
-
-                if (listItems == null)
-                {
-                    Thread.Sleep(200);
-                }
-                else
-                    break;
-            }
+            doc = tmpWeb.Load(url);
+            listItems = doc.DocumentNode.GetNodesByClass("result-item");
 
             if (listItems != null)
             {

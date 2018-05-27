@@ -121,9 +121,6 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
                         return EventResult.Error("AmazonPrimeConnector/BrowserDocumentComplete/Expected home page after log in, was actually " + Url);
                     break;
                 case State.PlayPage:
-
-                    _currentState = State.PlayPage1;
-                    break;
                 case State.PlayPage1:
 
                     // Retry play every 1 second(s)

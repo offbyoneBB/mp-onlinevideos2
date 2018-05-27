@@ -28,20 +28,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
             var tmpWeb = session;
             HtmlNode detailNode = null;
 
-            // Attempt the URL up to 5 times as amazon wants us to use the api!
-            for (int i = 0; i < 5; i++)
-            {
-                doc = tmpWeb.Load(url);
-                detailNode = doc.GetElementbyId("aiv-main-content");
-
-                if (detailNode == null)
-                    Thread.Sleep(400);
-                else
-                    break;
-            }
-
-            if (detailNode == null)
-                return results;
+            doc = tmpWeb.Load(url);
 
             var episodeContainer = doc.GetElementbyId("dv-episode-list");
             if (episodeContainer == null || episodeContainer.FindFirstChildElement() == null)
