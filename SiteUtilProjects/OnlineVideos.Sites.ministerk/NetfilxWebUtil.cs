@@ -247,7 +247,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             get
             {
-                return currentProfile == null ? "" : (HttpUtility.HtmlDecode(currentProfile["summary"]["profileName"].Value<string>()) + (IsKidsProfile ? " (Kids)" : string.Empty));
+                return currentProfile == null ? "" : (HttpUtility.HtmlDecode(currentProfile["summary"]["value"]["profileName"].Value<string>()) + (IsKidsProfile ? " (Kids)" : string.Empty));
             }
         }
 
@@ -255,7 +255,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             get
             {
-                return currentProfile == null ? "" : currentProfile["summary"]["guid"].Value<string>();
+                return currentProfile == null ? "" : currentProfile["summary"]["value"]["guid"].Value<string>();
             }
         }
 
@@ -265,14 +265,14 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             {
                 if (currentProfile == null)
                     return 0;
-                return profiles.FindIndex(p => p["summary"]["guid"].Value<string>() == currentProfile["summary"]["guid"].Value<string>());
+                return profiles.FindIndex(p => p["summary"]["value"]["guid"].Value<string>() == currentProfile["summary"]["value"]["guid"].Value<string>());
             }
         }
         private bool IsKidsProfile
         {
             get
             {
-                return currentProfile != null && currentProfile["summary"]["isKids"].Value<bool>();
+                return currentProfile != null && currentProfile["summary"]["value"]["isKids"].Value<bool>();
             }
         }
 
@@ -282,7 +282,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             {
                 if (currentProfile == null)
                     return string.Empty;
-                string icon = currentProfile["summary"]["avatarName"].Value<string>().Replace("icon", string.Empty);
+                string icon = currentProfile["summary"]["value"]["avatarName"].Value<string>().Replace("icon", string.Empty);
                 if (icon.Count() == 1)
                 {
                     icon = "00" + icon;
