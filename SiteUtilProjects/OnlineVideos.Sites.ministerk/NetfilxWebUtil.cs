@@ -32,7 +32,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Username"), Description("Netflix email")]
         protected string username = null;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("Netflix password"), PasswordPropertyText(true)]
-        protected string password = null; 
+        protected string password = null;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show loading spinner"), Description("Show the loading spinner in the Browser Player")]
         protected bool showLoadingSpinner = true;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable Netflix Info/Stat OSD"), Description("Enable info and statistics OSD. Toggle OSD with 0 when video is playing. Do not enable this if you need to enter 0 in parental control pin")]
@@ -55,13 +55,14 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private string loginUrl = @"https://www.netflix.com/Login";
         private string homeUrl = @"https://www.netflix.com/";
         private string playerUrl = @"http://www.netflix.com/watch/{0}";
+        private string searchUrl = @"https://www.netflix.com/search?q={0}";
         private string loginPostData = "email={0}&password={1}&rememberMe=true&flow=websiteSignUp&mode=login&action=loginAction&withFields=email%2Cpassword%2CrememberMe%2CnextPage%2CshowPassword&authURL={2}&nextPage=&showPassword=";
         private string switchProfileUrl = @"{0}/{1}/profiles/switch?switchProfileGuid={2}&authURL={3}";
 
         #endregion
 
         #region Get Data
-        
+
         private string MyGetWebData(string url, string postData = null, string referer = null, string contentType = null, bool forceUTF8 = true)
         {
             //Never cache, problems with profiles sometimes
@@ -385,7 +386,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             m = rgx.Match(data);
             if (m.Success)
             {
-                _buildId= m.Groups[1].Value;
+                _buildId = m.Groups[1].Value;
             }
 
 
@@ -607,7 +608,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             List<Category> cats = new List<Category>();
             string data = GetPathData(@"{""paths"":[[""lists"",""" + LatestKidsCharacterList + @""",{""from"":0,""to"":100},""reference"",""summary""],[""lists"",""" + LatestKidsCharacterList + @""",{""from"":0,""to"":100},""reference"",""artwork"",""SQUAREHEADSHOT_1000x1000"",""png"",""_400x400""]],""authURL"":""" + LatestAuthUrl + @"""}");
             JObject json = (JObject)JsonConvert.DeserializeObject(data);
-            for (int i = 0; i <= 100 ; i++)
+            for (int i = 0; i <= 100; i++)
             {
                 JToken token = json["value"]["lists"][LatestKidsCharacterList][i.ToString()]["reference"];
                 if (token != null && token.Values().Count() == 2)
@@ -908,7 +909,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     string trailerId = token.Values().Last().ToString();
                     JToken trailer = trailerJson["value"]["videos"][trailerId];
                     VideoInfo video = new VideoInfo() { Title = trailer["title"].Value<string>(), Thumb = trailer["interestingMoment"]["_260x146"]["jpg"]["url"].Value<string>(), VideoUrl = string.Format(playerUrl, trailerId) };
-                    video.Description =  trailer["synopsis"] != null ? trailer["synopsis"].Value<string>() : "";
+                    video.Description = trailer["synopsis"] != null ? trailer["synopsis"].Value<string>() : "";
                     video.Length = trailer["runtime"] != null ? OnlineVideos.Helpers.TimeUtils.TimeFromSeconds(trailer["runtime"].Value<int>().ToString()) : "";
                     videos.Add(video);
                 }
@@ -957,6 +958,52 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             throw new OnlineVideosException((inQ ? Translate("My List Remove") : Translate("My List Add")) + ": OK");
         }
 
+        #endregion
+
+        #region search
+        public override bool CanSearch { get { return true; } }
+
+        public override List<SearchResultItem> Search(string query, string category = null)
+        {
+            string url = String.Format(searchUrl, HttpUtility.UrlEncode(query));
+            List<SearchResultItem> result = new List<SearchResultItem>();
+            string data = GetPathData(@"{""paths"":[[""search"",""byTerm"",""|" + query + @""",""titles"",48,{""from"":0,""to"":48},""reference"",[""summary"",""title"",""runtime"",""synopsis""]],[""search"",""byTerm"",""|" + query + @""",""titles"",48,{""from"":0,""to"":48},""reference"",""boxarts"",""_260x146"",""jpg""]],""authURL"":""" + LatestAuthUrl + @"""}");
+            JObject json = (JObject)JsonConvert.DeserializeObject(data);
+            JToken refList = null;
+            foreach (JToken token in json["value"]["search"]["byReference"].Where(t => t.Values().Count() > 1))
+            {
+                if (token.First != null && token.First["0"] != null)
+                {
+                    refList = token.First;
+                    break;
+                }
+            }
+            if (refList != null)
+            {
+                int i = 0;
+                while (refList[i.ToString()] != null)
+                {
+                    var refNode = refList[i.ToString()];
+                    JArray refs = refNode["reference"] as JArray;
+                    if (refs != null && refs.Count == 2 && refs[0].Value<string>() == "videos")
+                    {
+                        var vidNode = json["value"]["videos"][refs[1].Value<string>()];
+                        VideoInfo video = new VideoInfo();
+                        video.Title = vidNode["title"].Value<string>();
+                        if (vidNode["runtime"] is JValue)
+                            video.Length = Helpers.TimeUtils.TimeFromSeconds(vidNode["runtime"].Value<int>().ToString());
+                        video.Description = vidNode["synopsis"].Value<string>();
+                        video.Thumb = vidNode["boxarts"]["_260x146"]["jpg"]["url"].Value<string>();
+                        video.VideoUrl = string.Format(playerUrl, refs[1].Value<UInt32>());
+                        result.Add(video);
+
+                    }
+                    i++;
+                }
+            }
+
+            return result;
+        }
         #endregion
 
         #region Videos
