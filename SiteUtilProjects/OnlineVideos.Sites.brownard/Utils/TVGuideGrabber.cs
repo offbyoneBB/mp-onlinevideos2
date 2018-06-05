@@ -14,7 +14,7 @@ namespace OnlineVideos.Sites.Utils
     /// </summary>
     class TVGuideGrabber
     {
-        const string RADIOTIMES_JSON_URL = "http://www.radiotimes.com/rt-service/schedule/get?startdate={0}&hours=3&totalWidthUnits=898&channels={1}";
+        const string RADIOTIMES_JSON_URL = "https://www.radiotimes.com/rt-service/schedule/get?startdate={0}&hours=3&totalWidthUnits=898&channels={1}";
         static readonly TimeZoneInfo GMT = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
         static readonly Regex GUIDE_ID_REGEX = new Regex(@"[?&]guideid=(\d+)");
 
@@ -37,8 +37,17 @@ namespace OnlineVideos.Sites.Utils
             string requestTime = new DateTime(guideTime.Year, guideTime.Month, guideTime.Day, guideTime.Hour, 0, 0).ToString("dd-MM-yyyy HH:mm:ss");
             string url = string.Format(RADIOTIMES_JSON_URL, requestTime, radioTimesId);
 
-            JObject guideData = WebCache.Instance.GetWebData<JObject>(url);
             nowNext = null;
+            JObject guideData = null;
+            try
+            {
+                guideData = WebCache.Instance.GetWebData<JObject>(url);
+            }
+            catch
+            {
+                Log.Warn("TVGuideGrabber: Error retrieving tv guide from {0}", url);
+                return false;
+            }
             if (guideData == null)
                 return false;
 
