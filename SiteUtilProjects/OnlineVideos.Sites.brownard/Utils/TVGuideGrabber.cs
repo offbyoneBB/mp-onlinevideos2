@@ -14,7 +14,7 @@ namespace OnlineVideos.Sites.Utils
     /// </summary>
     class TVGuideGrabber
     {
-        const string RADIOTIMES_JSON_URL = "https://www.radiotimes.com/rt-service/schedule/get?startdate={0}&hours=3&totalWidthUnits=898&channels={1}";
+        const string RADIOTIMES_JSON_URL = "https://immediate-prod.apigee.net/broadcast/v1/schedule?startdate={0}&hours=3&totalWidthUnits=898&channels={1}";
         static readonly TimeZoneInfo GMT = TimeZoneInfo.FindSystemTimeZoneById("GMT Standard Time");
         static readonly Regex GUIDE_ID_REGEX = new Regex(@"[?&]guideid=(\d+)");
 
