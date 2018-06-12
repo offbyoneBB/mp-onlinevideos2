@@ -14,7 +14,7 @@ namespace OnlineVideos.Sites
     {
         [Category("OnlineVideosUserConfiguration"), Description("username")]
         private string userName = null;
-        [Category("OnlineVideosUserConfiguration"), Description("Password")]
+        [Category("OnlineVideosUserConfiguration"), Description("Password"), PasswordPropertyText(true)]
         private string password = null;
 
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse the baseUrl for dynamic categories. Group names: 'url', 'title', 'thumb', 'description'. Will not be used if not set.")]

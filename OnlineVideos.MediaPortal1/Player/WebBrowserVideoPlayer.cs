@@ -139,6 +139,9 @@ namespace OnlineVideos.MediaPortal1.Player
                                             EncryptionUtils.SymEncryptLocalPC(string.IsNullOrEmpty(_username) ? "_" : _username),
                                             EncryptionUtils.SymEncryptLocalPC(string.IsNullOrEmpty(_password) ? "_" : _password),
                                             _emulationLevel);
+            OnlineVideos.Log.Debug("Starting "+_browserProcess.StartInfo.FileName);
+            OnlineVideos.Log.Debug(" Arguments: "+_browserProcess.StartInfo.Arguments);
+
             _browserProcess.StartInfo.WindowStyle = ProcessWindowStyle.Maximized;
             
             // Restart MP or Restore MP Window if needed
