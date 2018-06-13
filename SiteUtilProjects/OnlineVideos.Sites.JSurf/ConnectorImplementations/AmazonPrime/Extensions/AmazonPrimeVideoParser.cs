@@ -33,27 +33,32 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
             var episodeContainer = doc.GetElementbyId("dv-episode-list");
             if (episodeContainer == null || episodeContainer.FindFirstChildElement() == null)
             {
+                //detailNode = doc.GetElementbyId("av-dp-container");
+                detailNode = doc.DocumentNode.GetNodeByClass("av-dp-container");
+                if (detailNode == null)
+                    return results;
+
                 // Movie, load this video
                 var video = new VideoInfo();
 
-                video.Title = detailNode.SelectSingleNode(".//h1[@id = 'aiv-content-title']").FirstChild.GetInnerTextTrim();
-                //doc.DocumentNode.GetNodeByClass("product_image").Attributes["alt"].Value;
-                var infoNode = detailNode.GetNodeByClass("dv-info");
+                video.Title = detailNode.SelectSingleNode(".//h1[@data-automation-id='title']")?.FirstChild?.GetInnerTextTrim();
+                var description =  detailNode.SelectSingleNode(".//div[@data-automation-id='synopsis']")?.FirstChild?.GetInnerTextTrim();
+                video.Description = video.Title;
 
-                var dvMetaInfo = infoNode.GetNodeByClass("dv-meta-info");
-                var altTitle = detailNode.NavigatePath(new[] { 0, 0 }).FirstChild.GetInnerTextTrim();
-                video.Description = string.Format("({0}amazon {1})\r\n{2}\r\n{3} {4}",
-                    video.Title == altTitle ? "" : altTitle + ", ",
-                    doc.GetElementbyId("summaryStars").FindFirstChildElement() == null ? string.Empty : doc.GetElementbyId("summaryStars").FindFirstChildElement().Attributes["title"].Value,
-                    infoNode.GetNodeByClass("synopsis").GetInnerTextTrim(),
-                    dvMetaInfo.NavigatePath(new[] { 0 }).GetInnerTextTrim(),
-                    dvMetaInfo.NavigatePath(new[] { 1 }).GetInnerTextTrim());
+                var ratingNode = detailNode.GetNodeByClass("av-icon--amazon_rating");
+                var starsCls = ratingNode?.GetAttribute("class").Split(' ').FirstOrDefault(c => c.StartsWith("av-stars-"));
+                if (starsCls != null)
+                    video.Description += " - " + starsCls.Replace("av-stars-", "").Replace("-", ".") + "/5";
 
-                var imageUrlNode = detailNode.GetNodeByClass("dp-meta-icon-container");
+                foreach (var textSpan in detailNode.GetNodesByClass("av-badge-text"))
+                    video.Description += " - " + textSpan.GetInnerTextTrim();
+
+                video.Description += "\r\n" + description;
+
+                var imageUrlNode = detailNode.GetNodeByClass("av-fallback-packshot");
                 video.Thumb = imageUrlNode == null ? string.Empty : imageUrlNode.SelectSingleNode(".//img").Attributes["src"].Value;
-                video.Airdate = detailNode.GetNodeByClass("release-year").GetInnerTextTrim();
-                video.Length = dvMetaInfo.NavigatePath(new[] { 3 }).GetInnerTextTrim();
-                video.Other = detailNode.GetNodeByClass("dv-play-btn-content")?.Attributes["data-asin"].Value;
+                video.Airdate = detailNode.SelectSingleNode(".//div[@data-automation-id='release-year-badge']")?.FirstChild?.GetInnerTextTrim();
+                video.Other = detailNode.SelectSingleNode(".//a[@data-ref='atv_dp_stream_prime_movie']")?.Attributes["data-page-title-id"]?.Value;
                 results.Add(video);
             }
             else
