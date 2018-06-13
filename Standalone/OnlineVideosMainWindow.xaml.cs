@@ -23,7 +23,7 @@ namespace Standalone
     /// </summary>
     public partial class OnlineVideosMainWindow : Window, INotifyPropertyChanged
     {
-        readonly string[] videoExtensions = new string[] { ".asf", ".asx", ".flv", ".m4v", ".mkv", ".mov", ".mp4", ".wmv" };
+        readonly string[] videoExtensions = new string[] { ".asf", ".asx", ".flv", ".m4v", ".mkv", ".mov", ".mp4", ".wmv", ".webm" };
 
         public event PropertyChangedEventHandler PropertyChanged;
         SiteUtilBase _SelectedSite;

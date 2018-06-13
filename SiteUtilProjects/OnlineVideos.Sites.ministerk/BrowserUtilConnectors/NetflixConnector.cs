@@ -31,7 +31,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private bool _showLoading = true;
         private bool _enableNetflixOsd = false;
         private bool _disableLogging = false;
-        private bool _use2200Mode = false;
 
         private State _currentState = State.None;
         private bool _isPlayingOrPausing = false;
@@ -83,13 +82,11 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             _enableNetflixOsd = bool.Parse(json["enableNetflixOsd"].Value<string>());
             _profileUrl = json["switchUrl"].Value<string>();
             _profileIndex = int.Parse(json["profileIndex"].Value<string>());
-            _use2200Mode  =  bool.Parse(json["use2200Mode"].Value<string>());
             _password = json["password"].Value<string>();
             _username = username;
             _currentState = State.Login;
             ProcessComplete.Finished = false;
             ProcessComplete.Success = false;
-            if (!_disableLogging) MessageHandler.Info("_useCompatibilityMode: {0}", _use2200Mode);
             Url = @"https://www.netflix.com/Login";
             return EventResult.Complete();
         }
@@ -155,51 +152,18 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                         {
                             timer.Stop();
                             timer.Dispose();
-                            if (_use2200Mode)
+                            string data = Browser.DocumentText;
+                            _currentState = State.SelectProfile;
+                            Regex rgx = new Regex(@"""authURL"":""(?<authURL>[^""]*)");
+                            Match m = rgx.Match(data);
+                            string authUrl = "";
+                            if (m.Success)
                             {
-                                string data = Browser.DocumentText;
-                                _currentState = State.SelectProfile;
-                                Regex rgx = new Regex(@"""authURL"":""(?<authURL>[^""]*)");
-                                Match m = rgx.Match(data);
-                                string authUrl = "";
-                                if (m.Success)
-                                {
-                                    authUrl = m.Groups["authURL"].Value;
-                                    authUrl = HttpUtility.UrlDecode(authUrl.Replace("\\x", "%"));
-                                    string loginPostDataFormat = "email={0}&password={1}&rememberMe=true&flow=websiteSignUp&mode=login&action=loginAction&withFields=email%2Cpassword%2CrememberMe%2CnextPage%2CshowPassword&authURL={2}&nextPage=&showPassword=";
-                                    string loginPostData = string.Format(loginPostDataFormat, HttpUtility.UrlEncode(_username), HttpUtility.UrlEncode(_password), HttpUtility.UrlEncode(authUrl));
-                                    Browser.Navigate(Url, "", Encoding.UTF8.GetBytes(loginPostData), "Referer: " + Url + "\r\nContent-Type: application/x-www-form-urlencoded\r\n");
-                                }
-                            }
-                            else
-                            {
-                                if (_showLoading)
-                                    HideLoading();
-                                string[] stringToSend = { "a", "{BACKSPACE}" };
-                                HtmlElement elt = GetFirstElement("input", "name", "emailOrPhoneNumber") ?? GetFirstElement("input", "name", "email");
-                                HtmlElement eltp = GetFirstElement("input", "name", "password");
-                                if (elt != null && eltp != null)
-                                {
-                                    elt.Focus();
-                                    elt.SetAttribute("Value", _username);
-                                    foreach (string s in stringToSend)
-                                    {
-                                        Thread.Sleep(50);
-                                        SendKeys.SendWait(s);
-                                    }
-                                    Thread.Sleep(100);
-                                    eltp.Focus();
-                                    eltp.SetAttribute("Value", _password);
-                                    foreach (string s in stringToSend)
-                                    {
-                                        Thread.Sleep(50);
-                                        SendKeys.SendWait(s);
-                                    }
-                                    Thread.Sleep(500);
-                                    _currentState = State.SelectProfile;
-                                    InvokeScript(Properties.Resources.NetflixJs);
-                                    InvokeScript(@"doClickDelay();");
-                                }
+                                authUrl = m.Groups["authURL"].Value;
+                                authUrl = HttpUtility.UrlDecode(authUrl.Replace("\\x", "%"));
+                                string loginPostDataFormat = "email={0}&password={1}&rememberMe=true&flow=websiteSignUp&mode=login&action=loginAction&withFields=email%2Cpassword%2CrememberMe%2CnextPage%2CshowPassword&authURL={2}&nextPage=&showPassword=";
+                                string loginPostData = string.Format(loginPostDataFormat, HttpUtility.UrlEncode(_username), HttpUtility.UrlEncode(_password), HttpUtility.UrlEncode(authUrl));
+                                Browser.Navigate(Url, "", Encoding.UTF8.GetBytes(loginPostData), "Referer: " + Url + "\r\nContent-Type: application/x-www-form-urlencoded\r\n");
                             }
                         };
                         timer.Interval = 1000;

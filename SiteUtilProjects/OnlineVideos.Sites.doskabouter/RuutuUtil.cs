@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using Newtonsoft.Json.Linq;
 using HtmlAgilityPack;
+using OnlineVideos.Helpers;
 
 namespace OnlineVideos.Sites
 {
@@ -29,7 +30,15 @@ namespace OnlineVideos.Sites
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(data);
             var vidUrl = doc.SelectSingleNode(@"//Clip/SourceFile").InnerText;
-            return vidUrl;
+            if (vidUrl.ToLowerInvariant().Contains("[not-used]"))
+            {
+                vidUrl = doc.SelectSingleNode(@"//Clip/WebHLSMediaFiles/WebHLSMediaFile").InnerText;
+                data = GetWebData(vidUrl);
+                video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(data, vidUrl, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height);
+                return video.GetPreferredUrl(true);
+            }
+            else
+                return vidUrl;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
@@ -309,10 +318,10 @@ namespace OnlineVideos.Sites
                     Name = node.InnerText
                 };
                 if (cat.Name == "Klipit")
-                    cat.Url = @"http://www.ruutu.fi/component/726950/update?type=component&content%5Bsource%5D%5Bparams%5D%5Bmedia_type%5D=video_clip&content%5Bsource%5D%5Bparams%5D%5B" +
+                    cat.Url = @"https://www.ruutu.fi/component/726950/update?type=component&content%5Bsource%5D%5Bparams%5D%5Bmedia_type%5D=video_clip&content%5Bsource%5D%5Bparams%5D%5B" +
                         "series%5D=" + (string)parentCategory.Other + @"&content%5Bsource%5D%5Bparams%5D%5Borderby%5D=airtime&content%5Bsource%5D%5Bparams%5D%5Border_direction%5D=desc&content%5Bsource%5D%5Bparams%5D%5Bdrm%5D=1&content%5Bsource%5D%5Bparams%5D%5Blimit%5D=30&content%5Bsource%5D%5Bparams%5D%5Boffset%5D=0&content%5Bsource%5D%5Burl%5D=http%3A%2F%2Fdynamic-gatling.nelonenmedia.fi%2Fcos%2Fvideos%2F2%2F&content%5Btype%5D=video&active=true&formatter=video_cards_grid";
                 else
-                    cat.Url = @"http://www.ruutu.fi/component/726940/update?type=component&content%5Btype%5D=episode&content%5Bsource%5D%5Bparams%5D%5Bhas_current_or_upcoming_online_rights%5D=960&content%5Bsource%5D%5Bparams%5D%5Blimit%5D=100&content%5Bsource%5D%5Bparams%5D%5Borderby%5D=sequence&content%5Bsource%5D%5Bparams%5D%5Border_direction%5D=asc&content%5Bsource%5D%5Bparams%5D%5Bseason_id%5D=" +
+                    cat.Url = @"https://www.ruutu.fi/component/726940/update?type=component&content%5Btype%5D=episode&content%5Bsource%5D%5Bparams%5D%5Bhas_current_or_upcoming_online_rights%5D=960&content%5Bsource%5D%5Bparams%5D%5Blimit%5D=100&content%5Bsource%5D%5Bparams%5D%5Borderby%5D=sequence&content%5Bsource%5D%5Bparams%5D%5Border_direction%5D=asc&content%5Bsource%5D%5Bparams%5D%5B" +
                         "season_id%5D=" + node.Attributes["data-value"].Value + @"&content%5Bsource%5D%5Bparams%5D%5Bdrm%5D=1&content%5Bsource%5D%5Bparams%5D%5B" +
                         "series_id%5D=" + (string)parentCategory.Other + @"&content%5Bsource%5D%5Bparams%5D%5Boffset%5D=0&content%5Bsource%5D%5Burl%5D=http%3A%2F%2Fdynamic-gatling.nelonenmedia.fi%2Fcos%2Fepisode%2F2%2F&active=true&formatter=episode_thumbnails_by_season";
                 parentCategory.SubCategories.Add(cat);

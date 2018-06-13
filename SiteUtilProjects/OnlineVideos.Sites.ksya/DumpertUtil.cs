@@ -22,7 +22,15 @@ namespace OnlineVideos.Sites
         if (regEx_FileUrl != null)
         {
             video.PlaybackOptions = GetPlaybackOptions(playListUrl);
-            if (video.PlaybackOptions.Count == 0) return ""; // if no match, return empty url -> error
+                if (video.PlaybackOptions.Count == 0)
+                {
+                    //poss. youtube
+                    var data = GetWebData(playListUrl);
+                    Match m = Regex.Match(data, @"<iframe\sclass='yt-iframe'\sstyle='[^']*'\ssrc='(?<url>[^']*)'", defaultRegexOptions);
+                    if (m.Success)
+                        video.PlaybackOptions = Hoster.HosterFactory.GetHoster("Youtube").GetPlaybackOptions(m.Groups["url"].Value);
+                    return video.GetPreferredUrl(false);
+                }
             else
             {
                 // return first found url as default

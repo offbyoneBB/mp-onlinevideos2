@@ -180,6 +180,32 @@ namespace OnlineVideos.Sites
             return currentVideosTitle;
         }
 
+        public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
+        {
+            if (string.IsNullOrEmpty(url)) // called for adding to favorites
+                return video.Title;
+            else // called for downloading
+            {
+                string saveName = Helpers.FileUtils.GetSaveFilename(video.Title);
+                string extension = null;
+
+                foreach (var kv in video.PlaybackOptions)
+                {
+                    if (kv.Value == url)
+                    {
+                        extension = Helpers.StringUtils.GetSubString(kv.Key, " | ", " ");
+                        break;
+                    }
+                }
+
+                if (!String.IsNullOrEmpty(extension))
+                    extension = "." + extension;
+                if (String.IsNullOrEmpty(extension) || !OnlineVideoSettings.Instance.VideoExtensions.ContainsKey(extension))
+                    extension = ".mp4";// Randomly chosen fallback
+                return saveName + extension;
+            }
+        }
+
         public override List<VideoInfo> GetVideos(Category category)
         {
             currentVideosTitle = null; // use default title for videos retrieved via this method (which is the Category Name)
@@ -756,7 +782,7 @@ namespace OnlineVideos.Sites
 
             foreach (var item in response.Items)
             {
-               
+
                 if (string.IsNullOrEmpty(videoIDs))
                 {
                     videoIDs = item.Id.VideoId;

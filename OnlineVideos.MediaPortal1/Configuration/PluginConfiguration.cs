@@ -39,12 +39,12 @@ namespace OnlineVideos.MediaPortal1
         public bool autoGroupByLang = true;
         public DateTime lastFirstRun;
         public uint updatePeriod = 4;
-		public bool LatestVideosRandomize = true;
-		public uint LatestVideosMaxItems = 3;
-		public uint LatestVideosOnlineDataRefresh = 30; // minutes
-		public uint LatestVideosGuiDataRefresh = 30; // seconds
+        public bool LatestVideosRandomize = true;
+        public uint LatestVideosMaxItems = 3;
+        public uint LatestVideosOnlineDataRefresh = 30; // minutes
+        public uint LatestVideosGuiDataRefresh = 30; // seconds
         public bool AllowRefreshRateChange = false;
-		public bool StoreLayoutPerCategory = true;
+        public bool StoreLayoutPerCategory = true;
 
         // runtime (while inside MediaPortal OnlineVideos) changeable values
         public Dictionary<string, List<string>> searchHistory;
@@ -72,7 +72,7 @@ namespace OnlineVideos.MediaPortal1
         const string CFG_PIN_AGECONFIRMATION = "pinAgeConfirmation";
         const string CFG_CACHE_TIMEOUT = "cacheTimeout";
         const string CFG_UTIL_TIMEOUT = "utilTimeout";
-		const string CFG_CATEGORYDISCOVERED_TIMEOUT = "categoryDiscoveryTimeout";
+        const string CFG_CATEGORYDISCOVERED_TIMEOUT = "categoryDiscoveryTimeout";
         const string CFG_WMP_BUFFER = "wmpbuffer";
         const string CFG_PLAY_BUFFER = "playbuffer";
         const string CFG_EMAIL = "email";
@@ -87,12 +87,12 @@ namespace OnlineVideos.MediaPortal1
         const string CFG_LAST_FIRSTRUN = "lastFirstRun";
         const string CFG_UPDATEPERIOD = "updatePeriod";
         const string CFG_FAVORITES_FIRST = "favoritesFirst";
-		const string CFG_LATESTVIDEOS_RANDOMIZE = "latestVideosRandomize";
-		const string CFG_LATESTVIDEOS_MAXITEMS = "latestVideosMaxItems";
-		const string CFG_LATESTVIDEOS_ONLINEDATA_REFRESH = "latestVideosOnlineDataRefresh";
-		const string CFG_LATESTVIDEOS_GUIDATA_REFRESH = "latestVideosGuiDataRefresh";
+        const string CFG_LATESTVIDEOS_RANDOMIZE = "latestVideosRandomize";
+        const string CFG_LATESTVIDEOS_MAXITEMS = "latestVideosMaxItems";
+        const string CFG_LATESTVIDEOS_ONLINEDATA_REFRESH = "latestVideosOnlineDataRefresh";
+        const string CFG_LATESTVIDEOS_GUIDATA_REFRESH = "latestVideosGuiDataRefresh";
         const string CFG_ALLOW_REFRESHRATE_CHANGE = "allowRefreshRateChange";
-		const string CFG_STORE_LAYOUT_PER_CATEGORY = "storeLayoutPerCategory";
+        const string CFG_STORE_LAYOUT_PER_CATEGORY = "storeLayoutPerCategory";
 
         // filter V2
         const string CFG_FILTER_V2_VIEW_MODE = "filterv2";
@@ -144,7 +144,7 @@ namespace OnlineVideos.MediaPortal1
                 return _Instance;
             }
         }
-		private PluginConfiguration() { Load(); }
+        private PluginConfiguration() { Load(); }
         #endregion
 
         public void ReLoadRuntimeSettings()
@@ -157,16 +157,16 @@ namespace OnlineVideos.MediaPortal1
                 ThumbsAge = settings.GetValueAsInt(CFG_SECTION, CFG_THUMBNAIL_AGE, ThumbsAge);
                 OnlineVideos.OnlineVideoSettings.Instance.CacheTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_CACHE_TIMEOUT, OnlineVideos.OnlineVideoSettings.Instance.CacheTimeout);
                 OnlineVideos.OnlineVideoSettings.Instance.UtilTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_UTIL_TIMEOUT, OnlineVideos.OnlineVideoSettings.Instance.UtilTimeout);
-				OnlineVideos.OnlineVideoSettings.Instance.DynamicCategoryTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_CATEGORYDISCOVERED_TIMEOUT, OnlineVideos.OnlineVideoSettings.Instance.DynamicCategoryTimeout);
+                OnlineVideos.OnlineVideoSettings.Instance.DynamicCategoryTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_CATEGORYDISCOVERED_TIMEOUT, OnlineVideos.OnlineVideoSettings.Instance.DynamicCategoryTimeout);
                 wmpbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
                 playbuffer = settings.GetValueAsInt(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
                 autoGroupByLang = settings.GetValueAsBool(CFG_SECTION, CFG_AUTO_LANG_GROUPS, autoGroupByLang);
                 OnlineVideos.OnlineVideoSettings.Instance.FavoritesFirst = settings.GetValueAsBool(CFG_SECTION, CFG_FAVORITES_FIRST, OnlineVideos.OnlineVideoSettings.Instance.FavoritesFirst);
-				LatestVideosRandomize = settings.GetValueAsBool(CFG_SECTION, CFG_LATESTVIDEOS_RANDOMIZE, LatestVideosRandomize);
-				LatestVideosOnlineDataRefresh = (uint)settings.GetValueAsInt(CFG_SECTION, CFG_LATESTVIDEOS_ONLINEDATA_REFRESH, (int)LatestVideosOnlineDataRefresh);
-				LatestVideosGuiDataRefresh = (uint)settings.GetValueAsInt(CFG_SECTION, CFG_LATESTVIDEOS_GUIDATA_REFRESH, (int)LatestVideosGuiDataRefresh);
-				AllowRefreshRateChange = settings.GetValueAsBool(CFG_SECTION, CFG_ALLOW_REFRESHRATE_CHANGE, AllowRefreshRateChange);
-				StoreLayoutPerCategory = settings.GetValueAsBool(CFG_SECTION, CFG_STORE_LAYOUT_PER_CATEGORY, StoreLayoutPerCategory);
+                LatestVideosRandomize = settings.GetValueAsBool(CFG_SECTION, CFG_LATESTVIDEOS_RANDOMIZE, LatestVideosRandomize);
+                LatestVideosOnlineDataRefresh = (uint)settings.GetValueAsInt(CFG_SECTION, CFG_LATESTVIDEOS_ONLINEDATA_REFRESH, (int)LatestVideosOnlineDataRefresh);
+                LatestVideosGuiDataRefresh = (uint)settings.GetValueAsInt(CFG_SECTION, CFG_LATESTVIDEOS_GUIDATA_REFRESH, (int)LatestVideosGuiDataRefresh);
+                AllowRefreshRateChange = settings.GetValueAsBool(CFG_SECTION, CFG_ALLOW_REFRESHRATE_CHANGE, AllowRefreshRateChange);
+                StoreLayoutPerCategory = settings.GetValueAsBool(CFG_SECTION, CFG_STORE_LAYOUT_PER_CATEGORY, StoreLayoutPerCategory);
             }
         }
 
@@ -182,7 +182,7 @@ namespace OnlineVideos.MediaPortal1
             ovsconf.DllsDir = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "OnlineVideos\\");
 
             // When run from MPEI we get an invalid plugin directory, we'll try to rectify that here
-            try 
+            try
             {
                 var hasFiles = true;
 
@@ -196,26 +196,26 @@ namespace OnlineVideos.MediaPortal1
                     hasFiles = false;
 
                 if (!hasFiles)
-                    ovsconf.DllsDir = Path.Combine(MediaPortal.Configuration.Config.GetDirectoryInfo(MediaPortal.Configuration.Config.Dir.Plugins).FullName, "Windows\\OnlineVideos"); 
+                    ovsconf.DllsDir = Path.Combine(MediaPortal.Configuration.Config.GetDirectoryInfo(MediaPortal.Configuration.Config.Dir.Plugins).FullName, "Windows\\OnlineVideos");
             }
             catch (Exception ex)
             {
                 Log.Instance.Error(ex);
             }
-            
+
             ovsconf.ThumbsResizeOptions = new OnlineVideos.Downloading.ImageDownloader.ResizeOptions()
             {
                 MaxSize = (int)Thumbs.ThumbLargeResolution,
                 Compositing = Thumbs.Compositing,
                 Interpolation = Thumbs.Interpolation,
-                Smoothing = Thumbs.Smoothing 
+                Smoothing = Thumbs.Smoothing
             };
             try
             {
                 ovsconf.Locale = CultureInfo.CreateSpecificCulture(GUILocalizeStrings.GetCultureName(GUILocalizeStrings.CurrentLanguage()));
             }
             catch (Exception ex)
-            {                
+            {
                 Log.Instance.Error(ex);
             }
             try
@@ -229,7 +229,7 @@ namespace OnlineVideos.MediaPortal1
                     currentCategoryView = (GUIFacadeControl.Layout)settings.GetValueAsInt(CFG_SECTION, CFG_CATEGORYVIEW_MODE, (int)GUIFacadeControl.Layout.List);
                     currentVideoView = (GUIFacadeControl.Layout)settings.GetValueAsInt(CFG_SECTION, CFG_VIDEOVIEW_MODE, (int)GUIFacadeControl.Layout.SmallIcons);
 
-					ovsconf.ThumbsDir = settings.GetValueAsString(CFG_SECTION, CFG_THUMBNAIL_DIR, ovsconf.ThumbsDir).Replace("/", @"\");
+                    ovsconf.ThumbsDir = settings.GetValueAsString(CFG_SECTION, CFG_THUMBNAIL_DIR, ovsconf.ThumbsDir).Replace("/", @"\");
                     if (!ovsconf.ThumbsDir.EndsWith(@"\")) ovsconf.ThumbsDir = ovsconf.ThumbsDir + @"\"; // fix thumbnail dir to include the trailing slash
                     try { if (!string.IsNullOrEmpty(ovsconf.ThumbsDir) && !Directory.Exists(ovsconf.ThumbsDir)) Directory.CreateDirectory(ovsconf.ThumbsDir); }
                     catch (Exception e) { Log.Instance.Error("Failed to create thumb dir: {0}", e.ToString()); }
@@ -240,10 +240,10 @@ namespace OnlineVideos.MediaPortal1
                     try { if (!string.IsNullOrEmpty(ovsconf.DownloadDir) && !Directory.Exists(ovsconf.DownloadDir)) Directory.CreateDirectory(ovsconf.DownloadDir); }
                     catch (Exception e) { Log.Instance.Error("Failed to create download dir: {0}", e.ToString()); }
 
-                    ovsconf.CacheTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_CACHE_TIMEOUT, ovsconf.CacheTimeout);                    
+                    ovsconf.CacheTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_CACHE_TIMEOUT, ovsconf.CacheTimeout);
                     ovsconf.UseAgeConfirmation = settings.GetValueAsBool(CFG_SECTION, CFG_USE_AGECONFIRMATION, ovsconf.UseAgeConfirmation);
                     ovsconf.UtilTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_UTIL_TIMEOUT, ovsconf.UtilTimeout);
-					ovsconf.DynamicCategoryTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_CATEGORYDISCOVERED_TIMEOUT, ovsconf.DynamicCategoryTimeout);
+                    ovsconf.DynamicCategoryTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_CATEGORYDISCOVERED_TIMEOUT, ovsconf.DynamicCategoryTimeout);
 
                     // set an almost random string by default -> user must enter pin in Configuration before beeing able to watch adult sites
                     pinAgeConfirmation = settings.GetValueAsString(CFG_SECTION, CFG_PIN_AGECONFIRMATION, DateTime.Now.Millisecond.ToString());
@@ -290,22 +290,22 @@ namespace OnlineVideos.MediaPortal1
                     string[] mediaportal_user_configured_video_extensions;
                     string strTmp = settings.GetValueAsString("movies", "extensions", ".avi,.mpg,.ogm,.mpeg,.mkv,.wmv,.ifo,.qt,.rm,.mov,.sbe,.dvr-ms,.ts");
                     mediaportal_user_configured_video_extensions = strTmp.Split(',');
-					var listOfExtensions = mediaportal_user_configured_video_extensions.ToList();
-					listOfExtensions.AddRange(new string[] { ".asf", ".asx", ".flv", ".m4v", ".mov", ".mp4", ".wmv" });
-					listOfExtensions = listOfExtensions.Distinct().ToList();
-					listOfExtensions.Sort();
-					ovsconf.AddSupportedVideoExtensions(listOfExtensions);
+                    var listOfExtensions = mediaportal_user_configured_video_extensions.ToList();
+                    listOfExtensions.AddRange(new string[] { ".asf", ".asx", ".flv", ".m4v", ".mov", ".mp4", ".wmv", ".webm" });
+                    listOfExtensions = listOfExtensions.Distinct().ToList();
+                    listOfExtensions.Sort();
+                    ovsconf.AddSupportedVideoExtensions(listOfExtensions);
 
                     autoGroupByLang = settings.GetValueAsBool(CFG_SECTION, CFG_AUTO_LANG_GROUPS, autoGroupByLang);
-					ovsconf.FavoritesFirst = settings.GetValueAsBool(CFG_SECTION, CFG_FAVORITES_FIRST, ovsconf.FavoritesFirst);
+                    ovsconf.FavoritesFirst = settings.GetValueAsBool(CFG_SECTION, CFG_FAVORITES_FIRST, ovsconf.FavoritesFirst);
 
-					LatestVideosRandomize = settings.GetValueAsBool(CFG_SECTION, CFG_LATESTVIDEOS_RANDOMIZE, LatestVideosRandomize);
-					LatestVideosMaxItems = (uint)settings.GetValueAsInt(CFG_SECTION, CFG_LATESTVIDEOS_MAXITEMS, (int)LatestVideosMaxItems);
-					LatestVideosOnlineDataRefresh = (uint)settings.GetValueAsInt(CFG_SECTION, CFG_LATESTVIDEOS_ONLINEDATA_REFRESH, (int)LatestVideosOnlineDataRefresh);
-					LatestVideosGuiDataRefresh = (uint)settings.GetValueAsInt(CFG_SECTION, CFG_LATESTVIDEOS_GUIDATA_REFRESH, (int)LatestVideosGuiDataRefresh);
+                    LatestVideosRandomize = settings.GetValueAsBool(CFG_SECTION, CFG_LATESTVIDEOS_RANDOMIZE, LatestVideosRandomize);
+                    LatestVideosMaxItems = (uint)settings.GetValueAsInt(CFG_SECTION, CFG_LATESTVIDEOS_MAXITEMS, (int)LatestVideosMaxItems);
+                    LatestVideosOnlineDataRefresh = (uint)settings.GetValueAsInt(CFG_SECTION, CFG_LATESTVIDEOS_ONLINEDATA_REFRESH, (int)LatestVideosOnlineDataRefresh);
+                    LatestVideosGuiDataRefresh = (uint)settings.GetValueAsInt(CFG_SECTION, CFG_LATESTVIDEOS_GUIDATA_REFRESH, (int)LatestVideosGuiDataRefresh);
 
-					AllowRefreshRateChange = settings.GetValueAsBool(CFG_SECTION, CFG_ALLOW_REFRESHRATE_CHANGE, AllowRefreshRateChange);
-					StoreLayoutPerCategory = settings.GetValueAsBool(CFG_SECTION, CFG_STORE_LAYOUT_PER_CATEGORY, StoreLayoutPerCategory);
+                    AllowRefreshRateChange = settings.GetValueAsBool(CFG_SECTION, CFG_ALLOW_REFRESHRATE_CHANGE, AllowRefreshRateChange);
+                    StoreLayoutPerCategory = settings.GetValueAsBool(CFG_SECTION, CFG_STORE_LAYOUT_PER_CATEGORY, StoreLayoutPerCategory);
 
                     ovsconf.HttpPreferredNetworkInterface = settings.GetValueAsString(CFG_SECTION, CFG_FILTER_V2_HTTP_PREFERRED_NETWORK_INTERFACE, OnlineVideoSettings.NetworkInterfaceSystemDefault);
                     ovsconf.HttpOpenConnectionTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_FILTER_V2_HTTP_OPEN_CONNECTION_TIMEOUT, ovsconf.HttpOpenConnectionTimeout);
@@ -391,7 +391,7 @@ namespace OnlineVideos.MediaPortal1
                         settings.SetValueAsBool(CFG_SECTION, CFG_USE_QUICKSELECT, useQuickSelect);
                         settings.SetValue(CFG_SECTION, CFG_CACHE_TIMEOUT, ovsconf.CacheTimeout);
                         settings.SetValue(CFG_SECTION, CFG_UTIL_TIMEOUT, ovsconf.UtilTimeout);
-						settings.SetValue(CFG_SECTION, CFG_CATEGORYDISCOVERED_TIMEOUT, ovsconf.DynamicCategoryTimeout);
+                        settings.SetValue(CFG_SECTION, CFG_CATEGORYDISCOVERED_TIMEOUT, ovsconf.DynamicCategoryTimeout);
                         settings.SetValue(CFG_SECTION, CFG_WMP_BUFFER, wmpbuffer);
                         settings.SetValue(CFG_SECTION, CFG_PLAY_BUFFER, playbuffer);
                         settings.SetValue(CFG_SECTION, CFG_UPDATEPERIOD, updatePeriod);
@@ -405,12 +405,12 @@ namespace OnlineVideos.MediaPortal1
                         settings.SetValue(CFG_SECTION, CFG_SEARCHHISTORYTYPE, (int)searchHistoryType);
                         settings.SetValueAsBool(CFG_SECTION, CFG_AUTO_LANG_GROUPS, autoGroupByLang);
                         settings.SetValueAsBool(CFG_SECTION, CFG_FAVORITES_FIRST, ovsconf.FavoritesFirst);
-						settings.SetValueAsBool(CFG_SECTION, CFG_LATESTVIDEOS_RANDOMIZE, LatestVideosRandomize);
-						settings.SetValue(CFG_SECTION, CFG_LATESTVIDEOS_MAXITEMS, LatestVideosMaxItems);
-						settings.SetValue(CFG_SECTION, CFG_LATESTVIDEOS_ONLINEDATA_REFRESH, LatestVideosOnlineDataRefresh);
-						settings.SetValue(CFG_SECTION, CFG_LATESTVIDEOS_GUIDATA_REFRESH, LatestVideosGuiDataRefresh);
-						settings.SetValueAsBool(CFG_SECTION, CFG_ALLOW_REFRESHRATE_CHANGE, AllowRefreshRateChange);
-						settings.SetValueAsBool(CFG_SECTION, CFG_STORE_LAYOUT_PER_CATEGORY, StoreLayoutPerCategory);
+                        settings.SetValueAsBool(CFG_SECTION, CFG_LATESTVIDEOS_RANDOMIZE, LatestVideosRandomize);
+                        settings.SetValue(CFG_SECTION, CFG_LATESTVIDEOS_MAXITEMS, LatestVideosMaxItems);
+                        settings.SetValue(CFG_SECTION, CFG_LATESTVIDEOS_ONLINEDATA_REFRESH, LatestVideosOnlineDataRefresh);
+                        settings.SetValue(CFG_SECTION, CFG_LATESTVIDEOS_GUIDATA_REFRESH, LatestVideosGuiDataRefresh);
+                        settings.SetValueAsBool(CFG_SECTION, CFG_ALLOW_REFRESHRATE_CHANGE, AllowRefreshRateChange);
+                        settings.SetValueAsBool(CFG_SECTION, CFG_STORE_LAYOUT_PER_CATEGORY, StoreLayoutPerCategory);
                         SaveSitesGroups();
                         ovsconf.SaveSites();
 

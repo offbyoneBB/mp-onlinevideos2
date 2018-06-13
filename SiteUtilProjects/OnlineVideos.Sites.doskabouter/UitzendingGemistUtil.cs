@@ -168,7 +168,7 @@ namespace OnlineVideos.Sites
                 nextPageUrl = FormatDecodeAbsolutifyUrl(baseUrl, jdata["nextLink"].Value<String>() + "&tilemapping=dedicated&tiletype=asset&pageType=catalogue", "", UrlDecoding.None);
 
             }
-            return base.Parse(url, jdata["tiles"].Value<String>());
+            return base.Parse(url, jdata["tiles"].ToString().Replace(@"\""",@"""").Replace(@"\n","\n"));
         }
 
         public override string GetVideoUrl(VideoInfo video)

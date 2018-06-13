@@ -179,7 +179,7 @@ namespace OnlineVideos.Hoster
                     {
                         if (!finalUrl.Contains("ratebypass"))
                             finalUrl += "&ratebypass=yes";
-                        PlaybackOptions.Add(string.Format("{0} | {1}{2}({3})", quality.Key[1], type, stereo, quality.Key[0]), finalUrl + (!string.IsNullOrEmpty(signature) ? ("&signature=" + signature) : "") + "&ext=." + type.Replace("webm", "mkv"));
+                        PlaybackOptions.Add(string.Format("{0} | {1}{2}({3})", quality.Key[1], type, stereo, quality.Key[0]), finalUrl + (!string.IsNullOrEmpty(signature) ? ("&signature=" + signature) : ""));
                     }
                     else
                     {

@@ -1048,6 +1048,50 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class VidNode : HosterBase, ISubtitle
+    {
+        private string subUrl;
+
+        public override string GetHosterUrl()
+        {
+            return "vidnode.net";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            Match m = Regex.Match(url, @"&amp;sub=(?<subid>[^&]*)&");
+            if (m.Success)
+                subUrl = @"https://vidnode.net/player/sub/index.php?id=" + m.Groups["subid"].Value;
+            else
+                subUrl = null;
+
+            var data = GetWebData(url);
+            m = Regex.Match(data, @"sources:\s*\[{file:\s*['""](?<url>[^'""]*)['""]\s*,\s*label");
+            if (m.Success)
+            {
+                return m.Groups["url"].Value;
+            }
+            return null;
+        }
+
+        string ISubtitle.SubtitleText
+        {
+            get
+            {
+                if (!String.IsNullOrEmpty(subUrl))
+                {
+                    var data = GetWebData(subUrl);
+                    if (data.StartsWith(@"WEBVTT"))
+                        data = Helpers.SubtitleUtils.Webvtt2SRT(data);
+
+                    return data;
+                }
+                else
+                    return null;
+            }
+        }
+    }
+
     public class Vidzi : HosterBase  //copied from ministerk, there it's called VidziTv and therefore could not be found by a regular gethoster call
     {
         public override string GetHosterUrl()

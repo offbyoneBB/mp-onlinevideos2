@@ -85,7 +85,7 @@ namespace OnlineVideos.MediaPortal2
             OnlineVideoSettings.Instance.DllsDir = Path.Combine(ovDataPath, "SiteUtils");
             OnlineVideoSettings.Instance.ThumbsDir = Path.Combine(ovDataPath, "Thumbs");
             OnlineVideoSettings.Instance.ConfigDir = ovConfigPath;
-            OnlineVideoSettings.Instance.AddSupportedVideoExtensions(new List<string> { ".asf", ".asx", ".flv", ".m4v", ".mov", ".mkv", ".mp4", ".wmv" });
+            OnlineVideoSettings.Instance.AddSupportedVideoExtensions(new List<string> { ".asf", ".asx", ".flv", ".m4v", ".mov", ".mkv", ".mp4", ".wmv", ".webm" });
             OnlineVideoSettings.Instance.Logger = new LogDelegator();
             OnlineVideoSettings.Instance.UserStore = new Configuration.UserSiteSettingsStore();
 
