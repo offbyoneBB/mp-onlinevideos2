@@ -13,6 +13,7 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
+            url = url.Replace(@"http://", @"https://");
             string page = WebCache.Instance.GetWebData(url);
             if (!string.IsNullOrEmpty(page))
             {
