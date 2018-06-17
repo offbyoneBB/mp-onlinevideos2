@@ -301,7 +301,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             if (profiles == null || profiles.Count == 0)
             {
                 string data = MyGetWebData(homeUrl);
-                Regex rgx = new Regex(@"netflix\.falkorCache\s*=\s*(.*)?;</script>");
+                Regex rgx = new Regex(@"netflix\.falcorCache\s*=\s*(.*)?;</script>");
                 Match m = rgx.Match(data);
                 if (m.Success)
                 {
