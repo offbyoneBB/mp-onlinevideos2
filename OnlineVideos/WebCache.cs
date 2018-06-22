@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
@@ -112,7 +113,7 @@ namespace OnlineVideos
                 return (T)(object)htmlDoc;
             }
 
-            return default(T);
+            return JsonConvert.DeserializeObject<T>(webData);
         }
 
         public string GetWebData(string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
@@ -243,7 +244,7 @@ namespace OnlineVideos
                 request.AllowAutoRedirect = true;
                 request.Timeout = 15000;
                 if (!string.IsNullOrEmpty(referer)) request.Referer = referer;
-                // invoke getting the Response async and abort as soon as data is coming in 
+                // invoke getting the Response async and abort as soon as data is coming in
                 // (according to docs - this is after headers are completely received)
                 var result = request.BeginGetResponse((ar) => request.Abort(), null);
                 // wait for the completion (or abortion) of the async response
