@@ -17,7 +17,7 @@ namespace OnlineVideos.Sites
 
         const string MEDIA_SELECTOR_URL = "http://open.live.bbc.co.uk/mediaselector/5/select/version/2.0/mediaset/pc/vpid/"; //"http://www.bbc.co.uk/mediaselector/4/mtis/stream/";
         const string HLS_MEDIA_SELECTOR_URL = "http://open.live.bbc.co.uk/mediaselector/5/select/version/2.0/mediaset/apple-ipad-hls/vpid/";
-        const string MOST_POPULAR_URL = "https://www.bbc.co.uk/iplayer/group/most-popular";
+        const string MOST_POPULAR_URL = "https://www.bbc.co.uk/iplayer/most-popular";
         const string ATOZ_URL = "https://www.bbc.co.uk/iplayer/a-z/";
         static readonly string[] atoz = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0-9" };
 
@@ -378,20 +378,9 @@ namespace OnlineVideos.Sites
 
             var document = GetWebData<HtmlDocument>(url).DocumentNode;
 
-            var pageNumbers = document.SelectNodes(@"//li[contains(@class, 'pagination__number')]/a");
-            if (pageNumbers == null)
-                pageNumbers = document.SelectNodes(@"//li[contains(@class, 'pagination__item--page')]/a");
-
-            int lastPage = 1;
-            if (pageNumbers != null && pageNumbers.Count > 0)
-            {
-                string lastPageUrl = pageNumbers.Last().GetAttributeValue("href", "").ParamsCleanup();
-                Match m = Regex.Match(lastPageUrl, @"\d+");
-                if (m.Success)
-                    lastPage = int.Parse(m.Value);
-            }
-
+            int pageCount = getPageCount(document);
             int currentPage = 1;
+
             while (true)
             {   
                 var programmes = document.SelectNodes(@"//div[contains(@class, 'content-item')]");
@@ -416,7 +405,7 @@ namespace OnlineVideos.Sites
                 }
 
                 currentPage++;
-                if (currentPage > lastPage)
+                if (currentPage > pageCount)
                     break;
 
                 document = GetWebData<HtmlDocument>(url + "?page=" + currentPage).DocumentNode;
@@ -446,7 +435,7 @@ namespace OnlineVideos.Sites
 
             return new RssLink()
             {
-                Url = BASE_URL + url,
+                Url = GetAbsoluteUri(url, BASE_URL).ToString(),
                 Name = titleNode.GetCleanInnerText()
             };
         }
@@ -469,7 +458,7 @@ namespace OnlineVideos.Sites
 
             return new RssLink()
             {
-                Url = BASE_URL + url,
+                Url = GetAbsoluteUri(url, BASE_URL).ToString(),
                 Name = titleNode.GetCleanInnerText()
             };
         }
@@ -496,25 +485,14 @@ namespace OnlineVideos.Sites
 
             var document = GetWebData<HtmlDocument>(url).DocumentNode;
 
-            var pageNumbers = document.SelectNodes(@"//li[contains(@class, 'pagination__number')]/a");
-            if (pageNumbers == null)
-                pageNumbers = document.SelectNodes(@"//li[contains(@class, 'pagination__item--page')]/a");
-
-            int lastPage = 1;
-            if (pageNumbers != null && pageNumbers.Count > 0)
-            {
-                string lastPageUrl = pageNumbers.Last().GetAttributeValue("href", "").ParamsCleanup();
-                Match m = Regex.Match(lastPageUrl, @"\d+");
-                if (m.Success)
-                    lastPage = int.Parse(m.Value);
-            }
-
+            int pageCount = getPageCount(document);
             int currentPage = 1;
+
             while (true)
             {                
                 var videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item')]");
                 if (videoNodes != null)
-                    videos.AddRange(videoNodes.Select(v => createVideo(v)).Where(v => v != null));
+                    videos.AddRange(videoNodes.Select(v => createVideo(v, category.Name)).Where(v => v != null));
                 else
                 {
                     var videoNode = document.SelectSingleNode(@"//div[@id='main']");
@@ -530,7 +508,7 @@ namespace OnlineVideos.Sites
                 }
 
                 currentPage++;
-                if (currentPage > lastPage)
+                if (currentPage > pageCount)
                     break;
 
                 document = GetWebData<HtmlDocument>(url + "?page=" + currentPage).DocumentNode;
@@ -543,7 +521,6 @@ namespace OnlineVideos.Sites
             List<VideoInfo> videos = new List<VideoInfo>();
             string url = (category as RssLink).Url;
             string pageUrl = url;
-            bool isMostPopular = url == MOST_POPULAR_URL;
 
             while (!string.IsNullOrEmpty(pageUrl))
             {
@@ -552,7 +529,7 @@ namespace OnlineVideos.Sites
 
                 foreach (var videoNode in videoNodes)
                 {
-                    VideoInfo video = createMostPopularVideo(videoNode, isMostPopular);
+                    VideoInfo video = createMostPopularVideo(videoNode);
                     if (video != null)
                         videos.Add(video);
                 }
@@ -561,13 +538,15 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        VideoInfo createVideo(HtmlNode videoNode)
+        VideoInfo createVideo(HtmlNode videoNode, string defaultTitle)
         {
             var urlNode = videoNode.SelectSingleNode(@"./a");
             if (urlNode == null)
                 return null;
 
             string title = videoNode.SelectSingleNode(@".//div[contains(@class, 'content-item__title')]").GetCleanInnerText();
+            if (string.IsNullOrEmpty(title))
+                title = defaultTitle;
 
             return new VideoInfo()
             {
@@ -592,7 +571,7 @@ namespace OnlineVideos.Sites
             };
         }
 
-        VideoInfo createMostPopularVideo(HtmlNode videoNode, bool includeSeriesTitle)
+        VideoInfo createMostPopularVideo(HtmlNode videoNode)
         {
             var urlNode = videoNode.SelectSingleNode(@".//a");
             if (urlNode == null)
@@ -601,7 +580,7 @@ namespace OnlineVideos.Sites
             string seriesTitle = videoNode.SelectSingleNode(@".//div[contains(@class, 'content-item__title')]").GetCleanInnerText();
             string episodeTitle = videoNode.SelectSingleNode(@".//div[contains(@class, 'content-item__info__primary')]").GetCleanInnerText();
             string title;
-            if (includeSeriesTitle && !string.IsNullOrEmpty(seriesTitle))
+            if (!string.IsNullOrEmpty(seriesTitle))
                 title = seriesTitle + (string.IsNullOrEmpty(episodeTitle) ? "" : ": " + episodeTitle);
             else
                 title = string.IsNullOrEmpty(episodeTitle) ? seriesTitle : episodeTitle;
@@ -610,8 +589,7 @@ namespace OnlineVideos.Sites
             {
                 VideoUrl = GetAbsoluteUri(urlNode.GetAttributeValue("href", ""), BASE_URL).ToString(),
                 Title = title,
-                Description = videoNode.SelectSingleNode(@".//div[contains(@class, 'content-item__info__secondary')]").GetCleanInnerText(),
-                //Airdate = videoNode.SelectSingleNode(@".//span[contains(@class, 'release')]").GetCleanInnerText().Replace("First shown:", "").Trim(),
+                Description = videoNode.SelectSingleNode(@".//div[contains(@class, 'content-item__info__secondary')]/div").GetCleanInnerText(),
                 Length = videoNode.SelectSingleNode(@".//div[@class='content-item__sublabels']/span").GetCleanInnerText().Trim(),
                 Thumb = getImageUrl(videoNode.SelectSingleNode(@".//source"))
             };
@@ -704,6 +682,23 @@ namespace OnlineVideos.Sites
                 return originalUrl + nextPageNode.GetAttributeValue("href", "").ParamsCleanup();
 
             return null;
+        }
+
+        static int getPageCount(HtmlNode document)
+        {
+            var pageNumbers = document.SelectNodes(@"//li[contains(@class, 'pagination__number')]/a");
+            if (pageNumbers == null)
+                pageNumbers = document.SelectNodes(@"//li[contains(@class, 'pagination__item--page')]/a");
+
+            int pageCount = 1;
+            if (pageNumbers != null && pageNumbers.Count > 0)
+            {
+                string lastPageUrl = pageNumbers.Last().GetAttributeValue("href", "").ParamsCleanup();
+                Match m = Regex.Match(lastPageUrl, @"\d+");
+                if (m.Success)
+                    pageCount = int.Parse(m.Value);
+            }
+            return pageCount;
         }
 
         static string getImageUrl(HtmlNode sourceNode)

@@ -365,7 +365,7 @@
 		    <Category xsi:type="RssLink" name="Travel">http://travel.cnn.com/rss.xml</Category>
 		    <Category xsi:type="RssLink" name="Video">http://rss.cnn.com/rss/cnn_freevideo.rss</Category>
       </Categories>
-	  </Site>
+	</Site>
     <Site name="BBC iPlayer" util="BBCiPlayer" agecheck="false" enabled="true" lang="en">
       <Description>The BBC iPlayer allows to catch up on the last 7 days of BBC TV (only available in the UK).</Description>
       <Configuration>
@@ -374,7 +374,7 @@
         <item key="tvGuideFormatString"><![CDATA[Now: <nowtitle> - <nowstart> - <nowend><newline>Next: <nexttitle> - <nextstart> - <nextend><newline><nowdescription>]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="Most Popular">https://www.bbc.co.uk/iplayer/group/most-popular</Category>
+        <Category xsi:type="RssLink" name="Most Popular">https://www.bbc.co.uk/iplayer/most-popular</Category>
         <Category xsi:type="RssLink" name="A - Z">https://www.bbc.co.uk/iplayer/a-z/</Category>
         <Category xsi:type="RssLink" name="Arts" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01n4zyb.jpg">https://www.bbc.co.uk/iplayer/categories/arts/a-z</Category>
         <Category xsi:type="RssLink" name="CBBC" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p02984mp.jpg">https://www.bbc.co.uk/iplayer/categories/cbbc/a-z</Category>
@@ -398,11 +398,11 @@
         <Category xsi:type="RssLink" name="BBC News" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2011.png">https://www.bbc.co.uk/tv/bbcnews/a-z</Category>
         <Category xsi:type="RssLink" name="BBC Parliament" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2072.png">https://www.bbc.co.uk/tv/bbcparliament/a-z</Category>
         <Category xsi:type="RssLink" name="BBC ALBA" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2012.png">https://www.bbc.co.uk/tv/bbcalba/a-z</Category>
-        <Category xsi:type="RssLink" name="Audio Described" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0276wg9.jpg">https://www.bbc.co.uk/iplayer/categories/audio-described/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Signed" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01x0kbv.jpg">https://www.bbc.co.uk/iplayer/categories/signed/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Northern Ireland" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p027lsl4.jpg">https://www.bbc.co.uk/iplayer/categories/northern-ireland/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Scotland" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p025h74g.jpg">https://www.bbc.co.uk/iplayer/categories/scotland/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Wales" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0295zvd.jpg">https://www.bbc.co.uk/iplayer/categories/wales/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Audio Described" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0276wg9.jpg">https://www.bbc.co.uk/iplayer/categories/audio-described/a-z</Category>
+        <Category xsi:type="RssLink" name="Signed" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01x0kbv.jpg">https://www.bbc.co.uk/iplayer/categories/signed/a-z</Category>
+        <Category xsi:type="RssLink" name="Northern Ireland" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p027lsl4.jpg">https://www.bbc.co.uk/iplayer/categories/northern-ireland/a-z</Category>
+        <Category xsi:type="RssLink" name="Scotland" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p025h74g.jpg">https://www.bbc.co.uk/iplayer/categories/scotland/a-z</Category>
+        <Category xsi:type="RssLink" name="Wales" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0295zvd.jpg">https://www.bbc.co.uk/iplayer/categories/wales/a-z</Category>
         <Category xsi:type="Group" name="Live TV">
           <Channels>
             <Channel name="BBC One" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2002.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/ak/bbc_one_london.m3u8?guideid=94</Channel>

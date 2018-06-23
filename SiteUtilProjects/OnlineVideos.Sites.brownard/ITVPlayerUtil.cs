@@ -198,6 +198,16 @@ namespace OnlineVideos.Sites
             return videoUrl;
         }
 
+        public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
+        {
+            string fileName = base.GetFileNameForDownload(video, category, url);
+            string extension = Path.GetExtension(fileName);
+            //Use mp4 if there's no extension or it looks like an HLS playist
+            if (string.IsNullOrEmpty(extension) || extension == ".m3u8")
+                fileName = Path.GetFileNameWithoutExtension(fileName) + ".mp4";
+            return fileName;
+        }
+
         #endregion
 
         #region Search
