@@ -1065,7 +1065,8 @@ namespace OnlineVideos.Hoster
             else
                 subUrl = null;
 
-            var data = GetWebData(url);
+            url = url.Replace(@"http://", @"https://");
+            var data = GetWebData(url, referer: "http://google.com");
             m = Regex.Match(data, @"sources:\s*\[{file:\s*['""](?<url>[^'""]*)['""]\s*,\s*label");
             if (m.Success)
             {
