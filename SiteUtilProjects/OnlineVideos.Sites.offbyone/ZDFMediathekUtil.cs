@@ -116,7 +116,7 @@ namespace OnlineVideos.Sites
             }
             else if (category.ParentCategory.Name == "Sendung Verpasst")
             {
-                
+
                 var json = GetWebData<JObject>((category as RssLink).Url, headers: headers);
                 foreach (var broadcast in json["http://zdf.de/rels/broadcasts-page"]["http://zdf.de/rels/cmdm/broadcasts"])
                 {
@@ -185,7 +185,7 @@ namespace OnlineVideos.Sites
                     throw new OnlineVideosException("Video nicht verfügbar!");
 
                 var json = GetWebData<JObject>(video.VideoUrl, headers: headers);
-                var sortedPlaybackOptions = new SortedDictionary<string, Dictionary<string, string>>();
+                var playbackOptions = new Dictionary<string, Dictionary<string, string>>();
                 foreach (var formitaet in json["priorityList"].SelectMany(l=>l["formitaeten"]))
                 {
                     if (formitaet["facets"].Any(f => f.ToString() == "restriction_useragent"))
@@ -202,28 +202,32 @@ namespace OnlineVideos.Sites
                         if (url.EndsWith(".m3u8") || url.EndsWith(".webm"))
                             continue;
 
-                        if (!sortedPlaybackOptions.ContainsKey(quality))
-                            sortedPlaybackOptions[quality] = new Dictionary<string, string>();
+                        if (!playbackOptions.ContainsKey(quality))
+                        {
+                            playbackOptions[quality] = new Dictionary<string, string>();
+                        }
 
                         if (url.Contains("master.m3u8"))
                         {
                             var m3u8Data = GetWebData(url);
                             foreach (Match match in Regex.Matches(m3u8Data, m3u8Regex))
                             {
-                                sortedPlaybackOptions[quality]
+                                playbackOptions[quality]
                                     [string.Format("HLS - {0} - {1} kbps", match.Groups["resolution"].Value, int.Parse(match.Groups["bitrate"].Value) / 1000)]
                                     = match.Groups["url"].Value;
                             }
                         }
                         else
-                            sortedPlaybackOptions[quality][type] = url;
+                        {
+                            playbackOptions[quality][type] = url;
+                        }
                     }
                 }
-                
+
                 video.PlaybackOptions = new Dictionary<string, string>();
-                foreach (var e in sortedPlaybackOptions)
+                foreach (var e in playbackOptions)
                 {
-                    foreach (var f in e.Value)
+                    foreach (var f in e.Value.Reverse())
                         video.PlaybackOptions.Add(string.Format("{0}-{1}", e.Key, f.Key), f.Value);
                 }
             }
@@ -232,10 +236,10 @@ namespace OnlineVideos.Sites
                 return string.Empty;
             if (video.PlaybackOptions.Count == 1)
                 return video.PlaybackOptions.First().Value;
-            
+
             string qualitytoMatch = videoQuality.ToString();
             string firstUrl = video.PlaybackOptions.FirstOrDefault(p => p.Key.Contains(qualitytoMatch)).Value;
-            return !string.IsNullOrEmpty(firstUrl) ? firstUrl : video.PlaybackOptions.First().Value;
+            return !string.IsNullOrEmpty(firstUrl) ? firstUrl : video.PlaybackOptions.Select(kvp => kvp.Value).LastOrDefault();
         }
 
         static RssLink CategoryFromJson(JToken result, Category parent, bool hasSubCategories)
