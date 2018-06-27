@@ -26,7 +26,7 @@ namespace OnlineVideos.Sites
         public override string GetVideoUrl(VideoInfo video)
         {
             var data = GetWebData(video.VideoUrl);
-            video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(data, video.VideoUrl, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height);
+            video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(data, video.VideoUrl, HlsStreamInfoFormatter.VideoDimension);
             return video.GetPreferredUrl(true);
         }
 

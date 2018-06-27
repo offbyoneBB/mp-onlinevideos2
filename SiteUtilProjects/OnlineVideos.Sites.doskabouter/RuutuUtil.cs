@@ -40,7 +40,7 @@ namespace OnlineVideos.Sites
                 string authUrl = @"https://gatling.nelonenmedia.fi/auth/access/v2?stream=" + HttpUtility.UrlEncode(vidUrl);
                 vidUrl = GetWebData(authUrl);
                 data = GetWebData(vidUrl);
-                video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(data, vidUrl, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height);
+                video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(data, vidUrl, HlsStreamInfoFormatter.VideoDimension);
                 return video.GetPreferredUrl(true);
             }
             else

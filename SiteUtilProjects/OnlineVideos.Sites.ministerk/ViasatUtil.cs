@@ -33,10 +33,10 @@ namespace OnlineVideos.Sites
         protected string redirectedSwfUrl;
 
         protected string _searchUrl = "";
-        protected string SearchUrl 
-        { 
-            get 
-            { 
+        protected string SearchUrl
+        {
+            get
+            {
                 if(string.IsNullOrEmpty(_searchUrl))
                 {
                     JObject config = GetWebData<JObject>(apiConfig);
@@ -44,8 +44,8 @@ namespace OnlineVideos.Sites
                     _searchUrl = search["_links"]["url"]["href"].Value<string>() + "&limit=500";
                     _searchUrl = _searchUrl.Replace("{country}", cc);
                 }
-                return _searchUrl; 
-            } 
+                return _searchUrl;
+            }
         }
 
         public override List<VideoInfo> GetLatestVideos()
@@ -232,10 +232,10 @@ namespace OnlineVideos.Sites
                 }
                 //Extra carefull...
                 JToken fp = v["format_position"];
-                if (fp != null 
+                if (fp != null
                     && !string.IsNullOrEmpty(fp["is_episodic"].ToString())
-                    && fp["is_episodic"].Value<bool>() 
-                    && !string.IsNullOrEmpty(fp["season"].ToString()) 
+                    && fp["is_episodic"].Value<bool>()
+                    && !string.IsNullOrEmpty(fp["season"].ToString())
                     && !string.IsNullOrEmpty(fp["episode"].ToString())
                     )
                 {
@@ -286,7 +286,7 @@ namespace OnlineVideos.Sites
             {
                 playstr = data["streams"]["hls"].Value<string>();
                 video.PlaybackOptions = new Dictionary<string, string>();
-                foreach (KeyValuePair<string,string> pair in HlsPlaylistParser.GetPlaybackOptions(GetWebData(playstr), playstr, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height + " (" + x.Bandwidth / 1000 + " Kbps)"))
+                foreach (KeyValuePair<string,string> pair in HlsPlaylistParser.GetPlaybackOptions(GetWebData(playstr), playstr))
                 {
                     MPUrlSourceFilter.HttpUrl httpUrl = new MPUrlSourceFilter.HttpUrl(pair.Value);
                     httpUrl.Referer = video.VideoUrl;
