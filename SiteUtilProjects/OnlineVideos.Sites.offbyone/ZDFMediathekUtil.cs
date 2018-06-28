@@ -5,13 +5,12 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
+using OnlineVideos.Helpers;
 
 namespace OnlineVideos.Sites
 {
     public class ZDFMediathekUtil : SiteUtilBase
     {
-        string m3u8Regex = @"#EXT-X-STREAM-INF:PROGRAM-ID=\d,BANDWIDTH=(?<bitrate>\d+),RESOLUTION=(?<resolution>\d+x\d+),?CODECS=""(?<codecs>[^""]+)"".*?\n(?<url>.*)";
-
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName = "VideoQuality"), Description("Defines the maximum quality for the video to be played.")]
         string videoQuality = "veryhigh";
 
@@ -185,12 +184,12 @@ namespace OnlineVideos.Sites
                     throw new OnlineVideosException("Video nicht verfügbar!");
 
                 var json = GetWebData<JObject>(video.VideoUrl, headers: headers);
-                var playbackOptions = new Dictionary<string, Dictionary<string, string>>();
+                var playbackOptions = new HashSet<KeyValuePair<string, string>>(KeyValuePairComparer.KeyOrdinalIgnoreCase);
                 foreach (var formitaet in json["priorityList"].SelectMany(l=>l["formitaeten"]))
                 {
                     if (formitaet["facets"].Any(f => f.ToString() == "restriction_useragent"))
                         continue;
-    
+
                     var type = formitaet.Value<string>("type");
                     foreach(var vid in formitaet["qualities"])
                     {
@@ -202,44 +201,24 @@ namespace OnlineVideos.Sites
                         if (url.EndsWith(".m3u8") || url.EndsWith(".webm"))
                             continue;
 
-                        if (!playbackOptions.ContainsKey(quality))
-                        {
-                            playbackOptions[quality] = new Dictionary<string, string>();
-                        }
-
                         if (url.Contains("master.m3u8"))
                         {
                             var m3u8Data = GetWebData(url);
-                            foreach (Match match in Regex.Matches(m3u8Data, m3u8Regex))
-                            {
-                                playbackOptions[quality]
-                                    [string.Format("HLS - {0} - {1} kbps", match.Groups["resolution"].Value, int.Parse(match.Groups["bitrate"].Value) / 1000)]
-                                    = match.Groups["url"].Value;
-                            }
+                            var m3u8PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(m3u8Data, video.VideoUrl);
+                            playbackOptions.UnionWith(m3u8PlaybackOptions);
                         }
                         else
                         {
-                            playbackOptions[quality][type] = url;
+                            playbackOptions.Add(new KeyValuePair<string, string>(string.Format("{0}-{1}", quality, type), url));
                         }
                     }
                 }
 
-                video.PlaybackOptions = new Dictionary<string, string>();
-                foreach (var e in playbackOptions)
-                {
-                    foreach (var f in e.Value.Reverse())
-                        video.PlaybackOptions.Add(string.Format("{0}-{1}", e.Key, f.Key), f.Value);
-                }
+                video.PlaybackOptions = playbackOptions.ToDictionary(e => e.Key, e => e.Value);
             }
 
-            if (video.PlaybackOptions == null || video.PlaybackOptions.Count == 0)
-                return string.Empty;
-            if (video.PlaybackOptions.Count == 1)
-                return video.PlaybackOptions.First().Value;
-
-            string qualitytoMatch = videoQuality.ToString();
-            string firstUrl = video.PlaybackOptions.FirstOrDefault(p => p.Key.Contains(qualitytoMatch)).Value;
-            return !string.IsNullOrEmpty(firstUrl) ? firstUrl : video.PlaybackOptions.Select(kvp => kvp.Value).LastOrDefault();
+            string firstUrl = video.PlaybackOptions.FirstOrDefault(p => p.Key.Contains(videoQuality)).Value;
+            return !string.IsNullOrEmpty(firstUrl) ? firstUrl : video.PlaybackOptions.LastOrDefault().Value;
         }
 
         static RssLink CategoryFromJson(JToken result, Category parent, bool hasSubCategories)

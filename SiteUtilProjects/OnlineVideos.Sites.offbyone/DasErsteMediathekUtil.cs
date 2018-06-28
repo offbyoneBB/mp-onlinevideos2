@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using OnlineVideos.Helpers;
 
 namespace OnlineVideos.Sites
 {
@@ -45,8 +46,6 @@ namespace OnlineVideos.Sites
     public class DasErsteMediathekUtil : SiteUtilBase
     {
         public enum VideoQuality { Low, Med, High, HD };
-        string m3u8Regex1 = @"#EXT-X-STREAM-INF:CODECS=""(?<codecs>[^""]+)"",BANDWIDTH=(?<bitrate>\d+).*?\n(?<url>.*)";
-        string m3u8Regex2 = @"#EXT-X-STREAM-INF:PROGRAM-ID=\d,BANDWIDTH=(?<bitrate>\d+),?RESOLUTION=(?<resolution>\d+x\d+),?CODECS=""(?<codecs>[^""]+)"".*?\n(?<url>.*)";
 
 
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName = "VideoQuality"), Description("Choose your preferred quality for the videos according to bandwidth.")]
@@ -60,7 +59,7 @@ namespace OnlineVideos.Sites
             Settings.Categories.Add(new RssLink() { Name = "Sendung verpasst?", HasSubCategories = true, Url = "http://www.ardmediathek.de/tv/sendungVerpasst" });
             Settings.Categories.Add(new RssLink() { Name = "Sendungen A-Z", HasSubCategories = true, Url = "http://www.ardmediathek.de/tv/sendungen-a-z" });
 
-            Uri baseUri = new Uri("http://www.ardmediathek.de/tv");
+            Uri baseUri = new Uri("https://www.ardmediathek.de/tv");
             var baseDoc = GetWebData<HtmlDocument>(baseUri.AbsoluteUri);
             foreach (var modHeadline in baseDoc.DocumentNode.Descendants("h2").Where(h2 => h2.GetAttributeValue("class", "") == "modHeadline"))
             {
@@ -350,7 +349,6 @@ namespace OnlineVideos.Sites
 
         public override String GetVideoUrl(VideoInfo video)
         {
-            var cache = new List<string>();
             var baseDoc = GetWebData<HtmlDocument>(video.VideoUrl);
             var mediaDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("data-ctrl-player", "") != "");
             if (mediaDiv != null)
@@ -358,7 +356,7 @@ namespace OnlineVideos.Sites
                 var configUrl = new Uri(new Uri(video.VideoUrl), JObject.Parse(HttpUtility.HtmlDecode(mediaDiv.GetAttributeValue("data-ctrl-player", ""))).Value<string>("mcUrl")).AbsoluteUri;
                 var mediaString = GetWebData<string>(configUrl);
                 var mediaJson = JsonConvert.DeserializeObject<JsonResponse>(mediaString);
-                var playbackOptionsByUrl = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                var playbackOptions = new HashSet<KeyValuePair<string, string>>(KeyValuePairComparer.KeyOrdinalIgnoreCase);
                 int qualityNumber;
                 foreach (var media in mediaJson.MediaArray.SelectMany(m => m.MediaStreamArray).Select(streamArray => new
                 {
@@ -368,7 +366,6 @@ namespace OnlineVideos.Sites
                     }).Distinct())
                 {
                     string url = media.Url;
-                    cache.Add(url);
                     if (url.EndsWith(".smil"))
                     {
                         url = GetStreamUrlFromSmil(url);
@@ -385,28 +382,16 @@ namespace OnlineVideos.Sites
                         if (url.Contains("master.m3u8"))
                         {
                             var m3u8Data = GetWebData(url);
-                            foreach (Match match in Regex.Matches(m3u8Data, m3u8Regex2))
-                            {
-                                playbackOptionsByUrl[match.Groups["url"].Value] =
-                                    string.Format("HLS - {0} - {1} kbps", match.Groups["resolution"].Value, int.Parse(match.Groups["bitrate"].Value) / 1000);
-                                cache.Add(match.Groups["url"].Value);
+                            var m3u8PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(m3u8Data, video.VideoUrl);
+                            playbackOptions.UnionWith(m3u8PlaybackOptions);
                             }
-
-                            foreach (Match match in Regex.Matches(m3u8Data, m3u8Regex1))
-                            {
-                                playbackOptionsByUrl[match.Groups["url"].Value] =
-                                    string.Format("HLS - {0} - {1} kbps", match.Groups["codecs"].Value, int.Parse(match.Groups["bitrate"].Value) / 1000);
-                                cache.Add(match.Groups["url"].Value);
-                            }
-                        }
-                        else if (url.EndsWith("f4m"))
-                        {
-                            url += "?g=" + Helpers.StringUtils.GetRandomLetters(12) + "&hdcore=3.8.0";
-                            playbackOptionsByUrl[url] = media.Quality;
-                        }
                         else
+                            {
+                            if (url.EndsWith("f4m"))
                         {
-                            playbackOptionsByUrl[url] = media.Quality;
+                                url += "?g=" + StringUtils.GetRandomLetters(12) + "&hdcore=3.8.0";
+                        }
+                            playbackOptions.Add(new KeyValuePair<string, string>(media.Quality, url));
                         }
                     }
                     else if (mediaJson.IsLive)
@@ -429,25 +414,16 @@ namespace OnlineVideos.Sites
                             url = new MPUrlSourceFilter.RtmpUrl(media.Server + "/" + media.Url) { Live = true, LiveStream = true, Subscribe = media.Url, PageUrl = video.VideoUrl }.ToString();
                         }
 
-                        playbackOptionsByUrl[url] = media.Quality;
+                        playbackOptions.Add(new KeyValuePair<string, string>(media.Quality, url));
                     }
                 }
 
-                video.PlaybackOptions = new Dictionary<string, string>();
-                foreach (var lookup in playbackOptionsByUrl.ToLookup(kvp => kvp.Value))
-                {
-                    var i = 0;
-                    foreach(var optionByUrl in lookup)
-                    {
-                        video.PlaybackOptions.Add(string.Format("{0} - {1}", optionByUrl.Value, i++), optionByUrl.Key);
-                    }
-                }
-
+                video.PlaybackOptions = playbackOptions.ToDictionary(e => e.Key, e => e.Value);
             }
 
             string qualitytoMatch = videoQuality.ToString();
             string firstUrl = video.PlaybackOptions.FirstOrDefault(p => p.Key.Contains(qualitytoMatch)).Value;
-            return !string.IsNullOrEmpty(firstUrl) ? firstUrl : video.PlaybackOptions.Select(kvp => kvp.Value).LastOrDefault();
+            return !string.IsNullOrEmpty(firstUrl) ? firstUrl : video.PlaybackOptions.LastOrDefault().Value;
         }
 
         string GetStreamUrlFromSmil(string smilUrl)
