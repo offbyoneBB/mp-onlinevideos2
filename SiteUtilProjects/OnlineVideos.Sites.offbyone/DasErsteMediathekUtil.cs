@@ -47,6 +47,9 @@ namespace OnlineVideos.Sites
     {
         public enum VideoQuality { Low, Med, High, HD };
 
+        private const string CATEGORYNAME_TV_LIVESTREAM = "TV-Livestreams";
+        private const string CATEGORYNAME_SENDUNG_VERPASST = "Sendung verpasst?";
+        private const string CATEGORYNAME_SENDUNGEN_AZ = "Sendungen A-Z";
 
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName = "VideoQuality"), Description("Choose your preferred quality for the videos according to bandwidth.")]
         VideoQuality videoQuality = VideoQuality.HD;
@@ -55,9 +58,9 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
-            Settings.Categories.Add(new RssLink() { Name = "TV-Livestreams", Url = "http://www.ardmediathek.de/tv/live" });
-            Settings.Categories.Add(new RssLink() { Name = "Sendung verpasst?", HasSubCategories = true, Url = "http://www.ardmediathek.de/tv/sendungVerpasst" });
-            Settings.Categories.Add(new RssLink() { Name = "Sendungen A-Z", HasSubCategories = true, Url = "http://www.ardmediathek.de/tv/sendungen-a-z" });
+            Settings.Categories.Add(new RssLink() { Name = CATEGORYNAME_TV_LIVESTREAM, Url = "https://www.ardmediathek.de/tv/live" });
+            Settings.Categories.Add(new RssLink() { Name = CATEGORYNAME_SENDUNG_VERPASST, HasSubCategories = true, Url = "https://www.ardmediathek.de/tv/sendungVerpasst" });
+            Settings.Categories.Add(new RssLink() { Name = CATEGORYNAME_SENDUNGEN_AZ, HasSubCategories = true, Url = "https://www.ardmediathek.de/tv/sendungen-a-z" });
 
             Uri baseUri = new Uri("https://www.ardmediathek.de/tv");
             var baseDoc = GetWebData<HtmlDocument>(baseUri.AbsoluteUri);
@@ -127,7 +130,7 @@ namespace OnlineVideos.Sites
             var myBaseUri = new Uri((parentCategory as RssLink).Url);
             var baseDoc = GetWebData<HtmlDocument>(myBaseUri.AbsoluteUri);
 
-            if (parentCategory.Name == "Sendungen A-Z")
+            if (parentCategory.Name == CATEGORYNAME_SENDUNGEN_AZ)
             {
                 foreach (HtmlNode entry in baseDoc.DocumentNode.Descendants("ul").FirstOrDefault(ul => ul.GetAttributeValue("class", "") == "subressorts raster").Elements("li"))
                 {
@@ -141,7 +144,7 @@ namespace OnlineVideos.Sites
                 }
                 parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
             }
-            else if (parentCategory.Name == "Sendung verpasst?")
+            else if (parentCategory.Name == CATEGORYNAME_SENDUNG_VERPASST)
             {
                 var senderDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("modSender"))
                     .Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("controls"));
@@ -158,7 +161,7 @@ namespace OnlineVideos.Sites
                 }
                 parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
             }
-            else if (parentCategory.ParentCategory == null || parentCategory.ParentCategory.Name == "Sendungen A-Z")
+            else if (parentCategory.ParentCategory == null || parentCategory.ParentCategory.Name == CATEGORYNAME_SENDUNGEN_AZ)
             {
                 var mainDivs = baseDoc.DocumentNode.Descendants("div").Where(div => div.GetAttributeValue("class", "") == "elementWrapper").Select(elem => elem.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "boxCon")).ToList();
                 var mainDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "elementWrapper")
@@ -166,7 +169,7 @@ namespace OnlineVideos.Sites
                 GetSubcategoriesFromDiv(parentCategory as RssLink, mainDiv);
                 parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
             }
-            else if (parentCategory.ParentCategory.Name == "Sendung verpasst?")
+            else if (parentCategory.ParentCategory.Name == CATEGORYNAME_SENDUNG_VERPASST)
             {
                 var programmDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("modProgramm"))
                     .Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("controls"));
@@ -209,7 +212,7 @@ namespace OnlineVideos.Sites
             var baseDoc = GetWebData<HtmlDocument>(myBaseUri.AbsoluteUri);
 
             var result = new List<VideoInfo>();
-            if (category.Name == "TV-Livestreams")
+            if (category.Name == CATEGORYNAME_TV_LIVESTREAM)
             {
                 var programmDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("modSender"))
                     .Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("controls"));
