@@ -359,10 +359,11 @@ namespace OnlineVideos.Sites
                 var mediaString = GetWebData<string>(configUrl);
                 var mediaJson = JsonConvert.DeserializeObject<JsonResponse>(mediaString);
                 var playbackOptionsByUrl = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                int qualityNumber;
                 foreach (var media in mediaJson.MediaArray.SelectMany(m => m.MediaStreamArray).Select(streamArray => new
-                    {
-                        Quality = int.TryParse(streamArray.Quality, out int qualityNumber) ? ((VideoQuality)qualityNumber).ToString() : "HD",
-                        Url = streamArray.Stream is JArray urlArray ? urlArray.Values<string>().OrderByDescending(item => item, StringComparer.OrdinalIgnoreCase).First() : streamArray.Stream as string,
+                {
+                        Quality = int.TryParse(streamArray.Quality, out qualityNumber) ? ((VideoQuality)qualityNumber).ToString() : "HD",
+                        Url = streamArray.Stream is JArray ? ((JArray)streamArray.Stream).Values<string>().OrderByDescending(item => item, StringComparer.OrdinalIgnoreCase).First() : streamArray.Stream as string,
                         Server = streamArray.Server
                     }).Distinct())
                 {
