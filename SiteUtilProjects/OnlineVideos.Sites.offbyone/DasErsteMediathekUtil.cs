@@ -47,9 +47,10 @@ namespace OnlineVideos.Sites
     {
         public enum VideoQuality { Low, Med, High, HD };
 
-        private const string CATEGORYNAME_TV_LIVESTREAM = "TV-Livestreams";
+        private const string CATEGORYNAME_LIVESTREAM = "Livestreams";
         private const string CATEGORYNAME_SENDUNG_VERPASST = "Sendung verpasst?";
         private const string CATEGORYNAME_SENDUNGEN_AZ = "Sendungen A-Z";
+        private const string CATEGORYNAME_RUBRIKEN = "Rubriken";
 
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName = "VideoQuality"), Description("Choose your preferred quality for the videos according to bandwidth.")]
         VideoQuality videoQuality = VideoQuality.HD;
@@ -58,7 +59,7 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
-            Settings.Categories.Add(new RssLink() { Name = CATEGORYNAME_TV_LIVESTREAM, Url = "https://www.ardmediathek.de/tv/live" });
+            Settings.Categories.Add(new RssLink() { Name = CATEGORYNAME_LIVESTREAM, Url = "https://www.ardmediathek.de/tv/live" });
             Settings.Categories.Add(new RssLink() { Name = CATEGORYNAME_SENDUNG_VERPASST, HasSubCategories = true, Url = "https://www.ardmediathek.de/tv/sendungVerpasst" });
             Settings.Categories.Add(new RssLink() { Name = CATEGORYNAME_SENDUNGEN_AZ, HasSubCategories = true, Url = "https://www.ardmediathek.de/tv/sendungen-a-z" });
 
@@ -82,14 +83,9 @@ namespace OnlineVideos.Sites
                 yield break;
             }
 
-            foreach (var modHeadline in modHeadlines)
+            foreach (var modHeadline in modHeadlines.Where(modHeadline => !string.Equals(modHeadline.InnerText, CATEGORYNAME_LIVESTREAM, StringComparison.OrdinalIgnoreCase)))
             {
                 var categoryName = HttpUtility.HtmlDecode(string.Join("",modHeadline.Elements("#text").Select(t => t.InnerText.Trim())));
-                if (modHeadline.InnerText.ToLower().Contains("live"))
-                {
-                    continue;
-                }
-
                 var categorySection = modHeadline.ParentNode;
                 var moreLink = categorySection.Descendants("a").FirstOrDefault(a => a.GetAttributeValue("class", "") == "more");
                 var pages = categorySection.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "controls paging");
@@ -207,15 +203,7 @@ namespace OnlineVideos.Sites
                 }
                 parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
             }
-            else if (parentCategory.ParentCategory == null || parentCategory.ParentCategory.Name == CATEGORYNAME_SENDUNGEN_AZ)
-            {
-                var mainDivs = baseDoc.DocumentNode.Descendants("div").Where(div => div.GetAttributeValue("class", "") == "elementWrapper").Select(elem => elem.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "boxCon")).ToList();
-                var mainDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "elementWrapper")
-                    .Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "boxCon");
-                parentCategory.SubCategories.AddRange(ExtractSubcategoriesFromDiv(mainDiv, parentCategory as RssLink));
-                parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
-            }
-            else if (parentCategory.ParentCategory.Name == CATEGORYNAME_SENDUNG_VERPASST)
+            else if (parentCategory.ParentCategory != null && parentCategory.ParentCategory.Name == CATEGORYNAME_SENDUNG_VERPASST)
             {
                 var programmDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("modProgramm"))
                     .Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("controls"));
@@ -233,6 +221,23 @@ namespace OnlineVideos.Sites
                 }
 
                 parentCategory.SubCategories.Reverse();
+            }
+            else
+            {
+                //TODO: SubCategories with pages (rubriken)
+                //TODO: Workaround
+                var subCategories = ExtractCategoriesFromHeadlines(baseDoc.DocumentNode, myBaseUri).Select(cat =>
+                {
+                    cat.ParentCategory = parentCategory;
+                    return cat;
+                }).ToList();
+                if (!subCategories.Any())
+                {
+                    var mainDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "elementWrapper").Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "boxCon");
+                    subCategories = ExtractSubcategoriesFromDiv(mainDiv, parentCategory as RssLink).ToList();
+                }
+                parentCategory.SubCategories.AddRange(subCategories);
+                parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
             }
 
             return parentCategory.SubCategories.Count;
@@ -258,7 +263,7 @@ namespace OnlineVideos.Sites
             var baseDoc = GetWebData<HtmlDocument>(myBaseUri.AbsoluteUri);
 
             var result = new List<VideoInfo>();
-            if (category.Name == CATEGORYNAME_TV_LIVESTREAM)
+            if (category.Name == CATEGORYNAME_LIVESTREAM)
             {
                 var programmDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("modSender"))
                     .Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("controls"));
