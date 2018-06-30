@@ -11,6 +11,13 @@ using OnlineVideos.Helpers;
 
 namespace OnlineVideos.Sites
 {
+    public static class Extensions
+    {
+        public static bool Contains(this string source, string value, StringComparison comparison)
+        {
+            return source?.IndexOf(value, comparison) >= 0;
+        }
+    }
     public class JsonResponse
     {
         [JsonProperty("_type")]
@@ -74,7 +81,12 @@ namespace OnlineVideos.Sites
             return Settings.Categories.Count;
         }
 
-        private IEnumerable<RssLink> ExtractCategoriesFromHeadlines(HtmlNode document, Uri baseUri)
+        private IEnumerable<RssLink> ExtractCategoriesFromHeadlines(HtmlNode document, RssLink parentCategory)
+        {
+            return ExtractCategoriesFromHeadlines(document, new Uri(parentCategory.Url), parentCategory);
+        }
+
+        private IEnumerable<RssLink> ExtractCategoriesFromHeadlines(HtmlNode document, Uri baseUri, Category parentCategory = null)
         {
             var modHeadlines = document.Descendants("h2").Where(h2 => h2.GetAttributeValue("class", "") == "modHeadline").ToList();
             if (modHeadlines.Count == 1)
@@ -83,53 +95,44 @@ namespace OnlineVideos.Sites
                 yield break;
             }
 
-            foreach (var modHeadline in modHeadlines.Where(modHeadline => !string.Equals(modHeadline.InnerText, CATEGORYNAME_LIVESTREAM, StringComparison.OrdinalIgnoreCase)))
+            foreach (var modHeadline in modHeadlines.Where(modHeadline => !modHeadline.InnerText.Contains(CATEGORYNAME_LIVESTREAM, StringComparison.OrdinalIgnoreCase)))
             {
                 var categoryName = HttpUtility.HtmlDecode(string.Join("",modHeadline.Elements("#text").Select(t => t.InnerText.Trim())));
                 var categorySection = modHeadline.ParentNode;
                 var moreLink = categorySection.Descendants("a").FirstOrDefault(a => a.GetAttributeValue("class", "") == "more");
-                var pages = categorySection.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "controls paging");
-                if (moreLink != null)
+                //TODO:instead of MoreLink paging on site
+                var pages = categorySection.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "controls paging")?.Descendants("a").Select(a => new Uri(baseUri, HttpUtility.HtmlDecode(a.GetAttributeValue("href", "")))).Distinct();
+
+                var category = new RssLink()
                 {
-                    yield return new RssLink()
-                    {
-                        Name = categoryName,
-                        Url = new Uri(baseUri, moreLink.GetAttributeValue("href", "")).AbsoluteUri,
-                        HasSubCategories = !SubItemsAreVideos(categorySection)
-                    };
-                }
-                else
+                    Url = moreLink == null ? baseUri.AbsoluteUri : new Uri(baseUri, moreLink.GetAttributeValue("href", "")).AbsoluteUri,
+                    Name = categoryName,
+                    ParentCategory = parentCategory,
+                    HasSubCategories = !SubItemsAreVideos(categorySection),
+                };
+
+                if (moreLink == null)
                 {
-                    var category = new RssLink()
-                    {
-                        Name = categoryName,
-                        Url = baseUri.AbsoluteUri,
-                        HasSubCategories = !SubItemsAreVideos(categorySection),
-                        SubCategoriesDiscovered = true,
-                    };
+                    //TODO: Ignore Livestream Category links of Rubrik Nachrichten
                     category.SubCategories = ExtractSubcategoriesFromDiv(categorySection, category).Cast<Category>().ToList();
-
-                    //GetSubcategoriesFromDiv(category, modHeadline.ParentNode);
-
-                    yield return category;
+                    category.SubCategoriesDiscovered = category.SubCategories.Any();
                 }
+
+                yield return category;
             }
         }
 
 
         private static bool SubItemsAreVideos(HtmlNode htmlNode)
         {
-            var firstTeaser = htmlNode.Descendants("div").FirstOrDefault(d => d.GetAttributeValue("class", "") == "teaser");
-            if (firstTeaser == null)
+            var teasers = htmlNode.DescendantsAndSelf("div").Where(d => d.GetAttributeValue("class", "") == "teaser").ToArray();
+            if (!teasers.Any())
             {
                 return false;
             }
-            var firstTeaserLink = firstTeaser.Descendants("a").FirstOrDefault();
-            if (firstTeaserLink != null)
-            {
-                return firstTeaserLink.GetAttributeValue("href", "").Contains("/Video?");
-            }
-            return false;
+            var allTeaserLinks = teasers.SelectMany( teaser => teaser.Descendants("a")).ToArray();
+            //TODO: All Contains("/Video?") or Any Contains("/Video?") ????
+            return allTeaserLinks.Any() && allTeaserLinks.All(a => a.GetAttributeValue("href", "").Contains("/Video?"));
         }
 
         private static IEnumerable<RssLink> ExtractSubcategoriesFromDiv(HtmlNode mainDiv, RssLink parentCategory)
@@ -156,11 +159,8 @@ namespace OnlineVideos.Sites
                 if (link != null) subCategory.Url = new Uri(baseUri, HttpUtility.HtmlDecode(link.GetAttributeValue("href", ""))).AbsoluteUri;
 
                 var textWrapper = teaser.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "textWrapper");
-                if (textWrapper != null)
-                {
-                    var subtitle = textWrapper.Descendants("p").FirstOrDefault(div => div.GetAttributeValue("class", "") == "subtitle");
-                    if (subtitle != null) subCategory.Description = subtitle.InnerText;
-                }
+                var subtitle = textWrapper?.Descendants("p").FirstOrDefault(div => div.GetAttributeValue("class", "") == "subtitle");
+                if (subtitle != null) subCategory.Description = subtitle.InnerText;
 
                 yield return subCategory;
             }
@@ -168,25 +168,26 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
-            parentCategory.SubCategories = new List<Category>();
-            var myBaseUri = new Uri((parentCategory as RssLink).Url);
+            var currentCategory = parentCategory as RssLink;
+            currentCategory.SubCategories = new List<Category>();
+            var myBaseUri = new Uri(currentCategory.Url);
             var baseDoc = GetWebData<HtmlDocument>(myBaseUri.AbsoluteUri);
 
-            if (parentCategory.Name == CATEGORYNAME_SENDUNGEN_AZ)
+            if (currentCategory.Name == CATEGORYNAME_SENDUNGEN_AZ)
             {
                 foreach (HtmlNode entry in baseDoc.DocumentNode.Descendants("ul").FirstOrDefault(ul => ul.GetAttributeValue("class", "") == "subressorts raster").Elements("li"))
                 {
                     var a = entry.Descendants("a").FirstOrDefault();
-                    RssLink letter = new RssLink() { Name = a.InnerText.Trim(), ParentCategory = parentCategory, HasSubCategories = true, SubCategories = new List<Category>() };
+                    RssLink letter = new RssLink() { Name = a.InnerText.Trim(), ParentCategory = currentCategory, HasSubCategories = true, SubCategories = new List<Category>() };
                     if (!string.IsNullOrEmpty(a.GetAttributeValue("href", "")))
                     {
                         letter.Url = new Uri(myBaseUri, a.GetAttributeValue("href", "")).AbsoluteUri;
-                        parentCategory.SubCategories.Add(letter);
+                        currentCategory.SubCategories.Add(letter);
                     }
                 }
-                parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
+                currentCategory.SubCategoriesDiscovered = currentCategory.SubCategories.Count > 0;
             }
-            else if (parentCategory.Name == CATEGORYNAME_SENDUNG_VERPASST)
+            else if (currentCategory.Name == CATEGORYNAME_SENDUNG_VERPASST)
             {
                 var senderDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("modSender"))
                     .Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("controls"));
@@ -195,52 +196,71 @@ namespace OnlineVideos.Sites
                     var a = entry.Descendants("a").FirstOrDefault();
                     if (a != null && a.GetAttributeValue("href", "") != "#")
                     {
-                        var tvStation = CreateRssLinkFromAnchor(a, myBaseUri, parentCategory);
+                        var tvStation = CreateRssLinkFromAnchor(a, myBaseUri, currentCategory);
                         tvStation.HasSubCategories = true;
                         tvStation.SubCategories = new List<Category>();
-                        parentCategory.SubCategories.Add(tvStation);
+                        currentCategory.SubCategories.Add(tvStation);
                     }
                 }
-                parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
+                currentCategory.SubCategoriesDiscovered = currentCategory.SubCategories.Count > 0;
             }
-            else if (parentCategory.ParentCategory != null && parentCategory.ParentCategory.Name == CATEGORYNAME_SENDUNG_VERPASST)
+            else if (currentCategory.ParentCategory != null && currentCategory.ParentCategory.Name == CATEGORYNAME_SENDUNG_VERPASST)
             {
                 var programmDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("modProgramm"))
                     .Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("controls"));
                 foreach (HtmlNode entry in programmDiv.Descendants("div").Where(div => div.GetAttributeValue("class", "") == "entry" || div.GetAttributeValue("class", "") == "entry active").Skip(1))
                 {
                     var a = entry.Descendants("a").FirstOrDefault();
-                    var dayLink = CreateRssLinkFromAnchor(a, myBaseUri, parentCategory);
+                    var dayLink = CreateRssLinkFromAnchor(a, myBaseUri, currentCategory);
                     var j = HttpUtility.HtmlDecode(entry.GetAttributeValue("data-ctrl-programmloader-source", ""));
                     if (!string.IsNullOrWhiteSpace(j))
                     {
                         var f = JObject.Parse(j);
                         dayLink.Name += " " + HttpUtility.UrlDecode(f.Value<string>("pixValue")).Split('/')[1];
                     }
-                    parentCategory.SubCategories.Add(dayLink);
+                    currentCategory.SubCategories.Add(dayLink);
                 }
 
-                parentCategory.SubCategories.Reverse();
+                currentCategory.SubCategories.Reverse();
+            }
+            else if (currentCategory.Name == CATEGORYNAME_RUBRIKEN)
+            {
+                var pages = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "controls paging")?.Descendants("a").Select(a => new Uri(myBaseUri, HttpUtility.HtmlDecode(a.GetAttributeValue("href", "")))).Distinct();
+
+                foreach (var page in pages)//.Except(new [] {myBaseUri}))
+                {
+                    baseDoc = GetWebData<HtmlDocument>(page.AbsoluteUri);
+                    var mainDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "elementWrapper").Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "boxCon");
+                    foreach (var subCategory in ExtractSubcategoriesFromDiv(mainDiv, currentCategory))
+                    {
+                        subCategory.HasSubCategories = true;
+                        currentCategory.SubCategories.Add(subCategory);
+                    }
+                }
+                //var mainDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "elementWrapper").Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "boxCon");
+                //foreach (var subCategory in ExtractSubcategoriesFromDiv(mainDiv, currentCategory))
+                //{
+                //    subCategory.HasSubCategories = true;
+                //    currentCategory.SubCategories.Add(subCategory);
+                //}
+                currentCategory.SubCategoriesDiscovered = currentCategory.SubCategories.Count > 0;
             }
             else
             {
                 //TODO: SubCategories with pages (rubriken)
                 //TODO: Workaround
-                var subCategories = ExtractCategoriesFromHeadlines(baseDoc.DocumentNode, myBaseUri).Select(cat =>
-                {
-                    cat.ParentCategory = parentCategory;
-                    return cat;
-                }).ToList();
+                var subCategories = ExtractCategoriesFromHeadlines(baseDoc.DocumentNode, currentCategory).ToList();
                 if (!subCategories.Any())
                 {
+                    //sendungen-a-z?buchstabe=A
                     var mainDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "elementWrapper").Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "boxCon");
-                    subCategories = ExtractSubcategoriesFromDiv(mainDiv, parentCategory as RssLink).ToList();
+                    subCategories = ExtractSubcategoriesFromDiv(mainDiv, currentCategory).ToList();
                 }
-                parentCategory.SubCategories.AddRange(subCategories);
-                parentCategory.SubCategoriesDiscovered = parentCategory.SubCategories.Count > 0;
+                currentCategory.SubCategories.AddRange(subCategories);
+                currentCategory.SubCategoriesDiscovered = currentCategory.SubCategories.Count > 0;
             }
 
-            return parentCategory.SubCategories.Count;
+            return currentCategory.SubCategories.Count;
         }
 
         private static RssLink CreateRssLinkFromAnchor(HtmlNode a, Uri myBaseUri, Category parentCategory)
