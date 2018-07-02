@@ -18,6 +18,28 @@ namespace OnlineVideos.Sites
             return source?.IndexOf(value, comparison) >= 0;
         }
     }
+
+
+    public class DataCtrlAttributesync
+    {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+        [JsonProperty("attribute")]
+        public string Attribute { get; set; }
+        [JsonProperty("startTime")]
+        public string StartTime { get; set; }
+        [JsonProperty("endTime")]
+        public string EndTime { get; set; }
+    }
+
+    public class DataCtrlImage
+    {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+        [JsonProperty("urlScheme")]
+        public string UrlScheme { get; set; }
+    }
+
     public class JsonResponse
     {
         [JsonProperty("_type")]
@@ -102,7 +124,7 @@ namespace OnlineVideos.Sites
 
             foreach (var modHeadline in modHeadlines.Where(modHeadline => !modHeadline.InnerText.Contains(CATEGORYNAME_LIVESTREAM, StringComparison.OrdinalIgnoreCase)))
             {
-                var categoryName = HttpUtility.HtmlDecode(string.Join("",modHeadline.Elements("#text").Select(t => t.InnerText.Trim())));
+                var categoryName = HttpUtility.HtmlDecode(string.Join("", modHeadline.Elements("#text").Select(t => t.InnerText.Trim())));
                 var categorySection = modHeadline.ParentNode;
                 var moreLink = categorySection.Descendants("a").FirstOrDefault(a => a.GetAttributeValue("class", "") == "more");
                 //TODO:instead of MoreLink paging on site
@@ -123,8 +145,8 @@ namespace OnlineVideos.Sites
                     category.SubCategories = ExtractSubcategoriesFromDiv(categorySection, category).Cast<Category>().ToList();
                     category.SubCategoriesDiscovered = category.SubCategories.Any();
                     //now create concrete Function for this section and presever in Other information for paging
-					HtmlNode CategorySectionFunc(HtmlNode doc) => modHeadlinesFunc.Invoke(doc).Single(headline => headline.InnerText.Equals(modHeadline.InnerText)).ParentNode;
-                    category.Other = (Func<HtmlNode, HtmlNode>) CategorySectionFunc;
+                    HtmlNode CategorySectionFunc(HtmlNode doc) => modHeadlinesFunc.Invoke(doc).Single(headline => headline.InnerText.Equals(modHeadline.InnerText)).ParentNode;
+                    category.Other = (Func<HtmlNode, HtmlNode>)CategorySectionFunc;
                 }
 
                 yield return category;
@@ -134,14 +156,14 @@ namespace OnlineVideos.Sites
 
         private static bool SubItemsAreMedias(HtmlNode htmlNode)
         {
-            var mediaLinkTypes = new [] {"/Video?", "/Audio?"};
+            var mediaLinkTypes = new[] { "/Video?", "/Audio?" };
 
             var teasers = htmlNode.DescendantsAndSelf("div").Where(d => d.GetAttributeValue("class", "") == "teaser").ToArray();
             if (!teasers.Any())
             {
                 return false;
             }
-            var allTeaserLinks = teasers.SelectMany( teaser => teaser.Descendants("a")).Select(a => a.GetAttributeValue("href", "")).Distinct().ToArray();
+            var allTeaserLinks = teasers.SelectMany(teaser => teaser.Descendants("a")).Select(a => a.GetAttributeValue("href", "")).Distinct().ToArray();
             //TODO: All Contains("/Video?") or Any Contains("/Video?") ????
             return allTeaserLinks.Any() && allTeaserLinks.All(link => mediaLinkTypes.Any(link.Contains));
         }
@@ -296,38 +318,31 @@ namespace OnlineVideos.Sites
             var result = new List<VideoInfo>();
             if (category.Name == CATEGORYNAME_LIVESTREAM)
             {
-                //var result2 = new List<VideoInfo>();
-                //var programmDivNew = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("modMini"));
-                //foreach (HtmlNode entry in programmDivNew.Descendants("div").Where(div => div.GetAttributeValue("class", "") == "teaser"))
-                //{
-                //    var img = entry.Descendants("img").Select(a => HttpUtility.HtmlDecode(a.GetAttributeValue("src", ""))).First(src => !string.IsNullOrWhiteSpace(src)); ;
-                //    var url = entry.Descendants("a").Select(a => HttpUtility.HtmlDecode(a.GetAttributeValue("href", ""))).First(href => !string.IsNullOrWhiteSpace(href));
-                //    var title = entry.Descendants("h4").First().InnerText.Trim();
-                //    var subtitle = entry.Descendants("p").FirstOrDefault(p => p.GetAttributeValue("class", "").Contains("subtitle"));
-                //    var timeline = entry.Descendants("div").First(div => div.GetAttributeValue("class", "").Contains("timeline"));
-
-                //    result.Add(new VideoInfo()
-                //    {
-                //        Title = title,
-                //        VideoUrl = new Uri(myBaseUri, url).AbsoluteUri,
-                //        Thumb = new Uri(myBaseUri, img).AbsoluteUri,
-
-                //    });
-                //}
-
-                var programmDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("modSender"))
-                    .Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("controls"));
-                foreach (HtmlNode entry in programmDiv.Descendants("div").Where(div => div.GetAttributeValue("class", "") == "entry" || div.GetAttributeValue("class", "") == "entry active").Skip(1))
+                var unixTimeMinValue = Helpers.TimeUtils.UNIXTimeToDateTime(0);
+                var programmDivNew = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("modMini"));
+                foreach (HtmlNode entry in programmDivNew.Descendants("div").Where(div => div.GetAttributeValue("class", "") == "teaser"))
                 {
-                    var a = entry.Descendants("a").FirstOrDefault();
-                    if (a != null && a.GetAttributeValue("href", "").Length > 1)
+                    var imgUrl = entry.Descendants("img").SelectMany(img => img.ChildAttributes("data-ctrl-image"), (node, attribute) => JsonConvert.DeserializeObject<DataCtrlImage>(HttpUtility.HtmlDecode(attribute.Value))).Select(dataCtrl => dataCtrl.UrlScheme.Replace("##width##", "1024")).FirstOrDefault();
+                    var url = entry.Descendants("a").Select(a => HttpUtility.HtmlDecode(a.GetAttributeValue("href", ""))).First(href => !string.IsNullOrWhiteSpace(href));
+                    var title = entry.Descendants("h4").First().InnerText.Trim();
+
+                    var subtitleNode = entry.Descendants("p").FirstOrDefault(p => p.GetAttributeValue("class", "").Contains("subtitle"));
+                    var subtitle = subtitleNode == null ? string.Empty : string.Join(Environment.NewLine, subtitleNode.Elements("#text").Select(t => t.InnerText.Trim()));
+
+                    var timeline = entry.Descendants("div").First(div => div.GetAttributeValue("class", "").Contains("timeline"))
+                                        .Descendants().SelectMany(img => img.ChildAttributes("data-ctrl-attributesync"), (node, attribute) => JsonConvert.DeserializeObject<DataCtrlAttributesync>(HttpUtility.HtmlDecode(attribute.Value))).FirstOrDefault();
+
+                    var startTime = Helpers.TimeUtils.UNIXTimeToDateTime(double.Parse(timeline.StartTime));
+                    var endTime = Helpers.TimeUtils.UNIXTimeToDateTime(double.Parse(timeline.EndTime));
+                    result.Add(new VideoInfo()
                     {
-                        result.Add(new VideoInfo()
-                        {
-                            Title = a.InnerText.Trim(),
-                            VideoUrl = new Uri(myBaseUri, HttpUtility.HtmlDecode(a.GetAttributeValue("href", ""))).AbsoluteUri
-                        });
-                    }
+                        Title = title,
+                        VideoUrl = new Uri(myBaseUri, url).AbsoluteUri,
+                        Thumb = new Uri(myBaseUri, imgUrl).AbsoluteUri,
+                        Description = subtitle,
+                        StartTime = startTime == unixTimeMinValue ? string.Empty : startTime.ToString("HH:mm"),
+                        Length = startTime == unixTimeMinValue ? string.Empty :  $"{(endTime - startTime).TotalMinutes:F0} min"
+                    });
                 }
             }
             else if (myBaseUri.AbsoluteUri.Contains("sendungVerpasst"))
@@ -368,7 +383,7 @@ namespace OnlineVideos.Sites
                 HtmlNode mainDiv;
                 if (category.Other is Func<HtmlNode, HtmlNode> getCategoryDiv)
                 {
-					//special handling for multiple categories on same page, need to find matching DIV for getting videos
+                    //special handling for multiple categories on same page, need to find matching DIV for getting videos
                     mainDiv = getCategoryDiv.Invoke(baseDoc.DocumentNode);
                 }
                 else
@@ -476,8 +491,8 @@ namespace OnlineVideos.Sites
                 {
                         Quality = int.TryParse(streamArray.Quality, out qualityNumber) ? ((VideoQuality)qualityNumber).ToString() : "HD",
                         Url = streamArray.Stream is JArray ? ((JArray)streamArray.Stream).Values<string>().OrderByDescending(item => item, StringComparer.OrdinalIgnoreCase).First() : streamArray.Stream as string,
-                        Server = streamArray.Server
-                    }).Distinct())
+                    Server = streamArray.Server
+                }).Distinct())
                 {
                     string url = media.Url;
                     if (url.EndsWith(".smil"))
