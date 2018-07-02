@@ -178,6 +178,8 @@ namespace OnlineVideos.Sites
 
         public override String GetVideoUrl(VideoInfo video)
         {
+                string bestVideoQualityUrl = string.Empty;
+
             if (video.PlaybackOptions == null)
             {
                 if (string.IsNullOrWhiteSpace(video.VideoUrl))
@@ -185,13 +187,13 @@ namespace OnlineVideos.Sites
 
                 var json = GetWebData<JObject>(video.VideoUrl, headers: headers);
                 var playbackOptions = new HashSet<KeyValuePair<string, string>>(KeyValuePairComparer.KeyOrdinalIgnoreCase);
-                foreach (var formitaet in json["priorityList"].SelectMany(l=>l["formitaeten"]))
+                foreach (var formitaet in json["priorityList"].SelectMany(l => l["formitaeten"]))
                 {
                     if (formitaet["facets"].Any(f => f.ToString() == "restriction_useragent"))
                         continue;
 
                     var type = formitaet.Value<string>("type");
-                    foreach(var vid in formitaet["qualities"])
+                    foreach (var vid in formitaet["qualities"])
                     {
                         var quality = vid.Value<string>("quality");
                         if (quality == "auto")
@@ -206,6 +208,7 @@ namespace OnlineVideos.Sites
                             var m3u8Data = GetWebData(url);
                             var m3u8PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(m3u8Data, video.VideoUrl);
                             playbackOptions.UnionWith(m3u8PlaybackOptions);
+                            bestVideoQualityUrl = m3u8PlaybackOptions.FirstOrDefault().Value; //Default, if m3u8 playlist cannot be collected, e.g. geoblocking
                         }
                         else
                         {
@@ -217,10 +220,8 @@ namespace OnlineVideos.Sites
                 video.PlaybackOptions = playbackOptions.ToDictionary(e => e.Key, e => e.Value);
             }
 
-            string firstUrl = video.PlaybackOptions.FirstOrDefault(p => p.Key.Contains(videoQuality)).Value;
-            return !string.IsNullOrEmpty(firstUrl) ? firstUrl : video.PlaybackOptions.LastOrDefault().Value;
+            return !string.IsNullOrWhiteSpace(bestVideoQualityUrl) ? bestVideoQualityUrl : video.PlaybackOptions.LastOrDefault().Value;
         }
-
         static RssLink CategoryFromJson(JToken result, Category parent, bool hasSubCategories)
         {
             var obj = result["http://zdf.de/rels/target"];

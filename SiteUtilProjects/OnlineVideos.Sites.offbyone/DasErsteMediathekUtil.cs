@@ -66,9 +66,6 @@ namespace OnlineVideos.Sites
         private const string CATEGORYNAME_SENDUNGEN_AZ = "Sendungen A-Z";
         private const string CATEGORYNAME_RUBRIKEN = "Rubriken";
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName = "VideoQuality"), Description("Choose your preferred quality for the videos according to bandwidth.")]
-        VideoQuality videoQuality = VideoQuality.HD;
-
         string nextPageUrl;
 
         public override int DiscoverDynamicCategories()
@@ -95,7 +92,6 @@ namespace OnlineVideos.Sites
 
         private IEnumerable<RssLink> ExtractCategoriesFromHeadlines(HtmlNode document, Uri baseUri, Category parentCategory = null)
         {
-			//Create Function Delegate in order to find a certain category section on a page again, especially if a headline category has multiple pages
             Func<HtmlNode, IList<HtmlNode>> modHeadlinesFunc = (doc) => doc.Descendants("h2").Where(h2 => h2.GetAttributeValue("class", "") == "modHeadline").ToList();
             var modHeadlines = modHeadlinesFunc.Invoke(document);
             if (modHeadlines.Count == 1)
@@ -122,7 +118,7 @@ namespace OnlineVideos.Sites
 
                 if (moreLink == null)
                 {
-					
+
                     //TODO: Ignore Livestream Category links of Rubrik Nachrichten
                     category.SubCategories = ExtractSubcategoriesFromDiv(categorySection, category).Cast<Category>().ToList();
                     category.SubCategoriesDiscovered = category.SubCategories.Any();
@@ -138,7 +134,6 @@ namespace OnlineVideos.Sites
 
         private static bool SubItemsAreMedias(HtmlNode htmlNode)
         {
-			//check for any kind of media, not only video
             var mediaLinkTypes = new [] {"/Video?", "/Audio?"};
 
             var teasers = htmlNode.DescendantsAndSelf("div").Where(d => d.GetAttributeValue("class", "") == "teaser").ToArray();
@@ -469,6 +464,7 @@ namespace OnlineVideos.Sites
         {
             var baseDoc = GetWebData<HtmlDocument>(video.VideoUrl);
             var mediaDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("data-ctrl-player", "") != "");
+            string bestVideoQualityUrl = string.Empty;
             if (mediaDiv != null)
             {
                 var configUrl = new Uri(new Uri(video.VideoUrl), JObject.Parse(HttpUtility.HtmlDecode(mediaDiv.GetAttributeValue("data-ctrl-player", ""))).Value<string>("mcUrl")).AbsoluteUri;
@@ -502,6 +498,7 @@ namespace OnlineVideos.Sites
                             var m3u8Data = GetWebData(url);
                             var m3u8PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(m3u8Data, video.VideoUrl);
                             playbackOptions.UnionWith(m3u8PlaybackOptions);
+                            bestVideoQualityUrl = m3u8PlaybackOptions.FirstOrDefault().Value; //Default, if m3u8 playlist cannot be collected, e.g. geoblocking
                         }
                         else
                         {
@@ -539,9 +536,7 @@ namespace OnlineVideos.Sites
                 video.PlaybackOptions = playbackOptions.ToDictionary(e => e.Key, e => e.Value);
             }
 
-            string qualitytoMatch = videoQuality.ToString();
-            string firstUrl = video.PlaybackOptions.FirstOrDefault(p => p.Key.Contains(qualitytoMatch)).Value;
-            return !string.IsNullOrEmpty(firstUrl) ? firstUrl : video.PlaybackOptions.LastOrDefault().Value;
+            return !string.IsNullOrWhiteSpace(bestVideoQualityUrl) ? bestVideoQualityUrl : video.PlaybackOptions.LastOrDefault().Value;
         }
 
         string GetStreamUrlFromSmil(string smilUrl)

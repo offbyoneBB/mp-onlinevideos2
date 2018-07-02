@@ -104,6 +104,7 @@ namespace OnlineVideos.Sites
         {
             var doc = GetWebData<HtmlDocument>(video.VideoUrl);
             var link = doc.DocumentNode.Descendants("a").FirstOrDefault(a => a.GetAttributeValue("data-extension", "").Contains("\"url\":\"http"));
+            string bestVideoQualityUrl = string.Empty;
             if (link != null)
             {
                 var json = JObject.Parse(link.GetAttributeValue("data-extension", ""));
@@ -118,19 +119,21 @@ namespace OnlineVideos.Sites
                 var playbackOptions = new HashSet<KeyValuePair<string, string>>(KeyValuePairComparer.KeyOrdinalIgnoreCase);
                 if (url.Contains("master.m3u8"))
                 {
-                    var uri = new Uri(new Uri(playlistUrl), url);
-                    var m3u8Data = GetWebData(uri.ToString());
+                    url = new Uri(new Uri(playlistUrl), url).AbsoluteUri;
+                    var m3u8Data = GetWebData(url);
                     var m3u8PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(m3u8Data, video.VideoUrl);
                     playbackOptions.UnionWith(m3u8PlaybackOptions);
+                    bestVideoQualityUrl = m3u8PlaybackOptions.FirstOrDefault().Value; //Default, if m3u8 playlist cannot be collected, e.g. geoblocking
                 }
 
                 video.PlaybackOptions = playbackOptions.ToDictionary(e => e.Key, e => e.Value);
-                return video.PlaybackOptions.LastOrDefault().Value;
             }
-            return null;
+
+            return !string.IsNullOrWhiteSpace(bestVideoQualityUrl) ? bestVideoQualityUrl : video.PlaybackOptions.LastOrDefault().Value;
         }
 
-		string GetStreamUrl(string videoPageUrl)
+
+        string GetStreamUrl(string videoPageUrl)
 		{
 			var doc = GetWebData<HtmlDocument>(videoPageUrl);
 			var flashParam = doc.DocumentNode.Descendants("param").Where(p => p.GetAttributeValue("name", "") == "flashvars").FirstOrDefault();
