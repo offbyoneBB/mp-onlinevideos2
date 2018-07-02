@@ -52,7 +52,14 @@ namespace OnlineVideos.Sites
     }
     public class DasErsteMediathekUtil : SiteUtilBase
     {
-        public enum VideoQuality { Low, Med, High, HD };
+        public enum VideoQuality
+        {
+            Low = 0,
+            Med = 1,
+            High = 2,
+            VeryHigh = 3,
+            VeryHigh2 = 4,
+        };
 
         private const string CATEGORYNAME_LIVESTREAM = "Livestreams";
         private const string CATEGORYNAME_SENDUNG_VERPASST = "Sendung verpasst?";
@@ -88,7 +95,9 @@ namespace OnlineVideos.Sites
 
         private IEnumerable<RssLink> ExtractCategoriesFromHeadlines(HtmlNode document, Uri baseUri, Category parentCategory = null)
         {
-            var modHeadlines = document.Descendants("h2").Where(h2 => h2.GetAttributeValue("class", "") == "modHeadline").ToList();
+			//Create Function Delegate in order to find a certain category section on a page again, especially if a headline category has multiple pages
+            Func<HtmlNode, IList<HtmlNode>> modHeadlinesFunc = (doc) => doc.Descendants("h2").Where(h2 => h2.GetAttributeValue("class", "") == "modHeadline").ToList();
+            var modHeadlines = modHeadlinesFunc.Invoke(document);
             if (modHeadlines.Count == 1)
             {
                 // Skip if only one Category, treat this as Video Links Only
@@ -108,14 +117,18 @@ namespace OnlineVideos.Sites
                     Url = moreLink == null ? baseUri.AbsoluteUri : new Uri(baseUri, moreLink.GetAttributeValue("href", "")).AbsoluteUri,
                     Name = categoryName,
                     ParentCategory = parentCategory,
-                    HasSubCategories = !SubItemsAreVideos(categorySection),
+                    HasSubCategories = !SubItemsAreMedias(categorySection),
                 };
 
                 if (moreLink == null)
                 {
+					
                     //TODO: Ignore Livestream Category links of Rubrik Nachrichten
                     category.SubCategories = ExtractSubcategoriesFromDiv(categorySection, category).Cast<Category>().ToList();
                     category.SubCategoriesDiscovered = category.SubCategories.Any();
+                    //now create concrete Function for this section and presever in Other information for paging
+					HtmlNode CategorySectionFunc(HtmlNode doc) => modHeadlinesFunc.Invoke(doc).Single(headline => headline.InnerText.Equals(modHeadline.InnerText)).ParentNode;
+                    category.Other = (Func<HtmlNode, HtmlNode>) CategorySectionFunc;
                 }
 
                 yield return category;
@@ -123,22 +136,25 @@ namespace OnlineVideos.Sites
         }
 
 
-        private static bool SubItemsAreVideos(HtmlNode htmlNode)
+        private static bool SubItemsAreMedias(HtmlNode htmlNode)
         {
+			//check for any kind of media, not only video
+            var mediaLinkTypes = new [] {"/Video?", "/Audio?"};
+
             var teasers = htmlNode.DescendantsAndSelf("div").Where(d => d.GetAttributeValue("class", "") == "teaser").ToArray();
             if (!teasers.Any())
             {
                 return false;
             }
-            var allTeaserLinks = teasers.SelectMany( teaser => teaser.Descendants("a")).ToArray();
+            var allTeaserLinks = teasers.SelectMany( teaser => teaser.Descendants("a")).Select(a => a.GetAttributeValue("href", "")).Distinct().ToArray();
             //TODO: All Contains("/Video?") or Any Contains("/Video?") ????
-            return allTeaserLinks.Any() && allTeaserLinks.All(a => a.GetAttributeValue("href", "").Contains("/Video?"));
+            return allTeaserLinks.Any() && allTeaserLinks.All(link => mediaLinkTypes.Any(link.Contains));
         }
 
         private static IEnumerable<RssLink> ExtractSubcategoriesFromDiv(HtmlNode mainDiv, RssLink parentCategory)
         {
             var baseUri = new Uri(parentCategory.Url);
-            foreach (var teaser in mainDiv.Descendants("div").Where(div => div.GetAttributeValue("class", "") == "teaser").Where(div => !SubItemsAreVideos(div)))
+            foreach (var teaser in mainDiv.Descendants("div").Where(div => div.GetAttributeValue("class", "") == "teaser").Where(div => !SubItemsAreMedias(div)))
             {
                 var headline = teaser.Descendants("h4").FirstOrDefault(h4 => h4.GetAttributeValue("class", "") == "headline");
                 if (headline == null || headline.InnerText.Contains(parentCategory.Name))
@@ -285,6 +301,25 @@ namespace OnlineVideos.Sites
             var result = new List<VideoInfo>();
             if (category.Name == CATEGORYNAME_LIVESTREAM)
             {
+                //var result2 = new List<VideoInfo>();
+                //var programmDivNew = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("modMini"));
+                //foreach (HtmlNode entry in programmDivNew.Descendants("div").Where(div => div.GetAttributeValue("class", "") == "teaser"))
+                //{
+                //    var img = entry.Descendants("img").Select(a => HttpUtility.HtmlDecode(a.GetAttributeValue("src", ""))).First(src => !string.IsNullOrWhiteSpace(src)); ;
+                //    var url = entry.Descendants("a").Select(a => HttpUtility.HtmlDecode(a.GetAttributeValue("href", ""))).First(href => !string.IsNullOrWhiteSpace(href));
+                //    var title = entry.Descendants("h4").First().InnerText.Trim();
+                //    var subtitle = entry.Descendants("p").FirstOrDefault(p => p.GetAttributeValue("class", "").Contains("subtitle"));
+                //    var timeline = entry.Descendants("div").First(div => div.GetAttributeValue("class", "").Contains("timeline"));
+
+                //    result.Add(new VideoInfo()
+                //    {
+                //        Title = title,
+                //        VideoUrl = new Uri(myBaseUri, url).AbsoluteUri,
+                //        Thumb = new Uri(myBaseUri, img).AbsoluteUri,
+
+                //    });
+                //}
+
                 var programmDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("modSender"))
                     .Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("controls"));
                 foreach (HtmlNode entry in programmDiv.Descendants("div").Where(div => div.GetAttributeValue("class", "") == "entry" || div.GetAttributeValue("class", "") == "entry active").Skip(1))
@@ -335,7 +370,16 @@ namespace OnlineVideos.Sites
             }
             else
             {
-                var mainDiv = baseDoc.DocumentNode.Descendants("div").LastOrDefault(div => div.GetAttributeValue("class", "").Contains("modMini")).ParentNode;
+                HtmlNode mainDiv;
+                if (category.Other is Func<HtmlNode, HtmlNode> getCategoryDiv)
+                {
+					//special handling for multiple categories on same page, need to find matching DIV for getting videos
+                    mainDiv = getCategoryDiv.Invoke(baseDoc.DocumentNode);
+                }
+                else
+                {
+                    mainDiv = baseDoc.DocumentNode.Descendants("div").LastOrDefault(div => div.GetAttributeValue("class", "").Contains("modMini")).ParentNode;
+                }
                 result = GetVideosFromDiv(mainDiv, myBaseUri);
             }
             return result;
@@ -458,13 +502,13 @@ namespace OnlineVideos.Sites
                             var m3u8Data = GetWebData(url);
                             var m3u8PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(m3u8Data, video.VideoUrl);
                             playbackOptions.UnionWith(m3u8PlaybackOptions);
-                            }
-                        else
-                            {
-                            if (url.EndsWith("f4m"))
-                        {
-                                url += "?g=" + StringUtils.GetRandomLetters(12) + "&hdcore=3.8.0";
                         }
+                        else
+                        {
+                            if (url.EndsWith("f4m"))
+                            {
+                                url += "?g=" + StringUtils.GetRandomLetters(12) + "&hdcore=3.8.0";
+                            }
                             playbackOptions.Add(new KeyValuePair<string, string>(media.Quality, url));
                         }
                     }
