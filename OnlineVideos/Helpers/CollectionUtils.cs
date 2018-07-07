@@ -28,7 +28,6 @@ namespace OnlineVideos.Helpers
                 }
                 writer.WriteEndElement();
                 writer.Flush();
-                writer.Close();
             }
             return sb.ToString();
         }
