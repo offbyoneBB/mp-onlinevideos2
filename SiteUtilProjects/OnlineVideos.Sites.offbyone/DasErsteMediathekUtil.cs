@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Web;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
@@ -16,6 +20,59 @@ namespace OnlineVideos.Sites
         public static bool Contains(this string source, string value, StringComparison comparison)
         {
             return source?.IndexOf(value, comparison) >= 0;
+        }
+
+        public static JToken ReadAsJToken(this WebCache webCache, string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
+        {
+            var responseString = webCache.ReadAsString(url, postData, cookies, referer, proxy, forceUTF8, allowUnsafeHeader, userAgent, encoding, headers, cache);
+            return JToken.Parse(responseString);
+        }
+
+        public static JObject ReadAsJObject(this WebCache webCache, string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
+        {
+            var responseString = webCache.ReadAsString(url, postData, cookies, referer, proxy, forceUTF8, allowUnsafeHeader, userAgent, encoding, headers, cache);
+            return JObject.Parse(responseString);
+        }
+
+        public static RssToolkit.Rss.RssDocument ReadAsRssDocument(this WebCache webCache, string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
+        {
+            var responseString = webCache.ReadAsString(url, postData, cookies, referer, proxy, forceUTF8, allowUnsafeHeader, userAgent, encoding, headers, cache);
+            return RssToolkit.Rss.RssDocument.Load(responseString);
+        }
+        public static XDocument ReadAsXDocument(this WebCache webCache, string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
+        {
+            var responseString = webCache.ReadAsString(url, postData, cookies, referer, proxy, forceUTF8, allowUnsafeHeader, userAgent, encoding, headers, cache);
+            return XDocument.Load(responseString);
+        }
+        public static System.Xml.XmlDocument ReadAsXmlDocument(this WebCache webCache, string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
+        {
+            var xDocument = webCache.ReadAsXDocument(url, postData, cookies, referer, proxy, forceUTF8, allowUnsafeHeader, userAgent, encoding, headers, cache);
+            var xmlDocument = new System.Xml.XmlDocument();
+            using (var xmlReader = xDocument.CreateReader())
+            {
+                xmlDocument.Load(xmlReader);
+            }
+            return xmlDocument;
+        }
+        public static HtmlAgilityPack.HtmlDocument ReadAsHtmlDocument(this WebCache webCache, string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
+        {
+            var responseString = webCache.ReadAsString(url, postData, cookies, referer, proxy, forceUTF8, allowUnsafeHeader, userAgent, encoding, headers, cache);
+            HtmlDocument htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(responseString);
+            return htmlDoc;
+        }
+
+        public static T ReadAs<T>(this WebCache webCache, string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
+        {
+            var responseString = webCache.ReadAsString(url, postData, cookies, referer, proxy, forceUTF8, allowUnsafeHeader, userAgent, encoding, headers, cache);
+            var obj = JsonConvert.DeserializeObject<T>(responseString);
+            return obj;
+        }
+
+        public static string ReadAsString(this WebCache webCache, string url, string postData = null, CookieContainer cookies = null, string referer = null, IWebProxy proxy = null, bool forceUTF8 = false, bool allowUnsafeHeader = false, string userAgent = null, Encoding encoding = null, NameValueCollection headers = null, bool cache = true)
+        {
+            var responseString = webCache.GetWebData(url, postData, cookies, referer, proxy, forceUTF8, allowUnsafeHeader, userAgent, encoding, headers, cache);
+            return responseString;
         }
     }
 
@@ -97,7 +154,7 @@ namespace OnlineVideos.Sites
             Settings.Categories.Add(new RssLink() { Name = CATEGORYNAME_SENDUNGEN_AZ, HasSubCategories = true, Url = "https://www.ardmediathek.de/tv/sendungen-a-z" });
 
             Uri baseUri = new Uri("https://www.ardmediathek.de/tv");
-            var baseDoc = GetWebData<HtmlDocument>(baseUri.AbsoluteUri);
+            var baseDoc = WebCache.Instance.ReadAsHtmlDocument(baseUri.AbsoluteUri);
             foreach (var category in ExtractCategoriesFromHeadlines(baseDoc.DocumentNode, baseUri))
             {
                 Settings.Categories.Add(category);
@@ -204,7 +261,7 @@ namespace OnlineVideos.Sites
             var currentCategory = parentCategory as RssLink;
             currentCategory.SubCategories = new List<Category>();
             var myBaseUri = new Uri(currentCategory.Url);
-            var baseDoc = GetWebData<HtmlDocument>(myBaseUri.AbsoluteUri);
+            var baseDoc = WebCache.Instance.ReadAsHtmlDocument(myBaseUri.AbsoluteUri);
 
             if (currentCategory.Name == CATEGORYNAME_SENDUNGEN_AZ)
             {
@@ -260,9 +317,9 @@ namespace OnlineVideos.Sites
             {
                 var pages = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "controls paging")?.Descendants("a").Select(a => new Uri(myBaseUri, HttpUtility.HtmlDecode(a.GetAttributeValue("href", "")))).Distinct();
 
-                foreach (var page in pages)//.Except(new [] {myBaseUri}))
+                foreach (var page in pages)
                 {
-                    baseDoc = GetWebData<HtmlDocument>(page.AbsoluteUri);
+                    baseDoc = WebCache.Instance.ReadAsHtmlDocument(page.AbsoluteUri);
                     var mainDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "elementWrapper").Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "boxCon");
                     foreach (var subCategory in ExtractSubcategoriesFromDiv(mainDiv, currentCategory))
                     {
@@ -270,17 +327,10 @@ namespace OnlineVideos.Sites
                         currentCategory.SubCategories.Add(subCategory);
                     }
                 }
-                //var mainDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "elementWrapper").Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "") == "boxCon");
-                //foreach (var subCategory in ExtractSubcategoriesFromDiv(mainDiv, currentCategory))
-                //{
-                //    subCategory.HasSubCategories = true;
-                //    currentCategory.SubCategories.Add(subCategory);
-                //}
                 currentCategory.SubCategoriesDiscovered = currentCategory.SubCategories.Count > 0;
             }
             else
             {
-                //TODO: SubCategories with pages (rubriken)
                 //TODO: Workaround
                 var subCategories = ExtractCategoriesFromHeadlines(baseDoc.DocumentNode, currentCategory).ToList();
                 if (!subCategories.Any())
@@ -313,11 +363,13 @@ namespace OnlineVideos.Sites
             HasNextPage = false;
 
             var myBaseUri = new Uri((category as RssLink).Url);
-            var baseDoc = GetWebData<HtmlDocument>(myBaseUri.AbsoluteUri);
+            var baseDoc = WebCache.Instance.ReadAsHtmlDocument(myBaseUri.AbsoluteUri);
 
             var result = new List<VideoInfo>();
             if (category.Name == CATEGORYNAME_LIVESTREAM)
             {
+                //always load LiveStream Data from web and not from Cache
+                baseDoc = WebCache.Instance.ReadAsHtmlDocument(myBaseUri.AbsoluteUri, cache: false);
                 var unixTimeMinValue = Helpers.TimeUtils.UNIXTimeToDateTime(0);
                 var programmDivNew = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("modMini"));
                 foreach (HtmlNode entry in programmDivNew.Descendants("div").Where(div => div.GetAttributeValue("class", "") == "teaser"))
@@ -340,12 +392,13 @@ namespace OnlineVideos.Sites
                         VideoUrl = new Uri(myBaseUri, url).AbsoluteUri,
                         Thumb = new Uri(myBaseUri, imgUrl).AbsoluteUri,
                         Description = subtitle,
-                        StartTime = startTime == unixTimeMinValue ? string.Empty : startTime.ToString("HH:mm"),
+                        // Livestream has 30min (1800sec) timeshift, therefore forward at least 29:55min
+                        StartTime = TimeSpan.FromSeconds(1795).ToString(),
                         Length = startTime == unixTimeMinValue ? string.Empty :  $"{(endTime - startTime).TotalMinutes:F0} min"
                     });
                 }
             }
-            else if (myBaseUri.AbsoluteUri.Contains("sendungVerpasst"))
+            else if (myBaseUri.AbsoluteUri.Contains("sendungVerpasst", StringComparison.OrdinalIgnoreCase))
             {
                 var programmDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("modProgramm"));
                 foreach (var boxDiv in programmDiv.Descendants("div").Where(div => div.GetAttributeValue("class", "") == "box"))
@@ -373,6 +426,8 @@ namespace OnlineVideos.Sites
                         }
                     }
                 }
+                //easier navigation, from more recent to older
+                result.Reverse();
             }
             else if (myBaseUri.AbsoluteUri.Contains("/Video?"))
             {
@@ -459,7 +514,7 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> GetNextPageVideos()
         {
             var myBaseUri = new Uri(nextPageUrl);
-            var doc = GetWebData<HtmlDocument>(nextPageUrl);
+            var doc = WebCache.Instance.ReadAsHtmlDocument(nextPageUrl);
             var mainDiv = doc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("modList") || div.GetAttributeValue("class", "").Contains("modMini")).ParentNode;
             return GetVideosFromDiv(mainDiv, myBaseUri);
         }
@@ -470,21 +525,20 @@ namespace OnlineVideos.Sites
         {
             var searchUrl = string.Format("http://www.ardmediathek.de/tv/suche?searchText={0}", HttpUtility.UrlEncode(query));
             var myBaseUri = new Uri(searchUrl);
-            var doc = GetWebData<HtmlDocument>(searchUrl);
+            var doc = WebCache.Instance.ReadAsHtmlDocument(searchUrl);
             var mainDiv = doc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", "").Contains("modList")).ParentNode;
             return GetVideosFromDiv(mainDiv, myBaseUri).ConvertAll(v => v as SearchResultItem);
         }
 
         public override String GetVideoUrl(VideoInfo video)
         {
-            var baseDoc = GetWebData<HtmlDocument>(video.VideoUrl);
+            var baseDoc = WebCache.Instance.ReadAsHtmlDocument(video.VideoUrl);
             var mediaDiv = baseDoc.DocumentNode.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("data-ctrl-player", "") != "");
             string bestVideoQualityUrl = string.Empty;
             if (mediaDiv != null)
             {
                 var configUrl = new Uri(new Uri(video.VideoUrl), JObject.Parse(HttpUtility.HtmlDecode(mediaDiv.GetAttributeValue("data-ctrl-player", ""))).Value<string>("mcUrl")).AbsoluteUri;
-                var mediaString = GetWebData<string>(configUrl);
-                var mediaJson = JsonConvert.DeserializeObject<JsonResponse>(mediaString);
+                var mediaJson = WebCache.Instance.ReadAs<JsonResponse>(configUrl);
                 var playbackOptions = new HashSet<KeyValuePair<string, string>>(KeyValuePairComparer.KeyOrdinalIgnoreCase);
                 int qualityNumber;
                 foreach (var media in mediaJson.MediaArray.SelectMany(m => m.MediaStreamArray).Select(streamArray => new
@@ -510,7 +564,7 @@ namespace OnlineVideos.Sites
 
                         if (url.Contains("master.m3u8"))
                         {
-                            var m3u8Data = GetWebData(url);
+                            var m3u8Data = WebCache.Instance.ReadAsString(url);
                             var m3u8PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(m3u8Data, video.VideoUrl);
                             playbackOptions.UnionWith(m3u8PlaybackOptions);
                             bestVideoQualityUrl = m3u8PlaybackOptions.FirstOrDefault().Value; //Default, if m3u8 playlist cannot be collected, e.g. geoblocking
@@ -556,7 +610,7 @@ namespace OnlineVideos.Sites
 
         string GetStreamUrlFromSmil(string smilUrl)
         {
-            var doc = GetWebData<System.Xml.Linq.XDocument>(smilUrl);
+            var doc = WebCache.Instance.ReadAsXDocument(smilUrl);
             return doc.Descendants("meta").FirstOrDefault().Attribute("base").Value + doc.Descendants("video").FirstOrDefault().Attribute("src").Value;
         }
 
