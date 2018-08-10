@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -39,8 +40,12 @@ namespace OnlineVideos.Sites.Utils
 
             nowNext = null;
             JObject guideData = null;
+
+            SecurityProtocolType oldSecurityProtocolType = ServicePointManager.SecurityProtocol;
             try
             {
+                //EPG API requires SecurityProtocolType TLS 1.2
+                ServicePointManager.SecurityProtocol = oldSecurityProtocolType | (SecurityProtocolType)3072;
                 guideData = WebCache.Instance.GetWebData<JObject>(url);
             }
             catch
@@ -48,6 +53,11 @@ namespace OnlineVideos.Sites.Utils
                 Log.Warn("TVGuideGrabber: Error retrieving tv guide from {0}", url);
                 return false;
             }
+            finally
+            {
+                ServicePointManager.SecurityProtocol = oldSecurityProtocolType;
+            }
+
             if (guideData == null)
                 return false;
 
