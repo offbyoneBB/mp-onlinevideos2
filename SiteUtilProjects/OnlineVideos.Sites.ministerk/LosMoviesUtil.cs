@@ -37,7 +37,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), Description("Select subtitle language preferences (; separated and ISO 639-2), for example: eng;ger")]
         protected string subtitleLanguages = "";
 
-        private const string baseUrl = "http://los-movies.com";
+        private const string baseUrl = @"http://losmovies.cx";
         private string nextPageUrl = "";
         private string currentCategoryThumb = "";
 
@@ -415,6 +415,8 @@ namespace OnlineVideos.Sites
                     }
                     d.Add(string.Format(format, count), u);
                 }
+                else
+                    Log.Debug("Skipped hoster:" + m.Groups["u"].Value);
             }
             d = d.OrderBy((p) =>
             {

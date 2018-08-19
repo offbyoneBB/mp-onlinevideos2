@@ -201,6 +201,42 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class EnterVIdeo : HosterBase, ISubtitle
+    {
+        string subUrl;
+
+        public string SubtitleText
+        {
+            get
+            {
+                if (!String.IsNullOrEmpty(subUrl))
+                {
+                    var data = GetWebData(subUrl);
+                    if (data.StartsWith(@"WEBVTT"))
+                        data = Helpers.SubtitleUtils.Webvtt2SRT(data);
+
+                    return data;
+                }
+                else
+                    return null;
+            }
+        }
+
+        public override string GetHosterUrl()
+        {
+            return "entervideo.net";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            var data = GetWebData(url);
+            subUrl = Helpers.StringUtils.GetSubString(data, @"<track kind=""captions"" src=""", @"""");
+            var vidUrl = Helpers.StringUtils.GetSubString(data, @"<source src=""", @"""");
+            var httpUrl = new HttpUrl(vidUrl);
+            httpUrl.Referer = url;
+            return httpUrl.ToString();
+        }
+    }
 
     public class FiftySix : HosterBase
     {
