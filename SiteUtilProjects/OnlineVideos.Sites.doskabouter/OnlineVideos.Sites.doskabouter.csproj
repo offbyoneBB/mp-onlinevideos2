@@ -75,6 +75,7 @@
     <Compile Include="Helpers\NPOHelper.cs" />
     <Compile Include="Hoster\Archiv.cs" />
     <Compile Include="Hoster\EcoStream.cs" />
+    <Compile Include="Hoster\FlashX.cs" />
     <Compile Include="Hoster\OvFile.cs" />
     <Compile Include="Hoster\SockShare.cs" />
     <Compile Include="Hoster\DataUp.cs" />

@@ -48,7 +48,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Hoster\180upload.cs" />
-    <Compile Include="Hoster\FlashX.cs" />
     <Compile Include="Hoster\GinBig.cs" />
     <Compile Include="Hoster\FileNuke.cs" />
     <Compile Include="Hoster\HostingBulk.cs" />
