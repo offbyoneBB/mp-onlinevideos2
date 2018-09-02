@@ -11,6 +11,7 @@ using System.Threading;
 using System.Xml;
 using System.Linq;
 using OnlineVideos.MPUrlSourceFilter;
+using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Hoster
 {
@@ -847,6 +848,34 @@ namespace OnlineVideos.Hoster
             if (m.Success)
                 return m.Groups["url"].Value;
             return String.Empty;
+        }
+    }
+
+    public class TheVideo : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "thevideo.me";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            var result = GetPlaybackOptions(url);
+            if (result != null && result.Count > 0) return result.Last().Value;
+            else return String.Empty;
+        }
+
+        public override Dictionary<string, string> GetPlaybackOptions(string url)
+        {
+            url = WebCache.Instance.GetRedirectedUrl(url);
+            url = url.Replace(@"https://vev.io/", @"https://vev.io/api/serve/video/");
+            var jsonData = GetWebData<JToken>(url, "{}");
+            Dictionary<string, string> result = new Dictionary<string, string>();
+            foreach (JProperty q in jsonData["qualities"])
+            {
+                result.Add(q.Name, q.Value.ToString());
+            }
+            return result;
         }
     }
 
