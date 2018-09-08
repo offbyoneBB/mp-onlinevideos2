@@ -1054,6 +1054,23 @@ namespace OnlineVideos.Hoster
 
     }
 
+    public class Vidoza : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "vidoza.net";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            var data = GetWebData(url);
+            var m = Regex.Match(data, @"{\ssrc:\s""(?<url>[^""]*)"",\stype:\s""video/mp4""");
+            if (m.Success)
+                return m.Groups["url"].Value;
+            return null;
+        }
+    }
+
     public class VidTo : MyHosterBase
     {
         public override string GetHosterUrl()
