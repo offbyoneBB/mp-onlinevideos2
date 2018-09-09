@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -8,7 +9,7 @@ namespace OnlineVideos.Hoster
 {
     public abstract class MyHosterBase : HosterBase
     {
-        protected string GetFromPost(string url, string page, bool skipsubmit = false, string[] extraValues = null, string[] ignoreValues = null)
+        protected string GetFromPost(string url, string page, bool skipsubmit = false, string[] extraValues = null, string[] ignoreValues = null, CookieContainer cookies = null)
         {
             List<string> values = new List<string>();
 
@@ -21,7 +22,7 @@ namespace OnlineVideos.Hoster
 
             if (!skipsubmit)
             {
-                m = Regex.Match(page, @"<input\s*type=""submit""\s*[^>]*name=""(?<name>[^""]*)""[^>]*value=""(?<value>[^""]*)""[^>]*>");
+                m = Regex.Match(page, @"<input\s*[^>]*type=""submit""\s*[^>]*name=""(?<name>[^""]*)""[^>]*value=""(?<value>[^""]*)""[^>]*>");
                 if (m.Success)
                     AddToList(m.Groups, values, ignoreValues);
             }
@@ -29,7 +30,7 @@ namespace OnlineVideos.Hoster
             if (extraValues != null)
                 values.AddRange(extraValues);
             if (values.Count > 0)
-                page = WebCache.Instance.GetWebData(url, String.Join("&", values.ToArray()), forceUTF8: true);
+                page = WebCache.Instance.GetWebData(url, String.Join("&", values.ToArray()), forceUTF8: true, cookies: cookies);
             // Sometimes gorillavid returns "utf8" instead of "utf-8" as charset which crashes getwebdatafrompost, so force it to utf8
 
             return page;
@@ -124,18 +125,18 @@ namespace OnlineVideos.Hoster
                 if (v1 < 5) arr2.Append(w[v1]);
                 else
                     if (v1 < w.Length)
-                        arr1.Append(w[v1]);
+                    arr1.Append(w[v1]);
                 v1++;
 
                 if (v2 < 5) arr2.Append(i[v2]);
                 else
                     if (v2 < i.Length)
-                        arr1.Append(i[v2]);
+                    arr1.Append(i[v2]);
                 v2++;
                 if (v3 < 5) arr2.Append(s[v3]);
                 else
                     if (v3 < s.Length)
-                        arr1.Append(s[v3]);
+                    arr1.Append(s[v3]);
                 v3++;
             }
 

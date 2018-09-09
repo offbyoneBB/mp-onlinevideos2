@@ -6,7 +6,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Net;
+using System.Net.Security;
 using System.Web;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Xml;
 using System.Linq;
@@ -867,7 +869,14 @@ namespace OnlineVideos.Hoster
 
         public override Dictionary<string, string> GetPlaybackOptions(string url)
         {
+            var oldCallback = ServicePointManager.ServerCertificateValidationCallback;
+            ServicePointManager.ServerCertificateValidationCallback = delegate (
+                Object obj, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+                {
+                    return (true);
+                };
             url = WebCache.Instance.GetRedirectedUrl(url);
+            ServicePointManager.ServerCertificateValidationCallback = oldCallback;
             url = url.Replace(@"https://vev.io/", @"https://vev.io/api/serve/video/");
             var jsonData = GetWebData<JToken>(url, "{}");
             Dictionary<string, string> result = new Dictionary<string, string>();
@@ -1209,6 +1218,30 @@ namespace OnlineVideos.Hoster
             return "";
         }
     }
+
+    public class Vshare : MyHosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "vshare.eu";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            string data = WebCache.Instance.GetWebData(url);
+            data = GetFromPost(url, data);
+
+            Match n = Regex.Match(data, @"<source\ssrc=""(?<url>[^""]*)""\stype=""video/mp4"">");
+            if (n.Success)
+                return n.Groups["url"].Value;
+            //<h1 class="alt lightbg lh42">File is no longer available!</h1>
+            Match noFile = Regex.Match(data, @"<h1\sclass=""alt\slightbg\slh42"">(?<msg>[^']+)""</h1>");
+            if (noFile.Success)
+                throw new OnlineVideosException(noFile.Groups["msg"].Value.ToUpperInvariant());
+            return null;
+        }
+    }
+
 
     public class Vureel : HosterBase
     {
