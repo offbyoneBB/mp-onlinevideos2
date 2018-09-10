@@ -129,16 +129,24 @@ namespace OnlineVideos.Sites
             {
                 if (subs.ContainsKey(prefSub) && !String.IsNullOrEmpty(subs[prefSub]))
                 {
-                    string subData = GetWebData(subs[prefSub]);
-                    if (subData.StartsWith(@"WEBVTT"))
-                        subData = Helpers.SubtitleUtils.Webvtt2SRT(subData);
+                    try
+                    {
+                        string subData = GetWebData(subs[prefSub]);
+                        if (subData.StartsWith(@"WEBVTT"))
+                            subData = Helpers.SubtitleUtils.Webvtt2SRT(subData);
 
-                    video.SubtitleText = subData;
+                        video.SubtitleText = subData;
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Warn("Unable to set subtitles:" + e.Message);
+                    }
+
                     break;
                 }
             }
 
-            if (String.IsNullOrEmpty(video.SubtitleUrl))
+            if (String.IsNullOrEmpty(video.SubtitleText))
             {
                 sh.SetSubtitleText(video, this.GetTrackingInfo);
             }

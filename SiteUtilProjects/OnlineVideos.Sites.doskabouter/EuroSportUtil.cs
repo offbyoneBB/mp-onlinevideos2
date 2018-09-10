@@ -22,7 +22,7 @@ namespace OnlineVideos.Sites
 
         [Category("OnlineVideosUserConfiguration"), Description("Email address of your eurosport account")]
         private string emailAddress = null;
-        [Category("OnlineVideosUserConfiguration"), Description("Password of your eurosport account")]
+        [Category("OnlineVideosUserConfiguration"), Description("Password of your eurosport account"), PasswordPropertyText(true)]
         private string password = null;
         [Category("OnlineVideosUserConfiguration"), Description("Language id (5 for dutch, others: ask doskabouter)")]
         private string languageId = null;

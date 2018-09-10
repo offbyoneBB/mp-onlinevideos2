@@ -13,7 +13,7 @@ namespace OnlineVideos.Sites
     {
         [Category("OnlineVideosUserConfiguration"), Description("Email address of your NicoNico account")]
         string emailAddress = null;
-        [Category("OnlineVideosUserConfiguration"), Description("Password of your NicoNico account")]
+        [Category("OnlineVideosUserConfiguration"), Description("Password of your NicoNico account"), PasswordPropertyText(true)]
         string password = null;
         [Category("OnlineVideosConfiguration"), Description("Regular Expression used to parse a html page for dynamic categories. Group names: 'url', 'title', 'thumb', 'description'. Will be used on the web pages resulting from the links from the dynamicCategoriesRegEx. Will not be used if not set.")]
         protected string dynamicSubSubCategoriesRegEx;
@@ -142,7 +142,7 @@ namespace OnlineVideos.Sites
 
         private string GetNicoWebData(string url)
         {
-            return GetWebData(url,cookies: cc, forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, headers: headers, cache: true);
+            return GetWebData(url, cookies: cc, forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, headers: headers, cache: true);
         }
 
         protected override CookieContainer GetCookie()

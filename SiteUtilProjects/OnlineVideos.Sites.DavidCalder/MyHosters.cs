@@ -189,47 +189,6 @@ namespace OnlineVideos.Sites.DavidCalder
         }
     }
 
-    public class Vshare : HosterBase
-    {
-        public override string GetHosterUrl()
-        {
-            return "vshare.eu";
-        }
-
-        public override string GetVideoUrl(string url)
-        {
-            CookieContainer cc = new CookieContainer();
-            string postData = String.Empty;
-            string Referer = "http://vshare.eu/player/6.6/jwplayer.flash.swf";
-
-            string data = WebCache.Instance.GetWebData(url, cookies: cc);
-            if (!string.IsNullOrEmpty(data))
-            {
-                Match match = Regex.Match(data, @"<input\stype=""hidden""\sname=""(?<name>[^""]+)""\svalue=""(?<value>[^""]+)"">");
-
-                while (match.Success)
-                {
-                    if (!String.IsNullOrEmpty(postData))
-                        postData += "&";
-                    postData += match.Groups["name"].Value + "=" + match.Groups["value"].Value;
-                    match = match.NextMatch();
-                }
-                postData += "&method_free=Continue";
-
-                data = WebCache.Instance.GetWebData(url, postData, cc, url);
-
-                Match n = Regex.Match(data, @"<source\ssrc=""(?<url>[^""]*)""\stype=""video/mp4"">");
-                if (n.Success)
-                    return n.Groups["url"].Value;
-                //<h1 class="alt lightbg lh42">File is no longer available!</h1>
-                Match noFile = Regex.Match(data, @"<h1\sclass=""alt\slightbg\slh42"">(?<msg>[^']+)""</h1>");
-                if (noFile.Success)
-                    throw new OnlineVideosException(noFile.Groups["msg"].Value.ToUpperInvariant());
-            }
-            return url;
-        }
-    }
-
     public class Played : HosterBase
     {
         public override string GetHosterUrl()

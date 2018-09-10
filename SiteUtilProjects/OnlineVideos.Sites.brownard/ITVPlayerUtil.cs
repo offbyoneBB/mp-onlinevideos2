@@ -40,10 +40,12 @@ namespace OnlineVideos.Sites
         protected bool retrieveTVGuide = true;
         [Category("OnlineVideosConfiguration"), Description("The layout to use to display TV Guide info, possible wildcards are <nowtitle>,<nowdescription>,<nowstart>,<nowend>,<nexttitle>,<nextstart>,<nextend>,<newline>")]
         protected string tvGuideFormatString;// = "Now: <nowtitle> - <nowstart> - <nowend><newline>Next: <nexttitle> - <nextstart> - <nextend><newline><nowdescription>";        
-        
+
         #endregion
 
         #region Consts
+
+        const string LIVE_STREAM = "live";
 
         const string SWF_URL = "http://www.itv.com/mercury/Mercury_VideoPlayer.swf";
 
@@ -112,8 +114,8 @@ namespace OnlineVideos.Sites
                     },
                     'variantAvailability': {
                         'featureset': {
-                            'min': ['hls', 'aes', 'outband-webvtt'],
-                            'max': ['hls', 'aes', 'outband-webvtt']
+                            'min': ['hls', 'aes'],
+                            'max': ['hls', 'aes']
                         },
                         'platformTag': 'dotcom'
                     }
@@ -182,12 +184,28 @@ namespace OnlineVideos.Sites
         {
             video.PlaybackOptions = new Dictionary<string, string>();
 
-            bool isLiveStream = video.VideoUrl.StartsWith("sim");
-            string url = isLiveStream ? video.VideoUrl : getProductionId(video.VideoUrl);
-            string videoUrl = populateUrlsFromXml(video, getPlaylistDocument(url, !isLiveStream), isLiveStream);
+            bool isLiveStream = video.Other as string == LIVE_STREAM;
+
+            string videoUrl = null;
+            if (!isLiveStream)
+            {
+                string id = getProductionId(video.VideoUrl);
+                videoUrl = populateUrlsFromXml(video, getPlaylistDocument(id, !isLiveStream), isLiveStream);
+            }
+
             if (string.IsNullOrEmpty(videoUrl))
                 videoUrl = GetHlsUrls(video);
             return videoUrl;
+        }
+
+        public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
+        {
+            string fileName = base.GetFileNameForDownload(video, category, url);
+            string extension = Path.GetExtension(fileName);
+            //Use mp4 if there's no extension or it looks like an HLS playist
+            if (string.IsNullOrEmpty(extension) || extension == ".m3u8")
+                fileName = Path.GetFileNameWithoutExtension(fileName) + ".mp4";
+            return fileName;
         }
 
         #endregion
@@ -355,6 +373,7 @@ namespace OnlineVideos.Sites
             foreach (Channel channel in group.Channels)
             {
                 VideoInfo video = new VideoInfo();
+                video.Other = LIVE_STREAM;
                 video.Title = channel.StreamName;
                 video.Thumb = channel.Thumb;
                 string url = channel.Url;
@@ -534,12 +553,15 @@ namespace OnlineVideos.Sites
         
         protected string GetHlsUrls(VideoInfo video)
         {
-            HtmlDocument videoDocument = GetWebData<HtmlDocument>(video.VideoUrl);
+            string videoUrl = video.Other as string == LIVE_STREAM ? "https://www.itv.com/hub/" + video.VideoUrl : video.VideoUrl;
+
+            HtmlDocument videoDocument = GetWebData<HtmlDocument>(videoUrl);
             HtmlNode videoNode = videoDocument.DocumentNode.SelectSingleNode("//div[@id='video']");
             if (videoNode == null)
                 return null;
 
-            string playlistUrl = videoNode.GetAttributeValue("data-video-playlist", null) ??
+            string playlistUrl = videoNode.GetAttributeValue("data-html5-playlist", null) ??
+                videoNode.GetAttributeValue("data-video-playlist", null) ??
                 videoNode.GetAttributeValue("data-video-id", null);
             if (playlistUrl == null)
                 return null;
@@ -567,9 +589,11 @@ namespace OnlineVideos.Sites
             CookieContainer cookieContainer = new CookieContainer();
             string playlistStr = GetHlsPlaylist(url, cookieContainer);
             HlsPlaylistParser playlist = new HlsPlaylistParser(playlistStr, playlistUrl);
-            var streamInfos = playlist.StreamInfos.Where(s => s.Width > 0 && s.Height > 0).ToList();
-            if (streamInfos.Count == 0)
+            if (playlist.StreamInfos.Count == 0)
                 return null;
+            IEnumerable<HlsStreamInfo> streamInfos = playlist.StreamInfos;
+            if (streamInfos.Any(s => s.Width > 0 && s.Height > 0))
+                streamInfos = streamInfos.Where(s => s.Width > 0 && s.Height > 0);
 
             CookieCollection cookies = cookieContainer.GetCookies(url);
             if (AutoSelectStream)
@@ -596,7 +620,7 @@ namespace OnlineVideos.Sites
         {
             try
             {
-                string userAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36";
+                string userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 9_3_3 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13G34 Safari/601.1";
                 NameValueCollection headers = new NameValueCollection();
                 headers["Content-Type"] = "application/json";
                 headers["Accept"] = "application/vnd.itv.vod.playlist.v2+json";

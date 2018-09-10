@@ -111,7 +111,7 @@ namespace OnlineVideos.JavaScript
                 signatureMethodName = @"\" + signatureMethodName;
             }
 
-            string pattern = @"\s?" + signatureMethodName + @"=function\((?<parameter>[^)]+)\)\s?\{\s?(?<body>[^}]+)\s?\}";
+            string pattern = @"\s?" + signatureMethodName + @"\s*=\s*function\((?<parameter>[^)]+)\)\s?\{\s?(?<body>[^}]+)\s?\}";
             Match match = Regex.Match(jsContent, pattern);
 
             if (match.Success)
@@ -126,7 +126,7 @@ namespace OnlineVideos.JavaScript
 
         string FindSignatureFunctionName(string jsContent)
         {
-            string pattern = @"signature.,\s*(?<name>[$a-zA-Z]+)\([^)]*\)";
+            string pattern = @"yt\.akamaized\.net/\)\s*\|\|\s*.*?\s*c\s*&&\s*d\.set\([^,]+\s*,\s*(?<name>[a-zA-Z0-9$]+)\(";
             Match match = Regex.Match(jsContent, pattern);
 
             if (match.Success)

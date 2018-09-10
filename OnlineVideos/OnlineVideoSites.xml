@@ -365,7 +365,7 @@
 		    <Category xsi:type="RssLink" name="Travel">http://travel.cnn.com/rss.xml</Category>
 		    <Category xsi:type="RssLink" name="Video">http://rss.cnn.com/rss/cnn_freevideo.rss</Category>
       </Categories>
-	  </Site>
+	</Site>
     <Site name="BBC iPlayer" util="BBCiPlayer" agecheck="false" enabled="true" lang="en">
       <Description>The BBC iPlayer allows to catch up on the last 7 days of BBC TV (only available in the UK).</Description>
       <Configuration>
@@ -374,23 +374,23 @@
         <item key="tvGuideFormatString"><![CDATA[Now: <nowtitle> - <nowstart> - <nowend><newline>Next: <nexttitle> - <nextstart> - <nextend><newline><nowdescription>]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" name="Most Popular">https://www.bbc.co.uk/iplayer/group/most-popular</Category>
+        <Category xsi:type="RssLink" name="Most Popular">https://www.bbc.co.uk/iplayer/most-popular</Category>
         <Category xsi:type="RssLink" name="A - Z">https://www.bbc.co.uk/iplayer/a-z/</Category>
-        <Category xsi:type="RssLink" name="Arts" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01n4zyb.jpg">https://www.bbc.co.uk/iplayer/categories/arts/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="CBBC" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p02984mp.jpg">https://www.bbc.co.uk/iplayer/categories/cbbc/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="CBeebies" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p027dlmb.jpg">https://www.bbc.co.uk/iplayer/categories/cbeebies/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Comedy" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p020dl2m.jpg">https://www.bbc.co.uk/iplayer/categories/comedy/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Documentaries" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01l8l4c.jpg">https://www.bbc.co.uk/iplayer/categories/documentaries/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Drama &amp; Soaps" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0295f60.jpg">https://www.bbc.co.uk/iplayer/categories/drama-and-soaps/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Entertainment" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01tlxfz.jpg">https://www.bbc.co.uk/iplayer/categories/entertainment/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Films" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01h6zpj.jpg">https://www.bbc.co.uk/iplayer/categories/films/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Food" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p023w4qg.jpg">https://www.bbc.co.uk/iplayer/categories/food/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="History" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01jykx1.jpg">https://www.bbc.co.uk/iplayer/categories/history/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Lifestyle" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01zxkgz.jpg">https://www.bbc.co.uk/iplayer/categories/lifestyle/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Music" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01lccbf.jpg">https://www.bbc.co.uk/iplayer/categories/music/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="News" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p029fqtd.jpg">https://www.bbc.co.uk/iplayer/categories/news/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Science &amp; Nature" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p027s8wj.jpg">https://www.bbc.co.uk/iplayer/categories/science-and-nature/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Sport" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p024q1kt.jpg">https://www.bbc.co.uk/iplayer/categories/sport/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Arts" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01n4zyb.jpg">https://www.bbc.co.uk/iplayer/categories/arts/a-z</Category>
+        <Category xsi:type="RssLink" name="CBBC" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p02984mp.jpg">https://www.bbc.co.uk/iplayer/categories/cbbc/a-z</Category>
+        <Category xsi:type="RssLink" name="CBeebies" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p027dlmb.jpg">https://www.bbc.co.uk/iplayer/categories/cbeebies/a-z</Category>
+        <Category xsi:type="RssLink" name="Comedy" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p020dl2m.jpg">https://www.bbc.co.uk/iplayer/categories/comedy/a-z</Category>
+        <Category xsi:type="RssLink" name="Documentaries" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01l8l4c.jpg">https://www.bbc.co.uk/iplayer/categories/documentaries/a-z</Category>
+        <Category xsi:type="RssLink" name="Drama &amp; Soaps" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0295f60.jpg">https://www.bbc.co.uk/iplayer/categories/drama-and-soaps/a-z</Category>
+        <Category xsi:type="RssLink" name="Entertainment" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01tlxfz.jpg">https://www.bbc.co.uk/iplayer/categories/entertainment/a-z</Category>
+        <Category xsi:type="RssLink" name="Films" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01h6zpj.jpg">https://www.bbc.co.uk/iplayer/categories/films/a-z</Category>
+        <Category xsi:type="RssLink" name="Food" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p023w4qg.jpg">https://www.bbc.co.uk/iplayer/categories/food/a-z</Category>
+        <Category xsi:type="RssLink" name="History" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01jykx1.jpg">https://www.bbc.co.uk/iplayer/categories/history/a-z</Category>
+        <Category xsi:type="RssLink" name="Lifestyle" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01zxkgz.jpg">https://www.bbc.co.uk/iplayer/categories/lifestyle/a-z</Category>
+        <Category xsi:type="RssLink" name="Music" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01lccbf.jpg">https://www.bbc.co.uk/iplayer/categories/music/a-z</Category>
+        <Category xsi:type="RssLink" name="News" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p029fqtd.jpg">https://www.bbc.co.uk/iplayer/categories/news/a-z</Category>
+        <Category xsi:type="RssLink" name="Science &amp; Nature" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p027s8wj.jpg">https://www.bbc.co.uk/iplayer/categories/science-and-nature/a-z</Category>
+        <Category xsi:type="RssLink" name="Sport" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p024q1kt.jpg">https://www.bbc.co.uk/iplayer/categories/sport/a-z</Category>
         <Category xsi:type="RssLink" name="BBC One" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2002.png">https://www.bbc.co.uk/bbcone/a-z</Category>
         <Category xsi:type="RssLink" name="BBC Two" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2006.png">https://www.bbc.co.uk/bbctwo/a-z</Category>
         <Category xsi:type="RssLink" name="BBC Three" thumb="https://upload.wikimedia.org/wikipedia/en/thumb/d/dd/BBC_Three_logo.svg/100px-BBC_Three_logo.svg.png">https://www.bbc.co.uk/tv/bbcthree/a-z</Category>
@@ -398,19 +398,19 @@
         <Category xsi:type="RssLink" name="BBC News" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2011.png">https://www.bbc.co.uk/tv/bbcnews/a-z</Category>
         <Category xsi:type="RssLink" name="BBC Parliament" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2072.png">https://www.bbc.co.uk/tv/bbcparliament/a-z</Category>
         <Category xsi:type="RssLink" name="BBC ALBA" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2012.png">https://www.bbc.co.uk/tv/bbcalba/a-z</Category>
-        <Category xsi:type="RssLink" name="Audio Described" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0276wg9.jpg">https://www.bbc.co.uk/iplayer/categories/audio-described/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Signed" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01x0kbv.jpg">https://www.bbc.co.uk/iplayer/categories/signed/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Northern Ireland" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p027lsl4.jpg">https://www.bbc.co.uk/iplayer/categories/northern-ireland/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Scotland" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p025h74g.jpg">https://www.bbc.co.uk/iplayer/categories/scotland/all?sort=atoz</Category>
-        <Category xsi:type="RssLink" name="Wales" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0295zvd.jpg">https://www.bbc.co.uk/iplayer/categories/wales/all?sort=atoz</Category>
+        <Category xsi:type="RssLink" name="Audio Described" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0276wg9.jpg">https://www.bbc.co.uk/iplayer/categories/audio-described/a-z</Category>
+        <Category xsi:type="RssLink" name="Signed" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01x0kbv.jpg">https://www.bbc.co.uk/iplayer/categories/signed/a-z</Category>
+        <Category xsi:type="RssLink" name="Northern Ireland" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p027lsl4.jpg">https://www.bbc.co.uk/iplayer/categories/northern-ireland/a-z</Category>
+        <Category xsi:type="RssLink" name="Scotland" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p025h74g.jpg">https://www.bbc.co.uk/iplayer/categories/scotland/a-z</Category>
+        <Category xsi:type="RssLink" name="Wales" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0295zvd.jpg">https://www.bbc.co.uk/iplayer/categories/wales/a-z</Category>
         <Category xsi:type="Group" name="Live TV">
           <Channels>
-            <Channel name="BBC One" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2002.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/ak/bbc_one_london.m3u8?guideid=94</Channel>
+            <Channel name="BBC One" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2002.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/abr_tv/llnw/bbc_one_london.m3u8?guideid=94</Channel>
             <Channel name="BBC Two" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2006.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/llnw/bbc_two_england.m3u8?guideid=105</Channel>
             <Channel name="BBC Four" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2018.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/llnw/bbc_four.m3u8?guideid=47</Channel>
             <Channel name="CBBC" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2020.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/llnw/cbbc.m3u8?guideid=482</Channel>
             <Channel name="CBeebies" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2019.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/llnw/cbeebies.m3u8?guideid=483</Channel>
-            <Channel name="BBC News" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2011.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/ak/bbc_news24.m3u8?guideid=48</Channel>
+            <Channel name="BBC News" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2011.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/abr_hdtv/llnw/bbc_news24.m3u8?guideid=48</Channel>
             <Channel name="BBC Parliament" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2072.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/llnw/bbc_parliament.m3u8?guideid=49</Channel>
             <Channel name="BBC ALBA" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2012.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_mobile_wifi/llnw/bbc_alba.m3u8?guideid=2098</Channel>
           </Channels>
@@ -1484,12 +1484,12 @@
         <Category xsi:type="RssLink" thumb="https://hubimages.itv.com/episode/1_7828_0110?w=304&amp;h=174&amp;q=80&amp;blur=0&amp;bg=false&amp;image_format=jpg" name="Sport">https://www.itv.com/hub/categories/sport</Category>
         <Category xsi:type="Group" thumb="http://s1.postimage.org/dkj7fvx5r/ITV1_logo.png" desc="Live TV" name="Live">
           <Channels>
-            <Channel name="ITV1" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6000.png">sim1?guideid=26</Channel>
-            <Channel name="ITV2" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6240.png">sim2?guideid=185</Channel>
-            <Channel name="ITVBe" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6508.png">sim8?guideid=11708</Channel>
-            <Channel name="ITV3" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6260.png">sim3?guideid=1859</Channel>
-            <Channel name="ITV4" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6272.png">sim4?guideid=1961</Channel>
-            <Channel name="CITV" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6273.png">sim7?guideid=1981</Channel>
+            <Channel name="ITV1" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6000.png">itv?guideid=26</Channel>
+            <Channel name="ITV2" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6240.png">itv2?guideid=185</Channel>
+            <Channel name="ITVBe" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6508.png">itvbe?guideid=11708</Channel>
+            <Channel name="ITV3" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6260.png">itv3?guideid=1859</Channel>
+            <Channel name="ITV4" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6272.png">itv4?guideid=1961</Channel>
+            <Channel name="CITV" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6273.png">citv?guideid=1981</Channel>
           </Channels>
         </Category>
       </Categories>

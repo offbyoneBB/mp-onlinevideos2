@@ -6,11 +6,14 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Net;
+using System.Net.Security;
 using System.Web;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Xml;
 using System.Linq;
 using OnlineVideos.MPUrlSourceFilter;
+using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Hoster
 {
@@ -201,6 +204,42 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class EnterVIdeo : HosterBase, ISubtitle
+    {
+        string subUrl;
+
+        public string SubtitleText
+        {
+            get
+            {
+                if (!String.IsNullOrEmpty(subUrl))
+                {
+                    var data = GetWebData(subUrl);
+                    if (data.StartsWith(@"WEBVTT"))
+                        data = Helpers.SubtitleUtils.Webvtt2SRT(data);
+
+                    return data;
+                }
+                else
+                    return null;
+            }
+        }
+
+        public override string GetHosterUrl()
+        {
+            return "entervideo.net";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            var data = GetWebData(url);
+            subUrl = Helpers.StringUtils.GetSubString(data, @"<track kind=""captions"" src=""", @"""");
+            var vidUrl = Helpers.StringUtils.GetSubString(data, @"<source src=""", @"""");
+            var httpUrl = new HttpUrl(vidUrl);
+            httpUrl.Referer = url;
+            return httpUrl.ToString();
+        }
+    }
 
     public class FiftySix : HosterBase
     {
@@ -814,6 +853,41 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class TheVideo : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "thevideo.me";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            var result = GetPlaybackOptions(url);
+            if (result != null && result.Count > 0) return result.Last().Value;
+            else return String.Empty;
+        }
+
+        public override Dictionary<string, string> GetPlaybackOptions(string url)
+        {
+            var oldCallback = ServicePointManager.ServerCertificateValidationCallback;
+            ServicePointManager.ServerCertificateValidationCallback = delegate (
+                Object obj, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+                {
+                    return (true);
+                };
+            url = WebCache.Instance.GetRedirectedUrl(url);
+            ServicePointManager.ServerCertificateValidationCallback = oldCallback;
+            url = url.Replace(@"https://vev.io/", @"https://vev.io/api/serve/video/");
+            var jsonData = GetWebData<JToken>(url, "{}");
+            Dictionary<string, string> result = new Dictionary<string, string>();
+            foreach (JProperty q in jsonData["qualities"])
+            {
+                result.Add(q.Name, q.Value.ToString());
+            }
+            return result;
+        }
+    }
+
     public class Tudou : HosterBase
     {
         public override string GetHosterUrl()
@@ -989,6 +1063,23 @@ namespace OnlineVideos.Hoster
 
     }
 
+    public class Vidoza : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "vidoza.net";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            var data = GetWebData(url);
+            var m = Regex.Match(data, @"{\ssrc:\s""(?<url>[^""]*)"",\stype:\s""video/mp4""");
+            if (m.Success)
+                return m.Groups["url"].Value;
+            return null;
+        }
+    }
+
     public class VidTo : MyHosterBase
     {
         public override string GetHosterUrl()
@@ -1065,7 +1156,8 @@ namespace OnlineVideos.Hoster
             else
                 subUrl = null;
 
-            var data = GetWebData(url);
+            url = url.Replace(@"http://", @"https://");
+            var data = GetWebData(url, referer: "http://google.com");
             m = Regex.Match(data, @"sources:\s*\[{file:\s*['""](?<url>[^'""]*)['""]\s*,\s*label");
             if (m.Success)
             {
@@ -1126,6 +1218,30 @@ namespace OnlineVideos.Hoster
             return "";
         }
     }
+
+    public class Vshare : MyHosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "vshare.eu";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            string data = WebCache.Instance.GetWebData(url);
+            data = GetFromPost(url, data);
+
+            Match n = Regex.Match(data, @"<source\ssrc=""(?<url>[^""]*)""\stype=""video/mp4"">");
+            if (n.Success)
+                return n.Groups["url"].Value;
+            //<h1 class="alt lightbg lh42">File is no longer available!</h1>
+            Match noFile = Regex.Match(data, @"<h1\sclass=""alt\slightbg\slh42"">(?<msg>[^']+)""</h1>");
+            if (noFile.Success)
+                throw new OnlineVideosException(noFile.Groups["msg"].Value.ToUpperInvariant());
+            return null;
+        }
+    }
+
 
     public class Vureel : HosterBase
     {
