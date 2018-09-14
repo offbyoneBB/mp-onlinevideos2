@@ -114,8 +114,8 @@ namespace OnlineVideos.Sites
                     },
                     'variantAvailability': {
                         'featureset': {
-                            'min': ['hls', 'aes'],
-                            'max': ['hls', 'aes']
+                            'min': ['hls', 'aes', 'outband-webvtt'],
+                            'max': ['hls', 'aes', 'outband-webvtt']
                         },
                         'platformTag': 'dotcom'
                     }
@@ -183,19 +183,23 @@ namespace OnlineVideos.Sites
         public override string GetVideoUrl(VideoInfo video)
         {
             video.PlaybackOptions = new Dictionary<string, string>();
+            return GetHlsUrls(video);
 
-            bool isLiveStream = video.Other as string == LIVE_STREAM;
+            // The old rtmp streams seem to no longer work
 
-            string videoUrl = null;
-            if (!isLiveStream)
-            {
-                string id = getProductionId(video.VideoUrl);
-                videoUrl = populateUrlsFromXml(video, getPlaylistDocument(id, !isLiveStream), isLiveStream);
-            }
+            //bool isLiveStream = video.Other as string == LIVE_STREAM;
 
-            if (string.IsNullOrEmpty(videoUrl))
-                videoUrl = GetHlsUrls(video);
-            return videoUrl;
+            //string videoUrl = null;
+
+            //if (!isLiveStream)
+            //{
+            //    string id = getProductionId(video.VideoUrl);
+            //    videoUrl = populateUrlsFromXml(video, getPlaylistDocument(id, !isLiveStream), isLiveStream);
+            //}
+
+            //if (string.IsNullOrEmpty(videoUrl))
+            //    videoUrl = GetHlsUrls(video);
+            //return videoUrl;
         }
 
         public override string GetFileNameForDownload(VideoInfo video, Category category, string url)
@@ -452,7 +456,7 @@ namespace OnlineVideos.Sites
                 if (node != null && Helpers.UriUtils.IsValidUri(node.InnerText))
                     video.SubtitleText = SubtitleReader.TimedText2SRT(GetWebData(node.InnerText));
             }
-            
+
             if (options.Count == 0)
                 return null;
 
@@ -572,6 +576,14 @@ namespace OnlineVideos.Sites
                 return null;
 
             var videoObject = json["Playlist"]["Video"];
+
+            if (RetrieveSubtitles)
+            {
+                JArray subtitles = videoObject["Subtitles"] as JArray;
+                if (subtitles != null && subtitles.Count > 0)
+                    video.SubtitleText = getVttSubtitleText((string)subtitles[0]["Href"]);
+            }
+
             var baseUrl = (string)videoObject["Base"];
             foreach (var mediaFile in videoObject["MediaFiles"])
             {
@@ -646,6 +658,29 @@ namespace OnlineVideos.Sites
             catch (Exception ex)
             {
                 Log.Warn("ITVPlayer: Failed to get hls playlist - {0}\r\n{1}", ex.Message, ex.StackTrace);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Tries to load a vtt subtitle from the given url
+        /// and convert it to an srt formatted string.
+        /// </summary>
+        /// <param name="vttSubtitleUrl">The url of a vtt subtitle file.</param>
+        /// <returns>An srt formatted string.</returns>
+        string getVttSubtitleText(string vttSubtitleUrl)
+        {
+            try
+            {
+                if (!Helpers.UriUtils.IsValidUri(vttSubtitleUrl))
+                    return null;
+                string vttText = GetWebData(vttSubtitleUrl);
+                return SubtitleReader.VTT2SRT(vttText);
+            }
+            catch (Exception ex)
+            {
+                Log.Error("ITVPlayer: Error reading subtitles from '{0}'", vttSubtitleUrl);
+                Log.Error(ex);
                 return null;
             }
         }
