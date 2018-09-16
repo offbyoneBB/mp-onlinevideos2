@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using MediaPortal.Common;
 using MediaPortal.Common.Threading;
 using MediaPortal.UI.Presentation.Screens;
@@ -24,42 +25,74 @@ namespace OnlineVideos.MediaPortal2
         }
 
         public bool IsExecuting { get { return _currentBackgroundTask != null; } }
-        Work _currentBackgroundTask = null;
+        private volatile IWork _currentBackgroundTask = null;
 
         internal bool Start<T>(Func<T> work, Action<bool, T> completed, string description = null)
         {
             if (IsExecuting) return false;
 
+            _currentBackgroundTask = new BackgroundWork<T>(work, (success, result) => { _currentBackgroundTask = null; completed(success, result); }, description);
+            return ServiceRegistration.Get<IThreadPool>().Add(_currentBackgroundTask);
+        }
+    }
+
+    internal class BackgroundWork<T> : IWork
+    {
+        private readonly Func<T> work;
+        private readonly Action<bool, T> completed;
+
+        public WorkState State { get; set; }
+        public string Description { get; set; }
+        public Exception Exception { get; set; }
+        public ThreadPriority ThreadPriority { get; set; }
+
+        internal BackgroundWork(Func<T> work, Action<bool, T> completed, string description = null)
+        {
+            this.work = work;
+            this.completed = completed;
+            this.Description = description;
+            this.State = WorkState.INIT;
+        }
+
+        void IWork.Process()
+        {
+            if (State != WorkState.INQUEUE)
+                return;
+
             ServiceRegistration.Get<ISuperLayerManager>().ShowBusyScreen();
-            _currentBackgroundTask = (Work)ServiceRegistration.Get<IThreadPool>().Add(() =>
+
+            State = WorkState.INPROGRESS;
+
+            T result = default(T);
+            bool success = false;
+            try
             {
-                try
-                {
-                    _currentBackgroundTask.EventArgs.SetResult<T>(work());
-                }
-                catch (Exception ex)
-                {
-                    _currentBackgroundTask.Exception = ex;
-                }
-            },
-            (args) =>
+                result = work();
+                success = true;
+                State = WorkState.FINISHED;
+            }
+            catch (Exception ex)
+            {
+                State = WorkState.ERROR;
+                Exception = ex;
+            }
+            finally
             {
                 ServiceRegistration.Get<ISuperLayerManager>().HideBusyScreen();
-                bool success = _currentBackgroundTask.Exception == null && _currentBackgroundTask.State == WorkState.FINISHED;
-                if (!success)
-                {
-                    // show dialog or notification message when no success
-                    Log.Warn(_currentBackgroundTask.Exception.ToString());
-                    var ovError = _currentBackgroundTask.Exception as OnlineVideosException;
-                    bool showDescription = ovError != null ? ovError.ShowCurrentTaskDescription : true;
-                    string info = string.Format("{0}\n{1}", showDescription ? description : "", _currentBackgroundTask.Exception.Message);
-                    ServiceRegistration.Get<IDialogManager>().ShowDialog("[OnlineVideos.Error]", info, DialogType.OkDialog, false, DialogButtonType.Ok);
-                }
-                _currentBackgroundTask = null;
-                completed.Invoke(success, args.GetResult<T>());
-            });
+            }
 
-            return true;
+            if (State == WorkState.ERROR)
+                ShowErrorDialog();
+
+            completed(success, result);
+        }
+
+        private void ShowErrorDialog()
+        {
+            Log.Warn(Exception?.ToString());
+            bool showDescription = (Exception as OnlineVideosException)?.ShowCurrentTaskDescription ?? true;
+            string info = string.Format("{0}\n{1}", showDescription ? Description : "", Exception.Message);
+            ServiceRegistration.Get<IDialogManager>().ShowDialog("[OnlineVideos.Error]", info, DialogType.OkDialog, false, DialogButtonType.Ok);
         }
     }
 }
