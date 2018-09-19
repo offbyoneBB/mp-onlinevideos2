@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
-using System.Runtime.InteropServices;
 using OnlineVideos.Sites.JSurf.Factories;
 using OnlineVideos.Sites.JSurf.Interfaces;
 using OnlineVideos.Sites.JSurf.Entities;
@@ -17,10 +16,6 @@ namespace OnlineVideos.Sites.JSurf
     /// </summary>
     public class AmazonPrimeSiteUtil : SiteUtilBase, IBrowserVersionEmulation, IInputStreamSite
     {
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool SetCursorPos(int x, int y);
-
         IInformationConnector _connector;
 
         /// <summary>
@@ -117,8 +112,6 @@ namespace OnlineVideos.Sites.JSurf
             base.Initialize(siteSettings);
             Resources.ResourceManager = new SingleAssemblyComponentResourceManager(typeof(Resources));
             _connector = ConnectorFactory.GetInformationConnector(webAutomationType, this);
-            // Move the curor to a corner, otherwise it is centered at screen and appears from time to time :(
-            SetCursorPos(5000, 5000);
         }
 
         /// <summary>

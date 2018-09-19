@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using OnlineVideos.Sites.Entities;
 using System.Windows.Forms;
 using OnlineVideos.Helpers;
@@ -11,6 +12,10 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
     /// </summary>
     public class AmazonPrimeConnector : BrowserUtilConnectorBase
     {
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool SetCursorPos(int x, int y);
+
         /// <summary> 
         /// The states this connector can be in - useful when waiting for browser responses
         /// </summary>
@@ -59,6 +64,8 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         public override EventResult PlayVideo(string videoToPlay)
         {
             ShowLoading();
+            // Move the curor to a corner, otherwise it is centered at screen and appears from time to time :(
+            SetCursorPos(5000, 5000);
             Browser.ScrollBarsEnabled = false;
             _currentState = State.PlayPage;
             ProcessComplete.Finished = false;
