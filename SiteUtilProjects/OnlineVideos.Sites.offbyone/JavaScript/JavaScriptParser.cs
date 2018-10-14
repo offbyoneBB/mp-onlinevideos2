@@ -126,7 +126,7 @@ namespace OnlineVideos.JavaScript
 
         string FindSignatureFunctionName(string jsContent)
         {
-            string pattern = @"yt\.akamaized\.net/\)\s*\|\|\s*.*?\s*c\s*&&\s*d\.set\([^,]+\s*,\s*(?<name>[a-zA-Z0-9$]+)\(";
+            string pattern = @"yt\.akamaized\.net/\)\s*\|\|\s*.*?\s*c\s*&&\s*.*?d\.set\([^,]+\s*,\s*(?<name>[a-zA-Z0-9$]+)\(";
             Match match = Regex.Match(jsContent, pattern);
 
             if (match.Success)
