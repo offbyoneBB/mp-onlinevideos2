@@ -453,13 +453,21 @@ namespace OnlineVideos.Sites
             return base.GetTrackingInfo(video);
         }
 
+        public override Dictionary<string, string> GetSearchableCategories()
+        {
+            Dictionary<string, string> result = Settings.Categories.Select(a => a.Name).ToDictionary<string, string>(a => a);
+            return result;
+        }
         public override bool CanSearch { get { return true; } }
 
         public override List<SearchResultItem> Search(string query, string category = null)
         {
             string url = baseUrl + "/search?type=movies&q=" + HttpUtility.UrlEncode(query);
             List<SearchResultItem> result = new List<SearchResultItem>();
-            GetVideos(url, false).ForEach(v => result.Add(v));
+            if (category != null && category == Settings.Categories[1].Name)
+                DiscoverSubCategoriesFromListing(url).ForEach(v => result.Add(v));
+            else
+                GetVideos(url, false).ForEach(v => result.Add(v));
             return result;
         }
 
