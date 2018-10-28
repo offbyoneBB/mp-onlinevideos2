@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Xml;
+using System.Web;
 using Newtonsoft.Json.Linq;
 using HtmlAgilityPack;
 using OnlineVideos.Helpers;
@@ -15,6 +15,7 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             int res = base.DiscoverDynamicCategories();
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072 | SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
             foreach (RssLink cat in Settings.Categories)
                 cat.HasSubCategories = true;
             return res;
@@ -44,17 +45,38 @@ namespace OnlineVideos.Sites
         public override int DiscoverSubCategories(Category parentCategory)
         {
             var doc = getDocument(parentCategory);
+
             if (parentCategory.Name == "Kaikki ohjelmat")
                 return AddKaikki(doc, parentCategory);
-            if (parentCategory.Name == "Ohjelmat")
+
+            if (((RssLink)parentCategory).ParentCategory == null)
                 return AddOhjelmat(doc, parentCategory);
-            if (parentCategory.Other is string)
-                return DiscoverSubsNew(parentCategory, doc);
-            if (parentCategory.Name == "Urheilu" || parentCategory.Name == "Uutiset" || parentCategory.Name == "Lapset")
-                return DiscoverSubs(parentCategory, doc);
-            if (RuType.LapsetSeries.Equals(parentCategory.Other))
-                return DiscoverSubsNew(parentCategory, doc);
-            return 0;
+
+            if (parentCategory.Other is int)
+            {
+                if (parentCategory.Name == "Uutiset")
+                    return Series(doc, parentCategory, "video");
+                else
+                    return Series(doc, parentCategory, "series");
+            }
+            else
+            {
+                if (!((RssLink)parentCategory).Url.Contains("prod-component-api"))
+                {
+                    var m = Regex.Match(doc.DocumentNode.OuterHtml, @"series-(?<id>\d+)");
+                    if (m.Success)
+                    {
+                        return OneSeries(parentCategory, @"https://prod-component-api.nm-services.nelonenmedia.fi/api/series/" + m.Groups["id"].Value + "?userroles=anonymous&clients=ruutufi%2Cruutufi-react");
+                    }
+                }
+                return OneSeries(parentCategory, ((RssLink)parentCategory).Url);
+            }
+
+        }
+
+        public override int DiscoverNextPageCategories(NextPageCategory category)
+        {
+            return Series(getDocument(category), category, "series");
         }
 
         public override List<VideoInfo> GetVideos(Category category)
@@ -62,294 +84,141 @@ namespace OnlineVideos.Sites
             if (category.Other is List<VideoInfo>)
                 return (List<VideoInfo>)category.Other;
             var json = GetWebData<JObject>(((RssLink)category).Url);
-            var htmlText = new StringBuilder();
-            foreach (var obj in json["items"])
-                htmlText.Append(obj.ToString());
-            return myParse2(getDocument(htmlText.ToString()).DocumentNode);
-        }
+            List<VideoInfo> res = new List<VideoInfo>();
 
-
-        private string getDescription(HtmlNode node)
-        {
-            var node2 = node.SelectSingleNode(".//p[@class='expanding-card__description']");//kausi
-            if (node2 == null)
-                node2 = node.SelectSingleNode(".//div[@class='list-item-main1']");//klipit
-            if (node2 == null)
-                node2 = node.SelectSingleNode(".//section[@class='ruutu-card__supporting-text']");//ohjelmat
-            if (node2 != null)
-                return node2.InnerText.Trim();
-            return String.Empty;
-        }
-
-        private List<VideoInfo> myParse2(HtmlNode node)
-        {
-            List<VideoInfo> result = new List<VideoInfo>();
-            var res = node.SelectNodes(".//div[@class='component-container__item']/div");
-            if (res != null)//normal
+            foreach (var item in json["items"])
             {
-                foreach (var vid2 in res)
+                if (item.SelectToken("link.href") != null)
                 {
-                    HtmlNode vid;
-                    if (vid2.ParentNode.Name == "a") //klipit
-                        vid = vid2.ParentNode.ParentNode;
-                    else
-                        vid = vid2;
-                    var node2 = vid.SelectSingleNode(".//a[@href]");
-                    if (node2 != null && vid.SelectSingleNode(".//h2") != null)
+                    VideoInfo vid = new VideoInfo()
                     {
-                        VideoInfo video = CreateVideoInfo();
+                        Title = item["title"].Value<string>(),
+                        Description = item["description"].Value<string>(),
+                        Thumb = item["media"]["images"]["640x360"].Value<string>(),
+                        VideoUrl = @"https://www.ruutu.fi" + item["link"]["href"].Value<string>()
+                    };
+                    res.Add(vid);
+                }
+            }
+            return res;
+        }
 
-                        video.Title = vid.SelectSingleNode(".//h2").InnerText;
-                        video.Description = getDescription(vid);
-                        video.VideoUrl = FormatDecodeAbsolutifyUrl(baseUrl, node2.Attributes["href"].Value, "", UrlDecoding.None);
-                        video.Thumb = getImageUrl(vid);
-                        var airDateNode = vid.SelectSingleNode(@".//div[@class='list-item-prefix']");
-                        if (airDateNode == null)
-                            airDateNode = vid.SelectSingleNode(@".//span[@class='ruutu-card__date']");
-                        if (airDateNode != null)
-                            video.Airdate = Helpers.StringUtils.PlainTextFromHtml(airDateNode.InnerText);
+        private int OneSeries(Category parentcat, string url)
+        {
+            parentcat.SubCategories = new List<Category>();
 
-                        var kausiNode = vid.SelectSingleNode(@".//div[contains(@class,'field-name-field-season')]");
-                        if (kausiNode != null)
+            var json = GetWebData<JObject>(url);
+            foreach (var component in json["components"])
+            {
+                if (component["type"].Value<string>() == "TabContainer")
+                {
+                    foreach (var item in component["content"]["items"])
+                    {
+                        var query = item["content"]["items"][0]["content"]["query"];
+                        RssLink cat = new RssLink()
                         {
-                            string kausi = kausiNode.ChildNodes.Last().InnerText;
-                            if (!String.IsNullOrEmpty(kausi))
-                                video.Title += " kausi " + kausi;
-                        }
-
-                        var jaksoNode = vid.SelectSingleNode(@".//div[contains(@class,'field-name-field-episode')]");
-                        if (jaksoNode != null)
-                        {
-                            string jakso = jaksoNode.ChildNodes.Last().InnerText;
-                            if (!String.IsNullOrEmpty(jakso))
-                                video.Title += " jakso " + jakso;
-                        }
-                        video.Title = cleanup(video.Title);
-                        result.Add(video);
+                            Name = item["label"]["text"].Value<String>(),
+                            Url = query["url"].Value<String>() + "?offset=0&limit=20&current_season_id=" + query["params"]["current_season_id"] + "&current_series_id=" + query["params"]["current_series_id"],
+                            ParentCategory = parentcat
+                        };
+                        parentcat.SubCategories.Add(cat);
                     }
                 }
             }
-            return result;
+            parentcat.SubCategoriesDiscovered = true;
+            return parentcat.SubCategories.Count;
         }
 
-        private List<VideoInfo> myParse3(HtmlNodeCollection nodes)
+
+        private int Series(HtmlDocument doc, Category parentcat, string kind)
         {
-            List<VideoInfo> result = new List<VideoInfo>();
-            var res = nodes;
-            if (res != null)//normal
+            int offset = (int)parentcat.Other;
+
+            var json = GetWebData<JObject>(((RssLink)parentcat).Url + offset.ToString());
+            parentcat.SubCategories = new List<Category>();
+            foreach (var item in json["items"])
             {
-                foreach (var vid in res)
+                RssLink cat = new RssLink()
                 {
-                    var node2 = vid.SelectSingleNode(".//a[@href]");
-                    if (node2 != null)
-                    {
-                        VideoInfo video = CreateVideoInfo();
+                    Name = item["title"].Value<string>(),
+                    Description = item["description"].Value<string>(),
+                    Thumb = item["media"]["images"]["640x360"].Value<string>(),
+                    Url = @"https://prod-component-api.nm-services.nelonenmedia.fi/api/" + kind + "/" + item["link"]["target"]["value"].Value<string>() + "?userroles=anonymous&clients=ruutufi%2Cruutufi-react",
+                    HasSubCategories = true,
+                    ParentCategory = parentcat
 
-                        if (vid.SelectSingleNode(@".//span[@class='mdc-list-item__text__primary']") != null)
-                            video.Title = vid.SelectSingleNode(@".//span[@class='mdc-list-item__text__primary']").InnerText;
-                        video.Description = getDescription(vid);
-                        video.VideoUrl = FormatDecodeAbsolutifyUrl(baseUrl, node2.Attributes["href"].Value, "", UrlDecoding.None);
-                        video.Thumb = getImageUrl(vid);
-                        var airDateNode = vid.SelectSingleNode(@".//span[@class='prefix-piece']");
-                        if (airDateNode != null)
-                            video.Airdate = Helpers.StringUtils.PlainTextFromHtml(airDateNode.InnerText);
-                        var durationNode = vid.SelectSingleNode(@".//span[@class='prefix-piece prefix-piece--duration']");
-                        if (durationNode != null)
-                            video.Length = Helpers.StringUtils.PlainTextFromHtml(durationNode.InnerText);
-
-                        video.Title = cleanup(video.Title);
-                        result.Add(video);
-                    }
-                }
+                };
+                parentcat.SubCategories.Add(cat);
             }
-            return result;
+
+            if (json["hits"].Value<int>() >= offset + parentcat.SubCategories.Count)
+            {
+                var nextPage = new NextPageCategory() { Url = ((RssLink)parentcat).Url, Other = offset + 20 };
+                parentcat.SubCategories.Add(nextPage);
+            }
+            parentcat.SubCategoriesDiscovered = true;
+            return parentcat.SubCategories.Count;
         }
 
         private int AddKaikki(HtmlDocument doc, Category parentCategory)
         {
-            var nodes = doc.DocumentNode.SelectNodes(@"//ul[@class='mdc-list--grid']");
+            var root = doc.DocumentNode.SelectSingleNode(@"//section/div");
             parentCategory.SubCategories = new List<Category>();
-            foreach (var node in nodes)
+            RssLink sub = null;
+            foreach (var node in root.ChildNodes)
             {
-                RssLink sub = new RssLink()
+                if (node.Attributes["id"] != null)
                 {
-                    Name = node.SelectSingleNode(@"./li").InnerText,
-                    ParentCategory = parentCategory,
-                    HasSubCategories = true,
-                };
-                sub.SubCategories = GetKaikkiSubcats(node, sub);
-                parentCategory.SubCategories.Add(sub);
+                    sub = new RssLink()
+                    {
+                        Name = node.Attributes["id"].Value,
+                        ParentCategory = parentCategory,
+                        HasSubCategories = true,
+                        SubCategoriesDiscovered = true
+                    };
+                    sub.SubCategories = new List<Category>();
+                    parentCategory.SubCategories.Add(sub);
+                }
+                else
+                {
+                    var subsub = new RssLink()
+                    {
+                        Name = node.SelectSingleNode(@".//h2").InnerText,
+                        ParentCategory = sub,
+                        HasSubCategories = true,
+                        Url = FormatDecodeAbsolutifyUrl(baseUrl, node.SelectSingleNode(@".//a").Attributes["href"].Value, "", UrlDecoding.None)
+                    };
+                    sub.SubCategories.Add(subsub);
+                }
 
             }
             parentCategory.SubCategoriesDiscovered = true;
             return parentCategory.SubCategories.Count;
         }
 
-        public List<Category> GetKaikkiSubcats(HtmlNode parentNode, Category parentCat)
-        {
-            List<Category> res = new List<Category>();
-            var nodes = parentNode.SelectNodes(@"./li[a[@href]]");
-            foreach (var node in nodes)
-            {
-                var cat = new RssLink()
-                {
-                    Name = node.SelectSingleNode(@".//span[@class='mdc-list-item__text__primary']").InnerText.Trim(),
-                    ParentCategory = parentCat,
-                    HasSubCategories = true,
-                    Url = FormatDecodeAbsolutifyUrl(baseUrl, node.SelectSingleNode("a").Attributes["href"].Value, "", UrlDecoding.None),
-                    Other = node.Attributes["data-id"].Value
-                };
-                cat.Name = Regex.Replace(cat.Name.Replace('\n', ' '), @"  +", " ", RegexOptions.Multiline);
-                res.Add(cat);
-            }
-
-            parentCat.SubCategoriesDiscovered = true;
-            return res;
-        }
-
         private int AddOhjelmat(HtmlDocument doc, Category parentCat)
         {
-            var nodes = doc.DocumentNode.SelectNodes(@"//section[div/h2[@class='component-container__header-title'][a]]");//tested
+            var nodes = doc.DocumentNode.SelectNodes(@"//section[@data-id and (@data-element-type='CardHoverbox' or @data-element-type='CardDefault')][h4]");
+            parentCat.SubCategories = new List<Category>();
             foreach (var node in nodes)
             {
-                Category sub = new Category()
+                RssLink sub = new RssLink()
                 {
-                    Name = node.SelectSingleNode(@".//h2/a/text()").InnerText.Trim(),
+                    Name = HttpUtility.HtmlDecode(node.InnerText),
                     ParentCategory = parentCat,
                     HasSubCategories = true,
-                    SubCategories = new List<Category>()
+                    Url = @"https://prod-component-api.nm-services.nelonenmedia.fi/api/component/" + node.Attributes["data-id"].Value + "?limit=20&offset=",
+                    Other = 0
                 };
-                if (sub.Name == "Elokuvat")
-                {
-                    sub.HasSubCategories = false;
-                    sub.Other = myParse2(node);
-                    parentCat.SubCategories.Add(sub);
-                }
-                else
-                {
-                    var nodes2 = node.SelectNodes(".//div[@class='ruutu-card ruutu-card--hoverbox'][.//a[@href]]");//tested
-                    if (nodes2 != null)
-                    {
-                        parentCat.SubCategories.Add(sub);
-                        foreach (var node2 in nodes2)
-                        {
-                            RssLink sub2 = new RssLink()
-                            {
-                                Name = node2.SelectSingleNode(".//h2").InnerText.Trim(),
-                                ParentCategory = sub,
-                                Url = FormatDecodeAbsolutifyUrl(baseUrl, node2.SelectSingleNode(".//a[@href]").Attributes["href"].Value, "", UrlDecoding.None),
-                                HasSubCategories = true,
-                                Other = node2.Attributes["data-series-id"].Value
-                            };
-                            sub2.Description = getDescription(node2);
-                            sub2.Thumb = getImageUrl(node2);
-                            sub.SubCategories.Add(sub2);
-                        }
-                        sub.SubCategoriesDiscovered = true;
-                    }
-                }
+                parentCat.SubCategories.Add(sub);
             }
             parentCat.SubCategoriesDiscovered = true;
             return parentCat.SubCategories.Count;
         }
 
-        private string getImageUrl(HtmlNode baseNode)
-        {
-            var thumbNode = baseNode.SelectSingleNode(".//img");//tested
-            if (thumbNode != null)
-            {
-                foreach (var src in thumbNode.Attributes)
-                    if (src.Name == "src" && src.Value.StartsWith("http"))
-                        return src.Value;
-
-                foreach (var src in thumbNode.Attributes)
-                    if (src.Name == "data-srcset" && src.Value.StartsWith("http"))
-                        return src.Value.Split(' ')[0];
-            }
-            return String.Empty;
-        }
-
-        private int DiscoverSubs(Category parentCategory, HtmlDocument doc)
-        {
-            parentCategory.SubCategories = new List<Category>();
-            var nodes = doc.DocumentNode.SelectNodes(@"//section[div[h2[@class='component-container__header-title']|h3[@class='component-container__header-title'] ]]");//tested
-            foreach (var node in nodes)
-            {
-                var videos = myParse2(node);
-                if (videos.Count > 0)
-                {
-                    Category cat = new Category()
-                    {
-                        ParentCategory = parentCategory,
-                        Other = videos
-                    };
-                    var hNode = node.SelectSingleNode(@".//h2[@class='component-container__header-title']");
-                    if (hNode == null)
-                        hNode = node.SelectSingleNode(@".//h3[@class='component-container__header-title']");
-                    if (hNode.SelectSingleNode("a/text()") != null)
-                        cat.Name = hNode.SelectSingleNode("a/text()").InnerText.Trim();
-                    else
-                        cat.Name = hNode.InnerText.Trim();
-
-                    parentCategory.SubCategories.Add(cat);
-
-                    if (videos.Count >= 12)
-                    {
-                        var extravids = doc.DocumentNode.SelectNodes(@".//section[@class='player-sidebar-video-thumbnails component-container']//li[@data-index > 11]");
-                        videos.AddRange(myParse3(extravids));
-                    }
-                }
-            }
-            parentCategory.SubCategoriesDiscovered = true;
-            return parentCategory.SubCategories.Count;
-        }
-
-        private int DiscoverSubsNew(Category parentCategory, HtmlDocument doc)
-        {
-            //other is seriesid. Method finds Kausi 1,2 etc and Klipit
-            parentCategory.SubCategories = new List<Category>();
-            var nodes = doc.DocumentNode.SelectNodes(@"//a[@data-value]");
-
-            foreach (var node in nodes)
-            {
-                RssLink cat = new RssLink()
-                {
-                    ParentCategory = parentCategory,
-                    Name = node.InnerText
-                };
-                if (cat.Name == "Klipit")
-                    cat.Url = @"https://www.ruutu.fi/component/726950/update?type=component&content%5Bsource%5D%5Bparams%5D%5Bmedia_type%5D=video_clip&content%5Bsource%5D%5Bparams%5D%5B" +
-                        "series%5D=" + (string)parentCategory.Other + @"&content%5Bsource%5D%5Bparams%5D%5Borderby%5D=airtime&content%5Bsource%5D%5Bparams%5D%5Border_direction%5D=desc&content%5Bsource%5D%5Bparams%5D%5Bdrm%5D=1&content%5Bsource%5D%5Bparams%5D%5Blimit%5D=30&content%5Bsource%5D%5Bparams%5D%5Boffset%5D=0&content%5Bsource%5D%5Burl%5D=http%3A%2F%2Fdynamic-gatling.nelonenmedia.fi%2Fcos%2Fvideos%2F2%2F&content%5Btype%5D=video&active=true&formatter=video_cards_grid";
-                else
-                    cat.Url = @"https://www.ruutu.fi/component/726940/update?type=component&content%5Btype%5D=episode&content%5Bsource%5D%5Bparams%5D%5Bhas_current_or_upcoming_online_rights%5D=960&content%5Bsource%5D%5Bparams%5D%5Blimit%5D=100&content%5Bsource%5D%5Bparams%5D%5Borderby%5D=sequence&content%5Bsource%5D%5Bparams%5D%5Border_direction%5D=asc&content%5Bsource%5D%5Bparams%5D%5B" +
-                        "season_id%5D=" + node.Attributes["data-value"].Value + @"&content%5Bsource%5D%5Bparams%5D%5Bdrm%5D=1&content%5Bsource%5D%5Bparams%5D%5B" +
-                        "series_id%5D=" + (string)parentCategory.Other + @"&content%5Bsource%5D%5Bparams%5D%5Boffset%5D=0&content%5Bsource%5D%5Burl%5D=http%3A%2F%2Fdynamic-gatling.nelonenmedia.fi%2Fcos%2Fepisode%2F2%2F&active=true&formatter=episode_thumbnails_by_season";
-                parentCategory.SubCategories.Add(cat);
-            }
-            parentCategory.SubCategoriesDiscovered = true;
-            return parentCategory.SubCategories.Count;
-        }
-
-
-        private string htmlValue(HtmlAttribute node)
-        {
-            if (node == null)
-                return String.Empty;
-            else
-                return node.Value;
-        }
-
-        private string cleanup(string s)
-        {
-            s = s.Replace('\n', ' ');
-            while (s.Contains("  "))
-                s = s.Replace("  ", " ");
-            return s;
-        }
-
         private HtmlDocument getDocument(Category cat)
         {
-            string webData = GetWebData(((RssLink)cat).Url);
+            string webData = GetWebData(((RssLink)cat).Url, forceUTF8: true);
             return getDocument(webData);
         }
 
