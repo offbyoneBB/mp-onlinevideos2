@@ -350,22 +350,20 @@ namespace OnlineVideos.Sites
         {
             List<Category> categories = new List<Category>();
             HtmlDocument document = GetWebData<HtmlDocument>(url);
-            var programmes = document.DocumentNode.SelectNodes(@"//ol[contains(@class, 'tleo-list')]/li");
+            var programmes = document.DocumentNode.SelectNodes(@"//ul[contains(@class, 'gel-layout')]/li");
             foreach (var programme in programmes)
             {
-                var urlNode = programme.SelectSingleNode(@"./a");
+                var urlNode = programme.SelectSingleNode(@".//a");
                 if (urlNode == null)
                     continue;
 
-                Match vpidMatch = urlVpidRegex.Match(urlNode.GetAttributeValue("href", ""));
-                if (!vpidMatch.Success)
-                    continue;
 
                 categories.Add(new RssLink()
                 {
-                    Url = BASE_URL + "/iplayer/episodes/" + vpidMatch.Groups[2].Value,
-                    Name = urlNode.SelectSingleNode(@"./span").GetCleanInnerText(),
-                    Thumb = defaultThumb,
+                    Url = GetAbsoluteUri(urlNode.GetAttributeValue("href", string.Empty), BASE_URL).ToString(),
+                    Name = programme.SelectSingleNode(@".//p[contains(@class, 'list-content-item__title')]").GetCleanInnerText(),
+                    Description = programme.SelectSingleNode(@".//p[contains(@class, 'list-content-item__synopsis')]").GetCleanInnerText(),
+                    Thumb = getImageUrl(programme.SelectSingleNode(@".//picture/source")),
                     ParentCategory = parentCategory
                 });
             }
@@ -481,37 +479,49 @@ namespace OnlineVideos.Sites
         List<VideoInfo> getVideos(Category category)
         {
             List<VideoInfo> videos = new List<VideoInfo>();
+
             string url = (category as RssLink).Url;
 
             var document = GetWebData<HtmlDocument>(url).DocumentNode;
 
+            var videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item')]");
+            if (videoNodes == null)
+            {
+                // Check for an 'all episdoes' link if we couldn't find any episodes 
+                var allEpisodes = document.SelectSingleNode(@"//a[starts-with(@href, '/iplayer/episodes/')]");
+                if (allEpisodes != null)
+                {
+                    document = GetWebData<HtmlDocument>(BASE_URL + allEpisodes.GetAttributeValue("href", "")).DocumentNode;
+                    videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item')]");
+                }
+            }
+
+            // Single video
+            if (videoNodes == null)
+            {
+                var videoNode = document.SelectSingleNode(@"//div[@id='main']");
+                if (videoNode != null)
+                {
+                    VideoInfo video = createSingleVideo(videoNode, url);
+                    if (video != null)
+                        videos.Add(video);
+                }
+                return videos;
+            }
+
+            videos.AddRange(videoNodes.Select(v => createVideo(v, category.Name)).Where(v => v != null));
+
             int pageCount = getPageCount(document);
             int currentPage = 1;
 
-            while (true)
-            {                
-                var videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item')]");
-                if (videoNodes != null)
-                    videos.AddRange(videoNodes.Select(v => createVideo(v, category.Name)).Where(v => v != null));
-                else
-                {
-                    var videoNode = document.SelectSingleNode(@"//div[@id='main']");
-                    if (videoNode != null)
-                    {
-                        VideoInfo video = createSingleVideo(videoNode, url);
-                        if (video != null)
-                        {
-                            videos.Add(video);
-                            break;
-                        }
-                    }
-                }
-
+            while (currentPage < pageCount)
+            {
                 currentPage++;
-                if (currentPage > pageCount)
-                    break;
-
                 document = GetWebData<HtmlDocument>(url + "?page=" + currentPage).DocumentNode;
+                videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item')]");
+                if (videoNodes == null)
+                    break;
+                videos.AddRange(videoNodes.Select(v => createVideo(v, category.Name)).Where(v => v != null));
             }
             return videos;
         }
