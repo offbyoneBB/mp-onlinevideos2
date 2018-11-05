@@ -483,18 +483,18 @@ namespace OnlineVideos.Sites
             string url = (category as RssLink).Url;
 
             var document = GetWebData<HtmlDocument>(url).DocumentNode;
+            HtmlNodeCollection videoNodes = null;
 
-            var videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item')]");
-            if (videoNodes == null)
+            // Check for an 'all episdoes' link if we couldn't find any episodes 
+            var allEpisodes = document.SelectSingleNode(@"//a[starts-with(@href, '/iplayer/episodes/')]");
+            if (allEpisodes != null)
             {
-                // Check for an 'all episdoes' link if we couldn't find any episodes 
-                var allEpisodes = document.SelectSingleNode(@"//a[starts-with(@href, '/iplayer/episodes/')]");
-                if (allEpisodes != null)
-                {
-                    document = GetWebData<HtmlDocument>(BASE_URL + allEpisodes.GetAttributeValue("href", "")).DocumentNode;
-                    videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item')]");
-                }
+                document = GetWebData<HtmlDocument>(BASE_URL + allEpisodes.GetAttributeValue("href", "")).DocumentNode;
+                videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item')]");
             }
+
+            if (videoNodes == null)
+                videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item')]");
 
             // Single video
             if (videoNodes == null)
