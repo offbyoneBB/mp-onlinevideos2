@@ -1484,11 +1484,11 @@
         <Category xsi:type="RssLink" thumb="https://hubimages.itv.com/episode/1_7828_0110?w=304&amp;h=174&amp;q=80&amp;blur=0&amp;bg=false&amp;image_format=jpg" name="Sport">https://www.itv.com/hub/categories/sport</Category>
         <Category xsi:type="Group" thumb="http://s1.postimage.org/dkj7fvx5r/ITV1_logo.png" desc="Live TV" name="Live">
           <Channels>
-            <Channel name="ITV1" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6000.png">itv?guideid=26</Channel>
-            <Channel name="ITV2" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6240.png">itv2?guideid=185</Channel>
+            <Channel name="ITV1" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6000.png">https://mediaplayer.itv.com/flash/playlists/ukonly/itv1.xml?guideid=26</Channel>
+            <Channel name="ITV2" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6240.png">https://mediaplayer.itv.com/flash/playlists/ukonly/itv2.xml?guideid=185</Channel>
             <Channel name="ITVBe" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6508.png">itvbe?guideid=11708</Channel>
             <Channel name="ITV3" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6260.png">itv3?guideid=1859</Channel>
-            <Channel name="ITV4" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6272.png">itv4?guideid=1961</Channel>
+            <Channel name="ITV4" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6272.png">https://mediaplayer.itv.com/flash/playlists/ukonly/itv4.xml?guideid=1961</Channel>
             <Channel name="CITV" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6273.png">citv?guideid=1981</Channel>
           </Channels>
         </Category>
