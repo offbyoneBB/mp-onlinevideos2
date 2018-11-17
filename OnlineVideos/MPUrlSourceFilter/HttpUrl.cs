@@ -49,7 +49,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// Initializes a new instance of <see cref="HttpUrl"/> class.
         /// </overloads>
         public HttpUrl(String url)
-            : this(new Uri(url))
+            : this(Helpers.DotNetFrameworkHelper.UriWithoutUrlDecoding.Create(url))
         {
         }
 
@@ -450,7 +450,7 @@ namespace OnlineVideos.MPUrlSourceFilter
 
                     parameters.Add(new Parameter(String.Format(HttpUrl.ParameterHttpHeaderFormatName, i), header.Name));
                     parameters.Add(new Parameter(String.Format(HttpUrl.ParameterHttpHeaderFormatValue, i), header.Value));
-                    
+
                 }
             }
 
