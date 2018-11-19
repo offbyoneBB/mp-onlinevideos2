@@ -16,7 +16,7 @@ namespace OnlineVideos.Sites
         #region Constants
 
         const string MEDIA_SELECTOR_URL = "http://open.live.bbc.co.uk/mediaselector/5/select/version/2.0/mediaset/pc/vpid/"; //"http://www.bbc.co.uk/mediaselector/4/mtis/stream/";
-        const string HLS_MEDIA_SELECTOR_URL = "http://open.live.bbc.co.uk/mediaselector/5/select/version/2.0/mediaset/apple-ipad-hls/vpid/";
+        const string HLS_MEDIA_SELECTOR_URL = "https://open.live.bbc.co.uk/mediaselector/6/select/version/2.0/mediaset/apple-ipad-hls/vpid/{0}/format/xml";
         const string MOST_POPULAR_URL = "https://www.bbc.co.uk/iplayer/most-popular";
         const string ATOZ_URL = "https://www.bbc.co.uk/iplayer/a-z/";
         static readonly string[] atoz = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0-9" };
@@ -56,7 +56,7 @@ namespace OnlineVideos.Sites
         
         static readonly Regex urlVpidRegex = new Regex(@"/iplayer/(episodes?|brand)/([^/""]*)");
         static readonly Regex srcsetRegex = new Regex(@"http[^\s""]*");
-        static readonly Regex videoPidRegex = new Regex(@"""versions"":.*?""id"":""([^""]*)");
+        static readonly Regex videoPidRegex = new Regex(@"""id"":""([^""]*)"",""kind"":""original"""); //(@"""versions"":.*?""id"":""([^""]*)");
 
         #endregion
 
@@ -100,8 +100,7 @@ namespace OnlineVideos.Sites
             }
 
             string vpid = m.Groups[1].Value;
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(GetWebData(MEDIA_SELECTOR_URL + vpid, proxy: proxyObj)); //uk only
+            XmlDocument doc = GetWebData<XmlDocument>(MEDIA_SELECTOR_URL + vpid, proxy: proxyObj); //uk only
             XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");
 
@@ -207,8 +206,7 @@ namespace OnlineVideos.Sites
 
         string getHLSVideoUrls(VideoInfo video, string vpid, WebProxy proxyObj)
         {
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(GetWebData(HLS_MEDIA_SELECTOR_URL + vpid, proxy: proxyObj)); //uk only
+            XmlDocument doc = GetWebData<XmlDocument>(string.Format(HLS_MEDIA_SELECTOR_URL, vpid), proxy: proxyObj); //uk only
             XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");
 
@@ -217,6 +215,9 @@ namespace OnlineVideos.Sites
             {
                 foreach (XmlElement connectionElem in mediaElem.SelectNodes("ns1:connection", nsmRequest))
                 {
+                    if (connectionElem.Attributes["transferFormat"] == null || connectionElem.Attributes["transferFormat"].Value != "hls" ||
+                        connectionElem.Attributes["href"] == null)
+                        continue;
                     string playlistUrl = connectionElem.Attributes["href"].Value;
                     string playlistStr = GetWebData(playlistUrl, proxy: proxyObj, userAgent: HlsPlaylistParser.APPLE_USER_AGENT);
                     HlsPlaylistParser playlist = new HlsPlaylistParser(playlistStr, playlistUrl);
