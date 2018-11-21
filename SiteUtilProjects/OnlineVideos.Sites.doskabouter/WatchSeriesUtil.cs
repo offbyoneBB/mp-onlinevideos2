@@ -6,6 +6,7 @@ using System.Web;
 using System.Net;
 using System.IO;
 using System.Text;
+using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
@@ -20,6 +21,7 @@ namespace OnlineVideos.Sites
         private enum Depth { MainMenu = 0, Alfabet = 1, Series = 2, Seasons = 3, BareList = 4 };
         public CookieContainer cc = null;
         private string nextVideoListPageUrl = null;
+        private string nextVideoListPostData = null;
         private Category currCategory = null;
 
         private WebProxy webProxy = null;
@@ -124,6 +126,7 @@ namespace OnlineVideos.Sites
                     break;
                 case Depth.Series:
                     Match m2 = Regex.Match(webData, @"imdb\.com/title/(?<imdbId>[^/]*)/");
+                    Match m3 = Regex.Match(webData, @"function\sloadMoreLinks\(season\)\s{\s*\$\.post\(\s*'(?<url>[^']*)',\s*{(?<postdata>[^}]*)}", defaultRegexOptions);
                     webData = Helpers.StringUtils.GetSubString(webData, @"class=""lists"" >", @"class=""clear"" ");
                     string[] tmp = { @"class=""lists"" >" };
                     string[] seasons = webData.Split(tmp, StringSplitOptions.RemoveEmptyEntries);
@@ -137,7 +140,25 @@ namespace OnlineVideos.Sites
                         cat.Url = s;
                         cat.SubCategoriesDiscovered = true;
                         cat.HasSubCategories = false;
-                        cat.Other = ((Depth)parentCategory.Other) + 1;
+                        Match m4 = Regex.Match(s, @"javascript:loadMoreLinks\((?<season>\d+)\)");
+                        if (m4.Success && m3.Success)
+                        {
+                            string posturl = m3.Groups["url"].Value;
+                            Match m5 = Regex.Match(m3.Groups["postdata"].Value, @"'(?<key>[^']*)'\s*:\s*(?:')?(?<value>[^',]*)");
+                            string postData = "";
+                            while (m5.Success)
+                            {
+                                postData += "&" + m5.Groups["key"].Value + "=";
+                                if (m5.Groups["key"].Value == "season")
+                                    postData += m4.Groups["season"].Value;
+                                else
+                                    postData += m5.Groups["value"].Value;
+                                m5 = m5.NextMatch();
+                            }
+                            cat.Other = new Tuple<string, string>(posturl, postData.Substring(1));
+                        }
+                        else
+                            cat.Other = ((Depth)parentCategory.Other) + 1;
 
                         parentCategory.SubCategories.Add(cat);
                         cat.ParentCategory = parentCategory;
@@ -183,11 +204,12 @@ namespace OnlineVideos.Sites
         private List<VideoInfo> getOnePageVideoList(Category category, string url)
         {
             currCategory = category;
-            nextVideoListPageUrl = null;
             string webData;
             if (category.Other.Equals(Depth.BareList))
             {
                 webData = GetWebData(url, cookies: cc, forceUTF8: true);
+                nextVideoListPageUrl = null;
+                nextVideoListPostData = null;
                 if (regEx_NextPage != null)
                 {
                     Match mNext = regEx_NextPage.Match(webData);
@@ -198,7 +220,15 @@ namespace OnlineVideos.Sites
                 }
             }
             else
+            {
+                var nextPage = category.Other as Tuple<string, string>;
+                if (nextPage != null)
+                {
+                    nextVideoListPageUrl = nextPage.Item1;
+                    nextVideoListPostData = nextPage.Item2;
+                }
                 webData = url;
+            }
 
             List<VideoInfo> videos = new List<VideoInfo>();
             if (!string.IsNullOrEmpty(webData))
@@ -269,7 +299,48 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> GetNextPageVideos()
         {
-            return getOnePageVideoList(currCategory, nextVideoListPageUrl);
+            if (currCategory.Other.Equals(Depth.BareList))
+                return getOnePageVideoList(currCategory, nextVideoListPageUrl);
+            else
+            {
+                //next page for series with large number of episodes
+                var webData = GetWebData(nextVideoListPageUrl, postData: nextVideoListPostData, cookies: cc, forceUTF8: true);
+                nextVideoListPageUrl = null;
+                var json = JToken.Parse(webData);
+                List<VideoInfo> videos = new List<VideoInfo>();
+                var seriesName = "";
+                var seriesTitle = "";
+                if (currCategory.ParentCategory != null)
+                {
+                    seriesName = ((RssLink)currCategory.ParentCategory).Url;
+                    seriesTitle = currCategory.ParentCategory.Name;
+                    int p = seriesName.LastIndexOf('/');
+                    if (p >= 0)
+                        seriesName = seriesName.Substring(p + 1);
+                }
+
+                foreach (var vid in json)
+                {
+                    VideoInfo video = CreateVideoInfo();
+
+                    video.Title = String.Format("Episode {0} ", vid.Value<uint>("episode")) + vid.Value<string>("name");
+                    video.VideoUrl = new Uri(new Uri(baseUrl), "episode/" + seriesName + "_s" + vid.Value<string>("season") + "_e" + vid.Value<uint>("episode") + ".html").AbsoluteUri;
+                    video.Airdate = vid.Value<string>("aired");
+                    video.Description = vid.Value<string>("description");
+
+                    TrackingInfo tInfo = new TrackingInfo()
+                    {
+                        VideoKind = VideoKind.TvSeries,
+                        Title = seriesTitle,
+                        Season = vid.Value<uint>("season"),
+                        Episode = vid.Value<uint>("episode")
+                    };
+                    video.Other = tInfo;
+                    videos.Add(video);
+                }
+
+                return videos;
+            }
         }
 
         public override List<SearchResultItem> Search(string query, string category = null)
