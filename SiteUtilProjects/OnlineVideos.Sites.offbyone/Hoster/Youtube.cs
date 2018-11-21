@@ -199,6 +199,7 @@ namespace OnlineVideos.Hoster
                     }
                 };
 
+                subtitleText = null;
                 if (!String.IsNullOrEmpty(subtitleLanguages) && !string.IsNullOrEmpty(Items.Get("player_response")))
                 {
                     try
