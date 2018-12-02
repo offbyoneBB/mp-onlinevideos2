@@ -56,7 +56,7 @@ namespace OnlineVideos.Sites
         
         static readonly Regex urlVpidRegex = new Regex(@"/iplayer/(episodes?|brand)/([^/""]*)");
         static readonly Regex srcsetRegex = new Regex(@"http[^\s""]*");
-        static readonly Regex videoPidRegex = new Regex(@"""id"":""([^""]*)"",""kind"":""original"""); //(@"""versions"":.*?""id"":""([^""]*)");
+        static readonly Regex videoPidRegex = new Regex(@"""id"":""([^""]*)"",""kind"":""(original|editorial)"""); //(@"""versions"":.*?""id"":""([^""]*)");
 
         #endregion
 
