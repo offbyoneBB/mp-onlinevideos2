@@ -149,11 +149,11 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
-            Settings.Categories.Add(new RssLink() { Name = CATEGORYNAME_LIVESTREAM, Url = "https://www.ardmediathek.de/tv/live" });
-            Settings.Categories.Add(new RssLink() { Name = CATEGORYNAME_SENDUNG_VERPASST, HasSubCategories = true, Url = "https://www.ardmediathek.de/tv/sendungVerpasst" });
-            Settings.Categories.Add(new RssLink() { Name = CATEGORYNAME_SENDUNGEN_AZ, HasSubCategories = true, Url = "https://www.ardmediathek.de/tv/sendungen-a-z" });
+            Settings.Categories.Add(new RssLink() { Name = CATEGORYNAME_LIVESTREAM, Url = "https://classic.ardmediathek.de/tv/live" });
+            Settings.Categories.Add(new RssLink() { Name = CATEGORYNAME_SENDUNG_VERPASST, HasSubCategories = true, Url = "https://classic.ardmediathek.de/tv/sendungVerpasst" });
+            Settings.Categories.Add(new RssLink() { Name = CATEGORYNAME_SENDUNGEN_AZ, HasSubCategories = true, Url = "https://classic.ardmediathek.de/tv/sendungen-a-z" });
 
-            Uri baseUri = new Uri("https://www.ardmediathek.de/tv");
+            Uri baseUri = new Uri("https://classic.ardmediathek.de/tv");
             var baseDoc = WebCache.Instance.ReadAsHtmlDocument(baseUri.AbsoluteUri);
             foreach (var category in ExtractCategoriesFromHeadlines(baseDoc.DocumentNode, baseUri))
             {
@@ -172,7 +172,7 @@ namespace OnlineVideos.Sites
         private IEnumerable<RssLink> ExtractCategoriesFromHeadlines(HtmlNode document, Uri baseUri, Category parentCategory = null)
         {
             Func<HtmlNode, IList<HtmlNode>> modHeadlinesFunc = (doc) => doc.Descendants("h2").Where(h2 => h2.GetAttributeValue("class", "") == "modHeadline").ToList();
-            var modHeadlines = modHeadlinesFunc.Invoke(document);
+            var modHeadlines = modHeadlinesFunc(document);
             if (modHeadlines.Count == 1)
             {
                 // Skip if only one Category, treat this as Video Links Only
@@ -202,7 +202,7 @@ namespace OnlineVideos.Sites
                     category.SubCategories = ExtractSubcategoriesFromDiv(categorySection, category).Cast<Category>().ToList();
                     category.SubCategoriesDiscovered = category.SubCategories.Any();
                     //now create concrete Function for this section and presever in Other information for paging
-                    HtmlNode CategorySectionFunc(HtmlNode doc) => modHeadlinesFunc.Invoke(doc).Single(headline => headline.InnerText.Equals(modHeadline.InnerText)).ParentNode;
+                    HtmlNode CategorySectionFunc(HtmlNode doc) => modHeadlinesFunc(doc).Single(headline => headline.InnerText.Equals(modHeadline.InnerText)).ParentNode;
                     category.Other = (Func<HtmlNode, HtmlNode>)CategorySectionFunc;
                 }
 
@@ -439,7 +439,7 @@ namespace OnlineVideos.Sites
                 if (category.Other is Func<HtmlNode, HtmlNode> getCategoryDiv)
                 {
                     //special handling for multiple categories on same page, need to find matching DIV for getting videos
-                    mainDiv = getCategoryDiv.Invoke(baseDoc.DocumentNode);
+                    mainDiv = getCategoryDiv(baseDoc.DocumentNode);
                 }
                 else
                 {
