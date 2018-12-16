@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
 using System.Xml.Linq;
-using OnlineVideos.Helpers;
 
 namespace OnlineVideos.Sites
 {
@@ -15,7 +14,8 @@ namespace OnlineVideos.Sites
     {
 		protected const string sendungenUrl = "http://www1.wdr.de/mediathek/video/sendungen-a-z/index.html";
         protected const string searchUrl = "http://www1.wdr.de/suche/index.jsp";
-        protected const string livestreamUrl = "https://www1.wdr.de/mediathek/video/live/index.html";
+        protected const string livestreamUrl = "http://wdr_fs_geo-lh.akamaihd.net/z/wdrfs_geogeblockt@112044/manifest.f4m?b=608-&";
+        private string m3u8Regex = @"#EXT-X-STREAM-INF:PROGRAM-ID=\d,BANDWIDTH=(?<bitrate>\d+),RESOLUTION=(?<resolution>\d+x\d+),?CODECS=""(?<codecs>[^""]+)"".*?\n(?<url>.*)";
 
         public override int DiscoverDynamicCategories()
         {
@@ -67,7 +67,7 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> GetVideos(Category category)
         {
             if (category.Name == "Livestream")
-                return new List<VideoInfo>() { new VideoInfo() { Title = "Livestream", VideoUrl = livestreamUrl } };
+                return new List<VideoInfo>() { new VideoInfo() { Title = "Livestream", VideoUrl = "https://www1.wdr.de/mediathek/video/live/index.html" } };
             else
             {
                 var baseUri = new Uri(((RssLink)category).Url);
@@ -104,7 +104,6 @@ namespace OnlineVideos.Sites
         {
             var doc = GetWebData<HtmlDocument>(video.VideoUrl);
             var link = doc.DocumentNode.Descendants("a").FirstOrDefault(a => a.GetAttributeValue("data-extension", "").Contains("\"url\":\"http"));
-            string bestVideoQualityUrl = string.Empty;
             if (link != null)
             {
                 var json = JObject.Parse(link.GetAttributeValue("data-extension", ""));
@@ -114,26 +113,37 @@ namespace OnlineVideos.Sites
                 var endIdx = f.LastIndexOf('}');
                 var length = endIdx - startIdx + 1;
                 var json2 = JObject.Parse(f.Substring(startIdx, length));
+                var videoUrl = Regex.Match(f, "\"videoURL\":\"(?<url>.*?(f4m|smil|m3u8))\"").Groups["url"].Value;
                 var url = json2["mediaResource"]["alt"].Value<string>("videoURL");
 
-                var playbackOptions = new HashSet<KeyValuePair<string, string>>(KeyValuePairComparer.KeyOrdinalIgnoreCase);
+
+                var playbackOptionsByUrl = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                 if (url.Contains("master.m3u8"))
                 {
-                    url = new Uri(new Uri(playlistUrl), url).AbsoluteUri;
-                    var m3u8Data = GetWebData(url);
-                    var m3u8PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(m3u8Data, video.VideoUrl);
-                    playbackOptions.UnionWith(m3u8PlaybackOptions);
-                    bestVideoQualityUrl = m3u8PlaybackOptions.FirstOrDefault().Value; //Default, if m3u8 playlist cannot be collected, e.g. geoblocking
+                    var uri = new Uri(new Uri(playlistUrl), url);
+                    var m3u8Data = GetWebData(uri.ToString());
+                    foreach (Match match in Regex.Matches(m3u8Data, m3u8Regex))
+                    {
+                        playbackOptionsByUrl[match.Groups["url"].Value] =
+                            string.Format("HLS - {0} - {1} kbps", match.Groups["resolution"].Value, int.Parse(match.Groups["bitrate"].Value) / 1000);
+                    }
                 }
 
-                video.PlaybackOptions = playbackOptions.ToDictionary(e => e.Key, e => e.Value);
+                video.PlaybackOptions = new Dictionary<string, string>();
+                foreach (var lookup in playbackOptionsByUrl.ToLookup(kvp => kvp.Value))
+                {
+                    var i = 0;
+                    foreach (var optionByUrl in lookup)
+                    {
+                        video.PlaybackOptions.Add(string.Format("{0} - {1}", optionByUrl.Value, i++), optionByUrl.Key);
+                    }
+                }
+                return video.PlaybackOptions.Select(p => p.Value).LastOrDefault();
             }
-
-            return !string.IsNullOrWhiteSpace(bestVideoQualityUrl) ? bestVideoQualityUrl : video.PlaybackOptions.LastOrDefault().Value;
+            return null;
         }
 
-
-        string GetStreamUrl(string videoPageUrl)
+		string GetStreamUrl(string videoPageUrl)
 		{
 			var doc = GetWebData<HtmlDocument>(videoPageUrl);
 			var flashParam = doc.DocumentNode.Descendants("param").Where(p => p.GetAttributeValue("name", "") == "flashvars").FirstOrDefault();

@@ -310,7 +310,6 @@
     <Compile Include="Hoster\LiveVideo.cs" />
     <Compile Include="JavaScript\FunctionData.cs" />
     <Compile Include="JavaScript\JavaScriptParser.cs" />
-    <Compile Include="KeyValuePairComparer.cs" />
     <Compile Include="KinoDeUtil.cs" />
     <Compile Include="MdrUtil.cs" />
     <Compile Include="MetaCafeUtil.cs" />
