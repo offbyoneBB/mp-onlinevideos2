@@ -136,7 +136,7 @@ namespace OnlineVideos.Sites
         string GetStreamUrl(string videoPageUrl)
 		{
 			var doc = GetWebData<HtmlDocument>(videoPageUrl);
-			var flashParam = doc.DocumentNode.Descendants("param").Where(p => p.GetAttributeValue("name", "") == "flashvars").FirstOrDefault();
+			var flashParam = doc.DocumentNode.Descendants("param").FirstOrDefault(p => p.GetAttributeValue("name", "") == "flashvars");
 			if (flashParam != null)
 			{
 				string value = flashParam.GetAttributeValue("value", "");
@@ -247,7 +247,7 @@ namespace OnlineVideos.Sites
 
                     lock (categories)
                     {
-                        if (!categories.Any(c => c.Url == url))
+                        if (categories.All(c => c.Url != url))
                             categories.Add(new RssLink { Name = name, Thumb = thumb, Url = url });
                     }
                 }
