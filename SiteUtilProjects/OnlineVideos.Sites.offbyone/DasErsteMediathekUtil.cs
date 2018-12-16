@@ -201,9 +201,9 @@ namespace OnlineVideos.Sites
                     //TODO: Ignore Livestream Category links of Rubrik Nachrichten
                     category.SubCategories = ExtractSubcategoriesFromDiv(categorySection, category).Cast<Category>().ToList();
                     category.SubCategoriesDiscovered = category.SubCategories.Any();
-                    //now create concrete Function for this section and presever in Other information for paging
-                    HtmlNode CategorySectionFunc(HtmlNode doc) => modHeadlinesFunc(doc).Single(headline => headline.InnerText.Equals(modHeadline.InnerText)).ParentNode;
-                    category.Other = (Func<HtmlNode, HtmlNode>)CategorySectionFunc;
+                    //now create concrete Function for this section and preserve in Other information for paging
+                    Func<HtmlNode, HtmlNode> categorySectionFunc = doc =>  modHeadlinesFunc(doc).Single(headline => headline.InnerText.Equals(modHeadline.InnerText)).ParentNode;
+                    category.Other = categorySectionFunc;
                 }
 
                 yield return category;
@@ -394,7 +394,7 @@ namespace OnlineVideos.Sites
                         Description = subtitle,
                         // Livestream has 30min (1800sec) timeshift, therefore forward at least 29:55min
                         StartTime = TimeSpan.FromSeconds(1795).ToString(),
-                        Length = startTime == unixTimeMinValue ? string.Empty :  $"{(endTime - startTime).TotalMinutes:F0} min"
+                        Length = startTime == unixTimeMinValue ? string.Empty :  string.Format("{0:F0} min", (endTime - startTime).TotalMinutes)
                     });
                 }
             }
@@ -436,8 +436,9 @@ namespace OnlineVideos.Sites
             else
             {
                 HtmlNode mainDiv;
-                if (category.Other is Func<HtmlNode, HtmlNode> getCategoryDiv)
+                if (category.Other is Func<HtmlNode, HtmlNode>)
                 {
+                    var getCategoryDiv = category.Other as Func<HtmlNode, HtmlNode>;
                     //special handling for multiple categories on same page, need to find matching DIV for getting videos
                     mainDiv = getCategoryDiv(baseDoc.DocumentNode);
                 }
