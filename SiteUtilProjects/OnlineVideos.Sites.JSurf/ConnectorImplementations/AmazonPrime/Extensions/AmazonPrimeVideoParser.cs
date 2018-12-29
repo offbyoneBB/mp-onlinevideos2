@@ -41,16 +41,20 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                     var video = new VideoInfo();
 
                     video.Title = detailNode.SelectSingleNode(".//h1[@data-automation-id='title']")?.FirstChild?.GetInnerTextTrim();
+                    if (string.IsNullOrEmpty(video.Title))
+                        video.Title = detailNode.GetNodeByClass("dv-node-dp-title")?.FirstChild?.GetInnerTextTrim();
                     var description = detailNode.SelectSingleNode(".//div[@data-automation-id='synopsis']")?.FirstChild?.GetInnerTextTrim();
-                    video.Description = video.Title;
+                    video.Description = description ?? video.Title;
 
                     var ratingNode = detailNode.GetNodeByClass("av-icon--amazon_rating");
                     var starsCls = ratingNode?.GetAttribute("class").Split(' ').FirstOrDefault(c => c.StartsWith("av-stars-"));
                     if (starsCls != null)
                         video.Description += " - " + starsCls.Replace("av-stars-", "").Replace("-", ".") + "/5";
 
-                    foreach (var textSpan in detailNode.GetNodesByClass("av-badge-text"))
-                        video.Description += " - " + textSpan.GetInnerTextTrim();
+                    var badeTextNodes = detailNode.GetNodesByClass("av-badge-text");
+                    if (badeTextNodes != null)
+                        foreach (var textSpan in badeTextNodes)
+                            video.Description += " - " + textSpan.GetInnerTextTrim();
 
                     video.Description += "\r\n" + description;
 
@@ -58,6 +62,12 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                     video.Thumb = imageUrlNode == null
                         ? string.Empty
                         : imageUrlNode.SelectSingleNode(".//img").Attributes["src"].Value;
+                    if (string.IsNullOrEmpty(video.Thumb))
+                    {
+                        var bgImgNode = detailNode.GetNodeByClass("av-bgimg-desktop");
+                        if (bgImgNode != null)
+                            video.Thumb = GetBackgroundUrl(bgImgNode);
+                    }
                     video.Airdate = detailNode.SelectSingleNode(".//div[@data-automation-id='release-year-badge']")?.FirstChild?.GetInnerTextTrim();
                     video.Other = detailNode.SelectSingleNode(".//a[@data-ref='atv_dp_stream_prime_movie']")?.Attributes["data-page-title-id"]?.Value;
                     results.Add(video);
@@ -139,16 +149,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                         // <div class="dv-el-packshot-image" style="background-image: url(http://ecx.images-amazon.com/images/I/....jpg);"></div>
                         imageUrlNode = item.GetNodeByClass("dv-el-packshot-image");
                         if (imageUrlNode != null)
-                        {
-                            var re = new Regex("\\((.*?)\\)");
-                            var htmlAttribute = imageUrlNode.GetAttributeValue("style", null);
-                            if (htmlAttribute != null)
-                            {
-                                var match = re.Match(htmlAttribute);
-                                if (match.Groups.Count == 2)
-                                    video.ThumbnailImage = match.Groups[1].Value;
-                            }
-                        }
+                            video.ThumbnailImage = GetBackgroundUrl(imageUrlNode);
 
                         // Certification, can be different classes,i.e. dv-ages_16_and_over
                         var certificationClasses = item.GetNodesByClass("dv-el-badge dv-ages_", true);
@@ -212,6 +213,14 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
             }
 
             return results;
+        }
+
+        public static string GetBackgroundUrl(HtmlNode imageUrlNode)
+        {
+            var re = new Regex("\\((.*?)\\)");
+            var htmlAttribute = imageUrlNode.GetAttributeValue("style", null);
+            var match = re.Match(htmlAttribute ?? imageUrlNode.InnerHtml);
+            return match.Groups.Count == 2 ? match.Groups[1].Value : null;
         }
     }
 }

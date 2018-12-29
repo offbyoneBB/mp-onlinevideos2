@@ -154,7 +154,8 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
             for (int i = 0; i < 2; i++)
             {
                 doc = tmpWeb.Load(url);
-                listItems = doc.DocumentNode.GetNodesByClass("dv-packshot");
+                listItems = doc.DocumentNode.GetNodesByClass("dv-packshot") ??
+                            doc.DocumentNode.GetNodesByClass("dvui-packshot");
 
                 if (listItems == null)
                 {
@@ -184,6 +185,8 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                     if (img != null)
                     {
                         tmpCateg.Thumb = img.GetAttribute("src");
+                        if (string.IsNullOrEmpty(tmpCateg.Name))
+                            tmpCateg.Name = img.GetAttribute("alt");
                     }
                     tmpCateg.Description = tmpCateg.Name; //"Released: " + released + "\r\nReview Score: " + score;
                     results.Add(tmpCateg);

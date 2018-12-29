@@ -97,6 +97,9 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
                     headers["User-Agent"] = UserAgent;
 
                     string postUrl = loginForm.Attributes["action"].Value;
+                    // &#x2F;
+                    if (postUrl.Contains("&#x"))
+                        postUrl = WebUtility.HtmlDecode(postUrl);
 
                     if (postUrl.StartsWith("https://"))
                         firstCorrectPostUrl = postUrl;
