@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
   <PropertyGroup>
-      <PluginDestination>$(SolutionDir)..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\$(ProjectName)\</PluginDestination>
+      <PluginDestination>$(SolutionDir)..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\Plugins\$(ProjectName)\</PluginDestination>
   </PropertyGroup>
 
   <ItemGroup>

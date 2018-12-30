@@ -54,26 +54,26 @@
   <ItemGroup>
     <Reference Include="DirectShowWrapper, Version=2.16.10.8139, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\VideoPlayers\DirectShowWrapper.dll</HintPath>
+      <HintPath>..\..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\Plugins\VideoPlayers\DirectShowWrapper.dll</HintPath>
     </Reference>
     <Reference Include="MediaPortal.Common, Version=2.16.10.8139, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\MediaPortal.Common.dll</HintPath>
+      <HintPath>..\..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\MediaPortal.Common.dll</HintPath>
     </Reference>
     <Reference Include="MediaPortal.UI, Version=2.16.10.8139, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\MediaPortal.UI.dll</HintPath>
+      <HintPath>..\..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\MediaPortal.UI.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX, Version=2.6.3.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\SkinEngine\SharpDX.dll</HintPath>
+      <HintPath>..\..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\Plugins\SkinEngine\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct3D9">
-      <HintPath>..\..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\SkinEngine\SharpDX.Direct3D9.dll</HintPath>
+      <HintPath>..\..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\Plugins\SkinEngine\SharpDX.Direct3D9.dll</HintPath>
     </Reference>
     <Reference Include="SkinEngine, Version=2.16.10.8139, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\SkinEngine\SkinEngine.dll</HintPath>
+      <HintPath>..\..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\Plugins\SkinEngine\SkinEngine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -84,7 +84,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="VideoPlayers, Version=2.16.10.8139, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\VideoPlayers\VideoPlayers.dll</HintPath>
+      <HintPath>..\..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\Plugins\VideoPlayers\VideoPlayers.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
