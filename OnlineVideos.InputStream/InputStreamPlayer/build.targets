@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
-  <PropertyGroup>
-      <PluginDestination>$(SolutionDir)..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\Plugins\$(ProjectName)\</PluginDestination>
-  </PropertyGroup>
-
   <ItemGroup>
     <PluginFiles Include="$(TargetDir)$(ProjectName).dll" />
     <PluginFiles Include="$(TargetDir)InputStreamSourceFilter.dll" />
@@ -13,16 +9,23 @@
   </ItemGroup>
 
   <Target Name="AfterBuild">
+    <PropertyGroup>
+      <PluginDestination>$(SolutionDir)..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\Plugins\$(ProjectName)\</PluginDestination>
+    </PropertyGroup>
     <ItemGroup>
-      <References Include="$(TargetDir)InputStream.*\**\*.*" />
+      <References Include="$(TargetDir)x86\InputStream.*\**\*.*" />
+      <References Include="$(TargetDir)x64\InputStream.*\**\*.*" />
     </ItemGroup>
     <ItemGroup>
-      <CppCliReferences Include="$(SolutionDir)bin\library.*\libKODI*.dll" />
-      <CppCliReferences Include="$(SolutionDir)bin\library.*\libXBMC*.dll" />
+      <CppCliReferencesX86 Include="$(SolutionDir)bin\win32\$(Configuration)\library.*\libKODI*.dll" />
+      <CppCliReferencesX86 Include="$(SolutionDir)bin\win32\$(Configuration)\library.*\libXBMC*.dll" />
+      <CppCliReferencesX64 Include="$(SolutionDir)bin\x64\$(Configuration)\library.*\libKODI*.dll" />
+      <CppCliReferencesX64 Include="$(SolutionDir)bin\x64\$(Configuration)\library.*\libXBMC*.dll" />
     </ItemGroup>
     <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginDestination)" />
     <Copy SourceFiles="@(References)" DestinationFiles="@(References->'$(PluginDestination)%(RecursiveDir)%(Filename)%(Extension)')"  />
-    <Copy SourceFiles="@(CppCliReferences)" DestinationFiles="@(CppCliReferences->'$(PluginDestination)%(RecursiveDir)\%(Filename)%(Extension)')"  />
+    <Copy SourceFiles="@(CppCliReferencesX64)" DestinationFiles="@(CppCliReferencesX64->'$(PluginDestination)\x64\%(RecursiveDir)\%(Filename)%(Extension)')"  />
+    <Copy SourceFiles="@(CppCliReferencesX86)" DestinationFiles="@(CppCliReferencesX86->'$(PluginDestination)\x86\%(RecursiveDir)\%(Filename)%(Extension)')"  />
   </Target>
 
 </Project>
