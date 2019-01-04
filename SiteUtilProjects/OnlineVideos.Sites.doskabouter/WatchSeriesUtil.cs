@@ -205,11 +205,11 @@ namespace OnlineVideos.Sites
         {
             currCategory = category;
             string webData;
+            nextVideoListPageUrl = null;
+            nextVideoListPostData = null;
             if (category.Other.Equals(Depth.BareList))
             {
                 webData = GetWebData(url, cookies: cc, forceUTF8: true);
-                nextVideoListPageUrl = null;
-                nextVideoListPostData = null;
                 if (regEx_NextPage != null)
                 {
                     Match mNext = regEx_NextPage.Match(webData);
