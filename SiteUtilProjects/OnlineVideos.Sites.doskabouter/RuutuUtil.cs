@@ -162,7 +162,7 @@ namespace OnlineVideos.Sites
 
         private int AddKaikki(HtmlDocument doc, Category parentCategory)
         {
-            var root = doc.DocumentNode.SelectSingleNode(@"//section/div");
+            var root = doc.DocumentNode.SelectSingleNode(@"//section/div[div[@id]]");
             parentCategory.SubCategories = new List<Category>();
             RssLink sub = null;
             foreach (var node in root.ChildNodes)
