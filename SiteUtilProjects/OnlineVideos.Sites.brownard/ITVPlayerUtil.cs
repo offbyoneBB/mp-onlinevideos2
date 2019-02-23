@@ -183,6 +183,8 @@ namespace OnlineVideos.Sites
         public override string GetVideoUrl(VideoInfo video)
         {
             video.PlaybackOptions = new Dictionary<string, string>();
+            if (video.Other as string == LIVE_STREAM && video.VideoUrl.StartsWith("http"))
+                return populateUrlsFromXml(video, GetWebData<XmlDocument>(video.VideoUrl), true);
             return GetHlsUrls(video);
 
             // The old rtmp streams seem to no longer work
@@ -557,7 +559,8 @@ namespace OnlineVideos.Sites
         
         protected string GetHlsUrls(VideoInfo video)
         {
-            string videoUrl = video.Other as string == LIVE_STREAM ? "https://www.itv.com/hub/" + video.VideoUrl : video.VideoUrl;
+            bool isLive = video.Other as string == LIVE_STREAM;
+            string videoUrl = isLive ? "https://www.itv.com/hub/" + video.VideoUrl : video.VideoUrl;
 
             HtmlDocument videoDocument = GetWebData<HtmlDocument>(videoUrl);
             HtmlNode videoNode = videoDocument.DocumentNode.SelectSingleNode("//div[@id='video']");

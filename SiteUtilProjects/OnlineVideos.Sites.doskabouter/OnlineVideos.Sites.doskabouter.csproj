@@ -62,16 +62,10 @@
     <Compile Include="..\..\Build\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
-    <Compile Include="123Stream.cs" />
     <Compile Include="ArrowTVUtil.cs" />
-    <Compile Include="BrassBandTubeUtil.cs" />
-    <Compile Include="CollegeHumorUtil.cs" />
     <Compile Include="DeferredResolveUtil.cs" />
-    <Compile Include="DeRedactieUtil.cs" />
     <Compile Include="EuroSportUtil.cs" />
-    <Compile Include="EventCasterUtil.cs" />
     <Compile Include="FilmonUtil.cs" />
-    <Compile Include="GamersNetUtil.cs" />
     <Compile Include="Helpers\NPOHelper.cs" />
     <Compile Include="Hoster\Archiv.cs" />
     <Compile Include="Hoster\EcoStream.cs" />
@@ -103,26 +97,15 @@
     <Compile Include="Hoster\Vimeo.cs" />
     <Compile Include="Hoster\MyHosterBase.cs" />
     <Compile Include="Hoster\Xtream.cs" />
-    <Compile Include="iLiveToUtil.cs" />
-    <Compile Include="IplaUtil.cs" />
     <Compile Include="KhanAcademyUtil.cs" />
-    <Compile Include="KijkUtil.cs" />
-    <Compile Include="KissAnimeUtil.cs" />
-    <Compile Include="LeagueOfLegendsUtil.cs" />
+    <Compile Include="M3u8Util.cs" />
     <Compile Include="MovieNightUtil.cs" />
-    <Compile Include="NickelodeonNLUtil.cs" />
-    <Compile Include="NicoNicoUtil.cs" />
     <Compile Include="NPOLiveUtil.cs" />
     <Compile Include="PowerUnlimitedUtil.cs" />
     <Compile Include="RedBull.cs" />
-    <Compile Include="RockPalastUtil.cs" />
-    <Compile Include="RTBFUtil.cs" />
-    <Compile Include="RTEPlayerUtil.cs" />
     <Compile Include="RtmpUtil.cs" />
     <Compile Include="RuutuUtil.cs" />
     <Compile Include="SBSauUtil.cs" />
-    <Compile Include="TelewizjadaUtil.cs" />
-    <Compile Include="ToonsTv.cs" />
     <Compile Include="TubePlusUtil.cs" />
     <Compile Include="TV3NZOnDemandUtil.cs" />
     <Compile Include="TVLinkscc.cs" />
@@ -135,11 +118,7 @@
     <Compile Include="CinemassacreUtil.cs" />
     <Compile Include="MyHosters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RTLXLUtil.cs" />
-    <Compile Include="SesameStreetUtil.cs" />
     <Compile Include="SouthParkUtil.cs" />
-    <Compile Include="ThatGuyWithTheGlassesUtil.cs" />
-    <Compile Include="TheEscapistUtil.cs" />
     <Compile Include="TVEUtil.cs" />
     <Compile Include="TVNZOnDemandUtil.cs" />
     <Compile Include="VRTUtil.cs" />

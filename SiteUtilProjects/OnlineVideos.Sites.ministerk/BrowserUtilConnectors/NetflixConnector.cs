@@ -5,14 +5,20 @@ using System;
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Web;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace OnlineVideos.Sites.BrowserUtilConnectors
 {
     public class NetflixConnector : BrowserUtilConnector
     {
+
+        private const int INTERNET_OPTION_SUPPRESS_BEHAVIOR = 81;
+        private const int INTERNET_SUPPRESS_COOKIE_PERSIST = 3;
+
+        [DllImport("wininet.dll", SetLastError = true)]
+        private static extern bool InternetSetOption(IntPtr hInternet, int dwOption, IntPtr lpBuffer, int lpdwBufferLength);
 
         private enum State
         {
@@ -26,8 +32,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         private string _username;
         private string _password;
-        private int _profileIndex;
-        private string _profileUrl;
+        private string _profileToken;
         private bool _showLoading = true;
         private bool _enableNetflixOsd = false;
         private bool _disableLogging = false;
@@ -80,13 +85,18 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 ShowLoading();
             _disableLogging = bool.Parse(json["disableLogging"].Value<string>());
             _enableNetflixOsd = bool.Parse(json["enableNetflixOsd"].Value<string>());
-            _profileUrl = json["switchUrl"].Value<string>();
-            _profileIndex = int.Parse(json["profileIndex"].Value<string>());
+            _profileToken = json["profileToken"].Value<string>();
             _password = json["password"].Value<string>();
             _username = username;
             _currentState = State.Login;
             ProcessComplete.Finished = false;
             ProcessComplete.Success = false;
+            unsafe
+            {
+                Int32 option = INTERNET_SUPPRESS_COOKIE_PERSIST;
+                InternetSetOption(IntPtr.Zero, INTERNET_OPTION_SUPPRESS_BEHAVIOR, new IntPtr(&option), sizeof(Int32));
+            }
+
             Url = @"https://www.netflix.com/Login";
             return EventResult.Complete();
         }
@@ -121,20 +131,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             return EventResult.Complete();
         }
 
-        private HtmlElement GetFirstElement(string elementName, string attributeName, string attributeValue)
-        {
-
-            var elts = Browser.Document.GetElementsByTagName(elementName);
-            foreach (HtmlElement elt in elts)
-            {
-                if (elt.GetAttribute(attributeName) == attributeValue)
-                {
-                    return elt;
-                }
-            }
-            return null;
-        }
-
         private bool activateLoginTimer = true;
         private bool activateProfileTimer = true;
         private bool activateReadyTimer = true;
@@ -156,10 +152,9 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                             _currentState = State.SelectProfile;
                             Regex rgx = new Regex(@"""authURL"":""(?<authURL>[^""]*)");
                             Match m = rgx.Match(data);
-                            string authUrl = "";
                             if (m.Success)
                             {
-                                authUrl = m.Groups["authURL"].Value;
+                                string authUrl = m.Groups["authURL"].Value;
                                 authUrl = HttpUtility.UrlDecode(authUrl.Replace("\\x", "%"));
                                 string loginPostDataFormat = "email={0}&password={1}&rememberMe=true&flow=websiteSignUp&mode=login&action=loginAction&withFields=email%2Cpassword%2CrememberMe%2CnextPage%2CshowPassword&authURL={2}&nextPage=&showPassword=";
                                 string loginPostData = string.Format(loginPostDataFormat, HttpUtility.UrlEncode(_username), HttpUtility.UrlEncode(_password), HttpUtility.UrlEncode(authUrl));
@@ -184,16 +179,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                         {
                             timer.Stop();
                             timer.Dispose();
-                            Regex rgx = new Regex(@"""authURL"":""(?<authURL>[^""]*)");
-                            Match m = rgx.Match(Browser.DocumentText);
-                            string authUrl = "";
-                            if (m.Success)
-                            {
-                                authUrl = m.Groups["authURL"].Value;
-                                authUrl = HttpUtility.UrlDecode(authUrl.Replace("\\x", "%"));
-                            }
                             InvokeScript(Properties.Resources.NetflixJs);
-                            InvokeScript("switchProfile('" + _profileUrl + HttpUtility.UrlEncode(authUrl) + "'," + _profileIndex + ");");
+                            InvokeScript("switchProfile('" + _profileToken + "')");
                             _currentState = State.ReadyToPlay;
                         };
                         timer.Interval = 2000;

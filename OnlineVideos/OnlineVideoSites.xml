@@ -264,55 +264,6 @@
         <Category xsi:type="RssLink" name="Game Trailers">http://www.screwattack.com/trailers</Category>
       </Categories>
     </Site>
-    <Site name="Sesamestreet" util="SesameStreet" agecheck="false" enabled="true" lang="en">
-      <Description>Sesamestreet videos</Description>
-      <Configuration>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\shref="(?<url>[^"]+)".*?span>(?<title>[^<]+)<]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\sclass="thumb-image">.*?<img\ssrc="(?<ImageUrl>[^"]+)".*?a\shref="(?<VideoUrl>[^"]+)".*?<span>(?<Title>[^<]+)<.*?class="description">(?<Description>[^<]+)<]]></item>
-        <item key="videoUrlRegEx"><![CDATA[http://www\.sesamestreet\.org/video_player/-/pgpv/videoplayer/0/(?<m0>[^/]*)/]]></item>
-        <item key="videoUrlFormatString"><![CDATA[http://www.sesamestreet.org/{0}]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\sclass="button\smore"\shref="(?<url>[^"]*)">\s<span>More</span>]]></item>
-        <item key="baseUrl"><![CDATA[http://www.sesamestreet.org]]></item>
-        <item key="searchUrl"><![CDATA[http://www.sesamestreet.org/browseallvideos?p_p_id=browsegpv_WAR_browsegpvportlet&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&p_p_col_id=column-2&p_p_col_count=1&_browsegpv_WAR_browsegpvportlet_cmd=search&_browsegpv_WAR_browsegpvportlet_assetType=VIDEO&_browsegpv_WAR_browsegpvportlet_keywords={0}&_browsegpv_WAR_browsegpvportlet_sortType=asc&_browsegpv_WAR_browsegpvportlet_field=&_browsegpv_WAR_browsegpvportlet_viewType=tiled&_browsegpv_WAR_browsegpvportlet_subject=&_browsegpv_WAR_browsegpvportlet_theme=&_browsegpv_WAR_browsegpvportlet_character=&_browsegpv_WAR_browsegpvportlet_muppetURL=]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="All">http://www.sesamestreet.org/browseallvideos?p_p_id=browsegpv_WAR_browsegpvportlet&amp;p_p_lifecycle=0&amp;p_p_state=normal&amp;p_p_mode=view&amp;p_p_col_id=column-2&amp;p_p_col_count=1&amp;_browsegpv_WAR_browsegpvportlet_cmd=search&amp;_browsegpv_WAR_browsegpvportlet_assetType=VIDEO&amp;_browsegpv_WAR_browsegpvportlet_keywords=&amp;_browsegpv_WAR_browsegpvportlet_sortType=asc&amp;_browsegpv_WAR_browsegpvportlet_field=title&amp;_browsegpv_WAR_browsegpvportlet_viewType=tiled&amp;_browsegpv_WAR_browsegpvportlet_subject=&amp;_browsegpv_WAR_browsegpvportlet_theme=&amp;_browsegpv_WAR_browsegpvportlet_character=&amp;_browsegpv_WAR_browsegpvportlet_muppetURL=</Category>
-        <Category xsi:type="RssLink" name="By Subject" thumb="http://www.sesamestreet.org/sesamestreet-theme/images/custom/rounded-container/browse_by_subject_bg.png">http://www.sesamestreet.org/browsevideosbysubject</Category>
-        <Category xsi:type="RssLink" name="By Theme" thumb="http://www.sesamestreet.org/sesamestreet-theme/images/custom/rounded-container/browse_by_theme_bg.png">http://www.sesamestreet.org/browsevideosbytheme</Category>
-        <Category xsi:type="RssLink" name="By Character" thumb="http://www.sesamestreet.org/sesamestreet-theme/images/custom/rounded-container/browse_by_characters_bg.png">http://www.sesamestreet.org/browsevideosbycharacter</Category>
-        <Category xsi:type="RssLink" name="Songs">http://www.sesamestreet.org/browseallvideos?p_p_id=browsegpv_WAR_browsegpvportlet&amp;p_p_lifecycle=1&amp;p_p_state=normal&amp;p_p_mode=view&amp;p_p_col_id=column-2&amp;p_p_col_count=1&amp;_browsegpv_WAR_browsegpvportlet_assetType=SONG</Category>
-        <Category xsi:type="RssLink" name="Classic clips">http://www.sesamestreet.org/browseallvideos?p_p_id=browsegpv_WAR_browsegpvportlet&amp;p_p_lifecycle=1&amp;p_p_state=normal&amp;p_p_mode=view&amp;p_p_col_id=column-2&amp;p_p_col_count=1&amp;_browsegpv_WAR_browsegpvportlet_assetType=CLASSIC</Category>
-      </Categories>
-    </Site>
-    <Site name="ThatGuyWithTheGlasses" util="ThatGuyWithTheGlasses" agecheck="false" enabled="true" lang="en">
-      <Description>That guy with the glasses</Description>
-      <Configuration>
-        <item key="videoListRegEx"><![CDATA[<tr\sclass="sectiontable.*?href="(?<VideoUrl>[^"]*)[^>]*>\s*(?<Title>[^<]*).*?<td\s*headers[^>]*>\s*(?<Description>[^<]*)]]></item>
-        <item key="fileUrlRegEx"><![CDATA[(?:<embed.*?src="(?<m0>[^"#]*)")|(?:<iframe\ssrc="(?<m0>[^"]*)")]]></item>
-        <item key="fileUrlFormatString"><![CDATA[{0}]]></item>
-        <item key="baseUrl"><![CDATA[http://thatguywiththeglasses.com]]></item>
-        <item key="resolveHoster"><![CDATA[FromUrl]]></item>
-      </Configuration>
-    </Site>
-    <Site name="BrassBandTube" util="BrassBandTube" agecheck="false" enabled="true" lang="en">
-      <Description>Videos from brassbands</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[(?<!</select>\s.*)<option\svalue="(?<url>[^"]*)"\s*>(?<title>[^<]*)</option>]]></item>
-        <item key="dynamicCategoryUrlFormatString"><![CDATA[sortType={0}]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<=</select>.*)<option\svalue="(?<url>[^"]*)"\s*>(?<title>[^<]*)</option>]]></item>
-        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[category={0}]]></item>
-        <item key="videoListRegEx"><![CDATA[(<a\shref="(?<VideoUrl>[^"]*)"><img\swidth="120px"\sheight="68px"\sstyle="padding:0\s5px\s5px\s0;"\ssrc="(?<ImageUrl>[^"]*)"\sborder="0"/></a></td><td\scolspan="4"\swidth="100%"\sstyle="font-weight:bold;">(?<Title>[^<]*)</td></tr>(?:<tr><td\scolspan="4">(?<Description>[^<]*)</td></tr>)?<tr><td\swidth="50px"><b>Rating:\s</b></td><td\swidth="90px"\salign="left"><img[^>]*></td><td\swidth="85px"><b>Views:\s</b>[^<]*</td><td\salign="right"><b>Duration:\s</b>(?<Duration>[^<]*)</td></tr><tr><td\scolspan="2"><b>Category:\s</b>[^<]*</td><td\scolspan="2"><b>Uploaded:\s</b>(?<Airdate>[^<]*)</td></tr>)
-|
-(<a\shref="[^"]*"\starget="_self">(?<Title>[^<]*)</a>\s*</div><table><tr><td\swidth="130"\salign="right">\s*<a\shref="(?<VideoUrl>[^"]*)"><img\ssrc="(?<ImageUrl>[^"]*)"[^>]*></a></td><td\svalign="top"><div>\s*<span\sclass="small">\s*\(Videos\)\s*</span>\s*</div>\s*<div>(?<Description>.*?)</div>\s*<div\sclass="small">[^<]*</div>\s*<table\scellspacing="0"\scellpadding="0"><tr><td\swidth="150px"><b>Rating:\s</b><img[^>]*></td><td\swidth="120px"\scolspan="2"><b>Views:\s</b>[^<]*</td></tr><tr><td\scolspan="3"><b>[^:]*:\s</b>[^<]*</td></tr><tr><td><b>Uploaded:\s</b>(?<Airdate>[^<]*)</td><td><b>Duration:\s</b>(?<Duration>[^<]*)</td><td>)
-|
-(<tr><td\srowspan="2"\sstyle="vertical-align:top;"\swidth="80px"><span\sid="videoinfo"\s><a\s*title="(?<Title>.*?)<p>(?<Description>[^<]*)<br/><b>Category</b>[^<]*<br/><b>Views</b>[^<]*<br/><b>Duration</b>:(?<Duration>[^<]*)</p>"\s*href="(?<VideoUrl>[^"]*)"\s><img\swidth="96px"\sheight="54\.4px"\sstyle="padding:0\s5px\s5px\s2px;"\ssrc="(?<ImageUrl>[^"]*)"\sborder="0"/></a></span></td><td\scolspan="2">)]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<param\sname="movie"\svalue="(?<m0>[^"]*)">]]></item>
-        <item key="baseUrl"><![CDATA[http://www.brassbandtube.com/concerts]]></item>
-        <item key="resolveHoster"><![CDATA[FromUrl]]></item>
-        <item key="searchUrl"><![CDATA[http://www.brassbandtube.com/component/search/{0}/%252F?ordering=&searchphrase=all]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\shref="\#Next"\sclass="jvdplink"\stitle="Next\sPage"\sonclick="document\.formSort\.limitstart\.value='(?<limitstart>[^']*)'[^>]*>Next</a>]]></item>
-      </Configuration>
-    </Site>
     <Site name="Cinemassacre" util="Cinemassacre" agecheck="false" enabled="true" lang="en" player="Internal">
       <Description>Video site from cinemassacre productions.</Description>
       <Configuration>
@@ -321,21 +272,6 @@
         <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\s>Next\s&raquo;</a>]]></item>
         <item key="fileUrlRegEx"><![CDATA[{file:\s'(?<m0>[^']*)',\slabel:\s'(?<n0>[^']*)',\stype:\s'mp4'}]]></item>
       </Configuration>
-    </Site>
-    <Site name="CollegeHumor" util="CollegeHumor" agecheck="false" enabled="true" lang="en" lastUpdated="2012-10-29T23:34:16.9119564+01:00">
-      <Description>Funny videos from CollegeHumor.com.</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[(?<!href="/pictures".*)<li>\s*<a\s*href="(?<url>[^"]*)"\sclass=""[^>]*>\s*<span>(?<title>[^<]*)</span>\s*</a>\s*</li>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<!\sclass="to-affix.*)<li[^>]*><a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a></li>]]></item>
-        <item key="videoListRegEx"><![CDATA[<img\ssrc="[^"]*"\swidth="[^"]*"\sheight="[^"]*"\sclass="[^"]*"\salt="[^"]*"\sdata-src="(?<ImageUrl>[^"]*)"\sdata-src-retina="(?<ImageUrl1>[^"]*)">\s*<noscript>\s*<img[^>]*>\s*</noscript>\s*<span\sclass="play-btn"><span\sclass="caret"></span></span>\s*</a>\s*<div\sclass="caption">\s*(?:<span[^>]*>[^<]*</span>)?\s*<h3[^>]*><a\shref="/(video|embed|post)/(?<VideoUrl>[^/]*)[^"]*"[^>]*>(?<Title>[^<]*)</a></h3>\s*</div>]]></item>
-        <item key="videoListRegExFormatString"><![CDATA[http://www.collegehumor.com/moogaloop/video/{0}.json]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\sclass="next"\shref="(?<url>[^"]*)"[^>]*>&raquo;</a>]]></item>
-        <item key="baseUrl"><![CDATA[http://www.collegehumor.com/videos]]></item>
-        <item key="forceUTF8Encoding"><![CDATA[True]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Home page">http://www.collegehumor.com/videos</Category>
-      </Categories>
     </Site>
     <Site name="CNN" util="CNN" agecheck="false" enabled="true" lang="en">
 	    <Description>Videos from the Cable News Network.</Description>
@@ -823,17 +759,6 @@
     <Site name="ABC iView" util="ABCiView2" agecheck="false" enabled="true" lang="en">
         <Description>iview is catch-up and more from ABC TV</Description>
     </Site>
-    <Site name="Academic Earth" util="GenericSite" agecheck="false" enabled="true" lang="en">
-      <Description>Online degrees and video courses from leading universities.</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[http://academicearth.org/]]></item>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li><a\sclass="accordion-item"\shref="(?<url>/subjects/[^"]*)">\s*(?<title>[^<]*)</a></li>\s*]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<div\sclass="thumb">\s*<a\sclass="thumb"\shref="(?<url>[^"]*)">\s*<img\ssrc="(?<thumb>[^"]*)"[^>]*>\s*</a>\s*<[^>]*><i[^>]*></a>\s*</div>\s*<div\sclass="info">\s*<h3><[^>]*>(?<title>[^<]*)</a></h3>\s*<h4><[^>]*>[^>]*>\s/\s<[^>]*>[^>]*></h4>\s*<[^>]*>\s*<[^>]*>\s*(?<Description>[^<]*)</a>]]></item>
-        <item key="videoListRegEx"><![CDATA[<a\sclass="thumb"\shref="(?<VideoUrl>[^"]*)"[^<]*<img[^>]*>\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^<]*</a>\s*<[^<]*</a>\s*<div\sclass="description">\s*<h4><[^>]*>(?<Title>[^<]*)</a></h4>\s*]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<textarea\sid="clip-embed"\sreadonly="readonly"\sstyle="display:none;"><div><embed\ssrc="(?<m0>[^"]*)"]]></item>
-        <item key="resolveHoster"><![CDATA[FromUrl]]></item>
-      </Configuration>
-    </Site>
     <Site name="ArrowTV" util="ArrowTV" agecheck="false" enabled="true" lang="nl">
       <Description>ARROW.TV Rock | 24/7 jouw favoriete Rockvideo's! Curated, all devices, full screen.</Description>
       <Categories>
@@ -858,61 +783,11 @@
         <item key="baseUrl"><![CDATA[http://www.onsnet.tv/corp/?site=4]]></item>
       </Configuration>
     </Site>
-    <Site name="De redactie" util="DeRedactie" agecheck="false" enabled="true" lang="nl">
-      <Description>Videos van De redactie.be</Description>
-      <Configuration>
-        <item key="videoListRegEx"><![CDATA[<div\sclass="contentitem">\s*<a\shref="(?<VideoUrl>[^"]*)"\srel="videoplayer">\s*<span\sclass="media\svideo">\s*<img\ssrc="(?<ImageUrl>[^"]*)">\s*<span\sclass="copyright">[^<]*</span>\s*<span[^>]*><small>[^<]*</small></span>\s*</span>\s*<h1>\s*<span\sclass="overlay"><i></i></span>(?<Title>[^<]*)</h1>\s*</a>
-|
-<a\shref="(?<VideoUrl>[^"]*)"\sclass="videolink">\s*<span\sclass="title\stitle_before_media">(?<Title>[^<]*)</span>\s*(?:<span\sclass="abstract\sabstract_before_media">(?<Description>[^<]*)</span>\s*)?<span\sclass="video">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[data-video-src="(?<m0>[^"]*)"]]></item>
-        <item key="baseUrl"><![CDATA[http://deredactie.be/cm/vrtnieuws/videozone]]></item>
-      </Configuration>
-    </Site>
-    <Site name="EscapistMagazine" util="TheEscapist" agecheck="false" enabled="true" lang="en">
-      <Description>The mouthpiece of the gaming generation, The Escapist aims to capture and celebrate the contemporary video gaming lifestyle and the diverse global video game culture by way of in-depth features, thought provoking articles and relevant columns authored by leading video game authorities, as well as cutting-edge video shorts, engaging forums and robust social media elements that incorporate the video gaming experience.</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<div\sclass='folders_container\scol_[^']*'\sid='folder_[^']*'><div\sclass='folders_title_card'><a\shref='(?<url>[^']*)'><img\ssrc='(?<thumb>[^']*)'\swidth='310'\sheight='90'></a></div><a\shref[^>]*>(?<title>[^:]*):\s(?:(?!folder_desc').)*folder_desc'\sstyle='display:none'><p\sstyle='padding:\s10px;'>(?<description>[^<]*)<]]></item>
-        <item key="videoListRegEx"><![CDATA[<div\sclass='filmstrip_video'><a\shref='(?<VideoUrl>[^']*)'><img\ssrc='(?<ImageUrl>[^']*)'></a><div\sclass='title'>[<i>]*(?<Title>[^<]*)[</i>]*(?<Title2>[^<]*)</div><div\sclass='date'>Date:\s(?<Airdate>[^<]*)</div><div\sclass='comments'><a\shref='[^']*'>[^<]*</a></div></div>]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\shref='(?<url>[^']*)'\sclass='next_page\s*'>Next</a>]]></item>
-        <item key="baseUrl"><![CDATA[http://www.escapistmagazine.com/videos/galleries]]></item>
-      </Configuration>
-    </Site>
     <Site name="EuroSport" util="EuroSport" agecheck="false" enabled="true" lang="en" player="Internal">
       <Description>Eurosport live streams and videos</Description>
     </Site>
-    <Site name="EventCaster" util="EventCaster" agecheck="false" enabled="true" lang="nl">
-      <Description>Uitzendingen van EventCaster</Description>
-      <Configuration>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<td\sclass='portal_station_item'\sid='(?<id>[^']*)'>\s*<div\sclass='caption'>\s*<a\shref="(?<url>[^"]*)"><div\sclass='line'>(?<title>[^<]*)</div>\s*<div\sclass='line'>(?<description>[^<]*)</div>\s*</a></div>\s*<div\sclass='logo'>\s*<a[^>]*><img\salt="[^"]*"\ssrc="(?<thumb>[^"]*)"\s/>]]></item>
-        <item key="videoListRegEx"><![CDATA[<tr[^>]*><td\sclass="date">(?<date>[^<]*)</td>\s*<td\sclass="time">(?<time>[^<]*)</td>\s*<td\sclass="icon"><a[^>]*><img\salt="Zoom"\ssrc="[^>]*></a></td>\s*<td\sclass="link"><a[^>]*>(?<Title>[^<]*)</a></td>\s*(?:<td>(?<Description>[^<]*)</td>\s*)?<td\sclass="video\splay_button"><a\shref="(?<VideoUrl>[^"]*)"><img\salt="Play"\sclass="play_icon"\ssrc="/images/video_portal/play\.png[^>]*></a>\s*</td>]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\sclass="next_page"\srel="next">[^\s]*\s&raquo;</a>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[a\shref="\#"\sonclick="new\sAjax\.Request\('(?<m0>[^']*)',\s{asynchronous:true,\sevalScripts:true,\smethod:'get',\sparameters:'authenticity_token='\s\+\sencodeURIComponent\('(?<m1>[^']*)'\)}\);\sreturn\sfalse;"><]]></item>
-        <item key="fileUrlFormatString"><![CDATA[{0}{1}]]></item>
-        <item key="searchUrl"><![CDATA[https://eventcaster.streamit.eu/content?search={0}&x=0&y=0]]></item>
-        <item key="baseUrl"><![CDATA[https://eventcaster.streamit.eu/portal_stations/]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Nu live">https://eventcaster.streamit.eu/portal_stations/live</Category>
-        <Category xsi:type="RssLink" name="Kerken">https://eventcaster.streamit.eu/portal_stations/churches</Category>
-        <Category xsi:type="RssLink" name="Alle stations">https://eventcaster.streamit.eu/portal_stations/</Category>
-      </Categories>
-    </Site>
     <Site name="Filmon" util="Filmon" agecheck="false" enabled="true" lang="en">
       <Description>Watch free 600 Free Live TV Channels. See 45000 Complimentary movies TV shows and documentaries. Record Local TV zero cost. View Horror Movies at no charge!</Description>
-    </Site>
-    <Site name="Gamersnet.nl" util="GamersNet" agecheck="false" enabled="true" lang="nl">
-      <Description>Bekijk hier alle nieuwste gametrailers en andere game video's. Bekijk onze nieuwste gametrailers in HD kwaliteit voor de ultieme beleving. </Description>
-      <Configuration>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<!<div\sclass="bottom">.*)(?<=<div\salign="center">.*)<a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>]]></item>
-    <item key="videoListRegEx"><![CDATA[(?#a..z)(<tr>\s*<td\svalign="top">\s*<a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a>\s*</td>\s*<td\salign="right"\svalign="top">(?<Description>[^<]*)</td>\s*</tr>)
-|(?#frontpage)(<br>\s*&bull;\s<a\shref="(?<VideoUrl>[^"]*)">(?<Title>[^<]*)</a>(?<Description>[^<]*))]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<meta\sitemprop="contentURL"\scontent="(?<m0>[^"]*)"\s/>]]></item>
-        <item key="baseUrl"><![CDATA[http://www.gamersnet.nl/movies]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Recent">http://www.gamersnet.nl/movies</Category>
-        <Category xsi:type="RssLink" name="A..Z">http://www.gamersnet.nl/movies</Category>
-      </Categories>
     </Site>
     <Site name="VRT Nu" util="VRT" agecheck="false" enabled="true" lang="nl">
       <Description>please fill</Description>
@@ -968,72 +843,12 @@
         <item key="baseUrl"><![CDATA[http://tvnz.co.nz]]></item>
       </Configuration>
     </Site>
-    <Site name="Ipla" util="Ipla" agecheck="false" enabled="true" lang="pl">
-      <Description>IPLA - interaktywna platforma rozrywkowa. Ogromna ilość materiałów w wysokiej jakości, dostęp do obszernej bazy VOD, funkcji komunikatora i czatu</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[http://getmedia.redefine.pl/r/l_x_35_ipla/categories/list/?ogin=common_user&passwdmd5=&ver=281&cuid=-8939960]]></item>
-        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://getmedia.redefine.pl/action/2.0/vod/list/?login=common_user&passwdmd5=&ver=281&cuid=-8939960&category={0}]]></item>
-      </Configuration>
-    </Site>
     <Site name="Khan Academy" util="KhanAcademy" agecheck="false" enabled="true" lang="en">
       <Description>Khan Academy is on a mission to provide a free world-class education to anyone anywhere. With over 2,600 videos covering everything from arithmetic to physics, finance, and history and 200 practice exercises, we're helping students learn whatever they want, whenever they want, at their own pace.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://www.khanacademy.org/api/v1/topic/root]]></item>
         <item key="resolveHoster"><![CDATA[FromUrl]]></item>
       </Configuration>
-    </Site>
-    <Site name="Kijk.nl" util="Kijk" agecheck="false" enabled="true" lang="nl">
-      <Description>Videos van SBS6, SBS9, Net5 en Veronica</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.kijk.nl/]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<object\sid=\\"myExperience[^"]*"\sclass=\\"BrightcoveExperience\\">"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param\sname=\\"playerID\\"\svalue=\\"(?<experienceId>[^\\]*)\\"\s/>"\s*\+\s"<param\sname=\\"playerKey\\"\svalue=\\"(?<playerKey>[^\\]*)\\"\s/>"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param[^>]*>"\s*\+\s"<param\sname=\\"@videoPlayer\\"\svalue=\\"(?<contentId>[^\\]*)\\"\s/>]]></item>
-        <item key="forceUTF8Encoding"><![CDATA[true]]></item>
-        <item key="hashValue"><![CDATA[0a2b91ec0fdb48c5dd5239d3e796d6f543974c33]]></item>
-        <item key="requestUrl"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerKey=AQ~~,AAAAiDenBUk~,YtnxvBxGO012li9YJqNYbzn7j1MkRsgk]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" thumb="" desc="" name="Gemist">
-          <SubCategories>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Alles">http://www.kijk.nl/ajax/section/overview/missed_MissedChannel-all/1/10</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="SBS6">http://www.kijk.nl/ajax/section/overview/missed_MissedChannel-sbs6/1/10</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="SBS9">http://www.kijk.nl/ajax/section/overview/missed_MissedChannel-sbs9/1/10</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="NET5">http://www.kijk.nl/ajax/section/overview/missed_MissedChannel-net5/1/10</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Veronica TV">http://www.kijk.nl/ajax/section/overview/missed_MissedChannel-veronicatv/1/10</Category>
-          </SubCategories>http://www.kijk.nl/gemist</Category>
-        <Category xsi:type="RssLink" thumb="" desc="" name="Series">http://www.kijk.nl/series</Category>
-        <Category xsi:type="RssLink" thumb="" desc="" name="Genres">http://www.kijk.nl/genres</Category>
-        <Category xsi:type="RssLink" thumb="" desc="" name="A - Z">http://www.kijk.nl/programmas</Category>
-        <Category xsi:type="RssLink" thumb="" desc="" name="Upload">http://upload.kijk.nl</Category>
-      </Categories>
-    </Site>
-    <Site name="KissAnime" util="KissAnime" agecheck="false" enabled="true" lang="en">
-      <Description>Watch anime online high quality</Description>
-      <Configuration>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<a\sclass="bigChar"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>\s*<p>(?<description>[^<]*)</p>\s*</div>'>\s*<a[^>]*>[^<]*</a>(\s*&nbsp;&nbsp;<img[^>]*>){0,2}\s*</td>(?:\s*<td>\s*<a\shref="[^"]*">(?<description>[^<]*)</a>)?]]></item>
-        <item key="dynamicSubCategoriesNextPageRegEx"><![CDATA[<li><a\shref="(?<url>[^"]*page=\d+)"\spage=\d{1,}>&rsaquo;\sNext]]></item>
-        <item key="videoListRegEx"><![CDATA[<tr>\s*<td>\s*<a\s*href="(?<VideoUrl>[^"]*)"\s*title="[^"]*">(?<Title>[^<]*)</a>\s*</td>\s*<td>(?<Airdate>[^<]*)</td>\s*</tr>]]></item>
-        <item key="baseUrl"><![CDATA[https://kissanime.ru/AnimeList]]></item>
-        <item key="genresRegex"><![CDATA[<a\shref="(?<url>/Genre[^"]*)"\stitle="(?<description>[^"]*)">(?<title>[^<]*)</a><br\s*/>]]></item>
-        <item key="alphabetRegex"><![CDATA[(<a\s*href="(?<url>\?[^"]*)">(?<title>[^<]*)</a>)|(<a\s*href="(?<url>[^"]*)">(?<title>All)</a>)]]></item>
-        <item key="fileUrlRegEx"><![CDATA[(?<=<select\sid="selectQuality">.*)<option\svalue="(?<m0>[^"]*)"\s*(?:selected)?>(?<n0>[^<]*)</option>]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" thumb="" desc="" name="Sort by alphabet">https://kissanime.to/AnimeList</Category>
-        <Category xsi:type="RssLink" thumb="" desc="" name="Sort by popularity">https://kissanime.to/AnimeList/MostPopular</Category>
-        <Category xsi:type="RssLink" thumb="" desc="" name="Latest update">https://kissanime.to/AnimeList/LatestUpdate</Category>
-        <Category xsi:type="RssLink" thumb="" desc="" name="New anime">https://kissanime.to/AnimeList/Newest</Category>
-        <Category xsi:type="RssLink" thumb="" desc="" name="Genres">https://kissanime.to/AnimeList/Newest</Category>
-      </Categories>
-    </Site>
-    <Site name="League of Legends Streams" util="LeagueOfLegends" agecheck="false" enabled="true" lang="en">
-      <Description>League of Legends Streams</Description>
-      <Configuration>
-        <item key="videoListRegEx"><![CDATA[<tr\sstyle="cursor:pointer;"\s*onclick="view_stream\('(?<VideoUrl>[^']*)','[^,]*,'(?<hoster>[^']*)'\);"\s*onMouseOver="show_preview\('[^']*',(?<ImageUrl>[^,]*),[^,]*,'[^']*','(?<Description>[^']*)'\);"[^>]*>\s<a\shref="[^"]*"\sstyle="display:none;">[^<]*</a>\s<td\sclass="live-td"><img[^>]*></td>\s<td\sclass="stream-name-td">(?<Title>[^<]*)<div[^>]*></div></td>\s<td\sclass="current-viewers-td"><font\scolor="green">(?<viewers>[^<]*)</font></td>\s<td\sclass="region-td"><img\ssrc="[^"]*"\stitle="(?<country>[^"]*)"\salt="[^"]*"\s*/></td>\s</tr>]]></item>
-        <item key="baseUrl"><![CDATA[http://www.leagueoflegendsstreams.com/]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Video">http://www.leagueoflegendsstreams.com/home/stream.php</Category>
-      </Categories>
     </Site>
     <Site name="liveLEAK" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Redefining The Media</Description>
@@ -1070,36 +885,6 @@
         <Category xsi:type="RssLink" name="Jensen" thumb="http://www.luckymedia.nl/luckytv/wp-content/themes/luckytv/timthumb.php?src=http://www.luckymedia.nl/luckytv/wp-content/uploads/jensen.jpg&amp;w=400&amp;h=226&amp;zc=1&amp;q=90">http://www.luckymedia.nl/luckytv/category/jensen/</Category>
         <Category xsi:type="RssLink" name="Joezny" thumb="http://www.luckymedia.nl/luckytv/wp-content/themes/luckytv/timthumb.php?src=http://www.luckymedia.nl/luckytv/wp-content/uploads/joezjny.jpg&amp;w=400&amp;h=226&amp;zc=1&amp;q=90">http://www.luckymedia.nl/luckytv/category/joezjny/</Category>
       </Categories>
-    </Site>
-    <Site name="Nickelodeon.nl" util="NickelodeonNL" agecheck="false" enabled="true" lang="nl">
-      <Description>Nickelodeon.nl is de leukste website voor kinderen met veel online videos van Spongebob, Dora, Big Time Rush en Pinguins van Madagascar.</Description>
-      <Configuration>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<div\sclass='teaser_item[^']*'>\s*<a\shref="[^"]*"\sclass="preview"\stitle="[^"]*"><img\salt="[^"]*"\sheight="[^"]*"\ssrc="(?<thumb>[^"]*)"\stitle="[^"]*"\swidth="[^"]*"\s/>\s*</a><div\sclass='description'>\s*<h3>(?<title>[^<]*)</h3>\s*<a[^>]*><span>Games</span>\s*</a><a\shref="(?<url>[^"]*)"\sclass="action\srelated_videos"\stitle="[^"]*"><span>Video’s</span>\s*</a></div>]]></item>
-        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]*)"\sclass="preview"><span\sclass='playicon'>Play</span>\s*<img\s(?:alt="[^"]*"\s)?(?:height="[^"]*"\s)?src="(?<ImageUrl>[^"]*)"[^>]*>\s*</a><div\sclass='description'>\s*<h3>(?<Title>[^<]*)</h3>\s*<a\shref="[^"]*"\sclass="action">bekijk</a>\s*</div>]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\sclass="next_page"\srel="next"\shref="(?<url>[^"]*)"><span>meer\svideo’s</span>]]></item>
-        <item key="baseUrl"><![CDATA[http://www.nickelodeon.nl/]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="New">http://www.nickelodeon.nl/videos/meer</Category>
-        <Category xsi:type="RssLink" name="Nickelodeon">http://www.nickelodeon.nl/shows?active_tab=0&amp;ajax</Category>
-        <Category xsi:type="RssLink" name="Nick Jr.">http://www.nickelodeon.nl/shows?active_tab=1&amp;ajax</Category>
-        <Category xsi:type="RssLink" name="Nick Toons">http://www.nickelodeon.nl/kanalen/28?window=nicktoons</Category>
-        <Category xsi:type="RssLink" name="Teen Nick">http://www.nickelodeon.nl/kanalen/28?window=teennick</Category>
-      </Categories>
-    </Site>
-    <Site name="NicoNico" util="NicoNico" agecheck="false" enabled="true" lang="en">
-      <Description>Niconico is a community website where users can enjoy commenting on videos from genres such as music, comedy, anime, game and gravure.</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass="child"\sid="[^"]*">\s*<a\shref="(?<url>[^"]*)"\sonclick="switchCategoryTag\('[^']*'\);\sreturn\sfalse;">(?<title>[^<]*)</a>\s*<p\sclass="upNum">(?<description>[^<]*)</p>\s*</li>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li>\s*<a\shref="(?<url>[^"]*)"\sonclick="switchCategoryTag\('[^']*'\);\sreturn\sfalse;">(?<title>[^<]*)</a>\s*</li>]]></item>
-        <item key="dynamicSubSubCategoriesRegEx"><![CDATA[<p\sclass="[^"]*"(?:\sstyle="[^"]*")?><a\shref="(?<url>[^"]*)">See\smore\s(?<title>[^<]*)</a></p>]]></item>
-        <item key="videoListRegEx"><![CDATA[<img\ssrc="(?<ImageUrl>[^"]*)"\salt=""\sclass="img_std96"></a></p>\s*<p\sclass="vinfo_length"><span>(?<Duration>[^<]*)</span></p>\s*</td>\s*<td\sclass="font10"\salign="right"><div\sstyle="width:92px;\soverflow:hidden;\spadding-left:4px;"><nobr>Views:\s<strong\sclass="vinfo_view">[^<]*</strong><br></nobr>\s*<nobr>Comments:\s<strong\sclass="vinfo_res">[^<]*</strong><br></nobr>\s*<nobr>My\sLists:\s<a[^>]*><strong\sclass="vinfo_mylist">[^<]*</strong></a><br></nobr>\s*<nobr>Ads:\s<a[^>]*><strong[^>]*>[^<]*</strong></a><br></nobr>\s*</div></td>\s*</tr>\s*</table>\s*</div>\s*</td>\s*<td[^>]*>\s*<div\sstyle="width:412px;\soverflow:hidden;">\s*<p\sclass="font12\sthumb_num">\s*Uploaded:\s<strong>(?<Airdate>[^<]*)</strong>\s*(?:<span[^>]*>[^<]*</span>\s*)?</p>\s*<p\sclass="font16"\sstyle="margin:2px\s0;"><nobr><a\shref="(?<VideoUrl>[^"]*)"[^>]*>(?<Title>[^<]*)</a></nobr></p>\s*<p[^>]*>(?<Description>[^<]*)</p>\s*</div>\s*</td>\s*</tr>]]></item>
-        <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)">Next</a>]]></item>
-        <item key="baseUrl"><![CDATA[http://www.nicovideo.jp/]]></item>
-        <item key="fileUrlRegEx"><![CDATA[&url=(?<m0>[^&]*)&]]></item>
-        <item key="forceUTF8Encoding"><![CDATA[True]]></item>
-        <item key="searchUrl"><![CDATA[http://www.nicovideo.jp/search/{0}]]></item>
-      </Configuration>
     </Site>
     <Site name="Nos" util="GenericSite" agecheck="false" enabled="true" lang="nl">
       <Description>Nieuws, Sport en Evenementen op Radio, TV en Internet</Description>
@@ -1188,49 +973,6 @@
         <item key="requestUrl"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerKey=AQ~~,AAACZYoJeMk~,6-AuiH-yar7vhFK8T1lKHxOJlJLkWYk4]]></item>
       </Configuration>
     </Site>
-    <Site name="Rockpalast" util="Rockpalast" agecheck="false" enabled="true" lang="de">
-      <Description>Rockpalast, das Kult-Programm mit festem wöchentlichen Sendeplatz und regelmäßigen zusätzlichen Rocknächten</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<div\sclass="image">\s*<img\ssrc="(?<thumb>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="teaser">\s*<div\sclass="teaserText">\s*<h2><span>(?<title>[^<]*)</span>\s*<span\sclass="hidden">:\s</span>(?<description>[^<]*)</h2>\s*</div>\s*</div>\s*<div\sclass="flapOverlay">\s*<p>\s*<span>(?<description2>[^<]*)</span>\s*<a\shref="(?<url>[^"]*)"\s>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[(?#Festivals_Backstage)(<div\sid="teaserSix[^"]*"\sclass="stripTeaserSix"\s>\s*<h2\s><a\shref="(?<url>[^"]*)"\sclass="colored">(?<title>[^<]*)</a></h2>\s*<ul\sclass="teaserContOuter">)|(?#B_Z)(<li\s>\s*<a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>\s*</li>\s*)|(?#A)(<div\sclass="printLocation"\stitle="URL:\s(?<url>[^"]*)">&nbsp;</div>(?:(?!Bands).)*Bands\smit\s(?<title>[^\s]*)\s<span\sclass="hover">:\sHier\sfindest\sDu\sDeine\sLieblingsband</span></li>\s*)]]></item>
-        <item key="videoListRegEx"><![CDATA[(?#Backstage)(<div\sclass="image">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="teaser">\s*<div\sclass="teaserText">\s*<h2><span>(?<Title>[^<]*)</span>\s*<span\sclass="hidden">:\s</span>(?<Year>[^<]*)</h2>\s*</div>\s*<ul\sclass="broadcastInfo">\s*<l[^>]*>\s*<span[^>]*>(?<Airdate>[^<]*)</span><span\sclass="hidden">,\s</span>\s*<span[^>]*>[^<]*</span><span\sclass="hidden">\s\|\s</span>\s*</li>\s*</ul>\s*</div>\s*<div\sclass="flapOverlay">\s*<p>\s*<span>(?<Description>[^<]*)</span>\s*<a\shref="(?<VideoUrl>[^"]*)"\s>)|(?#Festivals_Einzelkonzerte)(<div\sclass="image">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="teaser">\s*<div\sclass="teaserText">\s*<h2><span>(?<Title>[^<]*)</span>\s*<span\sclass="hidden">:\s</span>(?<Airdate>[^<]*)</h2>\s*</div>\s*</div>\s*<div\sclass="flapOverlay">\s*<p>\s*<span>(?<Description>[^<]*)</span>\s*<a\shref="(?<VideoUrl>[^"]*)"\s>)|(?#A_Z)(<li\sclass="mediathekvideo"\s>\s*<a\shref="(?<VideoUrl>[^"]*)"\s>\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*<span>(?<Title>[^<]*)</span>\s*</a>\s*</li>)]]></item>
-        <item key="playlistUrlRegEx"><![CDATA[(<a\shref="(?<url>[^"]*)"\srel="nofollow"\sclass="videoButton\splay">)|(<a\shref="(?<url>[^"]*)"\srel="nofollow">)]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<param\sname="flashvars"\svalue="dslSrc=(?<m0>[^&]*)&]]></item>
-        <item key="fileUrlFormatString"><![CDATA[{0}?hdcore=3.3.0&plugin=aasp-3.3.0.99.43]]></item>
-        <item key="baseUrl"><![CDATA[http://www1.wdr.de/fernsehen/kultur/rockpalast/videos/index.html]]></item>
-      </Configuration>
-    </Site>
-    <Site name="RTBF" util="RTBF" agecheck="false" enabled="true" lang="fr">
-      <Description>Retrouvez le replay de toutes vos émissions et séries  de la RTBF</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.rtbf.be/auvio]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" thumb="" desc="" name="Live (not supported)">http://www.rtbf.be/auvio/direct#category=0</Category>
-        <Category xsi:type="RssLink" thumb="" desc="" name="Émissions">http://www.rtbf.be/auvio/emissions</Category>
-      </Categories>
-    </Site>
-    <Site name="RTE.ie" util="RTEPlayer" agecheck="false" enabled="true" lang="en">
-      <Description>RTÉ news brings you the latest Irish news, world news, international news and up to the minute reports on breaking Irish news stories and news from around the world. Watch and listen to Irish news stories on our video and audio streams.</Description>
-      <Configuration>
-        <item key="dynamicCategoriesRegEx"><![CDATA[(?<!<section.*)<li><a\shref="(?<url>[^"]*)">(?<title>[^<]*)</a></li>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<article\sclass="thumbnail-module[^>]*>\s*<a\sclass="thumbnail-programme-link"\shref="(?<url>[^"]*)">\s*<div\sclass="image-container">\s*<img\salt="[^"]*"\sclass="thumbnail"\ssrc="(?<thumb>[^"]*)">\s*<div\sclass="grad"></div>\s*</div>\s*<[^>]*>\s*<span\sclass="thumbnail-title">(?<title>[^<]*)</span>\s*<span\sclass="thumbnail-date">(?<description>[^<]*)</span>\s*</[^>]*>\s*</a>\s*</article>]]></item>
-        <item key="videoListRegEx"><![CDATA[<article\sclass="thumbnail-module[^"]*">\s*<a\s*(?:class="thumbnail-programme-link"\s*)?href="(?<VideoUrl>[^"]*)"\s*(?:class="thumbnail-programme-link"\s*)?>\s*<div\sclass="image-container">\s*<img\s*(?:alt="[^"]*"\sclass="thumbnail"\s*)?src="(?<ImageUrl>[^"]*)"\s*(?:class="thumbnail"\salt="[^"]*"\s*)?>\s*<div\sclass="grad"></div>\s*</div>\s*<[^>]*>\s*<span\sclass="thumbnail-title">(?<Title>[^<]*)</span>\s*<span\sclass="thumbnail-date">(?<Airdate>[^<]*)</span>\s*</[^>]*>\s*</a>\s*</article>]]></item>
-        <item key="playlistUrlRegEx"><![CDATA[&feedUrl=(?<url>[^"]*)"]]></item>
-        <item key="baseUrl"><![CDATA[http://www.rte.ie/player/]]></item>
-      </Configuration>
-    </Site>
-    <Site name="RTL XL" util="RTLXL" agecheck="false" enabled="true" lang="nl" player="WMP">
-      <Description>RTL XL</Description>
-      <Categories>
-        <Category xsi:type="RssLink" name="Home">http://www.rtl.nl/system/xl/config/home.xml</Category>
-        <Category xsi:type="RssLink" name="A - Z">http://www.rtl.nl/system/xl/feed/a-z.xml</Category>
-        <Category xsi:type="RssLink" name="Gemist">http://www.rtl.nl/service/gemist/dataset_xml.xml</Category>
-        <Category xsi:type="RssLink" name="Gemist2">http://iptv.rtl.nl/nettv/feed.xml</Category>
-        <Category xsi:type="RssLink" name="Films">http://www.rtl.nl/system/xl/feed/films.xml</Category>
-        <Category xsi:type="RssLink" name="RTL Z">http://www.rtl.nl/system/s4m/xldata/abstract/210334.xml</Category>
-      </Categories>
-    </Site>
     <Site name="Ruutu.fi" util="Ruutu" agecheck="false" enabled="true" lang="fi">
       <Description>Ruutu - Nelonen, Liv, Jim ja Nelonen Pro. Viihdettä, draamaa, uutisia, urheilua ja lastenohjelmia - katso missä haluat ja milloin haluat.</Description>
       <Configuration>
@@ -1246,24 +988,6 @@
         <Category xsi:type="RssLink" name="Lapset">https://www.ruutu.fi/lapset</Category>
         <Category xsi:type="RssLink" name="Kaikki ohjelmat">https://www.ruutu.fi/ohjelmat/kaikki</Category>
       </Categories>
-    </Site>
-    <Site name="Telewizjada" util="Telewizjada" agecheck="false" enabled="true" lang="pl">
-      <Description>Telewizja na żywo</Description>
-      <Configuration>
-        <item key="videoListRegEx"><![CDATA[{"id":5,"priority":4,"name":"2014tvtvn","displayName":"(?<Title>[^"]*)","description":"(?<Description>[^"]*)","categoryID":1,"url":"(?<VideoUrl>[^"]*)","multibitrate":0,"project":"tw","thumb":"\\/media\\/stream\\/img\\/tvn\.png","embeddedThumb":"\\/media\\/stream\\/img\\/tvn_thumb\.png","bigThumb":"(?<ImageUrl>[^"]*)","date":"2016-01-02\s10:00:57","enabled":1,"epgUrl":"http:\\/\\/www\.telemagazyn\.pl\\/rss\\/24,stacja,st,krss\.xml","online":1,"isAdult":0,"viewcount":0,"publisher":""}]]></item>
-        <item key="baseUrl"><![CDATA[http://www.telewizjada.net/]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="videos">http://www.telewizjada.net/get_channels.php</Category>
-      </Categories>
-    </Site>
-    <Site name="ToonsTv" util="ToonsTv" agecheck="false" enabled="true" lang="en">
-      <Description>ToonsTV - The Home of Angry Birds Toons and Much More!</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[https://www.toons.tv/channels/]]></item>
-        <item key="hashValue"><![CDATA[75384f6d6bb17f9bdd44b8157487b9a64f40f6b4]]></item>
-        <item key="requestUrl"><![CDATA[https://secure.brightcove.com/services/messagebroker/amf?playerKey=AQ~~,AAAB4eGoB7k~,qFXAwsXF0CNH_yigPCPuBhmMwKcWfpTc]]></item>
-      </Configuration>
     </Site>
     <Site name="TV3NZ" util="TV3NZOnDemand" agecheck="false" enabled="true" lang="en">
       <Description>Television New Zealand: TV3, TV four</Description>
@@ -1292,10 +1016,10 @@
       <Description>Videos van tweakers.net</Description>
       <Configuration>
         <item key="videoListRegEx"><![CDATA[<tr>\s*<td\sclass="video-image">\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*><img\ssrc="(?<ImageUrl>[^"]*)"\swidth=124\sheight=70\salt=""><span\sclass="playtime">(?<Duration>[^<]*)</span></a>\s*</td>\s*<td>\s*<p\sclass="title\sellipsis"><a[^>]*>(?<Title>[^<]*)</a></p>\s*<p\sclass="lead"><span\sclass="date">(?<Airdate>[^<]*)</span>(?<Description>[^<]*)</p>]]></item>
-        <item key="videoUrlRegEx"><![CDATA[https://tweakers\.net/video/(?<m0>[^/]*)/]]></item>
-        <item key="videoUrlFormatString"><![CDATA[https://tweakers.net/video/s1playlist/{0}/620/349/playlist.xspf]]></item>
+        <item key="fileUrlRegEx"><![CDATA["youtubeId":"(?<m0>[^"]*)"]]></item>
+        <item key="fileUrlFormatString"><![CDATA[https://www.youtube.com/watch?v={0}]]></item>
         <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"\stitle="Volgende\spagina"\sclass="next">Volgende</a>\s</span>]]></item>
-        <item key="fileUrlRegEx"><![CDATA["label":"(?<n0>[^"]*)","height":[^,]*,"width":[^,]*,"sources":\[{"type":"video\\/mp4","src":(?<m0>[^}]+)}]]></item>
+        <item key="resolveHoster"><![CDATA[FromUrl]]></item>
         <item key="baseUrl"><![CDATA[https://tweakers.net/]]></item>
       </Configuration>
       <Categories>
@@ -1305,11 +1029,11 @@
     <Site name="Uitzending Gemist" util="UitzendingGemist" agecheck="false" enabled="true" lang="nl">
       <Description>Uitzending Gemist is de videotheek van de publieke omroep op internet en biedt het totaalaanbod van beschikbare TV uitzendingen van de omroepen.</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[https://www.npo.nl/programmas]]></item>
+        <item key="baseUrl"><![CDATA[https://www.npostart.nl/programmas]]></item>
         <item key="videoListRegEx"><![CDATA[
         (<div\sclass="npo-asset-tile-container\snpo-tile\s*"\sid="[^"]*">\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*>\s*<div\sclass="npo-asset-tile\s">\s*<div[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-image">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-new">nieuw</div>\s*<div\sclass="npo-asset-tile-play"></div>\s*<div\sclass="npo-asset-tile-watched">bekeken</div>\s*<div\sclass="npo-asset-tile-progress">\s*<div\sclass="npo-asset-tile-progress-bar"\sstyle="width:\s%"></div>\s*</div>\s*</div>\s*<h2>(?<Title>[^<]*)</h2>\s*<p>(?<Airdate>[^<]*)</p>\s*</a>\s*</div>)(?#videos of extras)
         |
-        (<div\sclass="npo-asset-tile-container\snpo-tile\s*"\sid="[^"]*"\s*>\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*>\s*<div\sclass="npo-asset-tile\s">\s*<div[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-timer">(?<Duration>[^<]*)</div>\s*<div\sclass="npo-asset-tile-image">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-new">nieuw</div>\s*<div\sclass="npo-asset-tile-play"></div>\s*<div\sclass="npo-asset-tile-watched">bekeken</div>\s*<div\sclass="npo-asset-tile-progress">\s*<div\sclass="npo-asset-tile-progress-bar"\sstyle="width:\s%"></div>\s*</div>\s*</div>\s*<h2>(?<Title>[^<]*)</h2>\s*<p>(?<Airdate>[^<]*)</p>\s*</a>\s*</div>)(?#videos of afleveringen)
+        (<div\sclass="npo-asset-tile-container\snpo-tile\s*"\sid="[^"]*"\s*>\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*>\s*<div\sclass="npo-asset-tile\s">\s*<div[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-timer">(?<Duration>[^<]*)</div>\s*<div\sclass="npo-asset-tile-image">\s*<img\sdata-src="(?<ImageUrl>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-new">nieuw</div>\s*<div\sclass="npo-asset-tile-play"></div>\s*<div\sclass="npo-asset-tile-watched">bekeken</div>\s*<div\sclass="npo-asset-tile-progress">\s*<div\sclass="npo-asset-tile-progress-bar"\sstyle="width:\s%"></div>\s*</div>\s*</div>\s*<div\sclass="npo-asset-tile-title">\s*<h2>(?<Title>[^<]*)</h2>\s*<p>(?<Airdate>[^<]*)</p>\s*</div>\s*</a>\s*</div>)(?#videos of afleveringen)
         ]]></item>
         <item key="searchUrl"><![CDATA[https://www.npo.nl/search/extended?pageSize=20&query={0}&filter=episodes&dateFrom=2014-01-01&tilemapping=search&tiletype=asset]]></item>
         <item key="fileUrlFormatString"><![CDATA[http://ida.omroep.nl/app.php/{0}?adaptive=no&token=]]></item>
@@ -1484,11 +1208,11 @@
         <Category xsi:type="RssLink" thumb="https://hubimages.itv.com/episode/1_7828_0110?w=304&amp;h=174&amp;q=80&amp;blur=0&amp;bg=false&amp;image_format=jpg" name="Sport">https://www.itv.com/hub/categories/sport</Category>
         <Category xsi:type="Group" thumb="http://s1.postimage.org/dkj7fvx5r/ITV1_logo.png" desc="Live TV" name="Live">
           <Channels>
-            <Channel name="ITV1" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6000.png">itv?guideid=26</Channel>
-            <Channel name="ITV2" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6240.png">itv2?guideid=185</Channel>
+            <Channel name="ITV1" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6000.png">https://mediaplayer.itv.com/flash/playlists/ukonly/itv1.xml?guideid=26</Channel>
+            <Channel name="ITV2" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6240.png">https://mediaplayer.itv.com/flash/playlists/ukonly/itv2.xml?guideid=185</Channel>
             <Channel name="ITVBe" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6508.png">itvbe?guideid=11708</Channel>
             <Channel name="ITV3" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6260.png">itv3?guideid=1859</Channel>
-            <Channel name="ITV4" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6272.png">itv4?guideid=1961</Channel>
+            <Channel name="ITV4" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6272.png">https://mediaplayer.itv.com/flash/playlists/ukonly/itv4.xml?guideid=1961</Channel>
             <Channel name="CITV" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb6273.png">citv?guideid=1981</Channel>
           </Channels>
         </Category>

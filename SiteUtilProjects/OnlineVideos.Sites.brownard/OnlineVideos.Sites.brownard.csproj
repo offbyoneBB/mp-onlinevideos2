@@ -53,6 +53,7 @@
     <Compile Include="Demand5Util.cs" />
     <Compile Include="FootballStreamingInfoUtil.cs" />
     <Compile Include="FourodUtil.cs" />
+    <Compile Include="TransponderTVUtil.cs" />
     <Compile Include="Utils\FourodDecrypter.cs" />
     <Compile Include="ITVPlayerUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

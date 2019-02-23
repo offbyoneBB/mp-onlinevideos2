@@ -16,7 +16,7 @@ namespace OnlineVideos.Sites
         #region Constants
 
         const string MEDIA_SELECTOR_URL = "http://open.live.bbc.co.uk/mediaselector/5/select/version/2.0/mediaset/pc/vpid/"; //"http://www.bbc.co.uk/mediaselector/4/mtis/stream/";
-        const string HLS_MEDIA_SELECTOR_URL = "http://open.live.bbc.co.uk/mediaselector/5/select/version/2.0/mediaset/apple-ipad-hls/vpid/";
+        const string HLS_MEDIA_SELECTOR_URL = "https://open.live.bbc.co.uk/mediaselector/6/select/version/2.0/mediaset/apple-ipad-hls/vpid/{0}/format/xml";
         const string MOST_POPULAR_URL = "https://www.bbc.co.uk/iplayer/most-popular";
         const string ATOZ_URL = "https://www.bbc.co.uk/iplayer/a-z/";
         static readonly string[] atoz = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0-9" };
@@ -56,7 +56,7 @@ namespace OnlineVideos.Sites
         
         static readonly Regex urlVpidRegex = new Regex(@"/iplayer/(episodes?|brand)/([^/""]*)");
         static readonly Regex srcsetRegex = new Regex(@"http[^\s""]*");
-        static readonly Regex videoPidRegex = new Regex(@"""versions"":.*?""id"":""([^""]*)");
+        static readonly Regex videoPidRegex = new Regex(@"""id"":""([^""]*)"",""kind"":""(original|editorial)"""); //(@"""versions"":.*?""id"":""([^""]*)");
 
         #endregion
 
@@ -100,8 +100,7 @@ namespace OnlineVideos.Sites
             }
 
             string vpid = m.Groups[1].Value;
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(GetWebData(MEDIA_SELECTOR_URL + vpid, proxy: proxyObj)); //uk only
+            XmlDocument doc = GetWebData<XmlDocument>(MEDIA_SELECTOR_URL + vpid, proxy: proxyObj); //uk only
             XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");
 
@@ -207,8 +206,7 @@ namespace OnlineVideos.Sites
 
         string getHLSVideoUrls(VideoInfo video, string vpid, WebProxy proxyObj)
         {
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(GetWebData(HLS_MEDIA_SELECTOR_URL + vpid, proxy: proxyObj)); //uk only
+            XmlDocument doc = GetWebData<XmlDocument>(string.Format(HLS_MEDIA_SELECTOR_URL, vpid), proxy: proxyObj); //uk only
             XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");
 
@@ -217,6 +215,9 @@ namespace OnlineVideos.Sites
             {
                 foreach (XmlElement connectionElem in mediaElem.SelectNodes("ns1:connection", nsmRequest))
                 {
+                    if (connectionElem.Attributes["transferFormat"] == null || connectionElem.Attributes["transferFormat"].Value != "hls" ||
+                        connectionElem.Attributes["href"] == null)
+                        continue;
                     string playlistUrl = connectionElem.Attributes["href"].Value;
                     string playlistStr = GetWebData(playlistUrl, proxy: proxyObj, userAgent: HlsPlaylistParser.APPLE_USER_AGENT);
                     HlsPlaylistParser playlist = new HlsPlaylistParser(playlistStr, playlistUrl);
@@ -350,22 +351,20 @@ namespace OnlineVideos.Sites
         {
             List<Category> categories = new List<Category>();
             HtmlDocument document = GetWebData<HtmlDocument>(url);
-            var programmes = document.DocumentNode.SelectNodes(@"//ol[contains(@class, 'tleo-list')]/li");
+            var programmes = document.DocumentNode.SelectNodes(@"//ul[contains(@class, 'gel-layout')]/li");
             foreach (var programme in programmes)
             {
-                var urlNode = programme.SelectSingleNode(@"./a");
+                var urlNode = programme.SelectSingleNode(@".//a");
                 if (urlNode == null)
                     continue;
 
-                Match vpidMatch = urlVpidRegex.Match(urlNode.GetAttributeValue("href", ""));
-                if (!vpidMatch.Success)
-                    continue;
 
                 categories.Add(new RssLink()
                 {
-                    Url = BASE_URL + "/iplayer/episodes/" + vpidMatch.Groups[2].Value,
-                    Name = urlNode.SelectSingleNode(@"./span").GetCleanInnerText(),
-                    Thumb = defaultThumb,
+                    Url = GetAbsoluteUri(urlNode.GetAttributeValue("href", string.Empty), BASE_URL).ToString(),
+                    Name = programme.SelectSingleNode(@".//p[contains(@class, 'list-content-item__title')]").GetCleanInnerText(),
+                    Description = programme.SelectSingleNode(@".//p[contains(@class, 'list-content-item__synopsis')]").GetCleanInnerText(),
+                    Thumb = getImageUrl(programme.SelectSingleNode(@".//picture/source")),
                     ParentCategory = parentCategory
                 });
             }
@@ -481,37 +480,49 @@ namespace OnlineVideos.Sites
         List<VideoInfo> getVideos(Category category)
         {
             List<VideoInfo> videos = new List<VideoInfo>();
+
             string url = (category as RssLink).Url;
 
             var document = GetWebData<HtmlDocument>(url).DocumentNode;
+            HtmlNodeCollection videoNodes = null;
+
+            // Check for an 'all episdoes' link if we couldn't find any episodes 
+            var allEpisodes = document.SelectSingleNode(@"//a[starts-with(@href, '/iplayer/episodes/')]");
+            if (allEpisodes != null)
+            {
+                document = GetWebData<HtmlDocument>(BASE_URL + allEpisodes.GetAttributeValue("href", "")).DocumentNode;
+                videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item')]");
+            }
+
+            if (videoNodes == null)
+                videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item')]");
+
+            // Single video
+            if (videoNodes == null)
+            {
+                var videoNode = document.SelectSingleNode(@"//div[@id='main']");
+                if (videoNode != null)
+                {
+                    VideoInfo video = createSingleVideo(videoNode, url);
+                    if (video != null)
+                        videos.Add(video);
+                }
+                return videos;
+            }
+
+            videos.AddRange(videoNodes.Select(v => createVideo(v, category.Name)).Where(v => v != null));
 
             int pageCount = getPageCount(document);
             int currentPage = 1;
 
-            while (true)
-            {                
-                var videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item')]");
-                if (videoNodes != null)
-                    videos.AddRange(videoNodes.Select(v => createVideo(v, category.Name)).Where(v => v != null));
-                else
-                {
-                    var videoNode = document.SelectSingleNode(@"//div[@id='main']");
-                    if (videoNode != null)
-                    {
-                        VideoInfo video = createSingleVideo(videoNode, url);
-                        if (video != null)
-                        {
-                            videos.Add(video);
-                            break;
-                        }
-                    }
-                }
-
+            while (currentPage < pageCount)
+            {
                 currentPage++;
-                if (currentPage > pageCount)
-                    break;
-
                 document = GetWebData<HtmlDocument>(url + "?page=" + currentPage).DocumentNode;
+                videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item')]");
+                if (videoNodes == null)
+                    break;
+                videos.AddRange(videoNodes.Select(v => createVideo(v, category.Name)).Where(v => v != null));
             }
             return videos;
         }

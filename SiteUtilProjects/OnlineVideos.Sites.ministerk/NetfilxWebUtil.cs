@@ -260,15 +260,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
         }
 
-        private int ProfileNumber
-        {
-            get
-            {
-                if (currentProfile == null)
-                    return 0;
-                return profiles.FindIndex(p => p["summary"]["value"]["guid"].Value<string>() == currentProfile["summary"]["value"]["guid"].Value<string>());
-            }
-        }
         private bool IsKidsProfile
         {
             get
@@ -317,8 +308,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                             profiles.Add(val.Value<JToken>());
                         }
                     }
-                    profiles.Reverse();
-                }
+                 }
                 else
                 {
                     _cc = null;
@@ -1140,13 +1130,13 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             {
                 Dictionary<string, string> p = new Dictionary<string, string>();
                 p.Add("password", password);
-                p.Add("switchUrl", string.Format(switchProfileUrl, ShaktiApi, BuildId, ProfileToken, ""));
-                p.Add("profileIndex", ProfileNumber.ToString());
+                p.Add("profileToken", ProfileToken);
                 p.Add("showLoadingSpinner", showLoadingSpinner.ToString());
                 p.Add("enableNetflixOsd", enableNetflixOsd.ToString());
                 p.Add("disableLogging", disableLogging.ToString());
                 string json = JsonConvert.SerializeObject(p);
                 string base64 = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(json));
+                if (enableVerboseLog) Log.Debug("profile: {0}", ProfileToken);
                 return base64;
             }
         }
