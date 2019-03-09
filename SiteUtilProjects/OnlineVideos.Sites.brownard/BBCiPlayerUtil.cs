@@ -8,6 +8,7 @@ using System.Net;
 using OnlineVideos.Sites.Utils;
 using System.Linq;
 using HtmlAgilityPack;
+using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Sites
 {
@@ -56,7 +57,7 @@ namespace OnlineVideos.Sites
         
         static readonly Regex urlVpidRegex = new Regex(@"/iplayer/(episodes?|brand)/([^/""]*)");
         static readonly Regex srcsetRegex = new Regex(@"http[^\s""]*");
-        static readonly Regex videoPidRegex = new Regex(@"""id"":""([^""]*)"",""kind"":""(original|editorial)"""); //(@"""versions"":.*?""id"":""([^""]*)");
+        static readonly Regex videoJsonRegex = new Regex(@"document.getElementById\(""tviplayer""\),(.*?)\);");
 
         #endregion
 
@@ -92,14 +93,15 @@ namespace OnlineVideos.Sites
         string getCatchupUrls(VideoInfo video)
         {
             WebProxy proxyObj = getProxy();
-            Match m = videoPidRegex.Match(GetWebData(video.VideoUrl, proxy: proxyObj));
-            if (!m.Success)
+            string html = GetWebData(video.VideoUrl, proxy: proxyObj);
+
+            string vpid;
+            if (!TryParseVpid(html, out vpid))
             {
                 Log.Warn("BBCiPlayer: Failed to parse vpid from '{0}'", video.VideoUrl);
                 return null;
             }
 
-            string vpid = m.Groups[1].Value;
             XmlDocument doc = GetWebData<XmlDocument>(MEDIA_SELECTOR_URL + vpid, proxy: proxyObj); //uk only
             XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");
@@ -202,6 +204,21 @@ namespace OnlineVideos.Sites
             if (errorNodes.Count > 0)
                 throw new OnlineVideosException(string.Format("BBC says: {0}", ((XmlElement)errorNodes[0]).GetAttribute("id")));
             return null;
+        }
+
+        bool TryParseVpid(string html, out string vpid)
+        {
+            vpid = null;
+            Match videoJsonMatch = videoJsonRegex.Match(html);
+            if (!videoJsonMatch.Success)
+                return false;
+
+            var versions = (JArray)JObject.Parse(videoJsonMatch.Groups[1].Value)?["appStoreState"]?["versions"];
+            if (versions == null || !versions.HasValues)
+                return false;
+
+            vpid = (string)versions[0]["id"];
+            return !string.IsNullOrWhiteSpace(vpid);
         }
 
         string getHLSVideoUrls(VideoInfo video, string vpid, WebProxy proxyObj)
