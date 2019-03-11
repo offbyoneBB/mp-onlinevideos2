@@ -368,7 +368,7 @@ namespace OnlineVideos.Sites
         {
             List<Category> categories = new List<Category>();
             HtmlDocument document = GetWebData<HtmlDocument>(url);
-            var programmes = document.DocumentNode.SelectNodes(@"//ul[contains(@class, 'gel-layout')]/li");
+            var programmes = document.DocumentNode.SelectNodes(@"//div[contains(@class, 'atoz-grid')]/ul/li");
             foreach (var programme in programmes)
             {
                 var urlNode = programme.SelectSingleNode(@".//a");
@@ -508,26 +508,46 @@ namespace OnlineVideos.Sites
             if (allEpisodes != null)
             {
                 document = GetWebData<HtmlDocument>(BASE_URL + allEpisodes.GetAttributeValue("href", "")).DocumentNode;
-                videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item')]");
+                videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item--')]");
             }
 
             if (videoNodes == null)
-                videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item')]");
+                videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item--')]");
+
+            var singleVideoNode = document.SelectSingleNode(@"//div[@id='main']");
 
             // Single video
             if (videoNodes == null)
             {
-                var videoNode = document.SelectSingleNode(@"//div[@id='main']");
-                if (videoNode != null)
+                if (singleVideoNode != null)
                 {
-                    VideoInfo video = createSingleVideo(videoNode, url);
+                    VideoInfo video = createSingleVideo(singleVideoNode, url, category.Name);
                     if (video != null)
                         videos.Add(video);
                 }
                 return videos;
             }
 
-            videos.AddRange(videoNodes.Select(v => createVideo(v, category.Name)).Where(v => v != null));
+            bool usedSingleVideo = false;
+            foreach (var videoNode in videoNodes)
+            {
+                var urlNode = videoNode.SelectSingleNode(@"./a");
+                if (urlNode != null)
+                {
+                    VideoInfo video = createVideo(videoNode, category.Name);
+                    if (video != null)
+                        videos.Add(video);
+                }
+                else
+                {
+                    if (usedSingleVideo)
+                        continue;
+                    usedSingleVideo = true;
+                    VideoInfo video = createSingleVideo(singleVideoNode, url, category.Name);
+                    if (video != null)
+                        videos.Add(video);
+                }
+            }
 
             int pageCount = getPageCount(document);
             int currentPage = 1;
@@ -536,7 +556,7 @@ namespace OnlineVideos.Sites
             {
                 currentPage++;
                 document = GetWebData<HtmlDocument>(url + "?page=" + currentPage).DocumentNode;
-                videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item')]");
+                videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item--')]");
                 if (videoNodes == null)
                     break;
                 videos.AddRange(videoNodes.Select(v => createVideo(v, category.Name)).Where(v => v != null));
@@ -586,12 +606,19 @@ namespace OnlineVideos.Sites
             };
         }
 
-        VideoInfo createSingleVideo(HtmlNode videoNode, string url)
+        VideoInfo createSingleVideo(HtmlNode videoNode, string url, string defaultTitle)
         {
+            string title = videoNode.SelectSingleNode(@".//span[contains(@class, 'play-cta__text__title')]").GetCleanInnerText();
+            if (title == defaultTitle)
+            {
+                string subtitle = videoNode.SelectSingleNode(@".//span[contains(@class, 'play-cta__text__subtitle')]").GetCleanInnerText();
+                if (!string.IsNullOrWhiteSpace(subtitle))
+                    title = subtitle;
+            }
             return new VideoInfo()
             {
                 VideoUrl = url,
-                Title = videoNode.SelectSingleNode(@".//span[contains(@class, 'play-cta__text__title')]").GetCleanInnerText(),
+                Title = title,
                 Description = videoNode.SelectSingleNode(@".//div[contains(@class, 'synopsis')]/p").GetCleanInnerText(),
                 Airdate = videoNode.SelectSingleNode(@".//div[contains(@class, 'metadata__container--first')]/p").GetCleanInnerText().Replace("First shown:", "").Trim(),
                 Length = videoNode.SelectSingleNode(@".//p[contains(@class, 'metadata__item--last')]").GetCleanInnerText().Replace("Duration", "").Trim(),
