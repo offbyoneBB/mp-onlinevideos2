@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
+using OnlineVideos.Helpers;
 
 namespace OnlineVideos.Sites
 {
@@ -26,16 +25,8 @@ namespace OnlineVideos.Sites
 
                 string deJSONified = Newtonsoft.Json.JsonConvert.DeserializeObject<string>(m.Groups["url"].Value);
                 webData = GetWebData(deJSONified);
-                m = Regex.Match(webData, @"\#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=(?<bw>[^,]*),CODECS=""[^""]*"",RESOLUTION=(?<reso>[^(,|\s)]*)(?:,AUDIO[^\s]*)?\s(?<url>.*)");
-                video.PlaybackOptions = new Dictionary<string, string>();
-                while (m.Success)
-                {
-                    string newurl = m.Groups["url"].Value;
-                    url = FormatDecodeAbsolutifyUrl(deJSONified, newurl, "", UrlDecoding.None);
-                    video.PlaybackOptions.Add(m.Groups["reso"].Value, url);
-                    m = m.NextMatch();
-                }
-                return video.PlaybackOptions.Values.LastOrDefault<String>();
+                video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(webData, deJSONified);
+                return video.GetPreferredUrl(false);
             }
             return String.Empty;
         }
