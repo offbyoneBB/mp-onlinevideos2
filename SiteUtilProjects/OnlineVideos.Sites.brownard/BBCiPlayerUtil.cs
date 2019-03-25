@@ -57,7 +57,7 @@ namespace OnlineVideos.Sites
         
         static readonly Regex urlVpidRegex = new Regex(@"/iplayer/(episodes?|brand)/([^/""]*)");
         static readonly Regex srcsetRegex = new Regex(@"http[^\s""]*");
-        static readonly Regex videoJsonRegex = new Regex(@"document.getElementById\(""tviplayer""\),(.*?)\);");
+        static readonly Regex videoJsonRegex = new Regex(@"__IPLAYER_REDUX_STATE__ = (.*?);</script>");
 
         #endregion
 
@@ -213,7 +213,7 @@ namespace OnlineVideos.Sites
             if (!videoJsonMatch.Success)
                 return false;
 
-            var versions = (JArray)JObject.Parse(videoJsonMatch.Groups[1].Value)?["appStoreState"]?["versions"];
+            var versions = (JArray)JObject.Parse(videoJsonMatch.Groups[1].Value)?["versions"];
             if (versions == null || !versions.HasValues)
                 return false;
 
