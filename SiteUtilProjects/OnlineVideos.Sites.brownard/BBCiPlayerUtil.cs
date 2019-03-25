@@ -17,7 +17,8 @@ namespace OnlineVideos.Sites
         #region Constants
         // https://open.live.bbc.co.uk/mediaselector/6/select/version/2.0/mediaset/apple-ipad-hls/vpid/m00031q0/format/xml
         const string MEDIA_SELECTOR_URL = "http://open.live.bbc.co.uk/mediaselector/5/select/version/2.0/mediaset/pc/vpid/"; //"http://www.bbc.co.uk/mediaselector/4/mtis/stream/";
-        const string HLS_MEDIA_SELECTOR_URL = "https://open.live.bbc.co.uk/mediaselector/6/select/version/2.0/mediaset/iptv-all/vpid/{0}/format/xml"; // "https://open.live.bbc.co.uk/mediaselector/6/select/version/2.0/mediaset/apple-ipad-hls/vpid/{0}/format/xml";
+        const string HLS_MEDIA_SELECTOR_URL = "https://open.live.bbc.co.uk/mediaselector/6/select/version/2.0/mediaset/{0}/vpid/{1}/format/xml"; // "https://open.live.bbc.co.uk/mediaselector/6/select/version/2.0/mediaset/apple-ipad-hls/vpid/{0}/format/xml";
+        const string DEFAULT_MEDIA_SET = "iptv-all";
         const string MOST_POPULAR_URL = "https://www.bbc.co.uk/iplayer/most-popular";
         const string ATOZ_URL = "https://www.bbc.co.uk/iplayer/a-z/";
         static readonly string[] atoz = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0-9" };
@@ -40,10 +41,8 @@ namespace OnlineVideos.Sites
         protected bool RetrieveSubtitles = false;
         [Category("OnlineVideosConfiguration"), Description("Format string used as Url for getting the results of a search. {0} will be replaced with the query.")]
         string searchUrl = "http://www.bbc.co.uk/iplayer/search?q={0}";
-        [Category("OnlineVideosConfiguration"), Description("Regular Expression used on a video thumbnail for matching a string to be replaced for higher quality")]
-        protected string thumbReplaceRegExPattern;
-        [Category("OnlineVideosConfiguration"), Description("The string used to replace the match if the pattern from the thumbReplaceRegExPattern matched")]
-        protected string thumbReplaceString;
+        [Category("OnlineVideosConfiguration"), Description("Debug setting to change the media set to use when retrieving urls.")]
+        protected string mediaSet = DEFAULT_MEDIA_SET;
 
         //TV Guide options
         [Category("OnlineVideosUserConfiguration"), Description("Whether to retrieve current program info for live streams.")]
@@ -223,7 +222,9 @@ namespace OnlineVideos.Sites
 
         string getHLSVideoUrls(VideoInfo video, string vpid, WebProxy proxyObj)
         {
-            XmlDocument doc = GetWebData<XmlDocument>(string.Format(HLS_MEDIA_SELECTOR_URL, vpid), proxy: proxyObj); //uk only
+            string url = string.Format(HLS_MEDIA_SELECTOR_URL, string.IsNullOrEmpty(mediaSet) ? DEFAULT_MEDIA_SET : mediaSet, vpid);
+            XmlDocument doc = GetWebData<XmlDocument>(url, proxy: proxyObj); //uk only
+
             XmlNamespaceManager nsmRequest = new XmlNamespaceManager(doc.NameTable);
             nsmRequest.AddNamespace("ns1", "http://bbc.co.uk/2008/mp/mediaselection");
 
