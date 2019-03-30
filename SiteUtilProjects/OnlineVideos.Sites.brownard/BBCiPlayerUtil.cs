@@ -504,12 +504,15 @@ namespace OnlineVideos.Sites
             var document = GetWebData<HtmlDocument>(url).DocumentNode;
             HtmlNodeCollection videoNodes = null;
 
-            // Check for an 'all episdoes' link if we couldn't find any episodes 
-            var allEpisodes = document.SelectSingleNode(@"//a[starts-with(@href, '/iplayer/episodes/')]");
-            if (allEpisodes != null)
+            // Check for an 'all episdoes' link if not currently on the episodes page
+            if (!url.Contains("/iplayer/episodes/"))
             {
-                document = GetWebData<HtmlDocument>(BASE_URL + allEpisodes.GetAttributeValue("href", "")).DocumentNode;
-                videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item--')]");
+                var allEpisodes = document.SelectSingleNode(@"//a[starts-with(@href, '/iplayer/episodes/')]");
+                if (allEpisodes != null)
+                {
+                    document = GetWebData<HtmlDocument>(BASE_URL + allEpisodes.GetAttributeValue("href", "")).DocumentNode;
+                    videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item--')]");
+                }
             }
 
             if (videoNodes == null)
@@ -750,9 +753,9 @@ namespace OnlineVideos.Sites
             if (pageNumbers != null && pageNumbers.Count > 0)
             {
                 string lastPageUrl = pageNumbers.Last().GetAttributeValue("href", "").ParamsCleanup();
-                Match m = Regex.Match(lastPageUrl, @"\d+");
+                Match m = Regex.Match(lastPageUrl, @"page=(\d+)");
                 if (m.Success)
-                    pageCount = int.Parse(m.Value);
+                    pageCount = int.Parse(m.Groups[1].Value);
             }
             return pageCount;
         }
