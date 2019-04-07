@@ -2160,9 +2160,17 @@ namespace OnlineVideos.MediaPortal1
                 if (currentPlaylist.IsPlayAll && currentPlaylist.HasNextPage)
                 {
                     var nVideos = currentVideoList.Count;
-                    var videos = SelectedSite.GetNextPageVideos();
-                    currentPlaylist = VideosToPlayList(videos, currentPlaylist.Random, null);
-                    currentPlaylist.Insert(0, currentPlayingItem);//keep one for chosenplaybackoption
+                    try
+                    {
+                        var videos = SelectedSite.GetNextPageVideos();
+                        currentPlaylist = VideosToPlayList(videos, currentPlaylist.Random, null);
+                        currentPlaylist.Insert(0, currentPlayingItem);//keep one for chosenplaybackoption
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Instance.Warn("Error getting nextPageVideos: {0}", ex);
+                        currentPlaylist.Clear();//force end of auto playback
+                    };
                     if (currentPlaylist.Count > 1)
                     {
                         currentPlaylistIndex = 1;
