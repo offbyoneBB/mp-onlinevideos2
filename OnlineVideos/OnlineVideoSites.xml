@@ -305,8 +305,6 @@
     <Site name="BBC iPlayer" util="BBCiPlayer" agecheck="false" enabled="true" lang="en">
       <Description>The BBC iPlayer allows to catch up on the last 7 days of BBC TV (only available in the UK).</Description>
       <Configuration>
-        <item key="thumbReplaceRegExPattern"><![CDATA[/\d{2,3}x\d{2,3}/]]></item>
-        <item key="thumbReplaceString"><![CDATA[/406x228/]]></item>
         <item key="tvGuideFormatString"><![CDATA[Now: <nowtitle> - <nowstart> - <nowend><newline>Next: <nexttitle> - <nextstart> - <nextend><newline><nowdescription>]]></item>
       </Configuration>
       <Categories>

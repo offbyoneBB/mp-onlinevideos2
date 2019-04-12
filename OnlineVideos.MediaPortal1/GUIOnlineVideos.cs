@@ -631,7 +631,19 @@ namespace OnlineVideos.MediaPortal1
                             if (cmer.RefreshCurrentItems)
                             {
                                 if (aVideo == null) DisplayCategories(selectedCategory, null);
-                                else DisplayVideos_Category(selectedCategory, true);
+                                else
+                                {
+                                    var indextoSelect = -1;
+                                    if (currentEntry.DisplayText == Translation.Instance.Delete)
+                                        indextoSelect = GUI_facadeView.SelectedListItemIndex;
+                                    DisplayVideos_Category(selectedCategory, true);
+                                    if (indextoSelect >= GUI_facadeView.Count) indextoSelect = GUI_facadeView.Count - 1;
+                                    if (indextoSelect > -1)
+                                    {
+                                        UpdateViewState();//not sure why this is necessary, on other places it's called after setting SelectedListItemIndex, but in this case it needs to be called before that...
+                                        GUI_facadeView.SelectedListItemIndex = indextoSelect;
+                                    }
+                                }
                             }
                             if (cmer.ResultItems != null && cmer.ResultItems.Count > 0) SetSearchResultItemsToFacade(cmer.ResultItems, VideosMode.Category, currentEntry.DisplayText);
                         }
@@ -2160,9 +2172,17 @@ namespace OnlineVideos.MediaPortal1
                 if (currentPlaylist.IsPlayAll && currentPlaylist.HasNextPage)
                 {
                     var nVideos = currentVideoList.Count;
-                    var videos = SelectedSite.GetNextPageVideos();
-                    currentPlaylist = VideosToPlayList(videos, currentPlaylist.Random, null);
-                    currentPlaylist.Insert(0, currentPlayingItem);//keep one for chosenplaybackoption
+                    try
+                    {
+                        var videos = SelectedSite.GetNextPageVideos();
+                        currentPlaylist = VideosToPlayList(videos, currentPlaylist.Random, null);
+                        currentPlaylist.Insert(0, currentPlayingItem);//keep one for chosenplaybackoption
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Instance.Warn("Error getting nextPageVideos: {0}", ex);
+                        currentPlaylist.Clear();//force end of auto playback
+                    };
                     if (currentPlaylist.Count > 1)
                     {
                         currentPlaylistIndex = 1;

@@ -684,7 +684,7 @@ namespace OnlineVideos.Sites
                     {
                         Name = item.Snippet.Localized.Title,
                         Description = item.Snippet.Localized.Description,
-                        Thumb = item.Snippet.Thumbnails != null ? item.Snippet.Thumbnails.High.Url : null,
+                        Thumb = getThumbnailUrl(item.Snippet.Thumbnails),
                         EstimatedVideoCount = (uint)(item.ContentDetails.ItemCount ?? 0),
                         ParentCategory = parentCategory,
                         Kind = YouTubeCategory.CategoryKind.Playlist,
@@ -698,6 +698,15 @@ namespace OnlineVideos.Sites
                 results.Add(new NextPageCategory() { ParentCategory = parentCategory, Other = (Func<List<Category>>)(() => QueryChannelPlaylists(parentCategory, channelId, response.NextPageToken)) });
             }
             return results;
+        }
+
+        private string getThumbnailUrl(Google.Apis.YouTube.v3.Data.ThumbnailDetails thumbnails)
+        {
+            if (thumbnails == null) return null;
+            if (thumbnails.High != null) return thumbnails.High.Url;
+            if (thumbnails.Medium != null) return thumbnails.Medium.Url;
+            if (thumbnails.Standard != null) return thumbnails.Standard.Url;
+            return null;
         }
 
         /// <summary>Returns a list of the authenticated user's subscriptions (channels).</summary>
