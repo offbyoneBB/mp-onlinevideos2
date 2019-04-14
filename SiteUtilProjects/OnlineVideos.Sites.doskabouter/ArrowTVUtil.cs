@@ -33,9 +33,9 @@ namespace OnlineVideos.Sites
             var videoList = new List<VideoInfo>();
             JObject webData;
             if (userHash == null)
-                webData = GetWebData<JObject>(@"http://arrow.tv/rock/account/register", postData: @"{""campaign"":""""}");
+                webData = GetWebData<JObject>(@"https://arrow.tv/rock/account/register", postData: @"{""campaign"":""""}");
             else
-                webData = GetWebData<JObject>(@"http://arrow.tv/rock/account/loginbyhash", postData: @"{""userhash"":""" + userHash + @""",""campaign"":"""",""from"":" + lastId + "}");
+                webData = GetWebData<JObject>(@"https://arrow.tv/rock/account/loginbyhash", postData: @"{""userhash"":""" + userHash + @""",""campaign"":"""",""from"":" + lastId + "}");
 
             foreach (var item in webData["playlist"])
             {

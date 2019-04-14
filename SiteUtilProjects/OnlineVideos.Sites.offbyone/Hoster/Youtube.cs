@@ -11,11 +11,17 @@ using OnlineVideos.Hoster;
 using OnlineVideos.JavaScript;
 using System.Text;
 using Jurassic;
+using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Hoster
 {
-    public class Youtube : HosterBase
+    public class Youtube : HosterBase, ISubtitle
     {
+        [Category("OnlineVideosUserConfiguration"), Description("Select subtitle language preferences (; separated and ISO 3166-2?), for example: en;de")]
+        protected string subtitleLanguages = "";
+
+        private string subtitleText = null;
+
         public override string GetHosterUrl()
         {
             return "Youtube.com";
@@ -191,6 +197,30 @@ namespace OnlineVideos.Hoster
                                 new MPUrlSourceFilter.RtmpUrl(rtmpUrl) { PlayPath = rtmpPlayPath, SwfUrl = swfUrl, SwfVerify = true }.ToString());
                         }
                     }
+                };
+
+                subtitleText = null;
+                if (!String.IsNullOrEmpty(subtitleLanguages) && !string.IsNullOrEmpty(Items.Get("player_response")))
+                {
+                    try
+                    {
+                        var jdata = JToken.Parse(Items.Get("player_response"));
+                        var captions = jdata["captions"]?["playerCaptionsTracklistRenderer"]?["captionTracks"] as JArray;
+
+                        string subUrl = getSubUrl(captions, subtitleLanguages);
+                        if (!String.IsNullOrEmpty(subUrl))
+                        {
+                            string data = WebCache.Instance.GetWebData(subUrl + "&fmt=vtt");
+                            subtitleText = Helpers.SubtitleUtils.Webvtt2SRT(data);
+                            if (subtitleText.StartsWith("Kind: captions\r\nLanguage: "))
+                            {
+                                subtitleText = subtitleText.Substring(30);
+                            }
+                        }
+
+                        //if (jdata !=)
+                    }
+                    catch { };
                 }
             }
             else if (Items.Get("status") == "fail")
@@ -213,6 +243,19 @@ namespace OnlineVideos.Hoster
             var result = GetPlaybackOptions(url);
             if (result != null && result.Count > 0) return result.Last().Value;
             else return String.Empty;
+        }
+
+        private string getSubUrl(JArray captions, string languages)
+        {
+            if (captions != null)
+            {
+                string[] langs = languages.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string lang in langs)
+                    foreach (JToken caption in captions)
+                        if (lang == caption.Value<string>("languageCode"))
+                            return caption.Value<string>("baseUrl");
+            }
+            return null;
         }
 
         /// <summary>/// Turn the encrypted s parameter into a valid signature</summary>
@@ -283,6 +326,15 @@ namespace OnlineVideos.Hoster
             }
             return string.Empty;
         }
+
+        public string SubtitleText
+        {
+            get
+            {
+                return subtitleText;
+            }
+        }
+
 
         /*
         private string DecryptWithJurassicEngine(string jsContent, string s)

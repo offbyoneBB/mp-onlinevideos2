@@ -75,7 +75,7 @@ namespace MediaPortal.UI.Players.InputStreamPlayer
       if (GetSubtitlePath(out paths, out filename))
       {
         MpcSubtitles.LoadSubtitles(upDevice, _displaySize, filename, _graphBuilder, paths, preferredSubtitleLcid);
-        MpcSubtitles.SetEnable(settings.EnableSubtitles);
+        MpcSubtitles.SetEnable(settings.EnableMpcSubtitlesEngine);
       }
     }
 

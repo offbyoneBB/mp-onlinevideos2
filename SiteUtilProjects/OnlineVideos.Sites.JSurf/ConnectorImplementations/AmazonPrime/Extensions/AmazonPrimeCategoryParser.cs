@@ -103,7 +103,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
 
             if (listItems != null)
             {
-                listItems = listItems.Where(x => x.OriginalName.ToLower() == "li" && x.Id.StartsWith("result_")).ToList();
+                //listItems = listItems.Where(x => x.OriginalName.ToLower() == "li" && x.Id.StartsWith("result_")).ToList();
 
                 // These are the movies - parse them into categories
                 foreach (var item in listItems)
@@ -111,18 +111,23 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                     var tmpCateg = new Category();
                     tmpCateg.ParentCategory = parent;
                     tmpCateg.HasSubCategories = false;
-                    var link = item.GetNodeByClass("s-access-detail-page");
-                    tmpCateg.Name = link.GetAttribute("title");
-                    tmpCateg.Name = StringUtils.PlainTextFromHtml(tmpCateg.Name.Replace("\n", String.Empty).Trim());
+                    var link = item.GetNodeByClass("a-link-normal");
                     tmpCateg.Other = CombineUrl(link);
-                    tmpCateg.Thumb = item.GetNodeByClass("s-access-image").GetAttribute("src");
+                    var imgNode = item.GetNodesByClass("s-image")?.FirstOrDefault(x => x.OriginalName.ToLower() == "img");
+                    if (imgNode != null)
+                    {
+                        tmpCateg.Thumb = imgNode.GetAttribute("src");
+                        tmpCateg.Name = imgNode.GetAttribute("alt");
+                        tmpCateg.Name = StringUtils.PlainTextFromHtml(tmpCateg.Name.Replace("\n", String.Empty).Trim());
+                    }
+
                     var released = link.ParentNode.NavigatePath(new int[] { 3 }).GetInnerText();
-                    var score = item.GetNodeByClass("a-icon-star") == null ? String.Empty : item.GetNodeByClass("a-icon-star").FirstChild.GetInnerText();
+                    var score = item.GetNodeByClass("a-icon-alt")?.GetInnerText();
                     tmpCateg.Description = StringUtils.PlainTextFromHtml("Released: " + released + "\r\nReview Score: " + score);
                     results.Add(tmpCateg);
                 }
 
-                var nextPageCtrl = doc.GetElementById("pagnNextLink");
+                var nextPageCtrl = doc.GetElementById("a-last")?.FirstChild;
 
                 if (nextPageCtrl != null)
                 {

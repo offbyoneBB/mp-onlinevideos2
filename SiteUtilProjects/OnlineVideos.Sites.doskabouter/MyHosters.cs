@@ -760,6 +760,54 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class Streamango : HosterBase
+    {
+
+        const string key = "=/+9876543210zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA";
+
+        public override string GetHosterUrl()
+        {
+            return "streamango.com";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            var data = GetWebData(url);
+            Match m = Regex.Match(data, @"type:""video/mp4"",src:d\('(?<encrypted>[^']*)',(?<mask>\d+)\)");
+            if (m.Success)
+            {
+                var enc = m.Groups["encrypted"].Value;
+                int mask = int.Parse(m.Groups["mask"].Value);
+                enc = Regex.Replace(enc, @"[^A-Za-z0-9\+\/\=]", "");
+                int idx = 0;
+                StringBuilder res = new StringBuilder();
+                res.Append("http:");
+                while (idx < enc.Length)
+                {
+                    int a = key.IndexOf(enc.Substring(idx++, 1));
+                    int b = key.IndexOf(enc.Substring(idx++, 1));
+                    int c = key.IndexOf(enc.Substring(idx++, 1));
+                    int d = key.IndexOf(enc.Substring(idx++, 1));
+                    int s1 = ((a << 2) | (b >> 4)) ^ mask;
+                    res.Append((char)s1);
+                    int s2 = ((b & 0xf) << 0x4) | (c >> 0x2);
+                    if (c != 0x40)
+                    {
+                        res.Append((char)s2);
+                    }
+                    int s3 = ((c & 0x3) << 0x6) | d;
+                    if (d != 0x40)
+                    {
+                        res.Append((char)s3);
+                    }
+                }
+                return res.ToString();
+
+            }
+            return null;
+        }
+    }
+
     public class StreamCloud : MyHosterBase
     {
         public override string GetHosterUrl()
@@ -1228,6 +1276,7 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
+            url = url.Replace(@"http://", @"https://");
             string data = WebCache.Instance.GetWebData(url);
             data = GetFromPost(url, data);
 

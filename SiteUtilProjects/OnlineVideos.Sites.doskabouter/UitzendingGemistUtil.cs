@@ -31,6 +31,9 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072 | SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
+
             HtmlDocument data = GetWebData<HtmlDocument>(baseUrl);
             var nodes = data.DocumentNode.SelectNodes(@"//div[@class='npo-dropdown-container']");
 
@@ -53,7 +56,7 @@ namespace OnlineVideos.Sites
                     var val = subnode.Attributes["data-value"].Value;
                     if (!String.IsNullOrEmpty(val))
                     {
-                        subcat.Url = "https://www.npo.nl/media/series?" + arg + '=' + val + "&tilemapping=normal&tiletype=teaser&pageType=catalogue&page=1";
+                        subcat.Url = @"https://www.npostart.nl/programmas?" + arg + '=' + val + "&genreId=";
                         cat.SubCategories.Add(subcat);
                     }
                 }
@@ -62,40 +65,68 @@ namespace OnlineVideos.Sites
             return Settings.Categories.Count;
         }
 
-        private void addSubcats(Category parentCategory, string url)
+        private RssLink getOneSubcat(HtmlNode hnode, Category parentCategory)
+        {
+            var subcat = new RssLink()
+            {
+                Name = HttpUtility.HtmlDecode(hnode.SelectSingleNode(".//h2").InnerText),
+                ParentCategory = parentCategory,
+                HasSubCategories = true,
+                Url = hnode.Attributes["href"].Value,
+                Other = true
+            };
+            var img = hnode.SelectSingleNode(".//img[@data-src and string-length(@data-src)!=0]");
+            if (img != null)
+                subcat.Thumb = FormatDecodeAbsolutifyUrl(((RssLink)parentCategory).Url, img.Attributes["data-src"].Value, null, UrlDecoding.HtmlDecode);
+            return subcat;
+        }
+
+        private void addSubcatsNextPage(Category parentCategory, string url)
         {
             NameValueCollection headers = new NameValueCollection();
             headers.Add("Accept", "*/*"); // accept any content type
             headers.Add("User-Agent", OnlineVideoSettings.Instance.UserAgent);
             headers.Add("X-Requested-With", "XMLHttpRequest");
 
-            JObject data = GetWebData<JObject>(url, headers: headers);
+            JObject data = GetWebData<JObject>(url);
             foreach (var jnode in data["tiles"])
             {
                 var html = jnode.Value<String>();
                 var doc = new HtmlDocument();
                 doc.LoadHtml(html);
-                var subcat = new RssLink()
-                {
-                    Name = HttpUtility.HtmlDecode(doc.DocumentNode.SelectSingleNode("//h2").InnerText),
-                    ParentCategory = parentCategory,
-                    HasSubCategories = true,
-                    Url = doc.DocumentNode.SelectSingleNode("//a").Attributes["href"].Value,
-                    Other = true
-                };
-                var img = doc.DocumentNode.SelectSingleNode("//div[@style]");
-                if (img != null)
-                    subcat.Thumb = Helpers.StringUtils.GetSubString(img.Attributes["style"].Value, "url('", "')");
+                var subcat=getOneSubcat(doc.DocumentNode.SelectSingleNode("div/a"), parentCategory);
                 parentCategory.SubCategories.Add(subcat);
             }
             if (!String.IsNullOrEmpty(data["nextLink"].Value<String>()))
                 parentCategory.SubCategories.Add(new NextPageCategory()
                 {
                     ParentCategory = parentCategory,
-                    Url = FormatDecodeAbsolutifyUrl(baseUrl, data["nextLink"].Value<String>() + "&tilemapping=normal&tiletype=teaser&pageType=catalogue", "", UrlDecoding.None)
+                    Url = FormatDecodeAbsolutifyUrl(baseUrl, data["nextLink"].Value<String>() + "&tileMapping=normal&tileType=teaser&pageType=catalogue", "", UrlDecoding.None)
                 }
                 );
 
+            parentCategory.SubCategoriesDiscovered = true;
+        }
+
+        private void addSubcats(Category parentCategory, string url)
+        {
+            var doc = GetWebData<HtmlDocument>(url);
+            foreach (var hnode in doc.DocumentNode.SelectNodes(@"//a[div/h2]"))
+            {
+                var subcat = getOneSubcat(hnode, parentCategory);
+                parentCategory.SubCategories.Add(subcat);
+            }
+
+            var nextNode = doc.DocumentNode.SelectSingleNode("//input[@type='hidden' and @name='nextLink' and string-length(@value)!=0]");
+            if (nextNode != null)
+            {
+                parentCategory.SubCategories.Add(new NextPageCategory()
+                {
+                    ParentCategory = parentCategory,
+                    Url = FormatDecodeAbsolutifyUrl(baseUrl, HttpUtility.HtmlDecode(nextNode.Attributes["value"].Value) + "&tileMapping=normal&tileType=teaser&pageType=catalogue", "", UrlDecoding.None)
+                }
+                );
+            }
             parentCategory.SubCategoriesDiscovered = true;
         }
 
@@ -116,7 +147,7 @@ namespace OnlineVideos.Sites
                 {
                     var afleveringen = new RssLink() { Name = "Afleveringen", ParentCategory = parentCategory };
                     parentCategory.SubCategories.Add(afleveringen);
-                    afleveringen.Url = "https://www.npo.nl" + episodesNode.SelectSingleNode(".//input[@name='selfLink']").Attributes["value"].Value + "?tilemapping=dedicated&pageType=catalogue&tiletype=asset";
+                    afleveringen.Other = base.Parse(((RssLink)parentCategory).Url, episodesNode.OuterHtml);
                 }
 
                 var clipsNode = data.DocumentNode.SelectSingleNode(@"//div[@id='component-grid-clips']");
@@ -137,8 +168,7 @@ namespace OnlineVideos.Sites
         {
 
             category.ParentCategory.SubCategories.Remove(category);
-            addSubcats(category.ParentCategory, ((RssLink)category).Url);
-            int oldAmount = category.ParentCategory.SubCategories.Count;
+            addSubcatsNextPage(category.ParentCategory, ((RssLink)category).Url);
             return category.ParentCategory.SubCategories.Count;
         }
 
@@ -158,7 +188,6 @@ namespace OnlineVideos.Sites
             headers.Add("User-Agent", OnlineVideoSettings.Instance.UserAgent);
             headers.Add("X-Requested-With", "XMLHttpRequest");
 
-
             JObject jdata = GetWebData<JObject>(url, headers: headers);
 
             nextPageAvailable = false;
@@ -168,7 +197,7 @@ namespace OnlineVideos.Sites
                 nextPageUrl = FormatDecodeAbsolutifyUrl(baseUrl, jdata["nextLink"].Value<String>() + "&tilemapping=dedicated&tiletype=asset&pageType=catalogue", "", UrlDecoding.None);
 
             }
-            return base.Parse(url, jdata["tiles"].ToString().Replace(@"\""",@"""").Replace(@"\n","\n"));
+            return base.Parse(url, jdata["tiles"].ToString().Replace(@"\""", @"""").Replace(@"\n", "\n"));
         }
 
         public override string GetVideoUrl(VideoInfo video)

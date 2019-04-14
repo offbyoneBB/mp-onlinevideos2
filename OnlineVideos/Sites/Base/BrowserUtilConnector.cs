@@ -181,7 +181,7 @@ namespace OnlineVideos.Sites
             }
 
             var ended = DateTime.Now;
-
+            if (ended >= end && MessageHandler != null) MessageHandler.Warn("Timeout of {0} has occurred", pollTimeout);
             return ended < end && ProcessComplete.Success;
         }
 

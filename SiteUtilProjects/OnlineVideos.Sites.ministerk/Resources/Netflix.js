@@ -1,20 +1,15 @@
-﻿function switchProfile(switchUrl, index) {
-    if (document.querySelectorAll('a.profile-link').length > index) {
+﻿function switchProfile(profiletoken) {
+    var proflinks = document.querySelectorAll('a.profile-link');
+    setTimeout(function () {
+        for (var i = 0; i < proflinks.length; i++) {
+            if (proflinks[i].href.indexOf(profiletoken) !== -1) {
+                proflinks[i].click();
+            };
+        };
         setTimeout(function () {
-            document.querySelectorAll('a.profile-link')[index].click();
-            setTimeout(function () {
-                switchProfileCallback("{}");
-            }, 1500);
-        }, 500);
-    } else if (window.jQuery) {
-        jQuery.ajax({
-            url: switchUrl,
-            dataType: 'json',
-            cache: false,
-            type: 'GET',
-            success: switchProfileCallback
-        })
-    }
+            switchProfileCallback("{}")
+        }, 1500);
+    }, 500);
 }
 
 function switchProfileCallback(data) {
