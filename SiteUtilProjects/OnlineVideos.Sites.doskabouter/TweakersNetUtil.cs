@@ -13,6 +13,9 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType) 3072|SecurityProtocolType.Ssl3|SecurityProtocolType.Tls;
+
             cc = new CookieContainer();
             string data = GetWebData(baseUrl, cookies: cc);
             Match m = Regex.Match(data, @"<input\stype=""hidden""\sname=""tweakers_token""\svalue=""(?<tweakerstoken>[^""]+)"">");
