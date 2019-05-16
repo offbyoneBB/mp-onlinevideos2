@@ -15,6 +15,7 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             int res = base.DiscoverDynamicCategories();
+            //TODO: revert after next release (after 
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072 | SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
             foreach (RssLink cat in Settings.Categories)
                 cat.HasSubCategories = true;
