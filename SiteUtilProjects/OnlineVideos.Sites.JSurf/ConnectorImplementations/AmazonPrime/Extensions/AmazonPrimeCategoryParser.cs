@@ -127,7 +127,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                     results.Add(tmpCateg);
                 }
 
-                var nextPageCtrl = doc.GetElementById("a-last")?.FirstChild;
+                var nextPageCtrl = doc.GetElementById("a-last")?.FirstChild ?? doc.DocumentNode.GetNodesByClass("a-last").FirstOrDefault()?.FirstChild;
 
                 if (nextPageCtrl != null)
                 {
