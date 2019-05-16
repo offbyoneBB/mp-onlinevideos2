@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
@@ -251,6 +252,9 @@ namespace OnlineVideos.MediaPortal1
 
         public override bool Init()
         {
+           ServicePointManager.Expect100Continue = true;
+           ServicePointManager.SecurityProtocol = (SecurityProtocolType) 3072|SecurityProtocolType.Ssl3|SecurityProtocolType.Tls;
+
             CrossDomain.OnlineVideosAppDomain.UseSeperateDomain = true;
 
             bool result = Load(GUIGraphicsContext.Skin + @"\myonlinevideos.xml");

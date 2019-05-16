@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using OnlineVideos.Hoster;
 using OnlineVideos.Sites;
@@ -19,6 +20,8 @@ namespace OnlineVideos.CrossDomain
         public PluginLoader()
         {
             AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType) 3072|SecurityProtocolType.Ssl3|SecurityProtocolType.Tls;
         }
 
         Assembly AssemblyResolve(object sender, ResolveEventArgs args)
