@@ -20,7 +20,6 @@ namespace OnlineVideos.CrossDomain
         public PluginLoader()
         {
             AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
-            ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = (SecurityProtocolType) 3072|SecurityProtocolType.Ssl3|SecurityProtocolType.Tls;
         }
 

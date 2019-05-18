@@ -252,7 +252,6 @@ namespace OnlineVideos.MediaPortal1
 
         public override bool Init()
         {
-           ServicePointManager.Expect100Continue = true;
            ServicePointManager.SecurityProtocol = (SecurityProtocolType) 3072|SecurityProtocolType.Ssl3|SecurityProtocolType.Tls;
 
             CrossDomain.OnlineVideosAppDomain.UseSeperateDomain = true;
