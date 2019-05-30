@@ -37,6 +37,8 @@ namespace OnlineVideos.Sites
             if (vidUrl.ToLowerInvariant().Contains("[not-used]"))
             {
                 vidUrl = doc.SelectSingleNode(@"//Clip/WebHLSMediaFiles/WebHLSMediaFile").InnerText;
+                string authUrl = @"https://gatling.nelonenmedia.fi/auth/access/v2?stream=" + HttpUtility.UrlEncode(vidUrl);
+                vidUrl = GetWebData(authUrl);
                 data = GetWebData(vidUrl);
                 video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(data, vidUrl, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height);
                 return video.GetPreferredUrl(true);
