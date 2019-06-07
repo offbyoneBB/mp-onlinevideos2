@@ -220,6 +220,11 @@
     <Content Include="Skin\default\themes\default\styles\OnlineVideosConsts.xaml" />
     <Content Include="Skin\default\themes\default\styles\OnlineVideosStyles.xaml" />
     <Content Include="Skin\default\screens\ovsSiteSettings.xaml" />
+    <Content Include="Skin\Nereus\images\NextPage.png" />
+    <Content Include="Skin\Nereus\images\ov_languages.jpg" />
+    <Content Include="Skin\Nereus\images\ov_sites.jpg" />
+    <Content Include="Skin\Nereus\images\ov_sites1.jpg" />
+    <Content Include="Skin\Nereus\images\ov_sites2.jpg" />
     <Content Include="Skin\Titanium\themes\default\styles\OnlineVideosStyles.xaml" />
     <Content Include="Skin\default\screens\ovsDialogSiteSettingText.xaml" />
     <Content Include="Skin\default\screens\ovsDialogSiteSettingChoice.xaml" />
@@ -392,6 +397,41 @@
     <PackageReference Include="SharpDX.Mathematics">
       <Version>4.0.1</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Skin\Nereus\screens\categories.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Skin\Nereus\screens\CurrentlyPlayingOV.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Skin\Nereus\screens\details.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Skin\Nereus\screens\FullScreenContentOV.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Skin\Nereus\screens\ovsSiteGroups.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Skin\Nereus\screens\ovsSiteManagement.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Skin\Nereus\screens\ovsSiteSettings.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Skin\Nereus\screens\sites.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Skin\Nereus\screens\videos.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Skin\Nereus\themes\default\styles\OnlineVideosConsts.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Skin\Nereus\themes\default\styles\OnlineVideosStyles.xaml">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="build.targets" />

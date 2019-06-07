@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Include
+    xmlns="www.team-mediaportal.com/2008/mpf/directx"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Source="screens\master_mediamenu.xaml"
+    xmlns:mp_special_controls="clr-namespace:MediaPortal.UI.SkinEngine.SpecialElements.Controls;assembly=SkinEngine"
+    >
+  <Include.Resources>
+
+    <!-- Header -->
+    <ResourceWrapper x:Key="Header_Text" Resource="[OnlineVideos.Sites]"/>
+    <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
+
+    <!-- Top and Bottom Fades -->
+    <ControlTemplate x:Key="TopGradient_Template">
+      <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0" Margin="0,0,0,0" Panel.ZIndex="1000">
+        <Border.Background>
+          <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+            <GradientStop Color="#E6000000" Offset="0" />
+            <GradientStop Color="#00000000" Offset="1" />
+          </LinearGradientBrush>
+        </Border.Background>
+      </Border>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="BottomGradient_Template">
+      <Border HorizontalAlignment="Stretch" VerticalAlignment="Bottom" BorderThickness="0" Margin="0,0,0,0" Height="100" Panel.ZIndex="1000">
+        <Border.Background>
+          <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+            <GradientStop Color="#00000000" Offset="0" />
+            <GradientStop Color="#E6000000" Offset="1" />
+          </LinearGradientBrush>
+        </Border.Background>
+      </Border>
+    </ControlTemplate>
+
+    <!-- Background -->
+    <ControlTemplate x:Key="FanArtBackground_Template">
+      <Image Stretch="Fill" Opacity="1">
+        <Image.Source>
+          <Binding Source="Background_GridView.png"/>
+        </Image.Source>
+      </Image>
+    </ControlTemplate>
+
+    <!-- Contents -->
+    <ControlTemplate x:Key="Contents_Template">
+      <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,-90,0,-270"
+            DataContext="{Binding Source={StaticResource OnlineVideosModel}}">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="1000"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="45,0,-20,0" Height="1200">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+
+          <Grid.Resources>
+            <Model x:Key="FanArtBackgroundModel" Id="8F42C8E9-E8A3-475C-A50A-99E1E644DC91"/>
+            <Model x:Key="SkinSettingsModel" Id="13961014-16C4-4361-9751-8E2C585EFD44"/>
+          </Grid.Resources>
+
+          <Image x:Name="FanArtImageBackground" Stretch="Fill" VerticalAlignment="Top" Source="ov_sites.jpg" HorizontalAlignment="Stretch" Height="600"
+                 IsVisible="{Binding Source={StaticResource SkinSettingsModel}, Path=[Nereus].EnableFanart}"/>
+          <Image Grid.RowSpan="2" Stretch="Fill" Source="List_overlay.png"/>
+          <Image Grid.RowSpan="2" Source="ContentGlow.png" Stretch="Uniform" VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="-20,0,0,0"/>
+
+          <Border Grid.RowSpan="2" BorderThickness="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Border.Background>
+              <LinearGradientBrush StartPoint="1,0.3" EndPoint="0,1">
+                <GradientStop Color="#44000000" Offset="0.0"/>
+                <GradientStop Color="#77000000" Offset="1"/>
+              </LinearGradientBrush>
+            </Border.Background>
+          </Border>
+        </Grid>
+
+        <!-- Content -->
+        <ListView x:Name="siteslist" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                  Style="{ThemeResource SitesListViewStyle}" Margin="-10,-20,-45,-20"
+                  CurrentItem="{Binding Path=FocusedSite, Mode=OneWayToSource}" RestoreFocus="True"
+                  ItemsSource="{Binding Path=SitesList}" SetFocusPrio="RestoreState"/>
+
+        <!-- Details -->
+        <Grid Grid.Row="0" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="70,380,0,80">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="30*"/>
+            <RowDefinition Height="70*"/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="60*"/>
+            <ColumnDefinition Width="40*"/>
+          </Grid.ColumnDefinitions>
+
+          <Image Grid.Row="1" Grid.Column="1" Width="300" Height="300" Stretch="Uniform"
+                 DataContext="{Binding ElementName=siteslist,Path=CurrentItem}" Margin="0,0,0,20"
+                 Source="{Binding Path=Site, Converter={ThemeResource ovsSiteUtilIconConverter}}" 
+                 HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+
+          <StackPanel Orientation="Vertical" Grid.Row="0" Grid.ColumnSpan="2" Margin="5">
+            <Label Color="{ThemeResource TextColor}" FontFamily="SegoeUIBold"
+                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontSize="{ThemeResource NormalFontSize}"
+                   DataContext="{Binding ElementName=siteslist,Path=CurrentItem}" Content="{Binding Path=Name}" />
+            <Image Width="{ResolutionResource ovsLanguageImageWidth}" Stretch="Uniform" Margin="0,2,0,2" DataContext="{Binding ElementName=siteslist,Path=CurrentItem}"
+                   HorizontalAlignment="Left" VerticalAlignment="Top" Source="{Binding Path=Language, Converter={StaticResource ovsLanguageIconConverter}}"/>
+            <Label FontSize="{ThemeResource SmallFontSize}" Margin="0,0,5,0" Content="{Binding Path=EstimatedChildren}"
+                   Color="{ThemeResource TextColor}" DataContext="{Binding ElementName=siteslist,Path=CurrentItem}"/>
+          </StackPanel>
+            
+          <Label Grid.Row="1" Color="{ThemeResource MediaItemUnwatchedColor}" Content="{Binding Description}" Margin="5,5,5,30"
+                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Wrap="True" FontSize="{ThemeResource SmallFontSize}"
+                 DataContext="{Binding ElementName=siteslist,Path=CurrentItem}" TextTrimming="WordEllipsis"/>
+        </Grid>
+
+        <!-- Actual Item / Total items -->
+        <DockPanel Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" IsVisible="{Binding IsItemsValid}">
+          <StackPanel DockPanel.Dock="Right" Margin="65,-80,25,90" Orientation="Horizontal">
+            <Label HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,10,0"
+               Color="{ThemeResource TextColor}" FontSize="{ThemeResource SmallerFontSize}">
+              <Label.Content>
+                <MultiBinding Converter="{StaticResource GetIndexMultiConverter}" ConverterParameter="1">
+                  <Binding ElementName="siteslist" Path="CurrentItem"/>
+                  <Binding ElementName="siteslist" Path="ItemsSource"/>
+                </MultiBinding>
+              </Label.Content>
+            </Label>
+            <Label Color="{ThemeResource TextColorForeground}" Content="| " FontSize="{ThemeResource SmallerFontSize}"/>
+            <Label Color="{ThemeResource TextColorForeground}" FontSize="{ThemeResource SmallerFontSize}">
+              <Label.Content>
+                <Binding ElementName="siteslist" Path="ItemsSource.Count" />
+              </Label.Content>
+            </Label>
+          </StackPanel>
+        </DockPanel>     
+        
+      </Grid>
+    </ControlTemplate>
+    </Include.Resources>
+</Include>
