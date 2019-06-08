@@ -115,7 +115,7 @@
         <BindingWrapper>
           <BindingWrapper.Binding>
             <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
-              <Binding Source="{StaticResource ViewModeModel}" Path="LayoutType"/>
+              <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
               <Binding Source="{ThemeResource SiteGroupListItemDataTemplate}"/>
               <Binding Source="{ThemeResource SiteGroupGridItemDataTemplate}"/>
             </MultiBinding>
@@ -128,7 +128,7 @@
         <BindingWrapper>
           <BindingWrapper.Binding>
             <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
-              <Binding Source="{StaticResource ViewModeModel}" Path="LayoutType"/>
+              <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
               <Binding Source="{ThemeResource SiteGroupListItemContainerStyle}"/>
               <Binding Source="{ThemeResource SiteGroupGridItemContainerStyle}"/>
             </MultiBinding>
@@ -141,7 +141,7 @@
         <BindingWrapper>
           <BindingWrapper.Binding>
             <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
-              <Binding Source="{StaticResource ViewModeModel}" Path="LayoutType"/>
+              <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
               <!-- List layout -->
               <Binding>
                 <Binding.Source>
@@ -290,7 +290,7 @@
         <BindingWrapper>
           <BindingWrapper.Binding>
             <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
-              <Binding Source="{StaticResource ViewModeModel}" Path="LayoutType"/>
+              <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
               <Binding Source="{ThemeResource SiteListItemDataTemplate}"/>
               <Binding Source="{ThemeResource SiteGridItemDataTemplate}"/>
             </MultiBinding>
@@ -303,7 +303,7 @@
         <BindingWrapper>
           <BindingWrapper.Binding>
             <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
-              <Binding Source="{StaticResource ViewModeModel}" Path="LayoutType"/>
+              <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
               <Binding Source="{ThemeResource SiteListItemContainerStyle}"/>
               <Binding Source="{ThemeResource SiteGridItemContainerStyle}"/>
             </MultiBinding>
@@ -420,7 +420,7 @@
         <BindingWrapper>
           <BindingWrapper.Binding>
             <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
-              <Binding Source="{StaticResource ViewModeModel}" Path="LayoutType"/>
+              <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
               <Binding Source="{ThemeResource CategoryListItemDataTemplate}"/>
               <Binding Source="{ThemeResource CategoryGridItemDataTemplate}"/>
             </MultiBinding>
@@ -433,7 +433,7 @@
         <BindingWrapper>
           <BindingWrapper.Binding>
             <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
-              <Binding Source="{StaticResource ViewModeModel}" Path="LayoutType"/>
+              <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
               <Binding Source="{ThemeResource CategoryListItemContainerStyle}"/>
               <Binding Source="{ThemeResource CategoryGridItemContainerStyle}"/>
             </MultiBinding>
@@ -551,7 +551,7 @@
         <BindingWrapper>
           <BindingWrapper.Binding>
             <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
-              <Binding Source="{StaticResource ViewModeModel}" Path="LayoutType"/>
+              <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
               <Binding Source="{ThemeResource VideoListItemDataTemplate}"/>
               <Binding Source="{ThemeResource VideoGridItemDataTemplate}"/>
             </MultiBinding>
@@ -564,7 +564,7 @@
         <BindingWrapper>
           <BindingWrapper.Binding>
             <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
-              <Binding Source="{StaticResource ViewModeModel}" Path="LayoutType"/>
+              <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
               <Binding Source="{ThemeResource VideoListItemContainerStyle}"/>
               <Binding Source="{ThemeResource VideoGridItemContainerStyle}"/>
             </MultiBinding>
@@ -707,7 +707,7 @@
           <BindingWrapper>
             <BindingWrapper.Binding>
               <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
-                <Binding Source="{StaticResource ViewModeModel}" Path="LayoutType"/>
+                <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
                 <Binding Source="{ThemeResource DetailsVideoListItemDataTemplate}"/>
                 <Binding Source="{ThemeResource DetailsVideoGridItemDataTemplate}"/>
               </MultiBinding>
@@ -720,7 +720,7 @@
           <BindingWrapper>
             <BindingWrapper.Binding>
               <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
-                <Binding Source="{StaticResource ViewModeModel}" Path="LayoutType"/>
+                <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
                 <Binding Source="{ThemeResource DetailsVideoListItemContainerStyle}"/>
                 <Binding Source="{ThemeResource DetailsVideoGridItemContainerStyle}"/>
               </MultiBinding>
