@@ -123,7 +123,7 @@ namespace OnlineVideos.Sites
                         RssLink cat = new RssLink()
                         {
                             Name = item["label"]["text"].Value<String>(),
-                            Url = query["url"].Value<String>() + "?offset=0&limit=200&current_season_id=" + query["params"]["current_season_id"] + "&current_series_id=" + query["params"]["current_series_id"],
+                            Url = query["url"].Value<String>() + "?offset=0&limit=200&current_season_id=" + query["params"]["current_season_id"] + "&current_series_id=" + query["params"]["current_series_id"] + "&app=ruutu&client=web",
                             ParentCategory = parentcat
                         };
                         parentcat.SubCategories.Add(cat);
@@ -167,7 +167,7 @@ namespace OnlineVideos.Sites
 
         private int AddKaikki(HtmlDocument doc, Category parentCategory)
         {
-            var root = doc.DocumentNode.SelectSingleNode(@"//section/div[div[@id]]");
+            var root = doc.DocumentNode.SelectSingleNode(@"//section/div/div[div[@id]]");
             parentCategory.SubCategories = new List<Category>();
             RssLink sub = null;
             foreach (var node in root.ChildNodes)
