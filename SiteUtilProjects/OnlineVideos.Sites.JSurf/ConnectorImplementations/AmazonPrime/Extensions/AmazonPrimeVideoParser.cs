@@ -30,11 +30,24 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
 
             doc = tmpWeb.Load(url);
 
+            if (LoadVideosV2(doc, out List<VideoInfo> info))
+                return info;
+
+            if (LoadVideosV1(doc, out info))
+                return info;
+
+
+            return results;
+        }
+
+        private static bool LoadVideosV1(HtmlDocument doc, out List<VideoInfo> results)
+        {
+            results = new List<VideoInfo>();
             var episodeContainer = doc.GetElementbyId("dv-episode-list");
             if (episodeContainer == null || episodeContainer.FindFirstChildElement() == null)
             {
                 //detailNode = doc.GetElementbyId("av-dp-container");
-                detailNode = doc.DocumentNode.GetNodeByClass("av-dp-container");
+                HtmlNode detailNode = doc.DocumentNode.GetNodeByClass("av-dp-container");
                 if (detailNode != null)
                 {
                     // Movie, load this video
@@ -77,7 +90,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                     var video = new VideoInfo();
                     detailNode = doc.GetElementbyId("aiv-main-content");
                     if (detailNode == null)
-                        return results;
+                        return false;
 
                     video.Title = detailNode.SelectSingleNode(".//h1[@id = 'aiv-content-title']").FirstChild.GetInnerTextTrim();
                     var infoNode = detailNode.GetNodeByClass("dv-info");
@@ -119,7 +132,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                 if (episodeList == null)
                 {
                     Log.Error("Could not load episode list!");
-                    return results;
+                    return false;
                 }
                 foreach (var item in episodeList)
                 {
@@ -212,7 +225,57 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                 }
             }
 
-            return results;
+            return results.Count > 0;
+        }
+
+        private static bool LoadVideosV2(HtmlDocument doc, out List<VideoInfo> results)
+        {
+            results = new List<VideoInfo>();
+            // TV Series, load all videos
+            var episodeList = doc.GetElementbyId("js-node-btf")?.GetNodesByClass("js-node-episode-container");
+            if (episodeList == null)
+                return false;
+
+            foreach (var item in episodeList)
+            {
+                var extendedProperties = new ExtendedProperties();
+                var video = new VideoInfo { Other = extendedProperties };
+                var titleNode = item.GetNodeByClass("dv-episode-playback-title");
+
+                if (titleNode == null)
+                    return false;
+
+                video.Title = titleNode.GetNodeByClass("js-episode-title-name")?.GetInnerTextTrim();
+
+                var playbackLink = titleNode.GetNodeByClass("js-deeplinkable");
+
+                if (playbackLink != null)
+                {
+                    extendedProperties.Other = playbackLink.Attributes["data-title-id"]?.Value;
+                }
+
+                var detailsNode = item.GetNodeByClass("js-ep-playback-wrapper")?.NextSibling;
+                if (detailsNode != null && detailsNode.ChildNodes.Count >= 2)
+                {
+                    video.Airdate = detailsNode.ChildNodes[0].GetInnerTextTrim();
+                    video.Length = detailsNode.ChildNodes[1].GetInnerTextTrim();
+
+                    var imageUrlNode = detailsNode.NextSibling.FirstChild?.FirstChild;
+                    if (imageUrlNode != null)
+                        video.ThumbnailImage = imageUrlNode.Attributes["src"]?.Value;
+
+                    // Playback progress
+                    var percentProgress = item.SelectSingleNode(".//*[@role='progressbar']")?.Attributes["aria-valuenow"]?.Value;
+                    int.TryParse(percentProgress, out var percents);
+
+                    extendedProperties.VideoProperties["Progress"] = string.Format("{0:0}%", percents);
+                }
+
+                video.Description = item.SelectSingleNode(".//*[contains(@data-automation-id, 'synopsis-')]")?.GetInnerTextTrim();
+                video.CleanDescriptionAndTitle();
+                results.Add(video);
+            }
+            return results.Count > 0;
         }
 
         public static string GetBackgroundUrl(HtmlNode imageUrlNode)
