@@ -128,7 +128,8 @@ namespace OnlineVideos.JavaScript
         {
             string[] patterns = new[] {
                 @"yt\.akamaized\.net/\)\s*\|\|\s*.*?\s*c\s*&&\s*.*?d\.set\([^,]+\s*,\s*(?:encodeURIComponent\s*\()?(?<name>[a-zA-Z0-9$]+)\(",
-                @"\bc\s*&&\s*d\.set\([^,]+\s*,\s*\([^)]*\)\s*\(\s*(?:encodeURIComponent\s*\()?(?<name>[a-zA-Z0-9$]+)\("
+                @"\bc\s*&&\s*d\.set\([^,]+\s*,\s*\([^)]*\)\s*\(\s*(?:encodeURIComponent\s*\()?(?<name>[a-zA-Z0-9$]+)\(",
+                @"(?<name>[a-zA-Z0-9$]+)\s*=\s*function\(\s*a\s*\)\s*{\s*a\s*=\s*a\.split\(\s*""""\)"
             };
             foreach (var pattern in patterns)
             {
