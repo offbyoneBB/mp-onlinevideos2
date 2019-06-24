@@ -390,15 +390,6 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
-        private string decode(string c)
-        {
-            int[] positions = { 4, 7, 10, 3, 8, 6, 5, 1, 2, 9, 11 };
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < positions.Length - 1; i++)
-                sb.Append(c[positions[i]]);
-            return sb.ToString();
-        }
-
         public override string GetVideoUrl(VideoInfo video)
         {
             string data = GetWebData(video.VideoUrl);
