@@ -3,8 +3,10 @@ using OnlineVideos.Subtitles;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using Jurassic;
 
 namespace OnlineVideos.Sites
 {
@@ -298,7 +300,6 @@ namespace OnlineVideos.Sites
                     LosMoviesVideoInfo video = new LosMoviesVideoInfo()
                     {
                         Title = m.Groups["n"].Value.Trim() + " " + m.Groups["s"].Value + "x" + m.Groups["e"].Value,
-                        Other = m.Groups["t"].Value,
                         Thumb = currentCategoryThumb
                     };
                     video.TrackingInfo = new TrackingInfo()
@@ -389,34 +390,59 @@ namespace OnlineVideos.Sites
             return videos;
         }
 
+        private string decode(string c)
+        {
+            int[] positions = { 4, 7, 10, 3, 8, 6, 5, 1, 2, 9, 11 };
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < positions.Length - 1; i++)
+                sb.Append(c[positions[i]]);
+            return sb.ToString();
+        }
+
         public override string GetVideoUrl(VideoInfo video)
         {
-            string data;
-            if (video.Other is string && !string.IsNullOrWhiteSpace(video.GetOtherAsString()))
-                data = video.GetOtherAsString();
-            else
-                data = GetWebData(video.VideoUrl);
-            Regex r = new Regex(@"<tr class=""linkTr"">.*?""linkQuality[^>]*>(?<q>[^<]*)<.*?linkHiddenUrl[^>]*>(?<u>[^<]*)<.*?</tr", RegexOptions.Singleline);
+            string data = GetWebData(video.VideoUrl);
+            Match m2 = Regex.Match(data, "<script>(?<script>.*?)</script>", RegexOptions.Singleline);
+            ScriptEngine engine = new ScriptEngine();
+
+            engine.Global["window"] = engine.Global;
+            engine.Global["document"] = engine.Global;
+            engine.Global["navigator"] = engine.Global;
+
+            engine.Execute(m2.Groups["script"].Value);
+
+
+
+            Regex r = new Regex(@"<tr class=""linkTr"">.*?""serverLink\sserverLink[^\s]*\sid=""(?<id>[^""]*)"".*?""linkQuality[^>]*>(?<q>[^<]*)<.*?linkHiddenFormat[^>]*>(?<f>[^<]*)<.*?linkHiddenCode[^>]*>(?<c>[^<]*)<.*?</tr", RegexOptions.Singleline);
+
             Dictionary<string, string> d = new Dictionary<string, string>();
             List<Hoster.HosterBase> hosters = Hoster.HosterFactory.GetAllHosters();
             foreach (Match m in r.Matches(data))
             {
-                string u = m.Groups["u"].Value;
-                if (u.StartsWith("//"))
-                    u = "http:" + u;
-                Hoster.HosterBase hoster = hosters.FirstOrDefault(h => u.ToLowerInvariant().Contains(h.GetHosterUrl().ToLowerInvariant()));
-                if (hoster != null)
+                string id = m.Groups["id"].Value.Replace("serverLink", "");
+                if (!string.IsNullOrEmpty(id))
                 {
-                    string format = hoster.GetHosterUrl() + " [" + m.Groups["q"].Value + "] " + "({0})";
-                    int count = 1;
-                    while (d.ContainsKey(string.Format(format, count)))
+                    string c = engine.CallGlobalFunction("dec_" + id, m.Groups["c"].Value).ToString();
+                    string u = m.Groups["f"].Value.Replace("%s", c);
+
+                    if (u.StartsWith("//"))
+                        u = "http:" + u;
+                    Hoster.HosterBase hoster = hosters.FirstOrDefault(h => u.ToLowerInvariant().Contains(h.GetHosterUrl().ToLowerInvariant()));
+                    if (hoster != null)
                     {
-                        count++;
+                        string format = hoster.GetHosterUrl() + " [" + m.Groups["q"].Value + "] " + "({0})";
+                        int count = 1;
+                        while (d.ContainsKey(string.Format(format, count)))
+                        {
+                            count++;
+                        }
+                        d.Add(string.Format(format, count), u);
                     }
-                    d.Add(string.Format(format, count), u);
+                    else
+                        Log.Debug("Skipped hoster:" + m.Groups["f"].Value);
                 }
                 else
-                    Log.Debug("Skipped hoster:" + m.Groups["u"].Value);
+                    Log.Debug("Skipped decription and hoster for: " + m.Groups["f"].Value);
             }
             d = d.OrderBy((p) =>
             {

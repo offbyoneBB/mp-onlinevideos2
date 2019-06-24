@@ -1044,6 +1044,22 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class VeryStream: HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "verystream.com";
+        }
+        public override string GetVideoUrl(string url)
+        {
+            var data = GetWebData(url);
+            var match = Regex.Match(data, @"<p\sstyle=""""\s*class=""""\s*id=""videolink"">(?<url>[^<]*)<");
+            if (match.Success)
+                return new Uri(new Uri(url), match.Groups["url"].Value).AbsoluteUri.Replace("/e/", "/gettoken/");
+            return null;
+        }
+    }
+
     public class Vidbull : HosterBase
     {
         public override string GetHosterUrl()
@@ -1168,6 +1184,30 @@ namespace OnlineVideos.Hoster
         public override string GetHosterUrl()
         {
             return "vidlox.tv";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            string s = WebCache.Instance.GetWebData(url);
+            s = Helpers.StringUtils.GetSubString(s, "sources: [", "]");
+            var m = Regex.Match(s, @"""(?<url>[^""]*)""");
+            string theUrl = null;
+            while (m.Success)
+            {
+                theUrl = m.Groups["url"].Value;
+                if (theUrl.EndsWith("mp4"))
+                    return theUrl;
+                m = m.NextMatch();
+            }
+            return theUrl;
+        }
+    }
+
+    public class VidLoxMe : VidLox
+    {
+        public override string GetHosterUrl()
+        {
+            return "vidlox.me";
         }
 
         public override string GetVideoUrl(string url)
