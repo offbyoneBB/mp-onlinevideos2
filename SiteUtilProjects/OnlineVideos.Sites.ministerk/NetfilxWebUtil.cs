@@ -57,7 +57,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private string playerUrl = @"http://www.netflix.com/watch/{0}";
         private string searchUrl = @"https://www.netflix.com/search?q={0}";
         private string loginPostData = "email={0}&password={1}&rememberMe=true&flow=websiteSignUp&mode=login&action=loginAction&withFields=email%2Cpassword%2CrememberMe%2CnextPage%2CshowPassword&authURL={2}&nextPage=&showPassword=";
-        private string switchProfileUrl = @"{0}/{1}/profiles/switch?switchProfileGuid={2}&authURL={3}";
+        private string switchProfileUrl = @"{0}{1}profiles/switch?switchProfileGuid={2}&authURL={3}";
 
         #endregion
 
@@ -231,7 +231,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         private string GetPathData(string postData, bool useCallMethod = false)
         {
-            return MyGetWebData(ShaktiApi + "/" + BuildId + "/pathEvaluator" + "?withSize=true&materialize=true&model=harris&" + (useCallMethod ? "method=call" : "esn=www"), postData: postData, contentType: "application/json");
+            return MyGetWebData(ShaktiApi + BuildId + "pathEvaluator" + "?withSize=true&materialize=true&model=harris&" + (useCallMethod ? "method=call" : "esn=www"), postData: postData, contentType: "application/json");
         }
 
         #endregion
@@ -365,23 +365,29 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             {
                 data = MyGetWebData(homeUrl);
             }
-            Regex rgx = new Regex(@"\""SHAKTI_API_ROOT\"":""([^\""]*)");
-            Match m = rgx.Match(data);
+            Match m;
+            if (data.Contains("API_BASE_URL"))
+            {
+                m = Regex.Match(data, @"\""BUILD_IDENTIFIER\"":""([^\""]*)");
+                if (m.Success)
+                {
+                    _buildId = "/" + m.Groups[1].Value + "/";
+                }
+
+                m = Regex.Match(data, @"\""SHAKTI_API_ROOT\"":""([^\""]*)");
+            }
+            else
+            {
+                _buildId = "/";
+                m = Regex.Match(data, @"\""apiUrl\"":""([^\""]*)");
+            }
+
             if (m.Success)
             {
                 _shaktiApi = m.Groups[1].Value.Replace("http:", "https:").Replace("\\x2F", "/");
             }
 
-            rgx = new Regex(@"\""BUILD_IDENTIFIER\"":""([^\""]*)");
-            m = rgx.Match(data);
-            if (m.Success)
-            {
-                _buildId = m.Groups[1].Value;
-            }
-
-
-            rgx = new Regex(@"""([^""]*)"":\{""0"":\{""reference"":\[""characters""");
-            m = rgx.Match(data);
+            m = Regex.Match(data, @"""([^""]*)"":\{""0"":\{""reference"":\[""characters""");
             if (m.Success)
             {
                 LatestKidsCharacterList = m.Groups[1].Value;
