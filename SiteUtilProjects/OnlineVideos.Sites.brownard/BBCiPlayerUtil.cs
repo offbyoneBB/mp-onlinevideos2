@@ -450,10 +450,13 @@ namespace OnlineVideos.Sites
             if (titleNode == null)
                 return null;
 
+            var descriptionNode = programme.SelectSingleNode(@".//div[contains(@class, 'content-item__info__secondary')]/div[contains(@class, 'content-item__description')]");
+
             return new RssLink()
             {
                 Url = GetAbsoluteUri(url, BASE_URL).ToString(),
-                Name = titleNode.GetCleanInnerText()
+                Name = titleNode.GetCleanInnerText(),
+                Description = descriptionNode?.GetCleanInnerText()
             };
         }
 
