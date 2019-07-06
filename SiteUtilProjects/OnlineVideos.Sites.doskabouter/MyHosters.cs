@@ -1044,7 +1044,7 @@ namespace OnlineVideos.Hoster
         }
     }
 
-    public class VeryStream: HosterBase
+    public class VeryStream : HosterBase
     {
         public override string GetHosterUrl()
         {
@@ -1056,6 +1056,9 @@ namespace OnlineVideos.Hoster
             var match = Regex.Match(data, @"<p\sstyle=""""\s*class=""""\s*id=""videolink"">(?<url>[^<]*)<");
             if (match.Success)
                 return new Uri(new Uri(url), match.Groups["url"].Value).AbsoluteUri.Replace("/e/", "/gettoken/");
+            match = Regex.Match(data, @"<h3>(?<error>[^<]*)<");
+            if (match.Success)
+                throw new OnlineVideosException(match.Groups["error"].Value);
             return null;
         }
     }
@@ -1269,6 +1272,27 @@ namespace OnlineVideos.Hoster
                 else
                     return null;
             }
+        }
+    }
+
+    public class VidTodo : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "vidtodo.com";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            url = url.Replace("vidtodo", "vidtodu");
+            var data = GetWebData(url);
+            string packed = Helpers.StringUtils.GetSubString(data, @"return p}", @"</script>");
+            packed = packed.Replace(@"\'", @"'");
+            string unpacked = Helpers.StringUtils.UnPack(packed);
+            string res = Helpers.StringUtils.GetSubString(unpacked, @"file:""", @"""");
+            if (!String.IsNullOrEmpty(res))
+                return res;
+            return null;
         }
     }
 
