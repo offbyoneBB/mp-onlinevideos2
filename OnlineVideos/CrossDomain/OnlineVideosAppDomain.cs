@@ -31,7 +31,7 @@ namespace OnlineVideos.CrossDomain
 
         static void Load()
         {
-            if (AppDomain.CurrentDomain.FriendlyName != "OnlineVideosSiteUtilDlls")
+             if (AppDomain.CurrentDomain.FriendlyName != "OnlineVideosSiteUtilDlls")
             {
                 if (_useSeperateDomain)
                 {
