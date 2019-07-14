@@ -3426,7 +3426,7 @@ public class Script
             userSid,
             FileSystemRights.FullControl,                                       // full control so no arm if new files are created
             InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, // all subfolders and files
-            PropagationFlags.InheritOnly,
+            PropagationFlags.NoPropagateInherit,
             AccessControlType.Allow);
         bool modified = false;
         security.ModifyAccessRule(AccessControlModification.Add, newRule, out modified);
