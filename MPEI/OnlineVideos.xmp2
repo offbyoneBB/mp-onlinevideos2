@@ -3782,7 +3782,7 @@ Play all automatically fetches the next page if available
 Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
 </VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
-    <OnlineLocation>https://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=10&amp;cf_id=82</OnlineLocation>
+    <OnlineLocation>https://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=366&amp;cf_id=86</OnlineLocation>
     <ReleaseDate>2019-07-09T15:00:00</ReleaseDate>
     <Tags>online,videos,youtube,netflix</Tags>
     <Location>..\MPEI\[Name][Version].mpe1</Location>
