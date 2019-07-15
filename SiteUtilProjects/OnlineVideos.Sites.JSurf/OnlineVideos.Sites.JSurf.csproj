@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\Packages\Costura.Fody.4.0.0\build\Costura.Fody.props" Condition="Exists('..\..\Packages\Costura.Fody.4.0.0\build\Costura.Fody.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -14,7 +15,8 @@
     <TargetFrameworkProfile />
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <NuGetPackageImportStamp>9662b851</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,6 +36,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Costura, Version=4.0.0.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\Costura.Fody.4.0.0\lib\net40\Costura.dll</HintPath>
+    </Reference>
     <Reference Include="HashLib, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Packages\HashLib.2.0.1\lib\net40\HashLib.dll</HintPath>
       <Private>True</Private>
@@ -57,9 +62,7 @@
     <Compile Include="ConnectorImplementations\AmazonPrime\Connectors\AmazonPrimeInformationConnector.cs" />
     <Compile Include="ConnectorImplementations\AmazonPrime\Extensions\AmazonPrimeCategoryParser.cs" />
     <Compile Include="ConnectorImplementations\AmazonPrime\Extensions\AmazonPrimeVideoParser.cs" />
-    <Compile Include="ConnectorImplementations\AmazonPrime\Connectors\AmazonBrowserSession.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="ConnectorImplementations\AmazonPrime\Connectors\AmazonBrowserSession.cs" />
     <Compile Include="ConnectorImplementations\BrowserSessionBase.cs" />
     <Compile Include="ConnectorImplementations\BrowserUtilConnectorBase.cs" />
     <Compile Include="ConnectorImplementations\FormElementCollection.cs" />
@@ -117,12 +120,13 @@
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
-  <Import Project="..\..\Packages\Fody.1.28.3\build\Fody.targets" Condition="Exists('..\..\Packages\Fody.1.28.3\build\Fody.targets')" />
+  <Import Project="..\..\Packages\Fody.5.1.1\build\Fody.targets" Condition="Exists('..\..\Packages\Fody.5.1.1\build\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
-      <ErrorText>Dieses Projekt verweist auf mindestens ein NuGet-Paket, das auf diesem Computer fehlt. Aktivieren Sie die Wiederherstellung von NuGet-Paketen, um die fehlende Datei herunterzuladen. Weitere Informationen finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=322105". Die fehlende Datei ist "{0}".</ErrorText>
+      <ErrorText>Dieses Projekt verweist auf mindestens ein NuGet-Paket, das auf diesem Computer fehlt. Verwenden Sie die Wiederherstellung von NuGet-Paketen, um die fehlenden Dateien herunterzuladen. Weitere Informationen finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=322105". Die fehlende Datei ist "{0}".</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\Packages\Fody.1.28.3\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\Fody.1.28.3\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\Fody.5.1.1\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\Fody.5.1.1\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\Costura.Fody.4.0.0\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\Costura.Fody.4.0.0\build\Costura.Fody.props'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
