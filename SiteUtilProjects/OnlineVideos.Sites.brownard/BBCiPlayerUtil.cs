@@ -382,7 +382,7 @@ namespace OnlineVideos.Sites
                     Url = GetAbsoluteUri(urlNode.GetAttributeValue("href", string.Empty), BASE_URL).ToString(),
                     Name = programme.SelectSingleNode(@".//p[contains(@class, 'list-content-item__title')]").GetCleanInnerText(),
                     Description = programme.SelectSingleNode(@".//p[contains(@class, 'list-content-item__synopsis')]").GetCleanInnerText(),
-                    Thumb = getImageUrl(programme.SelectSingleNode(@".//picture/source")),
+                    Thumb = getImageUrl(programme.SelectSingleNode(@".//img")),
                     ParentCategory = parentCategory
                 });
             }
@@ -415,7 +415,7 @@ namespace OnlineVideos.Sites
                     RssLink category = isAlternate ? createProgrammeCategoryAlternate(programme) : createProgrammeCategory(programme);
                     if (category != null)
                     {
-                        category.Thumb = getImageUrl(programme.SelectSingleNode(@".//source"));
+                        category.Thumb = getImageUrl(programme.SelectSingleNode(@".//img"));
                         category.ParentCategory = parentCategory;
                         categories.Add(category);
                     }
@@ -626,7 +626,7 @@ namespace OnlineVideos.Sites
                 Title = title,
                 Description = videoNode.SelectSingleNode(@".//div[contains(@class, 'content-item__description')]").GetCleanInnerText(),
                 Length = videoNode.SelectSingleNode(@".//div[contains(@class, 'content-item__sublabels')]/span").GetCleanInnerText(),
-                Thumb = getImageUrl(videoNode.SelectSingleNode(@".//source"))                
+                Thumb = getImageUrl(videoNode.SelectSingleNode(@".//img"))                
             };
         }
 
@@ -646,7 +646,7 @@ namespace OnlineVideos.Sites
                 Description = videoNode.SelectSingleNode(@".//div[contains(@class, 'synopsis')]/p").GetCleanInnerText(),
                 Airdate = videoNode.SelectSingleNode(@".//div[contains(@class, 'metadata__container--first')]/p").GetCleanInnerText().Replace("First shown:", "").Trim(),
                 Length = videoNode.SelectSingleNode(@".//p[contains(@class, 'metadata__item--last')]").GetCleanInnerText().Replace("Duration", "").Trim(),
-                Thumb = getImageUrl(videoNode.SelectSingleNode(@".//source"))
+                Thumb = getImageUrl(videoNode.SelectSingleNode(@".//noscript/img"))
             };
         }
 
@@ -670,7 +670,7 @@ namespace OnlineVideos.Sites
                 Title = title,
                 Description = videoNode.SelectSingleNode(@".//div[contains(@class, 'content-item__info__secondary')]/div").GetCleanInnerText(),
                 Length = videoNode.SelectSingleNode(@".//div[@class='content-item__sublabels']/span").GetCleanInnerText().Trim(),
-                Thumb = getImageUrl(videoNode.SelectSingleNode(@".//source"))
+                Thumb = getImageUrl(videoNode.SelectSingleNode(@".//img"))
             };
         }
 
