@@ -98,7 +98,6 @@
     <Compile Include="Hoster\MyHosterBase.cs" />
     <Compile Include="Hoster\Xtream.cs" />
     <Compile Include="KhanAcademyUtil.cs" />
-    <Compile Include="M3u8Util.cs" />
     <Compile Include="MovieNightUtil.cs" />
     <Compile Include="NPOLiveUtil.cs" />
     <Compile Include="PowerUnlimitedUtil.cs" />

@@ -309,6 +309,7 @@
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Most Popular">https://www.bbc.co.uk/iplayer/most-popular</Category>
+        <Category xsi:type="RssLink" name="Box Sets">https://www.bbc.co.uk/iplayer/group/p05pn9jr</Category>
         <Category xsi:type="RssLink" name="A - Z">https://www.bbc.co.uk/iplayer/a-z/</Category>
         <Category xsi:type="RssLink" name="Arts" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p01n4zyb.jpg">https://www.bbc.co.uk/iplayer/categories/arts/a-z</Category>
         <Category xsi:type="RssLink" name="CBBC" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p02984mp.jpg">https://www.bbc.co.uk/iplayer/categories/cbbc/a-z</Category>

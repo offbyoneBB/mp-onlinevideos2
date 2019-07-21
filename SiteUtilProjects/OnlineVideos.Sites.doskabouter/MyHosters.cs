@@ -1044,6 +1044,25 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class VeryStream : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "verystream.com";
+        }
+        public override string GetVideoUrl(string url)
+        {
+            var data = GetWebData(url);
+            var match = Regex.Match(data, @"<p\sstyle=""""\s*class=""""\s*id=""videolink"">(?<url>[^<]*)<");
+            if (match.Success)
+                return new Uri(new Uri(url), match.Groups["url"].Value).AbsoluteUri.Replace("/e/", "/gettoken/");
+            match = Regex.Match(data, @"<h3>(?<error>[^<]*)<");
+            if (match.Success)
+                throw new OnlineVideosException(match.Groups["error"].Value);
+            return null;
+        }
+    }
+
     public class Vidbull : HosterBase
     {
         public override string GetHosterUrl()
@@ -1187,6 +1206,30 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class VidLoxMe : VidLox
+    {
+        public override string GetHosterUrl()
+        {
+            return "vidlox.me";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            string s = WebCache.Instance.GetWebData(url);
+            s = Helpers.StringUtils.GetSubString(s, "sources: [", "]");
+            var m = Regex.Match(s, @"""(?<url>[^""]*)""");
+            string theUrl = null;
+            while (m.Success)
+            {
+                theUrl = m.Groups["url"].Value;
+                if (theUrl.EndsWith("mp4"))
+                    return theUrl;
+                m = m.NextMatch();
+            }
+            return theUrl;
+        }
+    }
+
     public class VidNode : HosterBase, ISubtitle
     {
         private string subUrl;
@@ -1229,6 +1272,27 @@ namespace OnlineVideos.Hoster
                 else
                     return null;
             }
+        }
+    }
+
+    public class VidTodo : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "vidtodo.com";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            url = url.Replace("vidtodo", "vidtodu");
+            var data = GetWebData(url);
+            string packed = Helpers.StringUtils.GetSubString(data, @"return p}", @"</script>");
+            packed = packed.Replace(@"\'", @"'");
+            string unpacked = Helpers.StringUtils.UnPack(packed);
+            string res = Helpers.StringUtils.GetSubString(unpacked, @"file:""", @"""");
+            if (!String.IsNullOrEmpty(res))
+                return res;
+            return null;
         }
     }
 

@@ -382,7 +382,7 @@ namespace OnlineVideos.Sites
                     Url = GetAbsoluteUri(urlNode.GetAttributeValue("href", string.Empty), BASE_URL).ToString(),
                     Name = programme.SelectSingleNode(@".//p[contains(@class, 'list-content-item__title')]").GetCleanInnerText(),
                     Description = programme.SelectSingleNode(@".//p[contains(@class, 'list-content-item__synopsis')]").GetCleanInnerText(),
-                    Thumb = getImageUrl(programme.SelectSingleNode(@".//picture/source")),
+                    Thumb = getImageUrl(programme.SelectSingleNode(@".//img")),
                     ParentCategory = parentCategory
                 });
             }
@@ -415,7 +415,7 @@ namespace OnlineVideos.Sites
                     RssLink category = isAlternate ? createProgrammeCategoryAlternate(programme) : createProgrammeCategory(programme);
                     if (category != null)
                     {
-                        category.Thumb = getImageUrl(programme.SelectSingleNode(@".//source"));
+                        category.Thumb = getImageUrl(programme.SelectSingleNode(@".//img"));
                         category.ParentCategory = parentCategory;
                         categories.Add(category);
                     }
@@ -450,10 +450,13 @@ namespace OnlineVideos.Sites
             if (titleNode == null)
                 return null;
 
+            var descriptionNode = programme.SelectSingleNode(@".//div[contains(@class, 'content-item__info__secondary')]/div[contains(@class, 'content-item__description')]");
+
             return new RssLink()
             {
                 Url = GetAbsoluteUri(url, BASE_URL).ToString(),
-                Name = titleNode.GetCleanInnerText()
+                Name = titleNode.GetCleanInnerText(),
+                Description = descriptionNode?.GetCleanInnerText()
             };
         }
 
@@ -502,18 +505,38 @@ namespace OnlineVideos.Sites
             string url = (category as RssLink).Url;
 
             var document = GetWebData<HtmlDocument>(url).DocumentNode;
-            HtmlNodeCollection videoNodes = null;
+            List<HtmlNode> videoNodes = null;
 
-            // Check for an 'all episdoes' link if we couldn't find any episodes 
-            var allEpisodes = document.SelectSingleNode(@"//a[starts-with(@href, '/iplayer/episodes/')]");
-            if (allEpisodes != null)
+            // Check for an 'all episdoes' link if not currently on the episodes page
+            if (!url.Contains("/iplayer/episodes/"))
             {
-                document = GetWebData<HtmlDocument>(BASE_URL + allEpisodes.GetAttributeValue("href", "")).DocumentNode;
-                videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item--')]");
+                var allEpisodes = document.SelectSingleNode(@"//a[starts-with(@href, '/iplayer/episodes/')]");
+                if (allEpisodes != null)
+                {
+                    document = GetWebData<HtmlDocument>(BASE_URL + allEpisodes.GetAttributeValue("href", "")).DocumentNode;
+                    videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item--')]")?.ToList();
+                }
             }
 
             if (videoNodes == null)
-                videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item--')]");
+                videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item--')]")?.ToList();
+
+            if (videoNodes != null)
+            {
+                // If we've found episodes, look for additional series
+                HtmlNodeCollection additionalSeriesNodes = document.SelectNodes(@"//a[contains(@class, 'series-nav__button')]");
+                if (additionalSeriesNodes != null)
+                {
+                    foreach (HtmlNode seriesNode in additionalSeriesNodes)
+                    {
+                        // Load page for the series and get all episodes
+                        var seriesEpisodeNodes = GetWebData<HtmlDocument>(GetAbsoluteUri(seriesNode.Attributes["href"].Value, BASE_URL).ToString())?
+                            .DocumentNode?.SelectNodes(@"//div[contains(@class, 'content-item--')]");
+                        if (seriesEpisodeNodes != null)
+                            videoNodes.AddRange(seriesEpisodeNodes);
+                    }
+                }
+            }
 
             var singleVideoNode = document.SelectSingleNode(@"//div[@id='main']");
 
@@ -557,7 +580,7 @@ namespace OnlineVideos.Sites
             {
                 currentPage++;
                 document = GetWebData<HtmlDocument>(url + "?page=" + currentPage).DocumentNode;
-                videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item--')]");
+                videoNodes = document.SelectNodes(@"//div[contains(@class, 'content-item--')]")?.ToList();
                 if (videoNodes == null)
                     break;
                 videos.AddRange(videoNodes.Select(v => createVideo(v, category.Name)).Where(v => v != null));
@@ -603,7 +626,7 @@ namespace OnlineVideos.Sites
                 Title = title,
                 Description = videoNode.SelectSingleNode(@".//div[contains(@class, 'content-item__description')]").GetCleanInnerText(),
                 Length = videoNode.SelectSingleNode(@".//div[contains(@class, 'content-item__sublabels')]/span").GetCleanInnerText(),
-                Thumb = getImageUrl(videoNode.SelectSingleNode(@".//source"))                
+                Thumb = getImageUrl(videoNode.SelectSingleNode(@".//img"))                
             };
         }
 
@@ -623,7 +646,7 @@ namespace OnlineVideos.Sites
                 Description = videoNode.SelectSingleNode(@".//div[contains(@class, 'synopsis')]/p").GetCleanInnerText(),
                 Airdate = videoNode.SelectSingleNode(@".//div[contains(@class, 'metadata__container--first')]/p").GetCleanInnerText().Replace("First shown:", "").Trim(),
                 Length = videoNode.SelectSingleNode(@".//p[contains(@class, 'metadata__item--last')]").GetCleanInnerText().Replace("Duration", "").Trim(),
-                Thumb = getImageUrl(videoNode.SelectSingleNode(@".//source"))
+                Thumb = getImageUrl(videoNode.SelectSingleNode(@".//noscript/img"))
             };
         }
 
@@ -647,7 +670,7 @@ namespace OnlineVideos.Sites
                 Title = title,
                 Description = videoNode.SelectSingleNode(@".//div[contains(@class, 'content-item__info__secondary')]/div").GetCleanInnerText(),
                 Length = videoNode.SelectSingleNode(@".//div[@class='content-item__sublabels']/span").GetCleanInnerText().Trim(),
-                Thumb = getImageUrl(videoNode.SelectSingleNode(@".//source"))
+                Thumb = getImageUrl(videoNode.SelectSingleNode(@".//img"))
             };
         }
 
@@ -750,9 +773,9 @@ namespace OnlineVideos.Sites
             if (pageNumbers != null && pageNumbers.Count > 0)
             {
                 string lastPageUrl = pageNumbers.Last().GetAttributeValue("href", "").ParamsCleanup();
-                Match m = Regex.Match(lastPageUrl, @"\d+");
+                Match m = Regex.Match(lastPageUrl, @"page=(\d+)");
                 if (m.Success)
-                    pageCount = int.Parse(m.Value);
+                    pageCount = int.Parse(m.Groups[1].Value);
             }
             return pageCount;
         }

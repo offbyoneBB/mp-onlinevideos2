@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using OnlineVideos.Helpers;
@@ -10,9 +9,6 @@ namespace OnlineVideos.Sites
     {
         public override string GetVideoUrl(VideoInfo video)
         {
-            ServicePointManager.Expect100Continue = true;
-            ServicePointManager.SecurityProtocol = (SecurityProtocolType) 3072|SecurityProtocolType.Ssl3|SecurityProtocolType.Tls;
-
             string newToken = Doskabouter.Helpers.NPOHelper.GetToken(video.VideoUrl);
             if (!String.IsNullOrEmpty(newToken))
             {

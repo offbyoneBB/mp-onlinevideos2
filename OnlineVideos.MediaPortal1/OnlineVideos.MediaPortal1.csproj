@@ -81,6 +81,9 @@
       <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\log4net.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="MediaInfo.Wrapper">
+      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\MediaInfo.Wrapper.dll</HintPath>
+    </Reference>
     <Reference Include="RemotePlugins">
       <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\RemotePlugins.dll</HintPath>
       <Private>False</Private>
