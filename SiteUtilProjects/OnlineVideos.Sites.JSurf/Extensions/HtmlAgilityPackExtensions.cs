@@ -66,9 +66,13 @@ namespace OnlineVideos.Sites.JSurf.Extensions
         /// <returns></returns>
         public static List<HtmlNode> GetNodesByClass(this HtmlNode node, string className, bool allowPartialMatch = false)
         {
-            var results = node.DescendantNodes().Where(x => x.GetAttribute("class") == className
-                                                            || x.GetAttribute("class").Contains((allowPartialMatch ? "" : " ") + className)
-                                                            || x.GetAttribute("class").Contains(className + (allowPartialMatch ? "" : " "))).ToList();
+            var results = node.DescendantNodes().Where(x =>
+            {
+                var clsAttr = x.GetAttribute("class") ?? "";
+                return clsAttr == className
+                       || clsAttr.Contains((allowPartialMatch ? "" : " ") + className)
+                       || clsAttr.Contains(className + (allowPartialMatch ? "" : " "));
+            }).ToList();
             if (results.Count == 0)
                 return null;
             return results.ToList();

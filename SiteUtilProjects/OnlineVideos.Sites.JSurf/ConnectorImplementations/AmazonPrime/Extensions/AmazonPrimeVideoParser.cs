@@ -55,23 +55,39 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
 
                     video.Title = detailNode.SelectSingleNode(".//h1[@data-automation-id='title']")?.FirstChild?.GetInnerTextTrim();
                     if (string.IsNullOrEmpty(video.Title))
-                        video.Title = detailNode.GetNodeByClass("dv-node-dp-title")?.FirstChild?.GetInnerTextTrim();
+                        video.Title = detailNode.GetNodeByClass("dv-node-dp-title", true)?.FirstChild?.GetInnerTextTrim();
                     var description = detailNode.SelectSingleNode(".//div[@data-automation-id='synopsis']")?.FirstChild?.GetInnerTextTrim();
-                    video.Description = description ?? video.Title;
+                    if (string.IsNullOrEmpty(description))
+                        description = detailNode.GetNodeByClass("dv-dp-node-synopsis", true)?.FirstChild?.GetInnerTextTrim();
 
-                    var ratingNode = detailNode.GetNodeByClass("av-icon--amazon_rating");
+                    description = description ?? video.Title;
+
+                    var ratingNode = detailNode.GetNodeByClass("av-icon--amazon_rating", true);
                     var starsCls = ratingNode?.GetAttribute("class").Split(' ').FirstOrDefault(c => c.StartsWith("av-stars-"));
                     if (starsCls != null)
-                        video.Description += " - " + starsCls.Replace("av-stars-", "").Replace("-", ".") + "/5";
+                        description = starsCls.Replace("av-stars-", "").Replace("-", ".") + "/5" + " - " + description;
 
-                    var badeTextNodes = detailNode.GetNodesByClass("av-badge-text");
-                    if (badeTextNodes != null)
-                        foreach (var textSpan in badeTextNodes)
-                            video.Description += " - " + textSpan.GetInnerTextTrim();
+                    var badgeTextNodes = detailNode.GetNodesByClass("av-badge-text");
+                    if (badgeTextNodes != null)
+                    {
+                        foreach (var textSpan in badgeTextNodes)
+                            description += " - " + textSpan.GetInnerTextTrim();
+                    }
+                    else
+                    {
+                        var badgeText = detailNode.SelectSingleNode(".//*[@data-automation-id='runtime-badge']")?.FirstChild?.GetInnerTextTrim();
+                        if (!string.IsNullOrEmpty(badgeText))
+                            video.Length = badgeText;
 
-                    video.Description += "\r\n" + description;
+                        badgeText = detailNode.SelectSingleNode(".//*[@data-automation-id='imdb-rating-badge']")?.Attributes["aria-label"]?.Value;
+                        if (!string.IsNullOrEmpty(badgeText))
+                            description = badgeText + " - " + description;
+                    }
 
-                    var imageUrlNode = detailNode.GetNodeByClass("av-fallback-packshot");
+                    video.Description = description;
+
+                    var imageUrlNode = detailNode.GetNodeByClass("av-fallback-packshot")
+                        ?? detailNode.GetNodeByClass("dv-fallback-packshot-image");
                     video.Thumb = imageUrlNode == null
                         ? string.Empty
                         : imageUrlNode.SelectSingleNode(".//img").Attributes["src"].Value;
@@ -81,9 +97,25 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                         if (bgImgNode != null)
                             video.Thumb = GetBackgroundUrl(bgImgNode);
                     }
-                    video.Airdate = detailNode.SelectSingleNode(".//div[@data-automation-id='release-year-badge']")?.FirstChild?.GetInnerTextTrim();
-                    video.Other = detailNode.SelectSingleNode(".//a[@data-ref='atv_dp_stream_prime_movie']")?.Attributes["data-page-title-id"]?.Value;
+                    video.Airdate = detailNode.SelectSingleNode(".//*[@data-automation-id='release-year-badge']")?.FirstChild?.GetInnerTextTrim();
+                    video.Other = detailNode.SelectSingleNode(".//a[@data-ref='atv_dp_stream_prime_movie']")?.Attributes["data-page-title-id"]?.Value
+                        ?? detailNode.SelectSingleNode(".//*[@data-video-type='Feature']")?.Attributes["data-page-title-id"]?.Value;
                     results.Add(video);
+
+                    // Check for trailer link (does not work,  has the same ASIN, but different playback url)
+                    //var trailerASIN = detailNode.SelectSingleNode(".//*[@data-video-type='Trailer']")?.Attributes["data-page-title-id"]?.Value;
+                    //if (!string.IsNullOrEmpty(trailerASIN))
+                    //{
+                    //    var trailer = new VideoInfo
+                    //    {
+                    //        Title = video.Title + " - Trailer",
+                    //        Description = "Trailer",
+                    //        Airdate = video.Airdate,
+                    //        Thumb = video.Thumb,
+                    //        Other = trailerASIN
+                    //    };
+                    //    results.Add(trailer);
+                    //}
                 }
                 else
                 {
@@ -232,7 +264,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
         {
             results = new List<VideoInfo>();
             // TV Series, load all videos
-            var episodeList = doc.GetElementbyId("js-node-btf")?.GetNodesByClass("js-node-episode-container");
+            var episodeList = doc.GetElementbyId("js-node-btf")?.GetNodesByClass("js-node-episode-container", true);
             if (episodeList == null)
                 return false;
 
