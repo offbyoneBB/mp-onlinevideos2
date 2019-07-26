@@ -84,6 +84,8 @@ namespace OnlineVideos.Hoster
                 string url_encoded_fmt_stream_map = Items.Get("url_encoded_fmt_stream_map");
                 if (!string.IsNullOrEmpty(url_encoded_fmt_stream_map))
                     forceGetWebPage = url_encoded_fmt_stream_map.Contains("&s=");
+                else
+                    forceGetWebPage = true;
 
                 if (Items.Count == 0 || Items["status"] == "fail" || Items["use_cipher_signature"] == "True" || forceGetWebPage)
                 {
