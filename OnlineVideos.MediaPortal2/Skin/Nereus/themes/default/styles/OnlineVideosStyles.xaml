@@ -499,7 +499,7 @@
   </Style>
 
   <DataTemplate x:Key="VideoListItemDataTemplate" DataType="{x:Type ovs:VideoViewModel}">
-    <DockPanel x:Name="ItemControl" LastChildFill="False">
+    <DockPanel x:Name="ItemControl" LastChildFill="True">
       <Image x:Name="thumb" DockPanel.Dock="Left" Stretch="Uniform" Height="40" Source="{Binding Path=ThumbnailImage}">
         <Image.Margin>
           <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} ? {1} : {2}">
@@ -509,10 +509,10 @@
           </MultiBinding>
         </Image.Margin>
       </Image>
-      <Label DockPanel.Dock="Center" x:Name="ItemLabel" FontFamily="SegoeUIBold" Margin="10,0,10,0" Content="{Binding Path=Title}"
-             FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource MediaItemUnwatchedColor}"/>
       <Label DockPanel.Dock="Right" x:Name="DurationLabel" FontFamily="SegoeUIBold" Margin="10,0,10,0" Content="{Binding Path=Length}"
              FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource MediaItemUnwatchedColor}"/>
+      <Label DockPanel.Dock="Center" x:Name="ItemLabel" FontFamily="SegoeUIBold" Margin="10,0,10,0" Content="{Binding Path=Title}"
+             FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource MediaItemUnwatchedColor}" ScrollDelay="0"/>
     </DockPanel>
   </DataTemplate>
 
