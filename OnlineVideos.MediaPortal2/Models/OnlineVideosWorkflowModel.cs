@@ -10,6 +10,8 @@ using OnlineVideos.Downloading;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MediaPortal.Common.UserManagement;
+using MediaPortal.UI.Services.UserManagement;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -19,7 +21,7 @@ namespace OnlineVideos.MediaPortal2
         {
             SiteGroupsList = new ItemsList();
             SitesList = new ItemsList();
-            
+
             // create a message queue where we listen to changes to the sites
             _messageQueue = new AsynchronousMessageQueue(this, new string[] { OnlineVideosMessaging.CHANNEL });
             _messageQueue.MessageReceived += new MessageReceivedHandler(OnlineVideosMessageReceived);
@@ -27,7 +29,7 @@ namespace OnlineVideos.MediaPortal2
         }
 
         protected AsynchronousMessageQueue _messageQueue;
-        
+
         bool sitesListHasAllSites = false;
 
         SiteViewModel _focusedSite;
@@ -96,6 +98,11 @@ namespace OnlineVideos.MediaPortal2
             {
                 SelectedSite = siteModel;
                 ShowCategories(siteModel.Site.Settings.Categories, SelectedSite.Name);
+            }
+
+            if (SelectedSite != null)
+            {
+                _ = ServiceRegistration.Get<IUserManagement>().NotifyUsage("onlinevideos", SelectedSite.Name);
             }
         }
 
@@ -395,7 +402,7 @@ namespace OnlineVideos.MediaPortal2
         {
             // pop all states up to the site state from the current navigation stack
             IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
-            while (workflowManager.NavigationContextStack.Peek().Predecessor != null && 
+            while (workflowManager.NavigationContextStack.Peek().Predecessor != null &&
                 workflowManager.NavigationContextStack.Peek().Predecessor.WorkflowState.StateId != Guids.WorkflowStateSites)
             {
                 workflowManager.NavigationContextStack.Pop();
