@@ -6,9 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Net;
-using System.Net.Security;
 using System.Web;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Xml;
 using System.Linq;
@@ -760,7 +758,7 @@ namespace OnlineVideos.Hoster
         }
     }
 
-    public class Streamango : HosterBase
+    public class Streamango : MyHosterBase
     {
 
         const string key = "=/+9876543210zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA";
@@ -804,6 +802,9 @@ namespace OnlineVideos.Hoster
                 return res.ToString();
 
             }
+            Match nofile = Regex.Match(data, @"<p class=""lead"">(?<message>[^>]*)</p>");
+            TestForError(nofile);
+
             return null;
         }
     }
@@ -862,12 +863,9 @@ namespace OnlineVideos.Hoster
                     return m.Groups["url"].Value;
 
             }
-            if (String.IsNullOrEmpty(streamer))
-            {
-                Match m = Regex.Match(webdata, @"<title>File\sRemoved</title>\s*<b>(?<message>[^<]*)</b>");
-                if (m.Success)
-                    throw new OnlineVideosException(m.Groups["message"].Value);
-            }
+            Match nofile = Regex.Match(webdata, @"<title>File\sRemoved</title>\s*<b>(?<message>[^<]*)</b>");
+            TestForError(nofile, streamer);
+
             RtmpUrl rtmpUrl = new RtmpUrl(streamer)
             {
                 PlayPath = file
@@ -901,7 +899,7 @@ namespace OnlineVideos.Hoster
         }
     }
 
-    public class TheVideo : HosterBase
+    public class TheVideo : MyHosterBase
     {
         public override string GetHosterUrl()
         {
@@ -917,14 +915,11 @@ namespace OnlineVideos.Hoster
 
         public override Dictionary<string, string> GetPlaybackOptions(string url)
         {
-            var oldCallback = ServicePointManager.ServerCertificateValidationCallback;
-            ServicePointManager.ServerCertificateValidationCallback = delegate (
-                Object obj, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
-                {
-                    return (true);
-                };
-            url = WebCache.Instance.GetRedirectedUrl(url);
-            ServicePointManager.ServerCertificateValidationCallback = oldCallback;
+            using (var certignorer = new CertificateIgnorer())
+            {
+                url = WebCache.Instance.GetRedirectedUrl(url);
+            }
+
             url = url.Replace(@"https://vev.io/", @"https://vev.io/api/serve/video/");
             var jsonData = GetWebData<JToken>(url, "{}");
             Dictionary<string, string> result = new Dictionary<string, string>();
@@ -1023,7 +1018,7 @@ namespace OnlineVideos.Hoster
         }
     }
 
-    public class Veehd : HosterBase
+    public class Veehd : MyHosterBase
     {
         public override string GetHosterUrl()
         {
@@ -1033,18 +1028,16 @@ namespace OnlineVideos.Hoster
         public override string GetVideoUrl(string url)
         {
             string webData = WebCache.Instance.GetWebData(url);
-            Match nofile = Regex.Match(webData, @"<b[^>]*>>(?<url>[^<]*)</b>");
+            Match nofile = Regex.Match(webData, @"<b[^>]*>>(?<message>[^<]*)</b>");
             string tmp = Helpers.StringUtils.GetSubString(webData, @"$(""#playeriframe"").attr({src : """, @"""");
             webData = WebCache.Instance.GetWebData(@"http://veehd.com" + tmp);
             string res = HttpUtility.UrlDecode(Helpers.StringUtils.GetSubString(webData, @"""url"":""", @""""));
-            if (String.IsNullOrEmpty(res) && nofile.Success)
-                throw new OnlineVideosException(nofile.Groups["url"].Value);
-
+            TestForError(nofile, res);
             return res;
         }
     }
 
-    public class VeryStream : HosterBase
+    public class VeryStream : MyHosterBase
     {
         public override string GetHosterUrl()
         {
@@ -1056,14 +1049,13 @@ namespace OnlineVideos.Hoster
             var match = Regex.Match(data, @"<p\sstyle=""""\s*class=""""\s*id=""videolink"">(?<url>[^<]*)<");
             if (match.Success)
                 return new Uri(new Uri(url), match.Groups["url"].Value).AbsoluteUri.Replace("/e/", "/gettoken/");
-            match = Regex.Match(data, @"<h3>(?<error>[^<]*)<");
-            if (match.Success)
-                throw new OnlineVideosException(match.Groups["error"].Value);
+            match = Regex.Match(data, @"<h3>(?<message>[^<]*)<");
+            TestForError(match);
             return null;
         }
     }
 
-    public class Vidbull : HosterBase
+    public class Vidbull : MyHosterBase
     {
         public override string GetHosterUrl()
         {
@@ -1108,9 +1100,8 @@ namespace OnlineVideos.Hoster
                         int p = res.IndexOf('\0');
                         if (p >= 0)
                             return res.Substring(0, p - 1);
-                        m = Regex.Match(webData, @"<span[^>]*>(?<text>[^<]*)</span>");
-                        if (m.Success)
-                            throw new OnlineVideosException(m.Groups["text"].Value);
+                        m = Regex.Match(webData, @"<span[^>]*>(?<message>[^<]*)</span>");
+                        TestForError(m);
                         return String.Empty;
                     }
                 }
@@ -1130,7 +1121,7 @@ namespace OnlineVideos.Hoster
 
     }
 
-    public class Vidoza : HosterBase
+    public class Vidoza : MyHosterBase
     {
         public override string GetHosterUrl()
         {
@@ -1143,6 +1134,8 @@ namespace OnlineVideos.Hoster
             var m = Regex.Match(data, @"{\ssrc:\s""(?<url>[^""]*)"",\stype:\s""video/mp4""");
             if (m.Success)
                 return m.Groups["url"].Value;
+            Match nofile = Regex.Match(data, @"<h3 class=""text-center"">(?<message>[^<]*)</h3>");
+            TestForError(nofile);
             return null;
         }
     }
@@ -1182,7 +1175,7 @@ namespace OnlineVideos.Hoster
         }
     }
 
-    public class VidLox : HosterBase
+    public class VidLox : MyHosterBase
     {
         public override string GetHosterUrl()
         {
@@ -1191,10 +1184,17 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
-            string s = WebCache.Instance.GetWebData(url);
+            string s;
+            using (var certIgnorer = new CertificateIgnorer())
+            {
+                s = WebCache.Instance.GetWebData(url);
+            }
+            Match nofile = Regex.Match(s, @"<p class=""text-center"">(?<message>[^<]*)</p>");
             s = Helpers.StringUtils.GetSubString(s, "sources: [", "]");
             var m = Regex.Match(s, @"""(?<url>[^""]*)""");
             string theUrl = null;
+            if (!m.Success)
+                TestForError(nofile);
             while (m.Success)
             {
                 theUrl = m.Groups["url"].Value;
@@ -1275,7 +1275,7 @@ namespace OnlineVideos.Hoster
         }
     }
 
-    public class VidTodo : HosterBase
+    public class VidTodo : MyHosterBase
     {
         public override string GetHosterUrl()
         {
@@ -1284,14 +1284,18 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
-            url = url.Replace("vidtodo", "vidtodu");
-            var data = GetWebData(url);
+            var data = GetWebData(url, referer: url);
             string packed = Helpers.StringUtils.GetSubString(data, @"return p}", @"</script>");
             packed = packed.Replace(@"\'", @"'");
             string unpacked = Helpers.StringUtils.UnPack(packed);
             string res = Helpers.StringUtils.GetSubString(unpacked, @"file:""", @"""");
             if (!String.IsNullOrEmpty(res))
                 return res;
+            res = Helpers.StringUtils.GetSubString(unpacked, @"src:""", @"""");
+            if (!String.IsNullOrEmpty(res))
+                return res;
+            Match noFile = Regex.Match(data, @"<div\sid=""container"">\s*<b>(?<message>.*?)</ul>", DefaultRegexOptions);
+            TestForError(noFile);
             return null;
         }
     }
@@ -1342,15 +1346,17 @@ namespace OnlineVideos.Hoster
         {
             url = url.Replace(@"http://", @"https://");
             string data = WebCache.Instance.GetWebData(url);
+            var m = Regex.Match(data, @"\$\('\#play'\)\.attr\('disabled',\strue\)\s*\.attr\('value',\s'(?<time>\d+)'\)");
+            if (m.Success)
+                Thread.Sleep(Convert.ToInt32(m.Groups["time"].Value) * 1001);
+            Match noFile = Regex.Match(data, @"<h1\sclass=""alt\slightbg\slh42"">(?<message>[^<]+)</h1>");
+
             data = GetFromPost(url, data);
 
             Match n = Regex.Match(data, @"<source\ssrc=""(?<url>[^""]*)""\stype=""video/mp4"">");
             if (n.Success)
                 return n.Groups["url"].Value;
-            //<h1 class="alt lightbg lh42">File is no longer available!</h1>
-            Match noFile = Regex.Match(data, @"<h1\sclass=""alt\slightbg\slh42"">(?<msg>[^']+)""</h1>");
-            if (noFile.Success)
-                throw new OnlineVideosException(noFile.Groups["msg"].Value.ToUpperInvariant());
+            TestForError(noFile);
             return null;
         }
     }
