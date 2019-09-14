@@ -501,6 +501,24 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class OnlyStream : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "onlystream.tv";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            var data = GetWebData(url);
+            Match m = Regex.Match(data, @"{file:""(?<url>[^""]*mp4)""");
+            if (m.Success)
+                return m.Groups["url"].Value;
+
+            return null;
+        }
+    }
+
     public class PlayerOmroep : HosterBase
     {
 
@@ -1294,7 +1312,7 @@ namespace OnlineVideos.Hoster
             res = Helpers.StringUtils.GetSubString(unpacked, @"src:""", @"""");
             if (!String.IsNullOrEmpty(res))
                 return res;
-            Match noFile = Regex.Match(data, @"<div\sid=""container"">\s*<b>(?<message>.*?)</ul>", DefaultRegexOptions);
+            Match noFile = Regex.Match(data, @"<div\sid=""container"">\s*<b>(?<message>[^<]*)<", DefaultRegexOptions);
             TestForError(noFile);
             return null;
         }
