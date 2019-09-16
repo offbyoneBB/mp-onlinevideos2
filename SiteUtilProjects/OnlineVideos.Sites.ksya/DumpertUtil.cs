@@ -8,13 +8,17 @@ namespace OnlineVideos.Sites
     {
         public override List<VideoInfo> GetVideos(Category category)
         {
-            string url = ((RssLink)category).Url;
-            string[] parts = url.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            int pageInd = parts.Length - 1;
-            int pageNr = Int32.Parse(parts[pageInd]);
-            parts[pageInd] = (pageNr++).ToString();
+            return parse(((RssLink)category).Url);
+        }
 
-            nextPageUrl = string.Join("/", parts) + '/';
+        private  List<VideoInfo> parse(string url)
+        {
+            string[] parts = url.Split('/');
+            int pageInd = parts.Length - 2;
+            int pageNr = Int32.Parse(parts[pageInd]);
+            parts[pageInd] = (++pageNr).ToString();
+
+            nextPageUrl = string.Join("/", parts);
 
             var jsonData = GetWebData<JObject>(url);
             var items = jsonData.Value<JArray>("items");
@@ -63,8 +67,13 @@ namespace OnlineVideos.Sites
                 videoInfo.Description = item.Value<string>("description");
                 videoList.Add(videoInfo);
             }
-            HasNextPage = videoList.Count > 0;
+            nextPageAvailable = videoList.Count > 0;
             return videoList;
+        }
+
+        public override List<VideoInfo> GetNextPageVideos()
+        {
+            return parse(nextPageUrl);
         }
 
         public override string GetVideoUrl(VideoInfo video)
