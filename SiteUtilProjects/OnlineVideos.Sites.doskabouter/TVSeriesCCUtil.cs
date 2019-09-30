@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Web;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using HtmlAgilityPack;
@@ -80,13 +79,26 @@ namespace OnlineVideos.Sites
                     ti.VideoKind = VideoKind.TvSeries;
                     ti.Title = category.ParentCategory.Name;
                 }
-                var urlNode = node.SelectSingleNode(".//button[@data-url and @data-target='#premium']");
-                VideoInfo vid = new VideoInfo()
+
+                VideoInfo vid = new TvLinkVideo()
                 {
                     Title = node.SelectSingleNode(".//div/h4").InnerText,
-                    VideoUrl = urls[urlNode.Attributes["data-url"].Value],
+                    PlaybackOptions = new Dictionary<string, string>(),
                     Other = ti
                 };
+
+                var resolutions = node.SelectNodes(@".//div[@class='download-row']");
+                foreach (var reso in resolutions)
+                {
+                    var resoNode = reso.SelectSingleNode(@".//div[@class='download-cell cell1']");
+                    var nm = resoNode.InnerText.Trim();
+                    var vidIdNode = reso.SelectSingleNode(".//button[@data-url and @data-target='#premium']");
+                    var vidId = vidIdNode.Attributes["data-url"].Value;
+                    vid.PlaybackOptions.Add(nm, urls[vidId]);
+                }
+
+                vid.VideoUrl = vid.GetPreferredUrl(false);
+
                 res.Add(vid);
             }
             return res;
@@ -94,7 +106,20 @@ namespace OnlineVideos.Sites
 
         public override string GetVideoUrl(VideoInfo video)
         {
-            var m = Regex.Match(video.VideoUrl, @"https://k2s.cc/file/(?<id>[^/]*)/");
+            return video.VideoUrl;
+        }
+
+        public override ITrackingInfo GetTrackingInfo(VideoInfo video)
+        {
+            return video.Other as TrackingInfo;
+        }
+    }
+
+    class TvLinkVideo : VideoInfo
+    {
+        public override string GetPlaybackOptionUrl(string url)
+        {
+            var m = Regex.Match(PlaybackOptions[url], @"https://k2s.cc/file/(?<id>[^/]*)/");
             if (!m.Success) return null;
 
             string id = m.Groups["id"].Value;
@@ -102,20 +127,16 @@ namespace OnlineVideos.Sites
             var extraHeader = new NameValueCollection();
             extraHeader["Content-Type"] = "application/json;charset=utf-8";
 
-            var data = GetWebData<JObject>(@"https://api.k2s.cc/v1/auth/token", postData: @"{""grant_type"":""client_credentials"",""client_id"":""k2s_web_app"",""client_secret"":""pjc8pyZv7vhscexepFNzmu4P""}", headers: extraHeader);
+            var data = WebCache.Instance.GetWebData<JObject>(@"https://api.k2s.cc/v1/auth/token", postData: @"{""grant_type"":""client_credentials"",""client_id"":""k2s_web_app"",""client_secret"":""pjc8pyZv7vhscexepFNzmu4P""}", headers: extraHeader);
             var access_token = data.Value<string>("access_token");
 
             extraHeader = new NameValueCollection();
             extraHeader["Authorization"] = "Bearer " + access_token;
 
-            var data2 = GetWebData<JObject>(@"https://api.k2s.cc/v1/files/" + id, headers: extraHeader);
+            var data2 = WebCache.Instance.GetWebData<JObject>(@"https://api.k2s.cc/v1/files/" + id, headers: extraHeader);
 
             return data2["videoPreview"].Value<string>("video");
-        }
 
-        public override ITrackingInfo GetTrackingInfo(VideoInfo video)
-        {
-            return video.Other as TrackingInfo;
         }
     }
 }
