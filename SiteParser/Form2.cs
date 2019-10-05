@@ -103,26 +103,26 @@ namespace SiteParser
                         inQuote = !inQuote;
                     else
                         if (!inQuote)
+                    {
+                        if (part[i] == '=')
                         {
-                            if (part[i] == '=')
+                            sb.Append(@"\cf4 ");
+                            colSet = true;
+                        }
+                        if (part[i] == ' ')
+                        {
+                            if (i < part.Length - 3) // prevent red dash at />
                             {
-                                sb.Append(@"\cf4 ");
+                                sb.Append(@"\cf3 ");
                                 colSet = true;
                             }
-                            if (part[i] == ' ')
-                            {
-                                if (i < part.Length - 3) // prevent red dash at />
-                                {
-                                    sb.Append(@"\cf3 ");
-                                    colSet = true;
-                                }
-                            }
-                            if (part[i] == '>')
-                            {
-                                if (colSet)
-                                    sb.Append(@"\cf2 ");
-                            }
                         }
+                        if (part[i] == '>')
+                        {
+                            if (colSet)
+                                sb.Append(@"\cf2 ");
+                        }
+                    }
                     sb.Append(part[i]);
 
                 }
@@ -311,6 +311,19 @@ namespace SiteParser
                         node.Nodes.Add(field + " " + val);
                         node.Expand();
                     }
+                    foreach (string extra in test.GetGroupNames())
+                    {
+                        Int32 dummy;
+                        if (!Array.Exists(fields, e => e == extra) && !Int32.TryParse(extra, out dummy))
+                        {
+                            string val = m.Groups[extra].Value;
+                            if (cleanupValues)
+                                val = OnlineVideos.Helpers.StringUtils.PlainTextFromHtml(val);
+                            node.Nodes.Add(extra + " " + val);
+                            node.Expand();
+                        }
+                    }
+
                     m = m.NextMatch();
                 }
             }
@@ -349,7 +362,7 @@ namespace SiteParser
                 string s = richTextBox1.SelectedRtf;
                 s = Regex.Replace(s, @"\\highlight\d*\\", @"\");// remove background color
                 regexRichText.SelectedRtf = s;
-                for (int i = selStart; i < selEnd; )
+                for (int i = selStart; i < selEnd;)
                 {
                     switch (regexRichText.Text[i])
                     {
@@ -387,9 +400,9 @@ namespace SiteParser
                                     newText = String.Empty;
                                 else
                                     if (j - i > 1 || txt2[i] == '\n')
-                                        newText = @"\s*";
-                                    else
-                                        newText = @"\s";
+                                    newText = @"\s*";
+                                else
+                                    newText = @"\s";
 
                                 regexRichText.SelectedText = newText;
                                 regexRichText.SelectionStart = i;
