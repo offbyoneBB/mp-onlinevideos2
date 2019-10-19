@@ -565,8 +565,9 @@ namespace OnlineVideos.Sites
 
                         if (url.Contains("master.m3u8"))
                         {
-                            var m3u8Data = WebCache.Instance.ReadAsString(url);
-                            var m3u8PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(m3u8Data, video.VideoUrl);
+                            var newUrl = WebCache.Instance.GetRedirectedUrl(url);
+                            var m3u8Data = WebCache.Instance.ReadAsString(newUrl);
+                            var m3u8PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(m3u8Data, newUrl);
                             playbackOptions.UnionWith(m3u8PlaybackOptions);
                             bestVideoQualityUrl = m3u8PlaybackOptions.FirstOrDefault().Value; //Default, if m3u8 playlist cannot be collected, e.g. geoblocking
                         }
