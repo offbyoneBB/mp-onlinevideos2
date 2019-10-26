@@ -393,7 +393,7 @@ namespace OnlineVideos.Sites
         public override string GetVideoUrl(VideoInfo video)
         {
             string data = GetWebData(video.VideoUrl);
-            Match m2 = Regex.Match(data, "<script>(?<script>.*?)</script>", RegexOptions.Singleline);
+            Match m2 = Regex.Match(data, "<script>(?<script>\\s*func.*?)</script>", RegexOptions.Singleline);
             ScriptEngine engine = new ScriptEngine();
 
             engine.Global["window"] = engine.Global;
