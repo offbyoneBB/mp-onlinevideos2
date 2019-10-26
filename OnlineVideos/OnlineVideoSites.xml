@@ -885,64 +885,20 @@
         <Category xsi:type="RssLink" name="Joezny" thumb="http://www.luckymedia.nl/luckytv/wp-content/themes/luckytv/timthumb.php?src=http://www.luckymedia.nl/luckytv/wp-content/uploads/joezjny.jpg&amp;w=400&amp;h=226&amp;zc=1&amp;q=90">http://www.luckymedia.nl/luckytv/category/joezjny/</Category>
       </Categories>
     </Site>
-    <Site name="Nos" util="GenericSite" agecheck="false" enabled="true" lang="nl">
-      <Description>Nieuws, Sport en Evenementen op Radio, TV en Internet</Description>
+    <Site name="NPOStart" util="NPOStart" agecheck="false" enabled="true" lang="nl" player="Browser">
+      <Description>Het beste van NPO vind je op NPO Start</Description>
       <Configuration>
-        <item key="videoListRegEx"><![CDATA[(<li\sclass="list-featured__item\s"[^>]*><a\shref="(?<VideoUrl>[^"]*)"\s*class="link-block[^>]*><figure\sclass="list-featured__img"><img\s*src="(?<ImageUrl>[^"]*)"\s*alt=""\s*class="media-full"\s*/><span\sclass="img-icon-play\sbadge--larger\spos-bl\sshow-from--tablet-small"></span></figure><div\sclass="list-featured__wrap"><span\sclass="list-featured__title\slink-hover">(?<Title>[^<]*)</span><div\sclass="list-featured__meta\smeta"><span\sclass="icon-time\sico-space-right"></span><time\sdatetime="[^"]*">(?<Airdate>[^<]*)</time></div></div></a></li>)(?#videos nieuws_sport)|(<li\sclass="broadcast-player__playlist__item"><a\shref="(?<VideoUrl>[^"]*)"\sclass="link-hover\sbroadcast-link\s*"\s*><span\sclass="broadcast-link__play\simg-icon-play"></span><span\sclass="broadcast-link__name\s">(?<Title>[^<]*)</span><time\sclass="broadcast-link__date"\sdatetime="(?<Airdate>[^"]*)"><span\sclass="broadcast-link__icon\sicon-time\sico-space-right"></span>(?<Time>[^<]*)</time></a></li>)(?#videos uitzendingen)]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<source\ssrc="(?<m0>[^"]*)"\stype="[^"]*"\sdata-label="(?<n0>[^"]*)"\s*/>]]></item>
-        <item key="baseUrl"><![CDATA[http://nos.nl]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li><a\sclass="close-dropdown"\s*title="[^"]*"\s*data-value="(?<url>[^"]+)"\s*data-title-tracking="[^"]*"\s*data-display="[^"]*"\s*data-argument="az"\s*data-target="">(?<title>[^<]*)</a>\s*</li>]]></item>
+        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[https://www.npostart.nl/media/series?page=1&az={0}&tileMapping=normal&tileType=teaser&pageType=catalogue]]></item>
+        <item key="seriesRegEx"><![CDATA[<div\sclass="npo-ankeiler-tile-container\snpo-ankeiler-tile-weblink\snpo-tile"\sdata-id="(?<dataid>[^"]*)">\s*<a\shref="(?<url>[^"]*)"\stitle="[^"]*"\sclass="npo-ankeiler-tile"\s*data-ts-click\sdata-ts-name="[^"]*"\s*data-ts-type="navigation"\sdata-ts-niveau1="programmas"\s*data-ts-destination="(?<datadest>[^"]*)"\s*>\s*<div\sclass="npo-ankeiler-tile-image">\s*<img\ssrc="[^"]*"\salt="[^"]*"\sdata-src="(?<thumb>[^"]*)"\sclass="js-lazy-image">\s*<h2>(?<title>[^<]*)</h2>\s*</div>\s*</a>\s*</div>]]></item>
+        <item key="videoListRegEx"><![CDATA[
+(?#live)(<a\shref="(?<VideoUrl>[^"]*)"\sclass="npo-tile-link"\sdata-radio=""\sdata-mediatarget=""\s*data-ts-click\sdata-ts-name="(?<Title>[^"]*)"\s*data-ts-type="navigation"\sdata-ts-niveau1="live"\s*data-ts-niveau2="tv"\sdata-ts-niveau3=""\s*data-ts-offer\s*data-ts-editorial="live-tv"\s*data-ts-destination="[^"]*">\s*<div\sclass="npo-asset-tile\s">\s*<div\sclass="npo-asset-tile-image">\s*<img[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-play"></div>\s*<div\sclass="npo-asset-info">\s*<div[^>]*></div>\s*<h2>(?<Description>[^<]*)</h2>)
+|(?#programmas)((?<!Laatste\safleveringen.*)<div\sclass="npo-asset-tile-container\snpo-tile\s*"\sdata-id="(?<dataid>[^"]*)">\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*>\s*<div\sclass="npo-asset-tile\s">\s*<div\sclass="npo-asset-tile-availability"\s*data-from="[^"]*"\s*data-to="[^"]*"\s*data-prediction="[^"]*"\s*data-premium-from="[^"]*"\s*data-premium-to="[^"]*"\s*data-premium-prediction="[^"]*">\s*</div>\s*<div\sclass="npo-asset-tile-timer">(?<Duration>[^<]*)</div>\s*<div\sclass="npo-asset-tile-timer\s_short-timer">[^<]*</div>\s*<div\sclass="npo-asset-tile-image">\s*<img\sdata-src="(?<ImageUrl>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-new">nieuw</div>\s*<div\sclass="npo-asset-tile-play\s"></div>\s*<div\sclass="npo-asset-tile-watched">bekeken</div>\s*<div\sclass="npo-asset-tile-progress">\s*<div\sclass="npo-asset-tile-progress-bar"\sstyle="width:\s0%"></div>\s*</div>\s*</div>\s*<div\sclass="npo-asset-tile-title">\s*<h2>(?<Title>[^<]*)</h2>\s*<p>(?<Description>[^-]*)-(?<Airdate>[^<]*)<)]]></item>
+        <item key="baseUrl"><![CDATA[https://www.npostart.nl/]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" thumb="" desc="" name="Nieuws">
-          <SubCategories>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Binnenland">http://nos.nl/nieuws/binnenland/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Buitenland">http://nos.nl/nieuws/buitenland/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Regio">http://nos.nl/nieuws/regio/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Politiek">http://nos.nl/nieuws/politiek/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Economie">http://nos.nl/nieuws/economie/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Koningshuis">http://nos.nl/nieuws/koningshuis/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Tech">http://nos.nl/nieuws/tech/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Cultuur &amp; Media">http://nos.nl/nieuws/cultuur-en-media/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Opmerkelijk">http://nos.nl/nieuws/opmerkelijk/videos/</Category>
-          </SubCategories>
-        </Category>
-        <Category xsi:type="RssLink" thumb="" desc="" name="Sport">
-          <SubCategories>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Voetbal">http://nos.nl/sport/voetbal/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Wielrennen">http://nos.nl/sport/wielrennen/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Schaatsen">http://nos.nl/sport/schaatsen/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Tennis">http://nos.nl/sport/tennis/videos/</Category>
-          </SubCategories>
-        </Category>
-        <Category xsi:type="RssLink" thumb="" desc="" name="Uitzendingen">
-          <SubCategories>
-            <Category xsi:type="RssLink" thumb="" desc="" name="NOS Journaal">http://nos.nl/uitzending/nos-journaal</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Nieuwsuur">http://nos.nl/uitzending/nieuwsuur</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="NOS Jeugdjournaal">http://nos.nl/uitzending/nos-jeugdjournaal</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="NOS Sportjournaal">http://nos.nl/uitzending/nos-sportjournaal</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="NOS Studio Sport">http://nos.nl/uitzending/nos-studio-sport</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="NOS Studio Sport Eredivisie">http://nos.nl/uitzending/nos-studio-sport-eredivisie</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="NOS Studio Voetbal">http://nos.nl/uitzending/nos-studio-voetbal</Category>
-          </SubCategories>
-        </Category>
-      </Categories>
-    </Site>
-    <Site name="NPO Livestreams" util="NPOLive" agecheck="false" enabled="true" lang="nl">
-      <Description>Livestreams van de NPO</Description>
-      <Categories>
-        <Category xsi:type="Group" name="Live">
-          <Channels>
-            <Channel name="Nederland 1" thumb="http://www-assets.npo.nl/uploads/tv_channel/263/logo/regular_logo-npo1.png">http://ida.omroep.nl/app.php/LI_NL1_4188102?adaptive=yes&amp;token=</Channel>
-            <Channel name="Nederland 2" thumb="http://www-assets.npo.nl/uploads/tv_channel/264/logo/regular_logo-npo2.png">http://ida.omroep.nl/app.php/LI_NL2_4188105?adaptive=yes&amp;token=</Channel>
-            <Channel name="Nederland 3" thumb="http://www-assets.npo.nl/uploads/tv_channel/265/logo/regular_npo3-logo.png">http://ida.omroep.nl/app.php/LI_NL3_4188107?adaptive=yes&amp;token=</Channel>
-            <Channel name="Zappelin" thumb="http://www-assets.npo.nl/assets/logos/logo-npozappelin-regular-5af1c056c6465d1152b49582eafdc7340232b9af629437d43d55478405228efe.png">http://ida.omroep.nl/app.php/LI_NEDERLAND3_221687?adaptive=yes&amp;token=</Channel>
-            <Channel name="NPO Nieuws" thumb="http://www-assets.npo.nl/uploads/tv_channel/279/logo/regular_logonieuws.png">http://ida.omroep.nl/app.php/LI_NEDERLAND1_221673?adaptive=yes&amp;token=</Channel>
-            <Channel name="NPO Cultura" thumb="http://www-assets.npo.nl/uploads/tv_channel/280/logo/regular_logocultura.png">http://ida.omroep.nl/app.php/LI_NEDERLAND2_221679?adaptive=yes&amp;token=</Channel>
-            <Channel name="NPO 101" thumb="http://www-assets.npo.nl/uploads/tv_channel/281/logo/regular_logo-101.png">http://ida.omroep.nl/app.php/LI_NEDERLAND3_221683?adaptive=yes&amp;token=</Channel>
-            <Channel name="NPO Politiek" thumb="http://www-assets.npo.nl/uploads/tv_channel/282/logo/regular_logopolitiek.png">http://ida.omroep.nl/app.php/LI_NEDERLAND1_221675?adaptive=yes&amp;token=</Channel>
-            <Channel name="NPO Zapp Xtra" thumb="http://www-assets.npo.nl/uploads/tv_channel/288/logo/regular_logozappxtra.png">http://ida.omroep.nl/app.php/LI_NEDERLAND3_221687?adaptive=yes&amp;token=</Channel>
-          </Channels>
-        </Category>
+        <Category xsi:type="RssLink" name="Live">https://www.npostart.nl/live</Category>
+        <Category xsi:type="RssLink" name="Programmas">https://www.npostart.nl/programmas</Category>
       </Categories>
     </Site>
     <Site name="Power Unlimited" util="PowerUnlimited" agecheck="false" enabled="true" lang="nl">
@@ -1024,21 +980,6 @@
       <Categories>
         <Category xsi:type="RssLink" name="Recente videos">http://tweakers.net/video/zoeken/</Category>
       </Categories>
-    </Site>
-    <Site name="Uitzending Gemist" util="UitzendingGemist" agecheck="false" enabled="true" lang="nl">
-      <Description>Uitzending Gemist is de videotheek van de publieke omroep op internet en biedt het totaalaanbod van beschikbare TV uitzendingen van de omroepen.</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[https://www.npostart.nl/programmas]]></item>
-        <item key="videoListRegEx"><![CDATA[
-        (<div\sclass="npo-asset-tile-container\snpo-tile\s*"\sid="[^"]*">\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*>\s*<div\sclass="npo-asset-tile\s">\s*<div[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-image">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-new">nieuw</div>\s*<div\sclass="npo-asset-tile-play"></div>\s*<div\sclass="npo-asset-tile-watched">bekeken</div>\s*<div\sclass="npo-asset-tile-progress">\s*<div\sclass="npo-asset-tile-progress-bar"\sstyle="width:\s%"></div>\s*</div>\s*</div>\s*<h2>(?<Title>[^<]*)</h2>\s*<p>(?<Airdate>[^<]*)</p>\s*</a>\s*</div>)(?#videos of extras)
-        |
-        (<div\sclass="npo-asset-tile-container\snpo-tile\s*"\sid="[^"]*"\s*>\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*>\s*<div\sclass="npo-asset-tile\s">\s*<div[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-timer">(?<Duration>[^<]*)</div>\s*<div\sclass="npo-asset-tile-image">\s*<img\sdata-src="(?<ImageUrl>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-new">nieuw</div>\s*<div\sclass="npo-asset-tile-play"></div>\s*<div\sclass="npo-asset-tile-watched">bekeken</div>\s*<div\sclass="npo-asset-tile-progress">\s*<div\sclass="npo-asset-tile-progress-bar"\sstyle="width:\s%"></div>\s*</div>\s*</div>\s*<div\sclass="npo-asset-tile-title">\s*<h2>(?<Title>[^<]*)</h2>\s*<p>(?<Airdate>[^<]*)</p>\s*</div>\s*</a>\s*</div>)(?#videos of afleveringen)
-        ]]></item>
-        <item key="searchUrl"><![CDATA[https://www.npo.nl/search/extended?pageSize=20&query={0}&filter=episodes&dateFrom=2014-01-01&tilemapping=search&tiletype=asset]]></item>
-        <item key="fileUrlFormatString"><![CDATA[http://ida.omroep.nl/app.php/{0}?adaptive=no&token=]]></item>
-        <item key="cookies"><![CDATA[npo_cc=31]]></item>
-        <item key="forceUTF8Encoding"><![CDATA[True]]></item>
-      </Configuration>
     </Site>
     <Site name="TouTV" util="TouTv" agecheck="false" enabled="true" lang="fr">
       <Description>Webtélé de divertissement axée sur la vidéo sur demande, offerte par Radio-Canada et une vingtaine de diffuseurs et de producteurs partenaires.</Description>
