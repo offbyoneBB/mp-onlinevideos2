@@ -105,8 +105,10 @@
     <Compile Include="BackgroundTask.cs" />
     <Compile Include="CommandContainer.cs" />
     <Compile Include="Configuration\Configuration.cs" />
+    <Compile Include="ContentLists\OnlineVideosContentListProviderBase.cs" />
     <Compile Include="Controls\OverlayPanel.cs" />
     <Compile Include="DynamicWorkflow.cs" />
+    <Compile Include="Models\OnlineVideosListModel.cs" />
     <Compile Include="Models\SiteUpdateWorkflowModels.cs" />
     <Compile Include="Configuration\UserSiteSettingsStore.cs" />
     <Compile Include="Models\SiteManagementWorkflowModel.cs" />

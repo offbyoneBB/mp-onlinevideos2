@@ -43,6 +43,12 @@
     <Model Id="C39D6682-90B5-4813-8A28-A1C9118D4F3E" Name="OnlineVideosSiteManagementWorkflowModel" ClassName="OnlineVideos.MediaPortal2.SiteManagementWorkflowModel"/>
     <Model Id="C8EA3B4B-E484-469B-AE3E-56A8E9EF9F04" Name="OnlineVideosSiteUpdateWorkflowModel" ClassName="OnlineVideos.MediaPortal2.SiteUpdateWorkflowModels"/>
     <Model Id="C43F4CD9-418A-4DFB-A0BD-DF24704B5BD6" Name="OnlineVideosSearchContributorModel" ClassName="OnlineVideos.MediaPortal2.SearchAction"/>
+    <Model Id="AFD048F1-9EBB-4EBC-84C8-B27B561B77D0" Name="OnlineVideosListModel" ClassName="OnlineVideos.MediaPortal2.Models.OnlineVideosListModel"/>
+  </Register>
+
+  <Register Location="/Content/OnlineVideosListProviders">
+    <ContentList Id="{7EF96DBE-7F42-4F42-856E-1F68E928E047}" Key="FavoriteOnlineVideoSites" ClassName="OnlineVideos.MediaPortal2.ContentLists.FavoriteOnlineVideoSitesListProvider"/>
+    <ContentList Id="{BCC590C4-94C1-40D0-AEE0-0EE007C58400}" Key="LastOnlineVideoSites" ClassName="OnlineVideos.MediaPortal2.ContentLists.LatestOnlineVideoSitesListProvider"/>
   </Register>
 
   <!-- The ResourceProvider to access abitrary token based media. -->
