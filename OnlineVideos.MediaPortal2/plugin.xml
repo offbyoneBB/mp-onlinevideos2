@@ -14,7 +14,7 @@
 
   <DependsOn>
     <CoreDependency Name="MediaPortal.Common" CompatibleAPI="2" />
-    <CoreDependency Name="MediaPortal.UI" CompatibleAPI="2" />
+    <CoreDependency Name="MediaPortal.UI" CompatibleAPI="3" />
     <PluginReference PluginId="{D87D92F0-5E71-470a-A2A4-430F90A28BF3}" CompatibleAPI="3"/> <!-- SkinEngine -->
     <PluginReference PluginId="{A965AFE5-44F9-46e0-980E-40BBE17F25CA}" CompatibleAPI="1"/> <!-- VideoPlayers -->
     <PluginReference PluginId="{15FB35F7-8C85-4404-BC67-BFF28446158A}" CompatibleAPI="2"/> <!-- Media -->
@@ -51,7 +51,7 @@
     <ContentList Id="{BCC590C4-94C1-40D0-AEE0-0EE007C58400}" Key="LastOnlineVideoSites" ClassName="OnlineVideos.MediaPortal2.ContentLists.LatestOnlineVideoSitesListProvider"/>
   </Register>
 
-  <!-- The ResourceProvider to access abitrary token based media. -->
+  <!-- The ResourceProvider to access arbitrary token based media. -->
   <Register Location="/ResourceProviders">
     <Instance Id="RawTokenResourceProvider" ClassName="OnlineVideos.MediaPortal2.ResourceAccess.RawTokenResourceProvider"/>
   </Register>

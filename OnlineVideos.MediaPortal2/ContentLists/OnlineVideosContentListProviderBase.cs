@@ -18,11 +18,16 @@
 
 #endregion
 
+using System.Collections.Generic;
+using System.Linq;
 using MediaPortal.Common.Commands;
 using MediaPortal.UI.Presentation.DataObjects;
 using System.Threading.Tasks;
-using MediaPortal.UiComponents.Media.General;
+using MediaPortal.Common;
+using MediaPortal.Common.UserManagement;
+using MediaPortal.Common.UserProfileDataManagement;
 using MediaPortal.UI.ContentLists;
+using MediaPortal.UI.Presentation.Workflow;
 using OnlineVideos.Sites;
 
 namespace OnlineVideos.MediaPortal2.ContentLists
@@ -43,21 +48,46 @@ namespace OnlineVideos.MediaPortal2.ContentLists
 
         public abstract Task<bool> UpdateItemsAsync(int maxItems, UpdateReason updateReason);
 
-        protected ListItem CreateAppItem(SiteUtilBase siteUtil)
+        protected async Task<UsageStatistics> GetSiteStats()
         {
-            ListItem item = new ListItem();
-            item.AdditionalProperties[Consts.KEY_ID] = siteUtil.ToString(); // TODO
-            item.Command = new AsyncMethodDelegateCommand(() => GotoSite(item));
-            return item;
+            IUserManagement userManagement = ServiceRegistration.Get<IUserManagement>();
+            UsageStatistics stats = await userManagement.UserProfileDataManagement.GetFeatureUsageStatisticsAsync(userManagement.CurrentUser.ProfileId, "onlinevideos");
+            return stats;
         }
 
-        protected Task GotoSite(ListItem item)
+        protected void GetSites(IList<string> sites, ItemsList sitesList)
         {
-            //AppLauncherHomeModel model = ServiceRegistration.Get<IWorkflowManager>().GetModel(Guid.Parse(AppLauncherHomeModel.MODEL_ID_STR)) as AppLauncherHomeModel;
-            //if (model != null)
-            //{
-            //    model.StartApp(item);
-            //}
+            if (!OnlineVideoSettings.Instance.IsSiteUtilsListBuilt())
+            {
+                while (!OnlineVideoSettings.Instance.IsSiteUtilsListBuilt())
+                    System.Threading.Thread.Sleep(50);
+            }
+            sitesList.Clear();
+            foreach (string siteName in sites)
+            {
+                foreach (var site in OnlineVideoSettings.Instance.SiteUtilsList)
+                {
+                    SiteUtilBase siteUtil = site.Value;
+                    if (siteUtil.Settings.Name == siteName && siteUtil.Settings.IsEnabled &&
+                        (!siteUtil.Settings.ConfirmAge || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed))
+                    {
+                        var item = new SiteViewModel(siteUtil);
+                        item.Command = new AsyncMethodDelegateCommand(() => GotoSite(item));
+                        sitesList.Add(item);
+                        break;
+                    }
+                }
+            }
+            sitesList.FireChange();
+        }
+
+        protected Task GotoSite(SiteViewModel item)
+        {
+            OnlineVideosWorkflowModel model = ServiceRegistration.Get<IWorkflowManager>().GetModel(OnlineVideosWorkflowModel.WF_MODEL_ID) as OnlineVideosWorkflowModel;
+            if (model != null)
+            {
+                model.SelectSite(item);
+            }
             return Task.CompletedTask;
         }
     }
@@ -66,13 +96,18 @@ namespace OnlineVideos.MediaPortal2.ContentLists
     {
         public override async Task<bool> UpdateItemsAsync(int maxItems, UpdateReason updateReason)
         {
+            var stats = await GetSiteStats();
+            GetSites(stats.TopUsed.Select(t => t.Name).ToList(), AllItems);
             return true;
         }
     }
+
     public class LatestOnlineVideoSitesListProvider : OnlineVideosContentListProviderBase
     {
         public override async Task<bool> UpdateItemsAsync(int maxItems, UpdateReason updateReason)
         {
+            var stats = await GetSiteStats();
+            GetSites(stats.LastUsed.Select(t => t.Name).ToList(), AllItems);
             return true;
         }
     }

@@ -17,6 +17,8 @@ namespace OnlineVideos.MediaPortal2
 {
     public class OnlineVideosWorkflowModel : IWorkflowModel
     {
+        public static Guid WF_MODEL_ID = new Guid("C418243F-5BD3-4637-8871-DA6545387929");
+
         public OnlineVideosWorkflowModel()
         {
             SiteGroupsList = new ItemsList();
