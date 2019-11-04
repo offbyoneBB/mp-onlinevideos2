@@ -73,11 +73,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>libKODI_inputstream</TargetName>
-    <OutDir>$(SolutionDir)\bin\library.kodi.inputstream</OutDir>
+    <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\library.kodi.inputstream</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>libKODI_inputstream</TargetName>
+    <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\library.kodi.inputstream</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>

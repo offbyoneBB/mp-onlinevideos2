@@ -73,11 +73,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>libXBMC_addon</TargetName>
-    <OutDir>$(SolutionDir)\bin\library.xbmc.addon</OutDir>
+    <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\library.xbmc.addon</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>libXBMC_addon</TargetName>
+    <OutDir>$(SolutionDir)\bin\$(Platform)\$(Configuration)\library.xbmc.addon</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
