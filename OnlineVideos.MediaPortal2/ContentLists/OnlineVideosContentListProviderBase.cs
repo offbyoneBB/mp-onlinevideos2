@@ -19,6 +19,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using MediaPortal.Common.Commands;
 using MediaPortal.UI.Presentation.DataObjects;
@@ -51,6 +52,7 @@ namespace OnlineVideos.MediaPortal2.ContentLists
         protected async Task<UsageStatistics> GetSiteStats()
         {
             IUserManagement userManagement = ServiceRegistration.Get<IUserManagement>();
+            if (userManagement.UserProfileDataManagement == null) return null;
             UsageStatistics stats = await userManagement.UserProfileDataManagement.GetFeatureUsageStatisticsAsync(userManagement.CurrentUser.ProfileId, "onlinevideos");
             return stats;
         }
@@ -63,6 +65,7 @@ namespace OnlineVideos.MediaPortal2.ContentLists
                     System.Threading.Thread.Sleep(50);
             }
             sitesList.Clear();
+            var converter = new SiteUtilIconConverter();
             foreach (string siteName in sites)
             {
                 foreach (var site in OnlineVideoSettings.Instance.SiteUtilsList)
@@ -73,6 +76,8 @@ namespace OnlineVideos.MediaPortal2.ContentLists
                     {
                         var item = new SiteViewModel(siteUtil);
                         item.Command = new AsyncMethodDelegateCommand(() => GotoSite(item));
+                        if (converter.Convert(siteUtil, null, null, null, out object imageUrl))
+                            item.Image = imageUrl as string;
                         sitesList.Add(item);
                         break;
                     }
@@ -97,6 +102,8 @@ namespace OnlineVideos.MediaPortal2.ContentLists
         public override async Task<bool> UpdateItemsAsync(int maxItems, UpdateReason updateReason)
         {
             var stats = await GetSiteStats();
+            if (stats == null)
+                return false;
             GetSites(stats.TopUsed.Select(t => t.Name).ToList(), AllItems);
             return true;
         }
@@ -107,6 +114,8 @@ namespace OnlineVideos.MediaPortal2.ContentLists
         public override async Task<bool> UpdateItemsAsync(int maxItems, UpdateReason updateReason)
         {
             var stats = await GetSiteStats();
+            if (stats == null)
+                return false;
             GetSites(stats.LastUsed.Select(t => t.Name).ToList(), AllItems);
             return true;
         }
