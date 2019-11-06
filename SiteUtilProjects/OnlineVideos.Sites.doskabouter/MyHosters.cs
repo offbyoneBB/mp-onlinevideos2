@@ -1302,7 +1302,16 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
-            var data = GetWebData(url, referer: url);
+            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+            request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
+            request.AllowAutoRedirect = false;
+            request.Timeout = 15000;
+            request.Referer = url;
+            request.Method = "HEAD";
+            HttpWebResponse httpWebresponse = (HttpWebResponse)request.GetResponse();
+            string newUrl = httpWebresponse.Headers.Get("Location");
+
+            var data = GetWebData(newUrl, referer: url);
             string packed = Helpers.StringUtils.GetSubString(data, @"return p}", @"</script>");
             packed = packed.Replace(@"\'", @"'");
             string unpacked = Helpers.StringUtils.UnPack(packed);
