@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using Newtonsoft.Json.Linq;
+using OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensions;
 using OnlineVideos.Sites.JSurf.Extensions;
 using OnlineVideos.Sites.JSurf.Properties;
 
@@ -15,6 +18,9 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
 {
     public class AmazonBrowserSession : BrowserSessionBase
     {
+        [DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        internal static extern bool InternetSetCookie(string lpszUrlName, string lpszCookieName, string lpszCookieData);
+
         private Boolean _isLoggedIn;
         private long _lastLogin;
         private string _lastCulture;
@@ -34,6 +40,31 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
             _deviceId = _userAgent.GenId();
         }
 
+        private static string CookieCacheFile => Path.Combine(Path.GetTempPath(), typeof(AmazonBrowserSession).GUID.ToString());
+
+        internal static CookieContainer GetSavedCookies()
+        {
+            var cacheFile = CookieCacheFile;
+            if (File.Exists(cacheFile))
+                return File.ReadAllText(cacheFile).Deserialize();
+            return null;
+        }
+        internal static void SaveCookies(CookieContainer cookieContainer)
+        {
+            if (cookieContainer != null)
+                File.WriteAllText(CookieCacheFile, cookieContainer.Serialize());
+        }
+
+        internal static void ApplySavedCookies(CookieContainer cookieContainer, string url)
+        {
+            if (cookieContainer != null && cookieContainer.Count > 0)
+            {
+                var uri = new Uri(url);
+                var cookie = cookieContainer.GetCookieHeader(uri);
+                InternetSetCookie(uri.Host, null, cookie.ToString());
+            }
+        }
+
         public void Login(string username, string password, bool forceLogin = false)
         {
             string culture = Resources.Culture.ToString();
@@ -51,90 +82,108 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
                 _lastCulture = culture;
 
                 // Load the main page inside a WebBrowser control to retrieve all dynamically created cookies (session ids by JS)
-                string afterLoginPage;
-                _cc = GetCookies(Resources.AmazonLoginUrl, username, password, out afterLoginPage);
-
-                var loginDoc = Load(Resources.AmazonLoginUrl);
-
-                string firstCorrectPostUrl = null;
-                for (var retry = 0; retry < 3; retry++)
+                string afterLoginPage = String.Empty;
+                _cc = GetSavedCookies();
+                if (_cc != null)
                 {
-                    // There can appear different login pages, using other names for form / controls
-                    var loginForm = loginDoc.GetElementbyId("ap_signin_form") ??
-                                    loginDoc.DocumentNode.SelectNodes("//*[@name='signIn']").FirstOrDefault();
-                    if (loginForm == null)
-                    {
-                        Log.Error("AmazonBrowserSession: Failed to get login form!");
-                        return;
-                    }
-                    var formElements = new FormElementCollection(loginForm);
-
-                    // Copy over all input elements
-                    foreach (var inputElement in loginForm.SelectNodes("//input"))
-                    {
-                        var name = inputElement.Attributes["name"];
-                        var value = inputElement.Attributes["value"];
-                        if (name != null && value != null)
-                            formElements[name.Value] = value.Value;
-                    }
-                    if (formElements.ContainsKey("email"))
-                    {
-                        formElements["email"] = username;
-                        formElements["password"] = password;
-                        formElements["create"] = "0";
-                    }
-                    else
-                    {
-                        // 2nd variant of login form
-                        formElements["ap_email"] = username;
-                        formElements["ap_password"] = password;
-                    }
-
-                    NameValueCollection headers = new NameValueCollection();
-                    headers["Accept"] = "text/html, application/xhtml+xml, image/jxr, */*";
-                    headers["Accept-Language"] = "de-DE";
-                    headers["Cache-Control"] = "no-cache";
-                    headers["User-Agent"] = UserAgent;
-
-                    string postUrl = loginForm.Attributes["action"].Value;
-                    // &#x2F;
-                    if (postUrl.Contains("&#x"))
-                        postUrl = WebUtility.HtmlDecode(postUrl);
-
-                    if (postUrl.StartsWith("https://"))
-                        firstCorrectPostUrl = postUrl;
-                    else
-                        postUrl = firstCorrectPostUrl;
-
-                    if (postUrl == null)
-                        break;
-
-                    Thread.Sleep(500);
-                    string login = GetWebData(postUrl, formElements.AssemblePostPayload(), _cc, Resources.AmazonLoginUrl, null, false, false, UserAgent, null, headers);
-
-                    var reCustomer = new[] {
-                        new Regex("\"customerID\":\"([^\"]*)\""),
-                        new Regex("custId=([^&]*)")
-                        };
-                    foreach (Regex regex in reCustomer)
-                    {
-                        var customerMatch = regex.Match(afterLoginPage);
-                        if (customerMatch.Groups.Count > 1)
-                        {
-                            _customerId = customerMatch.Groups[1].Value;
-                            _isLoggedIn = true;
-                            _lastLogin = day;
-                            return;
-                        }
-                    }
-                    if (!_isLoggedIn)
-                    {
-                        // Login not finished yet, i.e. because the new code sending happens and a new login form appears
-                        loginDoc.LoadHtml(login);
-                    }
+                    // Test if cookies are still valid
+                    _cc = GetCookies(Resources.AmazonRootUrl, username, password, true, out afterLoginPage, _cc);
+                    if (FindCustomerId(afterLoginPage, day)) return;
                 }
+
+                _cc = GetCookies(Resources.AmazonLoginUrl, username, password, false, out afterLoginPage);
+                SaveCookies(_cc);
+
+                //var loginDoc = Load(Resources.AmazonLoginUrl);
+
+                //string firstCorrectPostUrl = null;
+                //for (var retry = 0; retry < 3; retry++)
+                //{
+                //    if (retry > 0) Thread.Sleep(retry * 1000);
+                //    // There can appear different login pages, using other names for form / controls
+                //    var loginForm = loginDoc.GetElementbyId("ap_signin_form") ??
+                //                    loginDoc.DocumentNode.SelectNodes("//*[@name='signIn']").FirstOrDefault();
+                //    if (loginForm == null)
+                //    {
+                //        Log.Error("AmazonBrowserSession: Failed to get login form!");
+                //        return;
+                //    }
+                //    var formElements = new FormElementCollection(loginForm);
+
+                //    // Copy over all input elements
+                //    foreach (var inputElement in loginForm.SelectNodes("//input"))
+                //    {
+                //        var name = inputElement.Attributes["name"];
+                //        var value = inputElement.Attributes["value"];
+                //        if (name != null && value != null)
+                //            formElements[name.Value] = value.Value;
+                //    }
+                //    if (formElements.ContainsKey("email"))
+                //    {
+                //        formElements["email"] = username;
+                //        formElements["password"] = password;
+                //        formElements["create"] = "0";
+                //    }
+                //    else
+                //    {
+                //        // 2nd variant of login form
+                //        formElements["ap_email"] = username;
+                //        formElements["ap_password"] = password;
+                //    }
+
+                //    NameValueCollection headers = new NameValueCollection();
+                //    headers["Accept"] = "text/html, application/xhtml+xml, image/jxr, */*";
+                //    headers["Accept-Language"] = "de-DE";
+                //    headers["Cache-Control"] = "no-cache";
+                //    headers["User-Agent"] = UserAgent;
+
+                //    string postUrl = loginForm.Attributes["action"].Value;
+                //    // &#x2F;
+                //    if (postUrl.Contains("&#x"))
+                //        postUrl = WebUtility.HtmlDecode(postUrl);
+
+                //    if (postUrl.StartsWith("https://"))
+                //        firstCorrectPostUrl = postUrl;
+                //    else
+                //        postUrl = firstCorrectPostUrl;
+
+                //    if (postUrl == null)
+                //        break;
+
+                //    Thread.Sleep(500);
+                //    string login = GetWebData(postUrl, formElements.AssemblePostPayload(), _cc, Resources.AmazonLoginUrl, null, false, false, UserAgent, null, headers);
+
+                if (FindCustomerId(afterLoginPage, day)) return;
+                //if (!_isLoggedIn)
+                //{
+                //    // Login not finished yet, i.e. because the new code sending happens and a new login form appears
+                //    loginDoc.LoadHtml(login);
+                //}
+                //}
                 Log.Info("Login complete");
             }
+        }
+
+        private bool FindCustomerId(string afterLoginPage, long day)
+        {
+            var reCustomer = new[]
+            {
+                new Regex("\"customerID\":\"([^\"]*)\""),
+                new Regex("custId=([^&]*)")
+            };
+            foreach (Regex regex in reCustomer)
+            {
+                var customerMatch = regex.Match(afterLoginPage);
+                if (customerMatch.Groups.Count > 1)
+                {
+                    _customerId = customerMatch.Groups[1].Value;
+                    _isLoggedIn = true;
+                    _lastLogin = day;
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public bool GetInputStreamProperties(string asin, out string streamUrl, out string licUrl, out Dictionary<string, string> additionalTags)
@@ -158,7 +207,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
             Regex reCleanUrl1 = new Regex("~");
             Regex reCleanUrl2 = new Regex("/[1-9][$].*?/");
             var cleaned = reCleanUrl1.Replace(streamUrl, "");
-            if (string.Equals(cleaned, streamUrl))
+            if (String.Equals(cleaned, streamUrl))
                 cleaned = reCleanUrl2.Replace(streamUrl, "/");
 
             streamUrl = cleaned;
@@ -229,7 +278,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         private Dictionary<string, string> GetFlashVars(string asin)
         {
             Dictionary<string, string> values = new Dictionary<string, string>
-              {
+            {
                 {"asin", asin},
                 {"deviceTypeID", "AOAGZA014O5RE"},
                 {"userAgent", UserAgent},
@@ -250,7 +299,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         }
 
         protected Dictionary<string, string> TypeIDs = new Dictionary<string, string>
-            {
+        {
                 {"All", "firmware=fmw:17-app:2.0.45.1210&deviceTypeID=A2M4YX06LWP8WI"},
                 {"GetCategoryList_ftv", "firmware=fmw:17-app:2.0.45.1210&deviceTypeID=A12GXV8XMS007S"}
             };
@@ -259,7 +308,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         {
             if (query.Contains("?"))
                 query = query.Split('?')[1];
-            if (!string.IsNullOrEmpty(query))
+            if (!String.IsNullOrEmpty(query))
                 query = "&IncludeAll=T&AID=T&" + query;
 
             string deviceTypeId;
@@ -271,12 +320,12 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
             if (!pgMode.Contains("/"))
                 pgMode = "catalog/" + pgMode;
 
-            string parameter = string.Format("{0}&deviceID={1}&format=json&version={2}&formatVersion=3&marketplaceId={3}", deviceTypeId, _deviceId, version, Resources.AmazonMarketId);
-            if (!string.IsNullOrEmpty(siteId))
+            string parameter = String.Format("{0}&deviceID={1}&format=json&version={2}&formatVersion=3&marketplaceId={3}", deviceTypeId, _deviceId, version, Resources.AmazonMarketId);
+            if (!String.IsNullOrEmpty(siteId))
                 parameter += "&id=" + siteId;
 
-            string jsondata = GetWebData(string.Format("{0}/cdp/{1}?{2}{3}", Resources.AmazonATVUrl, pgMode, parameter, query), cookies: useCookie, cache: false, userAgent: UserAgent);
-            if (string.IsNullOrEmpty(jsondata))
+            string jsondata = GetWebData(String.Format("{0}/cdp/{1}?{2}{3}", Resources.AmazonATVUrl, pgMode, parameter, query), cookies: useCookie, cache: false, userAgent: UserAgent);
+            if (String.IsNullOrEmpty(jsondata))
                 return null; // false?
 
             var response = JObject.Parse(jsondata);
@@ -284,7 +333,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
             if (response.SelectToken("message.statusCode").ToString() != "SUCCESS")
             {
                 Log.Warn("Error Code: " + (string)response.SelectToken("message.body.code"));
-                return string.Empty;
+                return String.Empty;
             }
             return response.SelectToken("message.body");
         }
@@ -321,10 +370,10 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
                 return new Result { Url = url, Success = true };
 
             string data = GetWebData(url, cookies: useCookie, userAgent: UserAgent, referer: Resources.AmazonRootUrl, cache: false);
-            if (!string.IsNullOrEmpty(data))
+            if (!String.IsNullOrEmpty(data))
             {
                 string error = Regex.Match(data, "{[^\"]*\"errorCode[^}]*}").Value;
-                if (!string.IsNullOrEmpty(error))
+                if (!String.IsNullOrEmpty(error))
                     return new Result { Success = false, Data = error };
 
                 return new Result { Success = true, Data = data };
@@ -345,22 +394,21 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
             return newThread;
         }
 
-        private CookieContainer GetCookies(string url, string username, string password, out string afterLoginPage)
+        private CookieContainer GetCookies(string url, string username, string password, bool noFormSubmit, out string afterLoginPage, CookieContainer cc = null)
         {
             ManualResetEvent ready = new ManualResetEvent(false);
-            CookieContainer cc = null;
             string pageContent = null;
             RunSTAThreaded(
                 () =>
                 {
-                    var wnd = new BrowserWindow { Username = username, Password = password, NavigateUrl = url };
+                    var wnd = new BrowserWindow { Username = username, Password = password, NavigateUrl = url, CookieContainer = cc, NoFormSubmit = noFormSubmit };
                     Application.Run(wnd);
                     cc = wnd.CookieContainer;
                     pageContent = wnd.AfterLoginPage;
                     ready.Set();
                 });
 
-            ready.WaitOne(10000);
+            ready.WaitOne(30000);
             afterLoginPage = pageContent;
             return cc;
         }
@@ -368,12 +416,16 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
 
     class BrowserWindow : Form
     {
+        /// <summary>
+        /// If <c>>true</c>, no form will be submitted. This can be used to return only the loaded page content.
+        /// </summary>
+        public bool NoFormSubmit { get; set; }
         public string NavigateUrl { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public string AfterLoginPage { get; private set; }
 
-        public CookieContainer CookieContainer { get; private set; }
+        public CookieContainer CookieContainer { get; set; }
 
         public BrowserWindow()
         {
@@ -389,10 +441,15 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
 
         void Window_Load(object sender, EventArgs e)
         {
-            WebBrowser wb = new WebBrowser { AllowNavigation = true };
-            wb.ScriptErrorsSuppressed = true;
-            wb.ScrollBarsEnabled = true;
-            wb.Dock = DockStyle.Fill;
+            WebBrowser wb = new WebBrowser
+            {
+                AllowNavigation = true,
+                ScriptErrorsSuppressed = true,
+                ScrollBarsEnabled = true,
+                Dock = DockStyle.Fill,
+            };
+
+            AmazonBrowserSession.ApplySavedCookies(CookieContainer, NavigateUrl);
             Controls.Add(wb);
             wb.DocumentCompleted += wb_DocumentCompleted;
             wb.Navigate(NavigateUrl);
@@ -404,12 +461,27 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
             if (webBrowser.ReadyState != WebBrowserReadyState.Complete)
                 return;
 
-            foreach (HtmlElement form in webBrowser.Document.Forms)
+            if (!NoFormSubmit)
             {
-                if (form.Id == "ap_signin_form" || form.Name == "signIn")
+                foreach (HtmlElement form in webBrowser.Document.Forms)
                 {
-                    SubmitLogin(form);
-                    return; // Next round
+                    if (form.Id == "ap_signin_form" || form.Name == "signIn")
+                    {
+                        if (HasCaptcha(form))
+                        {
+                            // Wait for interactive input
+                            FillFormUserDetails(form, false);
+                            Size = new Size(500, 800);
+                            WindowState = FormWindowState.Normal;
+                            CenterToParent();
+                            BringToFront();
+                            Activate();
+                            return;
+                        }
+
+                        FillFormUserDetails(form, true);
+                        return; // Next round
+                    }
                 }
             }
 
@@ -419,18 +491,28 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
             Close();
         }
 
-        private void SubmitLogin(HtmlElement form)
+        private bool HasCaptcha(HtmlElement form)
+        {
+            return FindRecursive(form, (e) => e.Id == "use_image_captcha") != null;
+        }
+
+        private void FillFormUserDetails(HtmlElement form, bool submit)
         {
             Func<HtmlElement, bool> findEmail = e => e.Id == "email" || e.Id == "ap_email" || e.Id == "ap-claim";
             Func<HtmlElement, bool> findPasswd = e => e.Id == "password" || e.Id == "ap_password";
+            Func<HtmlElement, bool> findRemember = e => e.Id == "rememberMe";
 
             var emailElem = FindRecursive(form, findEmail);
             var passwordElem = FindRecursive(form, findPasswd);
+            var rememberElem = FindRecursive(form, findRemember);
             if (emailElem != null)
                 emailElem.SetAttribute("value", Username);
             if (passwordElem != null)
                 passwordElem.SetAttribute("value", Password);
-            form.InvokeMember("submit");
+            if (rememberElem != null)
+                rememberElem.SetAttribute("checked", "true");
+            if (submit)
+                form.InvokeMember("submit");
         }
 
         private HtmlElement FindRecursive(HtmlElement elem, Func<HtmlElement, bool> filter)

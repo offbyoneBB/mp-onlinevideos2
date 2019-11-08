@@ -43,7 +43,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                     video.Title = detailNode.SelectSingleNode(".//h1[@data-automation-id='title']")?.FirstChild?.GetInnerTextTrim();
                     if (string.IsNullOrEmpty(video.Title))
                         video.Title = detailNode.GetNodeByClass("dv-node-dp-title")?.FirstChild?.GetInnerTextTrim();
-                    var description = detailNode.SelectSingleNode(".//div[@data-automation-id='synopsis']")?.FirstChild?.GetInnerTextTrim();
+                    var description = (detailNode.SelectSingleNode(".//div[@data-automation-id='synopsis']") ?? detailNode.SelectSingleNode(".//div[@data-automation-id='atf-synopsis']"))?.FirstChild?.GetInnerTextTrim();
                     video.Description = description ?? video.Title;
 
                     var ratingNode = detailNode.GetNodeByClass("av-icon--amazon_rating");
@@ -59,17 +59,23 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                     video.Description += "\r\n" + description;
 
                     var imageUrlNode = detailNode.GetNodeByClass("av-fallback-packshot");
-                    video.Thumb = imageUrlNode == null
-                        ? string.Empty
-                        : imageUrlNode.SelectSingleNode(".//img").Attributes["src"].Value;
+                    if (imageUrlNode != null)
+                        video.Thumb = imageUrlNode.SelectSingleNode(".//img").Attributes["src"].Value;
+                    else
+                    {
+                        imageUrlNode = detailNode.GetNodeByClass("av-hero-background", true);
+                        if (imageUrlNode != null)
+                            video.Thumb = imageUrlNode.FirstChild?.SelectSingleNode(".//img")?.Attributes["src"].Value;
+                    }
                     if (string.IsNullOrEmpty(video.Thumb))
                     {
                         var bgImgNode = detailNode.GetNodeByClass("av-bgimg-desktop");
                         if (bgImgNode != null)
                             video.Thumb = GetBackgroundUrl(bgImgNode);
                     }
-                    video.Airdate = detailNode.SelectSingleNode(".//div[@data-automation-id='release-year-badge']")?.FirstChild?.GetInnerTextTrim();
-                    video.Other = detailNode.SelectSingleNode(".//a[@data-ref='atv_dp_stream_prime_movie']")?.Attributes["data-page-title-id"]?.Value;
+                    video.Airdate = (detailNode.SelectSingleNode(".//div[@data-automation-id='release-year-badge']") ?? detailNode.SelectSingleNode(".//span[@data-automation-id='release-year-badge']"))?.FirstChild?.GetInnerTextTrim();
+                    video.Other = detailNode.SelectSingleNode(".//a[@data-ref='atv_dp_stream_prime_movie']")?.Attributes["data-page-title-id"]?.Value 
+                        ?? detailNode.SelectSingleNode(".//a[@data-ref='atv_dp_stream_prime_tv']")?.Attributes["data-title-id"]?.Value;
                     results.Add(video);
                 }
                 else

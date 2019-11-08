@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using OnlineVideos.Sites.Entities;
 using System.Windows.Forms;
@@ -47,11 +48,23 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         protected override EventResult PerformActualLogin(string username, string password)
         {
             SetTopMostActivate();
-            _username = username;
-            _password = password;
-            _currentState = State.LoggingIn;
-            ProcessComplete.Finished = false;
-            ProcessComplete.Success = false;
+            // If we got the session cookie already, use it here and skip new login procedure (which could require Captcha again)
+            var cc = AmazonBrowserSession.GetSavedCookies();
+            if (cc != null)
+            {
+                AmazonBrowserSession.ApplySavedCookies(cc, Properties.Resources.AmazonLoginUrl);
+                _currentState = State.LoginResult;
+                ProcessComplete.Finished = true;
+                ProcessComplete.Success = true;
+            }
+            else
+            {
+                _username = username;
+                _password = password;
+                _currentState = State.LoggingIn;
+                ProcessComplete.Finished = false;
+                ProcessComplete.Success = false;
+            }
             Url = Properties.Resources.AmazonLoginUrl;
             return EventResult.Complete();
         }
