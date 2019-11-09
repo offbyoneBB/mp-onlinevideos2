@@ -87,11 +87,11 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
                 if (_cc != null)
                 {
                     // Test if cookies are still valid
-                    _cc = GetCookies(Resources.AmazonRootUrl, username, password, true, out afterLoginPage, _cc);
+                    _cc = GetPage(Resources.AmazonRootUrl, out afterLoginPage);
                     if (FindCustomerId(afterLoginPage, day)) return;
                 }
 
-                _cc = GetCookies(Resources.AmazonLoginUrl, username, password, false, out afterLoginPage);
+                _cc = GetPageAndCookies(Resources.AmazonLoginUrl, username, password, false, out afterLoginPage);
                 SaveCookies(_cc);
 
                 //var loginDoc = Load(Resources.AmazonLoginUrl);
@@ -394,7 +394,12 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
             return newThread;
         }
 
-        private CookieContainer GetCookies(string url, string username, string password, bool noFormSubmit, out string afterLoginPage, CookieContainer cc = null)
+        public CookieContainer GetPage(string url, out string afterLoginPage)
+        {
+            return GetPageAndCookies(url, null, null, true, out afterLoginPage);
+        }
+
+        public CookieContainer GetPageAndCookies(string url, string username, string password, bool noFormSubmit, out string afterLoginPage, CookieContainer cc = null)
         {
             ManualResetEvent ready = new ManualResetEvent(false);
             string pageContent = null;

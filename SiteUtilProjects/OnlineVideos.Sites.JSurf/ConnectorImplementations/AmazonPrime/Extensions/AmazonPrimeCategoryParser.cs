@@ -155,21 +155,32 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
 
             List<HtmlNode> listItems = null;
 
-            // Attempt the URL up to 10 times as amazon wants us to use the api!
-            for (int i = 0; i < 2; i++)
+            // Use browser based loading, old way does not work
+            session.GetPage(url, out string pageContent);
+            if (!string.IsNullOrEmpty(pageContent))
             {
-                doc = tmpWeb.Load(url);
+                doc = new HtmlDocument();
+                doc.LoadHtml(pageContent);
                 listItems = doc.DocumentNode.GetNodesByClass("dv-packshot") ??
                             doc.DocumentNode.GetNodesByClass("dvui-packshot");
-
-                if (listItems == null)
-                {
-                    Thread.Sleep(200);
-                }
-                else
-                    break;
             }
+            else
+            {
+                // Attempt the URL up to 10 times as amazon wants us to use the api!
+                for (int i = 0; i < 2; i++)
+                {
+                    doc = tmpWeb.Load(url);
+                    listItems = doc.DocumentNode.GetNodesByClass("dv-packshot") ??
+                                doc.DocumentNode.GetNodesByClass("dvui-packshot");
 
+                    if (listItems == null)
+                    {
+                        Thread.Sleep(200);
+                    }
+                    else
+                        break;
+                }
+            }
 
 
             if (listItems != null)
