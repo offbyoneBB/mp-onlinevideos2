@@ -51,14 +51,6 @@ namespace OnlineVideos.Sites.JSurf
         }
 
         /// <summary>
-        /// The VideoQuality
-        /// </summary>
-        public VideoQuality StreamVideoQuality
-        {
-            get { return videoQuality; }
-        }
-
-        /// <summary>
         /// The Amazon player type
         /// </summary>
         public AmazonPlayerType AmznPlayerType
@@ -66,9 +58,7 @@ namespace OnlineVideos.Sites.JSurf
             get { return amznPlayerType; }
         }
 
-        public enum VideoQuality { Low, Medium, High, HD, FullHD };
-
-        public enum AmazonPlayerType { InputStream, Browser, BrowserHTML5 };
+        public enum AmazonPlayerType { InputStream, /*Browser, */ BrowserHTML5 };
 
         [Category("OnlineVideosConfiguration"), Description("Type of web automation to run")]
         ConnectorType webAutomationType = ConnectorType.AmazonPrime;
@@ -92,16 +82,10 @@ namespace OnlineVideos.Sites.JSurf
         string amznAdultPin;
 
         /// <summary>
-        /// Video Quality Selection
-        /// </summary>
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Amazon Video Quality"), Description("Defines the maximum quality for the video to be played.")]
-        VideoQuality videoQuality = VideoQuality.Medium;
-
-        /// <summary>
         /// Player type for amazon
         /// </summary>
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Amazon Player Type"), Description("Amazon Player Type, Browser(Silverlight) or BrowserHTML5")]
-        AmazonPlayerType amznPlayerType = AmazonPlayerType.Browser;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Amazon Player Type"), Description("Amazon Player Type, InputStream or BrowserHTML5")]
+        AmazonPlayerType amznPlayerType = AmazonPlayerType.BrowserHTML5;
 
         /// <summary>
         /// Set the Web Automation Description from the enum
@@ -133,9 +117,7 @@ namespace OnlineVideos.Sites.JSurf
         public override int DiscoverDynamicCategories()
         {
             Settings.DynamicCategoriesDiscovered = true;
-            //Settings.Categories.Clear();
             BuildCategories(null, Settings.Categories);
-            //Settings.Categories = new BindingList<Category>(Settings.Categories.OrderBy(x => x.Name).ToList());
             return Settings.Categories.Count;
         }
 
@@ -172,11 +154,7 @@ namespace OnlineVideos.Sites.JSurf
 
         public override List<String> GetMultipleVideoUrls(VideoInfo video, bool inPlaylist = false)
         {
-            if (_connector is AmazonPrimeInformationConnector)
-            {
-                return ((AmazonPrimeInformationConnector)_connector).getMultipleVideoUrls(video, inPlaylist);
-            }
-            return new List<string> { video.Other.ToString() };
+            return _connector is AmazonPrimeInformationConnector ? ((AmazonPrimeInformationConnector)_connector).getMultipleVideoUrls(video, inPlaylist) : new List<string> { video.Other.ToString() };
         }
 
         /// <summary>
@@ -186,15 +164,8 @@ namespace OnlineVideos.Sites.JSurf
         /// <returns></returns>
         public override int DiscoverNextPageCategories(NextPageCategory nextPagecategory)
         {
-            string nextPage = string.Empty;
-
             nextPagecategory.ParentCategory.SubCategories.Remove(nextPagecategory);
-
             BuildCategories(nextPagecategory, null);
-
-            /* if (results != null)
-                 nextPagecategory.ParentCategory.SubCategories.AddRange(results);
-             */
             return nextPagecategory.ParentCategory.SubCategories.Count;
         }
 
@@ -220,7 +191,7 @@ namespace OnlineVideos.Sites.JSurf
         private void BuildVideos(IList<VideoInfo> videosToPopulate, Category parentCategory)
         {
             var results = _connector.LoadVideos(parentCategory);
-            results/*.OrderBy(x => x.Title).ToList()*/.ForEach(videosToPopulate.Add);
+            results.ForEach(videosToPopulate.Add);
         }
 
         public override bool CanSearch { get { return _connector.CanSearch; } }
@@ -234,9 +205,7 @@ namespace OnlineVideos.Sites.JSurf
         {
             get
             {
-                return AmznPlayerType == AmazonPlayerType.Browser
-                    ? 10000 /* IE10+Silverlight */
-                    : 12000 /* IE11/Edge with HTML5*/;
+                return 12000 /* IE11/Edge with HTML5*/;
             }
         }
 

@@ -2,6 +2,7 @@
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Sites
 {
@@ -35,7 +36,8 @@ namespace OnlineVideos.Sites
                 JObject talkDetails = JsonConvert.DeserializeObject(talkDetailsMatch.Groups["json"].Value) as JObject;
                 foreach (JProperty htmlStream in talkDetails["__INITIAL_DATA__"]["talks"][0]["downloads"]["nativeDownloads"])
                 {
-                    video.PlaybackOptions.Add(htmlStream.Name, htmlStream.Value.ToString());
+                    HttpUrl httpUrl = new HttpUrl(htmlStream.Value.ToString()) { UserAgent = OnlineVideoSettings.Instance.UserAgent };
+                    video.PlaybackOptions.Add(htmlStream.Name, httpUrl.ToString());
                 }
             }
             return video.PlaybackOptions.Count > 0 ? video.PlaybackOptions.Last().Value : "";

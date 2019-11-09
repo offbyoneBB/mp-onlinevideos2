@@ -72,7 +72,7 @@ namespace OnlineVideos.Hoster
             {
                 try
                 {
-                    contents = WebCache.Instance.GetWebData(string.Format("http://youtube.com/get_video_info?video_id={0}&has_verified=1", videoId), proxy: proxy);
+                    contents = WebCache.Instance.GetWebData(string.Format("https://www.youtube.com/get_video_info?video_id={0}&has_verified=1", videoId), proxy: proxy);
                 }
                 catch
                 {
@@ -88,7 +88,7 @@ namespace OnlineVideos.Hoster
                 if (Items.Count == 0 || Items["status"] == "fail" || Items["use_cipher_signature"] == "True" || forceGetWebPage)
                 {
                     ItemsAPI = Items;
-                    contents = WebCache.Instance.GetWebData(string.Format("http://www.youtube.com/watch?v={0}&has_verified=1", videoId), proxy: proxy);
+                    contents = WebCache.Instance.GetWebData(string.Format("https://www.youtube.com/watch?v={0}&has_verified=1", videoId), proxy: proxy);
                     Match m = swfJsonArgs.Match(contents);
                     if (m.Success)
                     {
@@ -172,7 +172,7 @@ namespace OnlineVideos.Hoster
                             if (!Uri.IsWellFormedUriString(playerUrl, UriKind.Absolute))
                             {
                                 Uri uri = null;
-                                if (Uri.TryCreate(new Uri(@"http://youtube.com"), playerUrl, out uri))
+                                if (Uri.TryCreate(new Uri(@"https://www.youtube.com"), playerUrl, out uri))
                                     playerUrl = uri.ToString();
                                 else
                                     playerUrl = string.Empty;
@@ -185,7 +185,7 @@ namespace OnlineVideos.Hoster
                     {
                         if (!finalUrl.Contains("ratebypass"))
                             finalUrl += "&ratebypass=yes";
-                        PlaybackOptions.Add(string.Format("{0} | {1}{2}({3})", quality.Key[1], type, stereo, quality.Key[0]), finalUrl + (!string.IsNullOrEmpty(signature) ? ("&signature=" + signature) : ""));
+                        PlaybackOptions.Add(string.Format("{0} | {1}{2}({3})", quality.Key[1], type, stereo, quality.Key[0]), finalUrl + (!string.IsNullOrEmpty(signature) ? ("&sig=" + signature) : ""));
                     }
                     else
                     {
@@ -269,7 +269,7 @@ namespace OnlineVideos.Hoster
             if (!string.IsNullOrEmpty(javascriptUrl))
             {
                 if (javascriptUrl.StartsWith("//"))
-                    javascriptUrl = "http:" + javascriptUrl;
+                    javascriptUrl = "https:" + javascriptUrl;
 
                 /*
                 var match = Regex.Match(javascriptUrl, @".*?-(?<id>[a-zA-Z0-9_-]+)(?:/watch_as3|/html5player)?\.(?<ext>[a-z]+)$");

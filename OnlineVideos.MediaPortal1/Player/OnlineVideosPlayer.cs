@@ -39,10 +39,10 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 try
                 {
-                    MediaInfo mi = new MediaInfo();
-                    int hr = mi.Open(cacheFile);
+                    MediaInfo.MediaInfo mi = new MediaInfo.MediaInfo();
+                    mi.Open(cacheFile);
                     double framerate;
-                    double.TryParse(mi.Get(StreamKind.Video, 0, "FrameRate"), System.Globalization.NumberStyles.AllowDecimalPoint, new System.Globalization.NumberFormatInfo() { NumberDecimalSeparator = "." }, out framerate);
+                    double.TryParse(mi.Get(MediaInfo.StreamKind.Video, 0, "FrameRate"), System.Globalization.NumberStyles.AllowDecimalPoint, new System.Globalization.NumberFormatInfo() { NumberDecimalSeparator = "." }, out framerate);
                     if (framerate > 1)
                     {
                         Log.Instance.Info("OnlineVideosPlayer got {0} FPS from MediaInfo", framerate);

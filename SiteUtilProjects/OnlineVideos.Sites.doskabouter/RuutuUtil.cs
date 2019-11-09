@@ -15,7 +15,10 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             int res = base.DiscoverDynamicCategories();
+
+            //TODO: remove after next release
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072 | SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
+
             foreach (RssLink cat in Settings.Categories)
                 cat.HasSubCategories = true;
             return res;
@@ -34,6 +37,8 @@ namespace OnlineVideos.Sites
             if (vidUrl.ToLowerInvariant().Contains("[not-used]"))
             {
                 vidUrl = doc.SelectSingleNode(@"//Clip/WebHLSMediaFiles/WebHLSMediaFile").InnerText;
+                string authUrl = @"https://gatling.nelonenmedia.fi/auth/access/v2?stream=" + HttpUtility.UrlEncode(vidUrl);
+                vidUrl = GetWebData(authUrl);
                 data = GetWebData(vidUrl);
                 video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(data, vidUrl, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height);
                 return video.GetPreferredUrl(true);
@@ -118,7 +123,7 @@ namespace OnlineVideos.Sites
                         RssLink cat = new RssLink()
                         {
                             Name = item["label"]["text"].Value<String>(),
-                            Url = query["url"].Value<String>() + "?offset=0&limit=20&current_season_id=" + query["params"]["current_season_id"] + "&current_series_id=" + query["params"]["current_series_id"],
+                            Url = query["url"].Value<String>() + "?offset=0&limit=200&current_season_id=" + query["params"]["current_season_id"] + "&current_series_id=" + query["params"]["current_series_id"] + "&app=ruutu&client=web",
                             ParentCategory = parentcat
                         };
                         parentcat.SubCategories.Add(cat);
@@ -162,7 +167,7 @@ namespace OnlineVideos.Sites
 
         private int AddKaikki(HtmlDocument doc, Category parentCategory)
         {
-            var root = doc.DocumentNode.SelectSingleNode(@"//section/div[div[@id]]");
+            var root = doc.DocumentNode.SelectSingleNode(@"//section/div/div[div[@id]]");
             parentCategory.SubCategories = new List<Category>();
             RssLink sub = null;
             foreach (var node in root.ChildNodes)

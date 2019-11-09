@@ -30,11 +30,24 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
 
             doc = tmpWeb.Load(url);
 
+            if (LoadVideosV2(doc, out List<VideoInfo> info))
+                return info;
+
+            if (LoadVideosV1(doc, out info))
+                return info;
+
+
+            return results;
+        }
+
+        private static bool LoadVideosV1(HtmlDocument doc, out List<VideoInfo> results)
+        {
+            results = new List<VideoInfo>();
             var episodeContainer = doc.GetElementbyId("dv-episode-list");
             if (episodeContainer == null || episodeContainer.FindFirstChildElement() == null)
             {
                 //detailNode = doc.GetElementbyId("av-dp-container");
-                detailNode = doc.DocumentNode.GetNodeByClass("av-dp-container");
+                HtmlNode detailNode = doc.DocumentNode.GetNodeByClass("av-dp-container");
                 if (detailNode != null)
                 {
                     // Movie, load this video
@@ -42,26 +55,39 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
 
                     video.Title = detailNode.SelectSingleNode(".//h1[@data-automation-id='title']")?.FirstChild?.GetInnerTextTrim();
                     if (string.IsNullOrEmpty(video.Title))
-                        video.Title = detailNode.GetNodeByClass("dv-node-dp-title")?.FirstChild?.GetInnerTextTrim();
+                        video.Title = detailNode.GetNodeByClass("dv-node-dp-title", true)?.FirstChild?.GetInnerTextTrim();
                     var description = (detailNode.SelectSingleNode(".//div[@data-automation-id='synopsis']") ?? detailNode.SelectSingleNode(".//div[@data-automation-id='atf-synopsis']"))?.FirstChild?.GetInnerTextTrim();
-                    video.Description = description ?? video.Title;
+                    if (string.IsNullOrEmpty(description))
+                        description = detailNode.GetNodeByClass("dv-dp-node-synopsis", true)?.FirstChild?.GetInnerTextTrim();
 
-                    var ratingNode = detailNode.GetNodeByClass("av-icon--amazon_rating");
+                    description = description ?? video.Title;
+
+                    var ratingNode = detailNode.GetNodeByClass("av-icon--amazon_rating", true);
                     var starsCls = ratingNode?.GetAttribute("class").Split(' ').FirstOrDefault(c => c.StartsWith("av-stars-"));
                     if (starsCls != null)
-                        video.Description += " - " + starsCls.Replace("av-stars-", "").Replace("-", ".") + "/5";
+                        description = starsCls.Replace("av-stars-", "").Replace("-", ".") + "/5" + " - " + description;
 
-                    var badeTextNodes = detailNode.GetNodesByClass("av-badge-text");
-                    if (badeTextNodes != null)
-                        foreach (var textSpan in badeTextNodes)
-                            video.Description += " - " + textSpan.GetInnerTextTrim();
-
-                    video.Description += "\r\n" + description;
-
-                    var imageUrlNode = detailNode.GetNodeByClass("av-fallback-packshot");
-                    if (imageUrlNode != null)
-                        video.Thumb = imageUrlNode.SelectSingleNode(".//img").Attributes["src"].Value;
+                    var badgeTextNodes = detailNode.GetNodesByClass("av-badge-text");
+                    if (badgeTextNodes != null)
+                    {
+                        foreach (var textSpan in badgeTextNodes)
+                            description += " - " + textSpan.GetInnerTextTrim();
+                    }
                     else
+                    {
+                        var badgeText = detailNode.SelectSingleNode(".//*[@data-automation-id='runtime-badge']")?.FirstChild?.GetInnerTextTrim();
+                        if (!string.IsNullOrEmpty(badgeText))
+                            video.Length = badgeText;
+
+                        badgeText = detailNode.SelectSingleNode(".//*[@data-automation-id='imdb-rating-badge']")?.Attributes["aria-label"]?.Value;
+                        if (!string.IsNullOrEmpty(badgeText))
+                            description = badgeText + " - " + description;
+                    }
+
+                    video.Description = description;
+
+                    var imageUrlNode = detailNode.GetNodeByClass("av-fallback-packshot")
+                        ?? detailNode.GetNodeByClass("dv-fallback-packshot-image");
                     {
                         imageUrlNode = detailNode.GetNodeByClass("av-hero-background", true);
                         if (imageUrlNode != null)
@@ -73,17 +99,32 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                         if (bgImgNode != null)
                             video.Thumb = GetBackgroundUrl(bgImgNode);
                     }
-                    video.Airdate = (detailNode.SelectSingleNode(".//div[@data-automation-id='release-year-badge']") ?? detailNode.SelectSingleNode(".//span[@data-automation-id='release-year-badge']"))?.FirstChild?.GetInnerTextTrim();
+                    video.Airdate = (detailNode.SelectSingleNode(".//*[@data-automation-id='release-year-badge']"))?.FirstChild?.GetInnerTextTrim();
                     video.Other = detailNode.SelectSingleNode(".//a[@data-ref='atv_dp_stream_prime_movie']")?.Attributes["data-page-title-id"]?.Value 
                         ?? detailNode.SelectSingleNode(".//a[@data-ref='atv_dp_stream_prime_tv']")?.Attributes["data-title-id"]?.Value;
                     results.Add(video);
+
+                    // Check for trailer link (does not work,  has the same ASIN, but different playback url)
+                    //var trailerASIN = detailNode.SelectSingleNode(".//*[@data-video-type='Trailer']")?.Attributes["data-page-title-id"]?.Value;
+                    //if (!string.IsNullOrEmpty(trailerASIN))
+                    //{
+                    //    var trailer = new VideoInfo
+                    //    {
+                    //        Title = video.Title + " - Trailer",
+                    //        Description = "Trailer",
+                    //        Airdate = video.Airdate,
+                    //        Thumb = video.Thumb,
+                    //        Other = trailerASIN
+                    //    };
+                    //    results.Add(trailer);
+                    //}
                 }
                 else
                 {
                     var video = new VideoInfo();
                     detailNode = doc.GetElementbyId("aiv-main-content");
                     if (detailNode == null)
-                        return results;
+                        return false;
 
                     video.Title = detailNode.SelectSingleNode(".//h1[@id = 'aiv-content-title']").FirstChild.GetInnerTextTrim();
                     var infoNode = detailNode.GetNodeByClass("dv-info");
@@ -125,7 +166,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                 if (episodeList == null)
                 {
                     Log.Error("Could not load episode list!");
-                    return results;
+                    return false;
                 }
                 foreach (var item in episodeList)
                 {
@@ -218,7 +259,57 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                 }
             }
 
-            return results;
+            return results.Count > 0;
+        }
+
+        private static bool LoadVideosV2(HtmlDocument doc, out List<VideoInfo> results)
+        {
+            results = new List<VideoInfo>();
+            // TV Series, load all videos
+            var episodeList = doc.GetElementbyId("js-node-btf")?.GetNodesByClass("js-node-episode-container", true);
+            if (episodeList == null)
+                return false;
+
+            foreach (var item in episodeList)
+            {
+                var extendedProperties = new ExtendedProperties();
+                var video = new VideoInfo { Other = extendedProperties };
+                var titleNode = item.GetNodeByClass("dv-episode-playback-title");
+
+                if (titleNode == null)
+                    return false;
+
+                video.Title = titleNode.GetNodeByClass("js-episode-title-name")?.GetInnerTextTrim();
+
+                var playbackLink = titleNode.GetNodeByClass("js-deeplinkable");
+
+                if (playbackLink != null)
+                {
+                    extendedProperties.Other = playbackLink.Attributes["data-title-id"]?.Value;
+                }
+
+                var detailsNode = item.GetNodeByClass("js-ep-playback-wrapper")?.NextSibling;
+                if (detailsNode != null && detailsNode.ChildNodes.Count >= 2)
+                {
+                    video.Airdate = detailsNode.ChildNodes[0].GetInnerTextTrim();
+                    video.Length = detailsNode.ChildNodes[1].GetInnerTextTrim();
+
+                    var imageUrlNode = detailsNode.NextSibling.FirstChild?.FirstChild;
+                    if (imageUrlNode != null)
+                        video.ThumbnailImage = imageUrlNode.Attributes["src"]?.Value;
+
+                    // Playback progress
+                    var percentProgress = item.SelectSingleNode(".//*[@role='progressbar']")?.Attributes["aria-valuenow"]?.Value;
+                    int.TryParse(percentProgress, out var percents);
+
+                    extendedProperties.VideoProperties["Progress"] = string.Format("{0:0}%", percents);
+                }
+
+                video.Description = item.SelectSingleNode(".//*[contains(@data-automation-id, 'synopsis-')]")?.GetInnerTextTrim();
+                video.CleanDescriptionAndTitle();
+                results.Add(video);
+            }
+            return results.Count > 0;
         }
 
         public static string GetBackgroundUrl(HtmlNode imageUrlNode)

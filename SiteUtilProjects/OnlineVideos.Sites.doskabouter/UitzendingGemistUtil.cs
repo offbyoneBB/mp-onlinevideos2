@@ -31,9 +31,6 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
-            ServicePointManager.Expect100Continue = true;
-            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072 | SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
-
             HtmlDocument data = GetWebData<HtmlDocument>(baseUrl);
             var nodes = data.DocumentNode.SelectNodes(@"//div[@class='npo-dropdown-container']");
 
