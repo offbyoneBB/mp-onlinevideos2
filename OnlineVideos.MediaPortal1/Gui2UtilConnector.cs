@@ -190,7 +190,25 @@ namespace OnlineVideos.MediaPortal1
             Monitor.Exit(this);
 
             // execute the result handler
-            if (stored_Handler != null) stored_Handler.Invoke(stored_TaskSuccess, stored_ResultObject);
+            if (stored_Handler != null)
+            {
+                try
+                {
+                    stored_Handler.Invoke(stored_TaskSuccess, stored_ResultObject);
+                }
+                catch (OnlineVideosException ex)
+                {
+                    GUIDialogOK dlg_error = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+                    if (dlg_error != null)
+                    {
+                        dlg_error.Reset();
+                        dlg_error.SetHeading(PluginConfiguration.Instance.BasicHomeScreenName);
+                        dlg_error.SetLine(2, ex.Message);
+                        dlg_error.DoModal(GUIWindowManager.ActiveWindow);
+                    }
+                }
+
+            }
         }
     }
 }
