@@ -102,10 +102,9 @@ namespace OnlineVideos.MediaPortal2
                 ShowCategories(siteModel.Site.Settings.Categories, SelectedSite.Name);
             }
 
-            if (SelectedSite != null)
-            {
-                _ = ServiceRegistration.Get<IUserManagement>().NotifyUsage("onlinevideos", SelectedSite.Name);
-            }
+            string key = string.IsNullOrEmpty(siteModel.Site.Settings.Language) ? "--" : siteModel.Site.Settings.Language;
+            _ = ServiceRegistration.Get<IUserManagement>().NotifyUsage("onlinevideos", siteModel.Name);
+            _ = ServiceRegistration.Get<IUserManagement>().NotifyUsage("onlinevideos-lang", key);
         }
 
         public void SelectCategory(CategoryViewModel categoryModel)

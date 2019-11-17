@@ -56,6 +56,13 @@ namespace OnlineVideos.MediaPortal2.ContentLists
             UsageStatistics stats = await userManagement.UserProfileDataManagement.GetFeatureUsageStatisticsAsync(userManagement.CurrentUser.ProfileId, "onlinevideos");
             return stats;
         }
+        protected async Task<UsageStatistics> GetSiteLanguageStats()
+        {
+            IUserManagement userManagement = ServiceRegistration.Get<IUserManagement>();
+            if (userManagement.UserProfileDataManagement == null) return null;
+            UsageStatistics stats = await userManagement.UserProfileDataManagement.GetFeatureUsageStatisticsAsync(userManagement.CurrentUser.ProfileId, "onlinevideos-lang");
+            return stats;
+        }
 
         protected void GetSites(IList<string> sites, ItemsList sitesList)
         {
@@ -86,12 +93,58 @@ namespace OnlineVideos.MediaPortal2.ContentLists
             sitesList.FireChange();
         }
 
+        protected void GetSiteGroups(IList<string> languages, ItemsList sitesList)
+        {
+            if (!OnlineVideoSettings.Instance.IsSiteUtilsListBuilt())
+            {
+                while (!OnlineVideoSettings.Instance.IsSiteUtilsListBuilt())
+                    System.Threading.Thread.Sleep(50);
+            }
+            sitesList.Clear();
+            foreach (string languageCode in languages)
+            {
+                var item = new SiteGroupViewModel(
+                    LanguageCodeLocalizedConverter.GetLanguageInUserLocale(languageCode),
+                    string.Format(@"LanguageFlagsBig\{0}.png", languageCode),
+                    GetSitesByLanguage(languageCode));
+                item.Command = new AsyncMethodDelegateCommand(() => GotoSiteGroup(item));
+
+                sitesList.Add(item);
+            }
+            sitesList.FireChange();
+        }
+
+        protected List<string> GetSitesByLanguage(string languageCode)
+        {
+            List<string> siteNames = new List<string>();
+            foreach (var site in OnlineVideoSettings.Instance.SiteUtilsList)
+            {
+                SiteUtilBase siteUtil = site.Value;
+                if (siteUtil.Settings.Language == languageCode && siteUtil.Settings.IsEnabled &&
+                    (!siteUtil.Settings.ConfirmAge || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed))
+                {
+                    siteNames.Add(siteUtil.Settings.Name);
+                }
+            }
+            return siteNames;
+        }
+
         protected Task GotoSite(SiteViewModel item)
         {
             OnlineVideosWorkflowModel model = ServiceRegistration.Get<IWorkflowManager>().GetModel(OnlineVideosWorkflowModel.WF_MODEL_ID) as OnlineVideosWorkflowModel;
             if (model != null)
             {
                 model.SelectSite(item);
+            }
+            return Task.CompletedTask;
+        }
+
+        protected Task GotoSiteGroup(SiteGroupViewModel item)
+        {
+            OnlineVideosWorkflowModel model = ServiceRegistration.Get<IWorkflowManager>().GetModel(OnlineVideosWorkflowModel.WF_MODEL_ID) as OnlineVideosWorkflowModel;
+            if (model != null)
+            {
+                model.SelectSiteGroup(item);
             }
             return Task.CompletedTask;
         }
@@ -117,6 +170,18 @@ namespace OnlineVideos.MediaPortal2.ContentLists
             if (stats == null)
                 return false;
             GetSites(stats.LastUsed.Select(t => t.Name).ToList(), AllItems);
+            return true;
+        }
+    }
+
+    public class TopLanguagesOnlineVideoSitesListProvider : OnlineVideosContentListProviderBase
+    {
+        public override async Task<bool> UpdateItemsAsync(int maxItems, UpdateReason updateReason)
+        {
+            var stats = await GetSiteLanguageStats();
+            if (stats == null)
+                return false;
+            GetSiteGroups(stats.TopUsed.Select(t => t.Name).ToList(), AllItems);
             return true;
         }
     }

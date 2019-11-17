@@ -49,6 +49,7 @@
   <Register Location="/Content/OnlineVideosListProviders">
     <ContentList Id="{7EF96DBE-7F42-4F42-856E-1F68E928E047}" Key="FavoriteOnlineVideoSites" ClassName="OnlineVideos.MediaPortal2.ContentLists.FavoriteOnlineVideoSitesListProvider"/>
     <ContentList Id="{BCC590C4-94C1-40D0-AEE0-0EE007C58400}" Key="LastOnlineVideoSites" ClassName="OnlineVideos.MediaPortal2.ContentLists.LatestOnlineVideoSitesListProvider"/>
+    <ContentList Id="{AC441DAE-3247-436A-B4A4-BA5C492C488C}" Key="TopLanguagesOnlineVideoSites" ClassName="OnlineVideos.MediaPortal2.ContentLists.TopLanguagesOnlineVideoSitesListProvider"/>
   </Register>
 
   <!-- The ResourceProvider to access arbitrary token based media. -->
