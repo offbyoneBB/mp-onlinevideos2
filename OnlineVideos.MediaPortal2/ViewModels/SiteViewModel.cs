@@ -36,12 +36,12 @@ namespace OnlineVideos.MediaPortal2
             set { _languageProperty.SetValue(value); }
         }
 
-        protected AbstractProperty _imageProperty;
-        public AbstractProperty ImageProperty { get { return _imageProperty; } }
-        public string Image
+        protected AbstractProperty _thumbProperty;
+        public AbstractProperty ThumbProperty { get { return _thumbProperty; } }
+        public string Thumb
         {
-            get { return (string)_imageProperty.GetValue(); }
-            set { _imageProperty.SetValue(value); }
+            get { return (string)_thumbProperty.GetValue(); }
+            set { _thumbProperty.SetValue(value); }
         }
 
         protected Sites.SiteUtilBase _site;
@@ -65,7 +65,7 @@ namespace OnlineVideos.MediaPortal2
 
             _nameProperty = new WProperty(typeof(string), site.Settings.Name);
             _languageProperty = new WProperty(typeof(string), site.Settings.Language);
-            _imageProperty = new WProperty(typeof(string), null);
+            _thumbProperty = new WProperty(typeof(string), null);
             _descriptionProperty = new WProperty(typeof(string), site.Settings.Description);
             _contextMenuEntriesProperty = new WProperty(typeof(ItemsList), null);
             _settingsListProperty = new WProperty(typeof(ItemsList), null);

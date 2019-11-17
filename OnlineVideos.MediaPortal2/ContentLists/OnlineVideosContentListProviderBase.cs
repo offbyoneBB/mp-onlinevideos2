@@ -84,7 +84,7 @@ namespace OnlineVideos.MediaPortal2.ContentLists
                         var item = new SiteViewModel(siteUtil);
                         item.Command = new AsyncMethodDelegateCommand(() => GotoSite(item));
                         if (converter.Convert(siteUtil, null, null, null, out object imageUrl))
-                            item.Image = imageUrl as string;
+                            item.Thumb = imageUrl as string;
                         sitesList.Add(item);
                         break;
                     }
