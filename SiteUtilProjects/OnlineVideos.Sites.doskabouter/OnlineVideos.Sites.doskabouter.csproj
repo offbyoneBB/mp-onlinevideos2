@@ -122,6 +122,7 @@
     <Compile Include="TVNZOnDemandUtil.cs" />
     <Compile Include="VRTUtil.cs" />
     <Compile Include="WatchSeriesUtil.cs" />
+    <Compile Include="WebDAVUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\OnlineVideos\OnlineVideos.csproj">
