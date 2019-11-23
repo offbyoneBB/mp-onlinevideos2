@@ -68,6 +68,9 @@ namespace OnlineVideos.Hoster
             NameValueCollection ItemsAPI = new NameValueCollection();
             NameValueCollection Items = new NameValueCollection();
             string contents = "";
+
+            List<KeyValuePair<string[], string>> qualities = new List<KeyValuePair<string[], string>>();
+
             try
             {
                 try
@@ -105,6 +108,18 @@ namespace OnlineVideos.Hoster
                             {
                                 Items.Add(z.Key, z.Value.ToString());
                             }
+
+                            if (string.IsNullOrEmpty(Items.Get("url_encoded_fmt_stream_map")) && !string.IsNullOrEmpty(Items.Get("player_response")))
+                            {
+                                var jdata = JToken.Parse(Items.Get("player_response"));
+                                var formats = jdata["streamingData"]["formats"] as JArray;
+                                foreach (var format in formats)
+                                {
+                                    string[] qualityKey = { format.Value<String>("itag"), format.Value<String>("width") + 'x' + format.Value<String>("height") };
+                                    var qualityValue = format.Value<String>("url");
+                                    qualities.Add(new KeyValuePair<string[], string>(qualityKey, qualityValue));
+                                }
+                            }
                         }
                         else if (m.Groups["html"].Success)
                         {
@@ -118,19 +133,20 @@ namespace OnlineVideos.Hoster
             }
             catch { }
 
-            if (!string.IsNullOrEmpty(Items.Get("url_encoded_fmt_stream_map")))
+            if (!string.IsNullOrEmpty(Items.Get("url_encoded_fmt_stream_map")) || qualities.Count > 0)
             {
                 string swfUrl = Regex.Unescape(Regex.Match(contents, @"""url""\s*:\s*""(https?:\\/\\/.*?watch[^""]+\.swf)""").Groups[1].Value);
 
-                List<KeyValuePair<string[], string>> qualities = new List<KeyValuePair<string[], string>>();
-
-                string[] FmtUrlMap = Items["url_encoded_fmt_stream_map"].Split(',');
-                string[] FmtList = Items["fmt_list"].Split(',');
-                for (int i = 0; i < FmtList.Length; i++)
-                    if (i < FmtUrlMap.Length)
-                    {
-                        qualities.Add(new KeyValuePair<string[], string>(FmtList[i].Split('/'), FmtUrlMap[i]));
-                    }
+                if (qualities.Count == 0)
+                {
+                    string[] FmtUrlMap = Items["url_encoded_fmt_stream_map"].Split(',');
+                    string[] FmtList = Items["fmt_list"].Split(',');
+                    for (int i = 0; i < FmtList.Length; i++)
+                        if (i < FmtUrlMap.Length)
+                        {
+                            qualities.Add(new KeyValuePair<string[], string>(FmtList[i].Split('/'), FmtUrlMap[i]));
+                        }
+                }
                 /*
                 string[] AdaptiveFmtUrlMap = Items["adaptive_fmts"].Split(',');
                 for (int i = 0; i < AdaptiveFmtUrlMap.Length; i++)
@@ -155,6 +171,7 @@ namespace OnlineVideos.Hoster
                     if (hideMobileFormats && fmtOptionsMobile.Any(b => b == fmt_quality)) continue;
                     if (hide3DFormats && fmtOptions3D.Any(b => b == fmt_quality)) continue;
 
+                    string finalUrl;
                     var urlOptions = HttpUtility.ParseQueryString(quality.Value);
                     string type = urlOptions.Get("type");
                     string stereo = urlOptions["stereo3d"] == "1" ? " 3D " : " ";
@@ -163,26 +180,36 @@ namespace OnlineVideos.Hoster
                         type = Regex.Replace(type, @"; codecs=""[^""]*""", "");
                         type = type.Substring(type.LastIndexOfAny(new char[] { '/', '-' }) + 1);
                     }
-                    string signature = urlOptions.Get("sig");
-                    if (string.IsNullOrEmpty(signature))
+                    string signature = null;
+
+                    if (Helpers.UriUtils.IsValidUri(quality.Value))
                     {
-                        string playerUrl = "";
-                        var jsPlayerMatch = Regex.Match(contents, "\"assets\":.+?\"js\":\\s*(\"[^\"]+\")");
-                        if (jsPlayerMatch.Success)
-                        {
-                            playerUrl = Newtonsoft.Json.Linq.JToken.Parse(jsPlayerMatch.Groups[1].Value).ToString();
-                            if (!Uri.IsWellFormedUriString(playerUrl, UriKind.Absolute))
-                            {
-                                Uri uri = null;
-                                if (Uri.TryCreate(new Uri(@"https://www.youtube.com"), playerUrl, out uri))
-                                    playerUrl = uri.ToString();
-                                else
-                                    playerUrl = string.Empty;
-                            }
-                        }
-                        signature = DecryptSignature(playerUrl, urlOptions.Get("s"));
+                        finalUrl = quality.Value;
                     }
-                    string finalUrl = urlOptions.Get("url");
+                    else
+                    {
+                        signature = urlOptions.Get("sig");
+                        if (string.IsNullOrEmpty(signature))
+                        {
+                            string playerUrl = "";
+                            var jsPlayerMatch = Regex.Match(contents, "\"assets\":.+?\"js\":\\s*(\"[^\"]+\")");
+                            if (jsPlayerMatch.Success)
+                            {
+                                playerUrl = Newtonsoft.Json.Linq.JToken.Parse(jsPlayerMatch.Groups[1].Value).ToString();
+                                if (!Uri.IsWellFormedUriString(playerUrl, UriKind.Absolute))
+                                {
+                                    Uri uri = null;
+                                    if (Uri.TryCreate(new Uri(@"https://www.youtube.com"), playerUrl, out uri))
+                                        playerUrl = uri.ToString();
+                                    else
+                                        playerUrl = string.Empty;
+                                }
+                            }
+                            signature = DecryptSignature(playerUrl, urlOptions.Get("s"));
+                        }
+                        finalUrl = urlOptions.Get("url");
+                    }
+
                     if (!string.IsNullOrEmpty(finalUrl))
                     {
                         if (!finalUrl.Contains("ratebypass"))
