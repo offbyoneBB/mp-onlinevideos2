@@ -383,14 +383,14 @@
       <Description>Ideas Worth Spreading. Talks from renowned speakers around the world.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[(?<=name="sort".*)<option\svalue="(?<url>[^"]*)">(?<title>[^<]*)</option>]]></item>
-        <item key="dynamicCategoryUrlFormatString"><![CDATA[http://www.ted.com/talks?sort={0}]]></item>
+        <item key="dynamicCategoryUrlFormatString"><![CDATA[https://www.ted.com/talks?sort={0}]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[{"value":"(?<url>[^"]*)","label":"(?<title>[^"]*)"}]]></item>
-        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://www.ted.com/talks?topics[]={0}&sort=newest]]></item>
-        <item key="videoListRegEx"><![CDATA[(?#normal)(<img\salt=""\sclass="\sthumb__image"\splay="(?<id>[^"]*)"\ssrc="(?<ImageUrl>[^"]*)"\scrop="top"\s/><span\sclass="thumb__aligner"></span></span></span><span\sclass="thumb__duration">(?<Duration>[^<]*)</span></span>\s*</a>\s*</div>\s*<div\sclass='media__message'>\s*<h4\sclass='h12\stalk-link__speaker'>(?<speaker>[^<]*)</h4>\s*<h4\sclass='[^']*'>\s*<a\sclass='\sga-link'\sdata-ga-context='talks'\shref='(?<VideoUrl>[^>]*)>(?<Title>[^<]*)</a>\s*</h4>\s*<div\sclass='meta'>\s*<span\sclass='meta__item'>\s*Posted\s*<span\sclass='meta__val'>(?<Airdate>[^<]*)</span>)|
+        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[https://www.ted.com/talks?topics[]={0}&sort=newest]]></item>
+        <item key="videoListRegEx"><![CDATA[(?#normal)(<img\salt=""\sclass="\sthumb__image"\splay="(?<id>[^"]*)"\ssrc="(?<ImageUrl>[^"]*)"\scrop="top"\s/><span\sclass="thumb__aligner"></span></span></span><span\sclass="thumb__duration">(?<Duration>[^<]*)</span></span>\s*</a>\s*</div>\s*<div\sclass='media__message'>\s*<h4\sclass='h12\stalk-link__speaker'>(?<speaker>[^<]*)</h4>\s*<h4\sclass='[^']*'>\s*<a\sclass='\sga-link'\sdata-ga-context='talks'\shref='(?<VideoUrl>[^']*)'>(?<Title>[^<]*)</a>\s*</h4>\s*<div\sclass='meta'>\s*<span\sclass='meta__item'>\s*Posted\s*<span\sclass='meta__val'>(?<Airdate>[^<]*)</span>)|
         (?#search)(<a\sclass="ga-link"\sdata-ga-context="search"\shref="[^"]*">(?<Title>[^<]*)</a>\s*<!--[^>]*>\s*</h3>\s*<div\sclass='media\smedia--oh-v\smedia--lg-h'>\s*<div\sclass='media__image\smedia__image--thumb\ssearch__result__image--video'>\s*<a\sclass="ga-link"\sdata-ga-context="search"\shref="(?<VideoUrl>[^"]*)"><span\sclass="thumb\sthumb--video"><span\sclass="thumb__sizer"><span\sclass="thumb__tugger"><img\salt=""\sclass="\sthumb__image"\splay="false"\ssrc="(?<ImageUrl>[^"]*)"\s/><span\sclass="thumb__aligner"></span></span></span></span></a>\s*</div>\s*<div\sclass='media__message'>\s*<div\sclass='search__result__description\sm4'>(?<Description>[^<]*)</div>)]]></item>
         <item key="nextPageRegEx"><![CDATA[rel="next"\shref="(?<url>[^"]*)">Next</a>]]></item>
         <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
-        <item key="baseUrl"><![CDATA[http://www.ted.com/talks/browse]]></item>
+        <item key="baseUrl"><![CDATA[https://www.ted.com/talks/browse]]></item>
         <item key="fileUrlRegEx"><![CDATA[<script[^>]*>q\("talkPage.init",(?<json>.*?)\)</script>]]></item>
         <item key="searchUrl"><![CDATA[https://www.ted.com/search?q={0}]]></item>
       </Configuration>
