@@ -102,14 +102,10 @@
     <Compile Include="MovieNightUtil.cs" />
     <Compile Include="NPOStartUtil.cs" />
     <Compile Include="PowerUnlimitedUtil.cs" />
-    <Compile Include="RedBull.cs" />
     <Compile Include="RtmpUtil.cs" />
     <Compile Include="RuutuUtil.cs" />
     <Compile Include="SBSauUtil.cs" />
-    <Compile Include="TubePlusUtil.cs" />
-    <Compile Include="TV3NZOnDemandUtil.cs" />
     <Compile Include="TVLinkscc.cs" />
-    <Compile Include="TVNPlayerUtil.cs" />
     <Compile Include="TweakersNetUtil.cs" />
     <Compile Include="VimeoUtil.cs" />
     <Compile Include="Vimeo\AuthBase.cs" />
@@ -119,7 +115,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SouthParkUtil.cs" />
     <Compile Include="TVEUtil.cs" />
-    <Compile Include="TVNZOnDemandUtil.cs" />
     <Compile Include="VRTUtil.cs" />
     <Compile Include="WatchSeriesUtil.cs" />
     <Compile Include="WebDAVUtil.cs" />

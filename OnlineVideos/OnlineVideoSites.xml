@@ -832,16 +832,6 @@
         </Category>
       </Categories>
     </Site>
-    <Site name="TVNZOnDemand" util="TVNZOnDemand" agecheck="false" enabled="true" lang="en" player="Internal">
-      <Description>Television New Zealand: TV One, TV2, TVNZ 6, TVNZ 7</Description>
-      <Configuration>
-        <item key="fileUrlRegEx"><![CDATA[<object\sid="[^"]*"\sclass="BrightcoveExperience\s">\s*<param[^>]*>\s*<param[^>]*>\s*<param[^>]*>\s*<param[^>]*>\s*<param\svalue="(?<experienceId>[^"]*)"\sname="playerID"\s/>\s*<param[^>]*>\s*<param[^>]*>\s*<param[^>]*>\s*<param[^>]*>\s*<param[^>]*>\s*<param[^>]*>\s*<param\svalue="ref:(?<contentRefId>[^"]*)"\sname="@videoPlayer"\s/>\s*<param[^>]*>\s*<param[^>]*>\s*</object>]]></item>
-        <item key="hashValue"><![CDATA[f86d6617a68b38ee0f400e1f4dc603d6e3b4e4ed]]></item>
-        <item key="playerId"><![CDATA[1029272630001]]></item>
-        <item key="requestUrl"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerId=1029272630001]]></item>
-        <item key="baseUrl"><![CDATA[http://tvnz.co.nz]]></item>
-      </Configuration>
-    </Site>
     <Site name="Khan Academy" util="KhanAcademy" agecheck="false" enabled="true" lang="en">
       <Description>Khan Academy is on a mission to provide a free world-class education to anyone anywhere. With over 2,600 videos covering everything from arithmetic to physics, finance, and history and 200 practice exercises, we're helping students learn whatever they want, whenever they want, at their own pace.</Description>
       <Configuration>
@@ -915,19 +905,6 @@
         <Category xsi:type="RssLink" name="Trailers" thumb="" desc="">http://www.pu.nl/media/trailer/</Category>
       </Categories>
     </Site>
-    <Site name="Red Bull TV" util="RedBull" agecheck="false" enabled="true" lang="en">
-      <Description>Red Bull TV - Watch sports, music and entertainment TV online. Free.</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.redbull.tv/]]></item>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass='navigation__item'>\s*<img\sclass="channel-image"\salt="[^"]*"\ssrc="(?<thumb>[^"]*)"\s/>\s*<a\sclass="[^"]*"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li\sclass='navigation__sub-item\sswiper-slide'>\s*<a\sclass="[^"]*"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>\s*</li>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[videoPlayer=(?<contentRefId>[^"]*)"]]></item>
-        <item key="hashValue"><![CDATA[63cfaa5119fd8e383eadf26f1118f24d87251f76]]></item>
-        <item key="requestType"><![CDATA[ViewerExperienceRequest]]></item>
-        <item key="playerKey"><![CDATA[AQ~~,AAACZYoJeMk~,6-AuiH-yar7vhFK8T1lKHxOJlJLkWYk4]]></item>
-        <item key="requestUrl"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerKey=AQ~~,AAACZYoJeMk~,6-AuiH-yar7vhFK8T1lKHxOJlJLkWYk4]]></item>
-      </Configuration>
-    </Site>
     <Site name="Ruutu.fi" util="Ruutu" agecheck="false" enabled="true" lang="fi">
       <Description>Ruutu - Nelonen, Liv, Jim ja Nelonen Pro. Viihdettä, draamaa, uutisia, urheilua ja lastenohjelmia - katso missä haluat ja milloin haluat.</Description>
       <Configuration>
@@ -943,29 +920,6 @@
         <Category xsi:type="RssLink" name="Lapset">https://www.ruutu.fi/lapset</Category>
         <Category xsi:type="RssLink" name="Kaikki ohjelmat">https://www.ruutu.fi/ohjelmat/kaikki</Category>
       </Categories>
-    </Site>
-    <Site name="TV3NZ" util="TV3NZOnDemand" agecheck="false" enabled="true" lang="en">
-      <Description>Television New Zealand: TV3, TV four</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.tv3.co.nz/]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<div\sclass="grid_2[^"]*">\s*<a\srel="[^"]*"\shref="http://www.[^.]*.co.nz/tabid/[^/]*/MCat/(?<url>[^/]*)/Default.aspx"><img\sclass="tsrImgBlkBorder"\ssrc="(?<thumb>[^"]*)"[^>]*></a>\s*(?:<span\sclass="geomob"\stitle="This\sshow\sis\savailable\son\ssome\smobile\sand\stablet\sdevices\.\sWatch\sNow"></span>\s*)?<p\sclass="artTitle"><a[^>]*>(?<title>[^<]*)</a></p>\s*</div>]]></item>
-        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://www.tv3.co.nz/OnDemand/ShowEpisodesDetail.aspx?MCat={0}]]></item>
-        <item key="videoListRegEx"><![CDATA[((?#front page)<div\sclass="grid_2[^"]*">\s*<a\shref="(?<VideoUrl>[^"]*)"><img\sclass="tsrImgBlkBorder"\ssrc="(?<ImageUrl>[^"]*)"\salt="(?<Description>[^"]*)"\swidth="138"\sheight="91"\sborder="0"\s/></a>\s*<div\sclass="artTitle">(?<Title>[^<]*)</div>\s*<p\sclass="MiniHeading\sgreyHead">(?<Airdate>[^<]*)</p>\s*(?:<div\sclass="MiniHeading\sredHead"><time\sclass="fixtimeago"\sdatetime="[^"]*">(?<ViewTime>[^<]*)</time></div>)?\s*</div>
-)|(?#one show)
-(<div\sclass="listWrapper[^"]*">\s*<div\sclass="epDetail"><p><a\shref="(?<VideoUrl>[^"]*)"\sclass="flt_l">(?<Title>[^<]*)</a><span\sclass="showSynop"></span></p></div>\s*<div\sclass="epDetailDate"><time[^>]*><p><a[^>]*>(?<Airdate>[^<]*)</a></p></time></div>\s*<div\sclass="epDetailDate"><p><a[^>]*>(?<Duration>[^<]*)</a></p></div>\s*<div\sclass="epSynop"><p>(?<Description>[^<]*)</p></div>\s*</div>)]]></item>
-        <item key="fileUrlRegEx"><![CDATA[var\svideo\s="(?<m0>[^"]*)";]]></item>
-        <item key="fileUrlFormatString"><![CDATA[http://www.tv3.co.nz/portals/0/video/smil1500-2.aspx?serverVar=rtmpe://vod-geo.mediaworks.co.nz/vod/_definst_&locationVar=mp4:@@{0}&typeVar=mp4]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Expiring soon">http://www.tv3.co.nz/OnDemand/ExpiringSoon.aspx</Category>
-        <Category xsi:type="RssLink" name="Recently Added">http://www.tv3.co.nz/OnDemand/RecentlyAdded.aspx</Category>
-        <Category xsi:type="RssLink" name="A-Z">http://www.tv3.co.nz/OnDemand/TitleAZ.aspx</Category>
-      </Categories>
-    </Site>
-    <Site name="TVNPlayer" util="TVNPlayer" agecheck="false" enabled="true" lang="pl">
-      <Description>Oglądaj online najlepsze programy, seriale i filmy. Tylko u nas, jeszcze przed premierą w telewizji, obejrzysz serialowe nowości z oferty TVN. Przegapiłeś swój ulubiony program na antenie TVN, TVN Style czy TVN Turbo? W tvn player nie zabraknie najpopularniejszych programów i show z kanałów tematycznych tvn.</Description>
-      <Configuration>
-      </Configuration>
     </Site>
     <Site name="Tweakers.net" util="TweakersNet" agecheck="false" enabled="true" lang="nl">
       <Description>Videos van tweakers.net</Description>
@@ -1158,26 +1112,25 @@
         </Category>
       </Categories>
     </Site>
-	<Site name="YouPorn" util="GenericSite" agecheck="true" enabled="true" lang="en">
-	  <Description>YouPorn.com is the largest porn site on the web with the best variety of free full length porn videos - XXX, sex, porno, hardcore and more.</Description>
-	  <Configuration>
-		<item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass='sublist-item'>\s*<a\s+href="(?<url>/category[^"]+)".*?>(?<title>[^<]+)<]]></item>
-		<item key="videoListRegEx"><![CDATA[<div\s+class="video-box.*?title="(?<Title>[^"]*)".*?<a\s+href="(?<VideoUrl>/watch/[^"]+)"[^>]*>.*?<img(?:(?!src).)+src="(?<ImageUrl>[^"\?]+)[^"]*"[^>]+>.*?<span\s+class="video-box-duration">(?<Duration>[^<]*)</span>]]></item>
-		<item key="nextPageRegEx"><![CDATA[<div\s+class="prev-next">\s*<a\s+href="(?<url>[^"]*)"]]></item>
-		<item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
-		<item key="fileUrlRegEx"><![CDATA[<div\s+class='downloadOption'>.*?<a\s+href='(?<m0>[^']*)'.*?>(?<n0>[^<]*)</a>\s*<span[^>]*>(?<n1>[^<]*)]]></item>
-		<item key="fileUrlNameFormatString"><![CDATA[{0} {1}]]></item>
-		<item key="fileUrlDecoding"><![CDATA[HtmlDecode]]></item>
-		<item key="searchUrl"><![CDATA[http://www.youporn.com/search/?query={0}]]></item>
-		<item key="baseUrl"><![CDATA[http://www.youporn.com/categories/]]></item>
-		<item key="cookies"><![CDATA[_gat=1,age_verified=1]]></item>
-	  </Configuration>
-	  <Categories>
-		<Category xsi:type="RssLink" name="Newest">http://www.youporn.com/</Category>
-		<Category xsi:type="RssLink" name="Top Rated">http://www.youporn.com/top_rated</Category>
-		<Category xsi:type="RssLink" name="Most Viewed">http://www.youporn.com/most_viewed</Category>
-	  </Categories>
-	</Site>
+    <Site name="YouPorn" util="GenericSite" agecheck="true" enabled="true" lang="en">
+      <Description>YouPorn.com is the largest porn site on the web with the best variety of free full length porn videos - XXX, sex, porno, hardcore and more.</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"[^>]*>\s*<img\ssrc="[^"]*"\sdata-original="(?<thumb>[^"]*)"[^>]*>\s*<div\sclass='categoryTitle'>\s*<p>(?<title>[^<]*)<span>(?<description>[^<]*)</span>\s*</p>\s*</div>\s*</a>]]></item>
+        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]*)"\sclass='video-box-image'\s>\s*<span\sclass="video-box-image-wrapper">\s*<img\ssrc="[^"]*"\sclass="[^"]*"\salt='[^']*'\s*data-thumbnail="(?<ImageUrl>[^"]*)"[^>]*>\s*</span>\s*<div\sclass="video-box-title"[^>]*>(?<Title>[^<]*)</div>\s*</a>\s*<div\sclass="video-box-infos">\s*<div\sclass='video-box-rating'>\s*<span\sclass='video-box-percentage\sup'>[^<]*</span>\s*<span\sclass='video-box-views'>[^<]*</span>\s*</div>\s*<div\sclass="video-duration">(?<Duration>[^<]*)</div>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<div\s+class="prev-next">\s*<a\s+href="(?<url>[^"]*)"]]></item>
+        <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<a\sclass='downloadOption\sdownloadVideoLink[^']*'\s*href="(?<m0>[^"]*)"\s*title='Download\sVideo'\s*download="download"\s*target="_blank">(?<n0>[^<]*)<div]]></item>
+        <item key="fileUrlDecoding"><![CDATA[HtmlDecode]]></item>
+        <item key="searchUrl"><![CDATA[http://www.youporn.com/search/?query={0}]]></item>
+        <item key="baseUrl"><![CDATA[http://www.youporn.com/categories/]]></item>
+        <item key="cookies"><![CDATA[_gat=1,age_verified=1]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Newest">http://www.youporn.com/</Category>
+        <Category xsi:type="RssLink" name="Top Rated">http://www.youporn.com/top_rated</Category>
+        <Category xsi:type="RssLink" name="Most Viewed">http://www.youporn.com/most_viewed</Category>
+      </Categories>
+    </Site>
 	<Site name="RedTube" util="GenericSite" agecheck="true" enabled="true" lang="en">
 	  <Description>The home of free porn videos.</Description>
 	  <Configuration>
