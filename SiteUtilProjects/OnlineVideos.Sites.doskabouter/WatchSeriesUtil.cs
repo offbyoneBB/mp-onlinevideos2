@@ -286,6 +286,8 @@ namespace OnlineVideos.Sites
                 }
 
             }
+            if (videos.Count == 0 && HasNextPage)
+                return GetNextPageVideos();
             return videos;
         }
 
