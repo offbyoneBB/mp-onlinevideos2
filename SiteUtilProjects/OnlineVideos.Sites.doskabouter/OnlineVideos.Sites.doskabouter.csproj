@@ -68,6 +68,7 @@
     <Compile Include="DeferredResolveUtil.cs" />
     <Compile Include="EuroSportUtil.cs" />
     <Compile Include="FilmonUtil.cs" />
+    <Compile Include="FMoviesUtil.cs" />
     <Compile Include="Hoster\Archiv.cs" />
     <Compile Include="Hoster\EcoStream.cs" />
     <Compile Include="Hoster\FlashX.cs" />
@@ -99,7 +100,6 @@
     <Compile Include="Hoster\MyHosterBase.cs" />
     <Compile Include="Hoster\Xtream.cs" />
     <Compile Include="KhanAcademyUtil.cs" />
-    <Compile Include="MovieNightUtil.cs" />
     <Compile Include="NPOStartUtil.cs" />
     <Compile Include="PowerUnlimitedUtil.cs" />
     <Compile Include="RtmpUtil.cs" />
