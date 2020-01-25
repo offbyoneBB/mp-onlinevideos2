@@ -14,6 +14,16 @@ namespace OnlineVideos.MediaPortal2
         private FilterFileWrapper _filterWrapper;
         public const string ONLINEVIDEOS_MIMETYPE = "video/online";
 
+        private static string DefaultSplitter
+        {
+            get
+            {
+                return IntPtr.Size > 4 ?
+                    "LAV Splitter Source" : // Our own MPUrlSourceSplitter filter is not yet available as 64-bit, so fall back to LAV Source Splitter
+                    MPUrlSourceFilter.Downloader.FilterName;
+            }
+        }
+
         protected override void AddSourceFilter()
         {
             string sourceFilterName = GetSourceFilterName(_resourceAccessor.ResourcePathName);
@@ -24,6 +34,7 @@ namespace OnlineVideos.MediaPortal2
                 {
                     if (sourceFilterName == MPUrlSourceFilter.Downloader.FilterName)
                     {
+                        // TODO Morpheus_xx, 2020-01-25: Support x64 build here (x86/x64 subfolders) once there is a x64 build of MPUrlSourceSplitter!
                         _filterWrapper = FilterLoader.LoadFilterFromDll(
                             Path.Combine(Path.GetDirectoryName(GetType().Assembly.Location), @"MPUrlSourceSplitter\MPUrlSourceSplitter.ax"),
                             new Guid(MPUrlSourceFilter.Downloader.FilterCLSID));
@@ -131,10 +142,10 @@ namespace OnlineVideos.MediaPortal2
             {
                 case "http":
                     sourceFilterName = url.ToLower().Contains(".asf") ?
-                        "WM ASF Reader" : MPUrlSourceFilter.Downloader.FilterName;
+                        "WM ASF Reader" : DefaultSplitter;
                     break;
                 case "rtmp":
-                    sourceFilterName = MPUrlSourceFilter.Downloader.FilterName;
+                    sourceFilterName = DefaultSplitter;
                     break;
                 case "sop":
                     sourceFilterName = "SopCast ASF Splitter";
