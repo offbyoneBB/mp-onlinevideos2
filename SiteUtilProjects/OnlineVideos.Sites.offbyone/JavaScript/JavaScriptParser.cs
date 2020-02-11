@@ -129,10 +129,12 @@ namespace OnlineVideos.JavaScript
             string[] patterns = new[] {
                 @"\b[cs]\s*&&\s*[adf]\.set\([^,]+\s*,\s*encodeURIComponent\s*\(\s*(?<name>[a-zA-Z0-9$]+)\(",
                 @"\b[a-zA-Z0-9]+\s*&&\s*[a-zA-Z0-9]+\.set\([^,]+\s*,\s*encodeURIComponent\s*\(\s*(?<name>[a-zA-Z0-9$]+)\(",
+                @"\b(?<name>[a-zA-Z0-9$]{2})\s*=\s*function\(\s*a\s*\)\s*{\s*a\s*=\s*a\.split\(\s*""""\s*\)",
                 @"(?<name>[a-zA-Z0-9$]+)\s*=\s*function\(\s*a\s*\)\s*{\s*a\s*=\s*a\.split\(\s*""""\s*\)",
                 @"([""\'])signature\1\s*,\s*(?<name>[a-zA-Z0-9$]+)\(",
                 @"\.sig\|\|(?<name>[a-zA-Z0-9$]+)\(",
                 @"yt\.akamaized\.net/\)\s*\|\|\s*.*?\s*[cs]\s*&&\s*[adf]\.set\([^,]+\s*,\s*(?:encodeURIComponent\s*\()?\s*(?<name>[a-zA-Z0-9$]+)\(",
+                @"(?<name>[a-zA-Z0-9$]+)\(",
                 @"\b[cs]\s*&&\s*[adf]\.set\([^,]+\s*,\s*(?<name>[a-zA-Z0-9$]+)\(",
                 @"\b[a-zA-Z0-9]+\s*&&\s*[a-zA-Z0-9]+\.set\([^,]+\s*,\s*(?<name>[a-zA-Z0-9$]+)\(",
                 @"\bc\s*&&\s*a\.set\([^,]+\s*,\s*\([^)]*\)\s*\(\s*(?<name>[a-zA-Z0-9$]+)\(",

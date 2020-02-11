@@ -69,7 +69,7 @@ namespace OnlineVideos.Hoster
             NameValueCollection Items = new NameValueCollection();
             string contents = "";
 
-            List<KeyValuePair<string[], string>> qualities = new List<KeyValuePair<string[], string>>();
+            List<KeyValuePair<string[], string[]>> qualities = new List<KeyValuePair<string[], string[]>>();// KeyValuePair.Value is either {url} or {url,sig}
 
             try
             {
@@ -117,7 +117,18 @@ namespace OnlineVideos.Hoster
                                 {
                                     string[] qualityKey = { format.Value<String>("itag"), format.Value<String>("width") + 'x' + format.Value<String>("height") };
                                     var qualityValue = format.Value<String>("url");
-                                    qualities.Add(new KeyValuePair<string[], string>(qualityKey, qualityValue));
+                                    if (String.IsNullOrEmpty(qualityValue))
+                                    {
+                                        NameValueCollection cipherItems = HttpUtility.ParseQueryString(System.Web.HttpUtility.HtmlDecode(format.Value<String>("cipher")));
+                                        qualityValue = cipherItems.Get("url");
+                                        string[] tmp = { qualityValue, cipherItems.Get("s") };
+                                        qualities.Add(new KeyValuePair<string[], string[]>(qualityKey, tmp));
+                                    }
+                                    else
+                                    {
+                                        string[] tmp = { qualityValue };
+                                        qualities.Add(new KeyValuePair<string[], string[]>(qualityKey, tmp));
+                                    }
                                 }
                             }
                         }
@@ -144,7 +155,8 @@ namespace OnlineVideos.Hoster
                     for (int i = 0; i < FmtList.Length; i++)
                         if (i < FmtUrlMap.Length)
                         {
-                            qualities.Add(new KeyValuePair<string[], string>(FmtList[i].Split('/'), FmtUrlMap[i]));
+                            string[] tmp = { FmtUrlMap[i] };
+                            qualities.Add(new KeyValuePair<string[], string[]>(FmtList[i].Split('/'), tmp));
                         }
                 }
                 /*
@@ -156,7 +168,7 @@ namespace OnlineVideos.Hoster
                     qualities.Add(new KeyValuePair<string[], string>(quality, AdaptiveFmtUrlMap[i]));
                 }
                 */
-                qualities.Sort(new Comparison<KeyValuePair<string[], string>>((a, b) =>
+                qualities.Sort(new Comparison<KeyValuePair<string[], string[]>>((a, b) =>
                 {
                     return Array.IndexOf(fmtOptionsQualitySorted, ushort.Parse(b.Key[0])).CompareTo(Array.IndexOf(fmtOptionsQualitySorted, ushort.Parse(a.Key[0])));
                 }));
@@ -172,7 +184,7 @@ namespace OnlineVideos.Hoster
                     if (hide3DFormats && fmtOptions3D.Any(b => b == fmt_quality)) continue;
 
                     string finalUrl;
-                    var urlOptions = HttpUtility.ParseQueryString(quality.Value);
+                    var urlOptions = HttpUtility.ParseQueryString(quality.Value[0]);
                     string type = urlOptions.Get("type");
                     string stereo = urlOptions["stereo3d"] == "1" ? " 3D " : " ";
                     if (!string.IsNullOrEmpty(type))
@@ -182,9 +194,9 @@ namespace OnlineVideos.Hoster
                     }
                     string signature = null;
 
-                    if (Helpers.UriUtils.IsValidUri(quality.Value))
+                    if (Helpers.UriUtils.IsValidUri(quality.Value[0]) && quality.Value.Length == 1)
                     {
-                        finalUrl = quality.Value;
+                        finalUrl = quality.Value[0];
                     }
                     else
                     {
@@ -205,9 +217,12 @@ namespace OnlineVideos.Hoster
                                         playerUrl = string.Empty;
                                 }
                             }
-                            signature = DecryptSignature(playerUrl, urlOptions.Get("s"));
+                            signature = DecryptSignature(playerUrl, quality.Value.Length == 2 ? quality.Value[1] : urlOptions.Get("s"));
                         }
-                        finalUrl = urlOptions.Get("url");
+                        if (quality.Value.Length == 1)
+                            finalUrl = urlOptions.Get("url");
+                        else
+                            finalUrl = quality.Value[0];
                     }
 
                     if (!string.IsNullOrEmpty(finalUrl))
