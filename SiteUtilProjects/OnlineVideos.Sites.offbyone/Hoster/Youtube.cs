@@ -88,7 +88,21 @@ namespace OnlineVideos.Hoster
                 if (!string.IsNullOrEmpty(url_encoded_fmt_stream_map))
                     forceGetWebPage = url_encoded_fmt_stream_map.Contains("&s=");
                 else
-                    forceGetWebPage = true;
+                {
+                    var player_response = JObject.Parse(Items["player_response"]);
+
+                    if (player_response["playabilityStatus"]["status"].ToString() == "OK")
+                    {
+                        parsePlayerStatus(JToken.Parse(Items.Get("player_response")), qualities);
+                    }
+                    forceGetWebPage = qualities.Count == 0;
+                    if (!forceGetWebPage)
+                    {
+                        //if cipher needed, forceGetWebPage
+                        foreach (var kv in qualities)
+                            if (kv.Value.Length > 1) forceGetWebPage = true;
+                    }
+                }
 
                 if (Items.Count == 0 || Items["status"] == "fail" || Items["use_cipher_signature"] == "True" || forceGetWebPage)
                 {
@@ -111,25 +125,8 @@ namespace OnlineVideos.Hoster
 
                             if (string.IsNullOrEmpty(Items.Get("url_encoded_fmt_stream_map")) && !string.IsNullOrEmpty(Items.Get("player_response")))
                             {
-                                var jdata = JToken.Parse(Items.Get("player_response"));
-                                var formats = jdata["streamingData"]["formats"] as JArray;
-                                foreach (var format in formats)
-                                {
-                                    string[] qualityKey = { format.Value<String>("itag"), format.Value<String>("width") + 'x' + format.Value<String>("height") };
-                                    var qualityValue = format.Value<String>("url");
-                                    if (String.IsNullOrEmpty(qualityValue))
-                                    {
-                                        NameValueCollection cipherItems = HttpUtility.ParseQueryString(System.Web.HttpUtility.HtmlDecode(format.Value<String>("cipher")));
-                                        qualityValue = cipherItems.Get("url");
-                                        string[] tmp = { qualityValue, cipherItems.Get("s") };
-                                        qualities.Add(new KeyValuePair<string[], string[]>(qualityKey, tmp));
-                                    }
-                                    else
-                                    {
-                                        string[] tmp = { qualityValue };
-                                        qualities.Add(new KeyValuePair<string[], string[]>(qualityKey, tmp));
-                                    }
-                                }
+                                qualities.Clear();
+                                parsePlayerStatus(JToken.Parse(Items.Get("player_response")), qualities);
                             }
                         }
                         else if (m.Groups["html"].Success)
@@ -279,6 +276,28 @@ namespace OnlineVideos.Hoster
             }
 
             return PlaybackOptions;
+        }
+
+        private void parsePlayerStatus(JToken player_response, List<KeyValuePair<string[], string[]>> qualities)
+        {
+            var formats = player_response["streamingData"]["formats"] as JArray;
+            foreach (var format in formats)
+            {
+                string[] qualityKey = { format.Value<String>("itag"), format.Value<String>("width") + 'x' + format.Value<String>("height") };
+                var qualityValue = format.Value<String>("url");
+                if (String.IsNullOrEmpty(qualityValue))
+                {
+                    NameValueCollection cipherItems = HttpUtility.ParseQueryString(System.Web.HttpUtility.HtmlDecode(format.Value<String>("cipher")));
+                    qualityValue = cipherItems.Get("url");
+                    string[] tmp = { qualityValue, cipherItems.Get("s") };
+                    qualities.Add(new KeyValuePair<string[], string[]>(qualityKey, tmp));
+                }
+                else
+                {
+                    string[] tmp = { qualityValue };
+                    qualities.Add(new KeyValuePair<string[], string[]>(qualityKey, tmp));
+                }
+            }
         }
 
         public override string GetVideoUrl(string url)
