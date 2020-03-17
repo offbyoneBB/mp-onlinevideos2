@@ -164,41 +164,25 @@ namespace OnlineVideos.Hoster
 
         public override Dictionary<string, string> GetPlaybackOptions(string url)
         {
-            CookieContainer cc = new CookieContainer();
-            Cookie c = new Cookie();
-            c.Name = "family_filter";
-            c.Value = "off";
-            c.Expires = DateTime.Now.AddHours(1);
-            c.Domain = new Uri(url).Host;
-            cc.Add(c);
-
-            string webData = WebCache.Instance.GetWebData(url.Replace(@"/swf/", @"/video/"), cookies: cc);
+            string webData = WebCache.Instance.GetWebData(url);
 
             Dictionary<string, string> res = new Dictionary<string, string>();
-            Match matchFileUrl = Regex.Match(webData, @"""stream_(?<n0>[^_]*(?:_[^_]*)?)_url"":\s*""(?<m0>[^""]*)""");
-            while (matchFileUrl.Success)
+            Match matchFileUrl = Regex.Match(webData, @"""qualities"":{""auto"":\[{""type"":""application\\/x-mpegURL"",""url"":""(?<url>[^""]+)""}");
+            if (matchFileUrl.Success)
             {
-                string foundUrl = matchFileUrl.Groups["m0"].Value;
+                string foundUrl = matchFileUrl.Groups["url"].Value;
                 foundUrl = foundUrl.Replace(@"\/", @"/");
-                res.Add(matchFileUrl.Groups["n0"].Value, foundUrl);
-                matchFileUrl = matchFileUrl.NextMatch();
+                var m3u8Data = GetWebData(foundUrl);
+                return Helpers.HlsPlaylistParser.GetPlaybackOptions(m3u8Data, foundUrl);
+                //relative urls starting with /. need to fix https://github.com/MediaPortal/MediaPortal-1/blob/MP1-4155-FEAT-Merge_of_IPTV_filter_and_MediaPortal_Url_Source_Splitter/DirectShowFilters/MPUrlSourceSplitter/MPUrlSourceSplitter/MPUrlSourceSplitter_libstrings/formatUrl.cpp#L149
             }
             return res;
         }
 
         public override string GetVideoUrl(string url)
         {
-            string webData = WebCache.Instance.GetWebData(url);
-            string resUrl = Helpers.StringUtils.GetSubString(webData, @"""video"", """, @"""");
-            if (String.IsNullOrEmpty(resUrl))
-                resUrl = Helpers.StringUtils.GetSubString(webData, @"""stream_url"":""", @"""");
-            if (String.IsNullOrEmpty(resUrl) && !url.Contains("embed"))
-            {
-                string newUrl = url.Replace(@".com/", @".com/embed/");
-                if (!newUrl.Equals(url)) //safety check to prevent infinite recursion
-                    resUrl = GetVideoUrl(newUrl);
-            }
-            return resUrl.Replace(@"\/", @"/");
+            var res= GetPlaybackOptions(url);
+            return res.FirstOrDefault().Key;
         }
     }
 
