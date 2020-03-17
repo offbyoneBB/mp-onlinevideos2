@@ -174,7 +174,6 @@ namespace OnlineVideos.Hoster
                 foundUrl = foundUrl.Replace(@"\/", @"/");
                 var m3u8Data = GetWebData(foundUrl);
                 return Helpers.HlsPlaylistParser.GetPlaybackOptions(m3u8Data, foundUrl);
-                //relative urls starting with /. need to fix https://github.com/MediaPortal/MediaPortal-1/blob/MP1-4155-FEAT-Merge_of_IPTV_filter_and_MediaPortal_Url_Source_Splitter/DirectShowFilters/MPUrlSourceSplitter/MPUrlSourceSplitter/MPUrlSourceSplitter_libstrings/formatUrl.cpp#L149
             }
             return res;
         }
