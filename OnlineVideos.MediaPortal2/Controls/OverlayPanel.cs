@@ -3,8 +3,10 @@ using MediaPortal.Common;
 using MediaPortal.Common.Logging;
 using MediaPortal.UI.Presentation.Players;
 using MediaPortal.UI.Presentation.Screens;
+using MediaPortal.UI.SkinEngine;
 using MediaPortal.UI.SkinEngine.Controls.Panels;
 using SharpDX;
+using SharpDX.Mathematics.Interop;
 using Point = System.Drawing.Point;
 
 namespace OnlineVideos.MediaPortal2.Controls
@@ -36,7 +38,7 @@ namespace OnlineVideos.MediaPortal2.Controls
         /// </summary>
         /// <param name="boundingBox"></param>
         /// <returns></returns>
-        private RectangleF TransformBoundingBox(RectangleF boundingBox)
+        private RawRectangleF TransformBoundingBox(RawRectangleF boundingBox)
         {
             var mainForm = ServiceRegistration.Get<IScreenControl>() as Form;
             if (mainForm == null)
@@ -63,12 +65,12 @@ namespace OnlineVideos.MediaPortal2.Controls
             // First compensate size: ratio between "control to screen" vs. "screen to mainwindow"
             var ratioScreenToSkinWidth = mainFormScreen.Bounds.Width / (float)Screen.SkinWidth;
             var ratioScreenToSkinHeight = mainFormScreen.Bounds.Height / (float)Screen.SkinHeight;
-            var newWidth = boundingBox.Width / mainFormScreen.Bounds.Width * mainWidth * ratioScreenToSkinWidth;
-            var newHeight = boundingBox.Height / mainFormScreen.Bounds.Height * mainHeight * ratioScreenToSkinHeight;
+            var newWidth = boundingBox.Width() / mainFormScreen.Bounds.Width * mainWidth * ratioScreenToSkinWidth;
+            var newHeight = boundingBox.Height() / mainFormScreen.Bounds.Height * mainHeight * ratioScreenToSkinHeight;
 
             // Then move to compensate window position
-            var newX = boundingBox.X * ratioScreenToSkinWidth + mainLocation.X;
-            var newY = boundingBox.Y * ratioScreenToSkinHeight + mainLocation.Y;
+            var newX = boundingBox.X() * ratioScreenToSkinWidth + mainLocation.X;
+            var newY = boundingBox.Y() * ratioScreenToSkinHeight + mainLocation.Y;
             RectangleF newBBOX = new RectangleF(newX, newY, newWidth, newHeight);
             ServiceRegistration.Get<ILogger>().Info("OVP: Transformed BBOX: {0}", newBBOX);
             return newBBOX;

@@ -14,6 +14,7 @@ using MediaPortal.UiComponents.Media.Models;
 using MediaPortal.UI.Control.InputManager;
 using MediaPortal.UI.Presentation.Players;
 using MediaPortal.UI.Presentation.Screens;
+using MediaPortal.UI.SkinEngine;
 using MediaPortal.UI.SkinEngine.InputManagement;
 using OnlineVideos.Helpers;
 using OnlineVideos.MediaPortal2.Interfaces.Metadata;
@@ -23,6 +24,7 @@ using OnlineVideos.Sites.Interfaces;
 using OnlineVideos.Sites.Proxy.WebBrowserPlayerService;
 using OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation;
 using SharpDX;
+using SharpDX.Mathematics.Interop;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -299,8 +301,8 @@ namespace OnlineVideos.MediaPortal2
                 ServiceRegistration.Get<IScreenControl>().Restore();
                 int left = (int)TargetBounds.Left;
                 int top = (int)TargetBounds.Top;
-                int width = (int)TargetBounds.Width;
-                int height = (int)TargetBounds.Height;
+                int width = (int)TargetBounds.Width();
+                int height = (int)TargetBounds.Height();
                 action = string.Format("{0}{1},{2},{3},{4}", OnlineVideos.Constants.ACTION_WINDOWED, left, top, width, height);
             }
         }
@@ -531,7 +533,7 @@ namespace OnlineVideos.MediaPortal2
             get { return typeof(WebBrowserPlayerUIContributor); }
         }
 
-        public RectangleF TargetBounds { get; set; }
+        public RawRectangleF TargetBounds { get; set; }
     }
 
     public class WebBrowserPlayerUIContributor : BaseVideoPlayerUIContributor
