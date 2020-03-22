@@ -287,6 +287,10 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Extensio
                 {
                     extendedProperties.Other = playbackLink.Attributes["data-title-id"]?.Value;
                 }
+                else
+                {
+                    extendedProperties.Other = titleNode.FirstChild?.Attributes["data-title-id"]?.Value;
+                }
 
                 var detailsNode = item.GetNodeByClass("js-ep-playback-wrapper")?.NextSibling ?? item.SelectSingleNode(".//*[contains(@data-automation-id, 'ep-title-episodes-')]")?.NextSibling;
                 if (detailsNode != null && detailsNode.ChildNodes.Count >= 2)
