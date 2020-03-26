@@ -13,13 +13,14 @@ namespace OnlineVideos.Sites
         public override List<VideoInfo> GetVideos(Category category)
         {
             nextPageAvailable = true;
-            return GetVideoList();
+            nextPageUrl = ((RssLink)category).Url;
+            return GetVideoList(nextPageUrl);
         }
 
         public override List<VideoInfo> GetNextPageVideos()
         {
             nextPageAvailable = true;
-            return GetVideoList();
+            return GetVideoList(nextPageUrl);
         }
 
         public override string GetVideoUrl(VideoInfo video)
@@ -29,14 +30,14 @@ namespace OnlineVideos.Sites
             return video.GetPreferredUrl(true);
         }
 
-        private List<VideoInfo> GetVideoList()
+        private List<VideoInfo> GetVideoList(string baseUrl)
         {
             var videoList = new List<VideoInfo>();
             JObject webData;
             if (userHash == null)
-                webData = GetWebData<JObject>(@"https://arrow.tv/rock/account/register", postData: @"{""campaign"":""""}");
+                webData = GetWebData<JObject>(baseUrl + @"/account/register", postData: @"{""campaign"":""""}");
             else
-                webData = GetWebData<JObject>(@"https://arrow.tv/rock/account/loginbyhash", postData: @"{""userhash"":""" + userHash + @""",""campaign"":"""",""from"":" + lastId + "}");
+                webData = GetWebData<JObject>(baseUrl + @"/account/loginbyhash", postData: @"{""userhash"":""" + userHash + @""",""campaign"":"""",""from"":" + lastId + "}");
 
             foreach (var item in webData["playlist"])
             {

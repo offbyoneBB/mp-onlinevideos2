@@ -761,7 +761,8 @@
     <Site name="ArrowTV" util="ArrowTV" agecheck="false" enabled="true" lang="nl">
       <Description>ARROW.TV Rock | 24/7 jouw favoriete Rockvideo's! Curated, all devices, full screen.</Description>
       <Categories>
-        <Category xsi:type="RssLink" name="Rock"/>
+        <Category xsi:type="RssLink" name="Rock">https://arrow.tv/rock</Category>
+        <Category xsi:type="RssLink" name="Metal">https://arrow.tv/metal</Category>
       </Categories>
     </Site>
     <Site name="CBC.ca" util="CBC" agecheck="false" enabled="true" lang="en">
