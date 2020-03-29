@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
+using OnlineVideos.Helpers;
 
 namespace OnlineVideos.Sites
 {
@@ -11,133 +13,108 @@ namespace OnlineVideos.Sites
 
         public override int DiscoverDynamicCategories()
         {
-            string data = GetWebData(baseUrl).Substring(12);
-            JObject contentData = JObject.Parse(data);
-            foreach (KeyValuePair<string, JToken> item in contentData)
+            var data = GetWebData<JObject>(baseUrl);
+            SortedDictionary<char, Category> list = new SortedDictionary<char, Category>();
+
+            foreach (var entry in data["entries"])
             {
-                RssLink categ = new RssLink()
+                if (entry.Value<String>("type") == "program_series")
                 {
-                    Name = item.Key,
-                    Thumb = item.Value.Value<string>("thumbnail"),
-                    SubCategories = new List<Category>(),
-                    HasSubCategories = true,
-                    SubCategoriesDiscovered = true
-                };
-                Settings.Categories.Add(categ);
-
-                Add1Subcat(categ, "Featured", item.Value.Value<string>("furl"));
-                Add1Subcat(categ, "Latest", item.Value.Value<string>("url"));
-                Add1Subcat(categ, "Most Popular", item.Value.Value<string>("purl"));
-
-                AddSubcats(categ, item.Value.Value<JToken>("children"), true);
+                    RssLink categ = new RssLink()
+                    {
+                        Name = entry.Value<String>("name"),
+                        Description = entry.Value<String>("descrption"),
+                        Thumb = entry["thumbnails"].First.First.Value<String>(),
+                        Url = entry.Value<String>("url"),
+                        SubCategories = new List<Category>(),
+                        HasSubCategories = true
+                    };
+                    if (!String.IsNullOrEmpty(categ.Url))
+                    {
+                        Char first = categ.Name[0];
+                        if (Char.IsDigit(first))
+                            first = '#';
+                        else
+                            first = Char.ToUpper(first);
+                        if (!list.ContainsKey(first))
+                        {
+                            Category cat = new Category()
+                            {
+                                Name = first.ToString(),
+                                SubCategories = new List<Category>(),
+                                HasSubCategories = true,
+                                SubCategoriesDiscovered = true
+                            };
+                            list.Add(first, cat);
+                        }
+                        categ.ParentCategory = list[first];
+                        list[first].SubCategories.Add(categ);
+                    }
+                }
             }
+            foreach (var item in list)
+                Settings.Categories.Add(item.Value);
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
         }
 
-        private void Add1Subcat(Category parentCategory, string name, string url)
+        public override int DiscoverSubCategories(Category parentCategory)
         {
-            if (!String.IsNullOrEmpty(url))
-            {
-                if (!Uri.IsWellFormedUriString(url, System.UriKind.Absolute))
-                    url = new Uri(new Uri(baseUrl), url).AbsoluteUri;
+            var data = GetWebData<JObject>(((RssLink)parentCategory).Url);
+            SortedList<int, SortedList<int,VideoInfo>> list = new SortedList<int, SortedList<int,VideoInfo>>();
 
-                RssLink subcat = new RssLink()
-                {
-                    Name = name,
-                    Url = url,
-                    ParentCategory = parentCategory
-                };
-                parentCategory.SubCategories.Add(subcat);
-            }
-        }
-
-        private void AddSubcats(Category parentCategory, JToken sub, bool getFirst)
-        {
-            if (sub != null)
-                foreach (JToken v in sub)
-                {
-                    JToken first = v is JProperty ? v.First : v;
-                    RssLink subcat = new RssLink()
-                    {
-                        Name = first.Value<string>("name"),
-                        Thumb = first.Value<string>("thumbnail"),
-                        Url = first.Value<string>("url"),
-                        ParentCategory = parentCategory
-                    };
-                    if (!String.IsNullOrEmpty(subcat.Url))
-                    {
-                        if (!Uri.IsWellFormedUriString(subcat.Url, System.UriKind.Absolute))
-                            subcat.Url = new Uri(new Uri(baseUrl), subcat.Url).AbsoluteUri;
-                        parentCategory.HasSubCategories = true;
-                        parentCategory.SubCategoriesDiscovered = true;
-
-                        if (parentCategory.SubCategories == null)
-                            parentCategory.SubCategories = new List<Category>();
-                        parentCategory.SubCategories.Add(subcat);
-                        JToken subs = first.Value<JToken>("children");
-                        if (subs != null)
-                            AddSubcats(subcat, subs, false);
-                    }
-                }
-        }
-
-        protected override List<VideoInfo> Parse(string url, string data)
-        {
-            if (string.IsNullOrEmpty(data)) data = GetWebData(url);
-            JObject contentData = JObject.Parse(data);
-            List<VideoInfo> result = new List<VideoInfo>();
-            foreach (JObject vid in contentData["entries"])
+            foreach (var vid in data["entries"])
             {
                 VideoInfo video = new VideoInfo()
                 {
                     Title = vid.Value<string>("title"),
                     Description = vid.Value<string>("description") +
-                    " Expires " + epoch.AddSeconds(vid.Value<long>("media$expirationDate") / 1000).ToString(),
+                        " Expires " + epoch.AddSeconds(vid.Value<long>("media$expirationDate") / 1000).ToString(),
                     Airdate = epoch.AddSeconds(vid.Value<long>("pubDate") / 1000).ToString(),
                     VideoUrl = vid.Value<string>("id").Replace(@"http://data.media.theplatform.com/media/data/Media/",
-                    @"http://www.sbs.com.au/ondemand/video/")
+                    @"https://www.sbs.com.au/api/video_pdkvars/playlist/")
                 };
 
                 JArray thumbs = vid.Value<JArray>("media$thumbnails");
                 if (thumbs != null)
                     video.Thumb = thumbs[0].Value<string>("plfile$downloadUrl");
-                result.Add(video);
-            }
-            int startIndex = contentData.Value<Int32>("startIndex");
-            int entryCount = contentData.Value<Int32>("entryCount");
-            int totalResults = contentData.Value<Int32>("totalResults");
-            nextPageAvailable = startIndex + entryCount - 1 < totalResults;
-            if (nextPageAvailable)
-            {
-                int p = url.IndexOf("range=");
-                if (p >= 0)
-                {
-                    int q = url.IndexOf('&', p + 1);
-                    if (q >= 0)
-                        url = url.Substring(0, p - 1) + url.Substring(q, url.Length - q);
-                    else
-                        url = url.Substring(0, p - 1);
-                }
-                nextPageUrl = String.Format("{0}&range={1}-{2}", url, startIndex + entryCount, startIndex + entryCount + 24);
-            }
-            else
-                nextPageUrl = String.Empty;
 
-            return result;
+                int season = vid.Value<int>("pl1$season");
+                if (!list.ContainsKey(season))
+                    list.Add(season, new SortedList<int,VideoInfo>());
+                list[season].Add(vid.Value<int>("pl1$episodeNumber"),video);
+                
+            }
+
+            foreach (var item in list)
+                parentCategory.SubCategories.Add(new Category()
+                {
+                    Name = "Season " + item.Key.ToString(),
+                    Other = new List<VideoInfo>(item.Value.Values),
+                    ParentCategory = parentCategory
+                });
+            parentCategory.SubCategoriesDiscovered = true;
+            return parentCategory.SubCategories.Count;
         }
 
-        public override Dictionary<string, string> GetPlaybackOptions(string playlistUrl)
+        public override List<VideoInfo> GetVideos(Category category)
         {
-            Dictionary<string, string> result = new Dictionary<string, string>();
-            foreach (KeyValuePair<string, string> kv in base.GetPlaybackOptions(playlistUrl))
+            return (List<VideoInfo>)category.Other;
+        }
+
+        public override string GetVideoUrl(VideoInfo video)
+        {
+            var webData = GetWebData(video.VideoUrl);
+            var data=JArray.Parse(webData);
+            var ff = data[0]["releaseUrls"].Value<String>("html");
+            webData = GetWebData(ff);
+            var match = Regex.Match(webData,@"<video\ssrc=""(?<url>[^""]*)""", defaultRegexOptions);
+            if (match.Success)
             {
-                if (kv.Value.Contains("sbsvod-f.akamai") || kv.Value.Contains("sbsauvod-f.akamai"))
-                    result.Add(kv.Key, kv.Value + "?v=&fp=&r=&g=");
-                else
-                    result.Add(kv.Key, kv.Value);
+                webData = GetWebData(match.Groups["url"].Value);
+                video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(webData, match.Groups["url"].Value, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height);
             }
-            return result;
+            return video.GetPreferredUrl(true);
         }
     }
 }

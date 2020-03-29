@@ -922,6 +922,13 @@
         <Category xsi:type="RssLink" name="Kaikki ohjelmat">https://www.ruutu.fi/ohjelmat/kaikki</Category>
       </Categories>
     </Site>
+    <Site name="SBS.au" util="SBSau" agecheck="false" enabled="true" lang="en">
+      <Description>SBS On Demand gives you free, unlimited access to programs, films and events – watch your favourite SBS shows when you want!</Description>
+      <Configuration>
+        <item key="baseUrl"><![CDATA[https://www.sbs.com.au/api/video_programs/all]]></item>
+        <item key="searchUrl"><![CDATA[https://www.sbs.com.au/api/video_feed/f/dYtmxB/search?form=json&q={0}&count=true&defaultThumbnailAssetType=Thumbnail&range=1-24]]></item>
+      </Configuration>
+    </Site>
     <Site name="Tweakers.net" util="TweakersNet" agecheck="false" enabled="true" lang="nl">
       <Description>Videos van tweakers.net</Description>
       <Configuration>
