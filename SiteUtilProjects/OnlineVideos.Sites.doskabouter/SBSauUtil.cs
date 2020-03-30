@@ -61,29 +61,17 @@ namespace OnlineVideos.Sites
         public override int DiscoverSubCategories(Category parentCategory)
         {
             var data = GetWebData<JObject>(((RssLink)parentCategory).Url);
-            SortedList<int, SortedList<int,VideoInfo>> list = new SortedList<int, SortedList<int,VideoInfo>>();
+            SortedList<int, SortedList<int, VideoInfo>> list = new SortedList<int, SortedList<int, VideoInfo>>();
 
             foreach (var vid in data["entries"])
             {
-                VideoInfo video = new VideoInfo()
-                {
-                    Title = vid.Value<string>("title"),
-                    Description = vid.Value<string>("description") +
-                        " Expires " + epoch.AddSeconds(vid.Value<long>("media$expirationDate") / 1000).ToString(),
-                    Airdate = epoch.AddSeconds(vid.Value<long>("pubDate") / 1000).ToString(),
-                    VideoUrl = vid.Value<string>("id").Replace(@"http://data.media.theplatform.com/media/data/Media/",
-                    @"https://www.sbs.com.au/api/video_pdkvars/playlist/")
-                };
-
-                JArray thumbs = vid.Value<JArray>("media$thumbnails");
-                if (thumbs != null)
-                    video.Thumb = thumbs[0].Value<string>("plfile$downloadUrl");
+                VideoInfo video = parseVideo(vid);
 
                 int season = vid.Value<int>("pl1$season");
                 if (!list.ContainsKey(season))
-                    list.Add(season, new SortedList<int,VideoInfo>());
-                list[season].Add(vid.Value<int>("pl1$episodeNumber"),video);
-                
+                    list.Add(season, new SortedList<int, VideoInfo>());
+                list[season].Add(vid.Value<int>("pl1$episodeNumber"), video);
+
             }
 
             foreach (var item in list)
@@ -105,16 +93,47 @@ namespace OnlineVideos.Sites
         public override string GetVideoUrl(VideoInfo video)
         {
             var webData = GetWebData(video.VideoUrl);
-            var data=JArray.Parse(webData);
+            var data = JArray.Parse(webData);
             var ff = data[0]["releaseUrls"].Value<String>("html");
             webData = GetWebData(ff);
-            var match = Regex.Match(webData,@"<video\ssrc=""(?<url>[^""]*)""", defaultRegexOptions);
+            var match = Regex.Match(webData, @"<video\ssrc=""(?<url>[^""]*)""", defaultRegexOptions);
             if (match.Success)
             {
                 webData = GetWebData(match.Groups["url"].Value);
                 video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(webData, match.Groups["url"].Value, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height);
             }
             return video.GetPreferredUrl(true);
+        }
+
+        private VideoInfo parseVideo(JToken vid)
+        {
+            VideoInfo video = new VideoInfo()
+            {
+                Title = vid.Value<string>("title"),
+                Description = vid.Value<string>("description") +
+                    " Expires " + epoch.AddSeconds(vid.Value<long>("media$expirationDate") / 1000).ToString(),
+                Airdate = epoch.AddSeconds(vid.Value<long>("pubDate") / 1000).ToString(),
+                VideoUrl = vid.Value<string>("id").Replace(@"http://data.media.theplatform.com/media/data/Media/",
+                @"https://www.sbs.com.au/api/video_pdkvars/playlist/")
+            };
+
+            JArray thumbs = vid.Value<JArray>("media$thumbnails");
+            if (thumbs != null)
+                video.Thumb = thumbs[0].Value<string>("plfile$downloadUrl");
+            return video;
+        }
+
+        protected override List<VideoInfo> Parse(string url, string data)
+        {
+            List<VideoInfo> result = new List<VideoInfo>();
+            if (data == null) data = GetWebData(url);
+            var jData = JObject.Parse(data);
+            foreach (var vid in jData["entries"])
+            {
+                VideoInfo video = parseVideo(vid);
+                result.Add(video);
+            }
+            return result;
         }
     }
 }
