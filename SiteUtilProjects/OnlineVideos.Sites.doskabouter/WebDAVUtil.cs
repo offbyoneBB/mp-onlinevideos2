@@ -33,10 +33,14 @@ namespace OnlineVideos.Sites
             "</prop>" +
             "</propfind>";
 
-        public override int DiscoverDynamicCategories()
+        public override void Initialize(SiteSettings siteSettings)
         {
             fullBasePath = basePath.Replace(@"://", @"://" + userName + ":" + password + "@");
+            base.Initialize(siteSettings);
+        }
 
+        public override int DiscoverDynamicCategories()
+        {
             foreach (var cat in getDirectory(basePath))
                 Settings.Categories.Add(cat);
             Settings.DynamicCategoriesDiscovered = true;
