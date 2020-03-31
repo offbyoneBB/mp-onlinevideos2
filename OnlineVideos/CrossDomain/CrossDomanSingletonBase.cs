@@ -13,6 +13,10 @@ namespace OnlineVideos.CrossDomain
         {
             get { return _Instance ?? (_Instance = (T) OnlineVideosAppDomain.GetCrossDomainSingleton(typeof (T))); }
         }
+        public static T GetInstance(params object[] args)
+        {
+            return _Instance ?? (_Instance = (T) OnlineVideosAppDomain.GetCrossDomainSingleton(typeof (T), args));
+        }
 
         public override object InitializeLifetimeService()
         {

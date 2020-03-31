@@ -83,6 +83,11 @@ namespace OnlineVideos.MediaPortal2
             get { return OnlineVideoSettings.Instance.SiteUtilsList[SiteName] as IInputStreamSite; }
         }
 
+        public IWebDriverSite WebDriverSite
+        {
+            get { return OnlineVideoSettings.Instance.SiteUtilsList[SiteName] as IWebDriverSite; }
+        }
+
         /// <summary>
         /// Returns a resource locator instance for this item.
         /// </summary>

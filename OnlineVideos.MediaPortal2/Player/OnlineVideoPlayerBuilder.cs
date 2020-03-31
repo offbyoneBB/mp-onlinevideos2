@@ -95,13 +95,26 @@ namespace OnlineVideos.MediaPortal2
             // Also try browser player as fallback if InputStream decoding failed
             if (mimeType == WebBrowserVideoPlayer.ONLINEVIDEOSBROWSER_MIMETYPE)
             {
-                var player = new WebBrowserVideoPlayer();
-                if (!player.Init(mediaItem))
+                if (item?.WebDriverSite != null)
                 {
-                    player.Dispose();
-                    return null;
+                    var player = new AutomationVideoPlayer();
+                    if (!player.Init(mediaItem))
+                    {
+                        player.Dispose();
+                        return null;
+                    }
+                    return player;
                 }
-                return player;
+                else
+                {
+                    var player = new WebBrowserVideoPlayer();
+                    if (!player.Init(mediaItem))
+                    {
+                        player.Dispose();
+                        return null;
+                    }
+                    return player;
+                }
             }
 
             return null;
