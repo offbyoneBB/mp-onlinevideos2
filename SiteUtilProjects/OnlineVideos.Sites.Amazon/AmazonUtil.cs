@@ -127,6 +127,7 @@ namespace OnlineVideos.Sites.Amazon
                 {
                     categoryNode.Category.HasSubCategories = categoryNode.SubCategories?.Count > 0 || !string.IsNullOrEmpty(categoryNode.CategoryUrl);
                     categoryNode.Category.SubCategories = new List<Category>();
+                    categoryNode.Category.ParentCategory = parentCategory;
                     categoriesToPopulate.Add(categoryNode.Category);
                 }
 
@@ -140,7 +141,16 @@ namespace OnlineVideos.Sites.Amazon
                         var asin = webElement.FindElement(By.Name("titleID")).GetAttribute("value");
                         var title = webElement.FindElement(By.TagName("h1")).GetAttribute("innerText");
 
-                        categoriesToPopulate.Add(new Category { Name = title, Description = asin, Other = asin, Thumb = imgSrc, HasSubCategories = false, SubCategories = new List<Category>() });
+                        categoriesToPopulate.Add(new Category
+                        {
+                            Name = title,
+                            Description = asin,
+                            Other = asin,
+                            Thumb = imgSrc,
+                            ParentCategory = parentCategory,
+                            HasSubCategories = false,
+                            SubCategories = new List<Category>()
+                        });
                     }
                 }
             }
