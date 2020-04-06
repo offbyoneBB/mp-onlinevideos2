@@ -180,7 +180,7 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
-            var res= GetPlaybackOptions(url);
+            var res = GetPlaybackOptions(url);
             return res.FirstOrDefault().Key;
         }
     }
@@ -424,6 +424,51 @@ namespace OnlineVideos.Hoster
             return "karambavidz.com";
         }
     }
+
+    public class Mixdrop : MyHosterBase
+    {
+
+        public override string GetHosterUrl()
+        {
+            return "mixdrop.co";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            var data = GetWebData(url);
+            Match m = Regex.Match(data, @"<iframe\swidth=""[^%]*%""\sheight=""[^""]*""\ssrc=""(?<url>[^""]*)""");
+            if (m.Success)
+            {
+                var newUrl = m.Groups["url"].Value;
+                if (!Uri.IsWellFormedUriString(newUrl, UriKind.Absolute))
+                {
+                    Uri uri = null;
+                    if (Uri.TryCreate(new Uri(url), newUrl, out uri))
+                    {
+                        newUrl = uri.ToString();
+                    }
+                    else
+                    {
+                        newUrl = string.Empty;
+                    }
+                }
+                data = GetWebData(newUrl);
+                string packed = Helpers.StringUtils.GetSubString(data, @"return p}", @"</script>");
+                packed = packed.Replace(@"\'", @"'");
+                string unpacked = Helpers.StringUtils.UnPack(packed);
+                m = Regex.Match(unpacked, @"MDCore\.wurl=""(?<url>[^""]*)""");
+                if (m.Success)
+                {
+                    var finalUrl = m.Groups["url"].Value;
+                    if (!finalUrl.StartsWith("http"))
+                        finalUrl = "https:" + finalUrl;
+                    return finalUrl;
+                }
+            }
+            return String.Empty;
+        }
+    }
+
 
     public class MovDivX : MyHosterBase
     {
