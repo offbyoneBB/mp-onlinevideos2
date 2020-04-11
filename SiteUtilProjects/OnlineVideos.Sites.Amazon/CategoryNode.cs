@@ -14,9 +14,19 @@ namespace OnlineVideos.Sites.Amazon
             /// </summary>
             public String Url { get; set; }
             /// <summary>
-            /// Url to retrieve sub-categories. This is done for Series -> Episodes link.
+            /// Specifies the type of content and how the result should be parsed
             /// </summary>
-            public String CategoryUrl { get; set; }
+            public UrlType UrlType { get; set; }
+
+        }
+
+        private enum UrlType
+        {
+            Undefined,
+            SeriesCategory,
+            Movies,
+            SearchResults,
+            Genres
         }
     }
 }

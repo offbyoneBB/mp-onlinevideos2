@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading.Tasks;
 using OnlineVideos.Sites.Interfaces;
 using OpenQA.Selenium;
@@ -60,11 +61,26 @@ namespace OnlineVideos.Sites.Amazon
                     Category = new Category { Name = "Watchlist", Other = "W" },
                     SubCategories = new List<CategoryNode>
                     {
-                        new CategoryNode { Category = new Category { Name = "Series Watchlist", Other = "WS" }, CategoryUrl = "https://www.amazon.de/gp/video/watchlist/tv/ref=dv_web_wtls_nr_bar_tv?show=24&sort=DATE_ADDED_DESC"},
-                        new CategoryNode { Category = new Category { Name = "Movies Watchlist", Other = "WM" }, Url = "https://www.amazon.de/gp/video/watchlist/movies/ref=dv_web_wtls_nr_bar_mov?show=24&sort=DATE_ADDED_DESC"},
+                        new CategoryNode { Category = new Category { Name = "Series Watchlist", Other = "WS" }, Url = "https://www.amazon.de/gp/video/watchlist/tv/ref=dv_web_wtls_nr_bar_tv?show=24&sort=DATE_ADDED_DESC", UrlType = UrlType.SeriesCategory },
+                        new CategoryNode { Category = new Category { Name = "Movies Watchlist", Other = "WM" }, Url = "https://www.amazon.de/gp/video/watchlist/movies/ref=dv_web_wtls_nr_bar_mov?show=24&sort=DATE_ADDED_DESC", UrlType = UrlType.Movies },
                     }},
-                new CategoryNode { Category = new Category {  Name = "Series", Other = "S" } },
-                new CategoryNode { Category = new Category { Name = "Movies", Other = "M" } },
+                new CategoryNode { Category = new Category {  Name = "Series", Other = "S" } ,
+                    SubCategories = new List<CategoryNode> {
+                        new CategoryNode { Category = new Category { Name = "Series Watchlist", Other = "SWS" }, Url = "https://www.amazon.de/gp/video/watchlist/tv/ref=dv_web_wtls_nr_bar_tv?show=24&sort=DATE_ADDED_DESC", UrlType = UrlType.SeriesCategory },
+                        new CategoryNode { Category = new Category { Name = "Recently Added", Other = "SRA" }, Url = "https://www.amazon.de/s?i=prime-instant-video&bbn=3279204031&rh=n%3A3279204031%2Cn%3A3015916031%2Cp_n_ways_to_watch%3A7448695031&s=date-desc-rank&dc&_encoding=UTF8&qid=1586595330&rnid=7448692031&ref=sr_st_date-desc-rank", UrlType = UrlType.SearchResults },
+                        new CategoryNode { Category = new Category { Name = "Popular Series", Other = "SP" }, Url = "https://www.amazon.de/s?i=prime-instant-video&bbn=3279204031&rh=n%3A3279204031%2Cn%3A3015916031%2Cp_n_ways_to_watch%3A7448695031&s=popularity-rank&dc&_encoding=UTF8&qid=1586595304&rnid=7448692031&ref=sr_nr_p_n_ways_to_watch_1", UrlType = UrlType.SearchResults},
+                        new CategoryNode { Category = new Category { Name = "Less than 30 days available", Other = "SL" }, Url = "https://www.amazon.de/s/ref=sr_nr_n_1?rh=n%3A9798874031%2Cn%3A!3010076031%2Cn%3A3015916031&bbn=9798874031&ie=UTF8", UrlType = UrlType.SearchResults},
+                        new CategoryNode { Category = new Category { Name = "4K UHD", Other = "S4" }, Url = "https://www.amazon.de/s?i=prime-instant-video&bbn=3279204031&rh=n%3A3279204031%2Cn%3A3015916031%2Cp_n_ways_to_watch%3A7448695031%2Cp_n_video_quality%3A16184010031&s=featured-rank&dc&_encoding=UTF8&qid=1586595380&rnid=3010076031&ref=sr_st_featured-rank", UrlType = UrlType.SearchResults},
+                    } },
+                new CategoryNode { Category = new Category { Name = "Movies", Other = "M" } ,
+                    SubCategories = new List<CategoryNode> {
+                        new CategoryNode { Category = new Category { Name = "Movies Watchlist", Other = "MWM" }, Url = "https://www.amazon.de/gp/video/watchlist/movies/ref=dv_web_wtls_nr_bar_mov?show=24&sort=DATE_ADDED_DESC", UrlType = UrlType.SearchResults },
+                        new CategoryNode { Category = new Category { Name = "Recently Added", Other = "MRA" }, Url = "https://www.amazon.de/s/ref=atv_sn_piv_cl1_mv_ra?_encoding=UTF8&rh=n%3A3010075031%2Cn%3A3356018031%2Cn%3A4190509031&sort=popularity-rank", UrlType = UrlType.SearchResults },
+                        new CategoryNode { Category = new Category { Name = "Popular Movies", Other = "MP" }, Url = "https://www.amazon.de/s/ref=atv_sn_piv_cl1_mv_pl?_encoding=UTF8&rh=n%3A3010075031%2Cn%3A3356018031&sort=popularity-rank", UrlType = UrlType.SearchResults},
+                        new CategoryNode { Category = new Category { Name = "Less than 30 days available", Other = "ML" }, Url = "https://www.amazon.de/s?i=instant-video&bbn=9798874031&rh=n%3A9798874031%2Cn%3A3015915031&dc&qid=1586595215&rnid=3010076031&ref=sr_nr_n_1", UrlType = UrlType.SearchResults},
+                        new CategoryNode { Category = new Category { Name = "4K UHD", Other = "M4" }, Url = "https://www.amazon.de/s?i=prime-instant-video&bbn=3279204031&rh=n%3A3279204031%2Cn%3A3015915031%2Cp_n_ways_to_watch%3A7448695031%2Cp_n_video_quality%3A16184010031&s=date-desc-rank&dc&_encoding=UTF8&qid=1586593929&rnid=16184008031&ref=sr_nr_p_n_video_quality_2", UrlType = UrlType.SearchResults},
+                        new CategoryNode { Category = new Category { Name = "Genres", Other = "MG" }, Url = "https://www.amazon.de/s?i=prime-instant-video&bbn=3279204031&rh=n%3A3279204031%2Cn%3A3015915031%2Cp_n_ways_to_watch%3A7448695031&s=featured-rank&dc&_encoding=UTF8&qid=1586595682&rnid=3010076031&ref=sr_nr_n_1", UrlType = UrlType.Genres},
+                    } },
             }
         };
 
@@ -94,11 +110,16 @@ namespace OnlineVideos.Sites.Amazon
             if (node != null && !string.IsNullOrEmpty(node.Url))
             {
                 videoInfos.AddRange(LoadVideosAsync(node.Url).Result);
+                if (videoInfos.Count == 0)
+                {
+                    videoInfos.AddRange(LoadVideosFromSearchAsync(node.Url).Result);
+                }
             }
 
             if (node == null)
             {
                 LoadEpisodes(category, videoInfos);
+                LoadUrlFilteredVideos(category, videoInfos);
             }
             return videoInfos;
         }
@@ -106,10 +127,20 @@ namespace OnlineVideos.Sites.Amazon
         private void LoadEpisodes(Category category, List<VideoInfo> videoInfos)
         {
             // Dynamic nodes, like series list
-            if (!string.IsNullOrEmpty(category.Other as string))
+            string asin = category.Other as string;
+            if (!string.IsNullOrEmpty(asin) && !asin.StartsWith("https://"))
             {
-                string url = $"https://www.amazon.de/gp/video/detail/{category.Other}/ref=atv_wl_hom_c_unkc_1_1";
+                string url = $"https://www.amazon.de/gp/video/detail/{asin}/ref=atv_wl_hom_c_unkc_1_1";
                 videoInfos.AddRange(LoadEpisodesAsync(url).Result);
+            }
+        }
+        private void LoadUrlFilteredVideos(Category category, List<VideoInfo> videoInfos)
+        {
+            // Dynamic nodes, like series list
+            string url = category.Other as string;
+            if (!string.IsNullOrEmpty(url) && url.StartsWith("https://"))
+            {
+                videoInfos.AddRange(LoadVideosFromSearchAsync(url).Result);
             }
         }
 
@@ -125,15 +156,15 @@ namespace OnlineVideos.Sites.Amazon
             {
                 foreach (CategoryNode categoryNode in node.SubCategories)
                 {
-                    categoryNode.Category.HasSubCategories = categoryNode.SubCategories?.Count > 0 || !string.IsNullOrEmpty(categoryNode.CategoryUrl);
+                    categoryNode.Category.HasSubCategories = categoryNode.SubCategories?.Count > 0 || (!string.IsNullOrEmpty(categoryNode.Url)  && (categoryNode.UrlType == UrlType.SeriesCategory || categoryNode.UrlType == UrlType.Genres));
                     categoryNode.Category.SubCategories = new List<Category>();
                     categoryNode.Category.ParentCategory = parentCategory;
                     categoriesToPopulate.Add(categoryNode.Category);
                 }
 
-                if (!string.IsNullOrEmpty(node.CategoryUrl))
+                if (node.UrlType == UrlType.SeriesCategory)
                 {
-                    PrepareUrlAsync(node.CategoryUrl).Wait();
+                    PrepareUrlAsync(node.Url).Wait();
                     var series = _driver.FindElements(By.CssSelector("[data-automation-id^=wl-item-]"));
                     foreach (IWebElement webElement in series)
                     {
@@ -147,6 +178,28 @@ namespace OnlineVideos.Sites.Amazon
                             Description = asin,
                             Other = asin,
                             Thumb = imgSrc,
+                            ParentCategory = parentCategory,
+                            HasSubCategories = false,
+                            SubCategories = new List<Category>()
+                        });
+                    }
+                }
+
+                if (node.UrlType == UrlType.Genres)
+                {
+                    PrepareUrlAsync(node.Url).Wait();
+                    var genres = _driver.FindElements(By.CssSelector("[id^=p_n_theme_browse-bin\\/]"));
+                    foreach (IWebElement webElement in genres)
+                    {
+                        var link = webElement.FindElement(By.TagName("a"));
+
+                        var url = link.GetAttribute("href");
+                        var title = link.GetAttribute("innerText");
+
+                        categoriesToPopulate.Add(new Category
+                        {
+                            Name = title,
+                            Other = url,
                             ParentCategory = parentCategory,
                             HasSubCategories = false,
                             SubCategories = new List<Category>()
@@ -168,6 +221,26 @@ namespace OnlineVideos.Sites.Amazon
                 var title = webElement.FindElement(By.TagName("h1")).GetAttribute("innerText");
 
                 videoInfos.Add(new VideoInfo { Title = title, Description = asin, VideoUrl = asin, Thumb = imgSrc });
+            }
+            return videoInfos;
+        }
+
+        private async Task<List<VideoInfo>> LoadVideosFromSearchAsync(string url)
+        {
+            List<VideoInfo> videoInfos = new List<VideoInfo>();
+            await PrepareUrlAsync(url);
+            var searchResults = _driver.FindElements(By.ClassName("s-result-list")).FirstOrDefault();
+            if (searchResults != null)
+            {
+                var videos = _driver.FindElements(By.ClassName("s-result-item"));
+                foreach (IWebElement webElement in videos)
+                {
+                    var imgSrc = webElement.FindElement(By.ClassName("s-image")).GetAttribute("src");
+                    var asin = webElement.GetAttribute("data-asin");
+                    var title = webElement.FindElement(By.TagName("h2")).GetAttribute("innerText");
+
+                    videoInfos.Add(new VideoInfo { Title = title, Description = asin, VideoUrl = asin, Thumb = imgSrc });
+                }
             }
             return videoInfos;
         }
@@ -218,8 +291,8 @@ namespace OnlineVideos.Sites.Amazon
                     Profile = new FirefoxProfile(@"C:\Users\morpheus\AppData\Roaming\Mozilla\Firefox\Profiles\Amazon.Automation")
                 };
                 // For navigation we don't want the firefox window appearing
-                if (!windowVisible)
-                    firefoxOptions.AddArgument("-headless");
+                //if (!windowVisible)
+                //    firefoxOptions.AddArgument("-headless");
                 var ffds = FirefoxDriverService.CreateDefaultService();
                 ffds.HideCommandPromptWindow = true;
                 driver = new FirefoxDriver(ffds, firefoxOptions);
