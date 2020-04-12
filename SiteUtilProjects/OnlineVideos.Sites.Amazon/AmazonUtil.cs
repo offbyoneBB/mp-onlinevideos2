@@ -64,7 +64,7 @@ namespace OnlineVideos.Sites.Amazon
                         new CategoryNode { Category = new Category { Name = "Series Watchlist", Other = "WS" }, Url = "https://www.amazon.de/gp/video/watchlist/tv/ref=dv_web_wtls_nr_bar_tv?show=24&sort=DATE_ADDED_DESC", UrlType = UrlType.SeriesCategory },
                         new CategoryNode { Category = new Category { Name = "Movies Watchlist", Other = "WM" }, Url = "https://www.amazon.de/gp/video/watchlist/movies/ref=dv_web_wtls_nr_bar_mov?show=24&sort=DATE_ADDED_DESC", UrlType = UrlType.Movies },
                     }},
-                new CategoryNode { Category = new Category {  Name = "Series", Other = "S" } ,
+                new CategoryNode { Category = new Category {  Name = "Series", Other = "S", Thumb = "https://images-eu.ssl-images-amazon.com/images/S/atv-aps-images/encoded/STAR_TREK_PICARD/de_DE/COVER_ART/VINEYARD._UR1920,1080_RI_SX512_FMjpg_.jpg" } ,
                     SubCategories = new List<CategoryNode> {
                         new CategoryNode { Category = new Category { Name = "Series Watchlist", Other = "SWS" }, Url = "https://www.amazon.de/gp/video/watchlist/tv/ref=dv_web_wtls_nr_bar_tv?show=24&sort=DATE_ADDED_DESC", UrlType = UrlType.SeriesCategory },
                         new CategoryNode { Category = new Category { Name = "Recently Added", Other = "SRA" }, Url = "https://www.amazon.de/s?i=prime-instant-video&bbn=3279204031&rh=n%3A3279204031%2Cn%3A3015916031%2Cp_n_ways_to_watch%3A7448695031&s=date-desc-rank&dc&_encoding=UTF8&qid=1586595330&rnid=7448692031&ref=sr_st_date-desc-rank", UrlType = UrlType.SearchResults },
@@ -72,7 +72,7 @@ namespace OnlineVideos.Sites.Amazon
                         new CategoryNode { Category = new Category { Name = "Less than 30 days available", Other = "SL" }, Url = "https://www.amazon.de/s/ref=sr_nr_n_1?rh=n%3A9798874031%2Cn%3A!3010076031%2Cn%3A3015916031&bbn=9798874031&ie=UTF8", UrlType = UrlType.SearchResults},
                         new CategoryNode { Category = new Category { Name = "4K UHD", Other = "S4" }, Url = "https://www.amazon.de/s?i=prime-instant-video&bbn=3279204031&rh=n%3A3279204031%2Cn%3A3015916031%2Cp_n_ways_to_watch%3A7448695031%2Cp_n_video_quality%3A16184010031&s=featured-rank&dc&_encoding=UTF8&qid=1586595380&rnid=3010076031&ref=sr_st_featured-rank", UrlType = UrlType.SearchResults},
                     } },
-                new CategoryNode { Category = new Category { Name = "Movies", Other = "M" } ,
+                new CategoryNode { Category = new Category { Name = "Movies", Other = "M", Thumb = "https://images-eu.ssl-images-amazon.com/images/S/sgp-catalog-images/region_DE/disney-196960-Full-Image_GalleryCover-de-DE-1585331856342._UY500_UX667_RI_VsH2HPvUQOsKgBGkxruR0RTFVRlzMl7_TTW_SX512_.jpg"} ,
                     SubCategories = new List<CategoryNode> {
                         new CategoryNode { Category = new Category { Name = "Movies Watchlist", Other = "MWM" }, Url = "https://www.amazon.de/gp/video/watchlist/movies/ref=dv_web_wtls_nr_bar_mov?show=24&sort=DATE_ADDED_DESC", UrlType = UrlType.SearchResults },
                         new CategoryNode { Category = new Category { Name = "Recently Added", Other = "MRA" }, Url = "https://www.amazon.de/s/ref=atv_sn_piv_cl1_mv_ra?_encoding=UTF8&rh=n%3A3010075031%2Cn%3A3356018031%2Cn%3A4190509031&sort=popularity-rank", UrlType = UrlType.SearchResults },
@@ -291,8 +291,8 @@ namespace OnlineVideos.Sites.Amazon
                     Profile = new FirefoxProfile(@"C:\Users\morpheus\AppData\Roaming\Mozilla\Firefox\Profiles\Amazon.Automation")
                 };
                 // For navigation we don't want the firefox window appearing
-                //if (!windowVisible)
-                //    firefoxOptions.AddArgument("-headless");
+                if (!windowVisible)
+                    firefoxOptions.AddArgument("-headless");
                 var ffds = FirefoxDriverService.CreateDefaultService();
                 ffds.HideCommandPromptWindow = true;
                 driver = new FirefoxDriver(ffds, firefoxOptions);
