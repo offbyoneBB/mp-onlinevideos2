@@ -92,6 +92,8 @@ namespace OnlineVideos.MediaPortal2
 
         public void Shutdown()
         {
+            // Forces unloading of AppDomain on exit. This is required i.e. for WebDriver player to stop external processes.
+            OnlineVideoSettings.Unload();
             _messageQueue.Shutdown();
         }
 

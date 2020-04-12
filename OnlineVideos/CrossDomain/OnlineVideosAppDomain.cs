@@ -98,7 +98,7 @@ namespace OnlineVideos.CrossDomain
             return instance; // return the instance
         }
 
-        internal static void Reload()
+        internal static void Unload()
         {
             List<object> singletonNames = AppDomain.CurrentDomain.GetData("Singletons") as List<object>;
             AppDomain.Unload(_domain);
@@ -107,6 +107,11 @@ namespace OnlineVideos.CrossDomain
             if (singletonNames != null)
                 foreach (var s in singletonNames)
                     s.GetType().InvokeMember("_Instance", BindingFlags.Static | BindingFlags.FlattenHierarchy | BindingFlags.NonPublic | BindingFlags.SetField, null, s, new object[] { null });
+        }
+
+        internal static void Reload()
+        {
+            Unload();
             Load();
         }
     }

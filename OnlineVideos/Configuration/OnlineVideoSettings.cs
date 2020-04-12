@@ -113,6 +113,13 @@ namespace OnlineVideos
         }
 
         /// <summary>
+        /// Unloads the OnlineVideos app domain and frees all resources.
+        /// </summary>
+        public static void Unload()
+        {
+            OnlineVideosAppDomain.Unload();
+        }
+        /// <summary>
         /// Drops the current single instance, creates a new Appdomain and copies all settings to a new instance in the new AppDomain.
         /// SiteUtil (and DLLs) are not loaded.
         /// </summary>
