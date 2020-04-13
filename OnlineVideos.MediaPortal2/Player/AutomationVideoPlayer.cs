@@ -10,14 +10,13 @@ using OnlineVideos.Helpers;
 using OnlineVideos.MediaPortal2.Interfaces.Metadata;
 using OnlineVideos.MediaPortal2.ResourceAccess;
 using OnlineVideos.Sites;
-using SharpDX;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Windows.Forms;
+using System.Drawing;
+using MediaPortal.Utilities.Screens;
 using OnlineVideos.Sites.Interfaces;
 using Keys = OpenQA.Selenium.Keys;
+using RectangleF = SharpDX.RectangleF;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -98,21 +97,33 @@ namespace OnlineVideos.MediaPortal2
         /// <returns></returns>
         public bool Play()
         {
+            SplashScreen loadingScreen = null;
             try
             {
+                var imageName = MediaPortal.Utilities.FileSystem.FileUtils.BuildAssemblyRelativePath("loading.gif");
+                loadingScreen = new SplashScreen
+                {
+                    SplashBackgroundImage = Image.FromFile(imageName),
+                    ScaleToFullscreen = true,
+                    FadeOutDuration = TimeSpan.FromMilliseconds(2000),
+                    UsePictureBox = true, 
+                    TopMost = true
+                };
+                loadingScreen.ShowSplashScreen();
                 _webDriverSite.StartPlayback(_fileOrUrl);
                 var proxy = new KeyProxy();
                 proxy.OnStop += delegate { Stop(); };
                 _webDriverSite.SetKeyHandler(proxy);
                 SuspendMP(true);
-
-                // Keep input handling in MP2
-                //((Form)ServiceRegistration.Get<IScreenControl>()).Activate();
             }
             catch (Exception e)
             {
                 SuspendMP(false);
                 return false;
+            }
+            finally
+            {
+                loadingScreen?.CloseSplashScreen();
             }
             return true;
         }

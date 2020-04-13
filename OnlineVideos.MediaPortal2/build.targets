@@ -12,6 +12,7 @@
       <PluginFiles Include="$(TargetDir)$(ProjectName).*" />
       <PluginFiles Include="$(TargetDir)plugin.xml" />
       <APIFiles Include="$(TargetDir)OnlineVideos.dll" />
+      <APIFiles Include="$(TargetDir)loading.gif" />
       <APIFiles Include="$(TargetDir)geckodriver.exe" />
       <APIFiles Include="$(TargetDir)webdriver.dll" />
       <APIFiles Include="$(TargetDir)OnlineVideos.MediaPortal2.Interfaces.dll" />

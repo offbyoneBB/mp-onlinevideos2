@@ -160,6 +160,9 @@
     <Content Include="Language\strings_sv.xml" />
     <Content Include="Language\strings_tr.xml" />
     <Content Include="Language\strings_zh.xml" />
+    <Content Include="loading.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="plugin.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
