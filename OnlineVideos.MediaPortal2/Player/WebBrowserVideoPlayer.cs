@@ -172,7 +172,7 @@ namespace OnlineVideos.MediaPortal2
 
         /// <summary>
         /// Play the specified file - file will actually be the video id from the website 
-        /// This method will hide MediaPortal and run the BrowserHost - BorwserHost needs to support the WebAutomationType and have the code to actually navigate to the site
+        /// This method will hide MediaPortal and run the BrowserHost - BrowserHost needs to support the WebAutomationType and have the code to actually navigate to the site
         /// </summary>
         /// <returns></returns>
         public bool Play()

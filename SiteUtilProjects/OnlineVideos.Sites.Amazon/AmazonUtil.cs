@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Policy;
+using System.Threading;
 using System.Threading.Tasks;
+using OnlineVideos.Helpers;
 using OnlineVideos.Sites.Interfaces;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
@@ -27,6 +31,9 @@ namespace OnlineVideos.Sites.Amazon
         /// </summary>
         private IWebElement _keyEventTarget;
         private Task _initTask;
+        private Task _keyHandlerTask;
+        private CancellationTokenSource _tokenSource;
+        private IWebDriverKeyHandler _keyHandler;
 
         #region Configuration
 
@@ -156,7 +163,7 @@ namespace OnlineVideos.Sites.Amazon
             {
                 foreach (CategoryNode categoryNode in node.SubCategories)
                 {
-                    categoryNode.Category.HasSubCategories = categoryNode.SubCategories?.Count > 0 || (!string.IsNullOrEmpty(categoryNode.Url)  && (categoryNode.UrlType == UrlType.SeriesCategory || categoryNode.UrlType == UrlType.Genres));
+                    categoryNode.Category.HasSubCategories = categoryNode.SubCategories?.Count > 0 || (!string.IsNullOrEmpty(categoryNode.Url) && (categoryNode.UrlType == UrlType.SeriesCategory || categoryNode.UrlType == UrlType.Genres));
                     categoryNode.Category.SubCategories = new List<Category>();
                     categoryNode.Category.ParentCategory = parentCategory;
                     categoriesToPopulate.Add(categoryNode.Category);
@@ -288,7 +295,8 @@ namespace OnlineVideos.Sites.Amazon
             {
                 var firefoxOptions = new FirefoxOptions
                 {
-                    Profile = new FirefoxProfile(@"C:\Users\morpheus\AppData\Roaming\Mozilla\Firefox\Profiles\Amazon.Automation")
+                    /* Note: IWebDriverSite is loaded in another AppDomain, but CodeBase points to original location  */
+                    Profile = new FirefoxProfile(Path.Combine(Path.GetDirectoryName(typeof(IWebDriverSite).Assembly.CodeBase.Replace("file:///", "")), @"Profiles\Firefox.Automation"))
                 };
                 // For navigation we don't want the firefox window appearing
                 if (!windowVisible)
@@ -346,11 +354,45 @@ namespace OnlineVideos.Sites.Amazon
             return true;
         }
 
+        private async Task ListenForKeysAsync(IWebDriver driver, CancellationToken token)
+        {
+            if (driver is IJavaScriptExecutor js)
+            {
+                var body = driver.FindElement(By.TagName("body"));
+                js.ExecuteScript(@"var b=arguments[0];b.keyQueue=[];b.addEventListener('keyup', function onkeyup(key) { b.keyQueue.push(key.key); } );", body);
+                bool doStop = false;
+                do
+                {
+                    var keyFromBrowser = js.ExecuteScript("return arguments[0].keyQueue.shift();", body) as string;
+                    await Task.Delay(50);
+                    token.ThrowIfCancellationRequested();
+                    if (_keyHandler != null && keyFromBrowser != null)
+                    {
+                        if (keyFromBrowser == "MediaPlayPause" || keyFromBrowser == "MediaPause" ||
+                            keyFromBrowser == "MediaPlay")
+                        {
+                            // Map to Space
+                            HandleAction(" ");
+                        }
+                        else
+                            doStop = _keyHandler.HandleKey(keyFromBrowser);
+                    }
+                } while (!doStop);
+            }
+        }
+
         public bool HandleAction(string keyOrAction)
         {
             Actions action = new Actions(_playbackDriver);
             action.SendKeys(_keyEventTarget, keyOrAction).Perform();
             return true;
+        }
+
+        public void SetKeyHandler(IWebDriverKeyHandler handler)
+        {
+            _keyHandler = handler;
+            _tokenSource = new CancellationTokenSource();
+            _keyHandlerTask = ListenForKeysAsync(_playbackDriver, _tokenSource.Token);
         }
 
         public bool Fullscreen()
@@ -368,6 +410,9 @@ namespace OnlineVideos.Sites.Amazon
 
         public bool ShutDown()
         {
+            _tokenSource?.Cancel();
+            _tokenSource = null;
+            _keyHandlerTask = null;
             _playbackDriver?.Quit();
             _playbackDriver?.Dispose();
             _playbackDriver = null;

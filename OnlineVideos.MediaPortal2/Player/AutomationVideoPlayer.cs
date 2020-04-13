@@ -13,6 +13,8 @@ using OnlineVideos.Sites;
 using SharpDX;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 using OnlineVideos.Sites.Interfaces;
 using Keys = OpenQA.Selenium.Keys;
@@ -84,8 +86,7 @@ namespace OnlineVideos.MediaPortal2
             }
             finally
             {
-                if (ra != null)
-                    ra.Dispose();
+                ra?.Dispose();
             }
             return false;
         }
@@ -100,11 +101,13 @@ namespace OnlineVideos.MediaPortal2
             try
             {
                 _webDriverSite.StartPlayback(_fileOrUrl);
-
+                var proxy = new KeyProxy();
+                proxy.OnStop += delegate { Stop(); };
+                _webDriverSite.SetKeyHandler(proxy);
                 SuspendMP(true);
 
                 // Keep input handling in MP2
-                ((Form)ServiceRegistration.Get<IScreenControl>()).Activate();
+                //((Form)ServiceRegistration.Get<IScreenControl>()).Activate();
             }
             catch (Exception e)
             {
@@ -244,14 +247,14 @@ namespace OnlineVideos.MediaPortal2
 
         private void Shutdown()
         {
+            if (_mpWindowHidden)
+                SuspendMP(false);
             // Clean up the service proxy
             try
             {
                 _webDriverSite?.ShutDown();
             }
             catch { }
-            if (_mpWindowHidden)
-                SuspendMP(false);
         }
 
         protected void Ended()
@@ -275,32 +278,27 @@ namespace OnlineVideos.MediaPortal2
 
         protected void FireStarted()
         {
-            if (_started != null)
-                _started(this);
+            _started?.Invoke(this);
         }
 
         protected void FireStateReady()
         {
-            if (_stateReady != null)
-                _stateReady(this);
+            _stateReady?.Invoke(this);
         }
 
         protected void FireStopped()
         {
-            if (_stopped != null)
-                _stopped(this);
+            _stopped?.Invoke(this);
         }
 
         protected void FireEnded()
         {
-            if (_ended != null)
-                _ended(this);
+            _ended?.Invoke(this);
         }
 
         protected void FirePlaybackStateChanged()
         {
-            if (_playbackStateChanged != null)
-                _playbackStateChanged(this);
+            _playbackStateChanged?.Invoke(this);
         }
 
         #endregion
@@ -336,6 +334,22 @@ namespace OnlineVideos.MediaPortal2
         }
 
         public RectangleF TargetBounds { get; set; }
+    }
+
+    public class KeyProxy : MarshalByRefObject, IWebDriverKeyHandler
+    {
+        public EventHandler OnStop;
+
+        public bool HandleKey(string key)
+        {
+            if (key == "MediaStop" || key == "Escape")
+            {
+                OnStop?.Invoke(this, EventArgs.Empty);
+                return true;
+            }
+
+            return false;
+        }
     }
 }
 

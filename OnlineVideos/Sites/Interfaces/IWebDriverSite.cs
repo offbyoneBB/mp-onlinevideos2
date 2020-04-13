@@ -1,6 +1,19 @@
 ﻿namespace OnlineVideos.Sites.Interfaces
 {
     /// <summary>
+    /// Callback delegate from WebDriver site to the instantiating player. When the passed <paramref name="key"/> was handled, it returns <c>true</c>.
+    /// For now we use it only to forward "stop" action, when it got handled the WebDriver get terminated.
+    /// </summary>
+    /// <param name="key">Key captured by WebDriver</param>
+    /// <returns><c>true</c> if handled</returns>
+    public delegate bool KeyEventDelegate(string key);
+
+    public interface IWebDriverKeyHandler
+    {
+        bool HandleKey(string key);
+    }
+
+    /// <summary>
     /// This interface is implemented by site utils that use the WebDriver interface to automate browsers for playback.
     /// </summary>
     public interface IWebDriverSite
@@ -18,6 +31,12 @@
         /// <param name="keyOrAction">Key</param>
         /// <returns><c>true</c> if successful</returns>
         bool HandleAction(string keyOrAction);
+
+        /// <summary>
+        /// Sets a key handler.
+        /// </summary>
+        /// <param name="handler"></param>
+        void SetKeyHandler(IWebDriverKeyHandler handler);
 
         /// <summary>
         /// Set playback window to fullscreen.
