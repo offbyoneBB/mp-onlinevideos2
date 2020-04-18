@@ -66,6 +66,9 @@
       <label>#percentage</label><!-- #TV.Record.percent1 -->
       <label1>#percentage</label1><!-- #TV.Record.percent2 -->
       <label2>#TV.Record.percent3</label2>
+      <markertexture>osd_progress_mid_red.png</markertexture>
+      <labelmarkerstarts>#OnlineVideos.bufferedenough</labelmarkerstarts>
+      <labelmarkerends>#(iif(eq(#OnlineVideos.bufferedenough,'0'),0,add(cint(#OnlineVideos.bufferedenough),0.5)))</labelmarkerends>
       <font>font13</font>
       <textcolor>FF000000</textcolor>
       <visible>control.isVisible(111)|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)</visible>

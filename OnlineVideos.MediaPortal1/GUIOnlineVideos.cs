@@ -164,6 +164,7 @@ namespace OnlineVideos.MediaPortal1
                 _bufferingPlayerFactory = value;
                 GUIPropertyManager.SetProperty("#OnlineVideos.buffered", "0");
                 GUIPropertyManager.SetProperty("#OnlineVideos.IsBuffering", (value != null).ToString());
+                GUIPropertyManager.SetProperty("#OnlineVideos.bufferedenough", "0");
             }
         }
         #endregion
@@ -2414,6 +2415,7 @@ namespace OnlineVideos.MediaPortal1
             else
             {
                 Log.Instance.Info("Preparing graph for playback of '{0}'", lsUrl);
+                GUIPropertyManager.SetProperty("#OnlineVideos.bufferedenough", "0");
                 bool? prepareResult = ((OnlineVideosPlayer)factory.PreparedPlayer).PrepareGraph();
                 switch (prepareResult)
                 {
