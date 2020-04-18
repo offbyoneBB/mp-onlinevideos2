@@ -417,7 +417,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
                                 if (skipBuffering) Log.Instance.Debug("Buffering skipped at {0}%", percentageBuffered);
                                 filterConnected = true;
-                                renderPinsThread = new Thread(delegate()
+                                renderPinsThread = new Thread(delegate ()
                                 {
                                     try
                                     {
@@ -439,7 +439,8 @@ namespace OnlineVideos.MediaPortal1.Player
                                         Log.Instance.Warn(ex.Message);
                                         StopBuffering();
                                     }
-                                }) { IsBackground = true, Name = "OVGraph" };
+                                })
+                                { IsBackground = true, Name = "OVGraph" };
                                 renderPinsThread.Start();
                             }
                         }
@@ -484,7 +485,7 @@ namespace OnlineVideos.MediaPortal1.Player
                                 //cacheFile = filterState.GetCacheFileName();
                                 if (skipBuffering) Log.Instance.Debug("Buffering skipped at {0}%", percentageBuffered);
                                 filterConnected = true;
-                                renderPinsThread = new Thread(delegate()
+                                renderPinsThread = new Thread(delegate ()
                                 {
                                     try
                                     {
@@ -506,7 +507,8 @@ namespace OnlineVideos.MediaPortal1.Player
                                         Log.Instance.Warn(ex.Message);
                                         StopBuffering();
                                     }
-                                }) { IsBackground = true, Name = "OVGraph" };
+                                })
+                                { IsBackground = true, Name = "OVGraph" };
                                 renderPinsThread.Start();
                             }
                             // log every percent
@@ -729,7 +731,7 @@ namespace OnlineVideos.MediaPortal1.Player
                     hr = mediaCtrl.Run();
                     DsError.ThrowExceptionForHR(hr);
                     if (hr == 1)
-                        // S_FALSE from IMediaControl::Run means: The graph is preparing to run, but some filters have not completed the transition to a running state.
+                    // S_FALSE from IMediaControl::Run means: The graph is preparing to run, but some filters have not completed the transition to a running state.
                     {
                         // wait max. 20 seconds for the graph to transition to the running state
                         DateTime startTime = DateTime.Now;
@@ -763,7 +765,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
             if (basicVideo != null)
             {
-              basicVideo.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
+                basicVideo.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
             }
 
             if (GoFullscreen) GUIWindowManager.ActivateWindow(GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
