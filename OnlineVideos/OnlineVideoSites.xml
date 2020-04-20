@@ -925,7 +925,6 @@
     <Site name="SBS.au" util="SBSau" agecheck="false" enabled="true" lang="en">
       <Description>SBS On Demand gives you free, unlimited access to programs, films and events – watch your favourite SBS shows when you want!</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[https://www.sbs.com.au/api/video_programs/all]]></item>
         <item key="searchUrl"><![CDATA[https://www.sbs.com.au/api/video_search/v2/?q=darkland&m=1&range=1-24]]></item>
       </Configuration>
     </Site>
