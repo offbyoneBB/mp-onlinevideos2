@@ -11,20 +11,26 @@ namespace OnlineVideos.Sites
         {
             int p = video.VideoUrl.LastIndexOf('.');
             string id = video.VideoUrl.Substring(p + 1);
-            var data = GetWebData(@"https://fmovies.to/ajax/film/servers/" + id);
-            var m = Regex.Match(data, @"<a\sclass=\\""active\\""\sdata-id=\\""(?<id>[^\\]*)\\""\shref=\\""[^""]*"">");
+            var data = GetWebData(@"https://mcloud2.to/key",referer: video.VideoUrl);
+            var m = Regex.Match(data, @"mcloudKey='(?<key>[^']*)'");
+            string mccloud = "";
+            if (m.Success)
+                mccloud = "&mcloud=" + m.Groups["key"].Value;
+            data = GetWebData(@"https://fmovies.to/ajax/film/servers/" + id);
+            m = Regex.Match(data, @"<a\sclass=\\""active\\""\sdata-id=\\""(?<id>[^\\]*)\\""\shref=\\""[^""]*"">");
             if (m.Success)
             {
+                var jUrl = "https://fmovies.to/ajax/episode/info?id=" + m.Groups["id"].Value + mccloud;
                 JObject jData;
                 try
                 {
-                    jData = GetWebData<JObject>("https://fmovies.to/ajax/episode/info?id=" + m.Groups["id"].Value);
+                    jData = GetWebData<JObject>(jUrl);
                 }
                 catch (Exception e)
                 {
                     //in case of a 503
                     System.Threading.Thread.Sleep(1000);
-                    jData = GetWebData<JObject>("https://fmovies.to/ajax/episode/info?id=" + m.Groups["id"].Value);
+                    jData = GetWebData<JObject>(jUrl);
                 }
                 string url = jData.Value<string>("target");
                 string data2 = GetWebData(url, referer: video.VideoUrl);
