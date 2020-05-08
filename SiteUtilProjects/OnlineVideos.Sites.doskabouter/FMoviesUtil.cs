@@ -9,18 +9,29 @@ namespace OnlineVideos.Sites
     {
         public override string GetVideoUrl(VideoInfo video)
         {
+            var data = GetWebData(video.VideoUrl);
+            Match m = Regex.Match(data, @"data-ts=""(?<ts>[^""]*)""");
+
             int p = video.VideoUrl.LastIndexOf('.');
             string id = video.VideoUrl.Substring(p + 1);
-            var data = GetWebData(@"https://mcloud2.to/key",referer: video.VideoUrl);
-            var m = Regex.Match(data, @"mcloudKey='(?<key>[^']*)'");
+            string ts = "";
+            if (m.Success)
+                ts = "&ts=" + m.Groups["ts"].Value;
+
+            data = GetWebData(@"https://mcloud2.to/key", referer: video.VideoUrl);
+            m = Regex.Match(data, @"mcloudKey='(?<key>[^']*)'");
             string mccloud = "";
             if (m.Success)
                 mccloud = "&mcloud=" + m.Groups["key"].Value;
-            data = GetWebData(@"https://fmovies.to/ajax/film/servers/" + id);
+            data = GetWebData(@"https://fmovies.to/ajax/film/servers?id=" + id + "&_=839" + ts);
             m = Regex.Match(data, @"<a\sclass=\\""active\\""\sdata-id=\\""(?<id>[^\\]*)\\""\shref=\\""[^""]*"">");
             if (m.Success)
             {
-                var jUrl = "https://fmovies.to/ajax/episode/info?id=" + m.Groups["id"].Value + mccloud;
+                var m3 = Regex.Match(data, @"div\sclass=\\""server\srow\\""\sdata-type=\\""iframe\\""\sdata-id=\\""(?<server>[^\\]*)\\""");
+                string server = "";
+                if (m3.Success)
+                    server = @"&server=" + m3.Groups["server"].Value;
+                var jUrl = "https://fmovies.to/ajax/episode/info?id=" + m.Groups["id"].Value + server + mccloud + "&_=935" + ts;
                 JObject jData;
                 try
                 {
