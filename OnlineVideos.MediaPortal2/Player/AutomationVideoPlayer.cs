@@ -13,6 +13,8 @@ using OnlineVideos.Sites;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
+using MediaPortal.Common.Logging;
 using MediaPortal.Utilities.Screens;
 using OnlineVideos.Sites.Interfaces;
 using Keys = OpenQA.Selenium.Keys;
@@ -106,14 +108,21 @@ namespace OnlineVideos.MediaPortal2
                     SplashBackgroundImage = Image.FromFile(imageName),
                     ScaleToFullscreen = true,
                     FadeOutDuration = TimeSpan.FromMilliseconds(2000),
-                    UsePictureBox = true, 
+                    UsePictureBox = true,
                     TopMost = true
                 };
+                // Fullscreen splash
                 loadingScreen.ShowSplashScreen();
+
+                // Start playback by launching external browser
                 _webDriverSite.StartPlayback(_fileOrUrl);
+
+                // The proxy object allows us to forward key presses over AppDomain boundaries
                 var proxy = new KeyProxy();
                 proxy.OnStop += delegate { Stop(); };
                 _webDriverSite.SetKeyHandler(proxy);
+
+                // Minimize MP2 window
                 SuspendMP(true);
             }
             catch (Exception e)
@@ -133,10 +142,12 @@ namespace OnlineVideos.MediaPortal2
             //{ Key.Play, Keys. },
             { Key.PlayPause, Keys.Pause },
             { Key.Pause, Keys.Pause },
-            //{ Key.Stop, OnlineVideos.Constants.ACTION_STOP },
+            { Key.Stop, OnlineVideos.Constants.ACTION_STOP },
             { Key.Info, Keys.Command },
-            { Key.Left, Keys.Left },
-            { Key.Right, Keys.Return },
+            { Key.Left, Keys.ArrowLeft },
+            { Key.Right, Keys.ArrowRight},
+            { Key.Up, Keys.ArrowUp },
+            { Key.Down, Keys.ArrowDown },
             //{ Key.Previous, Keys.Backspace },
             //{ Key.Next, Keys. },
             { Key.Ok, OnlineVideos.Constants.ACTION_WINDOWED },
@@ -177,7 +188,7 @@ namespace OnlineVideos.MediaPortal2
             }
             if (action == OnlineVideos.Constants.ACTION_STOP)
             {
-                Shutdown();
+                Stop();
             }
         }
 
@@ -187,6 +198,8 @@ namespace OnlineVideos.MediaPortal2
         /// <param name="suspend"></param>
         void SuspendMP(bool suspend)
         {
+            ServiceRegistration.Get<ILogger>().Debug("AutomationVideoPlayer: SuspendMP: {0}", suspend);
+
             if (suspend && _mpWindowHidden) return; // Should already be suspended
             if (!suspend && !_mpWindowHidden) return; // Should already be visible
 
@@ -196,6 +209,16 @@ namespace OnlineVideos.MediaPortal2
 
                 // Minimise MePo to tray - this is preferable 
                 ToggleMinimise(true);
+
+                ServiceRegistration.Get<ILogger>().Debug("AutomationVideoPlayer: Minimized");
+
+                // Although minimized, we want to keep MP2 to react on key presses.
+                Form mainForm = ServiceRegistration.Get<IScreenControl>() as Form;
+                if (mainForm != null)
+                {
+                    mainForm?.Activate();
+                    ServiceRegistration.Get<ILogger>().Debug("AutomationVideoPlayer: Activated");
+                }
 
                 _mpWindowHidden = true;
             }
@@ -232,6 +255,7 @@ namespace OnlineVideos.MediaPortal2
         /// <param name="key"></param>
         private void InstanceOnKeyPressed(ref Key key)
         {
+            ServiceRegistration.Get<ILogger>().Debug("AutomationVideoPlayer: KeyPressed: '{0}'", key);
             string action;
             if (KEY_MAPPINGS.TryGetValue(key, out action) || IsPassThrough(key, out action))
             {

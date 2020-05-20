@@ -368,6 +368,7 @@ namespace OnlineVideos.Sites.Amazon
                     token.ThrowIfCancellationRequested();
                     if (_keyHandler != null && keyFromBrowser != null)
                     {
+                        Log.Debug("WebDriver: Received key: {0}", keyFromBrowser);
                         if (keyFromBrowser == "MediaPlayPause" || keyFromBrowser == "MediaPause" ||
                             keyFromBrowser == "MediaPlay")
                         {
