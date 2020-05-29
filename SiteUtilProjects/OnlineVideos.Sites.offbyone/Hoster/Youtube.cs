@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
+using OnlineVideos.Helpers;
 using OnlineVideos.Hoster;
 using OnlineVideos.JavaScript;
 using System.Text;
@@ -281,23 +282,39 @@ namespace OnlineVideos.Hoster
         private void parsePlayerStatus(JToken player_response, List<KeyValuePair<string[], string[]>> qualities)
         {
             var formats = player_response["streamingData"]["formats"] as JArray;
-            foreach (var format in formats)
+            if (formats == null)
             {
-                string[] qualityKey = { format.Value<String>("itag"), format.Value<String>("width") + 'x' + format.Value<String>("height") };
-                var qualityValue = format.Value<String>("url");
-                if (String.IsNullOrEmpty(qualityValue))
+                string hlsUrl = player_response["streamingData"].Value<String>("hlsManifestUrl");
+                if (!String.IsNullOrEmpty(hlsUrl))
                 {
-                    NameValueCollection cipherItems = HttpUtility.ParseQueryString(System.Web.HttpUtility.HtmlDecode(format.Value<String>("cipher")));
-                    qualityValue = cipherItems.Get("url");
-                    string[] tmp = { qualityValue, cipherItems.Get("s") };
-                    qualities.Add(new KeyValuePair<string[], string[]>(qualityKey, tmp));
-                }
-                else
-                {
-                    string[] tmp = { qualityValue };
-                    qualities.Add(new KeyValuePair<string[], string[]>(qualityKey, tmp));
+                    var data = GetWebData(hlsUrl);
+                    var res = HlsPlaylistParser.GetPlaybackOptions(data, hlsUrl, (x, y) => x.Bandwidth.CompareTo(y.Bandwidth), (x) => x.Width + "x" + x.Height);
+                    foreach (var kv in res)
+                    {
+                        string[] tmp = { kv.Value };
+                        string[] qualityKey = { "0", kv.Key };
+                        qualities.Add(new KeyValuePair<string[], string[]>(qualityKey, tmp));
+                    }
                 }
             }
+            else
+                foreach (var format in formats)
+                {
+                    string[] qualityKey = { format.Value<String>("itag"), format.Value<String>("width") + 'x' + format.Value<String>("height") };
+                    var qualityValue = format.Value<String>("url");
+                    if (String.IsNullOrEmpty(qualityValue))
+                    {
+                        NameValueCollection cipherItems = HttpUtility.ParseQueryString(System.Web.HttpUtility.HtmlDecode(format.Value<String>("cipher")));
+                        qualityValue = cipherItems.Get("url");
+                        string[] tmp = { qualityValue, cipherItems.Get("s") };
+                        qualities.Add(new KeyValuePair<string[], string[]>(qualityKey, tmp));
+                    }
+                    else
+                    {
+                        string[] tmp = { qualityValue };
+                        qualities.Add(new KeyValuePair<string[], string[]>(qualityKey, tmp));
+                    }
+                }
         }
 
         public override string GetVideoUrl(string url)
