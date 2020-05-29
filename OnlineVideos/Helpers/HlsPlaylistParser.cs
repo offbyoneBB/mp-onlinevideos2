@@ -125,7 +125,7 @@ namespace OnlineVideos.Helpers
                     if (!Uri.TryCreate(line, UriKind.RelativeOrAbsolute, out streamUrl) || !streamUrl.IsAbsoluteUri)
                         streamUrl = new Uri(baseUrl, line);
                     Log.Debug("HlsPlaylistParser: Found stream info: Bandwidth '{0}', Resolution '{1}x{2}', Url '{3}'", bandwidth, width, height, streamUrl);
-                    streamInfos.Add(new HlsStreamInfo(bandwidth, width, height, framerate, streamUrl.ToString()));
+                    streamInfos.Add(new HlsStreamInfo(bandwidth, width, height, framerate, streamUrl.AbsoluteUri));
                     bandwidth = 0;
                     width = 0;
                     height = 0;
