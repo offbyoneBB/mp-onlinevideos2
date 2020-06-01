@@ -231,7 +231,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         private string GetPathData(string postData, bool useCallMethod = false)
         {
-            return MyGetWebData(ShaktiApi + BuildId + "pathEvaluator" + "?withSize=true&materialize=true&model=harris&" + (useCallMethod ? "method=call" : "esn=www"), postData: postData, contentType: "application/json");
+            return MyGetWebData(ShaktiApi + BuildId + "pathEvaluator" + "?withSize=true&materialize=true&model=harris&" + (useCallMethod ? "method=call" : "esn=www"), postData: postData, contentType: "application/x-www-form-urlencoded");
         }
 
         #endregion

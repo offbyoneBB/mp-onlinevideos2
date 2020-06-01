@@ -286,6 +286,8 @@ namespace OnlineVideos.Sites
                 }
 
             }
+            if (videos.Count == 0 && HasNextPage)
+                return GetNextPageVideos();
             return videos;
         }
 
@@ -410,19 +412,6 @@ namespace OnlineVideos.Sites
         protected override CookieContainer GetCookie()
         {
             return cc;
-        }
-
-        public override string ResolveVideoUrl(string url)
-        {
-            //http://onwatchseries.to/cale.html?r=aHR0cDovL2dvcmlsbGF2aWQuaW4vN2MzcGlzZmIybWgx
-            int p = url.IndexOf("?r=");
-            if (p >= 0)
-            {
-                string hoster = Encoding.ASCII.GetString(Convert.FromBase64String(url.Substring(p + 3)));
-                return GetVideoUrl(hoster);
-            }
-            else
-                return String.Empty;
         }
 
     }

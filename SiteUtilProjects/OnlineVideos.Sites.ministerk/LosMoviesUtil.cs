@@ -39,7 +39,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), Description("Select subtitle language preferences (; separated and ISO 639-2), for example: eng;ger")]
         protected string subtitleLanguages = "";
 
-        private const string baseUrl = @"http://losmovies.pro";
+        private const string baseUrl = @"http://losmovies.fun";
         private string nextPageUrl = "";
         private string currentCategoryThumb = "";
 
@@ -393,7 +393,7 @@ namespace OnlineVideos.Sites
         public override string GetVideoUrl(VideoInfo video)
         {
             string data = GetWebData(video.VideoUrl);
-            Match m2 = Regex.Match(data, "<script>(?<script>.*?)</script>", RegexOptions.Singleline);
+            Match m2 = Regex.Match(data, "<script>(?<script>\\s*func.*?)</script>", RegexOptions.Singleline);
             ScriptEngine engine = new ScriptEngine();
 
             engine.Global["window"] = engine.Global;

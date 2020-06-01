@@ -173,5 +173,43 @@ namespace OnlineVideos.Hoster
             }
             return String.Empty;
         }
+
+        internal static void TestForError(Match m, string url = "")
+        {
+            if (String.IsNullOrEmpty(url) && m.Success)
+                throw new OnlineVideosException(m.Groups["message"].Value);
+        }
+
+    }
+
+    public class CertificateIgnorer : IDisposable
+    {
+        private System.Net.Security.RemoteCertificateValidationCallback oldCallback = null;
+        private bool disposed = false;
+
+        public CertificateIgnorer()
+        {
+            oldCallback = ServicePointManager.ServerCertificateValidationCallback;
+            ServicePointManager.ServerCertificateValidationCallback = delegate (
+                Object obj, System.Security.Cryptography.X509Certificates.X509Certificate certificate, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors errors)
+                {
+                    return (true);
+                };
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                    ServicePointManager.ServerCertificateValidationCallback = oldCallback;
+            }
+        }
     }
 }

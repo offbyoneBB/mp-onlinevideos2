@@ -383,16 +383,16 @@
       <Description>Ideas Worth Spreading. Talks from renowned speakers around the world.</Description>
       <Configuration>
         <item key="dynamicCategoriesRegEx"><![CDATA[(?<=name="sort".*)<option\svalue="(?<url>[^"]*)">(?<title>[^<]*)</option>]]></item>
-        <item key="dynamicCategoryUrlFormatString"><![CDATA[http://www.ted.com/talks?sort={0}]]></item>
+        <item key="dynamicCategoryUrlFormatString"><![CDATA[https://www.ted.com/talks?sort={0}]]></item>
         <item key="dynamicSubCategoriesRegEx"><![CDATA[{"value":"(?<url>[^"]*)","label":"(?<title>[^"]*)"}]]></item>
-        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://www.ted.com/talks?topics[]={0}&sort=newest]]></item>
-        <item key="videoListRegEx"><![CDATA[(?#normal)(<img\salt=""\sclass="\sthumb__image"\splay="(?<id>[^"]*)"\ssrc="(?<ImageUrl>[^"]*)"\scrop="top"\s/><span\sclass="thumb__aligner"></span></span></span><span\sclass="thumb__duration">(?<Duration>[^<]*)</span></span>\s*</a>\s*</div>\s*<div\sclass='media__message'>\s*<h4\sclass='h12\stalk-link__speaker'>(?<speaker>[^<]*)</h4>\s*<h4\sclass='h9\sm5'>\s*<a\sclass='\sga-link'\sdata-ga-context='talks'\shref='(?<VideoUrl>[^>]*)>(?<Title>[^<]*)</a>\s*</h4>\s*<div\sclass='meta'>\s*<span\sclass='meta__item'>\s*Posted\s*<span\sclass='meta__val'>(?<Airdate>[^<]*)</span>)|
+        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[https://www.ted.com/talks?topics[]={0}&sort=newest]]></item>
+        <item key="videoListRegEx"><![CDATA[(?#normal)(<img\salt=""\sclass="\sthumb__image"\splay="(?<id>[^"]*)"\ssrc="(?<ImageUrl>[^"]*)"\scrop="top"\s/><span\sclass="thumb__aligner"></span></span></span><span\sclass="thumb__duration">(?<Duration>[^<]*)</span></span>\s*</a>\s*</div>\s*<div\sclass='media__message'>\s*<h4\sclass='h12\stalk-link__speaker'>(?<speaker>[^<]*)</h4>\s*<h4\sclass='[^']*'>\s*<a\sclass='\sga-link'\sdata-ga-context='talks'\shref='(?<VideoUrl>[^']*)'>(?<Title>[^<]*)</a>\s*</h4>\s*<div\sclass='meta'>\s*<span\sclass='meta__item'>\s*Posted\s*<span\sclass='meta__val'>(?<Airdate>[^<]*)</span>)|
         (?#search)(<a\sclass="ga-link"\sdata-ga-context="search"\shref="[^"]*">(?<Title>[^<]*)</a>\s*<!--[^>]*>\s*</h3>\s*<div\sclass='media\smedia--oh-v\smedia--lg-h'>\s*<div\sclass='media__image\smedia__image--thumb\ssearch__result__image--video'>\s*<a\sclass="ga-link"\sdata-ga-context="search"\shref="(?<VideoUrl>[^"]*)"><span\sclass="thumb\sthumb--video"><span\sclass="thumb__sizer"><span\sclass="thumb__tugger"><img\salt=""\sclass="\sthumb__image"\splay="false"\ssrc="(?<ImageUrl>[^"]*)"\s/><span\sclass="thumb__aligner"></span></span></span></span></a>\s*</div>\s*<div\sclass='media__message'>\s*<div\sclass='search__result__description\sm4'>(?<Description>[^<]*)</div>)]]></item>
         <item key="nextPageRegEx"><![CDATA[rel="next"\shref="(?<url>[^"]*)">Next</a>]]></item>
         <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
-        <item key="baseUrl"><![CDATA[http://www.ted.com/talks/browse]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<script>q\("talkPage.init",(?<json>.*?)\)</script>]]></item>
-        <item key="searchUrl"><![CDATA[https://www.ted.com/search?q={0}]]></item>      
+        <item key="baseUrl"><![CDATA[https://www.ted.com/talks/browse]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<script[^>]*>q\("talkPage.init",(?<json>.*?)\)</script>]]></item>
+        <item key="searchUrl"><![CDATA[https://www.ted.com/search?q={0}]]></item>
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" name="Topics">http://www.ted.com/topics/combo?models=Talks</Category>
@@ -761,7 +761,8 @@
     <Site name="ArrowTV" util="ArrowTV" agecheck="false" enabled="true" lang="nl">
       <Description>ARROW.TV Rock | 24/7 jouw favoriete Rockvideo's! Curated, all devices, full screen.</Description>
       <Categories>
-        <Category xsi:type="RssLink" name="Rock"/>
+        <Category xsi:type="RssLink" name="Rock">https://arrow.tv/rock</Category>
+        <Category xsi:type="RssLink" name="Metal">https://arrow.tv/metal</Category>
       </Categories>
     </Site>
     <Site name="CBC.ca" util="CBC" agecheck="false" enabled="true" lang="en">
@@ -832,16 +833,6 @@
         </Category>
       </Categories>
     </Site>
-    <Site name="TVNZOnDemand" util="TVNZOnDemand" agecheck="false" enabled="true" lang="en" player="Internal">
-      <Description>Television New Zealand: TV One, TV2, TVNZ 6, TVNZ 7</Description>
-      <Configuration>
-        <item key="fileUrlRegEx"><![CDATA[<object\sid="[^"]*"\sclass="BrightcoveExperience\s">\s*<param[^>]*>\s*<param[^>]*>\s*<param[^>]*>\s*<param[^>]*>\s*<param\svalue="(?<experienceId>[^"]*)"\sname="playerID"\s/>\s*<param[^>]*>\s*<param[^>]*>\s*<param[^>]*>\s*<param[^>]*>\s*<param[^>]*>\s*<param[^>]*>\s*<param\svalue="ref:(?<contentRefId>[^"]*)"\sname="@videoPlayer"\s/>\s*<param[^>]*>\s*<param[^>]*>\s*</object>]]></item>
-        <item key="hashValue"><![CDATA[f86d6617a68b38ee0f400e1f4dc603d6e3b4e4ed]]></item>
-        <item key="playerId"><![CDATA[1029272630001]]></item>
-        <item key="requestUrl"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerId=1029272630001]]></item>
-        <item key="baseUrl"><![CDATA[http://tvnz.co.nz]]></item>
-      </Configuration>
-    </Site>
     <Site name="Khan Academy" util="KhanAcademy" agecheck="false" enabled="true" lang="en">
       <Description>Khan Academy is on a mission to provide a free world-class education to anyone anywhere. With over 2,600 videos covering everything from arithmetic to physics, finance, and history and 200 practice exercises, we're helping students learn whatever they want, whenever they want, at their own pace.</Description>
       <Configuration>
@@ -885,64 +876,20 @@
         <Category xsi:type="RssLink" name="Joezny" thumb="http://www.luckymedia.nl/luckytv/wp-content/themes/luckytv/timthumb.php?src=http://www.luckymedia.nl/luckytv/wp-content/uploads/joezjny.jpg&amp;w=400&amp;h=226&amp;zc=1&amp;q=90">http://www.luckymedia.nl/luckytv/category/joezjny/</Category>
       </Categories>
     </Site>
-    <Site name="Nos" util="GenericSite" agecheck="false" enabled="true" lang="nl">
-      <Description>Nieuws, Sport en Evenementen op Radio, TV en Internet</Description>
+    <Site name="NPOStart" util="NPOStart" agecheck="false" enabled="true" lang="nl" player="Browser">
+      <Description>Het beste van NPO vind je op NPO Start</Description>
       <Configuration>
-        <item key="videoListRegEx"><![CDATA[(<li\sclass="list-featured__item\s"[^>]*><a\shref="(?<VideoUrl>[^"]*)"\s*class="link-block[^>]*><figure\sclass="list-featured__img"><img\s*src="(?<ImageUrl>[^"]*)"\s*alt=""\s*class="media-full"\s*/><span\sclass="img-icon-play\sbadge--larger\spos-bl\sshow-from--tablet-small"></span></figure><div\sclass="list-featured__wrap"><span\sclass="list-featured__title\slink-hover">(?<Title>[^<]*)</span><div\sclass="list-featured__meta\smeta"><span\sclass="icon-time\sico-space-right"></span><time\sdatetime="[^"]*">(?<Airdate>[^<]*)</time></div></div></a></li>)(?#videos nieuws_sport)|(<li\sclass="broadcast-player__playlist__item"><a\shref="(?<VideoUrl>[^"]*)"\sclass="link-hover\sbroadcast-link\s*"\s*><span\sclass="broadcast-link__play\simg-icon-play"></span><span\sclass="broadcast-link__name\s">(?<Title>[^<]*)</span><time\sclass="broadcast-link__date"\sdatetime="(?<Airdate>[^"]*)"><span\sclass="broadcast-link__icon\sicon-time\sico-space-right"></span>(?<Time>[^<]*)</time></a></li>)(?#videos uitzendingen)]]></item>
-        <item key="fileUrlRegEx"><![CDATA[<source\ssrc="(?<m0>[^"]*)"\stype="[^"]*"\sdata-label="(?<n0>[^"]*)"\s*/>]]></item>
-        <item key="baseUrl"><![CDATA[http://nos.nl]]></item>
+        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li><a\sclass="close-dropdown"\s*title="[^"]*"\s*data-value="(?<url>[^"]+)"\s*data-title-tracking="[^"]*"\s*data-display="[^"]*"\s*data-argument="az"\s*data-target="">(?<title>[^<]*)</a>\s*</li>]]></item>
+        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[https://www.npostart.nl/media/series?page=1&az={0}&tileMapping=normal&tileType=teaser&pageType=catalogue]]></item>
+        <item key="seriesRegEx"><![CDATA[<div\sclass="npo-ankeiler-tile-container\snpo-ankeiler-tile-weblink\snpo-tile"\sdata-id="(?<dataid>[^"]*)">\s*<a\shref="(?<url>[^"]*)"\stitle="[^"]*"\sclass="npo-ankeiler-tile"\s*data-ts-click\sdata-ts-name="[^"]*"\s*data-ts-type="navigation"\sdata-ts-niveau1="programmas"\s*data-ts-destination="(?<datadest>[^"]*)"\s*>\s*<div\sclass="npo-ankeiler-tile-image">\s*<img\ssrc="[^"]*"\salt="[^"]*"\sdata-src="(?<thumb>[^"]*)"\sclass="js-lazy-image">\s*<h2>(?<title>[^<]*)</h2>\s*</div>\s*</a>\s*</div>]]></item>
+        <item key="videoListRegEx"><![CDATA[
+(?#live)(<a\shref="(?<VideoUrl>[^"]*)"\sclass="npo-tile-link"\sdata-radio=""\sdata-mediatarget=""\s*data-ts-click\sdata-ts-name="(?<Title>[^"]*)"\s*data-ts-type="navigation"\sdata-ts-niveau1="live"\s*data-ts-niveau2="tv"\sdata-ts-niveau3=""\s*data-ts-offer\s*data-ts-editorial="live-tv"\s*data-ts-destination="[^"]*">\s*<div\sclass="npo-asset-tile\s">\s*<div\sclass="npo-asset-tile-image">\s*<img[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-play"></div>\s*<div\sclass="npo-asset-info">\s*<div[^>]*></div>\s*<h2>(?<Description>[^<]*)</h2>)
+|(?#programmas)((?<!Laatste\safleveringen.*)<div\sclass="npo-asset-tile-container\snpo-tile\s*"\sdata-id="(?<dataid>[^"]*)">\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*>\s*<div\sclass="npo-asset-tile\s">\s*<div\sclass="npo-asset-tile-availability"\s*data-from="[^"]*"\s*data-to="[^"]*"\s*data-prediction="[^"]*"\s*data-premium-from="[^"]*"\s*data-premium-to="[^"]*"\s*data-premium-prediction="[^"]*">\s*</div>\s*<div\sclass="npo-asset-tile-timer">(?<Duration>[^<]*)</div>\s*<div\sclass="npo-asset-tile-timer\s_short-timer">[^<]*</div>\s*<div\sclass="npo-asset-tile-image">\s*<img\sdata-src="(?<ImageUrl>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-new">nieuw</div>\s*<div\sclass="npo-asset-tile-play\s"></div>\s*<div\sclass="npo-asset-tile-watched">bekeken</div>\s*<div\sclass="npo-asset-tile-progress">\s*<div\sclass="npo-asset-tile-progress-bar"\sstyle="width:\s0%"></div>\s*</div>\s*</div>\s*<div\sclass="npo-asset-tile-title">\s*<h2>(?<Title>[^<]*)</h2>\s*<p>(?<Description>[^-]*)-(?<Airdate>[^<]*)<)]]></item>
+        <item key="baseUrl"><![CDATA[https://www.npostart.nl/]]></item>
       </Configuration>
       <Categories>
-        <Category xsi:type="RssLink" thumb="" desc="" name="Nieuws">
-          <SubCategories>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Binnenland">http://nos.nl/nieuws/binnenland/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Buitenland">http://nos.nl/nieuws/buitenland/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Regio">http://nos.nl/nieuws/regio/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Politiek">http://nos.nl/nieuws/politiek/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Economie">http://nos.nl/nieuws/economie/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Koningshuis">http://nos.nl/nieuws/koningshuis/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Tech">http://nos.nl/nieuws/tech/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Cultuur &amp; Media">http://nos.nl/nieuws/cultuur-en-media/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Opmerkelijk">http://nos.nl/nieuws/opmerkelijk/videos/</Category>
-          </SubCategories>
-        </Category>
-        <Category xsi:type="RssLink" thumb="" desc="" name="Sport">
-          <SubCategories>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Voetbal">http://nos.nl/sport/voetbal/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Wielrennen">http://nos.nl/sport/wielrennen/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Schaatsen">http://nos.nl/sport/schaatsen/videos/</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Tennis">http://nos.nl/sport/tennis/videos/</Category>
-          </SubCategories>
-        </Category>
-        <Category xsi:type="RssLink" thumb="" desc="" name="Uitzendingen">
-          <SubCategories>
-            <Category xsi:type="RssLink" thumb="" desc="" name="NOS Journaal">http://nos.nl/uitzending/nos-journaal</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="Nieuwsuur">http://nos.nl/uitzending/nieuwsuur</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="NOS Jeugdjournaal">http://nos.nl/uitzending/nos-jeugdjournaal</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="NOS Sportjournaal">http://nos.nl/uitzending/nos-sportjournaal</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="NOS Studio Sport">http://nos.nl/uitzending/nos-studio-sport</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="NOS Studio Sport Eredivisie">http://nos.nl/uitzending/nos-studio-sport-eredivisie</Category>
-            <Category xsi:type="RssLink" thumb="" desc="" name="NOS Studio Voetbal">http://nos.nl/uitzending/nos-studio-voetbal</Category>
-          </SubCategories>
-        </Category>
-      </Categories>
-    </Site>
-    <Site name="NPO Livestreams" util="NPOLive" agecheck="false" enabled="true" lang="nl">
-      <Description>Livestreams van de NPO</Description>
-      <Categories>
-        <Category xsi:type="Group" name="Live">
-          <Channels>
-            <Channel name="Nederland 1" thumb="http://www-assets.npo.nl/uploads/tv_channel/263/logo/regular_logo-npo1.png">http://ida.omroep.nl/app.php/LI_NL1_4188102?adaptive=yes&amp;token=</Channel>
-            <Channel name="Nederland 2" thumb="http://www-assets.npo.nl/uploads/tv_channel/264/logo/regular_logo-npo2.png">http://ida.omroep.nl/app.php/LI_NL2_4188105?adaptive=yes&amp;token=</Channel>
-            <Channel name="Nederland 3" thumb="http://www-assets.npo.nl/uploads/tv_channel/265/logo/regular_npo3-logo.png">http://ida.omroep.nl/app.php/LI_NL3_4188107?adaptive=yes&amp;token=</Channel>
-            <Channel name="Zappelin" thumb="http://www-assets.npo.nl/assets/logos/logo-npozappelin-regular-5af1c056c6465d1152b49582eafdc7340232b9af629437d43d55478405228efe.png">http://ida.omroep.nl/app.php/LI_NEDERLAND3_221687?adaptive=yes&amp;token=</Channel>
-            <Channel name="NPO Nieuws" thumb="http://www-assets.npo.nl/uploads/tv_channel/279/logo/regular_logonieuws.png">http://ida.omroep.nl/app.php/LI_NEDERLAND1_221673?adaptive=yes&amp;token=</Channel>
-            <Channel name="NPO Cultura" thumb="http://www-assets.npo.nl/uploads/tv_channel/280/logo/regular_logocultura.png">http://ida.omroep.nl/app.php/LI_NEDERLAND2_221679?adaptive=yes&amp;token=</Channel>
-            <Channel name="NPO 101" thumb="http://www-assets.npo.nl/uploads/tv_channel/281/logo/regular_logo-101.png">http://ida.omroep.nl/app.php/LI_NEDERLAND3_221683?adaptive=yes&amp;token=</Channel>
-            <Channel name="NPO Politiek" thumb="http://www-assets.npo.nl/uploads/tv_channel/282/logo/regular_logopolitiek.png">http://ida.omroep.nl/app.php/LI_NEDERLAND1_221675?adaptive=yes&amp;token=</Channel>
-            <Channel name="NPO Zapp Xtra" thumb="http://www-assets.npo.nl/uploads/tv_channel/288/logo/regular_logozappxtra.png">http://ida.omroep.nl/app.php/LI_NEDERLAND3_221687?adaptive=yes&amp;token=</Channel>
-          </Channels>
-        </Category>
+        <Category xsi:type="RssLink" name="Live">https://www.npostart.nl/live</Category>
+        <Category xsi:type="RssLink" name="Programmas">https://www.npostart.nl/programmas</Category>
       </Categories>
     </Site>
     <Site name="Power Unlimited" util="PowerUnlimited" agecheck="false" enabled="true" lang="nl">
@@ -958,19 +905,6 @@
         <Category xsi:type="RssLink" name="PU-TV" thumb="" desc="">http://www.pu.nl/media/pu-tv/</Category>
         <Category xsi:type="RssLink" name="Trailers" thumb="" desc="">http://www.pu.nl/media/trailer/</Category>
       </Categories>
-    </Site>
-    <Site name="Red Bull TV" util="RedBull" agecheck="false" enabled="true" lang="en">
-      <Description>Red Bull TV - Watch sports, music and entertainment TV online. Free.</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.redbull.tv/]]></item>
-        <item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass='navigation__item'>\s*<img\sclass="channel-image"\salt="[^"]*"\ssrc="(?<thumb>[^"]*)"\s/>\s*<a\sclass="[^"]*"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li\sclass='navigation__sub-item\sswiper-slide'>\s*<a\sclass="[^"]*"\shref="(?<url>[^"]*)">(?<title>[^<]*)</a>\s*</li>]]></item>
-        <item key="fileUrlRegEx"><![CDATA[videoPlayer=(?<contentRefId>[^"]*)"]]></item>
-        <item key="hashValue"><![CDATA[63cfaa5119fd8e383eadf26f1118f24d87251f76]]></item>
-        <item key="requestType"><![CDATA[ViewerExperienceRequest]]></item>
-        <item key="playerKey"><![CDATA[AQ~~,AAACZYoJeMk~,6-AuiH-yar7vhFK8T1lKHxOJlJLkWYk4]]></item>
-        <item key="requestUrl"><![CDATA[http://c.brightcove.com/services/messagebroker/amf?playerKey=AQ~~,AAACZYoJeMk~,6-AuiH-yar7vhFK8T1lKHxOJlJLkWYk4]]></item>
-      </Configuration>
     </Site>
     <Site name="Ruutu.fi" util="Ruutu" agecheck="false" enabled="true" lang="fi">
       <Description>Ruutu - Nelonen, Liv, Jim ja Nelonen Pro. Viihdettä, draamaa, uutisia, urheilua ja lastenohjelmia - katso missä haluat ja milloin haluat.</Description>
@@ -988,27 +922,10 @@
         <Category xsi:type="RssLink" name="Kaikki ohjelmat">https://www.ruutu.fi/ohjelmat/kaikki</Category>
       </Categories>
     </Site>
-    <Site name="TV3NZ" util="TV3NZOnDemand" agecheck="false" enabled="true" lang="en">
-      <Description>Television New Zealand: TV3, TV four</Description>
+    <Site name="SBS.au" util="SBSau" agecheck="false" enabled="true" lang="en">
+      <Description>SBS On Demand gives you free, unlimited access to programs, films and events – watch your favourite SBS shows when you want!</Description>
       <Configuration>
-        <item key="baseUrl"><![CDATA[http://www.tv3.co.nz/]]></item>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<div\sclass="grid_2[^"]*">\s*<a\srel="[^"]*"\shref="http://www.[^.]*.co.nz/tabid/[^/]*/MCat/(?<url>[^/]*)/Default.aspx"><img\sclass="tsrImgBlkBorder"\ssrc="(?<thumb>[^"]*)"[^>]*></a>\s*(?:<span\sclass="geomob"\stitle="This\sshow\sis\savailable\son\ssome\smobile\sand\stablet\sdevices\.\sWatch\sNow"></span>\s*)?<p\sclass="artTitle"><a[^>]*>(?<title>[^<]*)</a></p>\s*</div>]]></item>
-        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[http://www.tv3.co.nz/OnDemand/ShowEpisodesDetail.aspx?MCat={0}]]></item>
-        <item key="videoListRegEx"><![CDATA[((?#front page)<div\sclass="grid_2[^"]*">\s*<a\shref="(?<VideoUrl>[^"]*)"><img\sclass="tsrImgBlkBorder"\ssrc="(?<ImageUrl>[^"]*)"\salt="(?<Description>[^"]*)"\swidth="138"\sheight="91"\sborder="0"\s/></a>\s*<div\sclass="artTitle">(?<Title>[^<]*)</div>\s*<p\sclass="MiniHeading\sgreyHead">(?<Airdate>[^<]*)</p>\s*(?:<div\sclass="MiniHeading\sredHead"><time\sclass="fixtimeago"\sdatetime="[^"]*">(?<ViewTime>[^<]*)</time></div>)?\s*</div>
-)|(?#one show)
-(<div\sclass="listWrapper[^"]*">\s*<div\sclass="epDetail"><p><a\shref="(?<VideoUrl>[^"]*)"\sclass="flt_l">(?<Title>[^<]*)</a><span\sclass="showSynop"></span></p></div>\s*<div\sclass="epDetailDate"><time[^>]*><p><a[^>]*>(?<Airdate>[^<]*)</a></p></time></div>\s*<div\sclass="epDetailDate"><p><a[^>]*>(?<Duration>[^<]*)</a></p></div>\s*<div\sclass="epSynop"><p>(?<Description>[^<]*)</p></div>\s*</div>)]]></item>
-        <item key="fileUrlRegEx"><![CDATA[var\svideo\s="(?<m0>[^"]*)";]]></item>
-        <item key="fileUrlFormatString"><![CDATA[http://www.tv3.co.nz/portals/0/video/smil1500-2.aspx?serverVar=rtmpe://vod-geo.mediaworks.co.nz/vod/_definst_&locationVar=mp4:@@{0}&typeVar=mp4]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Expiring soon">http://www.tv3.co.nz/OnDemand/ExpiringSoon.aspx</Category>
-        <Category xsi:type="RssLink" name="Recently Added">http://www.tv3.co.nz/OnDemand/RecentlyAdded.aspx</Category>
-        <Category xsi:type="RssLink" name="A-Z">http://www.tv3.co.nz/OnDemand/TitleAZ.aspx</Category>
-      </Categories>
-    </Site>
-    <Site name="TVNPlayer" util="TVNPlayer" agecheck="false" enabled="true" lang="pl">
-      <Description>Oglądaj online najlepsze programy, seriale i filmy. Tylko u nas, jeszcze przed premierą w telewizji, obejrzysz serialowe nowości z oferty TVN. Przegapiłeś swój ulubiony program na antenie TVN, TVN Style czy TVN Turbo? W tvn player nie zabraknie najpopularniejszych programów i show z kanałów tematycznych tvn.</Description>
-      <Configuration>
+        <item key="searchUrl"><![CDATA[https://www.sbs.com.au/api/video_search/v2/?q=darkland&m=1&range=1-24]]></item>
       </Configuration>
     </Site>
     <Site name="Tweakers.net" util="TweakersNet" agecheck="false" enabled="true" lang="nl">
@@ -1024,21 +941,6 @@
       <Categories>
         <Category xsi:type="RssLink" name="Recente videos">http://tweakers.net/video/zoeken/</Category>
       </Categories>
-    </Site>
-    <Site name="Uitzending Gemist" util="UitzendingGemist" agecheck="false" enabled="true" lang="nl">
-      <Description>Uitzending Gemist is de videotheek van de publieke omroep op internet en biedt het totaalaanbod van beschikbare TV uitzendingen van de omroepen.</Description>
-      <Configuration>
-        <item key="baseUrl"><![CDATA[https://www.npostart.nl/programmas]]></item>
-        <item key="videoListRegEx"><![CDATA[
-        (<div\sclass="npo-asset-tile-container\snpo-tile\s*"\sid="[^"]*">\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*>\s*<div\sclass="npo-asset-tile\s">\s*<div[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-image">\s*<img\ssrc="(?<ImageUrl>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-new">nieuw</div>\s*<div\sclass="npo-asset-tile-play"></div>\s*<div\sclass="npo-asset-tile-watched">bekeken</div>\s*<div\sclass="npo-asset-tile-progress">\s*<div\sclass="npo-asset-tile-progress-bar"\sstyle="width:\s%"></div>\s*</div>\s*</div>\s*<h2>(?<Title>[^<]*)</h2>\s*<p>(?<Airdate>[^<]*)</p>\s*</a>\s*</div>)(?#videos of extras)
-        |
-        (<div\sclass="npo-asset-tile-container\snpo-tile\s*"\sid="[^"]*"\s*>\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*>\s*<div\sclass="npo-asset-tile\s">\s*<div[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-timer">(?<Duration>[^<]*)</div>\s*<div\sclass="npo-asset-tile-image">\s*<img\sdata-src="(?<ImageUrl>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-new">nieuw</div>\s*<div\sclass="npo-asset-tile-play"></div>\s*<div\sclass="npo-asset-tile-watched">bekeken</div>\s*<div\sclass="npo-asset-tile-progress">\s*<div\sclass="npo-asset-tile-progress-bar"\sstyle="width:\s%"></div>\s*</div>\s*</div>\s*<div\sclass="npo-asset-tile-title">\s*<h2>(?<Title>[^<]*)</h2>\s*<p>(?<Airdate>[^<]*)</p>\s*</div>\s*</a>\s*</div>)(?#videos of afleveringen)
-        ]]></item>
-        <item key="searchUrl"><![CDATA[https://www.npo.nl/search/extended?pageSize=20&query={0}&filter=episodes&dateFrom=2014-01-01&tilemapping=search&tiletype=asset]]></item>
-        <item key="fileUrlFormatString"><![CDATA[http://ida.omroep.nl/app.php/{0}?adaptive=no&token=]]></item>
-        <item key="cookies"><![CDATA[npo_cc=31]]></item>
-        <item key="forceUTF8Encoding"><![CDATA[True]]></item>
-      </Configuration>
     </Site>
     <Site name="TouTV" util="TouTv" agecheck="false" enabled="true" lang="fr">
       <Description>Webtélé de divertissement axée sur la vidéo sur demande, offerte par Radio-Canada et une vingtaine de diffuseurs et de producteurs partenaires.</Description>
@@ -1217,26 +1119,25 @@
         </Category>
       </Categories>
     </Site>
-	<Site name="YouPorn" util="GenericSite" agecheck="true" enabled="true" lang="en">
-	  <Description>YouPorn.com is the largest porn site on the web with the best variety of free full length porn videos - XXX, sex, porno, hardcore and more.</Description>
-	  <Configuration>
-		<item key="dynamicCategoriesRegEx"><![CDATA[<li\sclass='sublist-item'>\s*<a\s+href="(?<url>/category[^"]+)".*?>(?<title>[^<]+)<]]></item>
-		<item key="videoListRegEx"><![CDATA[<div\s+class="video-box.*?title="(?<Title>[^"]*)".*?<a\s+href="(?<VideoUrl>/watch/[^"]+)"[^>]*>.*?<img(?:(?!src).)+src="(?<ImageUrl>[^"\?]+)[^"]*"[^>]+>.*?<span\s+class="video-box-duration">(?<Duration>[^<]*)</span>]]></item>
-		<item key="nextPageRegEx"><![CDATA[<div\s+class="prev-next">\s*<a\s+href="(?<url>[^"]*)"]]></item>
-		<item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
-		<item key="fileUrlRegEx"><![CDATA[<div\s+class='downloadOption'>.*?<a\s+href='(?<m0>[^']*)'.*?>(?<n0>[^<]*)</a>\s*<span[^>]*>(?<n1>[^<]*)]]></item>
-		<item key="fileUrlNameFormatString"><![CDATA[{0} {1}]]></item>
-		<item key="fileUrlDecoding"><![CDATA[HtmlDecode]]></item>
-		<item key="searchUrl"><![CDATA[http://www.youporn.com/search/?query={0}]]></item>
-		<item key="baseUrl"><![CDATA[http://www.youporn.com/categories/]]></item>
-		<item key="cookies"><![CDATA[_gat=1,age_verified=1]]></item>
-	  </Configuration>
-	  <Categories>
-		<Category xsi:type="RssLink" name="Newest">http://www.youporn.com/</Category>
-		<Category xsi:type="RssLink" name="Top Rated">http://www.youporn.com/top_rated</Category>
-		<Category xsi:type="RssLink" name="Most Viewed">http://www.youporn.com/most_viewed</Category>
-	  </Categories>
-	</Site>
+    <Site name="YouPorn" util="GenericSite" agecheck="true" enabled="true" lang="en">
+      <Description>YouPorn.com is the largest porn site on the web with the best variety of free full length porn videos - XXX, sex, porno, hardcore and more.</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<a\shref="(?<url>[^"]*)"[^>]*>\s*<img\ssrc="[^"]*"\sdata-original="(?<thumb>[^"]*)"[^>]*>\s*<div\sclass='categoryTitle'>\s*<p>(?<title>[^<]*)<span>(?<description>[^<]*)</span>\s*</p>\s*</div>\s*</a>]]></item>
+        <item key="videoListRegEx"><![CDATA[<a\shref="(?<VideoUrl>[^"]*)"\sclass='video-box-image'\s>\s*<span\sclass="video-box-image-wrapper">\s*<img\ssrc="[^"]*"\sclass="[^"]*"\salt='[^']*'\s*data-thumbnail="(?<ImageUrl>[^"]*)"[^>]*>\s*</span>\s*<div\sclass="video-box-title"[^>]*>(?<Title>[^<]*)</div>\s*</a>\s*<div\sclass="video-box-infos">\s*<div\sclass='video-box-rating'>\s*<span\sclass='video-box-percentage\sup'>[^<]*</span>\s*<span\sclass='video-box-views'>[^<]*</span>\s*</div>\s*<div\sclass="video-duration">(?<Duration>[^<]*)</div>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<div\s+class="prev-next">\s*<a\s+href="(?<url>[^"]*)"]]></item>
+        <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<a\sclass='downloadOption\sdownloadVideoLink[^']*'\s*href="(?<m0>[^"]*)"\s*title='Download\sVideo'\s*download="download"\s*target="_blank">(?<n0>[^<]*)<div]]></item>
+        <item key="fileUrlDecoding"><![CDATA[HtmlDecode]]></item>
+        <item key="searchUrl"><![CDATA[http://www.youporn.com/search/?query={0}]]></item>
+        <item key="baseUrl"><![CDATA[http://www.youporn.com/categories/]]></item>
+        <item key="cookies"><![CDATA[_gat=1,age_verified=1]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Newest">http://www.youporn.com/</Category>
+        <Category xsi:type="RssLink" name="Top Rated">http://www.youporn.com/top_rated</Category>
+        <Category xsi:type="RssLink" name="Most Viewed">http://www.youporn.com/most_viewed</Category>
+      </Categories>
+    </Site>
 	<Site name="RedTube" util="GenericSite" agecheck="true" enabled="true" lang="en">
 	  <Description>The home of free porn videos.</Description>
 	  <Configuration>

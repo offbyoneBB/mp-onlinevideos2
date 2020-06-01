@@ -225,7 +225,8 @@ namespace OnlineVideos.MPUrlSourceFilter
         {
             ParameterCollection parameters = new ParameterCollection();
 
-            parameters.Add(new Parameter(SimpleUrl.ParameterUrl, this.Uri.ToString()));
+            //better use absoluteuri, see https://stackoverflow.com/questions/7624987/whats-the-difference-between-uri-tostring-and-uri-absoluteuri
+            parameters.Add(new Parameter(SimpleUrl.ParameterUrl, this.Uri.AbsoluteUri));
             if (this.Verbosity != DefaultVerbosity)
             {
                 parameters.Add(new Parameter(SimpleUrl.ParameterLogVerbosity, ((int)this.Verbosity).ToString()));

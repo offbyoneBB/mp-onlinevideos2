@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
+using OnlineVideos.Helpers;
 using OnlineVideos.Hoster;
 using OnlineVideos.JavaScript;
 using System.Text;
@@ -68,6 +69,9 @@ namespace OnlineVideos.Hoster
             NameValueCollection ItemsAPI = new NameValueCollection();
             NameValueCollection Items = new NameValueCollection();
             string contents = "";
+
+            List<KeyValuePair<string[], string[]>> qualities = new List<KeyValuePair<string[], string[]>>();// KeyValuePair.Value is either {url} or {url,sig}
+
             try
             {
                 try
@@ -84,6 +88,22 @@ namespace OnlineVideos.Hoster
                 string url_encoded_fmt_stream_map = Items.Get("url_encoded_fmt_stream_map");
                 if (!string.IsNullOrEmpty(url_encoded_fmt_stream_map))
                     forceGetWebPage = url_encoded_fmt_stream_map.Contains("&s=");
+                else
+                {
+                    var player_response = JObject.Parse(Items["player_response"]);
+
+                    if (player_response["playabilityStatus"]["status"].ToString() == "OK")
+                    {
+                        parsePlayerStatus(JToken.Parse(Items.Get("player_response")), qualities);
+                    }
+                    forceGetWebPage = qualities.Count == 0;
+                    if (!forceGetWebPage)
+                    {
+                        //if cipher needed, forceGetWebPage
+                        foreach (var kv in qualities)
+                            if (kv.Value.Length > 1) forceGetWebPage = true;
+                    }
+                }
 
                 if (Items.Count == 0 || Items["status"] == "fail" || Items["use_cipher_signature"] == "True" || forceGetWebPage)
                 {
@@ -103,6 +123,12 @@ namespace OnlineVideos.Hoster
                             {
                                 Items.Add(z.Key, z.Value.ToString());
                             }
+
+                            if (string.IsNullOrEmpty(Items.Get("url_encoded_fmt_stream_map")) && !string.IsNullOrEmpty(Items.Get("player_response")))
+                            {
+                                qualities.Clear();
+                                parsePlayerStatus(JToken.Parse(Items.Get("player_response")), qualities);
+                            }
                         }
                         else if (m.Groups["html"].Success)
                         {
@@ -116,19 +142,21 @@ namespace OnlineVideos.Hoster
             }
             catch { }
 
-            if (!string.IsNullOrEmpty(Items.Get("url_encoded_fmt_stream_map")))
+            if (!string.IsNullOrEmpty(Items.Get("url_encoded_fmt_stream_map")) || qualities.Count > 0)
             {
                 string swfUrl = Regex.Unescape(Regex.Match(contents, @"""url""\s*:\s*""(https?:\\/\\/.*?watch[^""]+\.swf)""").Groups[1].Value);
 
-                List<KeyValuePair<string[], string>> qualities = new List<KeyValuePair<string[], string>>();
-
-                string[] FmtUrlMap = Items["url_encoded_fmt_stream_map"].Split(',');
-                string[] FmtList = Items["fmt_list"].Split(',');
-                for (int i = 0; i < FmtList.Length; i++)
-                    if (i < FmtUrlMap.Length)
-                    {
-                        qualities.Add(new KeyValuePair<string[], string>(FmtList[i].Split('/'), FmtUrlMap[i]));
-                    }
+                if (qualities.Count == 0)
+                {
+                    string[] FmtUrlMap = Items["url_encoded_fmt_stream_map"].Split(',');
+                    string[] FmtList = Items["fmt_list"].Split(',');
+                    for (int i = 0; i < FmtList.Length; i++)
+                        if (i < FmtUrlMap.Length)
+                        {
+                            string[] tmp = { FmtUrlMap[i] };
+                            qualities.Add(new KeyValuePair<string[], string[]>(FmtList[i].Split('/'), tmp));
+                        }
+                }
                 /*
                 string[] AdaptiveFmtUrlMap = Items["adaptive_fmts"].Split(',');
                 for (int i = 0; i < AdaptiveFmtUrlMap.Length; i++)
@@ -138,7 +166,7 @@ namespace OnlineVideos.Hoster
                     qualities.Add(new KeyValuePair<string[], string>(quality, AdaptiveFmtUrlMap[i]));
                 }
                 */
-                qualities.Sort(new Comparison<KeyValuePair<string[], string>>((a, b) =>
+                qualities.Sort(new Comparison<KeyValuePair<string[], string[]>>((a, b) =>
                 {
                     return Array.IndexOf(fmtOptionsQualitySorted, ushort.Parse(b.Key[0])).CompareTo(Array.IndexOf(fmtOptionsQualitySorted, ushort.Parse(a.Key[0])));
                 }));
@@ -153,7 +181,8 @@ namespace OnlineVideos.Hoster
                     if (hideMobileFormats && fmtOptionsMobile.Any(b => b == fmt_quality)) continue;
                     if (hide3DFormats && fmtOptions3D.Any(b => b == fmt_quality)) continue;
 
-                    var urlOptions = HttpUtility.ParseQueryString(quality.Value);
+                    string finalUrl;
+                    var urlOptions = HttpUtility.ParseQueryString(quality.Value[0]);
                     string type = urlOptions.Get("type");
                     string stereo = urlOptions["stereo3d"] == "1" ? " 3D " : " ";
                     if (!string.IsNullOrEmpty(type))
@@ -161,26 +190,39 @@ namespace OnlineVideos.Hoster
                         type = Regex.Replace(type, @"; codecs=""[^""]*""", "");
                         type = type.Substring(type.LastIndexOfAny(new char[] { '/', '-' }) + 1);
                     }
-                    string signature = urlOptions.Get("sig");
-                    if (string.IsNullOrEmpty(signature))
+                    string signature = null;
+
+                    if (Helpers.UriUtils.IsValidUri(quality.Value[0]) && quality.Value.Length == 1)
                     {
-                        string playerUrl = "";
-                        var jsPlayerMatch = Regex.Match(contents, "\"assets\":.+?\"js\":\\s*(\"[^\"]+\")");
-                        if (jsPlayerMatch.Success)
-                        {
-                            playerUrl = Newtonsoft.Json.Linq.JToken.Parse(jsPlayerMatch.Groups[1].Value).ToString();
-                            if (!Uri.IsWellFormedUriString(playerUrl, UriKind.Absolute))
-                            {
-                                Uri uri = null;
-                                if (Uri.TryCreate(new Uri(@"https://www.youtube.com"), playerUrl, out uri))
-                                    playerUrl = uri.ToString();
-                                else
-                                    playerUrl = string.Empty;
-                            }
-                        }
-                        signature = DecryptSignature(playerUrl, urlOptions.Get("s"));
+                        finalUrl = quality.Value[0];
                     }
-                    string finalUrl = urlOptions.Get("url");
+                    else
+                    {
+                        signature = urlOptions.Get("sig");
+                        if (string.IsNullOrEmpty(signature))
+                        {
+                            string playerUrl = "";
+                            var jsPlayerMatch = Regex.Match(contents, "\"assets\":.+?\"js\":\\s*(\"[^\"]+\")");
+                            if (jsPlayerMatch.Success)
+                            {
+                                playerUrl = Newtonsoft.Json.Linq.JToken.Parse(jsPlayerMatch.Groups[1].Value).ToString();
+                                if (!Uri.IsWellFormedUriString(playerUrl, UriKind.Absolute))
+                                {
+                                    Uri uri = null;
+                                    if (Uri.TryCreate(new Uri(@"https://www.youtube.com"), playerUrl, out uri))
+                                        playerUrl = uri.ToString();
+                                    else
+                                        playerUrl = string.Empty;
+                                }
+                            }
+                            signature = DecryptSignature(playerUrl, quality.Value.Length == 2 ? quality.Value[1] : urlOptions.Get("s"));
+                        }
+                        if (quality.Value.Length == 1)
+                            finalUrl = urlOptions.Get("url");
+                        else
+                            finalUrl = quality.Value[0];
+                    }
+
                     if (!string.IsNullOrEmpty(finalUrl))
                     {
                         if (!finalUrl.Contains("ratebypass"))
@@ -235,6 +277,44 @@ namespace OnlineVideos.Hoster
             }
 
             return PlaybackOptions;
+        }
+
+        private void parsePlayerStatus(JToken player_response, List<KeyValuePair<string[], string[]>> qualities)
+        {
+            var formats = player_response["streamingData"]["formats"] as JArray;
+            if (formats == null)
+            {
+                string hlsUrl = player_response["streamingData"].Value<String>("hlsManifestUrl");
+                if (!String.IsNullOrEmpty(hlsUrl))
+                {
+                    var data = GetWebData(hlsUrl);
+                    var res = HlsPlaylistParser.GetPlaybackOptions(data, hlsUrl, (x, y) => x.Bandwidth.CompareTo(y.Bandwidth), (x) => x.Width + "x" + x.Height);
+                    foreach (var kv in res)
+                    {
+                        string[] tmp = { kv.Value };
+                        string[] qualityKey = { "0", kv.Key };
+                        qualities.Add(new KeyValuePair<string[], string[]>(qualityKey, tmp));
+                    }
+                }
+            }
+            else
+                foreach (var format in formats)
+                {
+                    string[] qualityKey = { format.Value<String>("itag"), format.Value<String>("width") + 'x' + format.Value<String>("height") };
+                    var qualityValue = format.Value<String>("url");
+                    if (String.IsNullOrEmpty(qualityValue))
+                    {
+                        NameValueCollection cipherItems = HttpUtility.ParseQueryString(System.Web.HttpUtility.HtmlDecode(format.Value<String>("cipher")));
+                        qualityValue = cipherItems.Get("url");
+                        string[] tmp = { qualityValue, cipherItems.Get("s") };
+                        qualities.Add(new KeyValuePair<string[], string[]>(qualityKey, tmp));
+                    }
+                    else
+                    {
+                        string[] tmp = { qualityValue };
+                        qualities.Add(new KeyValuePair<string[], string[]>(qualityKey, tmp));
+                    }
+                }
         }
 
         public override string GetVideoUrl(string url)

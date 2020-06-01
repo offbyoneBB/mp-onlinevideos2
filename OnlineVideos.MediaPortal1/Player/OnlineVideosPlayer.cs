@@ -160,6 +160,20 @@ namespace OnlineVideos.MediaPortal1.Player
                 return base.GetInterfaces();
         }
 
+        private int CalculateBufferedEnough(long total, long current)
+        {
+            if (Duration == 0 || current == 0)
+                return 0;
+            TimeSpan buffertime = DateTime.Now - bufferingStart;
+            var estimatedBufferTime = ((double)total / current) * buffertime.TotalSeconds;
+            if (estimatedBufferTime == 0)
+                return 0;
+            double remainingPlayTime = Duration - CurrentPosition;//seconds
+            var enough = 100 - 100 * (remainingPlayTime / estimatedBufferTime);
+
+            return (int)(enough < 0 ? 0 : enough);
+        }
+
         public override void Process()
         {
             if ((DateTime.Now - lastProgressCheck).TotalMilliseconds > 100) // check progress at maximum 10 times per second
@@ -168,6 +182,7 @@ namespace OnlineVideos.MediaPortal1.Player
                 if (percentageBuffered >= 100.0f) // already buffered 100%, simply set the Property
                 {
                     GUIPropertyManager.SetProperty("#TV.Record.percent3", percentageBuffered.ToString());
+                    GUIPropertyManager.SetProperty("#OnlineVideos.bufferedenough", "0");
                 }
                 else
                 {
@@ -183,6 +198,8 @@ namespace OnlineVideos.MediaPortal1.Player
                                 ((IAMOpenProgress)sourceFilter).QueryProgress(out total, out current);
                                 percentageBuffered = (float)current / (float)total * 100.0f;
                                 GUIPropertyManager.SetProperty("#TV.Record.percent3", percentageBuffered.ToString());
+                                GUIPropertyManager.SetProperty("#OnlineVideos.bufferedenough", CalculateBufferedEnough(total, current).ToString());
+
                             }
                         }
                         catch (Exception ex)
@@ -202,6 +219,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
         float percentageBuffered;
         DateTime lastProgressCheck = DateTime.MinValue;
+        DateTime bufferingStart = DateTime.MinValue;
 
         public bool BufferingStopped { get; protected set; }
         public void StopBuffering() { BufferingStopped = true; }
@@ -308,6 +326,7 @@ namespace OnlineVideos.MediaPortal1.Player
         /// <returns>true, when playback can be started</returns>
         public bool BufferFile(Sites.SiteUtilBase siteUtil)
         {
+            bufferingStart = DateTime.Now;
             Thread renderPinsThread = null;
             VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent; // prevents the BlackRectangle on first time playback
             bool PlaybackReady = false;
@@ -398,7 +417,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
                                 if (skipBuffering) Log.Instance.Debug("Buffering skipped at {0}%", percentageBuffered);
                                 filterConnected = true;
-                                renderPinsThread = new Thread(delegate()
+                                renderPinsThread = new Thread(delegate ()
                                 {
                                     try
                                     {
@@ -420,7 +439,8 @@ namespace OnlineVideos.MediaPortal1.Player
                                         Log.Instance.Warn(ex.Message);
                                         StopBuffering();
                                     }
-                                }) { IsBackground = true, Name = "OVGraph" };
+                                })
+                                { IsBackground = true, Name = "OVGraph" };
                                 renderPinsThread.Start();
                             }
                         }
@@ -465,7 +485,7 @@ namespace OnlineVideos.MediaPortal1.Player
                                 //cacheFile = filterState.GetCacheFileName();
                                 if (skipBuffering) Log.Instance.Debug("Buffering skipped at {0}%", percentageBuffered);
                                 filterConnected = true;
-                                renderPinsThread = new Thread(delegate()
+                                renderPinsThread = new Thread(delegate ()
                                 {
                                     try
                                     {
@@ -487,7 +507,8 @@ namespace OnlineVideos.MediaPortal1.Player
                                         Log.Instance.Warn(ex.Message);
                                         StopBuffering();
                                     }
-                                }) { IsBackground = true, Name = "OVGraph" };
+                                })
+                                { IsBackground = true, Name = "OVGraph" };
                                 renderPinsThread.Start();
                             }
                             // log every percent
@@ -515,6 +536,7 @@ namespace OnlineVideos.MediaPortal1.Player
                         DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, sourceFilter);
                         percentageBuffered = 100.0f; // no progress reporting possible
                         GUIPropertyManager.SetProperty("#TV.Record.percent3", percentageBuffered.ToString());
+                        GUIPropertyManager.SetProperty("#OnlineVideos.bufferedenough", "80");
                         PlaybackReady = true;
                     }
                 }
@@ -709,7 +731,7 @@ namespace OnlineVideos.MediaPortal1.Player
                     hr = mediaCtrl.Run();
                     DsError.ThrowExceptionForHR(hr);
                     if (hr == 1)
-                        // S_FALSE from IMediaControl::Run means: The graph is preparing to run, but some filters have not completed the transition to a running state.
+                    // S_FALSE from IMediaControl::Run means: The graph is preparing to run, but some filters have not completed the transition to a running state.
                     {
                         // wait max. 20 seconds for the graph to transition to the running state
                         DateTime startTime = DateTime.Now;
@@ -743,7 +765,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
             if (basicVideo != null)
             {
-              basicVideo.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
+                basicVideo.GetVideoSize(out m_iVideoWidth, out m_iVideoHeight);
             }
 
             if (GoFullscreen) GUIWindowManager.ActivateWindow(GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
