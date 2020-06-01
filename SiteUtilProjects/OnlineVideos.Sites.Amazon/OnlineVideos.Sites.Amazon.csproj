@@ -52,6 +52,7 @@
     </Compile>
     <Compile Include="AmazonUtil.cs" />
     <Compile Include="CategoryNode.cs" />
+    <Compile Include="ExtendedProperties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

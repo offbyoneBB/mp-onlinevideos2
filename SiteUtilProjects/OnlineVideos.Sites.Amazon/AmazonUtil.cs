@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Policy;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using OnlineVideos.Helpers;
@@ -175,14 +176,17 @@ namespace OnlineVideos.Sites.Amazon
                     var series = _driver.FindElements(By.CssSelector("[data-automation-id^=wl-item-]"));
                     foreach (IWebElement webElement in series)
                     {
-                        var imgSrc = webElement.FindElement(By.TagName("img")).GetAttribute("src");
-                        var asin = webElement.FindElement(By.Name("titleID")).GetAttribute("value");
-                        var title = webElement.FindElement(By.TagName("h1")).GetAttribute("innerText");
+                        var imgSrc = webElement.TryFindElement(By.TagName("img"))?.GetAttribute("src");
+                        var asin = webElement.TryFindElement(By.Name("titleID"))?.GetAttribute("value");
+                        var title = webElement.TryFindElement(By.TagName("h1"))?.GetAttribute("innerText");
+                        var desc = webElement.TryFindElement(By.ClassName("tst-hover-synopsis"))?.GetAttribute("innerText");
+                        var rating = webElement.TryFindElement(By.ClassName("tst-hover-maturity-rating"))?.GetAttribute("innerText");
+                        var description = !string.IsNullOrEmpty(rating) ? desc + "\r\n" + rating : desc;
 
                         categoriesToPopulate.Add(new Category
                         {
                             Name = title,
-                            Description = asin,
+                            Description = description,
                             Other = asin,
                             Thumb = imgSrc,
                             ParentCategory = parentCategory,
@@ -198,10 +202,10 @@ namespace OnlineVideos.Sites.Amazon
                     var genres = _driver.FindElements(By.CssSelector("[id^=p_n_theme_browse-bin\\/]"));
                     foreach (IWebElement webElement in genres)
                     {
-                        var link = webElement.FindElement(By.TagName("a"));
+                        var link = webElement.TryFindElement(By.TagName("a"));
 
-                        var url = link.GetAttribute("href");
-                        var title = link.GetAttribute("innerText");
+                        var url = link?.GetAttribute("href");
+                        var title = link?.GetAttribute("innerText");
 
                         categoriesToPopulate.Add(new Category
                         {
@@ -221,13 +225,32 @@ namespace OnlineVideos.Sites.Amazon
             List<VideoInfo> videoInfos = new List<VideoInfo>();
             await PrepareUrlAsync(url);
             var videos = _driver.FindElements(By.CssSelector("[data-automation-id^=wl-item-]"));
+            Regex reDuration = new Regex(@"(\d) Std. (\d+) Min.");
             foreach (IWebElement webElement in videos)
             {
-                var imgSrc = webElement.FindElement(By.TagName("img")).GetAttribute("src");
-                var asin = webElement.FindElement(By.Name("titleID")).GetAttribute("value");
-                var title = webElement.FindElement(By.TagName("h1")).GetAttribute("innerText");
+                var imgSrc = webElement.TryFindElement(By.TagName("img"))?.GetAttribute("src");
+                var asin = webElement.TryFindElement(By.Name("titleID"))?.GetAttribute("value");
+                var title = webElement.TryFindElement(By.TagName("h1"))?.GetAttribute("innerText");
+                var desc = webElement.TryFindElement(By.ClassName("tst-hover-synopsis"))?.GetAttribute("innerText");
+                var rating = webElement.TryFindElement(By.ClassName("tst-hover-maturity-rating"))?.GetAttribute("innerText");
+                var fullContent = webElement.GetAttribute("innerHTML");
+                var match = reDuration.Match(fullContent);
+                var duration = match?.Value;
 
-                videoInfos.Add(new VideoInfo { Title = title, Description = asin, VideoUrl = asin, Thumb = imgSrc });
+                var resume = webElement.TryFindElement(By.CssSelector("a[data-resume-time]"))?.GetAttribute("data-resume-time"); // in seconds
+                double resumePercent = 0d;
+                if (match.Success && int.TryParse(resume, out int resumeSeconds))
+                {
+                    int totalTime = (int.Parse(match.Groups[1].Value) * 60 + int.Parse(match.Groups[2].Value)) * 60; // also in seconds
+                    resumePercent = (double)resumeSeconds / totalTime * 100;
+                }
+
+                var description = !string.IsNullOrEmpty(rating) ? desc + "\r\n" + rating : desc;
+
+                // Playback progress
+                ExtendedProperties extendedProperties = new ExtendedProperties { VideoProperties = { ["Progress"] = string.Format("{0:0}%", resumePercent) } };
+
+                videoInfos.Add(new VideoInfo { Title = title, Description = description, VideoUrl = asin, Thumb = imgSrc, Length = duration, Other = extendedProperties });
             }
             return videoInfos;
         }
@@ -242,11 +265,15 @@ namespace OnlineVideos.Sites.Amazon
                 var videos = _driver.FindElements(By.ClassName("s-result-item"));
                 foreach (IWebElement webElement in videos)
                 {
-                    var imgSrc = webElement.FindElement(By.ClassName("s-image")).GetAttribute("src");
+                    var imgSrc = webElement.TryFindElement(By.ClassName("s-image"))?.GetAttribute("src");
                     var asin = webElement.GetAttribute("data-asin");
-                    var title = webElement.FindElement(By.TagName("h2")).GetAttribute("innerText");
+                    var title = webElement.TryFindElement(By.TagName("h2"))?.GetAttribute("innerText");
+                    var airDate = webElement.TryFindElement(By.CssSelector("h2 + div > span"))?.Text;
+                    var ratingSummary = webElement.TryFindElement(By.CssSelector("h2 + div"))?.Text;
+                    var duration = ""; // not available in search?
+                    var description = ratingSummary;
 
-                    videoInfos.Add(new VideoInfo { Title = title, Description = asin, VideoUrl = asin, Thumb = imgSrc });
+                    videoInfos.Add(new VideoInfo { Title = title, Description = description, VideoUrl = asin, Thumb = imgSrc, Airdate = airDate, Length = duration });
                 }
             }
             return videoInfos;
@@ -259,11 +286,19 @@ namespace OnlineVideos.Sites.Amazon
             var episodes = _driver.FindElements(By.CssSelector("[id^=av-ep-episodes-]"));
             foreach (IWebElement webElement in episodes)
             {
-                var title = webElement.FindElement(By.ClassName("js-eplist-episode")).Text;
-                var imgSrc = webElement.FindElement(By.TagName("img")).GetAttribute("src");
-                var asin = webElement.FindElement(By.CssSelector("[id^=selector-]")).GetAttribute("id").Replace("selector-", "");
+                var title = webElement.TryFindElement(By.ClassName("js-eplist-episode"))?.Text;
+                var imgSrc = webElement.TryFindElement(By.TagName("img"))?.GetAttribute("src");
+                var asin = webElement.TryFindElement(By.CssSelector("[id^=selector-]"))?.GetAttribute("id").Replace("selector-", "");
+                var description = webElement.TryFindElement(By.CssSelector("[id^=synopsis-] + label + div"))?.Text;
+                var rating = webElement.TryFindElement(By.CssSelector("[data-testid=rating-badge]"))?.GetAttribute("Title");
+                var airDate = webElement.TryFindElement(By.CssSelector("[data-automation-id^=ep-title-episodes] + div > div"))?.Text;
+                var duration = webElement.TryFindElement(By.CssSelector("[data-automation-id^=ep-title-episodes] + div > div + div"))?.Text;
+                var progress = webElement.TryFindElement(By.CssSelector("span[aria-valuenow]"))?.GetAttribute("aria-valuenow");
+                int.TryParse(progress, out int progressPercent);
+                // Playback progress
+                ExtendedProperties extendedProperties = new ExtendedProperties { VideoProperties = { ["Progress"] = string.Format("{0:0}%", progressPercent) } };
 
-                videoInfos.Add(new VideoInfo { Title = title, Description = asin, VideoUrl = asin, Thumb = imgSrc });
+                videoInfos.Add(new VideoInfo { Title = title, Description = description, VideoUrl = asin, Thumb = imgSrc, Airdate = airDate, Length = duration, Other = extendedProperties });
             }
             return videoInfos;
         }
@@ -368,7 +403,6 @@ namespace OnlineVideos.Sites.Amazon
                     token.ThrowIfCancellationRequested();
                     if (_keyHandler != null && keyFromBrowser != null)
                     {
-                        Log.Debug("WebDriver: Received key: {0}", keyFromBrowser);
                         if (keyFromBrowser == "MediaPlayPause" || keyFromBrowser == "MediaPause" ||
                             keyFromBrowser == "MediaPlay")
                         {
@@ -430,5 +464,13 @@ namespace OnlineVideos.Sites.Amazon
             _initTask = null;
         }
 
+    }
+
+    public static class WebDriverExtensions
+    {
+        public static IWebElement TryFindElement(this IWebElement element, By by)
+        {
+            return element.FindElements(by).FirstOrDefault();
+        }
     }
 }

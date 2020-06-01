@@ -16,6 +16,7 @@
       <APIFiles Include="$(TargetDir)geckodriver.exe" />
       <APIFiles Include="$(TargetDir)webdriver.dll" />
       <APIFiles Include="$(TargetDir)OnlineVideos.MediaPortal2.Interfaces.dll" />
+      <WebDriverFiles Include="$(TargetDir)Profiles\**\*" />
       <APIFiles Include="$(TargetDir)OnlineVideos.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
       <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\iexplore.exe*" />
       <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\iexplore.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
@@ -35,6 +36,7 @@
     <Copy SourceFiles="@(BrowserHostFiles)" DestinationFolder="$(PluginDestination)" />
     <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(PluginDestination)Language\" />
     <Copy SourceFiles="@(SkinFiles)" DestinationFiles="@(SkinFiles->'$(PluginDestination)Skin\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(WebDriverFiles)" DestinationFiles="@(WebDriverFiles->'$(PluginDestination)Profiles\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(MPUrlSourceSplitterFiles)" DestinationFolder="$(PluginDestination)MPUrlSourceSplitter\" />
 
     <!-- Copy again to NuGetPackage folder for simple package creation -->
@@ -46,6 +48,7 @@
     <Copy SourceFiles="@(BrowserHostFiles)" DestinationFolder="$(PackageContent)" />
     <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(PackageContent)Language\" />
     <Copy SourceFiles="@(SkinFiles)" DestinationFiles="@(SkinFiles->'$(PackageContent)Skin\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(WebDriverFiles)" DestinationFiles="@(WebDriverFiles->'$(PackageContent)Profiles\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(MPUrlSourceSplitterFiles)" DestinationFolder="$(PackageContent)MPUrlSourceSplitter\" />
 
     <!-- Uncomment to enable automatic packaging -->
