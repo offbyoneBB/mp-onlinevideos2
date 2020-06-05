@@ -140,7 +140,10 @@ namespace OnlineVideos.Hoster
                     }
                 }
             }
-            catch { }
+            catch (Exception e)
+            {
+                Log.Error("Error getting url {0}", e.Message);
+            }
 
             if (!string.IsNullOrEmpty(Items.Get("url_encoded_fmt_stream_map")) || qualities.Count > 0)
             {
@@ -304,7 +307,11 @@ namespace OnlineVideos.Hoster
                     var qualityValue = format.Value<String>("url");
                     if (String.IsNullOrEmpty(qualityValue))
                     {
-                        NameValueCollection cipherItems = HttpUtility.ParseQueryString(System.Web.HttpUtility.HtmlDecode(format.Value<String>("cipher")));
+                        string cipher = format.Value<String>("cipher");
+                        if (String.IsNullOrEmpty(cipher))
+                            cipher = format.Value<String>("signatureCipher");
+
+                        NameValueCollection cipherItems = HttpUtility.ParseQueryString(HttpUtility.HtmlDecode(cipher));
                         qualityValue = cipherItems.Get("url");
                         string[] tmp = { qualityValue, cipherItems.Get("s") };
                         qualities.Add(new KeyValuePair<string[], string[]>(qualityKey, tmp));
