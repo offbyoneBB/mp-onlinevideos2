@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using System.Web;
 using Newtonsoft.Json.Linq;
 using OnlineVideos.Helpers;
 
@@ -23,7 +24,7 @@ namespace OnlineVideos.Sites
             string mccloud = "";
             if (m.Success)
                 mccloud = "&mcloud=" + m.Groups["key"].Value;
-            data = GetWebData(@"https://fmovies.to/ajax/film/servers?id=" + id + "&_=839" + ts);
+            data = GetWebData(@"https://fmovies.to/ajax/film/servers?id=" + id + "&_=840" + ts);
             m = Regex.Match(data, @"<a\sclass=\\""active\\""\sdata-id=\\""(?<id>[^\\]*)\\""\shref=\\""[^""]*"">");
             if (m.Success)
             {
@@ -31,7 +32,7 @@ namespace OnlineVideos.Sites
                 string server = "";
                 if (m3.Success)
                     server = @"&server=" + m3.Groups["server"].Value;
-                var jUrl = "https://fmovies.to/ajax/episode/info?id=" + m.Groups["id"].Value + server + mccloud + "&_=935" + ts;
+                var jUrl = "https://fmovies.to/ajax/episode/info?id=" + m.Groups["id"].Value + server + mccloud + "&_=888" + ts;
                 JObject jData;
                 try
                 {
@@ -51,8 +52,43 @@ namespace OnlineVideos.Sites
                     var m3u8Data = GetWebData(m2.Groups["url"].Value);
                     video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(m3u8Data, m2.Groups["url"].Value, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height);
                     string subUrl = jData.Value<string>("subtitle");
+                    if (String.IsNullOrEmpty(subUrl))
+                    {
+                        var pars = HttpUtility.ParseQueryString(url);
+                        subUrl = pars["sub.info"];
+                        if (!String.IsNullOrEmpty(subUrl))
+                        {
+                            JToken subs = null;
+                            try
+                            {
+                                subs = GetWebData<JToken>(subUrl);
+                            }
+                            catch (Exception e)
+                            {
+                                //in case of a 502
+                                System.Threading.Thread.Sleep(1000);
+                                subs = GetWebData<JToken>(subUrl);
+                            }
+
+                            subUrl = null;
+                            if (subs != null)
+                                foreach (var subItem in subs)
+                                {
+                                    if (subItem.Value<String>("default") == "true")
+                                    {
+                                        subUrl = subItem.Value<String>("file");
+                                        break;
+                                    }
+                                }
+                        }
+                    }
+
+
                     if (!String.IsNullOrEmpty(subUrl))
+                    {
+                        Log.Debug("Found subtitles at " + subUrl);
                         video.SubtitleText = Helpers.SubtitleUtils.Webvtt2SRT(GetWebData(subUrl));
+                    }
 
                     return video.GetPreferredUrl(true);
                 }
