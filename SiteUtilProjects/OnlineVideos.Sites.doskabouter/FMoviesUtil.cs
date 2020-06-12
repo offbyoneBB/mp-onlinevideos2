@@ -74,7 +74,7 @@ namespace OnlineVideos.Sites
                             if (subs != null)
                                 foreach (var subItem in subs)
                                 {
-                                    if (subItem.Value<String>("default") == "true")
+                                    if (subItem.Value<String>("label") == "English")
                                     {
                                         subUrl = subItem.Value<String>("file");
                                         break;
