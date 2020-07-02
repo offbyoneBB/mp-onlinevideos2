@@ -121,6 +121,28 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class ClipWatching : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "clipwatching.com";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            var data = GetWebData(url);
+            var m = Regex.Match(data, @"src:\s""(?<url>[^""]*)"",\stype:\s""application/x-mpegURL""");
+            if (m.Success)
+            {
+                data = GetWebData(m.Groups["url"].Value);
+                var res= Helpers.HlsPlaylistParser.GetPlaybackOptions(data, m.Groups["url"].Value);
+                return res.FirstOrDefault().Value;
+            }
+
+            return null;
+        }
+    }
+
     public class CloudTime : MyHosterBase
     {
         public override string GetHosterUrl()
