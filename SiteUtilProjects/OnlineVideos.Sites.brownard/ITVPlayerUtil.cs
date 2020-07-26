@@ -667,10 +667,17 @@ namespace OnlineVideos.Sites
             try
             {
                 string userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36";
-                NameValueCollection headers = new NameValueCollection();
-                headers["Accept"] = "text/html,application/xhtml+xml,application/x-mpegURL,application/xml;q=0.9,*/*;q=0.8";
-                headers["User-Agent"] = userAgent;
-                return WebCache.Instance.GetWebData(url, cookies: cookies, proxy: null, userAgent: userAgent, headers: headers, cache: false);
+
+                var restoreSecurityProtocol = ServicePointManager.SecurityProtocol;
+                try
+                {
+                    ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072 | SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
+                    return WebCache.Instance.GetWebData(url, cookies: cookies, proxy: null, userAgent: userAgent, cache: false);
+                }
+                finally
+                {
+                    ServicePointManager.SecurityProtocol = restoreSecurityProtocol;
+                }
             }
             catch (Exception ex)
             {
