@@ -47,7 +47,7 @@ namespace OnlineVideos.Sites
 
         const string LIVE_STREAM = "live";
 
-        const string SWF_URL = "http://www.itv.com/mercury/Mercury_VideoPlayer.swf";
+        const string SWF_URL = "https://mediaplayer.itv.com/2.19.5%2Bbuild.a23aa62b1e/ITVMediaPlayer.swf"; //"http://www.itv.com/mercury/Mercury_VideoPlayer.swf";
 
         const string SOAP_TEMPLATE = @"<?xml version='1.0' encoding='utf-8'?>
         <soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' xmlns:tem='http://tempuri.org/' xmlns:itv='http://schemas.datacontract.org/2004/07/Itv.BB.Mercury.Common.Types' xmlns:com='http://schemas.itv.com/2009/05/Common'>
@@ -610,7 +610,8 @@ namespace OnlineVideos.Sites
             if (streamInfos.Any(s => s.Width > 0 && s.Height > 0))
                 streamInfos = streamInfos.Where(s => s.Width > 0 && s.Height > 0);
 
-            CookieCollection cookies = cookieContainer.GetCookies(url);
+            CookieCollection cookies = createAccessCookies(cookieContainer.GetCookies(url));
+
             if (AutoSelectStream)
                 return addHlsPlaybackOption(streamInfos.Last(), cookies, video.PlaybackOptions);
 
@@ -620,10 +621,22 @@ namespace OnlineVideos.Sites
             return lastUrl;
         }
 
+        CookieCollection createAccessCookies(CookieCollection cookies)
+        {
+            Cookie hdntl = cookies["hdntl"];
+            Cookie noHubPlus = cookies["nohubplus~hmac"];
+
+            // ITVPlayer seems to combine these cookies together when making playlist requests
+            Cookie accessCookie = new Cookie("hdntl", hdntl.Value + "%2Cnohubplus~hmac=" + noHubPlus.Value, "/", "itvpnpdotcom.content.itv.com");
+            CookieCollection modifiedCookies = new CookieCollection();
+            modifiedCookies.Add(accessCookie);
+            return modifiedCookies;
+        }
+
         string addHlsPlaybackOption(HlsStreamInfo streamInfo, CookieCollection cookies, Dictionary<string, string> playbackOptions)
         {
             HttpUrl url = new HttpUrl(streamInfo.Url);
-            url.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36";
+            url.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36";
             url.Cookies.Add(cookies);
             string urlString = url.ToString();
             string name = string.Format("{0}x{1} | {2} kbps", streamInfo.Width, streamInfo.Height, streamInfo.Bandwidth / 1024);
@@ -635,7 +648,7 @@ namespace OnlineVideos.Sites
         {
             try
             {
-                string userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 9_3_3 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13G34 Safari/601.1";
+                string userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36";
                 NameValueCollection headers = new NameValueCollection();
                 headers["Content-Type"] = "application/json";
                 headers["Accept"] = "application/vnd.itv.vod.playlist.v2+json";
@@ -653,9 +666,10 @@ namespace OnlineVideos.Sites
         {
             try
             {
-                string userAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36";
+                string userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36";
                 NameValueCollection headers = new NameValueCollection();
-                headers["Accept"] = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+                headers["Accept"] = "text/html,application/xhtml+xml,application/x-mpegURL,application/xml;q=0.9,*/*;q=0.8";
+                headers["User-Agent"] = userAgent;
                 return WebCache.Instance.GetWebData(url, cookies: cookies, proxy: null, userAgent: userAgent, headers: headers, cache: false);
             }
             catch (Exception ex)
