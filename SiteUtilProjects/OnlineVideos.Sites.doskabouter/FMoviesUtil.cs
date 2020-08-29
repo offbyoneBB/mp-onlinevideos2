@@ -24,7 +24,7 @@ namespace OnlineVideos.Sites
             string mccloud = "";
             if (m.Success)
                 mccloud = "&mcloud=" + m.Groups["key"].Value;
-            data = GetWebData(@"https://fmovies.to/ajax/film/servers?id=" + id + "&_=840" + ts);
+            data = GetWebData(@"https://www11.fmovies.to/ajax/film/servers?id=" + id + "&_=840" + ts);
             m = Regex.Match(data, @"<a\sclass=\\""active\\""\sdata-id=\\""(?<id>[^\\]*)\\""\shref=\\""[^""]*"">");
             if (m.Success)
             {
@@ -32,7 +32,7 @@ namespace OnlineVideos.Sites
                 string server = "";
                 if (m3.Success)
                     server = @"&server=" + m3.Groups["server"].Value;
-                var jUrl = "https://fmovies.to/ajax/episode/info?id=" + m.Groups["id"].Value + server + mccloud + "&_=888" + ts;
+                var jUrl = "https://www11.fmovies.to/ajax/episode/info?id=" + m.Groups["id"].Value + server + mccloud + "&_=888" + ts;
                 JObject jData;
                 try
                 {
@@ -45,12 +45,14 @@ namespace OnlineVideos.Sites
                     jData = GetWebData<JObject>(jUrl);
                 }
                 string url = jData.Value<string>("target");
-                string data2 = GetWebData(url, referer: video.VideoUrl);
-                var m2 = Regex.Match(data2, @"var\smediaSources\s=\s\[{""file"":""(?<url>[^""]*)""}];");
-                if (m2.Success)
+                string url2 = url.Replace("/embed/", "/info/");
+
+                var data2 = GetWebData<JToken>(url2, referer: url);
+                if (data2.Value<bool>("success"))
                 {
-                    var m3u8Data = GetWebData(m2.Groups["url"].Value);
-                    video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(m3u8Data, m2.Groups["url"].Value, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height);
+                    var m3u8Url = data2["media"]?["sources"][0].Value<String>("file");
+                    var m3u8Data = GetWebData(m3u8Url);
+                    video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(m3u8Data, m3u8Url, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height);
                     string subUrl = jData.Value<string>("subtitle");
                     if (String.IsNullOrEmpty(subUrl))
                     {
