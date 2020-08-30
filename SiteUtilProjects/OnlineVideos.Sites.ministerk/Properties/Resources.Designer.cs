@@ -68,7 +68,7 @@ namespace OnlineVideos.Sites.Properties {
         ///    document.getElementById(&apos;video0_desktop-player&apos;).style.left = &quot;0px&quot;;
         ///    document.getElementById(&apos;video0_desktop-player&apos;).style.top = &quot;0px&quot;;
         ///    document.getElementById(&apos;video0_desktop-player&apos;).style.width = (window.innerWidth) + &apos;px&apos;;
-        ///    document.getElementById(&apos;vi [rest of string was truncated]&quot;;.
+        ///    document.getElementById(&apos;video0_de [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Katsomo {
             get {
@@ -77,20 +77,22 @@ namespace OnlineVideos.Sites.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to function switchProfile(switchUrl, index) {
-        ///    if (document.querySelectorAll(&apos;a.profile-link&apos;).length &gt; index) {
+        ///   Looks up a localized string similar to function switchProfile(profiletoken) {
+        ///    var proflinks = document.querySelectorAll(&apos;a.profile-link&apos;);
+        ///    setTimeout(function () {
+        ///        for (var i = 0; i &lt; proflinks.length; i++) {
+        ///            if (proflinks[i].href.indexOf(profiletoken) !== -1) {
+        ///                proflinks[i].click();
+        ///            };
+        ///        };
         ///        setTimeout(function () {
-        ///            document.querySelectorAll(&apos;a.profile-link&apos;)[index].click();
-        ///            setTimeout(function () {
-        ///                switchProfileCallback(&quot;{}&quot;);
-        ///            }, 1500);
-        ///        }, 500);
-        ///    } else if (window.jQuery) {
-        ///        jQuery.ajax({
-        ///            url: switchUrl,
-        ///            dataType: &apos;json&apos;,
-        ///            cache: false,
-        ///            type: &apos;GET [rest of string was truncated]&quot;;.
+        ///            switchProfileCallback(&quot;{}&quot;)
+        ///        }, 1500);
+        ///    }, 500);
+        ///}
+        ///
+        ///function switchProfileCallback(data) {
+        ///    window.location.href = &quot;https:/ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string NetflixJs {
             get {
