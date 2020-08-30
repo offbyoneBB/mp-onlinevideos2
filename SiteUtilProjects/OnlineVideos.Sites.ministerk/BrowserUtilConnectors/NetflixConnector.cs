@@ -14,12 +14,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
     public class NetflixConnector : BrowserUtilConnector
     {
 
-        private const int INTERNET_OPTION_SUPPRESS_BEHAVIOR = 81;
-        private const int INTERNET_SUPPRESS_COOKIE_PERSIST = 3;
-
-        [DllImport("wininet.dll", SetLastError = true)]
-        private static extern bool InternetSetOption(IntPtr hInternet, int dwOption, IntPtr lpBuffer, int lpdwBufferLength);
-
         private enum State
         {
             None,
@@ -91,12 +85,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             _currentState = State.Login;
             ProcessComplete.Finished = false;
             ProcessComplete.Success = false;
-            unsafe
-            {
-                Int32 option = INTERNET_SUPPRESS_COOKIE_PERSIST;
-                InternetSetOption(IntPtr.Zero, INTERNET_OPTION_SUPPRESS_BEHAVIOR, new IntPtr(&option), sizeof(Int32));
-            }
-
             Url = @"https://www.netflix.com/Login";
             return EventResult.Complete();
         }
@@ -161,7 +149,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                                 Browser.Navigate(Url, "", Encoding.UTF8.GetBytes(loginPostData), "Referer: " + Url + "\r\nContent-Type: application/x-www-form-urlencoded\r\n");
                             }
                         };
-                        timer.Interval = 1000;
+                        timer.Interval = 5000;
                         timer.Start();
                     }
                     else if (!Url.ToLower().Contains("/login"))
