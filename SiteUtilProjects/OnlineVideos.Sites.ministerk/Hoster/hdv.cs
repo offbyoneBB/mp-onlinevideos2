@@ -24,7 +24,7 @@ namespace OnlineVideos.Hoster
             Match m = Regex.Match(url, @"/(?<imdbid>[^/]+)$");
             if (m.Success)
             {
-                var data = GetWebData("https://api.hdv.fun/l1", "imdb=" + m.Groups["imdbid"].Value);
+                var data = GetWebData("https://eb2.srtaem.casa/l1", "imdb=" + m.Groups["imdbid"].Value);
                 JArray json = JArray.Parse(data);
                 string urlwithsubs = null;
                 string firsturl = null;
