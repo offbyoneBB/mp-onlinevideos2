@@ -3,11 +3,28 @@ using System.Text.RegularExpressions;
 using System.Web;
 using Newtonsoft.Json.Linq;
 using OnlineVideos.Helpers;
+using System.Collections.Generic;
 
 namespace OnlineVideos.Sites
 {
     public class FMoviesUtil : GenericSiteUtil
     {
+        private string rootUrl = null;
+        public override int DiscoverDynamicCategories()
+        {
+            if (!UriUtils.IsValidUri(baseUrl))
+            {
+                var data = GetWebData(@"https://fmovies.name");
+                Match m = Regex.Match(data, @"<li><a\shref=""(?<url>[^""]*)"">");
+                if (m.Success)
+                {
+                    rootUrl = FormatDecodeAbsolutifyUrl(m.Groups["url"].Value, "/", null, UrlDecoding.None);
+                    baseUrl = rootUrl + baseUrl;
+                    searchUrl = rootUrl + searchUrl;
+                }
+            }
+            return base.DiscoverDynamicCategories();
+        }
         public override string GetVideoUrl(VideoInfo video)
         {
             var data = GetWebData(video.VideoUrl);
@@ -24,7 +41,7 @@ namespace OnlineVideos.Sites
             string mccloud = "";
             if (m.Success)
                 mccloud = "&mcloud=" + m.Groups["key"].Value;
-            data = GetWebData(@"https://www11.fmovies.to/ajax/film/servers?id=" + id + "&_=840" + ts);
+            data = GetWebData(rootUrl + @"ajax/film/servers?id=" + id + "&_=840" + ts);
             m = Regex.Match(data, @"<a\sclass=\\""active\\""\sdata-id=\\""(?<id>[^\\]*)\\""\shref=\\""[^""]*"">");
             if (m.Success)
             {
@@ -32,7 +49,7 @@ namespace OnlineVideos.Sites
                 string server = "";
                 if (m3.Success)
                     server = @"&server=" + m3.Groups["server"].Value;
-                var jUrl = "https://www11.fmovies.to/ajax/episode/info?id=" + m.Groups["id"].Value + server + mccloud + "&_=888" + ts;
+                var jUrl = rootUrl + @"ajax/episode/info?id=" + m.Groups["id"].Value + server + mccloud + "&_=888" + ts;
                 JObject jData;
                 try
                 {
@@ -44,7 +61,7 @@ namespace OnlineVideos.Sites
                     System.Threading.Thread.Sleep(1000);
                     jData = GetWebData<JObject>(jUrl);
                 }
-                string url = jData.Value<string>("target");
+                string url = jData.Value<string>("url");
                 string url2 = url.Replace("/embed/", "/info/");
 
                 var data2 = GetWebData<JToken>(url2, referer: url);
@@ -96,6 +113,12 @@ namespace OnlineVideos.Sites
                 }
             }
             return null;
+        }
+
+        public override List<SearchResultItem> Search(string query, string category = null)
+        {
+            query = query.Replace(" ", "+");
+            return base.Search(query, category);
         }
 
         public override ITrackingInfo GetTrackingInfo(VideoInfo video)
