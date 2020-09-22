@@ -468,6 +468,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                         }
 
                     }
+                    System.Threading.Thread.Sleep(5000);
                     data = ExtendedWebCache.Instance.GetWebData<string>(redirUrl, string.Format(loginPostData, HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password), HttpUtility.UrlEncode(LatestAuthUrl)), _cc, cache: false);
                 }
                 return _cc;
