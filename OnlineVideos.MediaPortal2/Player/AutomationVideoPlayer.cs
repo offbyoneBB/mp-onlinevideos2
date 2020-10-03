@@ -106,7 +106,7 @@ namespace OnlineVideos.MediaPortal2
                 loadingScreen = new SplashScreen
                 {
                     SplashBackgroundImage = Image.FromFile(imageName),
-                    ScaleToFullscreen = true,
+                    ScaleToFullscreen = false,
                     FadeOutDuration = TimeSpan.FromMilliseconds(2000),
                     UsePictureBox = true,
                     TopMost = true
