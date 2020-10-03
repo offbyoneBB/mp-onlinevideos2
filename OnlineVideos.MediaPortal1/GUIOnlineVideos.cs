@@ -873,7 +873,8 @@ namespace OnlineVideos.MediaPortal1
             {
                 if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
                 {
-                    currentFilter.Clear();
+                    if (GUI_facadeView.SelectedListItem.Label != Translation.Instance.NextPage)
+                        currentFilter.Clear();
                     GUIPropertyManager.SetProperty("#OnlineVideos.filter", string.Empty);
                     switch (CurrentState)
                     {
@@ -1934,7 +1935,6 @@ namespace OnlineVideos.MediaPortal1
             int indextoSelect = -1;
             if (append)
             {
-                currentFilter.Clear();
                 indextoSelect = currentVideoList.Count + 1;
                 currentVideoList.AddRange(videos);
             }
@@ -3011,7 +3011,7 @@ namespace OnlineVideos.MediaPortal1
             GUIControl.ClearControl(GetID, GUI_facadeView.GetID);
             foreach (var item in currentFacadeItems)
             {
-                if (currentFilter.Matches(item.Label))
+                if (item.Label == Translation.Instance.NextPage || currentFilter.Matches(item.Label))
                 {
                     GUI_facadeView.Add(item);
                 }
