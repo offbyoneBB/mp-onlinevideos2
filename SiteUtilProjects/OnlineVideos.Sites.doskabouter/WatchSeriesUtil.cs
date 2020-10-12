@@ -272,8 +272,11 @@ namespace OnlineVideos.Sites
                         {
                             if (category is SeriesRssLink)
                                 tInfo.ID_IMDB = ((SeriesRssLink)category).imDbId;
+                            DateTime res;
+                            if (DateTime.TryParse(video.Airdate, out res))
+                                tInfo.Year = (uint)res.Year;
                             video.Other = tInfo;
-                            Log.Debug(String.Format("Trackinginfo: {0} Season: {1} Episode: {2}", tInfo.Title, tInfo.Season, tInfo.Episode));
+                            Log.Debug(String.Format("Trackinginfo: {0} Season: {1} Episode: {2} Yaer: {3}", tInfo.Title, tInfo.Season, tInfo.Episode, tInfo.Year));
                         }
                     }
                     catch (Exception e)
