@@ -127,6 +127,7 @@ namespace OnlineVideos.Sites
                 case Depth.Series:
                     Match m2 = Regex.Match(webData, @"imdb\.com/title/(?<imdbId>[^/]*)/");
                     Match m3 = Regex.Match(webData, @"function\sloadMoreLinks\(season\)\s{\s*\$\.post\(\s*'(?<url>[^']*)',\s*{(?<postdata>[^}]*)}", defaultRegexOptions);
+                    Match m6 = Regex.Match(webData, @"<strong>Release\sDate:</strong>\s<span\sitemprop=""startDate"">\s*<a[^>]*>(?<year>[\d+]*)</a></span>\s*<br\s/>");
                     webData = Helpers.StringUtils.GetSubString(webData, @"class=""lists"" >", @"class=""clear"" ");
                     string[] tmp = { @"class=""lists"" >" };
                     string[] seasons = webData.Split(tmp, StringSplitOptions.RemoveEmptyEntries);
@@ -135,6 +136,8 @@ namespace OnlineVideos.Sites
                         SeriesRssLink cat = new SeriesRssLink();
                         if (m2.Success)
                             cat.imDbId = m2.Groups["imdbId"].Value;
+                        if (m6.Success)
+                            cat.year = Convert.ToUInt32(m6.Groups["year"].Value);
 
                         cat.Name = HttpUtility.HtmlDecode(Helpers.StringUtils.GetSubString(s, @"name"">", "<")).Trim();
                         cat.Url = s;
@@ -271,10 +274,11 @@ namespace OnlineVideos.Sites
                         if (tInfo.Season != 0)
                         {
                             if (category is SeriesRssLink)
-                                tInfo.ID_IMDB = ((SeriesRssLink)category).imDbId;
-                            DateTime res;
-                            if (DateTime.TryParse(video.Airdate, out res))
-                                tInfo.Year = (uint)res.Year;
+                            {
+                                var seriesCat = ((SeriesRssLink)category);
+                                tInfo.ID_IMDB = seriesCat.imDbId;
+                                tInfo.Year = seriesCat.year;
+                            }
                             video.Other = tInfo;
                             Log.Debug(String.Format("Trackinginfo: {0} Season: {1} Episode: {2} Yaer: {3}", tInfo.Title, tInfo.Season, tInfo.Episode, tInfo.Year));
                         }
@@ -422,6 +426,7 @@ namespace OnlineVideos.Sites
     public class SeriesRssLink : RssLink
     {
         public string imDbId = null;
+        public uint year = 0;
     }
 
 }
