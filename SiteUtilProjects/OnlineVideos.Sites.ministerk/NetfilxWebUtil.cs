@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 
@@ -15,6 +17,12 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
     public class NetfilxWebUtil : SiteUtilBase, IBrowserVersionEmulation
     {
+
+        [DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        static extern bool InternetGetCookie(string lpszUrl, string lpszCookieName,
+                         StringBuilder lpszCookieData, ref int lpdwSize);
+        [DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        static extern bool InternetSetCookie(string lpszUrlName, string lpszCookieName, string lpszCookieData);
 
         #region Helper classes
 
@@ -29,10 +37,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         #region Settings
 
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Username"), Description("Netflix email")]
-        protected string username = null;
-        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Password"), Description("Netflix password"), PasswordPropertyText(true)]
-        protected string password = null;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Show loading spinner"), Description("Show the loading spinner in the Browser Player")]
         protected bool showLoadingSpinner = true;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable Netflix Info/Stat OSD"), Description("Enable info and statistics OSD. Toggle OSD with 0 when video is playing. Do not enable this if you need to enter 0 in parental control pin")]
@@ -52,11 +56,9 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         #region Urls
 
-        private string loginUrl = @"https://www.netflix.com/Login";
         private string homeUrl = @"https://www.netflix.com/";
         private string playerUrl = @"http://www.netflix.com/watch/{0}";
         private string searchUrl = @"https://www.netflix.com/search?q={0}";
-        private string loginPostData = "email={0}&password={1}&rememberMe=true&flow=websiteSignUp&mode=login&action=loginAction&withFields=email%2Cpassword%2CrememberMe%2CnextPage%2CshowPassword&authURL={2}&nextPage=&showPassword=";
         private string switchProfileUrl = @"{0}{1}profiles/switch?switchProfileGuid={2}&authURL={3}";
 
         #endregion
@@ -423,27 +425,33 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
         }
 
-        private bool HaveCredentials
-        {
-            get { return !string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(password); }
-        }
-
         private CookieContainer _cc = null;
         private CookieContainer Cookies
         {
             get
             {
-                if (!HaveCredentials)
-                {
-                    _cc = null;
-                    throw new OnlineVideosException("Please enter your email and password");
-                }
                 if (_cc == null)
                 {
                     _cc = new CookieContainer();
-                    // No caching in this case.
-                    string redirUrl = ExtendedWebCache.Instance.GetRedirectedUrl(loginUrl).Replace("entrytrap", "Login");
-                    string data = ExtendedWebCache.Instance.GetWebData<string>(redirUrl, cookies: _cc, cache: false);
+                    int size = 0;
+                    InternetGetCookie(homeUrl, null, null, ref size);
+
+                    StringBuilder lpszCookieData = new StringBuilder(size);
+                    InternetGetCookie(homeUrl, null, lpszCookieData, ref size);
+
+                    string cooks = lpszCookieData.ToString();
+                    if (!(String.IsNullOrEmpty(cooks)))
+                    {
+                        var cookarr = cooks.Split(';');
+                        foreach (var cook in cookarr)
+                        {
+                            int p = cook.IndexOf('=');
+                            Cookie c = new Cookie(cook.Substring(0, p).Trim(), cook.Substring(p + 1));
+                            c.Domain = new Uri(homeUrl).Host;
+                            _cc.Add(c);
+                        }
+                    }
+                    string data = ExtendedWebCache.Instance.GetWebData<string>(homeUrl, cookies: _cc, cache: false);
 
                     Regex rgx = new Regex(@"""authURL"":""(?<authURL>[^""]*)");
                     Match m = rgx.Match(data);
@@ -468,8 +476,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                         }
 
                     }
-                    System.Threading.Thread.Sleep(5000);
-                    data = ExtendedWebCache.Instance.GetWebData<string>(redirUrl, string.Format(loginPostData, HttpUtility.UrlEncode(username), HttpUtility.UrlEncode(password), HttpUtility.UrlEncode(LatestAuthUrl)), _cc, cache: false);
                 }
                 return _cc;
             }
@@ -483,22 +489,30 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         public override int DiscoverDynamicCategories()
         {
-            LoadProfiles();
-            foreach (JToken p in profiles)
+            Settings.Categories.Clear();
+            try
             {
-                currentProfile = p;
-                RssLink profile = new RssLink()
+                LoadProfiles();
+                foreach (JToken p in profiles)
                 {
-                    HasSubCategories = true,
-                    Name = ProfileName,
-                    Thumb = ProfileIcon
-                };
-                currentProfile = null;
-                profile.Other = (Func<List<Category>>)(() => GetProfileSubCategories(profile, p));
-                Settings.Categories.Add(profile);
+                    currentProfile = p;
+                    RssLink profile = new RssLink()
+                    {
+                        HasSubCategories = true,
+                        Name = ProfileName,
+                        Thumb = ProfileIcon
+                    };
+                    currentProfile = null;
+                    profile.Other = (Func<List<Category>>)(() => GetProfileSubCategories(profile, p));
+                    Settings.Categories.Add(profile);
+                }
+                Settings.DynamicCategoriesDiscovered = Settings.Categories.Count > 0;
             }
-
-            Settings.DynamicCategoriesDiscovered = Settings.Categories.Count > 0;
+            catch (OnlineVideosException e)
+            {
+                Log.Debug("Error " + e.Message + " loading profiles");
+                Settings.Categories.Add(new Category() { Name = "Log in", Other = (Func<List<VideoInfo>>)(() => GetLoginVideo(null)) });
+            }
             return Settings.Categories.Count;
         }
 
@@ -532,6 +546,13 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             MyGetWebData(string.Format(switchProfileUrl, ShaktiApi, BuildId, ProfileToken, LatestAuthUrl), referer: homeUrl);
             i18n = null;
             MyGetWebData(homeUrl);
+            if (_cc != null)
+            {
+                foreach (Cookie cookie in _cc.GetCookies(new Uri(homeUrl)))
+                {
+                    InternetSetCookie(homeUrl, cookie.Name, cookie.Value);
+                }
+            }
             List<Category> cats = new List<Category>();
 
             RssLink home = new RssLink() { Name = Translate("Home"), HasSubCategories = true, ParentCategory = parentCategory };
@@ -1016,6 +1037,13 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             return videos;
         }
 
+        private List<VideoInfo> GetLoginVideo(Category category)
+        {
+            List<VideoInfo> videos = new List<VideoInfo>();
+            videos.Add(new VideoInfo() { Title = "Play me", VideoUrl = "LOGIN" });
+            return videos;
+        }
+
         private List<VideoInfo> GetTraileVideos(Category trailers, List<VideoInfo> videos)
         {
             return videos;
@@ -1127,7 +1155,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             get
             {
-                return username;
+                return _cc == null ? "GET" : "";
             }
         }
 
@@ -1136,7 +1164,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             get
             {
                 Dictionary<string, string> p = new Dictionary<string, string>();
-                p.Add("password", password);
                 p.Add("profileToken", ProfileToken);
                 p.Add("showLoadingSpinner", showLoadingSpinner.ToString());
                 p.Add("enableNetflixOsd", enableNetflixOsd.ToString());
