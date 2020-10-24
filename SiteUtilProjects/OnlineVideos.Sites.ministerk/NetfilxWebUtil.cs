@@ -1164,7 +1164,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             get
             {
                 Dictionary<string, string> p = new Dictionary<string, string>();
-                p.Add("profileToken", ProfileToken);
                 p.Add("showLoadingSpinner", showLoadingSpinner.ToString());
                 p.Add("enableNetflixOsd", enableNetflixOsd.ToString());
                 p.Add("disableLogging", disableLogging.ToString());

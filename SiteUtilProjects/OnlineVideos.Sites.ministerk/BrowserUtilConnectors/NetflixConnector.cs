@@ -13,14 +13,10 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             None,
             Login,
-            SelectProfile,
             ReadyToPlay,
-            GotoToPlay,
             Playing
         }
 
-        private string _username;
-        private string _profileToken;
         private bool _showLoading = true;
         private bool _enableNetflixOsd = false;
         private bool _disableLogging = false;
@@ -41,6 +37,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             Process.GetCurrentProcess().Kill();
         }
+
         public override void OnAction(string actionEnumName)
         {
             if (!_disableLogging) MessageHandler.Info("Netflix. Input: {0}", actionEnumName);
@@ -71,8 +68,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 ShowLoading();
             _disableLogging = bool.Parse(json["disableLogging"].Value<string>());
             _enableNetflixOsd = bool.Parse(json["enableNetflixOsd"].Value<string>());
-            _profileToken = json["profileToken"].Value<string>();
-            _username = username;
 
             if (username == "GET")
             {
@@ -131,7 +126,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     {
                         if (Url.ToLowerInvariant().Contains("/browse"))
                         {
-                            _currentState = State.SelectProfile;
+                            _currentState = State.None;
                             return EventResult.Error("ignore this");
                         }
                         break;
