@@ -84,15 +84,16 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
             else
             {
-                Cursor.Hide();
                 ProcessComplete.Finished = true;
                 ProcessComplete.Success = true;
+                _currentState = State.ReadyToPlay;
             }
             return EventResult.Complete();
         }
 
         public override Entities.EventResult PlayVideo(string videoToPlay)
         {
+            Cursor.Hide();
             ProcessComplete.Finished = false;
             ProcessComplete.Success = false;
             Url = videoToPlay;
@@ -133,6 +134,12 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                             _currentState = State.SelectProfile;
                             return EventResult.Error("ignore this");
                         }
+                        break;
+                    }
+                case State.Playing:
+                    {
+                        ProcessComplete.Finished = true;
+                        ProcessComplete.Success = true;
                         break;
                     }
             }
