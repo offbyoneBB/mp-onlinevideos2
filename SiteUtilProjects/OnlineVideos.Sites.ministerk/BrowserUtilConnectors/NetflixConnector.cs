@@ -64,8 +64,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             JObject json = JObject.Parse(System.Text.Encoding.UTF8.GetString(System.Convert.FromBase64String(password)));
             _showLoading = bool.Parse(json["showLoadingSpinner"].Value<string>());
 
-            if (_showLoading)
-                ShowLoading();
             _disableLogging = bool.Parse(json["disableLogging"].Value<string>());
             _enableNetflixOsd = bool.Parse(json["enableNetflixOsd"].Value<string>());
 
@@ -79,6 +77,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             }
             else
             {
+                if (_showLoading)
+                  ShowLoading();
                 ProcessComplete.Finished = true;
                 ProcessComplete.Success = true;
                 _currentState = State.ReadyToPlay;
