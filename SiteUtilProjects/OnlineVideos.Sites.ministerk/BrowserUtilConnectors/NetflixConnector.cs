@@ -78,7 +78,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             else
             {
                 if (_showLoading)
-                  ShowLoading();
+                    ShowLoading();
                 ProcessComplete.Finished = true;
                 ProcessComplete.Success = true;
                 _currentState = State.ReadyToPlay;
@@ -133,6 +133,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                     }
                 case State.Playing:
                     {
+                        if (_showLoading)
+                            HideLoading();
                         ProcessComplete.Finished = true;
                         ProcessComplete.Success = true;
                         break;
