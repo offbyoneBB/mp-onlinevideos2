@@ -3,6 +3,8 @@ using OnlineVideos.Helpers;
 using OnlineVideos.Sites.Entities;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.Reflection;
+using System.ComponentModel;
 
 namespace OnlineVideos.Sites.BrowserUtilConnectors
 {
@@ -23,6 +25,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         private State _currentState = State.None;
         private bool _isPlayingOrPausing = false;
+        private PreviewKeyDownEventHandler _oldKeyDown = null;
 
         private void SendKeyToBrowser(string key)
         {
@@ -74,6 +77,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 ProcessComplete.Finished = false;
                 ProcessComplete.Success = false;
                 Url = @"https://www.netflix.com/Login";
+                RemoveEvent();
+                Browser.PreviewKeyDown += Browser_PreviewKeyDown;
             }
             else
             {
@@ -84,6 +89,27 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 _currentState = State.ReadyToPlay;
             }
             return EventResult.Complete();
+        }
+
+        private void RemoveEvent()
+        {
+
+            FieldInfo f1 = typeof(Control).GetField("EventPreviewKeyDown",
+                BindingFlags.Static | BindingFlags.NonPublic);
+
+            object obj = f1.GetValue(Browser);
+            PropertyInfo pi = Browser.GetType().GetProperty("Events",
+                BindingFlags.NonPublic | BindingFlags.Instance);
+
+            EventHandlerList list = (EventHandlerList)pi.GetValue(Browser, null);
+            _oldKeyDown = (PreviewKeyDownEventHandler)list[obj];
+            list.RemoveHandler(obj, list[obj]);
+        }
+
+        private void Browser_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            if (e.KeyValue == (int)Keys.Escape)
+                _oldKeyDown(sender, e);
         }
 
         public override Entities.EventResult PlayVideo(string videoToPlay)
