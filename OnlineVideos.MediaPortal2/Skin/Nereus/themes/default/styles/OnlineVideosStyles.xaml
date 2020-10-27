@@ -11,6 +11,7 @@
     <ovs:SiteStateColorConverter x:Key="ovsSiteStateColorConverter"/>
 
     <Model x:Key="GenericViewModeModel" Id="08BB1CFE-8AF3-4DD1-BB9C-582DD7EA8BBF"/>
+    <Model x:Key="SkinSettingsModel" Id="13961014-16C4-4361-9751-8E2C585EFD44"/>
 
     <ControlTemplate x:Key="ViewTemplate" TargetType="{x:Type ListView}">
       <ScrollViewer CanContentScroll="True" Margin="0" Style="{ThemeResource VerticalMediaScrollViewerStyle}"
@@ -148,10 +149,11 @@
               <Binding>
                 <Binding.Source>
                   <ItemsPanelTemplate>
-                    <AnimatedStackPanel x:Name="ListItemsHost" IsItemsHost="True" ScrollMargin="130,130" Margin="1,-10,0,-40">
+                    <AnimatedStackPanel x:Name="ListItemsHost" IsItemsHost="True" ScrollMargin="130,130" Margin="1,-10,0,-40"
+                                        LoopScroll="{Binding Source={StaticResource SkinSettingsModel}, Path=[Nereus].EnableLoopScrolling}">
                       <AnimatedStackPanel.Resources>
                         <Storyboard x:Key="ScrollAnimation" FillBehavior="HoldEnd">
-                          <DoubleAnimation BeginTime="00:00:00" From="0" To="1" Duration="00:00:00.300"
+                          <DoubleAnimation BeginTime="00:00:00" From="0" To="1" Duration="00:00:00.300" DecelerationRatio="0.3" AccelerationRatio="0.3"
                                            FillBehavior="HoldEnd" Storyboard.TargetName="ListItemsHost" Storyboard.TargetProperty="ScrollOffsetMultiplier" />
                         </Storyboard>
                       </AnimatedStackPanel.Resources>
@@ -170,10 +172,11 @@
               <Binding>
                 <Binding.Source>
                   <ItemsPanelTemplate>
-                    <AnimatedWrapPanel x:Name="GridItemsHost" IsItemsHost="True" Orientation="Horizontal" ScrollMargin="400,400" Margin="50,-270,0,-305">
+                    <AnimatedWrapPanel x:Name="GridItemsHost" IsItemsHost="True" Orientation="Horizontal" ScrollMargin="400,400" Margin="50,-270,0,-305"
+                                       LoopScroll="{Binding Source={StaticResource SkinSettingsModel}, Path=[Nereus].EnableLoopScrolling}">
                       <AnimatedWrapPanel.Resources>
                         <Storyboard x:Key="ScrollAnimation" FillBehavior="HoldEnd">
-                          <DoubleAnimation BeginTime="00:00:00" From="0" To="1" Duration="00:00:00.400"
+                          <DoubleAnimation BeginTime="00:00:00" From="0" To="1" Duration="00:00:00.400" DecelerationRatio="0.3" AccelerationRatio="0.3"
                                            FillBehavior="HoldEnd" Storyboard.TargetName="GridItemsHost" Storyboard.TargetProperty="ScrollOffsetMultiplier" />
                         </Storyboard>
                       </AnimatedWrapPanel.Resources>
