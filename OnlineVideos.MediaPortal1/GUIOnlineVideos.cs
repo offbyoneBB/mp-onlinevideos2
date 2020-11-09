@@ -253,7 +253,7 @@ namespace OnlineVideos.MediaPortal1
 
         public override bool Init()
         {
-           ServicePointManager.SecurityProtocol = (SecurityProtocolType) 3072|SecurityProtocolType.Ssl3|SecurityProtocolType.Tls;
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072 | SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
 
             CrossDomain.OnlineVideosAppDomain.UseSeperateDomain = true;
 
@@ -2167,7 +2167,7 @@ namespace OnlineVideos.MediaPortal1
             int currentPlaylistIndex = currentPlayingItem != null ? currentPlaylist.IndexOf(currentPlayingItem) : 0;
             if (currentPlaylist.Count > currentPlaylistIndex + 1)
             {
-                // if playing a playlist item, move to the next            
+                // if playing a playlist item, move to the next
                 currentPlaylistIndex++;
                 Play_Step1(currentPlaylist[currentPlaylistIndex], GUIWindowManager.ActiveWindow == GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
             }
@@ -2190,7 +2190,7 @@ namespace OnlineVideos.MediaPortal1
                     if (currentPlaylist.Count > 1)
                     {
                         currentPlaylistIndex = 1;
-                        Play_Step1(currentPlaylist[1], true);
+                        Play_Step1(currentPlaylist[1], GUIWindowManager.ActiveWindow == GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
                     }
                     else
                     {
@@ -2341,7 +2341,7 @@ namespace OnlineVideos.MediaPortal1
             string lsUrl = loUrlList[0];
             int currentPlaylistIndex = currentPlayingItem != null ? currentPlaylist.IndexOf(currentPlayingItem) : -1;
             bool resolve;
-            //try to find previously chosen playbackoption in plaiItem.Video.Playbackoptiohs. If found, take that one and don't display dialog
+            //try to find previously chosen playbackoption in playItem.Video.Playbackoptiohs. If found, take that one and don't display dialog
             if (!skipPlaybackOptionsDialog && currentPlaylistIndex >= 0 && playItem.Video.PlaybackOptions != null && playItem.Video.PlaybackOptions.Count > 1 &&
                 playItem.Video.PlaybackOptions.ContainsKey(currentPlaylist[currentPlaylistIndex].ChosenPlaybackOption))
             {
