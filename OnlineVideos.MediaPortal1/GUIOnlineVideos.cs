@@ -2169,6 +2169,7 @@ namespace OnlineVideos.MediaPortal1
             {
                 // if playing a playlist item, move to the next
                 currentPlaylistIndex++;
+                selectedVideo = currentPlaylist[currentPlaylistIndex].Video;
                 Play_Step1(currentPlaylist[currentPlaylistIndex], GUIWindowManager.ActiveWindow == GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
             }
             else
@@ -2181,6 +2182,7 @@ namespace OnlineVideos.MediaPortal1
                         var videos = SelectedSite.GetNextPageVideos();
                         currentPlaylist = VideosToPlayList(videos, currentPlaylist.Random, null);
                         currentPlaylist.Insert(0, currentPlayingItem);//keep one for chosenplaybackoption
+                        SetVideosToFacade(videos, currentVideosDisplayMode);
                     }
                     catch (Exception ex)
                     {
@@ -2342,11 +2344,25 @@ namespace OnlineVideos.MediaPortal1
             int currentPlaylistIndex = currentPlayingItem != null ? currentPlaylist.IndexOf(currentPlayingItem) : -1;
             bool resolve;
             //try to find previously chosen playbackoption in playItem.Video.Playbackoptiohs. If found, take that one and don't display dialog
-            if (!skipPlaybackOptionsDialog && currentPlaylistIndex >= 0 && playItem.Video.PlaybackOptions != null && playItem.Video.PlaybackOptions.Count > 1 &&
-                playItem.Video.PlaybackOptions.ContainsKey(currentPlaylist[currentPlaylistIndex].ChosenPlaybackOption))
+            if (!skipPlaybackOptionsDialog && currentPlaylistIndex >= 0 && playItem.Video.PlaybackOptions != null && playItem.Video.PlaybackOptions.Count > 1)
             {
-                resolve = true;
-                lsUrl = currentPlaylist[currentPlaylistIndex].ChosenPlaybackOption;
+                if (playItem.Video.PlaybackOptions.ContainsKey(currentPlaylist[currentPlaylistIndex].ChosenPlaybackOption))
+                {
+                    resolve = true;
+                    lsUrl = currentPlaylist[currentPlaylistIndex].ChosenPlaybackOption;
+                }
+                else
+                {
+                    //if previously chosen playbackoption was the first, then just take the first for this one too
+                    var currPlaybackOptions = currentPlaylist[currentPlaylistIndex].Video.PlaybackOptions;
+                    if (currPlaybackOptions.FirstOrDefault().Key == currentPlaylist[currentPlaylistIndex].ChosenPlaybackOption)
+                    {
+                        resolve = true;
+                        lsUrl = playItem.Video.PlaybackOptions.First().Key;
+                    }
+                    else
+                        resolve = DisplayPlaybackOptions(playItem.Video, ref lsUrl, skipPlaybackOptionsDialog); // resolve only when any playbackoptions were set
+                }
             }
 
             else
