@@ -85,6 +85,7 @@ namespace OnlineVideos.Sites
         public enum VideoFormat { flv, mp4, webm };
 
         const string CLIENT = @"eyJpbnN0YWxsZWQiOnsiYXV0aF91cmkiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20vby9vYXV0aDIvYXV0aCIsImNsaWVudF9zZWNyZXQiOiJ4cG52b05vNFB6N3lJUXdiVmdIQUdBcl8iLCJ0b2tlbl91cmkiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20vby9vYXV0aDIvdG9rZW4iLCJjbGllbnRfZW1haWwiOiIiLCJyZWRpcmVjdF91cmlzIjpbInVybjppZXRmOndnOm9hdXRoOjIuMDpvb2IiLCJvb2IiXSwiY2xpZW50X3g1MDlfY2VydF91cmwiOiIiLCJjbGllbnRfaWQiOiI5MjUzNzY1MjgyODAtMm9xdWkydnEwbHE2YjVtZjRzNTNodWNqNnRrb2JxazcuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdXRoX3Byb3ZpZGVyX3g1MDlfY2VydF91cmwiOiJodHRwczovL3d3dy5nb29nbGVhcGlzLmNvbS9vYXV0aDIvdjEvY2VydHMifX0=";
+        const string APIKEY = "AIzaSyDzL_VrmG4Q2K4unBafZEoOv3UCAUTB7e4";
 
         [Category("OnlineVideosConfiguration"), Description("Add some dynamic categories found at startup to the list of configured ones.")]
         bool useDynamicCategories = true;
@@ -534,7 +535,7 @@ namespace OnlineVideos.Sites
                     }
                     service = new YouTubeService(new BaseClientService.Initializer()
                     {
-                        ApiKey = "AIzaSyDzL_VrmG4Q2K4unBafZEoOv3UCAUTB7e4",
+                        ApiKey = APIKEY,
                         ApplicationName = "OnlineVideos",
                         HttpClientInitializer = credential,
                     });
