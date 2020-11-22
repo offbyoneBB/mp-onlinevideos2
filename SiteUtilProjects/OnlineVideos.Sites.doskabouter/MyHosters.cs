@@ -135,7 +135,7 @@ namespace OnlineVideos.Hoster
             if (m.Success)
             {
                 data = GetWebData(m.Groups["url"].Value);
-                var res= Helpers.HlsPlaylistParser.GetPlaybackOptions(data, m.Groups["url"].Value);
+                var res = Helpers.HlsPlaylistParser.GetPlaybackOptions(data, m.Groups["url"].Value);
                 return res.FirstOrDefault().Value;
             }
 
@@ -416,6 +416,36 @@ namespace OnlineVideos.Hoster
                 }
             }
             return String.Empty;
+        }
+    }
+
+    public class Gomoplayer : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "gomoplayer.com";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            var data = GetWebData(url);
+            string packed = Helpers.StringUtils.GetSubString(data, @"return p}", @"</script>");
+            if (!String.IsNullOrEmpty(packed))
+            {
+                packed = packed.Replace(@"\'", @"'");
+                string unpacked = Helpers.StringUtils.UnPack(packed);
+                var resUrl = Helpers.StringUtils.GetSubString(unpacked, @"file:""", @"""");
+                if (resUrl.EndsWith(".m3u8"))
+                {
+                    var m3u8Data = GetWebData(resUrl);
+                    var res = Helpers.HlsPlaylistParser.GetPlaybackOptions(m3u8Data, resUrl);
+                    var finalUrl = res.LastOrDefault().Value;
+                    return finalUrl;
+                }
+                else
+                    return resUrl;
+            }
+            return null;
         }
     }
 
