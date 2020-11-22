@@ -699,6 +699,13 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
             }
+
+            IAudioPostEngine audioEngine = AudioPostEngine.GetInstance(true);
+            if (audioEngine != null && !audioEngine.LoadPostProcessing(graphBuilder))
+            {
+              AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
+            }
+
             AnalyseStreams();
             SelectSubtitles();
             SelectAudioLanguage();
