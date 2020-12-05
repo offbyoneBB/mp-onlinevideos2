@@ -334,6 +334,11 @@ namespace OnlineVideos
             Category c = this;
             while (c != null)
             {
+                if (c is SearchCategory && this is RssLink)
+                {
+                    result = ((RssLink)this).Url;
+                    break;
+                }
                 result = c.Name + (result == "" ? "" : divider) + result;
                 c = c.ParentCategory;
             }
@@ -409,5 +414,12 @@ namespace OnlineVideos
             if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
+    }
+
+    /// <summary>
+    /// Category used to store the results of a search which returns categories
+    /// </summary>
+    public class SearchCategory : Category
+    {
     }
 }

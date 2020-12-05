@@ -1825,7 +1825,7 @@ namespace OnlineVideos.MediaPortal1
                 }
                 else
                 {
-                    Category searchCategory = CrossDomain.OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(Category).Assembly.FullName, typeof(Category).FullName) as Category;
+                    Category searchCategory = CrossDomain.OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(SearchCategory).Assembly.FullName, typeof(SearchCategory).FullName) as Category;
                     searchCategory.Name = categoryName;
                     searchCategory.HasSubCategories = true;
                     searchCategory.SubCategoriesDiscovered = true;

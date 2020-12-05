@@ -28,8 +28,13 @@ namespace OnlineVideos.MediaPortal1
                 m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "OnlineVideoDatabase.db3"));
                 DatabaseUtility.SetPragmas(m_db);
                 DatabaseUtility.AddTable(m_db, "FAVORITE_VIDEOS", "CREATE TABLE FAVORITE_VIDEOS(VDO_ID integer primary key autoincrement,VDO_NM text,VDO_URL text,VDO_DESC text,VDO_TAGS text,VDO_LENGTH text,VDO_OTHER_NFO text,VDO_IMG_URL text,VDO_SITE_ID text)\n");
-                DatabaseUtility.AddTable(m_db, "FAVORITE_Categories", "CREATE TABLE FAVORITE_Categories(CAT_ID integer primary key autoincrement,CAT_Name text,CAT_Desc text,CAT_ThumbUrl text,CAT_Hierarchy text,CAT_SITE_ID text)\n");
-				DatabaseUtility.AddTable(m_db, "PREFERRED_LAYOUT", "CREATE TABLE PREFERRED_LAYOUT(Site_Name text, Category_Hierarchy text, Layout integer, PRIMARY KEY (Site_Name, Category_Hierarchy) ON CONFLICT REPLACE)\n");
+                DatabaseUtility.AddTable(m_db, "FAVORITE_Categories", "CREATE TABLE FAVORITE_Categories(CAT_ID integer primary key autoincrement,CAT_Name text,CAT_Desc text,CAT_ThumbUrl text,CAT_Hierarchy text,CAT_SITE_ID text, CAT_IS_SEARCH boolean, SEARCH_CAT_HASSUBS boolean)\n");
+                DatabaseUtility.AddTable(m_db, "PREFERRED_LAYOUT", "CREATE TABLE PREFERRED_LAYOUT(Site_Name text, Category_Hierarchy text, Layout integer, PRIMARY KEY (Site_Name, Category_Hierarchy) ON CONFLICT REPLACE)\n");
+                if (!DatabaseUtility.TableColumnExists(m_db, "FAVORITE_Categories", "CAT_IS_SEARCH"))
+                {
+                    m_db.Execute("ALTER TABLE FAVORITE_Categories ADD COLUMN CAT_IS_SEARCH boolean DEFAULT false");
+                    m_db.Execute("ALTER TABLE FAVORITE_Categories ADD COLUMN SEARCH_CAT_HASSUBS boolean DEFAULT false");
+                }
             }
             catch (SQLiteException ex)
             {
@@ -182,8 +187,16 @@ namespace OnlineVideos.MediaPortal1
 
             string lsSQL =
                 string.Format(
-                    "insert into FAVORITE_Categories(CAT_Name,CAT_Desc,CAT_ThumbUrl,CAT_Hierarchy,CAT_SITE_ID)VALUES('{0}','{1}','{2}','{3}','{4}')",
-                    DatabaseUtility.RemoveInvalidChars(cat.Name), cat.Description == null ? "" : DatabaseUtility.RemoveInvalidChars(cat.Description), cat.Thumb, categoryHierarchyName, siteName);
+                    "insert into FAVORITE_Categories(CAT_Name,CAT_Desc,CAT_ThumbUrl,CAT_Hierarchy,CAT_SITE_ID,CAT_IS_SEARCH,SEARCH_CAT_HASSUBS) " +
+                    "VALUES('{0}','{1}','{2}','{3}','{4}',{5},{6})",
+                    DatabaseUtility.RemoveInvalidChars(cat.Name),
+                    cat.Description == null ? "" : DatabaseUtility.RemoveInvalidChars(cat.Description),
+                    cat.Thumb,
+                    categoryHierarchyName,
+                    siteName,
+                    cat.ParentCategory is SearchCategory,
+                    cat.HasSubCategories
+                    );
             m_db.Execute(lsSQL);
             if (m_db.ChangedRows() > 0)
             {
@@ -211,7 +224,9 @@ namespace OnlineVideos.MediaPortal1
                         Description = DatabaseUtility.Get(resultSet, iRow, "CAT_Desc"),
                         Thumb = DatabaseUtility.Get(resultSet, iRow, "CAT_ThumbUrl"),
                         Id = DatabaseUtility.GetAsInt(resultSet, iRow, "CAT_ID"),
-                        RecursiveName = DatabaseUtility.Get(resultSet, iRow, "CAT_Hierarchy")
+                        RecursiveName = DatabaseUtility.Get(resultSet, iRow, "CAT_Hierarchy"),
+                        IsSearchCat = DatabaseUtility.GetAsInt(resultSet, iRow, "CAT_IS_SEARCH")==1,
+                        SearchCatHasSubcategories = DatabaseUtility.GetAsInt(resultSet, iRow, "SEARCH_CAT_HASSUBS")==1
                     });
             }
             return results;

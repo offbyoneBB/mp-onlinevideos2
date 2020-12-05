@@ -83,5 +83,10 @@ namespace OnlineVideos
 
         /// <summary>Holds the recursive name of the original category.</summary>
         public string RecursiveName { get; set; }
+
+        public bool IsSearchCat { get; set; }
+
+        //only valid if IsSearchCat=true
+        public bool SearchCatHasSubcategories { get; set; }
     }
 }
