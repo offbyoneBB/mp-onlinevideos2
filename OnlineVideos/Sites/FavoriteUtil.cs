@@ -266,7 +266,7 @@ namespace OnlineVideos.Sites
                     videos.Sort((Comparison<VideoInfo>)((v1, v2) => v1.Title.CompareTo(v2.Title)));
                     break;
                 case "airdate":
-                    videos.Sort((Comparison<VideoInfo>)delegate(VideoInfo v1, VideoInfo v2)
+                    videos.Sort((Comparison<VideoInfo>)delegate (VideoInfo v1, VideoInfo v2)
                     {
                         DateTime airdate_v1;
                         DateTime airdate_v2;
@@ -277,7 +277,7 @@ namespace OnlineVideos.Sites
                     });
                     break;
                 case "runtime":
-                    videos.Sort((Comparison<VideoInfo>)delegate(VideoInfo v1, VideoInfo v2)
+                    videos.Sort((Comparison<VideoInfo>)delegate (VideoInfo v1, VideoInfo v2)
                     {
                         double seconds_v1 = TryGetSeconds(v1.Length);
                         double seconds_v2 = TryGetSeconds(v2.Length);
