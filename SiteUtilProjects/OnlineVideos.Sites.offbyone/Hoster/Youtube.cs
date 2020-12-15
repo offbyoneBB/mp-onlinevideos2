@@ -40,6 +40,7 @@ namespace OnlineVideos.Hoster
 (?<json>\{.+\})|
 (?:\<param\sname=\\""flashvars\\""\svalue=\\""(?<params>[^""]+)\\""\>)|
 (flashvars=""(?<params>[^""]+)""))|
+(ytInitialPlayerResponse\s*=\s*(?<json>{[^<]*});</script>)|
 (yt\.?player\.?Config\s*=\s*\{.*?""args""\:\s*(?<json>\{(?>\{(?<c>)|[^{}]+|\}(?<-c>))*(?(c)(?!))\}))", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
         //the json part uses balancing groups, as demonstrated here: http://stackoverflow.com/a/35271017
         static Regex unicodeFinder = new Regex(@"\\[uU]([0-9A-F]{4})", RegexOptions.Compiled);
@@ -124,10 +125,19 @@ namespace OnlineVideos.Hoster
                                 Items.Add(z.Key, z.Value.ToString());
                             }
 
-                            if (string.IsNullOrEmpty(Items.Get("url_encoded_fmt_stream_map")) && !string.IsNullOrEmpty(Items.Get("player_response")))
+                            if (string.IsNullOrEmpty(Items.Get("url_encoded_fmt_stream_map")))
                             {
-                                qualities.Clear();
-                                parsePlayerStatus(JToken.Parse(Items.Get("player_response")), qualities);
+                                if (!string.IsNullOrEmpty(Items.Get("player_response")))
+                                {
+                                    qualities.Clear();
+                                    parsePlayerStatus(JToken.Parse(Items.Get("player_response"))["streamingData"], qualities);
+                                }
+                                else
+                                if (!string.IsNullOrEmpty(Items.Get("streamingData")))
+                                {
+                                    qualities.Clear();
+                                    parsePlayerStatus(JToken.Parse(Items.Get("streamingData")), qualities);
+                                }
                             }
                         }
                         else if (m.Groups["html"].Success)
@@ -206,6 +216,8 @@ namespace OnlineVideos.Hoster
                         {
                             string playerUrl = "";
                             var jsPlayerMatch = Regex.Match(contents, "\"assets\":.+?\"js\":\\s*(\"[^\"]+\")");
+                            if (!jsPlayerMatch.Success)
+                                jsPlayerMatch = Regex.Match(contents, "\"jsUrl\":\\s*(\"[^\"]+\")");
                             if (jsPlayerMatch.Success)
                             {
                                 playerUrl = Newtonsoft.Json.Linq.JToken.Parse(jsPlayerMatch.Groups[1].Value).ToString();
@@ -282,12 +294,12 @@ namespace OnlineVideos.Hoster
             return PlaybackOptions;
         }
 
-        private void parsePlayerStatus(JToken player_response, List<KeyValuePair<string[], string[]>> qualities)
+        private void parsePlayerStatus(JToken streamingData, List<KeyValuePair<string[], string[]>> qualities)
         {
-            var formats = player_response["streamingData"]["formats"] as JArray;
+            var formats = streamingData["formats"] as JArray;
             if (formats == null)
             {
-                string hlsUrl = player_response["streamingData"].Value<String>("hlsManifestUrl");
+                string hlsUrl = streamingData.Value<String>("hlsManifestUrl");
                 if (!String.IsNullOrEmpty(hlsUrl))
                 {
                     var data = GetWebData(hlsUrl);
