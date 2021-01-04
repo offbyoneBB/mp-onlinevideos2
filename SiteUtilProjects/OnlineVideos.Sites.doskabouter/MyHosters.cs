@@ -477,6 +477,31 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class Mightyupload : MyHosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "mightyupload";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            string data = WebCache.Instance.GetWebData(url);
+            if (!string.IsNullOrEmpty(data))
+            {
+                var m2 = Regex.Match(data,@"return\sp(?<data>.*?)</script",DefaultRegexOptions);
+                if (m2.Success)
+                {
+                    var res= Helpers.StringUtils.UnPack(m2.Groups["data"].Value.Replace(@"\'", @"'"));
+                    m2 = Regex.Match(res, @"{file:""(?<url>[^""]*)"",flashplayer");
+                }
+                if (m2.Success)
+                    return m2.Groups["url"].Value;
+            }
+            return url;
+        }
+    }
+
     public class Mixdrop : MyHosterBase
     {
 
