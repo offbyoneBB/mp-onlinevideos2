@@ -1,9 +1,11 @@
 ﻿using OnlineVideos.Hoster;
 using OnlineVideos.Subtitles;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
-using System.Text;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Web;
 using Jurassic;
@@ -295,23 +297,32 @@ namespace OnlineVideos.Sites
                 string imdb = GetImdbId(data);
                 uint year = GetRelesaseYear(data);
 
-                foreach (Match m in r.Matches(data))
+                string[] episodes = data.Split(new[] { "<h3>" },StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (string episode in episodes)
                 {
-                    LosMoviesVideoInfo video = new LosMoviesVideoInfo()
+                    Match m = r.Match("<h3>"+episode);
+                    Match m2 = Regex.Match(episode, "(?<script><script>\\s*func.*?</script>)", RegexOptions.Singleline);
+
+                    if (m.Success && m2.Success)
                     {
-                        Title = m.Groups["n"].Value.Trim() + " " + m.Groups["s"].Value + "x" + m.Groups["e"].Value,
-                        Thumb = currentCategoryThumb
-                    };
-                    video.TrackingInfo = new TrackingInfo()
-                    {
-                        ID_IMDB = imdb,
-                        Title = m.Groups["n"].Value.Trim(),
-                        Season = uint.Parse(m.Groups["s"].Value),
-                        Episode = uint.Parse(m.Groups["e"].Value),
-                        VideoKind = VideoKind.TvSeries,
-                        Year = year
-                    };
-                    videos.Add(video);
+                        LosMoviesVideoInfo video = new LosMoviesVideoInfo()
+                        {
+                            Title = m.Groups["n"].Value.Trim() + " " + m.Groups["s"].Value + "x" + m.Groups["e"].Value,
+                            Other = m.Groups["t"].Value + " " + m2.Groups["script"].Value,
+                            Thumb = currentCategoryThumb
+                        };
+                        video.TrackingInfo = new TrackingInfo()
+                        {
+                            ID_IMDB = imdb,
+                            Title = m.Groups["n"].Value.Trim(),
+                            Season = uint.Parse(m.Groups["s"].Value),
+                            Episode = uint.Parse(m.Groups["e"].Value),
+                            VideoKind = VideoKind.TvSeries,
+                            Year = year
+                        };
+                        videos.Add(video);
+                    }
                 }
             }
             else
@@ -392,7 +403,11 @@ namespace OnlineVideos.Sites
 
         public override string GetVideoUrl(VideoInfo video)
         {
-            string data = GetWebData(video.VideoUrl);
+            string data;
+            if (video.Other is string && !string.IsNullOrWhiteSpace(video.GetOtherAsString()))
+                data = video.GetOtherAsString();
+            else
+                data = GetWebData(video.VideoUrl);
             Match m2 = Regex.Match(data, "<script>(?<script>\\s*func.*?)</script>", RegexOptions.Singleline);
             ScriptEngine engine = new ScriptEngine();
 
@@ -430,7 +445,7 @@ namespace OnlineVideos.Sites
                         d.Add(string.Format(format, count), u);
                     }
                     else
-                        Log.Debug("Skipped hoster:" + m.Groups["f"].Value);
+                        Log.Debug("Skipped hoster:" + u);
                 }
                 else
                     Log.Debug("Skipped decription and hoster for: " + m.Groups["f"].Value);
@@ -479,7 +494,7 @@ namespace OnlineVideos.Sites
 
         public override List<SearchResultItem> Search(string query, string category = null)
         {
-            string url = baseUrl + "/123movies-search?type=movies&q=" + HttpUtility.UrlEncode(query);
+            string url = baseUrl + "/movies-search?type=movies&q=" + HttpUtility.UrlEncode(query);
             List<SearchResultItem> result = new List<SearchResultItem>();
             if (category != null && category == Settings.Categories[1].Name)
                 DiscoverSubCategoriesFromListing(url).ForEach(v => result.Add(v));
