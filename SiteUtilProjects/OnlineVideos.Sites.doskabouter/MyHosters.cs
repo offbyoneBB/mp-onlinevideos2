@@ -489,10 +489,10 @@ namespace OnlineVideos.Hoster
             string data = WebCache.Instance.GetWebData(url);
             if (!string.IsNullOrEmpty(data))
             {
-                var m2 = Regex.Match(data,@"return\sp(?<data>.*?)</script",DefaultRegexOptions);
+                var m2 = Regex.Match(data, @"return\sp(?<data>.*?)</script", DefaultRegexOptions);
                 if (m2.Success)
                 {
-                    var res= Helpers.StringUtils.UnPack(m2.Groups["data"].Value.Replace(@"\'", @"'"));
+                    var res = Helpers.StringUtils.UnPack(m2.Groups["data"].Value.Replace(@"\'", @"'"));
                     m2 = Regex.Match(res, @"{file:""(?<url>[^""]*)"",flashplayer");
                 }
                 if (m2.Success)
@@ -541,6 +541,12 @@ namespace OnlineVideos.Hoster
                         finalUrl = "https:" + finalUrl;
                     return finalUrl;
                 }
+            }
+            else
+            {
+                m = Regex.Match(data, @"<h2>(?<line1>[^<]*)</h2>\s*<p>(?<line2>[^<]*)</p>");
+                if (m.Success)
+                    throw new OnlineVideosException(m.Groups["line1"].Value + "\n" + m.Groups["line2"].Value);
             }
             return String.Empty;
         }
