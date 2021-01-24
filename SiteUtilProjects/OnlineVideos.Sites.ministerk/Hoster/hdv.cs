@@ -64,7 +64,7 @@ namespace OnlineVideos.Hoster
         public override string GetVideoUrl(string url)
         {
             var result = GetPlaybackOptions(url);
-            if (result != null && result.Count > 0) return result.Last().Value;
+            if (result != null && result.Count > 0) return result.First().Value;
             else return String.Empty;
         }
 
