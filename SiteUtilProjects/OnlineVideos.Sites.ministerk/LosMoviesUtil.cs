@@ -27,7 +27,7 @@ namespace OnlineVideos.Sites
                 if (hoster != null)
                 {
                     string theUrl = hoster.GetVideoUrl(u);
-                    if (hoster is ISubtitle && string.IsNullOrWhiteSpace(SubtitleText))
+                    if (hoster is ISubtitle && !string.IsNullOrWhiteSpace((hoster as ISubtitle).SubtitleText))
                         this.SubtitleText = (hoster as ISubtitle).SubtitleText;
                     return theUrl;
                 }
