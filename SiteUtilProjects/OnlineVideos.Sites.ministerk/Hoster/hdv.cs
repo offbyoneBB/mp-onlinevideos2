@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json.Linq;
 
 namespace OnlineVideos.Hoster
 {
@@ -21,58 +21,46 @@ namespace OnlineVideos.Hoster
 
         public override Dictionary<string, string> GetPlaybackOptions(string url)
         {
-            Match m = Regex.Match(url, @"/(?<imdbid>[^/]+)$");
+            var data = GetWebData(url);
+
+            var m = Regex.Match(data, @"var\s*hdv_user=""(?<usr>[^""]*)""");
+            var usr ="";
             if (m.Success)
+                usr = m.Groups["usr"].Value;
+
+            m = Regex.Match(data, @"{""dislike"":\s[^,]*,\s""fid"":\s[^,]*,\s""ggc"":\s{""0"":\s""[^""]*"",\s""1"":\s""[^""]*"",\s""2"":\s""[^""]*"",\s""3"":\s""[^""]*"",\s""4"":\s""[^""]*"",\s""5"":\s""[^""]*"",\s""6"":\s""[^""]*"",\s""7"":\s""[^""]*"",\s""8"":\s""[^""]*"",\s""9"":\s""[^""]*""},\s""like"":\s[^,]*,\s""lscore"":\s[^,]*,\s""name"":\s""(?<name>[^""]*)"",\s""quality"":\s""(?<quality>[^""]*)"",\s""res"":\s(?<res>[^,]*),\s""ws"":\s""[^""]*""}");
+            var res = new Dictionary<string, string>();
+            while (m.Success)
             {
-                var data = GetWebData("https://eb2.srtaem.casa/l1", "imdb=" + m.Groups["imdbid"].Value);
-                JArray json = JArray.Parse(data);
-                string urlwithsubs = null;
-                string firsturl = null;
-                Dictionary<string, string> subs = new Dictionary<string, string>();
-                foreach (var src in json)
-                {
-                    if (firsturl == null)
-                    {
-                        firsturl = src["src"][0].Value<String>("src");
-                        if (!firsturl.StartsWith("http"))
-                            firsturl = "https:" + firsturl;
-                    }
-                    if (!String.IsNullOrEmpty(subtitleLanguages) && urlwithsubs == null && src["sub"] is JObject)
-                    {
-                        urlwithsubs = src["src"][0].Value<String>("src");
-                        if (!urlwithsubs.StartsWith("http"))
-                            urlwithsubs = "https:" + urlwithsubs;
-
-                        foreach (var sub in src["sub"].Children())
-                        {
-                            string lang = sub.First.Value<string>("lg");
-                            if (!subs.ContainsKey(lang))
-                                subs.Add(lang, sub.First.Value<string>("sub_id"));
-                        }
-                    }
-                }
-                if (subs.Count > 0)
-                {
-                    string subUrl = getSubUrl(subs, subtitleLanguages);
-                    if (!String.IsNullOrEmpty(subUrl))
-                    {
-                        string subData = WebCache.Instance.GetWebData(subUrl);
-                        subtitleText = Helpers.SubtitleUtils.Webvtt2SRT(subData);
-                    }
-                }
-
-                string finalUrl = urlwithsubs != null ? urlwithsubs : firsturl;
-                data = GetWebData(finalUrl);
-                var res = Helpers.HlsPlaylistParser.GetPlaybackOptions(data, finalUrl);
-                if (res.Count == 1 && res.First().Key == @"0x0 (0 Kbps)")
-                {
-                    res.Clear();
-                    res.Add("dummy", finalUrl);
-                }
-                return res;
+                var nm = res.Count().ToString() + ' ' + m.Groups["quality"].Value + " (" + m.Groups["res"].Value + ") ";
+                var encodedusr = btoa(rev(btoa(rev("sj6wx79142" + usr))));
+                var streamUrl = @"https://hls.hdv.fun/m3u8/" + m.Groups["name"].Value + ".m3u8?u=" + encodedusr;
+                res.Add(nm, streamUrl);
+                m = m.NextMatch();
             }
-            return null;
+
+            m = Regex.Match(data, @"""(?<lang>[^""]*)"":\s\[\[[^,]*,\s(?<id>[^,]*),");
+            Dictionary<string, string> subs = new Dictionary<string, string>();
+            while (m.Success)
+            {
+                var lang = m.Groups["lang"].Value;
+                if (!subs.ContainsKey(lang))
+                    subs.Add(lang, m.Groups["id"].Value);
+                m = m.NextMatch();
+            }
+            if (subs.Count > 0)
+            {
+                string subUrl = getSubUrl(subs, subtitleLanguages);
+                if (!String.IsNullOrEmpty(subUrl))
+                {
+                    string subData = WebCache.Instance.GetWebData(subUrl);
+                    subtitleText = Helpers.SubtitleUtils.Webvtt2SRT(subData);
+                }
+            }
+
+            return res;
         }
+
         public override string GetVideoUrl(string url)
         {
             var result = GetPlaybackOptions(url);
@@ -95,6 +83,19 @@ namespace OnlineVideos.Hoster
         public string SubtitleText
         {
             get { return subtitleText; }
+        }
+
+        private string rev(string s)
+        {
+            char[] charArray = s.ToCharArray();
+            Array.Reverse(charArray);
+            return new string(charArray);
+        }
+
+        private string btoa(string s)
+        {
+            byte[] dataBuffer = Encoding.ASCII.GetBytes(s);
+            return Convert.ToBase64String(dataBuffer);
         }
 
     }
