@@ -1042,7 +1042,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private List<VideoInfo> GetLoginVideo(Category category)
         {
             List<VideoInfo> videos = new List<VideoInfo>();
-            videos.Add(new VideoInfo() { Title = "Play me", VideoUrl = "LOGIN" });
+            videos.Add(new VideoInfo() { Title = "Login", VideoUrl = "LOGIN" });
             return videos;
         }
 
@@ -1169,7 +1169,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 p.Add("showLoadingSpinner", showLoadingSpinner.ToString());
                 p.Add("enableNetflixOsd", enableNetflixOsd.ToString());
                 p.Add("disableLogging", disableLogging.ToString());
-                p.Add("_enableIEDebug", enableIEDebug.ToString());
+                p.Add("enableIEDebug", enableIEDebug.ToString());
                 string json = JsonConvert.SerializeObject(p);
                 string base64 = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(json));
                 if (enableVerboseLog) Log.Debug("profile: {0}", ProfileToken);
