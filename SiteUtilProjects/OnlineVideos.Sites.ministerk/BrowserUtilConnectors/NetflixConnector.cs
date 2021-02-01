@@ -22,6 +22,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private bool _showLoading = true;
         private bool _enableNetflixOsd = false;
         private bool _disableLogging = false;
+        private bool _enableIEDebug = false;
 
         private State _currentState = State.None;
         private bool _isPlayingOrPausing = false;
@@ -69,6 +70,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
             _disableLogging = bool.Parse(json["disableLogging"].Value<string>());
             _enableNetflixOsd = bool.Parse(json["enableNetflixOsd"].Value<string>());
+            _enableIEDebug = bool.Parse(json["enableIEDebug"].Value<string>());
 
             if (username == "GET")
             {
@@ -108,8 +110,22 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         private void Browser_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            if (e.KeyValue == (int)Keys.Escape)
-                _oldKeyDown(sender, e);
+            if (_enableIEDebug)
+            {
+                if (e.KeyValue == 'G' && e.Alt)
+                {
+                    Url = @"https://www.google.com";
+                }
+                else
+                if (e.KeyValue == (int)Keys.F4 && e.Alt)
+                {
+                    var newe = new PreviewKeyDownEventArgs(Keys.Escape);
+                    _oldKeyDown(sender, newe);
+                }
+            }
+            else
+                if (e.KeyValue == (int)Keys.Escape)
+                    _oldKeyDown(sender, e);
         }
 
         public override Entities.EventResult PlayVideo(string videoToPlay)
@@ -150,7 +166,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             {
                 case State.Login:
                     {
-                        if (Url.ToLowerInvariant().Contains("/browse"))
+                        if (Url.ToLowerInvariant().Contains("/browse") && !_enableIEDebug)
                         {
                             _currentState = State.None;
                             return EventResult.Error("ignore this");

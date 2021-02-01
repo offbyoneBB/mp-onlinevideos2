@@ -49,6 +49,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         protected bool enableVerboseLog = false;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Disable browser logging"), Description("Change only if necessary/nothing else helps. If browser player fails. Change back if it does not help!")]
         protected bool disableLogging = false;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable IE debug mode"), Description("Use only for debugging purposes, normal use in onlinevideos will not work when this is set")]
+        protected bool enableIEDebug = false;
 
         protected Dictionary<string, string> i18n = null;
 
@@ -1167,6 +1169,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 p.Add("showLoadingSpinner", showLoadingSpinner.ToString());
                 p.Add("enableNetflixOsd", enableNetflixOsd.ToString());
                 p.Add("disableLogging", disableLogging.ToString());
+                p.Add("_enableIEDebug", enableIEDebug.ToString());
                 string json = JsonConvert.SerializeObject(p);
                 string base64 = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(json));
                 if (enableVerboseLog) Log.Debug("profile: {0}", ProfileToken);
