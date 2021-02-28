@@ -41,7 +41,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), Description("Select subtitle language preferences (; separated and ISO 639-2), for example: eng;ger")]
         protected string subtitleLanguages = "";
 
-        private const string baseUrl = @"http://losmovies.live";
+        private const string baseUrl = @"https://losmovies.site";
         private string nextPageUrl = "";
         private string currentCategoryThumb = "";
 
