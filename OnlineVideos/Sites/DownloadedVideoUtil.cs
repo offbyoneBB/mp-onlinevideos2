@@ -173,7 +173,7 @@ namespace OnlineVideos.Sites
                         loVideoInfo.Length = string.Format("{0} MB", (file.Length / 1024 / 1024).ToString("N0"));
                         loVideoInfo.Airdate = string.IsNullOrEmpty(airdate_xml) ? file.LastWriteTime.ToString("g", OnlineVideoSettings.Instance.Locale) : airdate_xml;
                         loVideoInfo.Description = description_xml;
-                        loVideoInfo.Other = new ExtraVideoInfo(file, ti.VideoKind != VideoKind.Other ? ti : null);
+                        loVideoInfo.Other = new ExtraVideoInfo(file, ti);
                         loVideoInfoList.Add(loVideoInfo);
                     }
                 }
