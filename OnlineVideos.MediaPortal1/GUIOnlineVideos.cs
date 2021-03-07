@@ -2937,7 +2937,8 @@ namespace OnlineVideos.MediaPortal1
                     SaveSubtitles(saveItems.CurrentItem.VideoInfo, Path.ChangeExtension(saveItems.CurrentItem.LocalFile, ".srt"));
                     // save matroska tag
                     string niceTitle = saveItems.CurrentItem.Util.GetFileNameForDownload(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, null);
-                    File.WriteAllText(Path.ChangeExtension(saveItems.CurrentItem.LocalFile, ".xml"), saveItems.CurrentItem.VideoInfo.CreateMatroskaXmlTag(niceTitle), System.Text.Encoding.UTF8);
+                    ITrackingInfo ti = saveItems.CurrentItem.Util.GetTrackingInfo(saveItems.CurrentItem.VideoInfo);
+                    File.WriteAllText(Path.ChangeExtension(saveItems.CurrentItem.LocalFile, ".xml"), saveItems.CurrentItem.VideoInfo.CreateMatroskaXmlTag(niceTitle,ti), System.Text.Encoding.UTF8);
                 }
                 catch (Exception ex)
                 {
