@@ -626,8 +626,16 @@ namespace OnlineVideos.Sites
             Cookie hdntl = cookies["hdntl"];
             Cookie noHubPlus = cookies["nohubplus~hmac"];
 
-            // ITVPlayer seems to combine these cookies together when making playlist requests
-            Cookie accessCookie = new Cookie("hdntl", hdntl.Value + "%2Cnohubplus~hmac=" + noHubPlus.Value, "/", "itvpnpdotcom.content.itv.com");
+            if (hdntl == null || noHubPlus == null)
+            {
+                Log.Warn("ITV Player: Unable to create access cookie, some cookies are missing.");
+                return cookies;
+            }
+
+            // For some reason we get 2 cookies, but Chrome treats them as a single cookie, and it only works if we do the same.
+            string combinedValue = string.Format("{0}%2C{1}={2}", hdntl.Value, noHubPlus.Name, noHubPlus.Value);
+
+            Cookie accessCookie = new Cookie(hdntl.Name, combinedValue, "/", hdntl.Domain);
             CookieCollection modifiedCookies = new CookieCollection();
             modifiedCookies.Add(accessCookie);
             return modifiedCookies;
