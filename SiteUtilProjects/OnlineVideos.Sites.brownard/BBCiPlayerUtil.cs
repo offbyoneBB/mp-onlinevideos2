@@ -195,7 +195,7 @@ namespace OnlineVideos.Sites
             }
 
             //Fallback to HLS streams
-            string url = getHLSVideoUrls(video, vpid, proxyObj);
+            string url = getHLSVideoUrls(video, vpid, proxyObj, mediaSet);
             if (!string.IsNullOrEmpty(url))
                 return url;
 
@@ -220,7 +220,7 @@ namespace OnlineVideos.Sites
             return !string.IsNullOrWhiteSpace(vpid);
         }
 
-        string getHLSVideoUrls(VideoInfo video, string vpid, WebProxy proxyObj)
+        string getHLSVideoUrls(VideoInfo video, string vpid, WebProxy proxyObj, string mediaSet)
         {
             string url = string.Format(HLS_MEDIA_SELECTOR_URL, string.IsNullOrEmpty(mediaSet) ? DEFAULT_MEDIA_SET : mediaSet, vpid);
             XmlDocument doc = GetWebData<XmlDocument>(url, proxy: proxyObj); //uk only
@@ -249,17 +249,8 @@ namespace OnlineVideos.Sites
         string getLiveUrls(VideoInfo video)
         {
             WebProxy proxyObj = getProxy();
-            string playlistStr = GetWebData(video.VideoUrl, proxy: proxyObj, userAgent: HlsPlaylistParser.APPLE_USER_AGENT);
-            HlsPlaylistParser playlist = new HlsPlaylistParser(playlistStr, video.VideoUrl);
 
-            video.PlaybackOptions = new Dictionary<string, string>();
-            if (playlist.StreamInfos.Count == 0)
-            {
-                video.PlaybackOptions.Add(video.Title, video.VideoUrl);
-                return video.VideoUrl;
-            }
-
-            return populateHlsPlaybackOptions(video, playlist.StreamInfos);
+            return getHLSVideoUrls(video, video.VideoUrl, proxyObj, DEFAULT_MEDIA_SET);
         }
 
         string populateHlsPlaybackOptions(VideoInfo video, List<HlsStreamInfo> streamInfos)
