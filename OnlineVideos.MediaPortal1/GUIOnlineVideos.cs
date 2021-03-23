@@ -1830,7 +1830,7 @@ namespace OnlineVideos.MediaPortal1
                     searchCategory.HasSubCategories = true;
                     searchCategory.SubCategoriesDiscovered = true;
                     searchCategory.SubCategories = resultList.ConvertAll(i => { (i as Category).ParentCategory = searchCategory; return i as Category; });
-                    SetCategoriesToFacade(searchCategory, searchCategory.SubCategories, true);
+                    SetCategoriesToFacade(searchCategory, searchCategory.SubCategories, null);
                 }
             }
             else
