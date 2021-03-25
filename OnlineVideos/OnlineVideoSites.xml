@@ -340,15 +340,15 @@
         <Category xsi:type="RssLink" thumb="http://ichef.bbci.co.uk/images/ic/406x228/p0295zvd.jpg" name="Wales">https://www.bbc.co.uk/iplayer/categories/wales/a-z</Category>
         <Category xsi:type="Group" name="Live TV">
           <Channels>
-            <Channel name="BBC One" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2002.png">https://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_pc/cfs/bbc_one_london.m3u8?guideid=94</Channel>
-            <Channel name="BBC Two" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2006.png">http://vs-hls-push-uk.live.cf.md.bbci.co.uk/manifest/x=3/i=urn:bbc:pips:service:bbc_two_hd/pc_hd_abr_v2_http.m3u8?guideid=105</Channel>
-            <Channel name="BBC Four" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2018.png">http://vs-hls-pushb-uk.live.cf.md.bbci.co.uk/manifest/x=3/i=urn:bbc:pips:service:bbc_four_hd/pc_hd_abr_v2_cloudfrontms_live_http.m3u8?guideid=47</Channel>
-            <Channel name="CBBC" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2020.png">https://vs-hls-pushb-uk.live.cf.md.bbci.co.uk/manifest/x=3/i=urn:bbc:pips:service:cbbc_hd/pc_hd_abr_v2_cloudfrontms_live.m3u8?guideid=482</Channel>
-            <Channel name="CBeebies" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2019.png">https://vs-hls-pushb-uk.live.cf.md.bbci.co.uk/manifest/x=3/i=urn:bbc:pips:service:cbeebies_hd/pc_hd_abr_v2_cloudfrontms_live.m3u8?guideid=483</Channel>
-            <Channel name="BBC Scotland" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb1138.png">http://vs-hls-pushb-uk.live.cf.md.bbci.co.uk/manifest/x=3/i=urn:bbc:pips:service:bbc_scotland_hd/pc_hd_abr_v2_cloudfrontms_live_http.m3u8</Channel>
-            <Channel name="BBC News" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2011.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_pc/cfs/bbc_news24.m3u8?guideid=48</Channel>
-            <Channel name="BBC Parliament" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2072.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_pc/cfs/bbc_parliament.m3u8?guideid=49</Channel>
-            <Channel name="BBC ALBA" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2012.png">http://a.files.bbci.co.uk/media/live/manifesto/audio_video/simulcast/hls/uk/hls_pc/cfs/bbc_alba.m3u8?guideid=2098</Channel>
+            <Channel name="BBC One" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2002.png">bbc_one_hd?guideid=94</Channel>
+            <Channel name="BBC Two" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2006.png">bbc_two_hd?guideid=105</Channel>
+            <Channel name="BBC Four" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2018.png">bbc_four_hd?guideid=47</Channel>
+            <Channel name="CBBC" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2020.png">cbbc_hd?guideid=482</Channel>
+            <Channel name="CBeebies" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2019.png">cbeebies_hd?guideid=483</Channel>
+            <Channel name="BBC Scotland" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb1138.png">bbc_scotland_hd</Channel>
+            <Channel name="BBC News" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2011.png">bbc_news24?guideid=48</Channel>
+            <Channel name="BBC Parliament" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2072.png">bbc_parliament?guideid=49</Channel>
+            <Channel name="BBC ALBA" thumb="https://d2n0069hmnqmmx.cloudfront.net/epgdata/1.0/newchanlogos/256/256/skychb2012.png">bbc_alba?guideid=2098</Channel>
           </Channels>
         </Category>
       </Categories>
