@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Player.PostProcessing;
+using MediaPortal.Player.LAV;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
