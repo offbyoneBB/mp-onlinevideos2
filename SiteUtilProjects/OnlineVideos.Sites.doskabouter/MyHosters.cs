@@ -138,6 +138,8 @@ namespace OnlineVideos.Hoster
                 var res = Helpers.HlsPlaylistParser.GetPlaybackOptions(data, m.Groups["url"].Value);
                 return res.FirstOrDefault().Value;
             }
+            if (data.IndexOf("The file you were looking for could not be found, sorry for any inconvenience.") >= 0)
+                throw new OnlineVideosException("The file you were looking for could not be found, sorry for any inconvenience.");
 
             return null;
         }
@@ -207,6 +209,14 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class Doodso : Dood
+    {
+        public override string GetHosterUrl()
+        {
+            return "dood.so";
+        }
+    }
+
     public class Dood : HosterBase
     {
         public override string GetHosterUrl()
@@ -216,6 +226,7 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
+            url = url.Replace("/d/", "/e/");
             var data = GetWebData(url);
             var m = Regex.Match(data, @"\$\.get\('(?<url>/pass[^']*)'");
             if (m.Success)
