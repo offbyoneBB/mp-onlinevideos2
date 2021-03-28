@@ -958,7 +958,11 @@ namespace OnlineVideos.MediaPortal1
                                 }
                                 else if (categoryToDisplay.HasSubCategories)
                                 {
-                                    DisplayCategories(categoryToDisplay, true);
+                                    if (SelectedSite is Sites.FavoriteUtil && categoryToDisplay.ParentCategory == null)
+                                        //do not diveDownOrUpIfSingle if Favorite, so you can remove the last category
+                                        DisplayCategories(categoryToDisplay, null);
+                                    else
+                                        DisplayCategories(categoryToDisplay, true);
                                 }
                                 else
                                 {
