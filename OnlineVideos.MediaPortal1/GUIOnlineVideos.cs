@@ -2942,7 +2942,7 @@ namespace OnlineVideos.MediaPortal1
                     // save matroska tag
                     string niceTitle = saveItems.CurrentItem.Util.GetFileNameForDownload(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, null);
                     ITrackingInfo ti = saveItems.CurrentItem.Util.GetTrackingInfo(saveItems.CurrentItem.VideoInfo);
-                    File.WriteAllText(Path.ChangeExtension(saveItems.CurrentItem.LocalFile, ".xml"), saveItems.CurrentItem.VideoInfo.CreateMatroskaXmlTag(niceTitle,ti), System.Text.Encoding.UTF8);
+                    File.WriteAllText(Path.ChangeExtension(saveItems.CurrentItem.LocalFile, ".xml"), saveItems.CurrentItem.VideoInfo.CreateMatroskaXmlTag(niceTitle, ti), System.Text.Encoding.UTF8);
                 }
                 catch (Exception ex)
                 {
