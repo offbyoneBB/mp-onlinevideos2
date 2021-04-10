@@ -47,7 +47,7 @@ namespace OnlineVideos.MediaPortal2.ContentLists
             get { return _allItems; }
         }
 
-        public abstract Task<bool> UpdateItemsAsync(int maxItems, UpdateReason updateReason);
+        public abstract Task<bool> UpdateItemsAsync(int maxItems, UpdateReason updateReason, ICollection<object> updatedObjects);
 
         protected async Task<UsageStatistics> GetSiteStats()
         {
@@ -152,7 +152,7 @@ namespace OnlineVideos.MediaPortal2.ContentLists
 
     public class FavoriteOnlineVideoSitesListProvider : OnlineVideosContentListProviderBase
     {
-        public override async Task<bool> UpdateItemsAsync(int maxItems, UpdateReason updateReason)
+        public override async Task<bool> UpdateItemsAsync(int maxItems, UpdateReason updateReason, ICollection<object> updatedObjects)
         {
             var stats = await GetSiteStats();
             if (stats == null)
@@ -164,7 +164,7 @@ namespace OnlineVideos.MediaPortal2.ContentLists
 
     public class LatestOnlineVideoSitesListProvider : OnlineVideosContentListProviderBase
     {
-        public override async Task<bool> UpdateItemsAsync(int maxItems, UpdateReason updateReason)
+        public override async Task<bool> UpdateItemsAsync(int maxItems, UpdateReason updateReason, ICollection<object> updatedObjects)
         {
             var stats = await GetSiteStats();
             if (stats == null)
@@ -176,7 +176,7 @@ namespace OnlineVideos.MediaPortal2.ContentLists
 
     public class TopLanguagesOnlineVideoSitesListProvider : OnlineVideosContentListProviderBase
     {
-        public override async Task<bool> UpdateItemsAsync(int maxItems, UpdateReason updateReason)
+        public override async Task<bool> UpdateItemsAsync(int maxItems, UpdateReason updateReason, ICollection<object> updatedObjects)
         {
             var stats = await GetSiteLanguageStats();
             if (stats == null)
