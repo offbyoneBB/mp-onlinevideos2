@@ -1518,6 +1518,27 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class Voe : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "voe.sx";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            var data = GetWebData(url);
+            Match m = Regex.Match(data, @"""hls"":\s""(?<url>[^""]*)""");
+            if (m.Success)
+            {
+                var data2 = GetWebData(m.Groups["url"].Value);
+                var res = Helpers.HlsPlaylistParser.GetPlaybackOptions(data2, m.Groups["url"].Value);
+                return res.FirstOrDefault().Value;
+            }
+            return null;
+        }
+    }
+
     public class Vshare : MyHosterBase
     {
         public override string GetHosterUrl()
@@ -1623,5 +1644,25 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class Wolfstream : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "wolfstream.tv";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            var data = GetWebData(url);
+            Match m = Regex.Match(data, @"{file:""(?<url>[^""]*)""");
+            if (m.Success)
+            {
+                var data2 = GetWebData(m.Groups["url"].Value);
+                var res = Helpers.HlsPlaylistParser.GetPlaybackOptions(data2, m.Groups["url"].Value);
+                return res.FirstOrDefault().Value;
+            }
+            return null;
+        }
+    }
 
 }
