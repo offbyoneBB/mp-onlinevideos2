@@ -251,9 +251,52 @@ namespace OnlineVideos.Sites
             parentCategory.SubCategoriesDiscovered = true;
 
             HtmlDocument document = GetWebData<HtmlDocument>((parentCategory as RssLink).Url);
-            var showNodes = document.DocumentNode.SelectNodes(@"//a[@data-content-type='programme']");
-            if (showNodes == null)
-                return 0;
+
+            // Category shows are contained in json in a script node
+            var scriptNode = document.DocumentNode.SelectSingleNode(@"//script[@id='__NEXT_DATA__']");
+            if (scriptNode != null)
+                addProgrammesFromJson(parentCategory, scriptNode.InnerText, subCategories);
+
+            // If the json isn't found fallback to html parsing
+            if (subCategories.Count == 0)
+                addProgrammesFromHtml(parentCategory, document.DocumentNode, subCategories);
+
+            return subCategories.Count;
+        }
+
+        void addProgrammesFromJson(Category parentCategory, string jsonString, List<Category> subCategories)
+        {
+            var programmesJson = JObject.Parse(jsonString)?["props"]?["pageProps"]?["programmes"] as JArray;
+            if (programmesJson == null)
+            {
+                Log.Error("ITVPlayer: Unable to parse programmes from json");
+                return;
+            }
+
+            foreach (var programme in programmesJson)
+            {
+                RssLink category = new RssLink();
+                category.ParentCategory = parentCategory;
+                category.Name = programme.Value<string>("title");
+                category.Description = programme.Value<string>("description");
+                category.EstimatedVideoCount = programme.Value<uint?>("episodeCount");
+                category.Url = string.Format("https://www.itv.com/hub/{0}/{1}",
+                    programme.Value<string>("titleSlug"),
+                    programme["encodedProgrammeId"]?.Value<string>("letterA")
+                );
+                category.Thumb = programme["imagePresets"]?["hero"]?.Value<string>("0").Replace(@"\u0026", "&");
+                subCategories.Add(category);
+            }
+        }
+
+        void addProgrammesFromHtml(Category parentCategory, HtmlNode documentNode, List<Category> subCategories)
+        {
+            var showNodes = documentNode.SelectNodes(@"//a[@data-content-type='programme']");
+            if (showNodes == null || showNodes.Count == 0)
+            {
+                Log.Error("ITVPlayer: Unable to parse programmes from html");
+                return;
+            }
 
             foreach (var show in showNodes)
             {
@@ -285,8 +328,6 @@ namespace OnlineVideos.Sites
 
                 subCategories.Add(category);
             }
-
-            return subCategories.Count;
         }
 
         List<VideoInfo> getShowsVideos(Category category)
