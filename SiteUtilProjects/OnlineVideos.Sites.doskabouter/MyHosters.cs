@@ -252,6 +252,41 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class DoodWatch : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "dood.watch";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            url = url.Replace("/d/", "/e/");
+            var data = GetWebData(url);
+            var m = Regex.Match(data, @"\$\.get\('(?<url>/pass[^']*)'");
+            if (m.Success)
+            {
+                var tmpUrl = m.Groups["url"].Value;
+                if (!Uri.IsWellFormedUriString(tmpUrl, UriKind.Absolute))
+                {
+                    Uri uri = null;
+                    if (Uri.TryCreate(new Uri(url), tmpUrl, out uri))
+                    {
+                        tmpUrl = uri.ToString();
+                    }
+                }
+                data = GetWebData(tmpUrl, referer: url);
+                int i = tmpUrl.LastIndexOf('/');
+                TimeSpan span = DateTime.Now.Subtract(new DateTime(1970, 1, 1, 0, 0, 0));
+                var newurl = data + "SQPPQsSXKD?token=" + tmpUrl.Substring(i + 1) + "&expiry=" + Math.Truncate(span.TotalMilliseconds);
+                HttpUrl finalUrl = new HttpUrl(newurl);
+                finalUrl.Referer = "https://dood.watch";
+                return finalUrl.ToString();
+            }
+            return null;
+        }
+    }
+
     public class EnterVIdeo : HosterBase, ISubtitle
     {
         string subUrl;
