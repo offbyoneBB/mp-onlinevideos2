@@ -77,7 +77,7 @@ namespace OnlineVideos.Hoster
             {
                 try
                 {
-                    contents = WebCache.Instance.GetWebData(string.Format("https://www.youtube.com/get_video_info?video_id={0}&has_verified=1", videoId), proxy: proxy);
+                    contents = WebCache.Instance.GetWebData(string.Format("https://www.youtube.com/get_video_info?video_id={0}&has_verified=1&html5=1", videoId), proxy: proxy);
                 }
                 catch
                 {
