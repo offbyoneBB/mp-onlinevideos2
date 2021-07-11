@@ -63,6 +63,7 @@ namespace OnlineVideos.MediaPortal1
             udPlayBuffer.SelectedItem = PluginConfiguration.Instance.playbuffer.ToString();
             chkUseQuickSelect.Checked = PluginConfiguration.Instance.useQuickSelect;
             chkStoreLayoutPerCategory.Checked = PluginConfiguration.Instance.StoreLayoutPerCategory;
+            chkUseMPUrlSourceSplitter.Checked = PluginConfiguration.Instance.useMPUrlSourceSplitter;
             nUPSearchHistoryItemCount.Value = PluginConfiguration.Instance.searchHistoryNum;
             if (PluginConfiguration.Instance.searchHistoryType == PluginConfiguration.SearchHistoryType.Simple)
                 rbLastSearch.Checked = true;
@@ -293,6 +294,7 @@ namespace OnlineVideos.MediaPortal1
                 PluginConfiguration.Instance.pinAgeConfirmation = tbxPin.Text;
                 PluginConfiguration.Instance.useQuickSelect = chkUseQuickSelect.Checked;
                 PluginConfiguration.Instance.StoreLayoutPerCategory = chkStoreLayoutPerCategory.Checked;
+                PluginConfiguration.Instance.useMPUrlSourceSplitter = chkUseMPUrlSourceSplitter.Checked;
                 PluginConfiguration.Instance.searchHistoryNum = (int)nUPSearchHistoryItemCount.Value;
                 if (rbLastSearch.Checked)
                     PluginConfiguration.Instance.searchHistoryType = PluginConfiguration.SearchHistoryType.Simple;

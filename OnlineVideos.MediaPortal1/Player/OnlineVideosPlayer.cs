@@ -237,7 +237,10 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 case "http":
                 case "rtmp":
-                    sourceFilterName = OnlineVideos.MPUrlSourceFilter.Downloader.FilterName;
+                    if (PluginConfiguration.Instance.useMPUrlSourceSplitter)
+                        sourceFilterName = OnlineVideos.MPUrlSourceFilter.Downloader.FilterName;
+                    else
+                        sourceFilterName = "LAV Splitter Source";
                     break;
                 case "sop":
                     sourceFilterName = "SopCast ASF Splitter";
@@ -468,7 +471,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
                     Log.Instance.Info("BufferFile : using unknown filter as source filter");
 
-                    if (sourceFilter is IAMOpenProgress && !m_strCurrentFile.Contains("live=true") && !m_strCurrentFile.Contains("RtmpLive=1"))
+                    if (PluginConfiguration.Instance.useMPUrlSourceSplitter && sourceFilter is IAMOpenProgress && !m_strCurrentFile.Contains("live=true") && !m_strCurrentFile.Contains("RtmpLive=1"))
                     {
                         // buffer before starting playback
                         bool filterConnected = false;

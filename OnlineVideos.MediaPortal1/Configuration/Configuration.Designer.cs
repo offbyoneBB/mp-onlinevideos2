@@ -198,6 +198,24 @@
             this.linkLabelFilterDownload = new System.Windows.Forms.LinkLabel();
             this.label10 = new System.Windows.Forms.Label();
             this.tabPageHttp = new System.Windows.Forms.TabPage();
+            this.groupBoxHttpProxyServerAuthentication = new System.Windows.Forms.GroupBox();
+            this.checkBoxHttpProxyServerAuthentication = new System.Windows.Forms.CheckBox();
+            this.labelHttpProxyType = new System.Windows.Forms.Label();
+            this.comboBoxHttpProxyServerType = new System.Windows.Forms.ComboBox();
+            this.labelHttpProxyServerPassword = new System.Windows.Forms.Label();
+            this.labelHttpProxyServerUserName = new System.Windows.Forms.Label();
+            this.labelHttpProxyServerPort = new System.Windows.Forms.Label();
+            this.labelHttpProxyServer = new System.Windows.Forms.Label();
+            this.textBoxHttpProxyServerPassword = new System.Windows.Forms.TextBox();
+            this.textBoxHttpProxyServerUserName = new System.Windows.Forms.TextBox();
+            this.textBoxHttpProxyServerPort = new System.Windows.Forms.TextBox();
+            this.textBoxHttpProxyServer = new System.Windows.Forms.TextBox();
+            this.groupBoxHttpServerAuthentication = new System.Windows.Forms.GroupBox();
+            this.checkBoxHttpServerAuthentication = new System.Windows.Forms.CheckBox();
+            this.labelHttpServerPassword = new System.Windows.Forms.Label();
+            this.textBoxHttpServerPassword = new System.Windows.Forms.TextBox();
+            this.textBoxHttpServerUserName = new System.Windows.Forms.TextBox();
+            this.labelHttpServerUserName = new System.Windows.Forms.Label();
             this.groupBoxHttpCommonParameters = new System.Windows.Forms.GroupBox();
             this.label25 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
@@ -260,24 +278,7 @@
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.onlineVideosService1 = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
-            this.groupBoxHttpServerAuthentication = new System.Windows.Forms.GroupBox();
-            this.checkBoxHttpServerAuthentication = new System.Windows.Forms.CheckBox();
-            this.labelHttpServerPassword = new System.Windows.Forms.Label();
-            this.textBoxHttpServerPassword = new System.Windows.Forms.TextBox();
-            this.textBoxHttpServerUserName = new System.Windows.Forms.TextBox();
-            this.labelHttpServerUserName = new System.Windows.Forms.Label();
-            this.groupBoxHttpProxyServerAuthentication = new System.Windows.Forms.GroupBox();
-            this.checkBoxHttpProxyServerAuthentication = new System.Windows.Forms.CheckBox();
-            this.labelHttpProxyType = new System.Windows.Forms.Label();
-            this.comboBoxHttpProxyServerType = new System.Windows.Forms.ComboBox();
-            this.labelHttpProxyServerPassword = new System.Windows.Forms.Label();
-            this.labelHttpProxyServerUserName = new System.Windows.Forms.Label();
-            this.labelHttpProxyServerPort = new System.Windows.Forms.Label();
-            this.labelHttpProxyServer = new System.Windows.Forms.Label();
-            this.textBoxHttpProxyServerPassword = new System.Windows.Forms.TextBox();
-            this.textBoxHttpProxyServerUserName = new System.Windows.Forms.TextBox();
-            this.textBoxHttpProxyServerPort = new System.Windows.Forms.TextBox();
-            this.textBoxHttpProxyServer = new System.Windows.Forms.TextBox();
+            this.chkUseMPUrlSourceSplitter = new System.Windows.Forms.CheckBox();
             siteNameIconPanel = new System.Windows.Forms.Panel();
             siteColumnName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             siteColumnDescription = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -332,6 +333,8 @@
             this.tabProtocols.SuspendLayout();
             this.tabPageNotDetectedFilter.SuspendLayout();
             this.tabPageHttp.SuspendLayout();
+            this.groupBoxHttpProxyServerAuthentication.SuspendLayout();
+            this.groupBoxHttpServerAuthentication.SuspendLayout();
             this.groupBoxHttpCommonParameters.SuspendLayout();
             this.tabPageRtmp.SuspendLayout();
             this.groupBoxRtmpCommonParameters.SuspendLayout();
@@ -340,8 +343,6 @@
             this.tabPageUdpRtp.SuspendLayout();
             this.groupBoxUdpRtpCommonParameters.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
-            this.groupBoxHttpServerAuthentication.SuspendLayout();
-            this.groupBoxHttpProxyServerAuthentication.SuspendLayout();
             this.SuspendLayout();
             // 
             // siteNameIconPanel
@@ -1224,6 +1225,7 @@
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.chkUseMPUrlSourceSplitter);
             this.groupBox2.Controls.Add(this.chkAdaptRefreshRate);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.label30);
@@ -1243,7 +1245,7 @@
             // chkAdaptRefreshRate
             // 
             this.chkAdaptRefreshRate.AutoSize = true;
-            this.chkAdaptRefreshRate.Location = new System.Drawing.Point(146, 25);
+            this.chkAdaptRefreshRate.Location = new System.Drawing.Point(113, 25);
             this.chkAdaptRefreshRate.Name = "chkAdaptRefreshRate";
             this.chkAdaptRefreshRate.Size = new System.Drawing.Size(15, 14);
             this.chkAdaptRefreshRate.TabIndex = 51;
@@ -1265,7 +1267,7 @@
             // 
             this.label30.AutoSize = true;
             this.label30.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label30.Location = new System.Drawing.Point(358, 26);
+            this.label30.Location = new System.Drawing.Point(284, 26);
             this.label30.Name = "label30";
             this.label30.Size = new System.Drawing.Size(15, 13);
             this.label30.TabIndex = 49;
@@ -1275,7 +1277,7 @@
             // 
             this.label29.AutoSize = true;
             this.label29.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label29.Location = new System.Drawing.Point(638, 26);
+            this.label29.Location = new System.Drawing.Point(507, 26);
             this.label29.Name = "label29";
             this.label29.Size = new System.Drawing.Size(32, 13);
             this.label29.TabIndex = 44;
@@ -1305,7 +1307,7 @@
             this.udPlayBuffer.Items.Add("3");
             this.udPlayBuffer.Items.Add("2");
             this.udPlayBuffer.Items.Add("1");
-            this.udPlayBuffer.Location = new System.Drawing.Point(285, 23);
+            this.udPlayBuffer.Location = new System.Drawing.Point(225, 23);
             this.udPlayBuffer.Name = "udPlayBuffer";
             this.udPlayBuffer.ReadOnly = true;
             this.udPlayBuffer.Size = new System.Drawing.Size(53, 20);
@@ -1317,9 +1319,9 @@
             // label16
             // 
             this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label16.Location = new System.Drawing.Point(406, 18);
+            this.label16.Location = new System.Drawing.Point(303, 18);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(129, 28);
+            this.label16.Size = new System.Drawing.Size(112, 28);
             this.label16.TabIndex = 43;
             this.label16.Text = "Windows Media Player VLC Media Player";
             this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -1327,7 +1329,7 @@
             // label24
             // 
             this.label24.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label24.Location = new System.Drawing.Point(198, 18);
+            this.label24.Location = new System.Drawing.Point(138, 18);
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(81, 26);
             this.label24.TabIndex = 48;
@@ -1337,9 +1339,9 @@
             // tbxWMPBuffer
             // 
             this.tbxWMPBuffer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbxWMPBuffer.Location = new System.Drawing.Point(541, 23);
+            this.tbxWMPBuffer.Location = new System.Drawing.Point(438, 23);
             this.tbxWMPBuffer.Name = "tbxWMPBuffer";
-            this.tbxWMPBuffer.Size = new System.Drawing.Size(76, 20);
+            this.tbxWMPBuffer.Size = new System.Drawing.Size(59, 20);
             this.tbxWMPBuffer.TabIndex = 18;
             this.tbxWMPBuffer.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.toolTip1.SetToolTip(this.tbxWMPBuffer, "Number of milliseconds to use as buffer for playback with Windows Media Player.");
@@ -1827,7 +1829,7 @@
             // 
             this.btnImportXml.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.ImportXml;
             this.btnImportXml.Name = "btnImportXml";
-            this.btnImportXml.Size = new System.Drawing.Size(108, 22);
+            this.btnImportXml.Size = new System.Drawing.Size(103, 22);
             this.btnImportXml.Text = "XML";
             this.btnImportXml.ToolTipText = "Import from Xml";
             this.btnImportXml.Click += new System.EventHandler(this.btnImportSite_Click);
@@ -1836,7 +1838,7 @@
             // 
             this.btnImportGlobal.Image = global::OnlineVideos.MediaPortal1.Properties.Resources.ImportGlobal;
             this.btnImportGlobal.Name = "btnImportGlobal";
-            this.btnImportGlobal.Size = new System.Drawing.Size(108, 22);
+            this.btnImportGlobal.Size = new System.Drawing.Size(103, 22);
             this.btnImportGlobal.Text = "Global";
             this.btnImportGlobal.ToolTipText = "Import from global List";
             this.btnImportGlobal.Click += new System.EventHandler(this.btnImportGlobal_Click);
@@ -2358,6 +2360,185 @@
             this.tabPageHttp.TabIndex = 1;
             this.tabPageHttp.Text = "HTTP";
             this.tabPageHttp.UseVisualStyleBackColor = true;
+            // 
+            // groupBoxHttpProxyServerAuthentication
+            // 
+            this.groupBoxHttpProxyServerAuthentication.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.checkBoxHttpProxyServerAuthentication);
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.labelHttpProxyType);
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.comboBoxHttpProxyServerType);
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.labelHttpProxyServerPassword);
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.labelHttpProxyServerUserName);
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.labelHttpProxyServerPort);
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.labelHttpProxyServer);
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.textBoxHttpProxyServerPassword);
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.textBoxHttpProxyServerUserName);
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.textBoxHttpProxyServerPort);
+            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.textBoxHttpProxyServer);
+            this.groupBoxHttpProxyServerAuthentication.Location = new System.Drawing.Point(6, 225);
+            this.groupBoxHttpProxyServerAuthentication.Name = "groupBoxHttpProxyServerAuthentication";
+            this.groupBoxHttpProxyServerAuthentication.Size = new System.Drawing.Size(678, 134);
+            this.groupBoxHttpProxyServerAuthentication.TabIndex = 3;
+            this.groupBoxHttpProxyServerAuthentication.TabStop = false;
+            this.groupBoxHttpProxyServerAuthentication.Text = "Proxy server authentication";
+            // 
+            // checkBoxHttpProxyServerAuthentication
+            // 
+            this.checkBoxHttpProxyServerAuthentication.AutoSize = true;
+            this.checkBoxHttpProxyServerAuthentication.Location = new System.Drawing.Point(11, 19);
+            this.checkBoxHttpProxyServerAuthentication.Name = "checkBoxHttpProxyServerAuthentication";
+            this.checkBoxHttpProxyServerAuthentication.Size = new System.Drawing.Size(189, 17);
+            this.checkBoxHttpProxyServerAuthentication.TabIndex = 0;
+            this.checkBoxHttpProxyServerAuthentication.Text = "Enable proxy server authentication";
+            this.checkBoxHttpProxyServerAuthentication.UseVisualStyleBackColor = true;
+            // 
+            // labelHttpProxyType
+            // 
+            this.labelHttpProxyType.AutoSize = true;
+            this.labelHttpProxyType.Location = new System.Drawing.Point(8, 97);
+            this.labelHttpProxyType.Name = "labelHttpProxyType";
+            this.labelHttpProxyType.Size = new System.Drawing.Size(56, 13);
+            this.labelHttpProxyType.TabIndex = 9;
+            this.labelHttpProxyType.Text = "Proxy type";
+            // 
+            // comboBoxHttpProxyServerType
+            // 
+            this.comboBoxHttpProxyServerType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxHttpProxyServerType.FormattingEnabled = true;
+            this.comboBoxHttpProxyServerType.Items.AddRange(new object[] {
+            "HTTP",
+            "HTTP 1.0",
+            "SOCKS4",
+            "SOCKS5",
+            "SOCKS4A",
+            "SOCKS5 with hostname"});
+            this.comboBoxHttpProxyServerType.Location = new System.Drawing.Point(89, 94);
+            this.comboBoxHttpProxyServerType.Name = "comboBoxHttpProxyServerType";
+            this.comboBoxHttpProxyServerType.Size = new System.Drawing.Size(182, 21);
+            this.comboBoxHttpProxyServerType.TabIndex = 10;
+            // 
+            // labelHttpProxyServerPassword
+            // 
+            this.labelHttpProxyServerPassword.AutoSize = true;
+            this.labelHttpProxyServerPassword.Location = new System.Drawing.Point(245, 71);
+            this.labelHttpProxyServerPassword.Name = "labelHttpProxyServerPassword";
+            this.labelHttpProxyServerPassword.Size = new System.Drawing.Size(53, 13);
+            this.labelHttpProxyServerPassword.TabIndex = 7;
+            this.labelHttpProxyServerPassword.Text = "Password";
+            // 
+            // labelHttpProxyServerUserName
+            // 
+            this.labelHttpProxyServerUserName.AutoSize = true;
+            this.labelHttpProxyServerUserName.Location = new System.Drawing.Point(8, 71);
+            this.labelHttpProxyServerUserName.Name = "labelHttpProxyServerUserName";
+            this.labelHttpProxyServerUserName.Size = new System.Drawing.Size(58, 13);
+            this.labelHttpProxyServerUserName.TabIndex = 5;
+            this.labelHttpProxyServerUserName.Text = "User name";
+            // 
+            // labelHttpProxyServerPort
+            // 
+            this.labelHttpProxyServerPort.AutoSize = true;
+            this.labelHttpProxyServerPort.Location = new System.Drawing.Point(375, 45);
+            this.labelHttpProxyServerPort.Name = "labelHttpProxyServerPort";
+            this.labelHttpProxyServerPort.Size = new System.Drawing.Size(26, 13);
+            this.labelHttpProxyServerPort.TabIndex = 3;
+            this.labelHttpProxyServerPort.Text = "Port";
+            // 
+            // labelHttpProxyServer
+            // 
+            this.labelHttpProxyServer.AutoSize = true;
+            this.labelHttpProxyServer.Location = new System.Drawing.Point(8, 45);
+            this.labelHttpProxyServer.Name = "labelHttpProxyServer";
+            this.labelHttpProxyServer.Size = new System.Drawing.Size(65, 13);
+            this.labelHttpProxyServer.TabIndex = 1;
+            this.labelHttpProxyServer.Text = "Proxy server";
+            // 
+            // textBoxHttpProxyServerPassword
+            // 
+            this.textBoxHttpProxyServerPassword.Location = new System.Drawing.Point(307, 68);
+            this.textBoxHttpProxyServerPassword.Name = "textBoxHttpProxyServerPassword";
+            this.textBoxHttpProxyServerPassword.Size = new System.Drawing.Size(150, 20);
+            this.textBoxHttpProxyServerPassword.TabIndex = 8;
+            // 
+            // textBoxHttpProxyServerUserName
+            // 
+            this.textBoxHttpProxyServerUserName.Location = new System.Drawing.Point(89, 68);
+            this.textBoxHttpProxyServerUserName.Name = "textBoxHttpProxyServerUserName";
+            this.textBoxHttpProxyServerUserName.Size = new System.Drawing.Size(150, 20);
+            this.textBoxHttpProxyServerUserName.TabIndex = 6;
+            // 
+            // textBoxHttpProxyServerPort
+            // 
+            this.textBoxHttpProxyServerPort.Location = new System.Drawing.Point(407, 42);
+            this.textBoxHttpProxyServerPort.Name = "textBoxHttpProxyServerPort";
+            this.textBoxHttpProxyServerPort.Size = new System.Drawing.Size(47, 20);
+            this.textBoxHttpProxyServerPort.TabIndex = 4;
+            // 
+            // textBoxHttpProxyServer
+            // 
+            this.textBoxHttpProxyServer.Location = new System.Drawing.Point(89, 42);
+            this.textBoxHttpProxyServer.Name = "textBoxHttpProxyServer";
+            this.textBoxHttpProxyServer.Size = new System.Drawing.Size(267, 20);
+            this.textBoxHttpProxyServer.TabIndex = 2;
+            // 
+            // groupBoxHttpServerAuthentication
+            // 
+            this.groupBoxHttpServerAuthentication.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxHttpServerAuthentication.Controls.Add(this.checkBoxHttpServerAuthentication);
+            this.groupBoxHttpServerAuthentication.Controls.Add(this.labelHttpServerPassword);
+            this.groupBoxHttpServerAuthentication.Controls.Add(this.textBoxHttpServerPassword);
+            this.groupBoxHttpServerAuthentication.Controls.Add(this.textBoxHttpServerUserName);
+            this.groupBoxHttpServerAuthentication.Controls.Add(this.labelHttpServerUserName);
+            this.groupBoxHttpServerAuthentication.Location = new System.Drawing.Point(6, 145);
+            this.groupBoxHttpServerAuthentication.Name = "groupBoxHttpServerAuthentication";
+            this.groupBoxHttpServerAuthentication.Size = new System.Drawing.Size(678, 74);
+            this.groupBoxHttpServerAuthentication.TabIndex = 2;
+            this.groupBoxHttpServerAuthentication.TabStop = false;
+            this.groupBoxHttpServerAuthentication.Text = "Remote server authentication";
+            // 
+            // checkBoxHttpServerAuthentication
+            // 
+            this.checkBoxHttpServerAuthentication.AutoSize = true;
+            this.checkBoxHttpServerAuthentication.Location = new System.Drawing.Point(11, 19);
+            this.checkBoxHttpServerAuthentication.Name = "checkBoxHttpServerAuthentication";
+            this.checkBoxHttpServerAuthentication.Size = new System.Drawing.Size(161, 17);
+            this.checkBoxHttpServerAuthentication.TabIndex = 0;
+            this.checkBoxHttpServerAuthentication.Text = "Enable server authentication";
+            this.checkBoxHttpServerAuthentication.UseVisualStyleBackColor = true;
+            // 
+            // labelHttpServerPassword
+            // 
+            this.labelHttpServerPassword.AutoSize = true;
+            this.labelHttpServerPassword.Location = new System.Drawing.Point(245, 45);
+            this.labelHttpServerPassword.Name = "labelHttpServerPassword";
+            this.labelHttpServerPassword.Size = new System.Drawing.Size(53, 13);
+            this.labelHttpServerPassword.TabIndex = 3;
+            this.labelHttpServerPassword.Text = "Password";
+            // 
+            // textBoxHttpServerPassword
+            // 
+            this.textBoxHttpServerPassword.Location = new System.Drawing.Point(304, 42);
+            this.textBoxHttpServerPassword.Name = "textBoxHttpServerPassword";
+            this.textBoxHttpServerPassword.Size = new System.Drawing.Size(150, 20);
+            this.textBoxHttpServerPassword.TabIndex = 4;
+            // 
+            // textBoxHttpServerUserName
+            // 
+            this.textBoxHttpServerUserName.Location = new System.Drawing.Point(89, 42);
+            this.textBoxHttpServerUserName.Name = "textBoxHttpServerUserName";
+            this.textBoxHttpServerUserName.Size = new System.Drawing.Size(150, 20);
+            this.textBoxHttpServerUserName.TabIndex = 2;
+            // 
+            // labelHttpServerUserName
+            // 
+            this.labelHttpServerUserName.AutoSize = true;
+            this.labelHttpServerUserName.Location = new System.Drawing.Point(6, 45);
+            this.labelHttpServerUserName.Name = "labelHttpServerUserName";
+            this.labelHttpServerUserName.Size = new System.Drawing.Size(58, 13);
+            this.labelHttpServerUserName.TabIndex = 1;
+            this.labelHttpServerUserName.Text = "User name";
             // 
             // groupBoxHttpCommonParameters
             // 
@@ -2930,184 +3111,19 @@
             this.onlineVideosService1.Url = "http://onlinevideos.nocrosshair.de/OnlineVideos.asmx";
             this.onlineVideosService1.UseDefaultCredentials = false;
             // 
-            // groupBoxHttpServerAuthentication
+            // chkUseMPUrlSourceSplitter
             // 
-            this.groupBoxHttpServerAuthentication.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBoxHttpServerAuthentication.Controls.Add(this.checkBoxHttpServerAuthentication);
-            this.groupBoxHttpServerAuthentication.Controls.Add(this.labelHttpServerPassword);
-            this.groupBoxHttpServerAuthentication.Controls.Add(this.textBoxHttpServerPassword);
-            this.groupBoxHttpServerAuthentication.Controls.Add(this.textBoxHttpServerUserName);
-            this.groupBoxHttpServerAuthentication.Controls.Add(this.labelHttpServerUserName);
-            this.groupBoxHttpServerAuthentication.Location = new System.Drawing.Point(6, 145);
-            this.groupBoxHttpServerAuthentication.Name = "groupBoxHttpServerAuthentication";
-            this.groupBoxHttpServerAuthentication.Size = new System.Drawing.Size(678, 74);
-            this.groupBoxHttpServerAuthentication.TabIndex = 2;
-            this.groupBoxHttpServerAuthentication.TabStop = false;
-            this.groupBoxHttpServerAuthentication.Text = "Remote server authentication";
-            // 
-            // checkBoxHttpServerAuthentication
-            // 
-            this.checkBoxHttpServerAuthentication.AutoSize = true;
-            this.checkBoxHttpServerAuthentication.Location = new System.Drawing.Point(11, 19);
-            this.checkBoxHttpServerAuthentication.Name = "checkBoxHttpServerAuthentication";
-            this.checkBoxHttpServerAuthentication.Size = new System.Drawing.Size(161, 17);
-            this.checkBoxHttpServerAuthentication.TabIndex = 0;
-            this.checkBoxHttpServerAuthentication.Text = "Enable server authentication";
-            this.checkBoxHttpServerAuthentication.UseVisualStyleBackColor = true;
-            // 
-            // labelHttpServerPassword
-            // 
-            this.labelHttpServerPassword.AutoSize = true;
-            this.labelHttpServerPassword.Location = new System.Drawing.Point(245, 45);
-            this.labelHttpServerPassword.Name = "labelHttpServerPassword";
-            this.labelHttpServerPassword.Size = new System.Drawing.Size(53, 13);
-            this.labelHttpServerPassword.TabIndex = 3;
-            this.labelHttpServerPassword.Text = "Password";
-            // 
-            // textBoxHttpServerPassword
-            // 
-            this.textBoxHttpServerPassword.Location = new System.Drawing.Point(304, 42);
-            this.textBoxHttpServerPassword.Name = "textBoxHttpServerPassword";
-            this.textBoxHttpServerPassword.Size = new System.Drawing.Size(150, 20);
-            this.textBoxHttpServerPassword.TabIndex = 4;
-            // 
-            // textBoxHttpServerUserName
-            // 
-            this.textBoxHttpServerUserName.Location = new System.Drawing.Point(89, 42);
-            this.textBoxHttpServerUserName.Name = "textBoxHttpServerUserName";
-            this.textBoxHttpServerUserName.Size = new System.Drawing.Size(150, 20);
-            this.textBoxHttpServerUserName.TabIndex = 2;
-            // 
-            // labelHttpServerUserName
-            // 
-            this.labelHttpServerUserName.AutoSize = true;
-            this.labelHttpServerUserName.Location = new System.Drawing.Point(6, 45);
-            this.labelHttpServerUserName.Name = "labelHttpServerUserName";
-            this.labelHttpServerUserName.Size = new System.Drawing.Size(58, 13);
-            this.labelHttpServerUserName.TabIndex = 1;
-            this.labelHttpServerUserName.Text = "User name";
-            // 
-            // groupBoxHttpProxyServerAuthentication
-            // 
-            this.groupBoxHttpProxyServerAuthentication.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.checkBoxHttpProxyServerAuthentication);
-            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.labelHttpProxyType);
-            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.comboBoxHttpProxyServerType);
-            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.labelHttpProxyServerPassword);
-            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.labelHttpProxyServerUserName);
-            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.labelHttpProxyServerPort);
-            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.labelHttpProxyServer);
-            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.textBoxHttpProxyServerPassword);
-            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.textBoxHttpProxyServerUserName);
-            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.textBoxHttpProxyServerPort);
-            this.groupBoxHttpProxyServerAuthentication.Controls.Add(this.textBoxHttpProxyServer);
-            this.groupBoxHttpProxyServerAuthentication.Location = new System.Drawing.Point(6, 225);
-            this.groupBoxHttpProxyServerAuthentication.Name = "groupBoxHttpProxyServerAuthentication";
-            this.groupBoxHttpProxyServerAuthentication.Size = new System.Drawing.Size(678, 134);
-            this.groupBoxHttpProxyServerAuthentication.TabIndex = 3;
-            this.groupBoxHttpProxyServerAuthentication.TabStop = false;
-            this.groupBoxHttpProxyServerAuthentication.Text = "Proxy server authentication";
-            // 
-            // checkBoxHttpProxyServerAuthentication
-            // 
-            this.checkBoxHttpProxyServerAuthentication.AutoSize = true;
-            this.checkBoxHttpProxyServerAuthentication.Location = new System.Drawing.Point(11, 19);
-            this.checkBoxHttpProxyServerAuthentication.Name = "checkBoxHttpProxyServerAuthentication";
-            this.checkBoxHttpProxyServerAuthentication.Size = new System.Drawing.Size(189, 17);
-            this.checkBoxHttpProxyServerAuthentication.TabIndex = 0;
-            this.checkBoxHttpProxyServerAuthentication.Text = "Enable proxy server authentication";
-            this.checkBoxHttpProxyServerAuthentication.UseVisualStyleBackColor = true;
-            // 
-            // labelHttpProxyType
-            // 
-            this.labelHttpProxyType.AutoSize = true;
-            this.labelHttpProxyType.Location = new System.Drawing.Point(8, 97);
-            this.labelHttpProxyType.Name = "labelHttpProxyType";
-            this.labelHttpProxyType.Size = new System.Drawing.Size(56, 13);
-            this.labelHttpProxyType.TabIndex = 9;
-            this.labelHttpProxyType.Text = "Proxy type";
-            // 
-            // comboBoxHttpProxyServerType
-            // 
-            this.comboBoxHttpProxyServerType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxHttpProxyServerType.FormattingEnabled = true;
-            this.comboBoxHttpProxyServerType.Items.AddRange(new object[] {
-            "HTTP",
-            "HTTP 1.0",
-            "SOCKS4",
-            "SOCKS5",
-            "SOCKS4A",
-            "SOCKS5 with hostname"});
-            this.comboBoxHttpProxyServerType.Location = new System.Drawing.Point(89, 94);
-            this.comboBoxHttpProxyServerType.Name = "comboBoxHttpProxyServerType";
-            this.comboBoxHttpProxyServerType.Size = new System.Drawing.Size(182, 21);
-            this.comboBoxHttpProxyServerType.TabIndex = 10;
-            // 
-            // labelHttpProxyServerPassword
-            // 
-            this.labelHttpProxyServerPassword.AutoSize = true;
-            this.labelHttpProxyServerPassword.Location = new System.Drawing.Point(245, 71);
-            this.labelHttpProxyServerPassword.Name = "labelHttpProxyServerPassword";
-            this.labelHttpProxyServerPassword.Size = new System.Drawing.Size(53, 13);
-            this.labelHttpProxyServerPassword.TabIndex = 7;
-            this.labelHttpProxyServerPassword.Text = "Password";
-            // 
-            // labelHttpProxyServerUserName
-            // 
-            this.labelHttpProxyServerUserName.AutoSize = true;
-            this.labelHttpProxyServerUserName.Location = new System.Drawing.Point(8, 71);
-            this.labelHttpProxyServerUserName.Name = "labelHttpProxyServerUserName";
-            this.labelHttpProxyServerUserName.Size = new System.Drawing.Size(58, 13);
-            this.labelHttpProxyServerUserName.TabIndex = 5;
-            this.labelHttpProxyServerUserName.Text = "User name";
-            // 
-            // labelHttpProxyServerPort
-            // 
-            this.labelHttpProxyServerPort.AutoSize = true;
-            this.labelHttpProxyServerPort.Location = new System.Drawing.Point(375, 45);
-            this.labelHttpProxyServerPort.Name = "labelHttpProxyServerPort";
-            this.labelHttpProxyServerPort.Size = new System.Drawing.Size(26, 13);
-            this.labelHttpProxyServerPort.TabIndex = 3;
-            this.labelHttpProxyServerPort.Text = "Port";
-            // 
-            // labelHttpProxyServer
-            // 
-            this.labelHttpProxyServer.AutoSize = true;
-            this.labelHttpProxyServer.Location = new System.Drawing.Point(8, 45);
-            this.labelHttpProxyServer.Name = "labelHttpProxyServer";
-            this.labelHttpProxyServer.Size = new System.Drawing.Size(65, 13);
-            this.labelHttpProxyServer.TabIndex = 1;
-            this.labelHttpProxyServer.Text = "Proxy server";
-            // 
-            // textBoxHttpProxyServerPassword
-            // 
-            this.textBoxHttpProxyServerPassword.Location = new System.Drawing.Point(307, 68);
-            this.textBoxHttpProxyServerPassword.Name = "textBoxHttpProxyServerPassword";
-            this.textBoxHttpProxyServerPassword.Size = new System.Drawing.Size(150, 20);
-            this.textBoxHttpProxyServerPassword.TabIndex = 8;
-            // 
-            // textBoxHttpProxyServerUserName
-            // 
-            this.textBoxHttpProxyServerUserName.Location = new System.Drawing.Point(89, 68);
-            this.textBoxHttpProxyServerUserName.Name = "textBoxHttpProxyServerUserName";
-            this.textBoxHttpProxyServerUserName.Size = new System.Drawing.Size(150, 20);
-            this.textBoxHttpProxyServerUserName.TabIndex = 6;
-            // 
-            // textBoxHttpProxyServerPort
-            // 
-            this.textBoxHttpProxyServerPort.Location = new System.Drawing.Point(407, 42);
-            this.textBoxHttpProxyServerPort.Name = "textBoxHttpProxyServerPort";
-            this.textBoxHttpProxyServerPort.Size = new System.Drawing.Size(47, 20);
-            this.textBoxHttpProxyServerPort.TabIndex = 4;
-            // 
-            // textBoxHttpProxyServer
-            // 
-            this.textBoxHttpProxyServer.Location = new System.Drawing.Point(89, 42);
-            this.textBoxHttpProxyServer.Name = "textBoxHttpProxyServer";
-            this.textBoxHttpProxyServer.Size = new System.Drawing.Size(267, 20);
-            this.textBoxHttpProxyServer.TabIndex = 2;
+            this.chkUseMPUrlSourceSplitter.AutoSize = true;
+            this.chkUseMPUrlSourceSplitter.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkUseMPUrlSourceSplitter.Location = new System.Drawing.Point(545, 24);
+            this.chkUseMPUrlSourceSplitter.Name = "chkUseMPUrlSourceSplitter";
+            this.chkUseMPUrlSourceSplitter.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.chkUseMPUrlSourceSplitter.Size = new System.Drawing.Size(143, 17);
+            this.chkUseMPUrlSourceSplitter.TabIndex = 52;
+            this.chkUseMPUrlSourceSplitter.Text = "Use MPUrlSourceSplitter";
+            this.toolTip1.SetToolTip(this.chkUseMPUrlSourceSplitter, "If checked, MPUrlSourceSplitter will be used as source for building graph\r\nIf unc" +
+        "hecked, LAV Splitter Source will be used");
+            this.chkUseMPUrlSourceSplitter.UseVisualStyleBackColor = true;
             // 
             // Configuration
             // 
@@ -3187,6 +3203,10 @@
             this.tabPageNotDetectedFilter.ResumeLayout(false);
             this.tabPageNotDetectedFilter.PerformLayout();
             this.tabPageHttp.ResumeLayout(false);
+            this.groupBoxHttpProxyServerAuthentication.ResumeLayout(false);
+            this.groupBoxHttpProxyServerAuthentication.PerformLayout();
+            this.groupBoxHttpServerAuthentication.ResumeLayout(false);
+            this.groupBoxHttpServerAuthentication.PerformLayout();
             this.groupBoxHttpCommonParameters.ResumeLayout(false);
             this.groupBoxHttpCommonParameters.PerformLayout();
             this.tabPageRtmp.ResumeLayout(false);
@@ -3199,10 +3219,6 @@
             this.groupBoxUdpRtpCommonParameters.ResumeLayout(false);
             this.groupBoxUdpRtpCommonParameters.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
-            this.groupBoxHttpServerAuthentication.ResumeLayout(false);
-            this.groupBoxHttpServerAuthentication.PerformLayout();
-            this.groupBoxHttpProxyServerAuthentication.ResumeLayout(false);
-            this.groupBoxHttpProxyServerAuthentication.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -3454,5 +3470,6 @@
         private System.Windows.Forms.TextBox textBoxHttpServerPassword;
         private System.Windows.Forms.TextBox textBoxHttpServerUserName;
         private System.Windows.Forms.Label labelHttpServerUserName;
-	}
+        private System.Windows.Forms.CheckBox chkUseMPUrlSourceSplitter;
+    }
 }
