@@ -248,6 +248,9 @@ namespace OnlineVideos.Hoster
                 finalUrl.Referer = "https://dood.to";
                 return finalUrl.ToString();
             }
+            m = Regex.Match(data, @"<title>(?<Title>[^<]*)</title>");
+            if (m.Success)
+                throw new OnlineVideosException(m.Groups["Title"].Value);
             return null;
         }
     }
