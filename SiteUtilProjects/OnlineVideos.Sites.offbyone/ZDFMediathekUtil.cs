@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Text.RegularExpressions;
 using OnlineVideos.Helpers;
+using Google.Apis.Util;
+using HtmlAgilityPack;
 
 namespace OnlineVideos.Sites
 {
@@ -14,7 +15,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName = "VideoQuality"), Description("Defines the maximum quality for the video to be played.")]
         string videoQuality = "veryhigh";
 
-        private static readonly NameValueCollection headers = new NameValueCollection { { "Accept-Encoding", "gzip" }, { "Accept", "*/*" }, { "User-Agent", "ZDF UWP" }, { "Api-Auth", "Bearer 6ed877e78b8e63771ca91df6cd232c3ef35609c1" } };
+        private static readonly NameValueCollection _defaultHeaders = new NameValueCollection { { "Accept-Encoding", "gzip" }, { "Accept", "*/*" } };
 
         public override int DiscoverDynamicCategories()
         {
@@ -25,6 +26,75 @@ namespace OnlineVideos.Sites
             Settings.Categories.Add(new Category { Name = "Sendungen A-Z", HasSubCategories = true });
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
+        }
+
+        public override void Initialize(SiteSettings siteSettings)
+        {
+            base.Initialize(siteSettings);
+
+            var document = GetWebData<HtmlDocument>("https://www.zdf.de", headers: _defaultHeaders);
+            _searchBearer = ParseBearerIndexPage(document.DocumentNode.Descendants("head").Single(), "script", "'");
+            _videoBearer = ParseBearerIndexPage(document.DocumentNode.Descendants("body").Single(), "script", "\"");
+        }
+
+
+        private NameValueCollection HeadersWithSearchBearer()
+        {
+            return new NameValueCollection(_defaultHeaders)
+            {
+                { "Api-Auth", $"Bearer {_searchBearer}" }
+            };
+        }
+
+        private NameValueCollection HeadersWithVideohBearer()
+        {
+            return new NameValueCollection(_defaultHeaders)
+            {
+                { "Api-Auth", $"Bearer {_videoBearer}" }
+            };
+        }
+
+        private static readonly string JSON_API_TOKEN = "apiToken";
+        private string _searchBearer;
+        private string _videoBearer;
+
+        private string ParseBearerIndexPage(HtmlNode aDocumentNode, string aQuery, string aStringQuote)
+        {
+
+            var scriptElements = aDocumentNode.Descendants(aQuery);
+            foreach (var scriptElement in scriptElements)
+            {
+                var script = scriptElement.InnerHtml;
+
+                var value = ParseBearer(script, aStringQuote);
+                if (!value.IsNullOrEmpty())
+                {
+                    return value;
+                }
+            }
+
+            return string.Empty;
+        }
+
+        private string ParseBearer(string aJson, string aStringQuote)
+        {
+            var bearer = "";
+
+            var indexToken = aJson.IndexOf(JSON_API_TOKEN);
+
+            if (indexToken <= 0)
+            {
+                return bearer;
+            }
+            var indexStart = aJson.IndexOf(aStringQuote, indexToken + JSON_API_TOKEN.Length + 1) + 1;
+            var indexEnd = aJson.IndexOf(aStringQuote, indexStart);
+
+            if (indexStart > 0)
+            {
+                bearer = aJson.Substring(indexStart, indexEnd - indexStart);
+            }
+
+            return bearer;
         }
 
         public override int DiscoverSubCategories(Category parentCategory)
@@ -41,7 +111,7 @@ namespace OnlineVideos.Sites
                         else
                         {
                             parentCategory.SubCategories = new List<Category>();
-                            for (int i = 0; i <= 7; i++)
+                            for (var i = 0; i <= 7; i++)
                             {
                                 parentCategory.SubCategories.Add(new RssLink()
                                 {
@@ -54,22 +124,22 @@ namespace OnlineVideos.Sites
                         break;
                     case "Sendungen A-Z":
                         parentCategory.SubCategories = new List<Category>();
-                        var showsUrl = "http://api.zdf.de/content/documents/sendungen-100.json?profile=default";
-                        foreach (var show in GetWebData<JObject>(showsUrl, headers: headers)["brand"].SelectMany(l => l["teaser"] ?? Enumerable.Empty<JToken>()))
+                        var showsUrl = "https://api.zdf.de/content/documents/sendungen-100.json?profile=default";
+                        foreach (var show in GetWebData<JObject>(showsUrl, headers: HeadersWithSearchBearer())["brand"].SelectMany(l => l["teaser"] ?? Enumerable.Empty<JToken>()))
                         {
                             var category = CategoryFromJson(show, parentCategory, false);
-                            category.Url = string.Format("http://api.zdf.de/search/documents{0}?q=*&contentTypes=episode&sortOrder=desc&sortBy=date", show["http://zdf.de/rels/target"].Value<string>("structureNodePath"));
+                            category.Url = string.Format("https://api.zdf.de/search/documents{0}?q=*&contentTypes=episode&sortOrder=desc&sortBy=date", show["http://zdf.de/rels/target"].Value<string>("structureNodePath"));
                             parentCategory.SubCategories.Add(category);
                         }
                         parentCategory.SubCategoriesDiscovered = true;
                         break;
                     case "Rubriken":
                         parentCategory.SubCategories = new List<Category>();
-                        var catUrl = "http://api.zdf.de/search/documents?q=*&types=page-index&contentTypes=category";
-                        foreach (var cat in GetWebData<JObject>(catUrl, headers: headers)["http://zdf.de/rels/search/results"])
+                        var catUrl = "https://api.zdf.de/search/documents?q=*&types=page-index&contentTypes=category";
+                        foreach (var cat in GetWebData<JObject>(catUrl, headers: HeadersWithSearchBearer())["http://zdf.de/rels/search/results"])
                         {
                             var category = CategoryFromJson(cat, parentCategory, true);
-                            category.Url = string.Format("http://api.zdf.de/search/documents{0}?q=*&contentTypes=brand&sortOrder=desc&sortBy=relevance", cat["http://zdf.de/rels/target"].Value<string>("structureNodePath"));
+                            category.Url = string.Format("https://api.zdf.de/search/documents{0}?q=*&contentTypes=brand&sortOrder=desc&sortBy=relevance", cat["http://zdf.de/rels/target"].Value<string>("structureNodePath"));
                             parentCategory.SubCategories.Add(category);
                         }
                         parentCategory.SubCategoriesDiscovered = true;
@@ -79,11 +149,11 @@ namespace OnlineVideos.Sites
             else
             {
                 parentCategory.SubCategories = new List<Category>();
-                var json = GetWebData<JObject>(((RssLink)parentCategory).Url, headers: headers);
+                var json = GetWebData<JObject>(((RssLink)parentCategory).Url, headers: HeadersWithSearchBearer());
                 foreach (var show in json["http://zdf.de/rels/search/results"])
                 {
                     var category = CategoryFromJson(show, parentCategory, false);
-                    category.Url = string.Format("http://api.zdf.de/search/documents{0}?q=*&contentTypes=episode&sortOrder=desc&sortBy=date", show["http://zdf.de/rels/target"].Value<string>("structureNodePath"));
+                    category.Url = string.Format("https://api.zdf.de/search/documents{0}?q=*&contentTypes=episode&sortOrder=desc&sortBy=date", show["http://zdf.de/rels/target"].Value<string>("structureNodePath"));
                     parentCategory.SubCategories.Add(category);
                 }
                 parentCategory.SubCategoriesDiscovered = true;
@@ -93,7 +163,8 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> GetVideos(Category category)
         {
-            List<VideoInfo> list = new List<VideoInfo>();
+            var list = new List<VideoInfo>();
+            var headers = HeadersWithSearchBearer();
 
             if (category.Name == "Live")
             {
@@ -103,7 +174,7 @@ namespace OnlineVideos.Sites
                 {
                     var title = teaser["http://zdf.de/rels/target"].Value<string>("tvService");
                     var img = teaser["http://zdf.de/rels/target"]["teaserImageRef"]["layouts"].Value<string>("384x216");
-                    var url = "http://api.zdf.de" + teaser["http://zdf.de/rels/target"]["mainVideoContent"]["http://zdf.de/rels/target"].Value<string>("http://zdf.de/rels/streams/ptmd-template").Replace("{playerId}", "portal");
+                    var url = "https://api.zdf.de" + teaser["http://zdf.de/rels/target"]["mainVideoContent"]["http://zdf.de/rels/target"].Value<string>("http://zdf.de/rels/streams/ptmd-template").Replace("{playerId}", "portal");
 
                     list.Add(new VideoInfo
                     {
@@ -133,7 +204,7 @@ namespace OnlineVideos.Sites
                     var tvStation = broadcast.Value<string>("tvService");
                     var desc = broadcast.Value<string>("text");
                     var img = video_page_teaser["teaserImageRef"]?["layouts"]?.Value<string>("384x216");
-                    var url = mainVideoContent["http://zdf.de/rels/target"].Value<string>("http://zdf.de/rels/streams/ptmd-template")?.Replace("{playerId}", "portal")?.Insert(0, "http://api.zdf.de");
+                    var url = mainVideoContent["http://zdf.de/rels/target"].Value<string>("http://zdf.de/rels/streams/ptmd-template")?.Replace("{playerId}", "portal")?.Insert(0, "https://api.zdf.de");
 
                     list.Add(new VideoInfo
                     {
@@ -162,7 +233,7 @@ namespace OnlineVideos.Sites
                     var img = obj["teaserImageRef"]["layouts"]?.Value<string>("384x216");
 
                     var length = TimeSpan.FromSeconds(videoContent.Value<int>("duration"));
-                    var url = "http://api.zdf.de" + videoContent.Value<string>("http://zdf.de/rels/streams/ptmd-template").Replace("{playerId}", "portal");
+                    var url = "https://api.zdf.de" + videoContent.Value<string>("http://zdf.de/rels/streams/ptmd-template").Replace("{playerId}", "portal");
                     list.Add(new VideoInfo
                     {
                         Title = title,
@@ -176,9 +247,10 @@ namespace OnlineVideos.Sites
             return list;
         }
 
-        public override String GetVideoUrl(VideoInfo video)
+        public override string GetVideoUrl(VideoInfo video)
         {
-                string bestVideoQualityUrl = string.Empty;
+            var bestVideoQualityUrl = string.Empty;
+            var headers = HeadersWithVideohBearer();
 
             if (video.PlaybackOptions == null)
             {
@@ -227,10 +299,10 @@ namespace OnlineVideos.Sites
             var obj = result["http://zdf.de/rels/target"];
             var title = obj.Value<string>("teaserHeadline");
             var desc = obj.Value<string>("teasertext");
-            var thumb = obj["teaserImageRef"]["layouts"].Value<string>("384x216");
+            var thumb = obj["teaserImageRef"]["layouts"]?.Value<string>("384x216");
 
             var videoCounterObj = obj["http://zdf.de/rels/search/page-video-counter-with-video"];
-            uint? videoCount = !hasSubCategories && videoCounterObj != null ? videoCounterObj.Value<uint?>("totalResultsCount") : null;
+            var videoCount = !hasSubCategories && videoCounterObj != null ? videoCounterObj.Value<uint?>("totalResultsCount") : null;
 
             return new RssLink
             {
