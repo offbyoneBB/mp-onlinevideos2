@@ -32,10 +32,12 @@ namespace OnlineVideos.Sites.Zdf
 
         private static readonly NameValueCollection _defaultHeaders = new NameValueCollection { { "Accept-Encoding", "gzip" }, { "Accept", "*/*" } };
 
+        private const string CATEGORYNAME_LIVESTREAM = "Live TV";
+
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
-            Settings.Categories.Add(new Category { Name = "Live" });
+            Settings.Categories.Add(new Category { Name = CATEGORYNAME_LIVESTREAM });
             Settings.Categories.Add(new Category { Name = "Sendung Verpasst", HasSubCategories = true, Description = "Sendungen der letzten 7 Tage." });
             Settings.Categories.Add(new Category { Name = "Rubriken", HasSubCategories = true });
             Settings.Categories.Add(new Category { Name = "Sendungen A-Z", HasSubCategories = true });
@@ -195,7 +197,7 @@ namespace OnlineVideos.Sites.Zdf
             var list = new List<VideoInfo>();
             var headers = HeadersWithSearchBearer();
 
-            if (category.Name == "Live")
+            if (category.Name == CATEGORYNAME_LIVESTREAM)
             {
                 // TODO nice, but downloads a 5MB Json, just to dynamically retrieve some data for more or less static streams
                 //var json = GetWebData<JObject>("https://api.zdf.de/content/documents/epg-livetv-100.json?profile=default", headers: headers, cache: false);
@@ -342,7 +344,7 @@ namespace OnlineVideos.Sites.Zdf
 
                 //video.PlaybackOptions = playbackOptions.ToDictionary(e => e.Key, e => e.Value);
                 //var orderedPlaybackOptions = playbackOptionsWorkaround.OrderBy(i => (int) i.Key).ToList();
-                var xxx = videoStreams.Where(s => string.Equals("deu", s.Language, StringComparison.OrdinalIgnoreCase))
+                var xxx = videoStreamsWorkaround.Where(s => string.Equals("deu", s.Language, StringComparison.OrdinalIgnoreCase))
                     .ToLookup(s => s.MimeType)
                     .ToDictionary(grp => grp.Key, StringComparer.OrdinalIgnoreCase);
                 //                        grp => grp.OrderBy(i => (int) i.Quality).ToDictionary(i => i.Quality, i => i.Url));
@@ -409,6 +411,9 @@ namespace OnlineVideos.Sites.Zdf
 
         private void parseVideoUrls(/*DownloadDto dto,*/ JObject rootNode)
         {
+            //TODO Reset workaround
+            videoStreamsWorkaround = new HashSet<DownloadDetailsDto>();
+
             // array priorityList
             var priorityList = rootNode[JSON_ELEMENT_PRIORITYLIST];
             foreach (var priority in priorityList)
@@ -419,21 +424,21 @@ namespace OnlineVideos.Sites.Zdf
 
         private void parsePriority(/*DownloadDto dto,*/ JToken priority)
         {
-            if (priority != null)
+            if (priority == null)
             {
+                return;
+            }
 
-                // array formitaeten
-                var formitaetList = priority[JSON_ELEMENT_FORMITAET];
-                foreach (var formitaet in formitaetList)
-                {
-                    parseFormitaet(/*dto,*/ formitaet);
-                }
+            // array formitaeten
+            var formitaetList = priority[JSON_ELEMENT_FORMITAET];
+            foreach (var formitaet in formitaetList)
+            {
+                parseFormitaet(/*dto,*/ formitaet);
             }
         }
 
         private void parseFormitaet(/*DownloadDto dto,*/ JToken formitaet)
         {
-            // only mp4-videos are relevant
             var mimeType = formitaet[JSON_ELEMENT_MIMETYPE];
             if (mimeType == null
                 //|| !string.Equals(RELEVANT_MIME_TYPE, mimeType.ToString(), StringComparison.OrdinalIgnoreCase)
@@ -450,16 +455,16 @@ namespace OnlineVideos.Sites.Zdf
 
                 // subelement audio
                 var audio = quality[JSON_ELEMENT_AUDIO];
-                if (audio != null)
+                if (audio == null)
                 {
+                    continue;
+                }
+                // array tracks
+                var tracks = audio[JSON_ELEMENT_TRACKS];
 
-                    // array tracks
-                    var tracks = audio[JSON_ELEMENT_TRACKS];
-
-                    foreach (var trackElement in tracks)
-                    {
-                        extractTrack(/*dto,*/ mimeType.ToString(), qualityValue, trackElement);
-                    }
+                foreach (var trackElement in tracks)
+                {
+                    extractTrack(/*dto,*/ mimeType.ToString(), qualityValue, trackElement);
                 }
             }
         }
@@ -480,7 +485,7 @@ namespace OnlineVideos.Sites.Zdf
             {
                 //aDto.addUrl(language, qualityValue, uri);
                 var dl = new DownloadDetailsDto(mimeType: mimeType, language: language, qualityValue, uri);
-                videoStreams.Add(dl);
+                videoStreamsWorkaround.Add(dl);
             }
             else
             {
@@ -489,7 +494,7 @@ namespace OnlineVideos.Sites.Zdf
         }
 
         //private HashSet<KeyValuePair<Qualities, string>> playbackOptionsWorkaround = new HashSet<KeyValuePair<Qualities, string>>();
-        private HashSet<DownloadDetailsDto> videoStreams = new HashSet<DownloadDetailsDto>();
+        private HashSet<DownloadDetailsDto> videoStreamsWorkaround = new HashSet<DownloadDetailsDto>();
 
         private Qualities parseVideoQuality(JToken quality)
         {
