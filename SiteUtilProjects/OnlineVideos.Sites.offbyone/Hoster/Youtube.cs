@@ -67,7 +67,6 @@ namespace OnlineVideos.Hoster
                 videoId = videoId.Substring(p, q - p);
             }
 
-            NameValueCollection ItemsAPI = new NameValueCollection();
             NameValueCollection Items = new NameValueCollection();
             string contents = "";
 
@@ -75,78 +74,43 @@ namespace OnlineVideos.Hoster
 
             try
             {
-                try
+                contents = WebCache.Instance.GetWebData(string.Format("https://www.youtube.com/watch?v={0}&has_verified=1", videoId), proxy: proxy);
+                Match m = swfJsonArgs.Match(contents);
+                if (m.Success)
                 {
-                    contents = WebCache.Instance.GetWebData(string.Format("https://www.youtube.com/get_video_info?video_id={0}&has_verified=1&html5=1&c=TVHTML5&cver=6.20180913", videoId), proxy: proxy);
-                }
-                catch
-                {
-                    if (contents == null) contents = "";
-                }
-                Items = System.Web.HttpUtility.ParseQueryString(contents);
-                bool forceGetWebPage = false;
-
-                string url_encoded_fmt_stream_map = Items.Get("url_encoded_fmt_stream_map");
-                if (!string.IsNullOrEmpty(url_encoded_fmt_stream_map))
-                    forceGetWebPage = url_encoded_fmt_stream_map.Contains("&s=");
-                else
-                {
-                    var player_response = JObject.Parse(Items["player_response"]);
-
-                    if (player_response["playabilityStatus"]["status"].ToString() == "OK")
+                    if (m.Groups["params"].Success)
                     {
-                        parsePlayerStatus(JToken.Parse(Items.Get("player_response")), qualities);
+                        Items = System.Web.HttpUtility.ParseQueryString(System.Web.HttpUtility.HtmlDecode(m.Groups["params"].Value));
                     }
-                    forceGetWebPage = qualities.Count == 0;
-                    if (!forceGetWebPage)
+                    else if (m.Groups["json"].Success)
                     {
-                        //if cipher needed, forceGetWebPage
-                        foreach (var kv in qualities)
-                            if (kv.Value.Length > 1) forceGetWebPage = true;
-                    }
-                }
-
-                if (Items.Count == 0 || Items["status"] == "fail" || Items["use_cipher_signature"] == "True" || forceGetWebPage)
-                {
-                    ItemsAPI = Items;
-                    contents = WebCache.Instance.GetWebData(string.Format("https://www.youtube.com/watch?v={0}&has_verified=1", videoId), proxy: proxy);
-                    Match m = swfJsonArgs.Match(contents);
-                    if (m.Success)
-                    {
-                        if (m.Groups["params"].Success)
+                        Items = new NameValueCollection();
+                        foreach (var z in Newtonsoft.Json.Linq.JObject.Parse(m.Groups["json"].Value))
                         {
-                            Items = System.Web.HttpUtility.ParseQueryString(System.Web.HttpUtility.HtmlDecode(m.Groups["params"].Value));
+                            Items.Add(z.Key, z.Value.ToString());
                         }
-                        else if (m.Groups["json"].Success)
-                        {
-                            Items = new NameValueCollection();
-                            foreach (var z in Newtonsoft.Json.Linq.JObject.Parse(m.Groups["json"].Value))
-                            {
-                                Items.Add(z.Key, z.Value.ToString());
-                            }
 
-                            if (string.IsNullOrEmpty(Items.Get("url_encoded_fmt_stream_map")))
+                        if (string.IsNullOrEmpty(Items.Get("url_encoded_fmt_stream_map")))
+                        {
+                            if (!string.IsNullOrEmpty(Items.Get("player_response")))
                             {
-                                if (!string.IsNullOrEmpty(Items.Get("player_response")))
-                                {
-                                    qualities.Clear();
-                                    parsePlayerStatus(JToken.Parse(Items.Get("player_response"))["streamingData"], qualities);
-                                }
-                                else
-                                if (!string.IsNullOrEmpty(Items.Get("streamingData")))
-                                {
-                                    qualities.Clear();
-                                    parsePlayerStatus(JToken.Parse(Items.Get("streamingData")), qualities);
-                                }
+                                qualities.Clear();
+                                parsePlayerStatus(JToken.Parse(Items.Get("player_response"))["streamingData"], qualities);
+                            }
+                            else
+                            if (!string.IsNullOrEmpty(Items.Get("streamingData")))
+                            {
+                                qualities.Clear();
+                                parsePlayerStatus(JToken.Parse(Items.Get("streamingData")), qualities);
                             }
                         }
-                        else if (m.Groups["html"].Success)
-                        {
-                            Items = new NameValueCollection();
-                            string html = Regex.Match(m.Groups["html"].Value, @"flashvars=\\""(?<value>.+?)\\""").Groups["value"].Value;
-                            html = unicodeFinder.Replace(html, match => ((char)Int32.Parse(match.Value.Substring(2), NumberStyles.HexNumber)).ToString());
-                            Items = System.Web.HttpUtility.ParseQueryString(System.Web.HttpUtility.HtmlDecode(html));
-                        }
+                    }
+                    else if (m.Groups["html"].Success)
+                    {
+                        Items = new NameValueCollection();
+                        string html = Regex.Match(m.Groups["html"].Value, @"flashvars=\\""(?<value>.+?)\\""").Groups["value"].Value;
+                        html = unicodeFinder.Replace(html, match => ((char)Int32.Parse(match.Value.Substring(2), NumberStyles.HexNumber)).ToString());
+                        Items = System.Web.HttpUtility.ParseQueryString(System.Web.HttpUtility.HtmlDecode(html));
                     }
                 }
             }
@@ -285,10 +249,11 @@ namespace OnlineVideos.Hoster
                 string reason = Items.Get("reason");
                 if (!string.IsNullOrEmpty(reason) && (PlaybackOptions == null || PlaybackOptions.Count == 0)) throw new OnlineVideosException(reason);
             }
-            else if (ItemsAPI.Get("status") == "fail")
+            else
             {
-                string reason = ItemsAPI.Get("reason");
-                if (!string.IsNullOrEmpty(reason) && (PlaybackOptions == null || PlaybackOptions.Count == 0)) throw new OnlineVideosException(reason);
+                Match m = Regex.Match(contents, @"""status"":""LOGIN_REQUIRED"",""reason"":""(?<reason>[^""]*)""");
+                if (m.Success)
+                    throw new OnlineVideosException(m.Groups["reason"].Value);
             }
 
             return PlaybackOptions;
