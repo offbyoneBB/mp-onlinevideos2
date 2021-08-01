@@ -18,12 +18,18 @@ namespace OnlineVideos.Sites.Zdf
     public class ZDFMediathekUtil : SiteUtilBase
     {
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName = "VideoQuality"), Description("Defines the maximum quality for the video to be played (" + nameof(Qualities.HD) + "/" + nameof(Qualities.High) + "/" + nameof(Qualities.Normal) + "/" + nameof(Qualities.Small) + ").")]
-        string videoQuality = "HD";
+        protected string videoQuality = "HD";
 
+        [Category("OnlineVideosUserConfiguration"), Description("MIME Type that is preferred, if several exist."), LocalizableDisplayName("MIME type preferred")]
+        protected string preferredMimeType = "video/webm";
 
-        private static readonly HashSet<string> mimeTypesPrioOrder = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-            { "video/webm", "video/mp4", "application/x-mpegURL"};
-        private static readonly string RELEVANT_MIME_TYPE = "video/mp4";
+        [Category("OnlineVideosUserConfiguration"), Description("MIME Types (comma seperated) priority order (left highest prio)"), LocalizableDisplayName("MIME types priority")]
+        protected string prioOrderMimeTypes = "video/webm, video/mp4, application/x-mpegURL";
+
+        private IEnumerable<string> GetMimeTypesPrioOrder()
+            => prioOrderMimeTypes.Split(new [] {',', ';'}, StringSplitOptions.RemoveEmptyEntries).ToList();
+            //{ "video/webm", "video/mp4", "application/x-mpegURL"};
+        //private static readonly string RELEVANT_MIME_TYPE = "video/mp4";
         //private static readonly string RELEVANT_MIME_TYPE = "video/webm";
 
         private static readonly string RELEVANT_TEASERIMAGE_LAYOUT = "384x216";
@@ -33,14 +39,17 @@ namespace OnlineVideos.Sites.Zdf
         private static readonly NameValueCollection _defaultHeaders = new NameValueCollection { { "Accept-Encoding", "gzip" }, { "Accept", "*/*" } };
 
         private const string CATEGORYNAME_LIVESTREAM = "Live TV";
+        private const string CATEGORYNAME_MISSED_BROADCAST = "Sendung Verpasst";
+        private const string CATEGORYNAME_RUBRICS = "Rubriken";
+        private const string CATEGORYNAME_BROADCASTS_AZ = "Sendungen A-Z";
 
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
             Settings.Categories.Add(new Category { Name = CATEGORYNAME_LIVESTREAM });
-            Settings.Categories.Add(new Category { Name = "Sendung Verpasst", HasSubCategories = true, Description = "Sendungen der letzten 7 Tage." });
-            Settings.Categories.Add(new Category { Name = "Rubriken", HasSubCategories = true });
-            Settings.Categories.Add(new Category { Name = "Sendungen A-Z", HasSubCategories = true });
+            Settings.Categories.Add(new Category { Name = CATEGORYNAME_MISSED_BROADCAST, HasSubCategories = true, Description = "Sendungen der letzten 7 Tage." });
+            Settings.Categories.Add(new Category { Name = CATEGORYNAME_RUBRICS, HasSubCategories = true });
+            Settings.Categories.Add(new Category { Name = CATEGORYNAME_BROADCASTS_AZ, HasSubCategories = true });
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
         }
@@ -127,7 +136,7 @@ namespace OnlineVideos.Sites.Zdf
             {
                 switch (parentCategory.Name)
                 {
-                    case "Sendung Verpasst":
+                    case CATEGORYNAME_MISSED_BROADCAST:
                         if (parentCategory.SubCategories != null &&
                             parentCategory.SubCategories.Count > 0 &&
                             parentCategory.SubCategories[0].Name == DateTime.Today.ToString("dddd, d.M.yyy"))
@@ -146,7 +155,7 @@ namespace OnlineVideos.Sites.Zdf
                             }
                         }
                         break;
-                    case "Sendungen A-Z":
+                    case CATEGORYNAME_BROADCASTS_AZ:
                         parentCategory.SubCategories = new List<Category>();
                         var showsUrl = "https://api.zdf.de/content/documents/sendungen-100.json?profile=default";
                         foreach (var show in GetWebData<JObject>(showsUrl, headers: HeadersWithSearchBearer())["brand"].SelectMany(l => l["teaser"] ?? Enumerable.Empty<JToken>()))
@@ -157,7 +166,7 @@ namespace OnlineVideos.Sites.Zdf
                         }
                         parentCategory.SubCategoriesDiscovered = true;
                         break;
-                    case "Rubriken":
+                    case CATEGORYNAME_RUBRICS:
                         parentCategory.SubCategories = new List<Category>();
                         var catUrl = "https://api.zdf.de/search/documents?q=*&types=page-index&contentTypes=category";
                         foreach (var cat in GetWebData<JObject>(catUrl, headers: HeadersWithSearchBearer())["http://zdf.de/rels/search/results"])
@@ -236,10 +245,10 @@ namespace OnlineVideos.Sites.Zdf
 
                 list.AddRange(tvServices);
             }
-            else if (category.ParentCategory.Name == "Sendung Verpasst")
+            else if (category.ParentCategory.Name == CATEGORYNAME_MISSED_BROADCAST)
             {
 
-                var json = GetWebData<JObject>((category as RssLink).Url, headers: headers);
+                var json = GetWebData<JObject>((category as RssLink).Url, headers: headers, cache: false);
                 foreach (var broadcast in json["http://zdf.de/rels/broadcasts-page"]["http://zdf.de/rels/cmdm/broadcasts"])
                 {
                     var video_page_teaser = broadcast["http://zdf.de/rels/content/video-page-teaser"];
@@ -349,7 +358,7 @@ namespace OnlineVideos.Sites.Zdf
                     .ToDictionary(grp => grp.Key, StringComparer.OrdinalIgnoreCase);
                 //                        grp => grp.OrderBy(i => (int) i.Quality).ToDictionary(i => i.Quality, i => i.Url));
 
-                var mimeTypes = new HashSet<string>(new string[] { RELEVANT_MIME_TYPE }.Concat(mimeTypesPrioOrder), StringComparer.OrdinalIgnoreCase);
+                var mimeTypes = new List<string>(new string[] { preferredMimeType }.Concat(GetMimeTypesPrioOrder()));
                 var selectedMimeType = mimeTypes.FirstOrDefault(mime => xxx.ContainsKey(mime));
 
                 var dls = string.IsNullOrEmpty(selectedMimeType) ? xxx.FirstOrDefault().Value : xxx[selectedMimeType];
