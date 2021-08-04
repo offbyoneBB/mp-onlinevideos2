@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -51,6 +52,13 @@ namespace OnlineVideos.Helpers
             return GetPlaybackOptions(playlist, url, HlsStreamInfoComparer.BandwidthHighLow, formatter);
         }
 
+        [Obsolete("Please use GetPlaybackOptions(string playlist, string url, HlsStreamInfoFormatter formatter")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static Dictionary<string, string> GetPlaybackOptions(string playlist, string url, Func<HlsStreamInfo, string> formatter)
+        {
+            return GetPlaybackOptions(playlist, url, (x, y) => x.Bandwidth.CompareTo(y.Bandwidth), formatter);
+        }
+
         /// <summary>
         /// Parse a m3u8 playlist into a dictionary with streamname and streamurl
         /// Sorting and streamname are customizable
@@ -68,6 +76,22 @@ namespace OnlineVideos.Helpers
             foreach (var streamInfo in tmp.StreamInfos.OrderBy(info => info, comparer))
             {
                 var streamName = formatter.Format(streamInfo);
+                if (!playbackOptions.ContainsKey(streamName))
+                    playbackOptions.Add(streamName, streamInfo.Url);
+            }
+            return playbackOptions;
+        }
+
+        [Obsolete("Please use GetPlaybackOptions(string playlist, string url, HlsStreamInfoComparer comparer, HlsStreamInfoFormatter formatter) instead")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static Dictionary<string, string> GetPlaybackOptions(string playlist, string url, Comparison<HlsStreamInfo> sortcomparer, Func<HlsStreamInfo, string> formatter)
+        {
+            Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
+            var tmp = new HlsPlaylistParser(playlist, url);
+            tmp.streamInfos.Sort(sortcomparer);
+            foreach (var streamInfo in tmp.StreamInfos)
+            {
+                var streamName = formatter(streamInfo);
                 if (!playbackOptions.ContainsKey(streamName))
                     playbackOptions.Add(streamName, streamInfo.Url);
             }
