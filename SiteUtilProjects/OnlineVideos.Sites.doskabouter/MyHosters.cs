@@ -1087,6 +1087,47 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class Streamzz : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "streamzz.to";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            var newUrl = WebCache.Instance.GetRedirectedUrl(url);
+            CookieContainer cc = new CookieContainer();
+            var data = GetWebData(newUrl, cookies: cc);
+            Match m = Regex.Match(data, @"history\.pushState\(stateObj,\s*""[^""]*"",\s""(?<url>[^""]*)""\);");
+            string referer = null;
+            if (m.Success)
+            {
+                referer = m.Groups["url"].Value;
+                if (!Uri.IsWellFormedUriString(referer, UriKind.Absolute))
+                {
+                    Uri uri = null;
+                    if (Uri.TryCreate(new Uri(newUrl), referer, out uri))
+                        referer = uri.ToString();
+                }
+            }
+            m = Regex.Match(data, @"return\sp(?<pack>[^<]*)</script");
+            var l = new List<String>();
+            string url1 = null;
+            while (m.Success && url1 == null)
+            {
+                var unpacked = Helpers.StringUtils.UnPack(m.Groups["pack"].Value);
+                if (unpacked != null)
+                {
+                    Match m2 = Regex.Match(unpacked, @"src:\\'https://(?<p1>[^/]*)/getl1nk'\.split\('(?<p2>[^\\]*)\\'");
+                    if (m2.Success)
+                        url1 = @"https://" + m2.Groups["p1"].Value + "/getlink" + m2.Groups["p2"].Value;
+                }
+                m = m.NextMatch();
+            }
+            return WebCache.Instance.GetRedirectedUrl(url1, referer);
+        }
+    }
     public class TheFile : MyHosterBase
     {
         public override string GetHosterUrl()
