@@ -22,7 +22,6 @@ namespace OnlineVideos.Sites
 
     public class ArdMediathekUtil : SiteUtilBase
     {
-        private const string CATEGORYNAME_LIVESTREAM = "Live TV";
         private const string CATEGORYNAME_MISSED_BROADCASTS = "Was lief";
 
         public static readonly string PLACEHOLDER_IMAGE_WIDTH = "{width}";
@@ -31,7 +30,7 @@ namespace OnlineVideos.Sites
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
-            Settings.Categories.Add(new RssLink {Name = CATEGORYNAME_LIVESTREAM});
+            Settings.Categories.Add(new RssLink {Name = ArdLiveStreamsDeserializer.Name, Url = ArdLiveStreamsDeserializer.EntryUrl.AbsoluteUri, HasSubCategories = ArdLiveStreamsDeserializer .HasCategories, Other = new Context(new ArdLiveStreamsDeserializer(WebCache.Instance), default) });
 
             Settings.Categories.Add(new RssLink {Name = ArdTopicsPageDeserializer.Name, Url = ArdTopicsPageDeserializer.EntryUrl.AbsoluteUri , HasSubCategories = ArdTopicsPageDeserializer.HasCategories, Other = new Context(new ArdTopicsPageDeserializer(WebCache.Instance), default) });
             Settings.Categories.Add(new RssLink
@@ -126,31 +125,6 @@ namespace OnlineVideos.Sites
                     });
                 }
             }
-
-            else if (category.Name == CATEGORYNAME_LIVESTREAM)
-            {
-                //"https://api.ardmediathek.de/page-gateway/pages/ard/item/Y3JpZDovL2Rhc2Vyc3RlLmRlL0xpdmVzdHJlYW0tRGFzRXJzdGU?devicetype=pc&embedded=true"
-                var json = GetWebData<JObject>(
-                    "https://api.ardmediathek.de/page-gateway/pages/ard/item/Y3JpZDovL2Rhc2Vyc3RlLmRlL0xpdmVzdHJlYW0tRGFzRXJzdGU",
-                    cache: false);
-
-                var listLiveStreams = json["widgets"]?.FirstOrDefault()?["relates"] as JArray;
-                foreach (var liveStream in listLiveStreams)
-                {
-                    var title = liveStream.Value<string>("shortTitle");
-                    //var img = liveStream["publicationService"]["logo"].Value<string>("src").Replace(PLACEHOLDER_IMAGE_WIDTH, IMAGE_WIDTH);
-                    var img = liveStream["images"]["aspect16x9"].Value<string>("src")
-                        .Replace(PLACEHOLDER_IMAGE_WIDTH, IMAGE_WIDTH);
-                    var url = liveStream["links"]["target"].Value<string>("href");
-
-                    list.Add(new VideoInfo
-                    {
-                        Title = title,
-                        Thumb = img,
-                        VideoUrl = url
-                    });
-                }
-            }
             else
             {
                 var json = GetWebData<JToken>((category as RssLink).Url, cache: false);
@@ -193,27 +167,37 @@ namespace OnlineVideos.Sites
 
 
                 var streamUrl = video.PlaybackOptions.FirstOrDefault().Value;
-                // TODO already handled in DownloadDetailsDto
-                if (streamUrl.StartsWith("//"))
+                //// TODO already handled in DownloadDetailsDto
+                //if (streamUrl.StartsWith("//"))
+                //{
+                //    streamUrl = $"https:{streamUrl}";
+                //}
+
+                if (streamUrl?.Contains("master.m3u8") ?? false)
                 {
-                    streamUrl = $"https:{streamUrl}";
+                    var m3u8Data = GetWebData<string>(streamUrl, cache: false);
+                    var m3u8PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(m3u8Data, streamUrl);
+                    video.PlaybackOptions = m3u8PlaybackOptions;
+                    streamUrl = video.PlaybackOptions.FirstOrDefault().Value;
                 }
                 return streamUrl;
             }
 
-            var json = GetWebData<JObject>(video.VideoUrl, cache: false);
-            var listLiveStream = json["widgets"]?.FirstOrDefault()?["mediaCollection"]["embedded"];
-            var livestreamPlaylistUrl = listLiveStream["_mediaArray"].FirstOrDefault()["_mediaStreamArray"].FirstOrDefault().Value<string>("_stream");
-            //TODO Workaround for url without leading https:
-            if (livestreamPlaylistUrl.StartsWith("//"))
             {
-                livestreamPlaylistUrl = $"https:{livestreamPlaylistUrl}";
-            }
+                var json = GetWebData<JObject>(video.VideoUrl, cache: false);
+                var listLiveStream = json["widgets"]?.FirstOrDefault()?["mediaCollection"]["embedded"];
+                var livestreamPlaylistUrl = listLiveStream["_mediaArray"].FirstOrDefault()["_mediaStreamArray"].FirstOrDefault().Value<string>("_stream");
+                //TODO Workaround for url without leading https:
+                if (livestreamPlaylistUrl.StartsWith("//"))
+                {
+                    livestreamPlaylistUrl = $"https:{livestreamPlaylistUrl}";
+                }
 
-            //var newUrl = WebCache.Instance.GetRedirectedUrl(livestreamPlaylistUrl);
-            var m3u8Data = GetWebData<string>(livestreamPlaylistUrl, cache: false);
-            var m3u8PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(m3u8Data, livestreamPlaylistUrl);
-            video.PlaybackOptions = m3u8PlaybackOptions;
+                //var newUrl = WebCache.Instance.GetRedirectedUrl(livestreamPlaylistUrl);
+                var m3u8Data = GetWebData<string>(livestreamPlaylistUrl, cache: false);
+                var m3u8PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(m3u8Data, livestreamPlaylistUrl);
+                video.PlaybackOptions = m3u8PlaybackOptions;
+            }
 
             return video.PlaybackOptions.FirstOrDefault().Value;
         }

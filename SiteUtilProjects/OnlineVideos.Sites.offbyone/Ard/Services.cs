@@ -5,11 +5,119 @@ using OnlineVideos.Sites.Zdf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace OnlineVideos.Sites.Ard
 {
+
+    public class ContinuationToken : Dictionary<string, object>
+    {
+        public ContinuationToken()
+        {
+        }
+
+        public ContinuationToken(ContinuationToken otherToken) : base(otherToken)
+        {
+        }
+    }
+
+    public abstract class PageDeserializerBase
+    {
+        protected ArdMediaArrayConverter MediaArrayConverter { get; } = new ArdMediaArrayConverter();
+
+        //public abstract ArdCategoryInfoDto RootCategory { get; }
+        protected WebCache WebClient { get; }
+
+        protected PageDeserializerBase(WebCache webClient) => WebClient = webClient;
+
+        public abstract Result<IEnumerable<ArdCategoryInfoDto>> GetCategories(string targetUrl, ContinuationToken continuationToken = null);
+
+        public abstract Result<IEnumerable<ArdFilmInfoDto>> GetVideos(string targetUrl, ContinuationToken continuationToken = null);
+
+
+
+        public virtual Result<IEnumerable<DownloadDetailsDto>> GetStreams(string url, ContinuationToken continuationToken = null)
+        {
+            //continuationToken ??= new ContinuationToken() { { _level, 0 } };
+
+            var json = WebClient.GetWebData<JObject>(url, cache: false);
+            //var json = GetWebData<JObject>(video.VideoUrl, cache: false);
+            var collectionEmbedded = json["widgets"]?.FirstOrDefault()?["mediaCollection"]["embedded"];
+            //var livestreamPlaylistUrl = listLiveStream["_mediaArray"].FirstOrDefault()["_mediaStreamArray"].FirstOrDefault().Value<string>("_stream"); "_stream");
+
+            var streamInfoDtos = MediaArrayConverter.ParseVideoUrls(collectionEmbedded as JObject);
+
+            return new Result<IEnumerable<DownloadDetailsDto>>()
+                   {
+                       ContinuationToken = continuationToken,
+                       Value = streamInfoDtos
+                   };
+        }
+    }
+
+    public class Result<T> //where T : ArdInformationDtoBase
+    {
+        public T Value { get; set; }
+        public ContinuationToken ContinuationToken { get; set; }
+    }
+
+
+    public class ArdLiveStreamsDeserializer : PageDeserializerBase
+    {
+        public static string Name { get; } = "Live TV";
+        public static bool HasCategories { get; } = false;
+        public static Uri EntryUrl { get; } = new Uri("https://api.ardmediathek.de/page-gateway/widgets/ard/editorials/4hEeBDgtx6kWs6W6sa44yY");
+
+        private ArdCategoryDeserializer _categoryDeserializer = new ArdCategoryDeserializer();
+        private ArdFilmInfoDeserializerNeu _videoDeserializer = new ArdFilmInfoDeserializerNeu();
+        //private ArdMediaArrayConverter _mediaArrayConverter = new ArdMediaArrayConverter();
+
+        public ArdLiveStreamsDeserializer(WebCache webClient) : base(webClient) { }
+
+        /// <inheritdoc />
+        public override Result<IEnumerable<ArdCategoryInfoDto>> GetCategories(string targetUrl, ContinuationToken continuationToken = null) => throw new NotImplementedException();
+
+
+        /// <inheritdoc />
+        public override Result<IEnumerable<ArdFilmInfoDto>> GetVideos(string targetUrl, ContinuationToken continuationToken = null)
+        {
+            var json = WebClient.GetWebData<JObject>(targetUrl);
+            var filmInfoDtos = LoadDetails(json);
+            return new Result<IEnumerable<ArdFilmInfoDto>>()
+                   {
+                       ContinuationToken = continuationToken,
+                       Value = filmInfoDtos
+                   };
+        }
+
+        private IEnumerable<ArdFilmInfoDto> LoadDetails(JObject json)
+        {
+            var categories = _videoDeserializer.ParseTeasers(json);
+
+            //TODO bringt nichts, weil ich von TargetUrl FirstWidget nehmen muss und nicht teasers
+            foreach (var category in categories)
+            {
+                //TODO workaround
+                var details = WebClient.GetWebData<JObject>(category.TargetUrl);
+                var newFilmInfo = _videoDeserializer.ParseTeaser(details);
+                category.Title = newFilmInfo.Title;
+                category.Description = newFilmInfo.Description;
+                yield return category;
+                // sub item sind videos, aber ...
+            }
+
+            //return categories;
+        }
+
+        ///// <inheritdoc />
+        //public override Result<IEnumerable<DownloadDetailsDto>> GetStreams(string url, ContinuationToken continuationToken = null)
+        //{
+        //    throw new NotImplementedException();
+        //}
+        /// <inheritdoc />
+    }
 
     /// <summary>
     ///                     case CATEGORYNAME_BROADCASTS_AZ:
@@ -21,17 +129,15 @@ namespace OnlineVideos.Sites.Ard
     {
         private static readonly string _level = "Level";
 
-        private readonly WebCache _webClient;
-
         public static string Name { get; } = "Sendungen A-Z";
         public static bool HasCategories { get; } = true;
         public static Uri EntryUrl { get; } = new Uri("https://api.ardmediathek.de/page-gateway/pages/ard/editorial/experiment-a-z");
 
-        public ArdTopicsPageDeserializer(WebCache webClient) => _webClient = webClient;
+        public ArdTopicsPageDeserializer(WebCache webClient) : base(webClient) { }
 
         private ArdCategoryDeserializer _categoryDeserializer = new ArdCategoryDeserializer();
         private ArdFilmInfoDeserializerNeu _videoDeserializer = new ArdFilmInfoDeserializerNeu();
-        private ArdMediaArrayConverter _mediaArrayConverter = new ArdMediaArrayConverter();
+        //private ArdMediaArrayConverter _mediaArrayConverter = new ArdMediaArrayConverter();
 
         public override Result<IEnumerable<ArdCategoryInfoDto>> GetCategories(string targetUrl, ContinuationToken continuationToken = null)
         {
@@ -40,7 +146,7 @@ namespace OnlineVideos.Sites.Ard
             var currentLevel = continuationToken.GetValueOrDefault(_level) as int? ?? 0;
             //var currentLevel = string.Equals(EntryUrl.AbsoluteUri, targetUrl) ? 0 : 1;
 
-            var json = _webClient.GetWebData<JObject>(targetUrl);
+            var json = WebClient.GetWebData<JObject>(targetUrl);
             var categoryInfoDtos = currentLevel switch
             {
                 0 => _categoryDeserializer.ParseWidgets(json, hasSubCategories: true), // load A - Z
@@ -65,7 +171,7 @@ namespace OnlineVideos.Sites.Ard
             foreach (var category in categories)
             {
                 //TODO workaround
-                var details = _webClient.GetWebData<JObject>(category.TargetUrl);
+                var details = WebClient.GetWebData<JObject>(category.TargetUrl);
                 var newCategory = _categoryDeserializer.ParseTeaser(details);
                 category.Title = newCategory.Title;
                 category.Description = newCategory.Description;
@@ -78,7 +184,7 @@ namespace OnlineVideos.Sites.Ard
 
         public override Result<IEnumerable<ArdFilmInfoDto>> GetVideos(string url, ContinuationToken continuationToken = null)
         {
-            var json = _webClient.GetWebData<JToken>(url, cache: false);
+            var json = WebClient.GetWebData<JToken>(url, cache: false);
             var filmInfoDtos = _videoDeserializer.ParseTeasers(json);
 
             return new Result<IEnumerable<ArdFilmInfoDto>>()
@@ -88,51 +194,26 @@ namespace OnlineVideos.Sites.Ard
             };
         }
 
-        public override Result<IEnumerable<DownloadDetailsDto>> GetStreams(string url, ContinuationToken continuationToken = null)
-        {
-            continuationToken ??= new ContinuationToken() { { _level, 0 } };
+        //public override Result<IEnumerable<DownloadDetailsDto>> GetStreams(string url, ContinuationToken continuationToken = null)
+        //{
+        //    continuationToken ??= new ContinuationToken() { { _level, 0 } };
 
-            var json = _webClient.GetWebData<JObject>(url, cache: false);
-            //var json = GetWebData<JObject>(video.VideoUrl, cache: false);
-            var collectionEmbedded = json["widgets"]?.FirstOrDefault()?["mediaCollection"]["embedded"];
-            //var livestreamPlaylistUrl = listLiveStream["_mediaArray"].FirstOrDefault()["_mediaStreamArray"].FirstOrDefault().Value<string>("_stream"); "_stream");
+        //    var json = _webClient.GetWebData<JObject>(url, cache: false);
+        //    //var json = GetWebData<JObject>(video.VideoUrl, cache: false);
+        //    var collectionEmbedded = json["widgets"]?.FirstOrDefault()?["mediaCollection"]["embedded"];
+        //    //var livestreamPlaylistUrl = listLiveStream["_mediaArray"].FirstOrDefault()["_mediaStreamArray"].FirstOrDefault().Value<string>("_stream"); "_stream");
 
-            var streamInfoDtos = _mediaArrayConverter.ParseVideoUrls(collectionEmbedded as JObject);
+        //    var streamInfoDtos = _mediaArrayConverter.ParseVideoUrls(collectionEmbedded as JObject);
 
-            return new Result<IEnumerable<DownloadDetailsDto>>()
-            {
-                ContinuationToken = continuationToken,
-                Value = streamInfoDtos
-            };
-        }
+        //    return new Result<IEnumerable<DownloadDetailsDto>>()
+        //    {
+        //        ContinuationToken = continuationToken,
+        //        Value = streamInfoDtos
+        //    };
+        //}
 
     }
 
-    public class ContinuationToken : Dictionary<string, object>
-    {
-        public ContinuationToken()
-        {
-        }
-
-        public ContinuationToken(ContinuationToken otherToken) : base(otherToken)
-        {
-        }
-    }
-
-    public abstract class PageDeserializerBase
-    {
-        public abstract Result<IEnumerable<ArdCategoryInfoDto>> GetCategories(string url, ContinuationToken continuationToken = null);
-
-        public abstract Result<IEnumerable<ArdFilmInfoDto>> GetVideos(string url, ContinuationToken continuationToken = null);
-
-        public abstract Result<IEnumerable<DownloadDetailsDto>> GetStreams(string url, ContinuationToken continuationToken = null);
-    }
-
-    public class Result<T> //where T : ArdInformationDtoBase
-    {
-        public T Value { get; set; }
-        public ContinuationToken ContinuationToken { get; set; }
-    }
 
 
     public class ArdMediaArrayConverter
@@ -386,7 +467,7 @@ namespace OnlineVideos.Sites.Ard
             {
                 widgetsElement = jsonElement[ELEMENT_WIDGETS];
             }
-            var selectedWidgetElements = Enumerable.Empty<JObject>();
+            IEnumerable<JObject> selectedWidgetElements = new List<JObject>() { jsonElement as JObject };
             if (widgetsElement?.Type == JTokenType.Array)
             {
                 selectedWidgetElements = widgetsElement.Children().Take(widgetsToUse).OfType<JObject>();
@@ -406,19 +487,19 @@ namespace OnlineVideos.Sites.Ard
 
             foreach (var teaser in teasers)
             {
-                var category = ParseTeaser(teaser);
-                if (category == null)
+                var filmInfo = ParseTeaser(teaser);
+                if (filmInfo == null)
                 {
                     yield break;
                 }
                 else
                 {
-                    yield return category;
+                    yield return filmInfo;
                 }
             }
         }
 
-        protected ArdFilmInfoDto ParseTeaser(JToken teaserElement)
+        public ArdFilmInfoDto ParseTeaser(JToken teaserElement)
         {
             var id = teaserElement[ELEMENT_LINKS]?[ELEMENT_TARGET]?.Value<string>(ATTRIBUTE_ID) ??
                         teaserElement.Value<string>(ATTRIBUTE_ID);
