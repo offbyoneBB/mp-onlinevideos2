@@ -111,7 +111,7 @@ namespace OnlineVideos.JavaScript
                 signatureMethodName = @"\" + signatureMethodName;
             }
 
-            string pattern = @"\s?" + signatureMethodName + @"\s*=\s*function\((?<parameter>[^)]+)\)\s?\{\s?(?<body>[^}]+)\s?\}";
+            string pattern = @"\s?[^\.]" + signatureMethodName + @"\s*=\s*function\((?<parameter>[^)]+)\)\s?\{\s?(?<body>[^}]+)\s?\}";
             Match match = Regex.Match(jsContent, pattern);
 
             if (match.Success)
