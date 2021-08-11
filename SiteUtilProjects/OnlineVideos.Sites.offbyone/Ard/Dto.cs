@@ -80,8 +80,8 @@ namespace OnlineVideos.Sites.Ard
 
         //public string Title { get; set; }
         //public string Description { get; set; }
-        public DateTime AirDate { get; set; }
-        public DateTime AvailableUntilDate { get; set; }
+        public DateTime? AirDate { get; set; }
+        public DateTime? AvailableUntilDate { get; set; }
         public int? Duration { get; set; }
         //public string ImageUrl { get; set; }
 

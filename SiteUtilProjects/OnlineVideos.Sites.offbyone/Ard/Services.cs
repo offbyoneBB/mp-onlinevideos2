@@ -3,13 +3,8 @@
 using OnlineVideos.Sites.Zdf;
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OnlineVideos.Sites.Ard
 {
@@ -25,14 +20,16 @@ namespace OnlineVideos.Sites.Ard
         }
     }
 
-    public abstract class PageDeserializerBase
+    internal abstract class PageDeserializerBase
     {
         protected ArdMediaArrayConverter MediaArrayConverter { get; } = new ArdMediaArrayConverter();
-
-        //public abstract ArdCategoryInfoDto RootCategory { get; }
+        protected ArdCategoryDeserializer CategoryDeserializer { get; } = new ArdCategoryDeserializer();
+        protected ArdFilmInfoDeserializerNeu VideoDeserializer { get; } = new ArdFilmInfoDeserializerNeu();
         protected WebCache WebClient { get; }
 
         protected PageDeserializerBase(WebCache webClient) => WebClient = webClient;
+
+        public abstract ArdCategoryInfoDto RootCategory { get; }
 
         public abstract Result<IEnumerable<ArdCategoryInfoDto>> GetCategories(string targetUrl, ContinuationToken continuationToken = null);
 
@@ -66,15 +63,20 @@ namespace OnlineVideos.Sites.Ard
     }
 
 
-    public class ArdLiveStreamsDeserializer : PageDeserializerBase
+    internal class ArdLiveStreamsDeserializer : PageDeserializerBase
     {
         public static string Name { get; } = "Live TV";
         public static bool HasCategories { get; } = false;
         public static Uri EntryUrl { get; } = new Uri("https://api.ardmediathek.de/page-gateway/widgets/ard/editorials/4hEeBDgtx6kWs6W6sa44yY");
 
-        private ArdCategoryDeserializer _categoryDeserializer = new ArdCategoryDeserializer();
-        private ArdFilmInfoDeserializerNeu _videoDeserializer = new ArdFilmInfoDeserializerNeu();
-        //private ArdMediaArrayConverter _mediaArrayConverter = new ArdMediaArrayConverter();
+        public override ArdCategoryInfoDto RootCategory { get; } = new ArdCategoryInfoDto("", EntryUrl.AbsoluteUri)
+                                                                   {
+                                                                       Title = Name,
+                                                                       //Description = "",
+                                                                       HasSubCategories = false,
+                                                                       //ImageUrl = ,
+                                                                       //TargetUrl = 
+                                                                   };
 
         public ArdLiveStreamsDeserializer(WebCache webClient) : base(webClient) { }
 
@@ -96,29 +98,19 @@ namespace OnlineVideos.Sites.Ard
 
         private IEnumerable<ArdFilmInfoDto> LoadDetails(JObject json)
         {
-            var categories = _videoDeserializer.ParseTeasers(json);
+            var categories = VideoDeserializer.ParseTeasers(json);
 
-            //TODO bringt nichts, weil ich von TargetUrl FirstWidget nehmen muss und nicht teasers
             foreach (var category in categories)
             {
                 //TODO workaround
                 var details = WebClient.GetWebData<JObject>(category.TargetUrl);
-                var newFilmInfo = _videoDeserializer.ParseWidgets(details).SingleOrDefault();
+                var newFilmInfo = VideoDeserializer.ParseWidgets(details).SingleOrDefault();
                 category.Title = newFilmInfo?.Title;
                 category.Description = newFilmInfo?.Description;
                 yield return category;
                 // sub item sind videos, aber ...
             }
-
-            //return categories;
         }
-
-        ///// <inheritdoc />
-        //public override Result<IEnumerable<DownloadDetailsDto>> GetStreams(string url, ContinuationToken continuationToken = null)
-        //{
-        //    throw new NotImplementedException();
-        //}
-        /// <inheritdoc />
     }
 
     /// <summary>
@@ -127,67 +119,71 @@ namespace OnlineVideos.Sites.Ard
     /// https://api.ardmediathek.de/page-gateway/pages/ard/editorial/experiment-a-z?embedded=false
     /// https://api.ardmediathek.de/page-gateway/pages/ard/editorial/experiment-a-z");
     /// </summary>
-    public class ArdTopicsPageDeserializer : PageDeserializerBase
+    internal class ArdTopicsPageDeserializer : PageDeserializerBase
     {
-        private static readonly string _level = "Level";
+        private static readonly string _categoryLevel = "Level";
 
         public static string Name { get; } = "Sendungen A-Z";
         public static bool HasCategories { get; } = true;
         public static Uri EntryUrl { get; } = new Uri("https://api.ardmediathek.de/page-gateway/pages/ard/editorial/experiment-a-z");
 
+        public override ArdCategoryInfoDto RootCategory { get; } = new ArdCategoryInfoDto("", EntryUrl.AbsoluteUri)
+                                                                   {
+                                                                       Title = Name,
+                                                                       //Description = "",
+                                                                       HasSubCategories = false,
+                                                                       //ImageUrl = ,
+                                                                       //TargetUrl = 
+                                                                   };
+
         public ArdTopicsPageDeserializer(WebCache webClient) : base(webClient) { }
 
-        private ArdCategoryDeserializer _categoryDeserializer = new ArdCategoryDeserializer();
-        private ArdFilmInfoDeserializerNeu _videoDeserializer = new ArdFilmInfoDeserializerNeu();
-        //private ArdMediaArrayConverter _mediaArrayConverter = new ArdMediaArrayConverter();
 
         public override Result<IEnumerable<ArdCategoryInfoDto>> GetCategories(string targetUrl, ContinuationToken continuationToken = null)
         {
-            continuationToken ??= new ContinuationToken() { { _level, 0 } };
+            continuationToken ??= new ContinuationToken() { { _categoryLevel, 0 } };
 
-            var currentLevel = continuationToken.GetValueOrDefault(_level) as int? ?? 0;
+            var currentLevel = continuationToken.GetValueOrDefault(_categoryLevel) as int? ?? 0;
             //var currentLevel = string.Equals(EntryUrl.AbsoluteUri, targetUrl) ? 0 : 1;
 
             var json = WebClient.GetWebData<JObject>(targetUrl);
-            var categoryInfoDtos = currentLevel switch
+            var categoryInfos = currentLevel switch
             {
-                0 => _categoryDeserializer.ParseWidgets(json, hasSubCategories: true), // load A - Z
+                0 => CategoryDeserializer.ParseWidgets(json, hasSubCategories: true), // load A - Z
                 1 => LoadDetails(json), // load e.g. Abendschau - skip level, (load infos from nextlevel) for each category load url and read synopsis
                 //2 => categoryDeserializer.ParseTeasers(json), // videos...
                 _ => throw new ArgumentOutOfRangeException(),
             };
 
             var newToken = new ContinuationToken(continuationToken);
-            newToken[_level] = currentLevel + 1;
+            newToken[_categoryLevel] = currentLevel + 1;
             return new Result<IEnumerable<ArdCategoryInfoDto>>
             {
                 ContinuationToken = newToken,
-                Value = categoryInfoDtos
+                Value = categoryInfos
             };
         }
 
         private IEnumerable<ArdCategoryInfoDto> LoadDetails(JObject json)
         {
-            var categories = _categoryDeserializer.ParseTeasers(json);
+            var categories = CategoryDeserializer.ParseTeasers(json);
 
             foreach (var category in categories)
             {
                 //TODO workaround
                 var details = WebClient.GetWebData<JObject>(category.TargetUrl);
-                var newCategory = _categoryDeserializer.ParseTeaser(details);
+                var newCategory = CategoryDeserializer.ParseTeaser(details);
                 category.Title = newCategory.Title;
                 category.Description = newCategory.Description;
                 yield return category;
                 // sub item sind videos, aber ...
             }
-
-            //return categories;
         }
 
         public override Result<IEnumerable<ArdFilmInfoDto>> GetVideos(string url, ContinuationToken continuationToken = null)
         {
             var json = WebClient.GetWebData<JToken>(url, cache: false);
-            var filmInfoDtos = _videoDeserializer.ParseTeasers(json);
+            var filmInfoDtos = VideoDeserializer.ParseTeasers(json);
 
             return new Result<IEnumerable<ArdFilmInfoDto>>()
             {
@@ -195,30 +191,94 @@ namespace OnlineVideos.Sites.Ard
                 Value = filmInfoDtos
             };
         }
-
-        //public override Result<IEnumerable<DownloadDetailsDto>> GetStreams(string url, ContinuationToken continuationToken = null)
-        //{
-        //    continuationToken ??= new ContinuationToken() { { _level, 0 } };
-
-        //    var json = _webClient.GetWebData<JObject>(url, cache: false);
-        //    //var json = GetWebData<JObject>(video.VideoUrl, cache: false);
-        //    var collectionEmbedded = json["widgets"]?.FirstOrDefault()?["mediaCollection"]["embedded"];
-        //    //var livestreamPlaylistUrl = listLiveStream["_mediaArray"].FirstOrDefault()["_mediaStreamArray"].FirstOrDefault().Value<string>("_stream"); "_stream");
-
-        //    var streamInfoDtos = _mediaArrayConverter.ParseVideoUrls(collectionEmbedded as JObject);
-
-        //    return new Result<IEnumerable<DownloadDetailsDto>>()
-        //    {
-        //        ContinuationToken = continuationToken,
-        //        Value = streamInfoDtos
-        //    };
-        //}
-
     }
 
 
+    internal class ArdDayPageDeserializer : PageDeserializerBase
+    {
+        private static readonly string _categoryLevel = "Level";
 
-    public class ArdMediaArrayConverter
+        private static readonly string DAY_PAGE  = "https://api.ardmediathek.de//page-gateway/compilations/{0}/pastbroadcasts?startDateTime={1}T00:00:00.000Z&endDateTime={2}T23:59:59.000Z&pageNumber=0&pageSize={3}";
+
+        /// <inheritdoc />
+        public override ArdCategoryInfoDto RootCategory { get; } = new ArdCategoryInfoDto(nameof(ArdDayPageDeserializer), string.Empty)
+                                                                   {
+                                                                       Title = "Was lief",
+                                                                       Description = "Sendungen der letzten 7 Tage.",
+                                                                       HasSubCategories = true,
+                                                                       //ImageUrl = ,
+                                                                       //TargetUrl = 
+                                                                   };
+
+        public ArdDayPageDeserializer(WebCache webClient) : base(webClient) { }
+
+
+        /// <inheritdoc />
+        public override Result<IEnumerable<ArdCategoryInfoDto>> GetCategories(string targetUrl, ContinuationToken continuationToken = null)
+        {
+            continuationToken ??= new ContinuationToken() { { _categoryLevel, 0 } };
+            var currentLevel = continuationToken.GetValueOrDefault(_categoryLevel) as int? ?? 0;
+
+            var categoryInfos = LastSevenDays();
+
+            var newToken = new ContinuationToken(continuationToken);
+            newToken[_categoryLevel] = currentLevel + 1;
+            return new Result<IEnumerable<ArdCategoryInfoDto>>
+                   {
+                       ContinuationToken = newToken,
+                       Value = categoryInfos
+                   };
+
+        }
+
+
+        private IEnumerable<ArdCategoryInfoDto> LastSevenDays()
+        {
+            const string DAY_PAGE_DATE_FORMAT = "yyyy-MM-dd";
+            static string CreateDayUrl(string partnerName, DateTime day)
+                => $"https://api.ardmediathek.de//page-gateway/compilations/{partnerName}/pastbroadcasts" +
+                   $"?startDateTime={day.ToString(DAY_PAGE_DATE_FORMAT)}T00:00:00.000Z" +
+                   $"&endDateTime={day.ToString(DAY_PAGE_DATE_FORMAT)}T23:59:59.000Z" +
+                   $"&pageNumber=0" +
+                   $"&pageSize={ArdConstants.DAY_PAGE_SIZE}";
+
+            for (var i = 0; i <= 7; i++)
+            {
+                var day = DateTime.Today.AddDays(-i);
+                var url = CreateDayUrl("daserste", day);
+                yield return new ArdCategoryInfoDto(nameof(ArdDayPageDeserializer) + i, url) 
+                             { 
+                                 Title = i switch
+                                 {
+                                     0 => "Heute",
+                                     1 => "Gestern",
+                                     _ => day.ToString("ddd, d.M.")
+                                 },
+                                 //Url = url,
+                                 //HasSubCategories = true,
+                                 //ImageUrl = 
+                             };
+            }
+        }
+
+        /// <inheritdoc />
+        public override Result<IEnumerable<ArdFilmInfoDto>> GetVideos(string url, ContinuationToken continuationToken = null)
+        {
+            var json = WebClient.GetWebData<JToken>(url, cache: false);
+            var filmInfos = VideoDeserializer.ParseTeasers(json);
+
+            return new Result<IEnumerable<ArdFilmInfoDto>>()
+                   {
+                       ContinuationToken = continuationToken,
+                       Value = filmInfos
+                   };
+        //            return filmInfo;
+        }
+    }
+
+    //ArdFilmDeserialize (ArdFilmInfoDto) -> ArdVideoInfoJsonDeserializer (ArdVideoDTO) --> ArdMediaArrayToDownloadUrlsConverter ( Map<Qualities, URL> )
+
+    internal class ArdMediaArrayConverter
     {
         private static readonly string ELEMENT_MEDIA_ARRAY = "_mediaArray";
         private static readonly string ELEMENT_STREAM = "_stream";
@@ -302,183 +362,6 @@ namespace OnlineVideos.Sites.Ard
                     yield return new DownloadDetailsDto(quality, url);
                 }
             }
-        }
-    }
-
-
-    internal abstract class ArdWidgetTeaserDeserializerBase
-    {
-        protected static readonly string ELEMENT_WIDGETS = "widgets";
-        protected static readonly string ELEMENT_TEASERS = "teasers";
-
-        protected static readonly string ELEMENT_LINKS = "links";
-        protected static readonly string ELEMENT_SELF = "self";
-        protected static readonly string ELEMENT_TARGET = "target";
-
-        protected static readonly string ELEMENT_IMAGES = "images";
-        protected static readonly string ELEMENT_ASPECT_16X9 = "aspect16x9";
-        protected static readonly string ELEMENT_ASPECT_4X3 = "aspect16x9";
-
-
-        protected static readonly string ATTRIBUTE_ID = "id";
-        protected static readonly string ATTRIBUTE_HREF = "href";
-        protected static readonly string ATTRIBUTE_SRC = "src";
-
-        protected static readonly string ATTRIBUTE_TITLE = "title";
-        protected static readonly string ATTRIBUTE_TITLE_SHORT = "shortTitle";
-        protected static readonly string ATTRIBUTE_DESCRIPTION = "synopsis";
-
-
-        public IEnumerable<T> EnumerateItems<T>(IEnumerable<JToken> elements, Func<JToken, T> converter) where T : ArdInformationDtoBase
-        {
-            return elements.AsEmptyIfNull()
-                           .ExceptDefault()
-                           .Select(converter)
-                           .Where(result => result != null);
-        }
-
-
-        protected static JToken TryGetWidgetsTokenOrInput(JToken jsonElement)
-        {
-            return jsonElement?.Type == JTokenType.Object && jsonElement?[ELEMENT_WIDGETS] != null 
-                       ? jsonElement[ELEMENT_WIDGETS] 
-                       : jsonElement;
-        }
-
-
-        protected static IEnumerable<JToken> TryGetTeasersTokenOrInput(JToken widgetsElement, int widgetsToUse = 1)
-        {
-
-            var selectedWidgetElements = widgetsElement?.Type == JTokenType.Array 
-                                             ? widgetsElement.Children()
-                                                             .Take(widgetsToUse)
-                                                             .OfType<JObject>() 
-                                             : new List<JObject>()
-                                               {
-                                                   widgetsElement as JObject
-                                               };
-
-
-            // ToDo SelectMany do we need the widget category, which is now omitted?
-            return selectedWidgetElements.ExceptDefault()
-                                         .Select(jObj => jObj[ELEMENT_TEASERS] as JArray)
-                                         .First();
-        }
-    }
-
-    internal class ArdCategoryDeserializer : ArdWidgetTeaserDeserializerBase
-    {
-        protected static readonly string ELEMENT_MEDIACOLLECTION = "mediaCollection";
-        protected static readonly string ELEMENT_EMBEDDED = "embedded";
-
-        protected static readonly string WIDGET_ATTRIBUTE_COMPILATIONTYPE = "compilationType";
-
-        public IEnumerable<ArdCategoryInfoDto> ParseWidgets(JToken jsonElement, bool hasSubCategories = false)
-        {
-            var widgetsElement = TryGetWidgetsTokenOrInput(jsonElement);
-
-            return EnumerateItems(widgetsElement as JArray, widget => ParseWidget(widget, hasSubCategories));
-        }
-
-        protected ArdCategoryInfoDto ParseWidget(JToken widgetElement, bool hasSubCategories = false)
-        {
-            var compilationType = widgetElement.Value<string>(WIDGET_ATTRIBUTE_COMPILATIONTYPE);
-
-            var id = //widgetElement[ELEMENT_LINKS]?[ELEMENT_TARGET]?.Value<string>(ATTRIBUTE_ID) ??
-                     widgetElement.Value<string>(ATTRIBUTE_ID);
-
-            var selfUrl = widgetElement[ELEMENT_LINKS]?[ELEMENT_SELF]?.Value<string>(ATTRIBUTE_HREF);
-
-            return new ArdCategoryInfoDto(id, selfUrl)
-            {
-                Title = widgetElement.Value<string>(ATTRIBUTE_TITLE),
-                //Description =,
-                //ImageUrl = ,
-                //NavigationUrl = selfUrl, //string.Format(ArdConstants.EDITORIAL_URL, id),
-                //Pagination = ,
-                HasSubCategories = hasSubCategories,
-            };
-        }
-
-
-        public IEnumerable<ArdCategoryInfoDto> ParseTeasers(JToken jsonElement, bool hasSubCategories = false, int widgetsToUse = 1)
-        {
-            var widgetsElement = TryGetWidgetsTokenOrInput(jsonElement);
-
-            var teasers = TryGetTeasersTokenOrInput(widgetsElement);
-            return EnumerateItems(teasers, teaser => ParseTeaser(teaser, hasSubCategories));
-        }
-        public ArdCategoryInfoDto ParseTeaser(JToken teaserElement, bool hasSubCategories = false)
-        {
-            var id = teaserElement[ELEMENT_LINKS]?[ELEMENT_TARGET]?.Value<string>(ATTRIBUTE_ID) ??
-                        teaserElement.Value<string>(ATTRIBUTE_ID);
-            if (string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-            var url = teaserElement[ELEMENT_LINKS]?[ELEMENT_TARGET]?.Value<string>(ATTRIBUTE_HREF);
-            var imageUrl = teaserElement[ELEMENT_IMAGES]?[ELEMENT_ASPECT_16X9]?.Value<string>(ATTRIBUTE_SRC) ??
-                            teaserElement[ELEMENT_IMAGES]?[ELEMENT_ASPECT_4X3]?.Value<string>(ATTRIBUTE_SRC);
-
-            return new ArdCategoryInfoDto(id, url)
-            {
-                Title = teaserElement.Value<string>(ATTRIBUTE_TITLE),
-                //AirDate = teaserElement.Value<DateTime>(ATTRIBUTE_DATETIME),
-                Description = teaserElement.Value<string>(ATTRIBUTE_DESCRIPTION),
-                //Duration = teaserElement[ELEMENT_MEDIACOLLECTION]?[ELEMENT_EMBEDDED]?.Value<int>(ATTRIBUTE_DURATION),
-                ImageUrl = imageUrl?.Replace(ArdMediathekUtil.PLACEHOLDER_IMAGE_WIDTH, ArdMediathekUtil.IMAGE_WIDTH),
-                HasSubCategories = hasSubCategories,
-            };
-        }
-    }
-
-    internal class ArdFilmInfoDeserializerNeu : ArdWidgetTeaserDeserializerBase
-    {
-        protected static readonly string ATTRIBUTE_UNTIL_DATETIME = "availableTo";
-        protected static readonly string ATTRIBUTE_AIR_DATETIME = "broadcastedOn";
-        protected static readonly string ATTRIBUTE_DURATION = "duration";
-
-        protected static readonly string ATTRIBUTE_NUMBER_OF_CLIPS = "numberOfClips";
-        public IEnumerable<ArdFilmInfoDto> ParseWidgets(JToken jsonElement)
-        {
-            var widgetsElement = TryGetWidgetsTokenOrInput(jsonElement);
-
-
-            return EnumerateItems(widgetsElement, ParseVideoInfo);
-        }
-
-        public IEnumerable<ArdFilmInfoDto> ParseTeasers(JToken jsonElement, int widgetsToUse = 1)
-        {
-            var widgetsElement = TryGetWidgetsTokenOrInput(jsonElement);
-
-            var teasers = TryGetTeasersTokenOrInput(widgetsElement);
-
-            return EnumerateItems(teasers, ParseVideoInfo);
-        }
-
-        public ArdFilmInfoDto ParseVideoInfo(JToken teaserElement)
-        {
-            var id = teaserElement[ELEMENT_LINKS]?[ELEMENT_TARGET]?.Value<string>(ATTRIBUTE_ID) ??
-                        teaserElement.Value<string>(ATTRIBUTE_ID);
-            if (string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-            var url = teaserElement[ELEMENT_LINKS]?[ELEMENT_TARGET]?.Value<string>(ATTRIBUTE_HREF);
-            var imageUrl = teaserElement[ELEMENT_IMAGES]?[ELEMENT_ASPECT_16X9]?.Value<string>(ATTRIBUTE_SRC) ??
-                            teaserElement[ELEMENT_IMAGES]?[ELEMENT_ASPECT_4X3]?.Value<string>(ATTRIBUTE_SRC);
-
-            var numberOfClips = teaserElement.Value<int?>(ATTRIBUTE_NUMBER_OF_CLIPS) ?? 0;
-
-            return new ArdFilmInfoDto(id, numberOfClips, url)
-            {
-                Title = teaserElement.Value<string>(ATTRIBUTE_TITLE),
-                AirDate = teaserElement.Value<DateTime>(ATTRIBUTE_AIR_DATETIME),
-                AvailableUntilDate = teaserElement.Value<DateTime?>(ATTRIBUTE_UNTIL_DATETIME) ?? DateTime.MaxValue,
-                Description = teaserElement.Value<string>(ATTRIBUTE_DESCRIPTION),
-                Duration = teaserElement.Value<int>(ATTRIBUTE_DURATION),
-                ImageUrl = imageUrl?.Replace(ArdMediathekUtil.PLACEHOLDER_IMAGE_WIDTH, ArdMediathekUtil.IMAGE_WIDTH)
-            };
         }
     }
 }
