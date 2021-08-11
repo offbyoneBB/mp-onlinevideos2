@@ -3,7 +3,9 @@
 using OnlineVideos.Sites.Zdf;
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -101,9 +103,9 @@ namespace OnlineVideos.Sites.Ard
             {
                 //TODO workaround
                 var details = WebClient.GetWebData<JObject>(category.TargetUrl);
-                var newFilmInfo = _videoDeserializer.ParseTeaser(details);
-                category.Title = newFilmInfo.Title;
-                category.Description = newFilmInfo.Description;
+                var newFilmInfo = _videoDeserializer.ParseWidgets(details).SingleOrDefault();
+                category.Title = newFilmInfo?.Title;
+                category.Description = newFilmInfo?.Description;
                 yield return category;
                 // sub item sind videos, aber ...
             }
@@ -325,6 +327,43 @@ namespace OnlineVideos.Sites.Ard
         protected static readonly string ATTRIBUTE_TITLE = "title";
         protected static readonly string ATTRIBUTE_TITLE_SHORT = "shortTitle";
         protected static readonly string ATTRIBUTE_DESCRIPTION = "synopsis";
+
+
+        public IEnumerable<T> EnumerateItems<T>(IEnumerable<JToken> elements, Func<JToken, T> converter) where T : ArdInformationDtoBase
+        {
+            return elements.AsEmptyIfNull()
+                           .ExceptDefault()
+                           .Select(converter)
+                           .Where(result => result != null);
+        }
+
+
+        protected static JToken TryGetWidgetsTokenOrInput(JToken jsonElement)
+        {
+            return jsonElement?.Type == JTokenType.Object && jsonElement?[ELEMENT_WIDGETS] != null 
+                       ? jsonElement[ELEMENT_WIDGETS] 
+                       : jsonElement;
+        }
+
+
+        protected static IEnumerable<JToken> TryGetTeasersTokenOrInput(JToken widgetsElement, int widgetsToUse = 1)
+        {
+
+            var selectedWidgetElements = widgetsElement?.Type == JTokenType.Array 
+                                             ? widgetsElement.Children()
+                                                             .Take(widgetsToUse)
+                                                             .OfType<JObject>() 
+                                             : new List<JObject>()
+                                               {
+                                                   widgetsElement as JObject
+                                               };
+
+
+            // ToDo SelectMany do we need the widget category, which is now omitted?
+            return selectedWidgetElements.ExceptDefault()
+                                         .Select(jObj => jObj[ELEMENT_TEASERS] as JArray)
+                                         .First();
+        }
     }
 
     internal class ArdCategoryDeserializer : ArdWidgetTeaserDeserializerBase
@@ -336,43 +375,17 @@ namespace OnlineVideos.Sites.Ard
 
         public IEnumerable<ArdCategoryInfoDto> ParseWidgets(JToken jsonElement, bool hasSubCategories = false)
         {
-            var widgets = jsonElement?[ELEMENT_WIDGETS] as JArray;
-            return ParseWidgets(widgets, hasSubCategories);
-        }
+            var widgetsElement = TryGetWidgetsTokenOrInput(jsonElement);
 
-        public IEnumerable<ArdCategoryInfoDto> ParseWidgets(JArray widgets, bool hasSubCategories = false)
-        {
-            if (widgets == null)
-            {
-                yield break;
-            }
-
-            foreach (var widget in widgets)
-            {
-                var category = ParseWidget(widget, hasSubCategories);
-                if (category == null)
-                {
-                    yield break;
-                }
-                else
-                {
-                    yield return category;
-                }
-            }
+            return EnumerateItems(widgetsElement as JArray, widget => ParseWidget(widget, hasSubCategories));
         }
 
         protected ArdCategoryInfoDto ParseWidget(JToken widgetElement, bool hasSubCategories = false)
         {
-            if (widgetElement == null)
-            {
-                return null;
-            }
-
             var compilationType = widgetElement.Value<string>(WIDGET_ATTRIBUTE_COMPILATIONTYPE);
 
             var id = //widgetElement[ELEMENT_LINKS]?[ELEMENT_TARGET]?.Value<string>(ATTRIBUTE_ID) ??
                      widgetElement.Value<string>(ATTRIBUTE_ID);
-
 
             var selfUrl = widgetElement[ELEMENT_LINKS]?[ELEMENT_SELF]?.Value<string>(ATTRIBUTE_HREF);
 
@@ -390,44 +403,11 @@ namespace OnlineVideos.Sites.Ard
 
         public IEnumerable<ArdCategoryInfoDto> ParseTeasers(JToken jsonElement, bool hasSubCategories = false, int widgetsToUse = 1)
         {
-            var widgetsElement = jsonElement;
-            if (jsonElement?.Type == JTokenType.Object && jsonElement?[ELEMENT_WIDGETS] != null)
-            {
-                widgetsElement = jsonElement[ELEMENT_WIDGETS];
-            }
-            IEnumerable<JObject> selectedWidgetElements = new List<JObject>() { jsonElement as JObject };
-            if (widgetsElement?.Type == JTokenType.Array)
-            {
-                selectedWidgetElements = widgetsElement.Children().Take(widgetsToUse).OfType<JObject>();
-            }
+            var widgetsElement = TryGetWidgetsTokenOrInput(jsonElement);
 
-            // ToDo SelectMany do we need the widget category, which is now omitted?
-            var teasers = selectedWidgetElements.Select(jObj => jObj?[ELEMENT_TEASERS] as JArray).First();
-            return ParseTeasers(teasers, hasSubCategories);
+            var teasers = TryGetTeasersTokenOrInput(widgetsElement);
+            return EnumerateItems(teasers, teaser => ParseTeaser(teaser, hasSubCategories));
         }
-
-        public IEnumerable<ArdCategoryInfoDto> ParseTeasers(JArray teasers, bool hasSubCategories = false)
-        {
-            if (teasers == null)
-            {
-                yield break;
-            }
-
-            foreach (var teaser in teasers)
-            {
-                var category = ParseTeaser(teaser, hasSubCategories);
-                if (category == null)
-                {
-                    yield break;
-                }
-                else
-                {
-                    yield return category;
-                }
-            }
-        }
-
-
         public ArdCategoryInfoDto ParseTeaser(JToken teaserElement, bool hasSubCategories = false)
         {
             var id = teaserElement[ELEMENT_LINKS]?[ELEMENT_TARGET]?.Value<string>(ATTRIBUTE_ID) ??
@@ -459,47 +439,24 @@ namespace OnlineVideos.Sites.Ard
         protected static readonly string ATTRIBUTE_DURATION = "duration";
 
         protected static readonly string ATTRIBUTE_NUMBER_OF_CLIPS = "numberOfClips";
+        public IEnumerable<ArdFilmInfoDto> ParseWidgets(JToken jsonElement)
+        {
+            var widgetsElement = TryGetWidgetsTokenOrInput(jsonElement);
+
+
+            return EnumerateItems(widgetsElement, ParseVideoInfo);
+        }
 
         public IEnumerable<ArdFilmInfoDto> ParseTeasers(JToken jsonElement, int widgetsToUse = 1)
         {
-            JToken widgetsElement = jsonElement;
-            if (jsonElement?.Type == JTokenType.Object && jsonElement?[ELEMENT_WIDGETS] != null)
-            {
-                widgetsElement = jsonElement[ELEMENT_WIDGETS];
-            }
-            IEnumerable<JObject> selectedWidgetElements = new List<JObject>() { jsonElement as JObject };
-            if (widgetsElement?.Type == JTokenType.Array)
-            {
-                selectedWidgetElements = widgetsElement.Children().Take(widgetsToUse).OfType<JObject>();
-            }
+            var widgetsElement = TryGetWidgetsTokenOrInput(jsonElement);
 
-            // ToDo SelectMany do we need the widget category, which is now omitted?
-            var teasers = selectedWidgetElements.Select(jObj => jObj[ELEMENT_TEASERS] as JArray).First();
-            return ParseTeasers(teasers);
+            var teasers = TryGetTeasersTokenOrInput(widgetsElement);
+
+            return EnumerateItems(teasers, ParseVideoInfo);
         }
 
-        public IEnumerable<ArdFilmInfoDto> ParseTeasers(JArray teasers)
-        {
-            if (teasers == null)
-            {
-                yield break;
-            }
-
-            foreach (var teaser in teasers)
-            {
-                var filmInfo = ParseTeaser(teaser);
-                if (filmInfo == null)
-                {
-                    yield break;
-                }
-                else
-                {
-                    yield return filmInfo;
-                }
-            }
-        }
-
-        public ArdFilmInfoDto ParseTeaser(JToken teaserElement)
+        public ArdFilmInfoDto ParseVideoInfo(JToken teaserElement)
         {
             var id = teaserElement[ELEMENT_LINKS]?[ELEMENT_TARGET]?.Value<string>(ATTRIBUTE_ID) ??
                         teaserElement.Value<string>(ATTRIBUTE_ID);
@@ -517,65 +474,11 @@ namespace OnlineVideos.Sites.Ard
             {
                 Title = teaserElement.Value<string>(ATTRIBUTE_TITLE),
                 AirDate = teaserElement.Value<DateTime>(ATTRIBUTE_AIR_DATETIME),
-                AvailableUntilDate = teaserElement.Value<DateTime>(ATTRIBUTE_UNTIL_DATETIME),
-                //TODO To get Description we need to navigate to items url (should be the "url")
+                AvailableUntilDate = teaserElement.Value<DateTime?>(ATTRIBUTE_UNTIL_DATETIME) ?? DateTime.MaxValue,
                 Description = teaserElement.Value<string>(ATTRIBUTE_DESCRIPTION),
                 Duration = teaserElement.Value<int>(ATTRIBUTE_DURATION),
                 ImageUrl = imageUrl?.Replace(ArdMediathekUtil.PLACEHOLDER_IMAGE_WIDTH, ArdMediathekUtil.IMAGE_WIDTH)
             };
-        }
-    }
-
-
-    public static class CollectionExtensions
-    {
-        public static TValue? GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
-        {
-            return dictionary.GetValueOrDefault(key, default!);
-        }
-
-        public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue)
-        {
-            if (dictionary == null)
-            {
-                throw new ArgumentNullException(nameof(dictionary));
-            }
-
-            TValue? value;
-            return dictionary.TryGetValue(key, out value) ? value : defaultValue;
-        }
-
-        public static bool TryAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
-        {
-            if (dictionary == null)
-            {
-                throw new ArgumentNullException(nameof(dictionary));
-            }
-
-            if (!dictionary.ContainsKey(key))
-            {
-                dictionary.Add(key, value);
-                return true;
-            }
-
-            return false;
-        }
-
-        public static bool Remove<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, out TValue value)
-        {
-            if (dictionary == null)
-            {
-                throw new ArgumentNullException(nameof(dictionary));
-            }
-
-            if (dictionary.TryGetValue(key, out value))
-            {
-                dictionary.Remove(key);
-                return true;
-            }
-
-            value = default;
-            return false;
         }
     }
 }
