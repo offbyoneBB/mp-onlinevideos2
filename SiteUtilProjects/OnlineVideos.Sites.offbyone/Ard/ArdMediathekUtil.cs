@@ -142,25 +142,35 @@ namespace OnlineVideos.Sites
         }
 
 
-        public static VideoInfo AsVideoInfo(this ArdFilmInfoDto item, PageDeserializerBase page, ContinuationToken token)
+        public static VideoInfo AsVideoInfo(this ArdFilmInfoDto item, PageDeserializerBase page, ContinuationToken token, bool skipPlaybackOptionsDialog = false)
         {
-            return AsVideoInfo(item, new Context(page, token));
+            return AsVideoInfo(item, new Context(page, token), skipPlaybackOptionsDialog);
         }
 
 
-        public static VideoInfo AsVideoInfo(this ArdFilmInfoDto item, Context context)
+        public static VideoInfo AsVideoInfo(this ArdFilmInfoDto item, Context context, bool skipPlaybackOptionsDialog = false)
         {
             return new VideoInfo
                    {
                        Title = item.Title,
                        Description = item.Description ?? string.Empty,
-                       //Length = length.TotalMinutes <= 60 ? length.TotalMinutes.ToString() + " min" : length.ToString("h\\h\\ m\\ \\m\\i\\n"),
+                       Length = item.FormatDuration(),
                        Thumb = item.ImageUrl,
                        Airdate = item.AirDate?.ToLocalTime().ToString("g", OnlineVideoSettings.Instance.Locale) ?? string.Empty,
                        VideoUrl = item.TargetUrl,
+                       HasDetails = !skipPlaybackOptionsDialog,
                        Other = context
                    };
         }
+
+
+        private static string FormatDuration(this ArdFilmInfoDto item)
+        {
+            var duration = TimeSpan.FromSeconds(item.Duration ?? 0);
+            return duration.TotalMinutes <= 60 ? $"{duration.TotalMinutes} Min." : $"{duration.Hours} Std. {duration.Minutes} Min.";
+        }
+
+
     }
 
 
