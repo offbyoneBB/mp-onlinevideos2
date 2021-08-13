@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
-using Newtonsoft.Json.Linq;
+using System.Net;
 
 using OnlineVideos.Helpers;
-using OnlineVideos.Sites.Ard;
 
 
-namespace OnlineVideos.Sites
+namespace OnlineVideos.Sites.Ard
 {
     public class ArdConstants
     {
@@ -25,6 +23,14 @@ namespace OnlineVideos.Sites
         public static readonly string PLACEHOLDER_IMAGE_WIDTH = "{width}";
         public static readonly string IMAGE_WIDTH = "1024";
 
+        static ArdMediathekUtil()
+        {
+            //TODO Workaround
+            //ServicePointManager.Expect100Continue = false;
+            ServicePointManager.UseNagleAlgorithm = false;
+            ServicePointManager.DefaultConnectionLimit = 10;
+        }
+
         public override int DiscoverDynamicCategories()
         {
             Settings.Categories.Clear();
@@ -33,18 +39,16 @@ namespace OnlineVideos.Sites
             Settings.Categories.Add(ArdPageFactory.CreateCategory<ArdTopicsPageDeserializer>());
             Settings.Categories.Add(ArdPageFactory.CreateCategory<ArdDayPageDeserializer>());
 
-
             Settings.DynamicCategoriesDiscovered = true;
             return Settings.Categories.Count;
         }
 
-        public delegate ArdCategoryInfoDto GetCategories(JToken json);
-
         public override int DiscoverSubCategories(Category selectedCategory)
         {
-
+            Log.Debug(nameof(DiscoverSubCategories));
             if (selectedCategory is RssLink { Other: Context context } rssCategory)
             {
+                Log.Debug($"Category: {selectedCategory.Name} (HasSubCat={selectedCategory.HasSubCategories}, SubCategoriesDiscovered={selectedCategory.SubCategoriesDiscovered})");
                 var subCategories = new List<Category>();
                 var page = context.Page;
                 var result = page.GetCategories(rssCategory.Url, context.Token);
@@ -54,22 +58,27 @@ namespace OnlineVideos.Sites
                     subCategories.Add(subCategory);
                 }
                 selectedCategory.SubCategories = subCategories;
+                selectedCategory.SubCategoriesDiscovered = true;
+                Log.Debug($"SubCategories Discovered: {string.Join(",", selectedCategory.SubCategories.Select(c => c.Name))}");
             }
 
             return selectedCategory.SubCategories.Count;
         }
 
-        public override List<VideoInfo> GetVideos(Category category)
+        public override List<VideoInfo> GetVideos(Category selectedCategory)
         {
+            Log.Debug(nameof(GetVideos));
+            Log.Debug($"Category: {selectedCategory.Name} (HasSubCat={selectedCategory.HasSubCategories}, SubCategoriesDiscovered={selectedCategory.SubCategoriesDiscovered})");
+
             var list = new List<VideoInfo>();
 
-            if (category is RssLink rssCategory && !string.IsNullOrWhiteSpace(rssCategory.Url) && rssCategory.Other is Context context)
+            if (selectedCategory is RssLink { Other: Context context } rssCategory)
             {
                 var page = context.Page;
                 var result = page.GetVideos(rssCategory.Url, context.Token);
                 foreach (var filmInfoDto in result.Value)
                 {
-                    list.Add(filmInfoDto.AsVideoInfo(page, result.ContinuationToken));
+                    list.Add(filmInfoDto.AsVideoInfo(page, result.ContinuationToken, skipPlaybackOptionsDialog: _skipPlayackOptionsDialog));
                 }
             }
 
@@ -78,6 +87,8 @@ namespace OnlineVideos.Sites
 
         public override string GetVideoUrl(VideoInfo video)
         {
+            Log.Debug(nameof(GetVideoUrl));
+
             if (video.Other is Context context)
             {
                 var page = context.Page;
@@ -104,6 +115,29 @@ namespace OnlineVideos.Sites
 
             return video.PlaybackOptions.FirstOrDefault().Value;
         }
+
+
+        private bool _skipPlayackOptionsDialog = false;
+        /// <inheritdoc />
+        public override List<ContextMenuEntry> GetContextMenuEntries(Category selectedCategory, VideoInfo selectedItem)
+        {
+            var ctxMenu = new ContextMenuEntry()
+                          {
+                              DisplayText = _skipPlayackOptionsDialog ? "Manual select Playback Stream" : "Directly select Playback Stream",
+                              Action = ContextMenuEntry.UIAction.Execute,
+
+                          };
+            return new List<ContextMenuEntry>() { ctxMenu };
+        }
+
+
+        /// <inheritdoc />
+        public override ContextMenuExecutionResult ExecuteContextMenuEntry(Category selectedCategory, VideoInfo selectedItem, ContextMenuEntry choice)
+        {
+            _skipPlayackOptionsDialog = !_skipPlayackOptionsDialog;
+            Log.Debug($"_skipPlayackOptionsDialog={_skipPlayackOptionsDialog}");
+            return null;
+        }
     }
 
     class Context
@@ -117,8 +151,6 @@ namespace OnlineVideos.Sites
         public PageDeserializerBase Page { get; set; }
         public ContinuationToken Token { get; set; }
     }
-
-
     internal static class ArdInformationDtoExtensions
     {
         public static RssLink AsRssLink(this ArdCategoryInfoDto item, Category parentCategory, PageDeserializerBase page, ContinuationToken token)
@@ -167,7 +199,11 @@ namespace OnlineVideos.Sites
         private static string FormatDuration(this ArdFilmInfoDto item)
         {
             var duration = TimeSpan.FromSeconds(item.Duration ?? 0);
-            return duration.TotalMinutes <= 60 ? $"{duration.TotalMinutes} Min." : $"{duration.Hours} Std. {duration.Minutes} Min.";
+            return duration.TotalMinutes <= 0 
+                       ? string.Empty 
+                       : duration.TotalMinutes <= 60 
+                           ? $"{duration.Minutes} Min." 
+                           : $"{duration.Hours} Std. {duration.Minutes} Min.";
         }
 
 
