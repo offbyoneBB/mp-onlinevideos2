@@ -100,6 +100,7 @@
       <Link>Properties\Version.cs</Link>
     </Compile>
     <Compile Include="Ard\ArdMediathekUtil.cs" />
+    <Compile Include="Ard\ArdPartner.cs" />
     <Compile Include="Ard\ArdWidgetTeaserDeserializerBase.cs" />
     <Compile Include="Ard\CollectionExtensions.cs" />
     <Compile Include="Ard\Services.cs" />
