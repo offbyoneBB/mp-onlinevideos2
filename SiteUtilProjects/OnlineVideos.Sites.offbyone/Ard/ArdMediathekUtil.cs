@@ -13,8 +13,6 @@ namespace OnlineVideos.Sites.Ard
 
         public static Uri API_URL { get; } = new Uri("https://api.ardmediathek.de");
         public static string ITEM_URL { get; } = API_URL + "/page-gateway/pages/ard/item/";
-        public static string DAY_PAGE_URL { get; } = API_URL + "/page-gateway/compilations/{0}/pastbroadcasts?startDateTime={1}T00:00:00.000Z&endDateTime={2}T23:59:59.000Z&pageNumber=0&pageSize={3}";
-
         public static int DAY_PAGE_SIZE { get; } = 100;
     }
 
@@ -81,7 +79,6 @@ namespace OnlineVideos.Sites.Ard
                     list.Add(filmInfoDto.AsVideoInfo(page, result.ContinuationToken, skipPlaybackOptionsDialog: _skipPlayackOptionsDialog));
                 }
             }
-
             return list;
         }
 
@@ -174,13 +171,13 @@ namespace OnlineVideos.Sites.Ard
         }
 
 
-        public static VideoInfo AsVideoInfo(this ArdFilmInfoDto item, PageDeserializerBase page, ContinuationToken token, bool skipPlaybackOptionsDialog = false)
+        public static VideoInfo AsVideoInfo(this ArdVideoInfoDto item, PageDeserializerBase page, ContinuationToken token, bool skipPlaybackOptionsDialog = false)
         {
             return AsVideoInfo(item, new Context(page, token), skipPlaybackOptionsDialog);
         }
 
 
-        public static VideoInfo AsVideoInfo(this ArdFilmInfoDto item, Context context, bool skipPlaybackOptionsDialog = false)
+        public static VideoInfo AsVideoInfo(this ArdVideoInfoDto item, Context context, bool skipPlaybackOptionsDialog = false)
         {
             return new VideoInfo
                    {
@@ -196,14 +193,12 @@ namespace OnlineVideos.Sites.Ard
         }
 
 
-        private static string FormatDuration(this ArdFilmInfoDto item)
+        private static string FormatDuration(this ArdVideoInfoDto item)
         {
             var duration = TimeSpan.FromSeconds(item.Duration ?? 0);
-            return duration.TotalMinutes <= 0 
-                       ? string.Empty 
-                       : duration.TotalMinutes <= 60 
-                           ? $"{duration.Minutes} Min." 
-                           : $"{duration.Hours} Std. {duration.Minutes} Min.";
+            return duration.TotalMinutes <= 0
+                       ? string.Empty
+                       : $"{duration.Minutes} Min.";
         }
 
 

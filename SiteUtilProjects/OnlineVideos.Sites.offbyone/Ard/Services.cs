@@ -24,7 +24,7 @@ namespace OnlineVideos.Sites.Ard
     internal abstract class PageDeserializerBase
     {
         protected ArdCategoryDeserializer CategoryDeserializer { get; } = new ArdCategoryDeserializer();
-        protected ArdFilmInfoDeserializerNeu VideoDeserializer { get; } = new ArdFilmInfoDeserializerNeu();
+        protected ArdVideoInfoDeserializer VideoDeserializer { get; } = new ArdVideoInfoDeserializer();
         protected ArdMediaStreamsDeserializer VideoStreamsDeserializer { get; } = new ArdMediaStreamsDeserializer();
 
         protected WebCache WebClient { get; }
@@ -35,20 +35,20 @@ namespace OnlineVideos.Sites.Ard
 
         public abstract Result<IEnumerable<ArdCategoryInfoDto>> GetCategories(string url, ContinuationToken continuationToken = null);
 
-        public virtual Result<IEnumerable<ArdFilmInfoDto>> GetVideos(string url, ContinuationToken continuationToken = null)
+        public virtual Result<IEnumerable<ArdVideoInfoDto>> GetVideos(string url, ContinuationToken continuationToken = null)
         {
             var json = WebClient.GetWebData<JToken>(url, cache: false, proxy: WebRequest.GetSystemWebProxy());
             var detailUrls = VideoDeserializer.ParseTeasersUrl(json);
             var filmInfos = LoadVideosWithDetails(detailUrls);
 
-            return new Result<IEnumerable<ArdFilmInfoDto>>()
+            return new Result<IEnumerable<ArdVideoInfoDto>>()
                    {
                        ContinuationToken = continuationToken,
                        Value = filmInfos
             };
         }
 
-        private IEnumerable<ArdFilmInfoDto> LoadVideosWithDetails(IEnumerable<string> urls)
+        private IEnumerable<ArdVideoInfoDto> LoadVideosWithDetails(IEnumerable<string> urls)
         {
             foreach (var url in urls)
             {
@@ -57,7 +57,7 @@ namespace OnlineVideos.Sites.Ard
         }
 
 
-        private ArdFilmInfoDto GetVideoDetails(string url)
+        private ArdVideoInfoDto GetVideoDetails(string url)
         {
             var details = WebClient.GetWebData<JObject>(url, proxy: WebRequest.GetSystemWebProxy());
             var filmInfo = VideoDeserializer.ParseWidgets(details, takeWidgets: 1).FirstOrDefault();
@@ -71,7 +71,7 @@ namespace OnlineVideos.Sites.Ard
 
             var json = WebClient.GetWebData<JToken>(url, cache: false, proxy: WebRequest.GetSystemWebProxy());
             var streamInfos = VideoStreamsDeserializer.ParseWidgets(json);
-            
+
             return new Result<IEnumerable<DownloadDetailsDto>>()
                    {
                        ContinuationToken = continuationToken,
@@ -86,6 +86,47 @@ namespace OnlineVideos.Sites.Ard
         public ContinuationToken ContinuationToken { get; set; }
     }
 
+    internal class ArdHomeDeserializer : PageDeserializerBase
+    {
+        private static readonly string _categoryLevel = "Level";
+
+        public static Uri EntryUrl { get; } = new Uri("https://api.ardmediathek.de/page-gateway/pages/ard/home?embedded=true");
+
+        public override ArdCategoryInfoDto RootCategory { get; } = new ArdCategoryInfoDto(nameof(Ard), EntryUrl.AbsoluteUri)
+        {
+            Title = "Home", //"Highlights",
+            //Description = "",
+            HasSubCategories = true,
+            //ImageUrl = ,
+        };
+
+        public ArdHomeDeserializer(WebCache webClient) : base(webClient) { }
+
+        public override Result<IEnumerable<ArdCategoryInfoDto>> GetCategories(string url, ContinuationToken continuationToken = null)
+        {
+            continuationToken ??= new ContinuationToken() { { _categoryLevel, 0 } };
+
+            var currentLevel = continuationToken.GetValueOrDefault(_categoryLevel) as int? ?? 0;
+            Log.Debug($"GetCategories current Level: {currentLevel}");
+
+            var json = WebClient.GetWebData<JObject>(url, proxy: WebRequest.GetSystemWebProxy());
+            var categoryInfos = currentLevel switch
+            {
+                0 => CategoryDeserializer.ParseWidgets(json, hasSubCategories: true), // load A - Z
+                //1 => LoadCategoriesWithDetails(json), // load e.g. Abendschau - skip level, (load infos from nextlevel) for each category load url and read synopsis
+                ////2 => categoryDeserializer.ParseTeasers(json), // videos...
+                _ => throw new ArgumentOutOfRangeException(),
+            };
+
+            var newToken = new ContinuationToken(continuationToken);
+            newToken[_categoryLevel] = currentLevel + 1;
+            return new Result<IEnumerable<ArdCategoryInfoDto>>
+            {
+                ContinuationToken = newToken,
+                Value = categoryInfos
+            };
+        }
+    }
 
     internal class ArdLiveStreamsDeserializer : PageDeserializerBase
     {
@@ -97,7 +138,7 @@ namespace OnlineVideos.Sites.Ard
                                                                        //Description = "",
                                                                        HasSubCategories = false,
                                                                        //ImageUrl = ,
-                                                                       //TargetUrl = 
+                                                                       //TargetUrl =
                                                                    };
 
         public ArdLiveStreamsDeserializer(WebCache webClient) : base(webClient) { }
@@ -124,7 +165,7 @@ namespace OnlineVideos.Sites.Ard
                                                                        //Description = "",
                                                                        HasSubCategories = true,
                                                                        //ImageUrl = ,
-                                                                       //TargetUrl = 
+                                                                       //TargetUrl =
                                                                    };
 
         public ArdTopicsPageDeserializer(WebCache webClient) : base(webClient) { }
@@ -136,7 +177,7 @@ namespace OnlineVideos.Sites.Ard
 
             var currentLevel = continuationToken.GetValueOrDefault(_categoryLevel) as int? ?? 0;
             Log.Debug($"GetCategories current Level: {currentLevel}");
-            
+
             var json = WebClient.GetWebData<JObject>(targetUrl, proxy: WebRequest.GetSystemWebProxy());
             var categoryInfos = currentLevel switch
             {
@@ -186,7 +227,7 @@ namespace OnlineVideos.Sites.Ard
                                                                        Description = "Sendungen der letzten 7 Tage.",
                                                                        HasSubCategories = true,
                                                                        //ImageUrl = ,
-                                                                       //TargetUrl = 
+                                                                       //TargetUrl =
                                                                    };
 
         public ArdDayPageDeserializer(WebCache webClient) : base(webClient) { }
@@ -217,7 +258,7 @@ namespace OnlineVideos.Sites.Ard
 
 
         private static readonly string PLACEHOLDER_PARTNERNAME = "{{partnerName}}";
-        
+
         private IEnumerable<ArdCategoryInfoDto> LastSevenDays()
         {
             const string DAY_PAGE_DATE_FORMAT = "yyyy-MM-dd";
@@ -232,8 +273,8 @@ namespace OnlineVideos.Sites.Ard
             {
                 var day = DateTime.Today.AddDays(-i);
                 var url = CreateDayUrl(day);
-                yield return new ArdCategoryInfoDto(nameof(ArdDayPageDeserializer) + i, url) 
-                             { 
+                yield return new ArdCategoryInfoDto(nameof(ArdDayPageDeserializer) + i, url)
+                             {
                                  Title = i switch
                                  {
                                      0 => "Heute",
@@ -242,7 +283,7 @@ namespace OnlineVideos.Sites.Ard
                                  },
                                  //Url = url,
                                  HasSubCategories = true,
-                                 //ImageUrl = 
+                                 //ImageUrl =
                              };
             }
         }
@@ -260,7 +301,7 @@ namespace OnlineVideos.Sites.Ard
                     Title = partner.DisplayName,
                     //Url = url,
                     //HasSubCategories = true,
-                    //ImageUrl = 
+                    //ImageUrl =
                 };
             }
         }

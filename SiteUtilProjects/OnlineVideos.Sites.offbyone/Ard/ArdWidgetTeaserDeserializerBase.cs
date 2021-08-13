@@ -150,7 +150,7 @@ namespace OnlineVideos.Sites.Ard
         }
     }
 
-    internal class ArdFilmInfoDeserializerNeu : ArdWidgetTeaserDeserializerBase
+    internal class ArdVideoInfoDeserializer : ArdWidgetTeaserDeserializerBase
     {
         protected static readonly string ATTRIBUTE_UNTIL_DATETIME = "availableTo";
         protected static readonly string ATTRIBUTE_AIR_DATETIME = "broadcastedOn";
@@ -158,12 +158,12 @@ namespace OnlineVideos.Sites.Ard
 
         protected static readonly string ATTRIBUTE_NUMBER_OF_CLIPS = "numberOfClips";
 
-        public IEnumerable<ArdFilmInfoDto> ParseWidgets(JToken jsonElement, int takeWidgets = int.MaxValue)
+        public IEnumerable<ArdVideoInfoDto> ParseWidgets(JToken jsonElement, int takeWidgets = int.MaxValue)
         {
             var widgetsElement = TryGetWidgetsTokenOrInput(jsonElement);
             var selectedWidgetElements = TrySelectWidgetElements(widgetsElement, takeWidgets);
 
-            Func<JToken, ArdFilmInfoDto> videoInfoParser = IsVideoElement(selectedWidgetElements.FirstOrDefault()) ? ParseWidgetVideoInfo : ParseTeaserVideoInfo;
+            Func<JToken, ArdVideoInfoDto> videoInfoParser = IsVideoElement(selectedWidgetElements.FirstOrDefault()) ? ParseWidgetVideoInfo : ParseTeaserVideoInfo;
             return EnumerateItems(selectedWidgetElements, videoInfoParser);
         }
 
@@ -174,7 +174,7 @@ namespace OnlineVideos.Sites.Ard
         }
 
 
-        public IEnumerable<ArdFilmInfoDto> ParseTeasers(JToken jsonElement, int widgetsToUse = 1)
+        public IEnumerable<ArdVideoInfoDto> ParseTeasers(JToken jsonElement, int widgetsToUse = 1)
         {
             var teasers = ParseTeasersInternal(jsonElement, widgetsToUse);
 
@@ -204,7 +204,7 @@ namespace OnlineVideos.Sites.Ard
             return teaserElement[ELEMENT_LINKS]?[ELEMENT_TARGET]?.Value<string>(ATTRIBUTE_HREF);
         }
 
-        public ArdFilmInfoDto ParseTeaserVideoInfo(JToken teaserElement)
+        public ArdVideoInfoDto ParseTeaserVideoInfo(JToken teaserElement)
         {
             var id = teaserElement[ELEMENT_LINKS]?[ELEMENT_TARGET]?.Value<string>(ATTRIBUTE_ID) ??
                         teaserElement.Value<string>(ATTRIBUTE_ID);
@@ -218,7 +218,7 @@ namespace OnlineVideos.Sites.Ard
 
             var numberOfClips = teaserElement.Value<int?>(ATTRIBUTE_NUMBER_OF_CLIPS) ?? 0;
 
-            return new ArdFilmInfoDto(id, numberOfClips, url)
+            return new ArdVideoInfoDto(id, numberOfClips, url)
             {
                 Title = teaserElement.Value<string>(ATTRIBUTE_TITLE),
                 AirDate = teaserElement.Value<DateTime?>(ATTRIBUTE_AIR_DATETIME),
@@ -229,7 +229,7 @@ namespace OnlineVideos.Sites.Ard
             };
         }
 
-        public ArdFilmInfoDto ParseWidgetVideoInfo(JToken itemElement)
+        public ArdVideoInfoDto ParseWidgetVideoInfo(JToken itemElement)
         {
             var id = itemElement.Value<string>(ATTRIBUTE_ID);
             if (string.IsNullOrEmpty(id))
@@ -244,7 +244,7 @@ namespace OnlineVideos.Sites.Ard
 
             var numberOfClips = itemElement.Value<int?>(ATTRIBUTE_NUMBER_OF_CLIPS) ?? 0;
 
-            return new ArdFilmInfoDto(id, numberOfClips, url)
+            return new ArdVideoInfoDto(id, numberOfClips, url)
                    {
                        Title = itemElement.Value<string>(ATTRIBUTE_TITLE),
                        AirDate = itemElement.Value<DateTime?>(ATTRIBUTE_AIR_DATETIME),

@@ -71,7 +71,7 @@ namespace OnlineVideos.Sites.Ard
         public string ImageUrl { get; set; }
     }
 
-    public class ArdFilmInfoDto : ArdInformationDtoBase, IEquatable<ArdFilmInfoDto>
+    public class ArdVideoInfoDto : ArdInformationDtoBase, IEquatable<ArdVideoInfoDto> //extends CrawlerUrlDTO
     {
         //public string TargetUrl { get; }
         //public string Id { get; }
@@ -88,7 +88,7 @@ namespace OnlineVideos.Sites.Ard
         public bool IsFskBlocked { get; set; }
 
 
-        public ArdFilmInfoDto(string id, int numberOfClips, string url = null) : base(id)
+        public ArdVideoInfoDto(string id, int numberOfClips, string url = null) : base(id)
         {
             //super(url);
             TargetUrl = url ?? ArdConstants.ITEM_URL + id;
@@ -96,7 +96,7 @@ namespace OnlineVideos.Sites.Ard
             NumberOfClips = numberOfClips;
         }
 
-        public bool Equals(ArdFilmInfoDto other)
+        public bool Equals(ArdVideoInfoDto other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -108,7 +108,7 @@ namespace OnlineVideos.Sites.Ard
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((ArdFilmInfoDto)obj);
+            return Equals((ArdVideoInfoDto)obj);
         }
 
         public override int GetHashCode()
@@ -122,12 +122,12 @@ namespace OnlineVideos.Sites.Ard
             }
         }
 
-        public static bool operator ==(ArdFilmInfoDto left, ArdFilmInfoDto right)
+        public static bool operator ==(ArdVideoInfoDto left, ArdVideoInfoDto right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(ArdFilmInfoDto left, ArdFilmInfoDto right)
+        public static bool operator !=(ArdVideoInfoDto left, ArdVideoInfoDto right)
         {
             return !Equals(left, right);
         }
