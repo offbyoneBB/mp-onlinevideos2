@@ -5,6 +5,7 @@ using OnlineVideos.Sites.Zdf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace OnlineVideos.Sites.Ard
 {
@@ -22,36 +23,59 @@ namespace OnlineVideos.Sites.Ard
 
     internal abstract class PageDeserializerBase
     {
-        protected ArdMediaArrayConverter MediaArrayConverter { get; } = new ArdMediaArrayConverter();
         protected ArdCategoryDeserializer CategoryDeserializer { get; } = new ArdCategoryDeserializer();
         protected ArdFilmInfoDeserializerNeu VideoDeserializer { get; } = new ArdFilmInfoDeserializerNeu();
+        protected ArdMediaStreamsDeserializer VideoStreamsDeserializer { get; } = new ArdMediaStreamsDeserializer();
+
         protected WebCache WebClient { get; }
 
         protected PageDeserializerBase(WebCache webClient) => WebClient = webClient;
 
         public abstract ArdCategoryInfoDto RootCategory { get; }
 
-        public abstract Result<IEnumerable<ArdCategoryInfoDto>> GetCategories(string targetUrl, ContinuationToken continuationToken = null);
+        public abstract Result<IEnumerable<ArdCategoryInfoDto>> GetCategories(string url, ContinuationToken continuationToken = null);
 
-        public abstract Result<IEnumerable<ArdFilmInfoDto>> GetVideos(string targetUrl, ContinuationToken continuationToken = null);
+        public virtual Result<IEnumerable<ArdFilmInfoDto>> GetVideos(string url, ContinuationToken continuationToken = null)
+        {
+            var json = WebClient.GetWebData<JToken>(url, cache: false, proxy: WebRequest.GetSystemWebProxy());
+            var detailUrls = VideoDeserializer.ParseTeasersUrl(json);
+            var filmInfos = LoadVideosWithDetails(detailUrls);
 
+            return new Result<IEnumerable<ArdFilmInfoDto>>()
+                   {
+                       ContinuationToken = continuationToken,
+                       Value = filmInfos
+            };
+        }
+
+        private IEnumerable<ArdFilmInfoDto> LoadVideosWithDetails(IEnumerable<string> urls)
+        {
+            foreach (var url in urls)
+            {
+                yield return GetVideoDetails(url);
+            }
+        }
+
+
+        private ArdFilmInfoDto GetVideoDetails(string url)
+        {
+            var details = WebClient.GetWebData<JObject>(url, proxy: WebRequest.GetSystemWebProxy());
+            var filmInfo = VideoDeserializer.ParseWidgets(details, takeWidgets: 1).FirstOrDefault();
+            return filmInfo;
+        }
 
 
         public virtual Result<IEnumerable<DownloadDetailsDto>> GetStreams(string url, ContinuationToken continuationToken = null)
         {
             //continuationToken ??= new ContinuationToken() { { _level, 0 } };
 
-            var json = WebClient.GetWebData<JObject>(url, cache: false);
-            //var json = GetWebData<JObject>(video.VideoUrl, cache: false);
-            var collectionEmbedded = json["widgets"]?.FirstOrDefault()?["mediaCollection"]["embedded"];
-            //var livestreamPlaylistUrl = listLiveStream["_mediaArray"].FirstOrDefault()["_mediaStreamArray"].FirstOrDefault().Value<string>("_stream"); "_stream");
-
-            var streamInfoDtos = MediaArrayConverter.ParseVideoUrls(collectionEmbedded as JObject);
-
+            var json = WebClient.GetWebData<JToken>(url, cache: false, proxy: WebRequest.GetSystemWebProxy());
+            var streamInfos = VideoStreamsDeserializer.ParseWidgets(json);
+            
             return new Result<IEnumerable<DownloadDetailsDto>>()
                    {
                        ContinuationToken = continuationToken,
-                       Value = streamInfoDtos
+                       Value = streamInfos
                    };
         }
     }
@@ -65,13 +89,11 @@ namespace OnlineVideos.Sites.Ard
 
     internal class ArdLiveStreamsDeserializer : PageDeserializerBase
     {
-        public static string Name { get; } = "Live TV";
-        public static bool HasCategories { get; } = false;
         public static Uri EntryUrl { get; } = new Uri("https://api.ardmediathek.de/page-gateway/widgets/ard/editorials/4hEeBDgtx6kWs6W6sa44yY");
 
         public override ArdCategoryInfoDto RootCategory { get; } = new ArdCategoryInfoDto("", EntryUrl.AbsoluteUri)
                                                                    {
-                                                                       Title = Name,
+                                                                       Title = "Live TV",
                                                                        //Description = "",
                                                                        HasSubCategories = false,
                                                                        //ImageUrl = ,
@@ -82,35 +104,6 @@ namespace OnlineVideos.Sites.Ard
 
         /// <inheritdoc />
         public override Result<IEnumerable<ArdCategoryInfoDto>> GetCategories(string targetUrl, ContinuationToken continuationToken = null) => throw new NotImplementedException();
-
-
-        /// <inheritdoc />
-        public override Result<IEnumerable<ArdFilmInfoDto>> GetVideos(string targetUrl, ContinuationToken continuationToken = null)
-        {
-            var json = WebClient.GetWebData<JObject>(targetUrl);
-            var filmInfoDtos = LoadDetails(json);
-            return new Result<IEnumerable<ArdFilmInfoDto>>()
-                   {
-                       ContinuationToken = continuationToken,
-                       Value = filmInfoDtos
-                   };
-        }
-
-        private IEnumerable<ArdFilmInfoDto> LoadDetails(JObject json)
-        {
-            var categories = VideoDeserializer.ParseTeasers(json);
-
-            foreach (var category in categories)
-            {
-                //TODO workaround
-                var details = WebClient.GetWebData<JObject>(category.TargetUrl);
-                var newFilmInfo = VideoDeserializer.ParseWidgets(details).SingleOrDefault();
-                category.Title = newFilmInfo?.Title;
-                category.Description = newFilmInfo?.Description;
-                yield return category;
-                // sub item sind videos, aber ...
-            }
-        }
     }
 
     /// <summary>
@@ -123,15 +116,13 @@ namespace OnlineVideos.Sites.Ard
     {
         private static readonly string _categoryLevel = "Level";
 
-        public static string Name { get; } = "Sendungen A-Z";
-        public static bool HasCategories { get; } = true;
         public static Uri EntryUrl { get; } = new Uri("https://api.ardmediathek.de/page-gateway/pages/ard/editorial/experiment-a-z");
 
         public override ArdCategoryInfoDto RootCategory { get; } = new ArdCategoryInfoDto("", EntryUrl.AbsoluteUri)
                                                                    {
-                                                                       Title = Name,
+                                                                       Title = "Sendungen A-Z",
                                                                        //Description = "",
-                                                                       HasSubCategories = false,
+                                                                       HasSubCategories = true,
                                                                        //ImageUrl = ,
                                                                        //TargetUrl = 
                                                                    };
@@ -144,13 +135,13 @@ namespace OnlineVideos.Sites.Ard
             continuationToken ??= new ContinuationToken() { { _categoryLevel, 0 } };
 
             var currentLevel = continuationToken.GetValueOrDefault(_categoryLevel) as int? ?? 0;
-            //var currentLevel = string.Equals(EntryUrl.AbsoluteUri, targetUrl) ? 0 : 1;
-
-            var json = WebClient.GetWebData<JObject>(targetUrl);
+            Log.Debug($"GetCategories current Level: {currentLevel}");
+            
+            var json = WebClient.GetWebData<JObject>(targetUrl, proxy: WebRequest.GetSystemWebProxy());
             var categoryInfos = currentLevel switch
             {
                 0 => CategoryDeserializer.ParseWidgets(json, hasSubCategories: true), // load A - Z
-                1 => LoadDetails(json), // load e.g. Abendschau - skip level, (load infos from nextlevel) for each category load url and read synopsis
+                1 => LoadCategoriesWithDetails(json), // load e.g. Abendschau - skip level, (load infos from nextlevel) for each category load url and read synopsis
                 //2 => categoryDeserializer.ParseTeasers(json), // videos...
                 _ => throw new ArgumentOutOfRangeException(),
             };
@@ -164,32 +155,20 @@ namespace OnlineVideos.Sites.Ard
             };
         }
 
-        private IEnumerable<ArdCategoryInfoDto> LoadDetails(JObject json)
+        private IEnumerable<ArdCategoryInfoDto> LoadCategoriesWithDetails(JObject json)
         {
             var categories = CategoryDeserializer.ParseTeasers(json);
 
             foreach (var category in categories)
             {
                 //TODO workaround
-                var details = WebClient.GetWebData<JObject>(category.TargetUrl);
+                var details = WebClient.GetWebData<JObject>(category.TargetUrl, proxy: WebRequest.GetSystemWebProxy());
                 var newCategory = CategoryDeserializer.ParseTeaser(details);
                 category.Title = newCategory.Title;
                 category.Description = newCategory.Description;
                 yield return category;
                 // sub item sind videos, aber ...
             }
-        }
-
-        public override Result<IEnumerable<ArdFilmInfoDto>> GetVideos(string url, ContinuationToken continuationToken = null)
-        {
-            var json = WebClient.GetWebData<JToken>(url, cache: false);
-            var filmInfoDtos = VideoDeserializer.ParseTeasers(json);
-
-            return new Result<IEnumerable<ArdFilmInfoDto>>()
-            {
-                ContinuationToken = continuationToken,
-                Value = filmInfoDtos
-            };
         }
     }
 
@@ -219,7 +198,12 @@ namespace OnlineVideos.Sites.Ard
             continuationToken ??= new ContinuationToken() { { _categoryLevel, 0 } };
             var currentLevel = continuationToken.GetValueOrDefault(_categoryLevel) as int? ?? 0;
 
-            var categoryInfos = LastSevenDays();
+            var categoryInfos = currentLevel switch
+            {
+                0 => LastSevenDays(),
+                1 => PartnerNames(targetUrl),
+                _ => throw new ArgumentOutOfRangeException(),
+            };
 
             var newToken = new ContinuationToken(continuationToken);
             newToken[_categoryLevel] = currentLevel + 1;
@@ -232,11 +216,13 @@ namespace OnlineVideos.Sites.Ard
         }
 
 
+        private static readonly string PLACEHOLDER_PARTNERNAME = "{{partnerName}}";
+        
         private IEnumerable<ArdCategoryInfoDto> LastSevenDays()
         {
             const string DAY_PAGE_DATE_FORMAT = "yyyy-MM-dd";
-            static string CreateDayUrl(string partnerName, DateTime day)
-                => $"https://api.ardmediathek.de//page-gateway/compilations/{partnerName}/pastbroadcasts" +
+            static string CreateDayUrl(DateTime day)
+                => $"https://api.ardmediathek.de//page-gateway/compilations/{PLACEHOLDER_PARTNERNAME}/pastbroadcasts" +
                    $"?startDateTime={day.ToString(DAY_PAGE_DATE_FORMAT)}T00:00:00.000Z" +
                    $"&endDateTime={day.ToString(DAY_PAGE_DATE_FORMAT)}T23:59:59.000Z" +
                    $"&pageNumber=0" +
@@ -245,7 +231,7 @@ namespace OnlineVideos.Sites.Ard
             for (var i = 0; i <= 7; i++)
             {
                 var day = DateTime.Today.AddDays(-i);
-                var url = CreateDayUrl("daserste", day);
+                var url = CreateDayUrl(day);
                 yield return new ArdCategoryInfoDto(nameof(ArdDayPageDeserializer) + i, url) 
                              { 
                                  Title = i switch
@@ -255,24 +241,28 @@ namespace OnlineVideos.Sites.Ard
                                      _ => day.ToString("ddd, d.M.")
                                  },
                                  //Url = url,
-                                 //HasSubCategories = true,
+                                 HasSubCategories = true,
                                  //ImageUrl = 
                              };
             }
         }
 
-        /// <inheritdoc />
-        public override Result<IEnumerable<ArdFilmInfoDto>> GetVideos(string url, ContinuationToken continuationToken = null)
+        private IEnumerable<ArdCategoryInfoDto> PartnerNames(string placeholderUrl)
         {
-            var json = WebClient.GetWebData<JToken>(url, cache: false);
-            var filmInfos = VideoDeserializer.ParseTeasers(json);
+            static string CreatePartnerUrl(string placeholderUrl, string partnerName)
+                => placeholderUrl.Replace(PLACEHOLDER_PARTNERNAME, partnerName);
 
-            return new Result<IEnumerable<ArdFilmInfoDto>>()
-                   {
-                       ContinuationToken = continuationToken,
-                       Value = filmInfos
-                   };
-        //            return filmInfo;
+            foreach (var partner in ArdPartner.Values)
+            {
+                var url = CreatePartnerUrl(placeholderUrl, partner);
+                yield return new ArdCategoryInfoDto(nameof(ArdDayPageDeserializer) + partner, url)
+                {
+                    Title = partner.DisplayName,
+                    //Url = url,
+                    //HasSubCategories = true,
+                    //ImageUrl = 
+                };
+            }
         }
     }
 
@@ -344,7 +334,7 @@ namespace OnlineVideos.Sites.Ard
             return qualityValue;
         }
 
-        private IEnumerable<DownloadDetailsDto> ParseMediaStreamStream(JToken videoElement, Qualities quality)
+        private static IEnumerable<DownloadDetailsDto> ParseMediaStreamStream(JToken videoElement, Qualities quality)
         {
             var videoObject = videoElement as JObject;
             var streamObject = videoObject?[ELEMENT_STREAM];

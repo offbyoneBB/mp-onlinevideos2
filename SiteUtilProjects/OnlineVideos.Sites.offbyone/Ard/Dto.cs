@@ -84,6 +84,8 @@ namespace OnlineVideos.Sites.Ard
         public DateTime? AvailableUntilDate { get; set; }
         public int? Duration { get; set; }
         //public string ImageUrl { get; set; }
+        public bool IsGeoBlocked { get; set; }
+        public bool IsFskBlocked { get; set; }
 
 
         public ArdFilmInfoDto(string id, int numberOfClips, string url = null) : base(id)
@@ -130,6 +132,29 @@ namespace OnlineVideos.Sites.Ard
             return !Equals(left, right);
         }
     }
+
+
+    public class PublicationService
+    {
+        public string Name { get; set; }
+        public string ImageUrl { get; set; }
+        public string PartnerName { get; set; }
+
+        /*
+        "name": "BR Fernsehen",
+        "logo": {
+          "title": "BR Fernsehen",
+          "alt": "BR Logo",
+          "producerName": "BR",
+          "src": "https://img.ardmediathek.de/standard/00/21/51/89/04/-2114473875/16x9/{width}?mandant=ard",
+          "aspectRatio": "16x9"
+        },
+        "publisherType": "TV",
+        "partner": "br",
+        "id": "b3JnYW5pemF0aW9uX0JS"
+         */
+    }
+
 
     public class ArdCategoryInfoDto : ArdInformationDtoBase, IEquatable<ArdCategoryInfoDto>
     {

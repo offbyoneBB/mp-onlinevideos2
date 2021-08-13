@@ -69,7 +69,7 @@ namespace OnlineVideos.Sites.Ard
         public static readonly ArdPartner One          = new ArdPartner("ONE");
         public static readonly ArdPartner Alpha        = new ArdPartner("alpha", "ARD-alpha");
         public static readonly ArdPartner Tagesschau24 = new ArdPartner("tagesschau24");
-        public static readonly ArdPartner Funk         = new ArdPartner("funk");
+        public static readonly ArdPartner Funk         = new ArdPartner("FUNK");
         public static readonly ArdPartner Phoenix      = new ArdPartner("phoenix");
 
         public static IEnumerable<ArdPartner> Values
@@ -102,10 +102,13 @@ namespace OnlineVideos.Sites.Ard
         public string Name { get; }
         public string DisplayName { get; }
 
-        private ArdPartner(string name, string displayName = null)
+        private ArdPartner(string displayName) : this(displayName.ToLower(), displayName)
+        { }
+
+        private ArdPartner(string name, string displayName)
         {
             Name = name;
-            DisplayName = displayName ?? name.ToLower();
+            DisplayName = displayName;
         }
 
 
