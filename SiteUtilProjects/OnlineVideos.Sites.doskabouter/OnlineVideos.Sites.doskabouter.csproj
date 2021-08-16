@@ -99,6 +99,7 @@
     <Compile Include="Hoster\Vimeo.cs" />
     <Compile Include="Hoster\MyHosterBase.cs" />
     <Compile Include="Hoster\Xtream.cs" />
+    <Compile Include="HttpUtil.cs" />
     <Compile Include="KhanAcademyUtil.cs" />
     <Compile Include="NPOStartUtil.cs" />
     <Compile Include="PowerUnlimitedUtil.cs" />
