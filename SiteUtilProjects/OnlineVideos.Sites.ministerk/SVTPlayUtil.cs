@@ -60,7 +60,7 @@ namespace OnlineVideos.Sites
                 Name = "Populärt",
                 SubCategories = new List<Category>(),
                 HasSubCategories = true
-            }; 
+            };
             popularCategory.Other = (Func<List<Category>>)(() => GetCategoriesFromArray(popularCategory, "http://www.svtplay.se/api/popular/?page={0}&pageSize=48", 1));
             Settings.Categories.Add(popularCategory);
             RssLink latestCategory = new RssLink()
@@ -437,7 +437,7 @@ namespace OnlineVideos.Sites
             categories = categories.OrderBy(c => c.Name).ToList<Category>();
             return categories;
         }
-        
+
         #endregion
 
         #region Videos
@@ -629,7 +629,7 @@ namespace OnlineVideos.Sites
             string videoUrl = video.VideoUrl;
             if (videoUrl.EndsWith(".m3u8"))
             {
-                video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(GetWebData(videoUrl), videoUrl, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height + " (" + x.Bandwidth/1000 + " Kbps)");
+                video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(GetWebData(videoUrl), videoUrl);
             }
             else
             {

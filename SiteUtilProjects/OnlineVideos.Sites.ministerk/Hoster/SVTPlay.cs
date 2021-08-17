@@ -74,7 +74,7 @@ namespace OnlineVideos.Hoster
             if (videoReference != null)
             {
                 url = videoReference["url"].Value<string>();
-                playbackOptions = HlsPlaylistParser.GetPlaybackOptions(GetWebData(url), url, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height + " (" + x.Bandwidth / 1000 + " Kbps)");
+                playbackOptions = HlsPlaylistParser.GetPlaybackOptions(GetWebData(url), url);
             }
             else
             {

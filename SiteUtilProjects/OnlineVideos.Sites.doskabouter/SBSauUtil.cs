@@ -179,7 +179,7 @@ namespace OnlineVideos.Sites
             if (match.Success)
             {
                 webData = GetWebData(match.Groups["url"].Value);
-                video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(webData, match.Groups["url"].Value, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height);
+                video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(webData, match.Groups["url"].Value, HlsStreamInfoFormatter.VideoDimensionAndBitrate);
             }
             return video.GetPreferredUrl(true);
         }

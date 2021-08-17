@@ -212,7 +212,7 @@ namespace OnlineVideos.Sites
                     if (!string.IsNullOrWhiteSpace(se))
                         title = se + title;
 
-                    
+
                     if (thumb.StartsWith("/")) thumb = "http://assets.pokemon.com/assets" + thumb;
                     videos.Add(
                         new VideoInfo()
@@ -224,7 +224,7 @@ namespace OnlineVideos.Sites
                         });
                 }
             }
-         
+
             return videos;
         }
 
@@ -236,7 +236,7 @@ namespace OnlineVideos.Sites
             if (m.Success)
             {
                 string playlistUrl = m.Groups["url"].Value;
-                video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(GetWebData(playlistUrl), playlistUrl, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => "Bitrate: " + x.Bandwidth);
+                video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(GetWebData(playlistUrl), playlistUrl, HlsStreamInfoFormatter.Bitrate);
                 url = video.PlaybackOptions.First().Value;
                 if (inPlaylist)
                     video.PlaybackOptions.Clear();

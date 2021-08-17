@@ -268,7 +268,7 @@ namespace OnlineVideos.Hoster
                 if (!String.IsNullOrEmpty(hlsUrl))
                 {
                     var data = GetWebData(hlsUrl);
-                    var res = HlsPlaylistParser.GetPlaybackOptions(data, hlsUrl, (x, y) => x.Bandwidth.CompareTo(y.Bandwidth), (x) => x.Width + "x" + x.Height);
+                    var res = HlsPlaylistParser.GetPlaybackOptions(data, hlsUrl, HlsStreamInfoFormatter.VideoDimensionAndBitrate);
                     foreach (var kv in res)
                     {
                         string[] tmp = { kv.Value };
