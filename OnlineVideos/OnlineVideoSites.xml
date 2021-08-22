@@ -4,6 +4,9 @@
     <Site name="YouTube" util="YouTubeV3" agecheck="false" enabled="true" lang="en">
       <Description>Largest video sharing site on the web. Available in any country.</Description>
     </Site>
+    <Site name="ARD Mediathek" util="ArdMediathek" agecheck="false" enabled="true" lang="de">
+      <Description>ARD Mediathek - Videos von Das Erste und den Dritten Programmen: Das Beste aus der ARD per Stream - Filme, Serien, Dokumentationen, Nachrichten, Livestreams und mehr - Videos online anschauen</Description>
+    </Site>
     <Site name="Das Erste" util="DasErsteMediathek" agecheck="false" enabled="true" lang="de">
       <Description>Die ARD Mediathek ist ein Gemeinschaftsangebot der Arbeitsgemeinschaft der Rundfunkanstalten der Bundesrepublik Deutschland (ARD) und der Deutschen Welle.</Description>
     </Site>
@@ -58,13 +61,13 @@
 <div\s+class="BoxHeadline[^"]*".*?>\s*<a.*?>(?<Title>[^<]*)</a>\s*</div>\s*
 <div\s+class="FloatText[^"]*".*?>\s*<a.*?>(?<Description>[^<]*)</a>]]>
         </item>
-        <item key="videoListUrlDecoding"><![CDATA[HtmlDecode]]></item>        
+        <item key="videoListUrlDecoding"><![CDATA[HtmlDecode]]></item>
         <item key="nextPageRegEx"><![CDATA[<div\s+class="BoxLabel\s+BoxLabelMore">mehr.*?</div>\s*<a.*?href="(?<url>[^"]+)".*?>]]></item>
-        <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>        
+        <item key="nextPageRegExUrlDecoding"><![CDATA[HtmlDecode]]></item>
         <item key="baseUrl"><![CDATA[http://www.3sat.de/mediathek/?mode=sendungenaz]]></item>
       </Configuration>
     </Site>
-		<Site name="MyVideo" util="MyVideo" agecheck="false" enabled="true" lang="de">
+        <Site name="MyVideo" util="MyVideo" agecheck="false" enabled="true" lang="de">
       <Description>Auf MyVideo findest Du kostenlos die besten Videos und Clips. Werbespots, lustige Videos, funny Clips uvm.</Description>
       <Configuration>
         <item key="serienSenderUrl"><![CDATA[http://www.myvideo.de/_partial/sushibar/10199?_format=json]]></item>
@@ -138,7 +141,7 @@
     </Site>
     <Site name="ctTV" util="HeiseVideo" agecheck="false" enabled="true" lang="de">
       <Description>Videoportal des heise ctTVs</Description>
-    </Site>    
+    </Site>
     <Site name="MetaCafe" util="MetaCafe" agecheck="false" enabled="true" lang="en">
       <Description>Metacafe is an audience-driven video entertainment site that focuses on short-form original videos.</Description>
       <Configuration>
@@ -180,7 +183,7 @@
     </Site>
     <Site name="DailyMotion" util="DailyMotion" agecheck="false" enabled="true" lang="en">
       <Description>Dailymotion is a video sharing service website, based in Paris (France).</Description>
-    </Site>    
+    </Site>
     <Site name="IMDb Movie Trailers" util="IMDb" agecheck="false" enabled="true" lang="en">
       <Description>View trailers and other movie related clips sourced by the most complete online movie database. Many trailers are available in high-quality HD</Description>
     </Site>
@@ -194,17 +197,17 @@
         <item key="dynamicSubCategoriesRegEx"><![CDATA[(?<=<li\s+class='active'>.*)<li><a\s+id='cat_\d+'\s+href='(?<url>[^']*)'>(?<title>.*?)</a></li>]]></item>
         <item key="videoListRegEx">
           <![CDATA[<article[^>]*>\s*
-	  <div[^>]*>\s*
-	  <span[^>]*>.*?</span>\s*
-	  <img.*?src='(?<ImageUrl>[^']*)'.*?/>\s*
-	  </div>\s*
-	  <h1>\s*
-	  <a\s+href='(?<VideoUrl>[^']*)'\s*>(?<Title>.*?)</a>\s*
-	  <span\s+class="date">(?<Airdate>.*?)</span>\s+
-	  <span[^>]*>.*?</span>\s*
-	  </h1>\s*
-	  <p>(?<Description>.*?)</p>\s*
-	  </article>]]>
+      <div[^>]*>\s*
+      <span[^>]*>.*?</span>\s*
+      <img.*?src='(?<ImageUrl>[^']*)'.*?/>\s*
+      </div>\s*
+      <h1>\s*
+      <a\s+href='(?<VideoUrl>[^']*)'\s*>(?<Title>.*?)</a>\s*
+      <span\s+class="date">(?<Airdate>.*?)</span>\s+
+      <span[^>]*>.*?</span>\s*
+      </h1>\s*
+      <p>(?<Description>.*?)</p>\s*
+      </article>]]>
         </item>
         <item key="nextPageRegEx"><![CDATA[<a\shref="(?<url>[^"]+)"[^>]*>\s*Next]]></item>
         <item key="fileUrlRegEx"><![CDATA[videoPath:\s*'(?<m0>[^']*)'.*?icon:\s*'(?<m1>[^']*)']]></item>
@@ -274,34 +277,34 @@
       </Configuration>
     </Site>
     <Site name="CNN" util="CNN" agecheck="false" enabled="true" lang="en">
-	    <Description>Videos from the Cable News Network.</Description>
-	    <Configuration>
-		    <item key="playlistUrlRegEx"><![CDATA["videoId":"(?<url>[^"]+)"]]></item>
-		    <item key="playlistUrlFormatString"><![CDATA[http://edition.cnn.com/video/data/3.0/video/{0}/index.xml?xml=true]]></item>
-		    <item key="fileUrlRegEx"><![CDATA[<file>(?<url>[^<]+)</file>]]></item>
-	    </Configuration>
-	    <Categories>
-		    <Category xsi:type="RssLink" name="Top Stories">http://rss.cnn.com/rss/edition.rss</Category>
-		    <Category xsi:type="RssLink" name="World">http://rss.cnn.com/rss/edition_world.rss</Category>
-		    <Category xsi:type="RssLink" name="Africa">http://rss.cnn.com/rss/edition_africa.rss</Category>
-		    <Category xsi:type="RssLink" name="Americas">http://rss.cnn.com/rss/edition_americas.rss</Category>
-		    <Category xsi:type="RssLink" name="Asia">http://rss.cnn.com/rss/edition_asia.rss</Category>
-		    <Category xsi:type="RssLink" name="Europe">http://rss.cnn.com/rss/edition_europe.rss</Category>
-		    <Category xsi:type="RssLink" name="Middle East">http://rss.cnn.com/rss/edition_meast.rss</Category>
-		    <Category xsi:type="RssLink" name="U.S.">http://rss.cnn.com/rss/edition_us.rss</Category>
-		    <Category xsi:type="RssLink" name="Money">http://rss.cnn.com/rss/money_news_international.rss</Category>
-		    <Category xsi:type="RssLink" name="Technology">http://rss.cnn.com/rss/edition_technology.rss</Category>
-		    <Category xsi:type="RssLink" name="Science &amp; Space">http://rss.cnn.com/rss/edition_space.rss</Category>
-		    <Category xsi:type="RssLink" name="Entertainment">http://rss.cnn.com/rss/edition_entertainment.rss</Category>
-		    <Category xsi:type="RssLink" name="World Sport">http://rss.cnn.com/rss/edition_sport.rss</Category>
-		    <Category xsi:type="RssLink" name="Football">http://rss.cnn.com/rss/edition_football.rss</Category>  
-		    <Category xsi:type="RssLink" name="Golf">http://rss.cnn.com/rss/edition_golf.rss</Category>
-		    <Category xsi:type="RssLink" name="Motorsport">http://rss.cnn.com/rss/edition_motorsport.rss</Category>
-		    <Category xsi:type="RssLink" name="Tennis">http://rss.cnn.com/rss/edition_tennis.rss</Category>
-		    <Category xsi:type="RssLink" name="Travel">http://travel.cnn.com/rss.xml</Category>
-		    <Category xsi:type="RssLink" name="Video">http://rss.cnn.com/rss/cnn_freevideo.rss</Category>
+        <Description>Videos from the Cable News Network.</Description>
+        <Configuration>
+            <item key="playlistUrlRegEx"><![CDATA["videoId":"(?<url>[^"]+)"]]></item>
+            <item key="playlistUrlFormatString"><![CDATA[http://edition.cnn.com/video/data/3.0/video/{0}/index.xml?xml=true]]></item>
+            <item key="fileUrlRegEx"><![CDATA[<file>(?<url>[^<]+)</file>]]></item>
+        </Configuration>
+        <Categories>
+            <Category xsi:type="RssLink" name="Top Stories">http://rss.cnn.com/rss/edition.rss</Category>
+            <Category xsi:type="RssLink" name="World">http://rss.cnn.com/rss/edition_world.rss</Category>
+            <Category xsi:type="RssLink" name="Africa">http://rss.cnn.com/rss/edition_africa.rss</Category>
+            <Category xsi:type="RssLink" name="Americas">http://rss.cnn.com/rss/edition_americas.rss</Category>
+            <Category xsi:type="RssLink" name="Asia">http://rss.cnn.com/rss/edition_asia.rss</Category>
+            <Category xsi:type="RssLink" name="Europe">http://rss.cnn.com/rss/edition_europe.rss</Category>
+            <Category xsi:type="RssLink" name="Middle East">http://rss.cnn.com/rss/edition_meast.rss</Category>
+            <Category xsi:type="RssLink" name="U.S.">http://rss.cnn.com/rss/edition_us.rss</Category>
+            <Category xsi:type="RssLink" name="Money">http://rss.cnn.com/rss/money_news_international.rss</Category>
+            <Category xsi:type="RssLink" name="Technology">http://rss.cnn.com/rss/edition_technology.rss</Category>
+            <Category xsi:type="RssLink" name="Science &amp; Space">http://rss.cnn.com/rss/edition_space.rss</Category>
+            <Category xsi:type="RssLink" name="Entertainment">http://rss.cnn.com/rss/edition_entertainment.rss</Category>
+            <Category xsi:type="RssLink" name="World Sport">http://rss.cnn.com/rss/edition_sport.rss</Category>
+            <Category xsi:type="RssLink" name="Football">http://rss.cnn.com/rss/edition_football.rss</Category>
+            <Category xsi:type="RssLink" name="Golf">http://rss.cnn.com/rss/edition_golf.rss</Category>
+            <Category xsi:type="RssLink" name="Motorsport">http://rss.cnn.com/rss/edition_motorsport.rss</Category>
+            <Category xsi:type="RssLink" name="Tennis">http://rss.cnn.com/rss/edition_tennis.rss</Category>
+            <Category xsi:type="RssLink" name="Travel">http://travel.cnn.com/rss.xml</Category>
+            <Category xsi:type="RssLink" name="Video">http://rss.cnn.com/rss/cnn_freevideo.rss</Category>
       </Categories>
-	</Site>
+    </Site>
     <Site name="BBC iPlayer" util="BBCiPlayer" agecheck="false" enabled="true" lang="en">
       <Description>The BBC iPlayer allows to catch up on the last 7 days of BBC TV (only available in the UK).</Description>
       <Configuration>
@@ -431,23 +434,23 @@
         <Category xsi:type="RssLink" name="NASA Goddard Shorts HD" thumb="http://svs.gsfc.nasa.gov/vis/iTunes/GoddardShortsHD_logo.jpg">http://svs.gsfc.nasa.gov/vis/iTunes/f0004.xml</Category>
       </Categories>
     </Site>
-	<Site name="spiegel.de" util="GenericSite" agecheck="false" enabled="true" lang="de">
-	  <Description>Videos des deutschen Newsportals spiegel.de</Description>
-	  <Configuration>
-		<item key="fileUrlRegEx"><![CDATA[var\s+server\s*=\s*"(?<m0>[^"]+)";.*?spStartVideo6\('spVideoElements',\s*\d+,\s*'(?<m1>.*?\.mp4)']]></item>
-		<item key="fileUrlFormatString"><![CDATA[{0}{1}]]></item>
-	  </Configuration>
-	  <Categories>
-		<Category xsi:type="RssLink" name="Politik und Wirtschaft">http://www.spiegel.de/video/politik_wirtschaft/index.rss</Category>
-		<Category xsi:type="RssLink" name="Panorama">http://www.spiegel.de/video/panorama/index.rss</Category>
-		<Category xsi:type="RssLink" name="Kino">http://www.spiegel.de/video/kino/index.rss</Category>
-		<Category xsi:type="RssLink" name="Kultur">http://www.spiegel.de/video/kultur/index.rss</Category>
-		<Category xsi:type="RssLink" name="Sport">http://www.spiegel.de/video/sport/index.rss</Category>
-		<Category xsi:type="RssLink" name="Wissen und Technik">http://www.spiegel.de/video/wissenschaft_technik/index.rss</Category>
-		<Category xsi:type="RssLink" name="Blogs">http://www.spiegel.de/video/blogs/index.rss</Category>
-		<Category xsi:type="RssLink" name="SpiegelTV Magazin">http://www.spiegel.de/video/spiegeltv/index.rss</Category>
-	  </Categories>
-	</Site>
+    <Site name="spiegel.de" util="GenericSite" agecheck="false" enabled="true" lang="de">
+      <Description>Videos des deutschen Newsportals spiegel.de</Description>
+      <Configuration>
+        <item key="fileUrlRegEx"><![CDATA[var\s+server\s*=\s*"(?<m0>[^"]+)";.*?spStartVideo6\('spVideoElements',\s*\d+,\s*'(?<m1>.*?\.mp4)']]></item>
+        <item key="fileUrlFormatString"><![CDATA[{0}{1}]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Politik und Wirtschaft">http://www.spiegel.de/video/politik_wirtschaft/index.rss</Category>
+        <Category xsi:type="RssLink" name="Panorama">http://www.spiegel.de/video/panorama/index.rss</Category>
+        <Category xsi:type="RssLink" name="Kino">http://www.spiegel.de/video/kino/index.rss</Category>
+        <Category xsi:type="RssLink" name="Kultur">http://www.spiegel.de/video/kultur/index.rss</Category>
+        <Category xsi:type="RssLink" name="Sport">http://www.spiegel.de/video/sport/index.rss</Category>
+        <Category xsi:type="RssLink" name="Wissen und Technik">http://www.spiegel.de/video/wissenschaft_technik/index.rss</Category>
+        <Category xsi:type="RssLink" name="Blogs">http://www.spiegel.de/video/blogs/index.rss</Category>
+        <Category xsi:type="RssLink" name="SpiegelTV Magazin">http://www.spiegel.de/video/spiegeltv/index.rss</Category>
+      </Categories>
+    </Site>
     <Site name="blip.tv" util="GenericSite" agecheck="false" enabled="true" lang="en">
       <Description>Website focused on making independent Web shows sustainable.</Description>
       <Categories>
@@ -984,7 +987,7 @@
       <Description>Canadian TV Channel dedicated to documentaries about popular science, technology, and history.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://watch.discoverychannel.ca]]></item>
-		<item key="swfUrl"><![CDATA[http://watch.discoverychannel.ca/Flash/player.swf?themeURL=http://watch.discoverychannel.ca/themes/Discoverynew/player/theme.aspx]]></item>
+        <item key="swfUrl"><![CDATA[http://watch.discoverychannel.ca/Flash/player.swf?themeURL=http://watch.discoverychannel.ca/themes/Discoverynew/player/theme.aspx]]></item>
         <item key="isLookaheadNeededAtMainLevel"><![CDATA[true]]></item>
       </Configuration>
     </Site>
@@ -1004,7 +1007,7 @@
       <Description>FashionTelevisionChannel (FT) is Canada's first and only 24-hour English language fashion channel dedicated to the world of art, architecture, photography, and design.</Description>
       <Configuration>
         <item key="baseUrl"><![CDATA[http://watch.fashiontelevision.com]]></item>
-		<item key="swfUrl"><![CDATA[http://watch.fashiontelevision.com/Flash/player.swf?themeURL=http://watch.fashiontelevision.com/themes/FashionTelevision/player/theme.aspx]]></item>
+        <item key="swfUrl"><![CDATA[http://watch.fashiontelevision.com/Flash/player.swf?themeURL=http://watch.fashiontelevision.com/themes/FashionTelevision/player/theme.aspx]]></item>
       </Configuration>
     </Site>
     <Site name="TSN" util="TSN" agecheck="false" enabled="true" lang="en">
@@ -1021,60 +1024,60 @@
     </Site>
     <Site name="History Television" util="CanWest" agecheck="false" enabled="true" lang="en">
       <Description>History Television captivates Canadian audiences with gripping stories about the people and events that have shaped our world.</Description>
-	  <Configuration>
-		<item key="feedPIDUrl"><![CDATA[http://www.history.ca/video/shawconnect_dynamic_assets__2362.js?id=31&id=32&id=84&id=85&id=4&id=1&id=2&id=86&id=19&id=20&id=21&id=7&id=83&id=46&id=77&id=28&&sitename=ShawHistory]]></item>
-		<item key="feedPIDRegexString"><![CDATA[H\.PID=H\.PID\|\|"(?<feedPID>[^"]*)"]]></item>
-		<item key="playerTag"><![CDATA[z/History Player - Video Center]]></item>
-	  </Configuration>
+      <Configuration>
+        <item key="feedPIDUrl"><![CDATA[http://www.history.ca/video/shawconnect_dynamic_assets__2362.js?id=31&id=32&id=84&id=85&id=4&id=1&id=2&id=86&id=19&id=20&id=21&id=7&id=83&id=46&id=77&id=28&&sitename=ShawHistory]]></item>
+        <item key="feedPIDRegexString"><![CDATA[H\.PID=H\.PID\|\|"(?<feedPID>[^"]*)"]]></item>
+        <item key="playerTag"><![CDATA[z/History Player - Video Center]]></item>
+      </Configuration>
     </Site>
     <Site name="The Food Network" util="CanWest" agecheck="false" enabled="true" lang="en">
       <Description>Foodnetwork.ca is the destination for Canadians for all things food-related.</Description>
-	  <Configuration>
-		<item key="feedPIDUrl"><![CDATA[http://www.foodnetwork.ca/video/index.html]]></item>
-		<item key="feedPIDRegexString"><![CDATA[PID:\s"(?<feedPID>[^"]*)",]]></item>
-		<item key="playerTag"><![CDATA[z/FOODNET Player - Video Centre]]></item>
-	  </Configuration>
+      <Configuration>
+        <item key="feedPIDUrl"><![CDATA[http://www.foodnetwork.ca/video/index.html]]></item>
+        <item key="feedPIDRegexString"><![CDATA[PID:\s"(?<feedPID>[^"]*)",]]></item>
+        <item key="playerTag"><![CDATA[z/FOODNET Player - Video Centre]]></item>
+      </Configuration>
     </Site>
     <Site name="HGTV Canada" util="CanWest" agecheck="false" enabled="true" lang="en">
       <Description>www.HGTV.ca is the online destination for home and garden information. The website is home to helpful articles, do-it-yourself project plans, expert advice, interactive quizzes, time-saving etools, information about HGTV programs and hosts, and much more. Informative, interesting, fun, and interactive, HGTV.ca is a must-click destination for home and garden enthusiasts. As well, the website offers a popular biweekly newsletter filled with advice, promotional opportunities and more.</Description>
-	  <Configuration>
-		<item key="feedPIDUrl"><![CDATA[http://www.hgtv.ca/video/]]></item>
-		<item key="feedPIDRegexString"><![CDATA[PID:\s'(?<feedPID>[^']*)',]]></item>
-		<item key="playerTag"><![CDATA[z/HGTVNEWVC - New Video Center]]></item>
-	  </Configuration>
+      <Configuration>
+        <item key="feedPIDUrl"><![CDATA[http://www.hgtv.ca/video/]]></item>
+        <item key="feedPIDRegexString"><![CDATA[PID:\s'(?<feedPID>[^']*)',]]></item>
+        <item key="playerTag"><![CDATA[z/HGTVNEWVC - New Video Center]]></item>
+      </Configuration>
     </Site>
     <Site name="Showcase" util="CanWest" agecheck="false" enabled="true" lang="en">
       <Description>Big. Bold. Hits. With a top-rated line-up of hit series, breakout cable exclusives and big-ticket movies, Showcase is a powerhouse of TV’s best. From the off-beat characters in House, the unconventional storylines of Weeds and the chemistry-fuelled Bones, to Hollywood heavy-hitters Superbad and I Am Legend, Showcase delivers the best and most colourful collection of television.</Description>
-	  <Configuration>
-		<item key="feedPIDUrl"><![CDATA[http://www.showcase.ca/shawconnect_dynamic_assets__2580.js?id=7&id=8&id=9&id=74&id=14&id=15&id=10&id=82&id=83&id=26&id=25&id=94&id=90&id=70&id=100&id=80&id=92&id=75&id=76&id=4&id=1&id=2&id=77&sitename=Showcase]]></item>
-		<item key="feedPIDRegexString"><![CDATA[G\.PID=G\.PID\|\|"(?<feedPID>[^"]*)"]]></item>
-		<item key="playerTag"><![CDATA[z/Showcase Video Centre]]></item>
-		<item key="swfUrl"><![CDATA[http://www.showcase.ca/video/swf/flvPlayer.swf]]></item>
-	  </Configuration>
+      <Configuration>
+        <item key="feedPIDUrl"><![CDATA[http://www.showcase.ca/shawconnect_dynamic_assets__2580.js?id=7&id=8&id=9&id=74&id=14&id=15&id=10&id=82&id=83&id=26&id=25&id=94&id=90&id=70&id=100&id=80&id=92&id=75&id=76&id=4&id=1&id=2&id=77&sitename=Showcase]]></item>
+        <item key="feedPIDRegexString"><![CDATA[G\.PID=G\.PID\|\|"(?<feedPID>[^"]*)"]]></item>
+        <item key="playerTag"><![CDATA[z/Showcase Video Centre]]></item>
+        <item key="swfUrl"><![CDATA[http://www.showcase.ca/video/swf/flvPlayer.swf]]></item>
+      </Configuration>
     </Site>
     <Site name="Slice" util="CanWest" agecheck="false" enabled="true" lang="en">
       <Description>With highly addictive, must-see entertainment, Slice™ is the juicy channel women have been waiting for. Targeting viewers with an attitude found nowhere else in the lifestyle television landscape, Slice™ brings an unapologetic attitude to topics that matter to women – family, fashion, relationships, celebrity, finances and gossip – to name just a few.</Description>
-	  <Configuration>
-		<item key="feedPIDUrl"><![CDATA[http://www.slice.ca/includes/vc_20/js/cwpSliceVC.js]]></item>
-		<item key="feedPIDRegexString"><![CDATA[data.PID\s=\sdata\.PID\s\|\|\s"(?<feedPID>[^"]*)";]]></item>
-		<item key="playerTag"><![CDATA[z/Slice Player - New Video Center]]></item>
-	  </Configuration>
+      <Configuration>
+        <item key="feedPIDUrl"><![CDATA[http://www.slice.ca/includes/vc_20/js/cwpSliceVC.js]]></item>
+        <item key="feedPIDRegexString"><![CDATA[data.PID\s=\sdata\.PID\s\|\|\s"(?<feedPID>[^"]*)";]]></item>
+        <item key="playerTag"><![CDATA[z/Slice Player - New Video Center]]></item>
+      </Configuration>
     </Site>
     <Site name="TVtropolis" util="CanWest" agecheck="false" enabled="true" lang="en">
       <Description>TVtropolis is the home of back-to-back, recent iconic TV series celebrating the shows and stars that have defined pop culture. Favourites including Seinfeld, Friends, Family Guy, Frasier, That 70’s Show, Everybody Loves Raymond, and King of Queens make TVtropolis a TV lover’s destination.</Description>
-	  <Configuration>
-		<item key="feedPIDUrl"><![CDATA[http://www.tvtropolis.com/video/]]></item>
-		<item key="feedPIDRegexString"><![CDATA[PID:\s"(?<feedPID>[^"]*)",]]></item>
-		<item key="playerTag"><![CDATA[z/TVTropolis Player - Video Center]]></item>
-	  </Configuration>
+      <Configuration>
+        <item key="feedPIDUrl"><![CDATA[http://www.tvtropolis.com/video/]]></item>
+        <item key="feedPIDRegexString"><![CDATA[PID:\s"(?<feedPID>[^"]*)",]]></item>
+        <item key="playerTag"><![CDATA[z/TVTropolis Player - Video Center]]></item>
+      </Configuration>
     </Site>
     <Site name="DIY Network Canada" util="CanWest" agecheck="false" enabled="true" lang="en">
       <Description>DIY Network Canada is the go-to destination for rip-up, knock-out home improvement television.</Description>
-	  <Configuration>
-		<item key="feedPIDUrl"><![CDATA[http://www.diy.ca/video/]]></item>
-		<item key="feedPIDRegexString"><![CDATA[PID:\s"(?<feedPID>[^"]*)",]]></item>
-		<item key="playerTag"><![CDATA[z/DIY Network - Video Centre]]></item>
-	  </Configuration>
+      <Configuration>
+        <item key="feedPIDUrl"><![CDATA[http://www.diy.ca/video/]]></item>
+        <item key="feedPIDRegexString"><![CDATA[PID:\s"(?<feedPID>[^"]*)",]]></item>
+        <item key="playerTag"><![CDATA[z/DIY Network - Video Centre]]></item>
+      </Configuration>
     </Site>
     <Site name="TVO" util="TVO" agecheck="false" enabled="true" lang="en">
       <Description>TVO is Ontario's public educational media organization and a trusted source of interactive educational content that informs, inspires, and stimulates curiosity and thought.</Description>
@@ -1139,82 +1142,82 @@
         <Category xsi:type="RssLink" name="Most Viewed">http://www.youporn.com/most_viewed</Category>
       </Categories>
     </Site>
-	<Site name="RedTube" util="GenericSite" agecheck="true" enabled="true" lang="en">
-	  <Description>The home of free porn videos.</Description>
-	  <Configuration>
-		<item key="dynamicCategoriesRegEx"><![CDATA[<li.*?>\s*<div\s+class="video">\s*<a\s+href="(?<url>[^"]+)"\s+title="(?<title>[^"]+)">\s*<img.*?src="(?<thumb>[^"]*)"]]></item>
-		<item key="videoListRegEx"><![CDATA[<li.*?>\s*
-	<a\shref="(?<VideoUrl>[^"]+)"\stitle="(?<Title>[^"]*)"[^>]*>\s*
-	<span\s+class="video-duration".*?>(?<Duration>[^<]*)</span>\s*
-	<img\s(?:(?!src).)*src="(?<ImageUrl>[^"]*)"]]></item>
-		<item key="nextPageRegEx"><![CDATA[title="Next\s*Page\s*"\s+href="(?<url>[^"]*page=\d{1,})">]]></item>
-		<item key="prevPageRegEx"><![CDATA[<a\stitle="Previous\spage"\shref="(?<url>[^"]*page=\d{1,})">Prev</a>]]></item>
-		<item key="fileUrlRegEx"><![CDATA[<source\s+src="(?<m0>[^"]*)"]]></item>
-		<item key="searchUrl"><![CDATA[http://www.redtube.com/?search={0}]]></item>
-		<item key="baseUrl"><![CDATA[http://www.redtube.com/channels]]></item>
-		<item key="cookies"><![CDATA[pp=1]]></item>
-	  </Configuration>
-	  <Categories>
-		<Category xsi:type="RssLink" name="Newest Videos">http://www.redtube.com/</Category>
-		<Category xsi:type="RssLink" name="Top Rated">http://www.redtube.com/top</Category>
-		<Category xsi:type="RssLink" name="Most Viewed">http://www.redtube.com/mostviewed</Category>
-		<Category xsi:type="RssLink" name="Most Favored">http://www.redtube.com/mostfavored</Category>
-	  </Categories>
-	</Site>
-	<Site name="xHamster" util="GenericSite" agecheck="true" enabled="true" lang="en">
-	  <Description>xHamster - just porn, no bullshit.</Description>
-	  <Configuration>
-		<item key="dynamicCategoriesRegEx"><![CDATA[<a\s+href='(?<url>http://xhamster.com/channels/[^']+)'>(?<title>[^<]+)</a>]]></item>
-		<item key="videoListRegEx"><![CDATA[<div\s+class='video'>\s*
-	<a\s+href='(?<VideoUrl>[^']+)'[^>]*>\s*
-	<img.*?src='(?<ImageUrl>[^']+)'[^>]*>\s*
-	(<img[^>]*>\s*)?
-	<b>(?<Duration>[^<]*)</b>\s*
-	<u[^>]*>(?<Title>.*?)</u>]]></item>
-		<item key="nextPageRegEx"><![CDATA[<a\shref='(?<url>[^']*)'[^>]*>\s*<div[^>]*>[^<]*</div>Next</a>]]></item>
-		<item key="prevPageRegEx"><![CDATA[<SPAN\sclass=navPrev><A\sHREF="(?<url>.+)">Prev</A></SPAN>]]></item>
-		<item key="fileUrlRegEx"><![CDATA[file:\s*'(?<m0>[^']*)'*]]></item>
-		<item key="searchUrl"><![CDATA[http://www.xhamster.com/search.php?q={0}]]></item>
-		<item key="baseUrl"><![CDATA[http://www.xhamster.com]]></item>
-	  </Configuration>
-	</Site>
-	<Site name="Tube8" util="GenericSite" agecheck="true" enabled="true" lang="en">
-	  <Description>A Huge selection of hardcore videos is what makes Tube8 the best porn tube site. The site contains 100% user-uploaded free porn.</Description>
-	  <Configuration>
-		<item key="videoListRegEx"><![CDATA[<div\sid="video_i\d+"[^>]*>.*?
-	<a\shref="(?<VideoUrl>[^"]+)"[^>]*>\s*
-	<img\s(?:(?!\ssrc).)*\ssrc="(?<ImageUrl>[^"]+)".*?/>\s*</a>\s*
-	.*?<a\shref="[^"]*"\stitle="(?<Title>[^"]+)">\s*
-	(?:(?!<strong>).)*<strong>(?<Duration>[^<]*)</strong>]]></item>
-		<item key="nextPageRegEx"><![CDATA[<link\s+rel="next"\s+href="(?<url>[^"]*)">]]></item>
-		<item key="fileUrlRegEx"><![CDATA[page_params.videoLink\s*=\s*"(?<m0>[^"]+)"]]></item>
-		<item key="searchUrl"><![CDATA[http://www.tube8.com/search.html?q={0}]]></item>
-		<item key="baseUrl"><![CDATA[http://www.tube8.com]]></item>
-		<item key="cookies"><![CDATA[t8disclaimer=1]]></item>
-	  </Configuration>
-	  <Categories>
-		<Category xsi:type="RssLink" name="Latest">http://www.tube8.com/latest.html</Category>
-		<Category xsi:type="RssLink" name="Top Rated">http://www.tube8.com/top.html</Category>
-		<Category xsi:type="RssLink" name="Most Viewed">http://www.tube8.com/mostviewed.html</Category>
-		<Category xsi:type="RssLink" name="Most Favorited">http://www.tube8.com/mostfavorited.html</Category>
-		<Category xsi:type="RssLink" name="Most Discussed">http://www.tube8.com/mostdiscussed.html</Category>
-		<Category xsi:type="RssLink" name="Most Voted">http://www.tube8.com/mostvoted.html</Category>
-		<Category xsi:type="RssLink" name="Amateur">http://www.tube8.com/cat/amateur/6/</Category>
-		<Category xsi:type="RssLink" name="Anal">http://www.tube8.com/cat/anal/13/</Category>
-		<Category xsi:type="RssLink" name="Asian">http://www.tube8.com/cat/asian/12/</Category>
-		<Category xsi:type="RssLink" name="Blowjob">http://www.tube8.com/cat/blowjob/7/</Category>
-		<Category xsi:type="RssLink" name="Ebony">http://www.tube8.com/cat/ebony/4/</Category>
-		<Category xsi:type="RssLink" name="Erotic">http://www.tube8.com/cat/erotic/11/</Category>
-		<Category xsi:type="RssLink" name="Fetish">http://www.tube8.com/cat/fetish/5/</Category>
-		<Category xsi:type="RssLink" name="Hardcore">http://www.tube8.com/cat/hardcore/1/</Category>
-		<Category xsi:type="RssLink" name="Indian">http://www.tube8.com/cat/indian/21/</Category>
-		<Category xsi:type="RssLink" name="Latina">http://www.tube8.com/cat/latina/14/</Category>
-		<Category xsi:type="RssLink" name="Lesbian">http://www.tube8.com/cat/lesbian/8/</Category>
-		<Category xsi:type="RssLink" name="Mature">http://www.tube8.com/cat/mature/2/</Category>
-		<Category xsi:type="RssLink" name="Strip">http://www.tube8.com/cat/strip/10/</Category>
-		<Category xsi:type="RssLink" name="Teen">http://www.tube8.com/cat/teen/3/</Category>
-	  </Categories>
-	</Site>
+    <Site name="RedTube" util="GenericSite" agecheck="true" enabled="true" lang="en">
+      <Description>The home of free porn videos.</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<li.*?>\s*<div\s+class="video">\s*<a\s+href="(?<url>[^"]+)"\s+title="(?<title>[^"]+)">\s*<img.*?src="(?<thumb>[^"]*)"]]></item>
+        <item key="videoListRegEx"><![CDATA[<li.*?>\s*
+    <a\shref="(?<VideoUrl>[^"]+)"\stitle="(?<Title>[^"]*)"[^>]*>\s*
+    <span\s+class="video-duration".*?>(?<Duration>[^<]*)</span>\s*
+    <img\s(?:(?!src).)*src="(?<ImageUrl>[^"]*)"]]></item>
+        <item key="nextPageRegEx"><![CDATA[title="Next\s*Page\s*"\s+href="(?<url>[^"]*page=\d{1,})">]]></item>
+        <item key="prevPageRegEx"><![CDATA[<a\stitle="Previous\spage"\shref="(?<url>[^"]*page=\d{1,})">Prev</a>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[<source\s+src="(?<m0>[^"]*)"]]></item>
+        <item key="searchUrl"><![CDATA[http://www.redtube.com/?search={0}]]></item>
+        <item key="baseUrl"><![CDATA[http://www.redtube.com/channels]]></item>
+        <item key="cookies"><![CDATA[pp=1]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Newest Videos">http://www.redtube.com/</Category>
+        <Category xsi:type="RssLink" name="Top Rated">http://www.redtube.com/top</Category>
+        <Category xsi:type="RssLink" name="Most Viewed">http://www.redtube.com/mostviewed</Category>
+        <Category xsi:type="RssLink" name="Most Favored">http://www.redtube.com/mostfavored</Category>
+      </Categories>
+    </Site>
+    <Site name="xHamster" util="GenericSite" agecheck="true" enabled="true" lang="en">
+      <Description>xHamster - just porn, no bullshit.</Description>
+      <Configuration>
+        <item key="dynamicCategoriesRegEx"><![CDATA[<a\s+href='(?<url>http://xhamster.com/channels/[^']+)'>(?<title>[^<]+)</a>]]></item>
+        <item key="videoListRegEx"><![CDATA[<div\s+class='video'>\s*
+    <a\s+href='(?<VideoUrl>[^']+)'[^>]*>\s*
+    <img.*?src='(?<ImageUrl>[^']+)'[^>]*>\s*
+    (<img[^>]*>\s*)?
+    <b>(?<Duration>[^<]*)</b>\s*
+    <u[^>]*>(?<Title>.*?)</u>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<a\shref='(?<url>[^']*)'[^>]*>\s*<div[^>]*>[^<]*</div>Next</a>]]></item>
+        <item key="prevPageRegEx"><![CDATA[<SPAN\sclass=navPrev><A\sHREF="(?<url>.+)">Prev</A></SPAN>]]></item>
+        <item key="fileUrlRegEx"><![CDATA[file:\s*'(?<m0>[^']*)'*]]></item>
+        <item key="searchUrl"><![CDATA[http://www.xhamster.com/search.php?q={0}]]></item>
+        <item key="baseUrl"><![CDATA[http://www.xhamster.com]]></item>
+      </Configuration>
+    </Site>
+    <Site name="Tube8" util="GenericSite" agecheck="true" enabled="true" lang="en">
+      <Description>A Huge selection of hardcore videos is what makes Tube8 the best porn tube site. The site contains 100% user-uploaded free porn.</Description>
+      <Configuration>
+        <item key="videoListRegEx"><![CDATA[<div\sid="video_i\d+"[^>]*>.*?
+    <a\shref="(?<VideoUrl>[^"]+)"[^>]*>\s*
+    <img\s(?:(?!\ssrc).)*\ssrc="(?<ImageUrl>[^"]+)".*?/>\s*</a>\s*
+    .*?<a\shref="[^"]*"\stitle="(?<Title>[^"]+)">\s*
+    (?:(?!<strong>).)*<strong>(?<Duration>[^<]*)</strong>]]></item>
+        <item key="nextPageRegEx"><![CDATA[<link\s+rel="next"\s+href="(?<url>[^"]*)">]]></item>
+        <item key="fileUrlRegEx"><![CDATA[page_params.videoLink\s*=\s*"(?<m0>[^"]+)"]]></item>
+        <item key="searchUrl"><![CDATA[http://www.tube8.com/search.html?q={0}]]></item>
+        <item key="baseUrl"><![CDATA[http://www.tube8.com]]></item>
+        <item key="cookies"><![CDATA[t8disclaimer=1]]></item>
+      </Configuration>
+      <Categories>
+        <Category xsi:type="RssLink" name="Latest">http://www.tube8.com/latest.html</Category>
+        <Category xsi:type="RssLink" name="Top Rated">http://www.tube8.com/top.html</Category>
+        <Category xsi:type="RssLink" name="Most Viewed">http://www.tube8.com/mostviewed.html</Category>
+        <Category xsi:type="RssLink" name="Most Favorited">http://www.tube8.com/mostfavorited.html</Category>
+        <Category xsi:type="RssLink" name="Most Discussed">http://www.tube8.com/mostdiscussed.html</Category>
+        <Category xsi:type="RssLink" name="Most Voted">http://www.tube8.com/mostvoted.html</Category>
+        <Category xsi:type="RssLink" name="Amateur">http://www.tube8.com/cat/amateur/6/</Category>
+        <Category xsi:type="RssLink" name="Anal">http://www.tube8.com/cat/anal/13/</Category>
+        <Category xsi:type="RssLink" name="Asian">http://www.tube8.com/cat/asian/12/</Category>
+        <Category xsi:type="RssLink" name="Blowjob">http://www.tube8.com/cat/blowjob/7/</Category>
+        <Category xsi:type="RssLink" name="Ebony">http://www.tube8.com/cat/ebony/4/</Category>
+        <Category xsi:type="RssLink" name="Erotic">http://www.tube8.com/cat/erotic/11/</Category>
+        <Category xsi:type="RssLink" name="Fetish">http://www.tube8.com/cat/fetish/5/</Category>
+        <Category xsi:type="RssLink" name="Hardcore">http://www.tube8.com/cat/hardcore/1/</Category>
+        <Category xsi:type="RssLink" name="Indian">http://www.tube8.com/cat/indian/21/</Category>
+        <Category xsi:type="RssLink" name="Latina">http://www.tube8.com/cat/latina/14/</Category>
+        <Category xsi:type="RssLink" name="Lesbian">http://www.tube8.com/cat/lesbian/8/</Category>
+        <Category xsi:type="RssLink" name="Mature">http://www.tube8.com/cat/mature/2/</Category>
+        <Category xsi:type="RssLink" name="Strip">http://www.tube8.com/cat/strip/10/</Category>
+        <Category xsi:type="RssLink" name="Teen">http://www.tube8.com/cat/teen/3/</Category>
+      </Categories>
+    </Site>
     <Site name="Empflix" util="GenericSite" agecheck="true" enabled="true" lang="en">
       <Description>Full Free Porn movies.</Description>
       <Configuration>
@@ -1230,28 +1233,28 @@
         <item key="baseUrl"><![CDATA[http://www.empflix.com/categories.php]]></item>
       </Configuration>
     </Site>
-	  <Site name="Sky Go Uk" util="WebAutomationSite" agecheck="false" enabled="true" player="Browser" lang="en">
-		  <Description>Sky Go lets you watch TV channels live on your PC. Watch catch-up TV from all channels - up to 500 great movies and the best sports &amp; entertainment around!  Requires a user name/password.</Description>
-		  <Configuration>
-			  <item key="webAutomationType"><![CDATA[SkyGo]]></item>
-		  </Configuration>
-	  </Site>
-	  <Site name="4oD Web" util="WebAutomationSite" agecheck="false" enabled="true" player="Browser" lang="en">
-		  <Description>Catchup on all your favourite Channel 4 shows (only available in the UK). Requires a user name/password.</Description>
-		  <Configuration>
-			  <item key="webAutomationType"><![CDATA[_4oD]]></item>
-		  </Configuration>
-	  </Site>
-	  <Site name="Amazon Prime Uk" util="AmazonPrimeSite" agecheck="false" enabled="true" player="Browser" lang="en">
-		  <Description>Amazon Prime allows unlimited streaming of 15,000 titles!  Requires a user name/password.</Description>
-		  <Configuration>
-			  <item key="webAutomationType"><![CDATA[AmazonPrime]]></item>
-		  </Configuration>
-	  </Site>
-	  <Site name="Amazon Prime De" util="AmazonPrimeSite" agecheck="false" enabled="true" lang="de">
-		  <Description>Amazon Prime allows unlimited streaming of 15,000 titles!  Requires a user name/password.</Description>
-		  <Configuration>
-			  <item key="webAutomationType"><![CDATA[AmazonPrimeDe]]></item>
-		  </Configuration>
-	  </Site>  </Sites>
+      <Site name="Sky Go Uk" util="WebAutomationSite" agecheck="false" enabled="true" player="Browser" lang="en">
+          <Description>Sky Go lets you watch TV channels live on your PC. Watch catch-up TV from all channels - up to 500 great movies and the best sports &amp; entertainment around!  Requires a user name/password.</Description>
+          <Configuration>
+              <item key="webAutomationType"><![CDATA[SkyGo]]></item>
+          </Configuration>
+      </Site>
+      <Site name="4oD Web" util="WebAutomationSite" agecheck="false" enabled="true" player="Browser" lang="en">
+          <Description>Catchup on all your favourite Channel 4 shows (only available in the UK). Requires a user name/password.</Description>
+          <Configuration>
+              <item key="webAutomationType"><![CDATA[_4oD]]></item>
+          </Configuration>
+      </Site>
+      <Site name="Amazon Prime Uk" util="AmazonPrimeSite" agecheck="false" enabled="true" player="Browser" lang="en">
+          <Description>Amazon Prime allows unlimited streaming of 15,000 titles!  Requires a user name/password.</Description>
+          <Configuration>
+              <item key="webAutomationType"><![CDATA[AmazonPrime]]></item>
+          </Configuration>
+      </Site>
+      <Site name="Amazon Prime De" util="AmazonPrimeSite" agecheck="false" enabled="true" lang="de">
+          <Description>Amazon Prime allows unlimited streaming of 15,000 titles!  Requires a user name/password.</Description>
+          <Configuration>
+              <item key="webAutomationType"><![CDATA[AmazonPrimeDe]]></item>
+          </Configuration>
+      </Site>  </Sites>
 </OnlineVideoSites>
