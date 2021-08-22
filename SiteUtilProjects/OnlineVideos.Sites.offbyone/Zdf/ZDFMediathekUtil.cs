@@ -377,7 +377,7 @@ namespace OnlineVideos.Sites.Zdf
             var obj = result["http://zdf.de/rels/target"];
             var title = obj.Value<string>("teaserHeadline");
             var desc = obj.Value<string>("teasertext");
-            var thumb = obj["teaserImageRef"]["layouts"]?.Value<string>(RELEVANT_TEASERIMAGE_LAYOUT);
+            var thumb = obj["teaserImageRef"]?["layouts"]?.Value<string>(RELEVANT_TEASERIMAGE_LAYOUT);
 
             var videoCounterObj = obj["http://zdf.de/rels/search/page-video-counter-with-video"];
             var videoCount = !hasSubCategories && videoCounterObj != null ? videoCounterObj.Value<uint?>("totalResultsCount") : null;
