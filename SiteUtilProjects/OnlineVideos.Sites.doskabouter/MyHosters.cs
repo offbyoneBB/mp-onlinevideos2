@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
@@ -1094,11 +1095,79 @@ namespace OnlineVideos.Hoster
             return "streamzz.to";
         }
 
+        public string MyGetRedirectedUrl(string url, string referer, CookieContainer cc, NameValueCollection headers)
+        {
+            HttpWebResponse httpWebresponse = null;
+            try
+            {
+                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+                if (request == null) return url;
+                foreach (var headerName in headers.AllKeys)
+                {
+                    switch (headerName.ToLowerInvariant())
+                    {
+                        case "accept":
+                            request.Accept = headers[headerName];
+                            break;
+                        case "user-agent":
+                            request.UserAgent = headers[headerName];
+                            break;
+                        case "referer":
+                            request.Referer = headers[headerName];
+                            break;
+                        default:
+                            request.Headers.Set(headerName, headers[headerName]);
+                            break;
+                    }
+                }
+
+                request.AllowAutoRedirect = true;
+                request.CookieContainer = cc;
+                request.Timeout = 15000;
+                if (!string.IsNullOrEmpty(referer)) request.Referer = referer;
+                var result = request.BeginGetResponse((ar) => request.Abort(), null);
+                while (!result.IsCompleted) Thread.Sleep(10);
+                httpWebresponse = request.EndGetResponse(result) as HttpWebResponse;
+                if (httpWebresponse == null) return url;
+                if (request.RequestUri.Equals(httpWebresponse.ResponseUri))
+                    return url;
+                else
+                    return httpWebresponse.ResponseUri.OriginalString;
+            }
+            catch (Exception ex)
+            {
+                Log.Warn(ex.ToString());
+            }
+            finally
+            {
+                if (httpWebresponse != null)
+                {
+                    try
+                    {
+                        httpWebresponse.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warn(ex.ToString());
+                    }
+                }
+            }
+            return url;
+        }
+
         public override string GetVideoUrl(string url)
         {
-            var newUrl = WebCache.Instance.GetRedirectedUrl(url);
+            const string uagent = @"Mozilla/5.0 (Windows NT 6.1; rv:90.0) Gecko/20100101 Firefox/90.0";
             CookieContainer cc = new CookieContainer();
-            var data = GetWebData(newUrl, cookies: cc);
+            NameValueCollection headers = new NameValueCollection();
+            headers.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,* /*;q=0.8");
+            headers.Set("Accept-Language", "en-US,en;q=0.5");
+            headers.Set("Accept-Encoding", "gzip, deflate, br");
+            var newUrl = MyGetRedirectedUrl(url, null, cc, headers);
+
+            var data = GetWebData(newUrl, cookies: cc, userAgent: uagent, headers: headers);
+            headers.Set("Accept", "*/*");
+
             Match m = Regex.Match(data, @"history\.pushState\(stateObj,\s*""[^""]*"",\s""(?<url>[^""]*)""\);");
             string referer = null;
             if (m.Success)
@@ -1107,10 +1176,20 @@ namespace OnlineVideos.Hoster
                 if (!Uri.IsWellFormedUriString(referer, UriKind.Absolute))
                 {
                     Uri uri = null;
-                    if (Uri.TryCreate(new Uri(newUrl), referer, out uri))
+                    if (Uri.TryCreate(new Uri(url), referer, out uri))
                         referer = uri.ToString();
                 }
             }
+
+            m = Regex.Match(data, @"<script\stype='text/javascript'\ssrc='[^']*?(?<ppu_main>[^\./']*)\.js'></script>");
+            cc.Add(new Cookie("ppu_main_" + m.Groups["ppu_main"].Value, "1", "", @".streamzz.to"));
+            var data5 = GetWebData(@"https://streamzz.to/count.php?bcd=1", referer: referer, cookies: cc, userAgent: uagent, headers: headers);
+
+            cc.Add(new Cookie("ppu_sub_" + m.Groups["ppu_main"].Value, "1", "", @".streamzz.to"));
+            cc.Add(new Cookie("ppu_delay_" + m.Groups["ppu_main"].Value, "1", "", @".streamzz.to"));
+            //todo: experiment with not doing following request:
+            var data6 = GetWebData(@"https://streamzz.to/videoplayer.js", referer: referer, cookies: cc, userAgent: uagent, headers: headers);
+
             m = Regex.Match(data, @"return\sp(?<pack>[^<]*)</script");
             var l = new List<String>();
             string url1 = null;
@@ -1119,13 +1198,20 @@ namespace OnlineVideos.Hoster
                 var unpacked = Helpers.StringUtils.UnPack(m.Groups["pack"].Value);
                 if (unpacked != null)
                 {
-                    Match m2 = Regex.Match(unpacked, @"src:\\'https://(?<p1>[^/]*)/getl1nk'\.split\('(?<p2>[^\\]*)\\'");
+                    Match m2 = Regex.Match(unpacked, @"src:\\'(?<p1>https://[^/]+)/getl1nk'\.split");
                     if (m2.Success)
-                        url1 = @"https://" + m2.Groups["p1"].Value + "/getlink" + m2.Groups["p2"].Value;
+                        url1 = m2.Groups["p1"].Value;
                 }
                 m = m.NextMatch();
             }
-            return WebCache.Instance.GetRedirectedUrl(url1, referer);
+            m = Regex.Match(newUrl, @"/x(?<code>.*)");
+            if (m.Success)
+            {
+                url1 = url1 + "/getlink-" + m.Groups["code"].Value + ".dll";
+                var finalUrl = WebCache.Instance.GetRedirectedUrl(url1, @"https://streamzz.to/");
+                return finalUrl;
+            }
+            return null;
         }
     }
     public class TheFile : MyHosterBase
