@@ -652,7 +652,7 @@ namespace OnlineVideos.Sites.Zdf
     }
 
 
-    internal enum Qualities
+    public enum Qualities
     {
         HD,
         High,
