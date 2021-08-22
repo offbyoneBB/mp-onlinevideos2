@@ -45,6 +45,10 @@ namespace OnlineVideos.Sites.Zdf
 
         public override int DiscoverDynamicCategories()
         {
+            var document = GetWebData<HtmlDocument>("https://www.zdf.de", headers: _defaultHeaders);
+            _searchBearer = ParseBearerIndexPage(document.DocumentNode.Descendants("head").Single(), "script", "'");
+            _videoBearer = ParseBearerIndexPage(document.DocumentNode.Descendants("body").Single(), "script", "\"");
+
             Settings.Categories.Clear();
             Settings.Categories.Add(new Category { Name = CATEGORYNAME_LIVESTREAM });
             Settings.Categories.Add(new Category { Name = CATEGORYNAME_MISSED_BROADCAST, HasSubCategories = true, Description = "Sendungen der letzten 7 Tage." });
@@ -61,9 +65,6 @@ namespace OnlineVideos.Sites.Zdf
             // .net 4.0 SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)(0xc0 | 0x300 | 0xc00);
 
-            var document = GetWebData<HtmlDocument>("https://www.zdf.de", headers: _defaultHeaders);
-            _searchBearer = ParseBearerIndexPage(document.DocumentNode.Descendants("head").Single(), "script", "'");
-            _videoBearer = ParseBearerIndexPage(document.DocumentNode.Descendants("body").Single(), "script", "\"");
         }
 
 
