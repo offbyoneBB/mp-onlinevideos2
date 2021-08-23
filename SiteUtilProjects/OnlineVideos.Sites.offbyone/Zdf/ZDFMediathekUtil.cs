@@ -5,16 +5,12 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net;
 
-using Google.Apis.Util;
-using HtmlAgilityPack;
-
 using Newtonsoft.Json.Linq;
 
 
-//using static OnlineVideos.Sites.FilmStartsUtil;
-
 namespace OnlineVideos.Sites.Zdf
 {
+
     public class ZDFMediathekUtil : SiteUtilBase
     {
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Video Quality", TranslationFieldName = "VideoQuality"), Description("Defines the maximum quality for the video to be played (" + nameof(Qualities.HD) + "/" + nameof(Qualities.High) + "/" + nameof(Qualities.Normal) + "/" + nameof(Qualities.Small) + ").")]
@@ -28,27 +24,21 @@ namespace OnlineVideos.Sites.Zdf
 
         private IEnumerable<string> GetMimeTypesPrioOrder()
             => prioOrderMimeTypes.Split(new [] {',', ';'}, StringSplitOptions.RemoveEmptyEntries).ToList();
-            //{ "video/webm", "video/mp4", "application/x-mpegURL"};
-        //private static readonly string RELEVANT_MIME_TYPE = "video/mp4";
-        //private static readonly string RELEVANT_MIME_TYPE = "video/webm";
+
 
         private static readonly string RELEVANT_TEASERIMAGE_LAYOUT = "384x216";
         //private static readonly string RELEVANT_TEASERIMAGE_LAYOUT = "768x432";
 
-
-        private static readonly NameValueCollection _defaultHeaders = new NameValueCollection { { "Accept-Encoding", "gzip" }, { "Accept", "*/*" } };
 
         private const string CATEGORYNAME_LIVESTREAM = "Live TV";
         private const string CATEGORYNAME_MISSED_BROADCAST = "Sendung Verpasst";
         private const string CATEGORYNAME_RUBRICS = "Rubriken";
         private const string CATEGORYNAME_BROADCASTS_AZ = "Sendungen A-Z";
 
+        private ZdfApiTokenProvider _apiTokenProvider;
+
         public override int DiscoverDynamicCategories()
         {
-            var document = GetWebData<HtmlDocument>("https://www.zdf.de", headers: _defaultHeaders);
-            _searchBearer = ParseBearerIndexPage(document.DocumentNode.Descendants("head").Single(), "script", "'");
-            _videoBearer = ParseBearerIndexPage(document.DocumentNode.Descendants("body").Single(), "script", "\"");
-
             Settings.Categories.Clear();
             Settings.Categories.Add(new Category { Name = CATEGORYNAME_LIVESTREAM });
             Settings.Categories.Add(new Category { Name = CATEGORYNAME_MISSED_BROADCAST, HasSubCategories = true, Description = "Sendungen der letzten 7 Tage." });
@@ -65,71 +55,29 @@ namespace OnlineVideos.Sites.Zdf
             // .net 4.0 SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)(0xc0 | 0x300 | 0xc00);
 
+            _apiTokenProvider = new ZdfApiTokenProvider(WebCache.Instance);
         }
 
 
         private NameValueCollection HeadersWithSearchBearer()
         {
-            return new NameValueCollection(_defaultHeaders)
+            return new NameValueCollection()
             {
-                { "Api-Auth", $"Bearer {_searchBearer}" }
+                { "Api-Auth", $"Bearer {_apiTokenProvider.SearchBearer}" }
             };
         }
 
         private NameValueCollection HeadersWithVideohBearer()
         {
-            return new NameValueCollection(_defaultHeaders)
+            return new NameValueCollection()
             {
-                { "Api-Auth", $"Bearer {_videoBearer}" }
+                { "Api-Auth", $"Bearer {_apiTokenProvider.VideoBearer}" }
             };
         }
 
         private static readonly string PLACEHOLDER_PLAYER_ID = "{playerId}";
         private static readonly string PLAYER_ID = "ngplayer_2_4";
         //private static readonly string PLAYER_ID = "portal";
-
-        private static readonly string JSON_API_TOKEN = "apiToken";
-        private string _searchBearer;
-        private string _videoBearer;
-
-        private string ParseBearerIndexPage(HtmlNode aDocumentNode, string aQuery, string aStringQuote)
-        {
-
-            var scriptElements = aDocumentNode.Descendants(aQuery);
-            foreach (var scriptElement in scriptElements)
-            {
-                var script = scriptElement.InnerHtml;
-
-                var value = ParseBearer(script, aStringQuote);
-                if (!value.IsNullOrEmpty())
-                {
-                    return value;
-                }
-            }
-
-            return string.Empty;
-        }
-
-        private string ParseBearer(string aJson, string aStringQuote)
-        {
-            var bearer = "";
-
-            var indexToken = aJson.IndexOf(JSON_API_TOKEN);
-
-            if (indexToken <= 0)
-            {
-                return bearer;
-            }
-            var indexStart = aJson.IndexOf(aStringQuote, indexToken + JSON_API_TOKEN.Length + 1) + 1;
-            var indexEnd = aJson.IndexOf(aStringQuote, indexStart);
-
-            if (indexStart > 0)
-            {
-                bearer = aJson.Substring(indexStart, indexEnd - indexStart);
-            }
-
-            return bearer;
-        }
 
         public override int DiscoverSubCategories(Category parentCategory)
         {
@@ -320,7 +268,7 @@ namespace OnlineVideos.Sites.Zdf
                     throw new OnlineVideosException("Video nicht verfügbar!");
 
                 var json = GetWebData<JObject>(video.VideoUrl, headers: headers);
-                parseVideoUrls(json);
+                ParseVideoUrls(json);
                 //var playbackOptions = new HashSet<KeyValuePair<string, string>>(KeyValuePairComparer.KeyOrdinalIgnoreCase);
                 //foreach (var formitaet in json["priorityList"].SelectMany(l => l["formitaeten"]))
                 //{
@@ -377,7 +325,7 @@ namespace OnlineVideos.Sites.Zdf
             var obj = result["http://zdf.de/rels/target"];
             var title = obj.Value<string>("teaserHeadline");
             var desc = obj.Value<string>("teasertext");
-            var thumb = obj["teaserImageRef"]["layouts"]?.Value<string>(RELEVANT_TEASERIMAGE_LAYOUT);
+            var thumb = obj["teaserImageRef"]?["layouts"]?.Value<string>(RELEVANT_TEASERIMAGE_LAYOUT);
 
             var videoCounterObj = obj["http://zdf.de/rels/search/page-video-counter-with-video"];
             var videoCount = !hasSubCategories && videoCounterObj != null ? videoCounterObj.Value<uint?>("totalResultsCount") : null;
@@ -415,11 +363,10 @@ namespace OnlineVideos.Sites.Zdf
 
         private static readonly String CLASS_AD = "ad";
 
-        //private static readonly string RELEVANT_MIME_TYPE = "video/mp4";
         private static readonly string RELEVANT_SUBTITLE_TYPE = ".xml";
         private static readonly string JSON_ELEMENT_QUALITIES = "qualities";
 
-        private void parseVideoUrls(/*DownloadDto dto,*/ JObject rootNode)
+        private void ParseVideoUrls(JObject rootNode)
         {
             //TODO Reset workaround
             videoStreamsWorkaround = new HashSet<DownloadDetailsDto>();
@@ -428,11 +375,11 @@ namespace OnlineVideos.Sites.Zdf
             var priorityList = rootNode[JSON_ELEMENT_PRIORITYLIST];
             foreach (var priority in priorityList)
             {
-                parsePriority(/*dto,*/ priority);
+                ParsePriority(priority);
             }
         }
 
-        private void parsePriority(/*DownloadDto dto,*/ JToken priority)
+        private void ParsePriority(JToken priority)
         {
             if (priority == null)
             {
@@ -443,16 +390,14 @@ namespace OnlineVideos.Sites.Zdf
             var formitaetList = priority[JSON_ELEMENT_FORMITAET];
             foreach (var formitaet in formitaetList)
             {
-                parseFormitaet(/*dto,*/ formitaet);
+                ParseFormitaet(formitaet);
             }
         }
 
-        private void parseFormitaet(/*DownloadDto dto,*/ JToken formitaet)
+        private void ParseFormitaet(JToken formitaet)
         {
             var mimeType = formitaet[JSON_ELEMENT_MIMETYPE];
-            if (mimeType == null
-                //|| !string.Equals(RELEVANT_MIME_TYPE, mimeType.ToString(), StringComparison.OrdinalIgnoreCase)
-                )
+            if (mimeType == null)
             {
                 return;
             }
@@ -461,7 +406,7 @@ namespace OnlineVideos.Sites.Zdf
             foreach (var quality in qualityList)
             {
 
-                var qualityValue = parseVideoQuality(quality);
+                var qualityValue = ParseVideoQuality(quality);
 
                 // subelement audio
                 var audio = quality[JSON_ELEMENT_AUDIO];
@@ -474,12 +419,12 @@ namespace OnlineVideos.Sites.Zdf
 
                 foreach (var trackElement in tracks)
                 {
-                    extractTrack(/*dto,*/ mimeType.ToString(), qualityValue, trackElement);
+                    ExtractTrack(mimeType.ToString(), qualityValue, trackElement);
                 }
             }
         }
 
-        private void extractTrack(/*DownloadDto aDto,*/ string mimeType, Qualities qualityValue, JToken aTrackElement)
+        private void ExtractTrack(string mimeType, Qualities qualityValue, JToken aTrackElement)
         {
             var trackObject = aTrackElement;
             var classValue = trackObject[JSON_ELEMENT_CLASS].ToString();
@@ -493,7 +438,6 @@ namespace OnlineVideos.Sites.Zdf
             }
             if (uri != null)
             {
-                //aDto.addUrl(language, qualityValue, uri);
                 var dl = new DownloadDetailsDto(mimeType: mimeType, language: language, qualityValue, uri);
                 videoStreamsWorkaround.Add(dl);
             }
@@ -506,7 +450,7 @@ namespace OnlineVideos.Sites.Zdf
         //private HashSet<KeyValuePair<Qualities, string>> playbackOptionsWorkaround = new HashSet<KeyValuePair<Qualities, string>>();
         private HashSet<DownloadDetailsDto> videoStreamsWorkaround = new HashSet<DownloadDetailsDto>();
 
-        private Qualities parseVideoQuality(JToken quality)
+        private Qualities ParseVideoQuality(JToken quality)
         {
             Qualities qualityValue;
             var hd = quality[JSON_ELEMENT_HD];

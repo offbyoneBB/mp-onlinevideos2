@@ -337,6 +337,7 @@
     <Compile Include="WDRUtil.cs" />
     <Compile Include="YouTubeUtil.cs" />
     <Compile Include="YouTubeV3Util.cs" />
+    <Compile Include="Zdf\ZdfApiTokenProvider.cs" />
     <Compile Include="Zdf\ZDFMediathekUtil.cs" />
   </ItemGroup>
   <ItemGroup>
