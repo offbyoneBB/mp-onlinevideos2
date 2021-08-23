@@ -89,7 +89,7 @@ namespace OnlineVideos.Sites
 
         public override ITrackingInfo GetTrackingInfo(VideoInfo video)
         {
-            return (video.Other as ExtraVideoInfo).Item2;
+            return video.Other is ExtraVideoInfo ? (video.Other as ExtraVideoInfo).Item2 : base.GetTrackingInfo(video);
         }
 
         List<VideoInfo> getVideoList(string path, string search, bool recursive)
