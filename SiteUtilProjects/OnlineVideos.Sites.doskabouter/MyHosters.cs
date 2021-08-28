@@ -596,41 +596,45 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
-            var data = GetWebData(url);
-            Match m = Regex.Match(data, @"<iframe\swidth=""[^%]*%""\sheight=""[^""]*""\ssrc=""(?<url>[^""]*)""");
-            if (m.Success)
+            if (!url.Contains("/e/"))
             {
-                var newUrl = m.Groups["url"].Value;
-                if (!Uri.IsWellFormedUriString(newUrl, UriKind.Absolute))
+                var data2 = GetWebData(url);
+                Match m2 = Regex.Match(data2, @"<iframe\swidth=""[^%]*%""\sheight=""[^""]*""\ssrc=""(?<url>[^""]*)""");
+                if (m2.Success)
                 {
-                    Uri uri = null;
-                    if (Uri.TryCreate(new Uri(url), newUrl, out uri))
+                    var newUrl = m2.Groups["url"].Value;
+                    if (!Uri.IsWellFormedUriString(newUrl, UriKind.Absolute))
                     {
-                        newUrl = uri.ToString();
+                        Uri uri = null;
+                        if (Uri.TryCreate(new Uri(url), newUrl, out uri))
+                        {
+                            newUrl = uri.ToString();
+                        }
+                        else
+                        {
+                            newUrl = string.Empty;
+                        }
                     }
-                    else
-                    {
-                        newUrl = string.Empty;
-                    }
+                    url = newUrl;
                 }
-                data = GetWebData(newUrl);
-                string packed = Helpers.StringUtils.GetSubString(data, @"return p}", @"</script>");
-                packed = packed.Replace(@"\'", @"'");
-                string unpacked = Helpers.StringUtils.UnPack(packed);
-                m = Regex.Match(unpacked, @"MDCore\.wurl=""(?<url>[^""]*)""");
-                if (m.Success)
+                else
                 {
-                    var finalUrl = m.Groups["url"].Value;
-                    if (!finalUrl.StartsWith("http"))
-                        finalUrl = "https:" + finalUrl;
-                    return finalUrl;
+                    m2 = Regex.Match(data2, @"<h2>(?<line1>[^<]*)</h2>\s*<p>(?<line2>[^<]*)</p>");
+                    if (m2.Success)
+                        throw new OnlineVideosException(m2.Groups["line1"].Value + "\n" + m2.Groups["line2"].Value);
                 }
             }
-            else
+            var data = GetWebData(url);
+            string packed = Helpers.StringUtils.GetSubString(data, @"return p}", @"</script>");
+            packed = packed.Replace(@"\'", @"'");
+            string unpacked = Helpers.StringUtils.UnPack(packed);
+            Match m = Regex.Match(unpacked, @"MDCore\.wurl=""(?<url>[^""]*)""");
+            if (m.Success)
             {
-                m = Regex.Match(data, @"<h2>(?<line1>[^<]*)</h2>\s*<p>(?<line2>[^<]*)</p>");
-                if (m.Success)
-                    throw new OnlineVideosException(m.Groups["line1"].Value + "\n" + m.Groups["line2"].Value);
+                var finalUrl = m.Groups["url"].Value;
+                if (!finalUrl.StartsWith("http"))
+                    finalUrl = "https:" + finalUrl;
+                return finalUrl;
             }
             return String.Empty;
         }
