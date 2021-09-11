@@ -767,6 +767,7 @@
       <Categories>
         <Category xsi:type="RssLink" name="Rock">https://arrow.tv/rock</Category>
         <Category xsi:type="RssLink" name="Metal">https://arrow.tv/metal</Category>
+        <Category xsi:type="RssLink" name="Bluesrock">https://arrow.tv/bluesrock</Category>
       </Categories>
     </Site>
     <Site name="CBC.ca" util="CBC" agecheck="false" enabled="true" lang="en">
