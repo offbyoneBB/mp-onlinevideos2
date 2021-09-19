@@ -145,12 +145,14 @@ namespace OnlineVideos
         /// <returns></returns>
         public string GetPreferredUrl(bool first)
         {
-            if (PlaybackOptions == null || PlaybackOptions.Count == 0) return null;
+            if (PlaybackOptions == null || PlaybackOptions.Count == 0) return VideoUrl;
             else
                 if (PlaybackOptions.Count == 1)
                 {
                     string resultUrl = PlaybackOptions.First().Value;
                     PlaybackOptions = null;// only one url found, PlaybackOptions not needed
+                    if (String.IsNullOrEmpty(VideoUrl))
+                        VideoUrl = resultUrl;
                     return resultUrl;
                 }
                 else
