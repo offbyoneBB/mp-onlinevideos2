@@ -21,6 +21,7 @@
     <PluginReference PluginId="{1AFF4467-64B0-4ca1-AF28-9AEDF3525BCE}" CompatibleAPI="1"/> <!-- ConfigurationManager -->
     <PluginReference PluginId="{B765A4B6-F455-4941-BDAE-2CE45208BFEB}" CompatibleAPI="1"/> <!-- Configuration plugin -->
     <PluginReference PluginId="{6792C6C5-842C-4C65-A698-D94710984A42}" CompatibleAPI="1"/> <!-- InputStreamPlayer -->
+    <PluginReference PluginId="{8B61C331-DBE8-4E56-8A1D-11C32D8C850D}" CompatibleAPI="1"/> <!-- FFMpegLib -->
   </DependsOn>
 
   <Runtime>

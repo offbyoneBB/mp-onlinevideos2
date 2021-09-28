@@ -6,6 +6,7 @@ using MediaPortal.Common;
 using MediaPortal.Common.Commands;
 using MediaPortal.Common.General;
 using MediaPortal.Common.MediaManagement;
+using MediaPortal.Extensions.MetadataExtractors.FFMpegLib;
 using MediaPortal.UI.Presentation.DataObjects;
 using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.UI.Presentation.Workflow;
@@ -490,8 +491,20 @@ namespace OnlineVideos.MediaPortal2
                 try
                 {
                     IDownloader dlHelper = null;
-                    if (dlList.CurrentItem.Url.ToLower().StartsWith("mms://")) dlHelper = new MMSDownloader();
-                    else dlHelper = new MPUrlSourceFilter.Downloader();
+                    if (dlList.CurrentItem.Url.ToLower().StartsWith("mms://")) 
+                        dlHelper = new MMSDownloader();
+                    else
+                    {
+                        if (IntPtr.Size > 4)
+                        {
+                            dlHelper = new FFMPEGDownloader(FFMpegBinary.FFMpegPath);
+                        }
+                        else
+                        {
+                            dlHelper = new MPUrlSourceFilter.Downloader();
+                        }
+                    }
+
                     dlList.CurrentItem.Downloader = dlHelper;
                     dlList.CurrentItem.Start = DateTime.Now;
                     Log.Info("Starting download of '{0}' to '{1}' from Site '{2}'", dlList.CurrentItem.Url, dlList.CurrentItem.LocalFile, dlList.CurrentItem.Util.Settings.Name);

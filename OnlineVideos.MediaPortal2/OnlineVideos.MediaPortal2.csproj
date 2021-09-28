@@ -46,8 +46,10 @@
     <Reference Include="Media">
       <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\Plugins\Media\Media.dll</HintPath>
     </Reference>
-    <Reference Include="MediaPortal.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="FFMpegLib">
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\Plugins\FFMpegLib\FFMpegLib.dll</HintPath>
+    </Reference>
+    <Reference Include="MediaPortal.Common">
       <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\MediaPortal.Common.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -55,8 +57,7 @@
       <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\MediaPortal.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="MediaPortal.Utilities, Version=2.0.0.1510, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="MediaPortal.Utilities">
       <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\MediaPortal.Utilities.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct3D9">
