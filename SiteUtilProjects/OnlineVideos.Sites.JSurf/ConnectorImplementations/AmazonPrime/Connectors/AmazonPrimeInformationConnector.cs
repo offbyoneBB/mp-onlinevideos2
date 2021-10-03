@@ -319,7 +319,7 @@ namespace OnlineVideos.Sites.JSurf.ConnectorImplementations.AmazonPrime.Connecto
         public List<SearchResultItem> DoSearch(string query)
         {
             DoLogin();
-            return Resources.AmazonSearchUrl.LoadAmazonPrimeSearchAsCategoriesFromUrl(query, _browserSession);
+            return Resources.AmazonSearchUrl(query).LoadAmazonPrimeSearchAsCategoriesFromUrl(query, _browserSession);
         }
 
         public bool GetInputStreamProperties(VideoInfo video, out string streamUrl, out string licenseUrl, out Dictionary<string, string> additionalTags)
