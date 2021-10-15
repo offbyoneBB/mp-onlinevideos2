@@ -1361,6 +1361,39 @@ namespace OnlineVideos.Hoster
         }
     }
 
+
+    public class Upstream : MyHosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "upstream.to";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            string data = GetWebData(url);
+            string packed = Helpers.StringUtils.GetSubString(data, @"return p}", @"</script>");
+            if (!String.IsNullOrEmpty(packed))
+            {
+                packed = packed.Replace(@"\'", @"'");
+                string unpacked = Helpers.StringUtils.UnPack(packed);
+                var resUrl = Helpers.StringUtils.GetSubString(unpacked, @"file:""", @"""");
+                if (resUrl.EndsWith(".m3u8"))
+                {
+                    var m3u8Data = GetWebData(resUrl, referer: "https://upstream.to/");
+                    var res = Helpers.HlsPlaylistParser.GetPlaybackOptions(m3u8Data, resUrl);
+                    var finalUrl = res.LastOrDefault().Value;
+                    HttpUrl ress = new HttpUrl(finalUrl);
+                    ress.Referer = "https://upstream.to/";
+                    return ress.ToString();
+                }
+                else
+                    return resUrl;
+            }
+            return null;
+        }
+    }
+
     public class Veehd : MyHosterBase
     {
         public override string GetHosterUrl()
