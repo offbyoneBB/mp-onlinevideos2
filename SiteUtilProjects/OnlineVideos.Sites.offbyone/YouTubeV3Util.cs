@@ -932,7 +932,7 @@ namespace OnlineVideos.Sites
             // Retrieve Video durations
             Dictionary<string, string> videoDurations = QueryVideoInfoDuration(videoIDs);
 
-            var results = response.Items.Select(i => new YouTubeVideo()
+            var results = response.Items.Where(i => !String.IsNullOrEmpty(i.Id.VideoId)).Select(i => new YouTubeVideo()
             {
                 Title = i.Snippet.Title,
                 Description = i.Snippet.Description,
