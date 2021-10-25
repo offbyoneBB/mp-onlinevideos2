@@ -7,22 +7,18 @@ using OnlineVideos.MPUrlSourceFilter;
 
 namespace OnlineVideos.Sites
 {
-    public class GofastIPTVUtil : GenericSiteUtil
+    public class IPTVUtil : GenericSiteUtil
     {
-        [Category("OnlineVideosUserConfiguration"), Description("Username of your gofastiptv account")]
-        private string username = null;
+        [Category("OnlineVideosUserConfiguration"), Description("Url of your m3u8")]
+        protected string m3u8url = ""; //;"http://lemon.catchmeifyo.com:8000/get.php?username=958394539&password=271325763&output=mpegts&type=m3u_plus";
 
-        [Category("OnlineVideosUserConfiguration"), Description("Password of your gofastiptv account"), PasswordPropertyText(true)]
-        private string password = null;
+        private static readonly Regex extinfReg = new Regex(@"\#EXTINF[^\s]*\stvg-id=""(?<tvgid>[^""]*)""\stvg-name=""(?<tvgname>[^""]*?)(?:(?<reso>\s(HD|FHD|FHD\+|HEVC|FHD\sHEVC)(?:\s\([^\)]*\))?))?""\stvg-logo=""(?<tvglogo>[^""]*)""\sgroup-title=""(?<grouptitle>[^""]*?)(?:(?<groupreso>\s(HD|FHD|HEVC|FHD\sHEVC)))?"",(?<rest>.*)", RegexOptions.IgnoreCase);
 
-
-        private static readonly Regex extinfReg = new Regex(@"\#EXTINF[^\s]*\stvg-id=""(?<tvgid>[^""]+)""\stvg-name=""(?<tvgname>[^""]*?)(?:(?<reso>\s(HD|FHD|HEVC|FHD\sHEVC)(?:\s\([^\)]*\))?))?""\stvg-logo=""(?<tvglogo>[^""]*)""\sgroup-title=""(?<grouptitle>[^""]*?)(?:(?<groupreso>\s(HD|FHD|HEVC|FHD\sHEVC)))?"",(?<rest>.*)", RegexOptions.IgnoreCase);
-
-        SortedList<string, SortedList<string, SortedList<string, GoFastStream>>> groups = new SortedList<string, SortedList<string, SortedList<string, GoFastStream>>>();
+        SortedList<string, SortedList<string, SortedList<string, IPTVStream>>> groups = new SortedList<string, SortedList<string, SortedList<string, IPTVStream>>>();
 
         public override int DiscoverDynamicCategories()
         {
-            var data = GetWebData(string.Format(baseUrl, username, password));
+            var data = GetWebData(m3u8url);
             using (StringReader sr = new StringReader(data))
             {
                 string line = sr.ReadLine();
@@ -33,11 +29,11 @@ namespace OnlineVideos.Sites
                         Match m = extinfReg.Match(line);
                         if (m.Success)
                         {
-                            GoFastStream stream = new GoFastStream()
+                            IPTVStream stream = new IPTVStream()
                             {
                                 tvgid = m.Groups["tvgid"].Value,
                                 tvgname = m.Groups["tvgname"].Value,
-                                grouptitle = m.Groups["grouptitle"].Value,
+                                grouptitle = m.Groups["grouptitle"].Value.Replace(" Terugkijken + Overig",""),
                                 reso = m.Groups["reso"].Value,
                                 logo = m.Groups["tvglogo"].Value
                             };
@@ -45,11 +41,11 @@ namespace OnlineVideos.Sites
                                 stream.tvgid = "None";
                             stream.url = sr.ReadLine();
                             if (!groups.ContainsKey(stream.grouptitle))
-                                groups.Add(stream.grouptitle, new SortedList<string, SortedList<string, GoFastStream>>());
+                                groups.Add(stream.grouptitle, new SortedList<string, SortedList<string, IPTVStream>>());
                             var group = groups[stream.grouptitle];
-                            if (!group.ContainsKey(stream.tvgid))
-                                group.Add(stream.tvgid, new SortedList<string, GoFastStream>());
-                            var channel = group[stream.tvgid];
+                            if (!group.ContainsKey(stream.tvgname))
+                                group.Add(stream.tvgname, new SortedList<string, IPTVStream>());
+                            var channel = group[stream.tvgname];
                             if (!channel.ContainsKey(stream.reso))
                                 channel.Add(stream.reso, stream);
                         }
@@ -73,11 +69,11 @@ namespace OnlineVideos.Sites
 
         public override List<VideoInfo> GetVideos(Category category)
         {
-            var vids = (SortedList<string, SortedList<string, GoFastStream>>)category.Other;
+            var vids = (SortedList<string, SortedList<string, IPTVStream>>)category.Other;
             List<VideoInfo> videos = new List<VideoInfo>();
             foreach (var vid in vids)
             {
-                VideoInfo video = new GoFastVideoInfo()
+                VideoInfo video = new IPTVVideoInfo()
                 {
                     Title = vid.Key,
                     Other = vid.Value,
@@ -100,7 +96,7 @@ namespace OnlineVideos.Sites
 
     }
 
-    public class GoFastVideoInfo : VideoInfo
+    public class IPTVVideoInfo : VideoInfo
     {
         public override string GetPlaybackOptionUrl(string url)
         {
@@ -111,7 +107,7 @@ namespace OnlineVideos.Sites
     }
 
 
-    class GoFastStream
+    class IPTVStream
     {
         public string tvgid;
         public string tvgname;
