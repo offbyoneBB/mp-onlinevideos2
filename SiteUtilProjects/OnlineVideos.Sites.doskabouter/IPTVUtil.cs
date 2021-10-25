@@ -10,7 +10,7 @@ namespace OnlineVideos.Sites
     public class IPTVUtil : GenericSiteUtil
     {
         [Category("OnlineVideosUserConfiguration"), Description("Url of your m3u8")]
-        protected string m3u8url = ""; //;"http://lemon.catchmeifyo.com:8000/get.php?username=958394539&password=271325763&output=mpegts&type=m3u_plus";
+        protected string m3u8url = "";
 
         private static readonly Regex extinfReg = new Regex(@"\#EXTINF[^\s]*\stvg-id=""(?<tvgid>[^""]*)""\stvg-name=""(?<tvgname>[^""]*?)(?:(?<reso>\s(HD|FHD|FHD\+|HEVC|FHD\sHEVC)(?:\s\([^\)]*\))?))?""\stvg-logo=""(?<tvglogo>[^""]*)""\sgroup-title=""(?<grouptitle>[^""]*?)(?:(?<groupreso>\s(HD|FHD|HEVC|FHD\sHEVC)))?"",(?<rest>.*)", RegexOptions.IgnoreCase);
 
