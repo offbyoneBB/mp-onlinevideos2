@@ -33,7 +33,7 @@ namespace OnlineVideos.Sites
                             {
                                 tvgid = m.Groups["tvgid"].Value,
                                 tvgname = m.Groups["tvgname"].Value,
-                                grouptitle = m.Groups["grouptitle"].Value.Replace(" Terugkijken + Overig",""),
+                                grouptitle = m.Groups["grouptitle"].Value.Replace(" Terugkijken + Overig", ""),
                                 reso = m.Groups["reso"].Value,
                                 logo = m.Groups["tvglogo"].Value
                             };
@@ -81,7 +81,9 @@ namespace OnlineVideos.Sites
                 };
                 foreach (var res in vid.Value)
                 {
-                    video.PlaybackOptions.Add(res.Key, res.Value.url);
+                    HttpUrl httpUrl = new HttpUrl(res.Value.url);
+                    httpUrl.UserAgent = OnlineVideoSettings.Instance.UserAgent;
+                    video.PlaybackOptions.Add(res.Key, httpUrl.ToString());
                     video.Thumb = res.Value.logo;
                 }
                 videos.Add(video);
