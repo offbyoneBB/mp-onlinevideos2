@@ -32,6 +32,26 @@ namespace OnlineVideos.MPUrlSourceFilter
             this.cancelled = false;
         }
 
+        /// <summary>
+        /// Checks if the required MPUrlSourceSplitter can be used.
+        /// </summary>
+        public static bool IsAvailable
+        {
+            get
+            {
+                try
+                {
+                    var sourceFilter = (IDownload)new MPUrlSourceSplitter();
+                    Marshal.ReleaseComObject(sourceFilter);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+
         #endregion
 
         #region Properties

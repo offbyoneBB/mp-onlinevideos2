@@ -495,7 +495,8 @@ namespace OnlineVideos.MediaPortal2
                         dlHelper = new MMSDownloader();
                     else
                     {
-                        if (IntPtr.Size > 4)
+                        // Prefer ffmpeg on 64 bit systems (no MPUrlSourceFilter avaible) or on systems where the filter is not registered.
+                        if (IntPtr.Size > 4 || !MPUrlSourceFilter.Downloader.IsAvailable)
                         {
                             dlHelper = new FFMPEGDownloader(FFMpegBinary.FFMpegPath);
                         }
