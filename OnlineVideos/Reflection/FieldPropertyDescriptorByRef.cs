@@ -42,7 +42,8 @@ namespace OnlineVideos.Reflection
         {
             get
             {
-                return FieldPropertyDescriptor.PropertyType.IsEnum || !FieldPropertyDescriptor.Attributes[typeof(TypeConverterAttribute)].IsDefaultAttribute();
+                return FieldPropertyDescriptor.PropertyType.IsEnum || 
+                    !String.IsNullOrEmpty(((TypeConverterAttribute)FieldPropertyDescriptor.Attributes[typeof(TypeConverterAttribute)]).ConverterTypeName);
             }
         }
 
