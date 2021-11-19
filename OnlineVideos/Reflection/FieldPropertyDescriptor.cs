@@ -29,6 +29,11 @@ namespace OnlineVideos.Reflection
             }
         }
 
+        public override string ToString()
+        {
+            return Name+":"+PropertyType.Name;
+        }
+
         public override int GetHashCode() { return _fieldInfo.GetHashCode(); }
 
         public override bool IsReadOnly { get { return false; } }
