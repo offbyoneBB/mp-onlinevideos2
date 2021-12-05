@@ -12,7 +12,7 @@ namespace OnlineVideos.Sites
         [Category("OnlineVideosUserConfiguration"), Description("Url of your m3u8")]
         protected string m3u8url = "";
 
-        private static readonly Regex extinfReg = new Regex(@"\#EXTINF[^\s]*\stvg-id=""(?<tvgid>[^""]*)""\stvg-name=""(?<tvgname>[^""]*?)(?:(?<reso>\s(HD|FHD|FHD\+|HEVC|FHD\sHEVC)(?:\s\([^\)]*\))?))?""\stvg-logo=""(?<tvglogo>[^""]*)""\sgroup-title=""(?<grouptitle>[^""]*?)(?:(?<groupreso>\s(HD|FHD|HEVC|FHD\sHEVC)))?"",(?<rest>.*)", RegexOptions.IgnoreCase);
+        private static readonly Regex extinfReg = new Regex(@"\#EXTINF[^\s]*\stvg-id=""(?<tvgid>[^""]*)""\stvg-name=""(?<tvgname>[^""]*?)(?:(?<reso>\s(HD|FHD|FHD\+|HEVC|FHD\sHEVC|H.265)(?:\s\([^\)]*\))?))?""\stvg-logo=""(?<tvglogo>[^""]*)""\sgroup-title=""(?<grouptitle>[^""]*?)(?:(?<groupreso>\s(HD|FHD|HEVC|FHD\sHEVC|HEVC\sH.265)))?"",(?<rest>.*)", RegexOptions.IgnoreCase);
 
         SortedList<string, SortedList<string, SortedList<string, IPTVStream>>> groups = new SortedList<string, SortedList<string, SortedList<string, IPTVStream>>>();
 
@@ -32,8 +32,8 @@ namespace OnlineVideos.Sites
                             IPTVStream stream = new IPTVStream()
                             {
                                 tvgid = m.Groups["tvgid"].Value,
-                                tvgname = m.Groups["tvgname"].Value,
-                                grouptitle = m.Groups["grouptitle"].Value.Replace(" Terugkijken + Overig", ""),
+                                tvgname = m.Groups["tvgname"].Value.Replace(" H.265",""),
+                                grouptitle = m.Groups["grouptitle"].Value.Replace(" Terugkijken + Overig", "").Replace(" KANALEN","").Replace(" HEVC H.265",""),
                                 reso = m.Groups["reso"].Value,
                                 logo = m.Groups["tvglogo"].Value
                             };
@@ -41,7 +41,7 @@ namespace OnlineVideos.Sites
                                 stream.tvgid = "None";
                             stream.url = sr.ReadLine();
                             if (!groups.ContainsKey(stream.grouptitle))
-                                groups.Add(stream.grouptitle, new SortedList<string, SortedList<string, IPTVStream>>());
+                                groups.Add(stream.grouptitle, new SortedList<string, SortedList<string, IPTVStream>>(StringComparer.CurrentCultureIgnoreCase));
                             var group = groups[stream.grouptitle];
                             if (!group.ContainsKey(stream.tvgname))
                                 group.Add(stream.tvgname, new SortedList<string, IPTVStream>());
@@ -73,7 +73,7 @@ namespace OnlineVideos.Sites
             List<VideoInfo> videos = new List<VideoInfo>();
             foreach (var vid in vids)
             {
-                VideoInfo video = new IPTVVideoInfo()
+                VideoInfo video = new VideoInfo()
                 {
                     Title = vid.Key,
                     Other = vid.Value,
@@ -83,6 +83,7 @@ namespace OnlineVideos.Sites
                 {
                     HttpUrl httpUrl = new HttpUrl(res.Value.url);
                     httpUrl.UserAgent = OnlineVideoSettings.Instance.UserAgent;
+                    httpUrl.LiveStream = true;
                     video.PlaybackOptions.Add(res.Key, httpUrl.ToString());
                     video.Thumb = res.Value.logo;
                 }
@@ -97,17 +98,6 @@ namespace OnlineVideos.Sites
         }
 
     }
-
-    public class IPTVVideoInfo : VideoInfo
-    {
-        public override string GetPlaybackOptionUrl(string url)
-        {
-            var result = WebCache.Instance.GetRedirectedUrl(PlaybackOptions[url]);
-            HttpUrl res = new HttpUrl(result) { LiveStream = true };
-            return res.ToString();
-        }
-    }
-
 
     class IPTVStream
     {
