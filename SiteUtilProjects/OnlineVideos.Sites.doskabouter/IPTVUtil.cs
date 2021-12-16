@@ -83,7 +83,7 @@ namespace OnlineVideos.Sites
                 {
                     HttpUrl httpUrl = new HttpUrl(res.Value.url);
                     httpUrl.UserAgent = OnlineVideoSettings.Instance.UserAgent;
-                    httpUrl.LiveStream = true;
+                    httpUrl.LiveStream = String.IsNullOrEmpty(Path.GetExtension(res.Value.url));
                     video.PlaybackOptions.Add(res.Key, httpUrl.ToString());
                     video.Thumb = res.Value.logo;
                 }
