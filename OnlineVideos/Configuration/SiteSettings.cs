@@ -23,7 +23,10 @@ namespace OnlineVideos
         [XmlEnum(Name = "VLC")]
         VLC,
         [XmlEnum(Name = "Browser")]
-        Browser
+        Browser,
+        [XmlEnum(Name = "Webview")]
+        Webview
+
     }
 
     [DataContract(Name = "OnlineVideoSites")]

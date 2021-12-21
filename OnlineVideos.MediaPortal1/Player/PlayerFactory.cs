@@ -1,5 +1,6 @@
 ﻿using System;
 using MediaPortal.Player;
+using OnlineVideos.Sites;
 
 namespace OnlineVideos.MediaPortal1.Player
 {
@@ -18,12 +19,12 @@ namespace OnlineVideos.MediaPortal1.Player
         public PlayerType PreparedPlayerType { get; protected set; }
         public IPlayer PreparedPlayer { get; protected set; }
 
-        public PlayerFactory(PlayerType playerType, string url)
+        public PlayerFactory(PlayerType playerType, string url, IWebViewSiteUtil siteUtil)
         {
             PreparedPlayerType = playerType;
             PreparedUrl = url;
             SelectPlayerType();
-            PreparePlayer();
+            PreparePlayer(siteUtil);
         }
 
         void SelectPlayerType()
@@ -59,13 +60,14 @@ namespace OnlineVideos.MediaPortal1.Player
             }
         }
 
-        void PreparePlayer()
+        void PreparePlayer(OnlineVideos.Sites.IWebViewSiteUtil webviewSiteUtil)
         {
             switch (PreparedPlayerType)
             {
                 case PlayerType.Internal: PreparedPlayer = new OnlineVideosPlayer(PreparedUrl); break;
                 case PlayerType.VLC: PreparedPlayer = new VLCPlayer(); break;
                 case PlayerType.Browser: PreparedPlayer = new WebBrowserVideoPlayer(); break;
+                case PlayerType.Webview: PreparedPlayer = new WebViewPlayer(webviewSiteUtil);break;
                 default: PreparedPlayer = new WMPVideoPlayer(); break;
             }
         }

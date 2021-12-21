@@ -490,6 +490,8 @@ namespace OnlineVideos.MediaPortal1
                                     dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>(OnlineVideos.PlayerType.Internal.ToString(), null));
                                     dlgSel.Add("Windows Media Player");
                                     dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>(OnlineVideos.PlayerType.WMP.ToString(), null));
+                                    dlgSel.Add("Webview Player");
+                                    dialogOptions.Add(new KeyValuePair<string, Sites.ContextMenuEntry>(OnlineVideos.PlayerType.Webview.ToString(), null));
                                     if (VLCPlayer.IsInstalled)
                                     {
                                         dlgSel.Add("VLC media player");
@@ -2402,7 +2404,9 @@ namespace OnlineVideos.MediaPortal1
         void Play_Step4(PlayListItem playItem, string lsUrl, bool goFullScreen)
         {
 
-            OnlineVideos.MediaPortal1.Player.PlayerFactory factory = new OnlineVideos.MediaPortal1.Player.PlayerFactory(playItem.ForcedPlayer != null ? playItem.ForcedPlayer.Value : playItem.Util.Settings.Player, lsUrl);
+            OnlineVideos.MediaPortal1.Player.PlayerFactory factory = 
+                new OnlineVideos.MediaPortal1.Player.PlayerFactory(
+                    playItem.ForcedPlayer != null ? playItem.ForcedPlayer.Value : playItem.Util.Settings.Player, lsUrl, playItem.Util as IWebViewSiteUtil);
 
             // check for valid url and cut off additional parameter
             if ((String.IsNullOrEmpty(lsUrl) ||
