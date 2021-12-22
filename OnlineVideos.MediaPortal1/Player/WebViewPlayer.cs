@@ -58,7 +58,7 @@ namespace OnlineVideos.MediaPortal1.Player
             playState = PlayState.Init;
             wvHelper = new WebViewHelper(webView);
 
-            webView.NavigationCompleted += WebView_NavigationCompleted;
+            webView.NavigationCompleted += WebView_FirstNavigationCompleted;
             GUIGraphicsContext.form.Controls.Add(webView);
             GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor while buffering
 
@@ -139,7 +139,7 @@ namespace OnlineVideos.MediaPortal1.Player
             }
         }
 
-        private void WebView_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
+        private void WebView_FirstNavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
             if (disableVMRWhenRunning)
                 GUIGraphicsContext.Vmr9Active = true;
@@ -147,8 +147,14 @@ namespace OnlineVideos.MediaPortal1.Player
             GUIWaitCursor.Hide(); // hide the wait cursor
             playState = PlayState.Playing;
             _siteUtil.OnInitialized(wvHelper);
+            webView.NavigationCompleted -= WebView_FirstNavigationCompleted;
+            webView.NavigationCompleted += WebView_FurtherNavigationCompleted;
         }
 
+        private void WebView_FurtherNavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
+        {
+            _siteUtil.OnPageLoaded(wvHelper);
+        }
     }
 
 
