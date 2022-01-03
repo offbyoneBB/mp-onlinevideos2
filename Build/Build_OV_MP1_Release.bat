@@ -28,7 +28,7 @@ echo.
 
 echo.
 echo Building OnlineVideos for MediaPortal1 ...
-"%progpath%\MSBuild\14.0\Bin\MSBUILD.exe" /target:Rebuild /property:Configuration=%BUILD_TYPE% "..\OnlineVideos.MediaPortal1.sln" >> %LOG%
+"%progpath%\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBUILD.exe" /target:Rebuild /property:Configuration=%BUILD_TYPE% "..\OnlineVideos.MediaPortal1.sln" >> %LOG%
 
 echo Building MPEI
 copy "..\MPEI\OnlineVideos.xmp2" "..\MPEI\OnlineVideos_COPY.xmp2"
