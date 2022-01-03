@@ -53,7 +53,7 @@
         <UpdateUrl>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=162&amp;cf_id=52</UpdateUrl>
         <Version>
           <Major>0</Major>
-          <Minor>74</Minor>
+          <Minor>75</Minor>
           <Build>1</Build>
           <Revision>0</Revision>
         </Version>
@@ -61,7 +61,7 @@
         <VersionDescription>See https://github.com/Nevcairiel/LAVFilters/releases for release notes.</VersionDescription>
         <DevelopmentStatus>Stable</DevelopmentStatus>
         <OnlineLocation>http://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=162&amp;cf_id=24</OnlineLocation>
-        <ReleaseDate>2019-07-15T15:00:00</ReleaseDate>
+        <ReleaseDate>2021-12-28T15:00:00</ReleaseDate>
         <Tags>codec</Tags>
         <Location>.\LAVFilters[Version].mpe1</Location>
         <Params>
