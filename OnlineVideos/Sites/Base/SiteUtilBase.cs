@@ -53,6 +53,7 @@ namespace OnlineVideos.Sites
         /// by the default implementation of the <see cref="Initialize"/> method.
         /// </summary>
         public virtual SiteSettings Settings { get; protected set; }
+        //public System.Windows.Forms.Control activeForm { get; set; }
 
         /// <summary>
         /// You should always call this implementation, even when overriding it. It is called after the instance has been created

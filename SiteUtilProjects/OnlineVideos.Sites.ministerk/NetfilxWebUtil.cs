@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using OnlineVideos.Helpers;
 using OnlineVideos.Sites.Interfaces;
 using OnlineVideos.Sites.Utils;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -11,18 +13,35 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using Microsoft.Web.WebView2.WinForms;
 
-namespace OnlineVideos.Sites.BrowserUtilConnectors
+namespace OnlineVideos.Sites
 {
 
-    public class NetfilxWebUtil : SiteUtilBase, IBrowserVersionEmulation
+    public class NetfilxWebUtil : SiteUtilBase, IWebViewSiteUtil
     {
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        public static extern int ShowCursor(bool bShow);
 
-        [DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        static extern bool InternetGetCookie(string lpszUrl, string lpszCookieName,
-                         StringBuilder lpszCookieData, ref int lpdwSize);
-        [DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        static extern bool InternetSetCookie(string lpszUrlName, string lpszCookieName, string lpszCookieData);
+        //private WebView2 wv2;
+        private WebViewHelper wvh;
+
+        public void SetWebviewHelper(WebViewHelper webViewHelper)
+        {
+            //webViewHelper.GetCookies(homeUrl);
+            wvh = webViewHelper;
+            //wv2 = webViewHelper.webView;
+        }
+        private void DoInit()
+        {
+            int i = 0;
+            //System.Windows.Forms.Form.ActiveForm.Invoke((Action)delegate { DoInit2(); });//ActiveForm=null
+            //System.Windows.Forms.Application.OpenForms[0].Invoke((Action)delegate { DoInit2(); });//OpenForms.Count=0
+            //activeForm.Invoke((Action)delegate { DoInit2(); });//FileNotFoundException: Could not load file or assembly 'OnlineVideos.Sites.ministerk, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null' or one of its dependencies. The system cannot find the file specified.
+            //wvh = new WebViewHelper(wv2);
+            //wvh.SetAndWait(homeUrl);//hangt ook
+        }
+
 
         #region Helper classes
 
@@ -58,7 +77,9 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         #region Urls
 
+
         private string homeUrl = @"https://www.netflix.com/";
+        private string loginUrl = @"https://www.netflix.com/login";
         private string playerUrl = @"http://www.netflix.com/watch/{0}";
         private string searchUrl = @"https://www.netflix.com/search?q={0}";
         private string switchProfileUrl = @"{0}{1}profiles/switch?switchProfileGuid={2}&authURL={3}";
@@ -435,23 +456,13 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
                 if (_cc == null)
                 {
                     _cc = new CookieContainer();
-                    int size = 0;
-                    InternetGetCookie(homeUrl, null, null, ref size);
+                    var cookies = wvh.GetCookies(homeUrl);
 
-                    StringBuilder lpszCookieData = new StringBuilder(size);
-                    InternetGetCookie(homeUrl, null, lpszCookieData, ref size);
-
-                    string cooks = lpszCookieData.ToString();
-                    if (!(String.IsNullOrEmpty(cooks)))
+                    foreach (var cook in cookies)
                     {
-                        var cookarr = cooks.Split(';');
-                        foreach (var cook in cookarr)
-                        {
-                            int p = cook.IndexOf('=');
-                            Cookie c = new Cookie(cook.Substring(0, p).Trim(), cook.Substring(p + 1));
-                            c.Domain = new Uri(homeUrl).Host;
-                            _cc.Add(c);
-                        }
+                        Cookie c = new Cookie(cook.Name, cook.Value);
+                        //c.Domain = new Uri(homeUrl).Host;
+                        _cc.Add(cook);
                     }
                     string data = ExtendedWebCache.Instance.GetWebData<string>(homeUrl, cookies: _cc, cache: false);
 
@@ -491,6 +502,9 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         public override int DiscoverDynamicCategories()
         {
+            DoInit();
+            Settings.Player = PlayerType.Webview;
+            //https://stackoverflow.com/questions/66394112/parallel-using-of-webview2-in-async-task
             Settings.Categories.Clear();
             try
             {
@@ -550,9 +564,21 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             MyGetWebData(homeUrl);
             if (_cc != null)
             {
+                var aa = wvh.GetCookies(homeUrl);
+                foreach (Cookie c in aa)
+                {
+                    Log.Debug("pre: " + c.Name + ":" + c.Value);
+                }
                 foreach (Cookie cookie in _cc.GetCookies(new Uri(homeUrl)))
                 {
-                    InternetSetCookie(homeUrl, cookie.Name, cookie.Value);
+                    Log.Debug("set: " + cookie.Name + ":" + cookie.Value);
+                    //cookie.Path = homeUrl;
+                    wvh.SetCookie(cookie);
+                }
+                var aa2 = wvh.GetCookies(homeUrl);
+                foreach (Cookie c in aa2)
+                {
+                    Log.Debug("post: " + c.Name + ":" + c.Value);
                 }
             }
             List<Category> cats = new List<Category>();
@@ -1042,7 +1068,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private List<VideoInfo> GetLoginVideo(Category category)
         {
             List<VideoInfo> videos = new List<VideoInfo>();
-            videos.Add(new VideoInfo() { Title = "Login", VideoUrl = "LOGIN" });
+            videos.Add(new VideoInfo() { Title = "Login", VideoUrl = loginUrl });
             return videos;
         }
 
@@ -1144,47 +1170,50 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         #endregion
 
-        #region IBrowserSiteUtil
-        string IBrowserSiteUtil.ConnectorEntityTypeName
+        #region IWebViewSiteUtil
+        string savUrl;
+        public void OnInitialized(WebViewHelper webViewHelper)
         {
-            get
+            if (Settings.Categories.Count == 1)
             {
-                return "OnlineVideos.Sites.BrowserUtilConnectors.NetflixConnector";
+                while (ShowCursor(true) < 0) ;
+                webViewHelper.SetEnabled(true);
             }
+            else
+            {
+                //savUrl = webViewHelper.GetUrl();
+                //webViewHelper.set(string.Format(switchProfileUrl, ShaktiApi, BuildId, ProfileToken, LatestAuthUrl));
+                //var doc = webViewHelper.GetHtml();
+
+            }
+                //webViewHelper.SendKeys(" ");
         }
 
-        string IBrowserSiteUtil.UserName
+        public void OnPageLoaded(WebViewHelper webViewHelper, ref bool doStopPlayback)
         {
-            get
+            if (Settings.Categories.Count == 1 && webViewHelper.GetUrl().ToLowerInvariant().Contains("/browse"))
             {
-                return _cc == null ? "GET" : "";
+                doStopPlayback = true;
             }
-        }
-
-        string IBrowserSiteUtil.Password
-        {
-            get
+            else
             {
-                var c = new ConnectorSettings()
+                if (!String.IsNullOrEmpty(savUrl))
                 {
-                    showLoadingSpinner = showLoadingSpinner,
-                    enableNetflixOsd = enableNetflixOsd,
-                    disableLogging = disableLogging,
-                    enableIEDebug = enableIEDebug
-                };
-                string json = JsonConvert.SerializeObject(c);
-                string base64 = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(json));
-                if (enableVerboseLog) Log.Debug("profile: {0}", ProfileToken);
-                return base64;
+                    webViewHelper.set(savUrl);
+                    savUrl = null;
+                }
+                int i = 0;
             }
         }
 
-        public int EmulatedVersion
+        public void DoPause(WebViewHelper webViewHelper)
         {
-            get
-            {
-                return 11000;
-            }
+            webViewHelper.SendKeys(" ");
+        }
+
+        public void DoPlay(WebViewHelper webViewHelper)
+        {
+            webViewHelper.SendKeys(" ");
         }
         #endregion
 

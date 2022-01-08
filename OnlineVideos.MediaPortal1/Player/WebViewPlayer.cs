@@ -12,7 +12,7 @@ namespace OnlineVideos.MediaPortal1.Player
 {
     public class WebViewPlayer : IPlayer, OVSPLayer
     {
-        private bool disableVMRWhenRunning = true;
+        private bool disableVMRWhenRunning = true;//when true no mousecursor is rendered...
         private IWebViewSiteUtil _siteUtil;
         private WebViewHelper wvHelper;
 
@@ -31,40 +31,49 @@ namespace OnlineVideos.MediaPortal1.Player
         private void DoDispose()
         {
             GUIGraphicsContext.form.Controls.Remove(webView);
-            webView.Dispose();
-            webView = null;
+            //webView.Dispose();
+            //webView = null;
         }
         public override void Dispose()
         {
-            if (webView != null)
-                DoDispose();
+            //if (webView != null)
+            //  DoDispose();
         }
 
         public override bool Play(string strFile)
         {
+            try
+            {
+                wvHelper = WebViewHelper.Instance;
+                webView = wvHelper.webView;
+                String cacheFolder = Path.Combine(Path.GetTempPath(), "WebViewplayer");
+                //webView = new WebView2();
 
-            String cacheFolder = Path.Combine(Path.GetTempPath(), "WebViewplayer");
-            webView = new WebView2();
+                //webView.CreationProperties = new CoreWebView2CreationProperties() { UserDataFolder = cacheFolder };
+                webView.Location = new Point(0, 0);
+                webView.Size = GUIGraphicsContext.form.Size;
+                webView.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom |
+                                 System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+                webView.Name = "webview";
+                webView.Visible = false;
+                webView.Enabled = false;
+                //webView.CoreWebView2InitializationCompleted += WebView_CoreWebView2InitializationCompleted;
+                playState = PlayState.Init;
+                //wvHelper = new WebViewHelper(webView);
 
-            webView.CreationProperties = new CoreWebView2CreationProperties() { UserDataFolder = cacheFolder };
-            webView.Location = new Point(0, 0);
-            webView.Size = GUIGraphicsContext.form.Size;
-            webView.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom |
-                             System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            webView.Name = "webview";
-            webView.Visible = false;
-            webView.Enabled = false;
-            webView.CoreWebView2InitializationCompleted += WebView_CoreWebView2InitializationCompleted;
-            playState = PlayState.Init;
-            wvHelper = new WebViewHelper(webView);
+                webView.NavigationCompleted += WebView_FirstNavigationCompleted;
+                GUIGraphicsContext.form.Controls.Add(webView);
+                GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor while buffering
 
-            webView.NavigationCompleted += WebView_FirstNavigationCompleted;
-            GUIGraphicsContext.form.Controls.Add(webView);
-            GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor while buffering
-
-            webView.Source = new Uri(strFile);
-
-            return true;
+                webView.Source = new Uri(strFile);
+                if (GoFullscreen) GUIWindowManager.ActivateWindow(GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+                return true;
+            }
+            catch (Exception e)
+            {
+                OnlineVideos.Log.Error("Error playing " + strFile + ": " + e.Message);
+                return false;
+            }
         }
 
         public override void Pause()
@@ -132,7 +141,7 @@ namespace OnlineVideos.MediaPortal1.Player
         private void WebView_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
         {
             if (!e.IsSuccess)
-                Log.Instance.Error("Error initializing webview: {0}", e.InitializationException.Message);
+                OnlineVideos.Log.Error("Error initializing webview: {0}", e.InitializationException.Message);
             else
             {
                 if (GoFullscreen) GUIWindowManager.ActivateWindow(GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
@@ -153,7 +162,10 @@ namespace OnlineVideos.MediaPortal1.Player
 
         private void WebView_FurtherNavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
-            _siteUtil.OnPageLoaded(wvHelper);
+            bool doStopPlayback = false;
+            _siteUtil.OnPageLoaded(wvHelper, ref doStopPlayback);
+            if (doStopPlayback)
+                Stop();
         }
     }
 

@@ -14,6 +14,8 @@ using OnlineVideos.Helpers;
 using OnlineVideos.MediaPortal1.Player;
 using OnlineVideos.Sites;
 using Action = MediaPortal.GUI.Library.Action;
+using Microsoft.Web.WebView2.WinForms;
+using Microsoft.Web.WebView2.Core;
 
 namespace OnlineVideos.MediaPortal1
 {
@@ -253,6 +255,7 @@ namespace OnlineVideos.MediaPortal1
 
         public override bool Init()
         {
+
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072 | SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
 
             CrossDomain.OnlineVideosAppDomain.UseSeperateDomain = true;
@@ -1384,6 +1387,24 @@ namespace OnlineVideos.MediaPortal1
             {
                 if (!SelectedSite.Settings.DynamicCategoriesDiscovered)
                 {
+                    //System.Windows.Forms.Form f;
+                    if (SelectedSite is IWebViewSiteUtil)
+                    {
+                        /* WebView2 wv2 = new WebView2();
+                         wv2.Cursor = System.Windows.Forms.Cursors.Arrow;
+                         wv2.CoreWebView2InitializationCompleted += delegate (object sender, CoreWebView2InitializationCompletedEventArgs e)
+                             { Wv2_CoreWebView2InitializationCompleted2(sender, e, parentCategory); };
+
+                         String cacheFolder = Path.Combine(Path.GetTempPath(), "WebViewplayer");
+                         wv2.CreationProperties = new CoreWebView2CreationProperties() { UserDataFolder = cacheFolder };
+                         ((IWebViewSiteUtil)SelectedSite).SetWebviewHelper(new WebViewHelper(wv2));
+                         wv2.EnsureCoreWebView2Async();
+                        */
+                        //no use, waiting is done on uithread, so cursor won't be displayed anyway GUIWaitCursor.Init(); GUIWaitCursor.Show(); 
+                        ((IWebViewSiteUtil)SelectedSite).SetWebviewHelper(WebViewHelper.Instance);
+                        //GUIWaitCursor.Hide();
+                    }
+                    //else
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
                     {
                         Log.Instance.Info("Looking for dynamic categories for site '{0}'", SelectedSite.Settings.Name);
@@ -1430,6 +1451,26 @@ namespace OnlineVideos.MediaPortal1
                     SetCategoriesToFacade(parentCategory, parentCategory.SubCategories, diveDownOrUpIfSingle);
                 }
             }
+        }
+        private void Wv2_CoreWebView2InitializationCompleted2(object sender, CoreWebView2InitializationCompletedEventArgs e, Category parentCategory, bool? diveDownOrUpIfSingle = null)
+        {
+            Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
+            {
+                Log.Instance.Info("Looking for dynamic categories for site '{0}'", SelectedSite.Settings.Name);
+                int foundCategories = SelectedSite.DiscoverDynamicCategories();
+                Log.Instance.Info("Found {0} dynamic categories for site '{1}'", foundCategories, SelectedSite.Settings.Name);
+                return SelectedSite.Settings.Categories;
+            },
+            delegate (bool success, object result)
+            {
+                if (success)
+                {
+                    SetCategoriesToFacade(parentCategory, result as IList<Category>, diveDownOrUpIfSingle);
+                }
+            },
+            Translation.Instance.GettingDynamicCategories, true);
+
+            int i = 0;
         }
 
         private void DisplayCategories_NextPage(NextPageCategory cat)
@@ -2286,7 +2327,7 @@ namespace OnlineVideos.MediaPortal1
         private void Play_Step2(PlayListItem playItem, List<String> loUrlList, bool goFullScreen, bool skipPlaybackOptionsDialog)
         {
 
-            if (playItem.Util.Settings.Player != PlayerType.Browser)
+            if (playItem.Util.Settings.Player != PlayerType.Browser && playItem.Util.Settings.Player != PlayerType.Webview)
                 Helpers.UriUtils.RemoveInvalidUrls(loUrlList);
 
             // if no valid urls were returned show error msg
@@ -2404,7 +2445,7 @@ namespace OnlineVideos.MediaPortal1
         void Play_Step4(PlayListItem playItem, string lsUrl, bool goFullScreen)
         {
 
-            OnlineVideos.MediaPortal1.Player.PlayerFactory factory = 
+            OnlineVideos.MediaPortal1.Player.PlayerFactory factory =
                 new OnlineVideos.MediaPortal1.Player.PlayerFactory(
                     playItem.ForcedPlayer != null ? playItem.ForcedPlayer.Value : playItem.Util.Settings.Player, lsUrl, playItem.Util as IWebViewSiteUtil);
 
@@ -2412,7 +2453,7 @@ namespace OnlineVideos.MediaPortal1
             if ((String.IsNullOrEmpty(lsUrl) ||
                 !Helpers.UriUtils.IsValidUri((lsUrl.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? lsUrl.Substring(0, lsUrl.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : lsUrl))
                 &&
-                factory.PreparedPlayerType != PlayerType.Browser)
+                factory.PreparedPlayerType != PlayerType.Browser && playItem.Util.Settings.Player != PlayerType.Webview)
             {
                 DisplayUnableToPlayDialog();
                 return;
@@ -2429,6 +2470,12 @@ namespace OnlineVideos.MediaPortal1
                 if (factory.PreparedPlayerType == PlayerType.Browser)
                 {
                     (factory.PreparedPlayer as WebBrowserVideoPlayer).Initialise(playItem.Util);
+                    factory.PreparedPlayer.Play(lsUrl);
+                    return;
+                }
+
+                if (false && factory.PreparedPlayerType == PlayerType.Webview)
+                {
                     factory.PreparedPlayer.Play(lsUrl);
                     return;
                 }

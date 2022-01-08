@@ -6,10 +6,11 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
 using Newtonsoft.Json.Linq;
+using OnlineVideos.Helpers;
 
-namespace OnlineVideos.Sites.BrowserUtilConnectors
+namespace OnlineVideos.Sites
 {
-    public class NPOStartUtil : GenericSiteUtil, IBrowserSiteUtil
+    public class NPOStartUtil : GenericSiteUtil, IWebViewSiteUtil
     {
         [Category("OnlineVideosConfiguration")]
         protected string seriesRegEx;
@@ -18,6 +19,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
+            siteSettings.Player = PlayerType.Webview;
             if (!string.IsNullOrEmpty(seriesRegEx)) regex_Series = new Regex(seriesRegEx, defaultRegexOptions);
         }
 
@@ -95,7 +97,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             if (video.VideoUrl.Contains("/live/"))
             {
                 var data = GetWebData(video.VideoUrl);
-                m = Regex.Match(data, @"data-iframeid=""iframe-(?<id>[^""]*)""", defaultRegexOptions);
+                m = Regex.Match(data, @"player-id=""(?<id>[^""]*)""", defaultRegexOptions);
             }
             else
                 m = Regex.Match(video.VideoUrl, @"/(?<id>[^/]*)$");
@@ -116,30 +118,31 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             return String.Empty;
         }
 
-        #region IBrowserSiteUtil
-        string IBrowserSiteUtil.ConnectorEntityTypeName
+        #region IWebviewSiteUtil
+        void IWebViewSiteUtil.OnInitialized(WebViewHelper webViewHelper)
         {
-            get
-            {
-                return "OnlineVideos.Sites.BrowserUtilConnectors.NPOStartConnector";
-            }
+            webViewHelper.execute(@"document.getElementsByClassName(""vjs-big-play-button"")[0].click()");
+        }
+        void IWebViewSiteUtil.DoPause(WebViewHelper webViewHelper)
+        {
+            webViewHelper.execute(@"document.getElementsByClassName(""vjs-play-control"")[0].click()");
+        }
+        void IWebViewSiteUtil.DoPlay(WebViewHelper webViewHelper)
+        {
+            webViewHelper.execute(@"document.getElementsByClassName(""vjs-play-control"")[0].click()");
         }
 
-        string IBrowserSiteUtil.UserName
+        void IWebViewSiteUtil.OnPageLoaded(WebViewHelper webViewHelper, ref bool doStopPlayback)
         {
-            get
-            {
-                return "";
-            }
         }
 
-        string IBrowserSiteUtil.Password
+        private WebViewHelper ww;
+        public void SetWebviewHelper(WebViewHelper webViewHelper)
         {
-            get
-            {
-                return "";
-            }
+            ww = webViewHelper;
+           int i=0;
         }
+
         #endregion
 
     }
