@@ -1384,6 +1384,10 @@ namespace OnlineVideos.MediaPortal1
             {
                 if (!SelectedSite.Settings.DynamicCategoriesDiscovered)
                 {
+                    if (SelectedSite is IWebViewSiteUtilBase)
+                    {
+                        ((IWebViewSiteUtilBase)SelectedSite).SetWebviewHelper(WebViewHelper.Instance);
+                    }
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
                     {
                         Log.Instance.Info("Looking for dynamic categories for site '{0}'", SelectedSite.Settings.Name);
@@ -2286,7 +2290,7 @@ namespace OnlineVideos.MediaPortal1
         private void Play_Step2(PlayListItem playItem, List<String> loUrlList, bool goFullScreen, bool skipPlaybackOptionsDialog)
         {
 
-            if (playItem.Util.Settings.Player != PlayerType.Browser)
+            if (playItem.Util.Settings.Player != PlayerType.Browser && playItem.Util.Settings.Player != PlayerType.Webview)
                 Helpers.UriUtils.RemoveInvalidUrls(loUrlList);
 
             // if no valid urls were returned show error msg
@@ -2404,15 +2408,15 @@ namespace OnlineVideos.MediaPortal1
         void Play_Step4(PlayListItem playItem, string lsUrl, bool goFullScreen)
         {
 
-            OnlineVideos.MediaPortal1.Player.PlayerFactory factory = 
+            OnlineVideos.MediaPortal1.Player.PlayerFactory factory =
                 new OnlineVideos.MediaPortal1.Player.PlayerFactory(
-                    playItem.ForcedPlayer != null ? playItem.ForcedPlayer.Value : playItem.Util.Settings.Player, lsUrl, playItem.Util as IWebViewSiteUtil);
+                    playItem.ForcedPlayer != null ? playItem.ForcedPlayer.Value : playItem.Util.Settings.Player, lsUrl, playItem.Util as IWebViewSiteUtilBase);
 
             // check for valid url and cut off additional parameter
             if ((String.IsNullOrEmpty(lsUrl) ||
                 !Helpers.UriUtils.IsValidUri((lsUrl.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? lsUrl.Substring(0, lsUrl.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : lsUrl))
                 &&
-                factory.PreparedPlayerType != PlayerType.Browser)
+                factory.PreparedPlayerType != PlayerType.Browser && playItem.Util.Settings.Player != PlayerType.Webview)
             {
                 DisplayUnableToPlayDialog();
                 return;

@@ -578,6 +578,9 @@ namespace OnlineVideos.MediaPortal1
 				ovGuiInstance.ResetToFirstView();
 				ovGuiInstance.LatestVideosManager.Stop();
 			}
+            //Dispose of the webviewhelper if it was created
+            OnlineVideos.Helpers.WebViewHelper.Dispose();
+
 			// now reload the appdomain
 			OnlineVideoSettings.Reload();
 			TranslationLoader.SetTranslationsToSingleton();

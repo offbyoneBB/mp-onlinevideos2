@@ -19,7 +19,7 @@ namespace OnlineVideos.MediaPortal1.Player
         public PlayerType PreparedPlayerType { get; protected set; }
         public IPlayer PreparedPlayer { get; protected set; }
 
-        public PlayerFactory(PlayerType playerType, string url, IWebViewSiteUtil siteUtil)
+        public PlayerFactory(PlayerType playerType, string url, IWebViewSiteUtilBase siteUtil)
         {
             PreparedPlayerType = playerType;
             PreparedUrl = url;
@@ -60,7 +60,7 @@ namespace OnlineVideos.MediaPortal1.Player
             }
         }
 
-        void PreparePlayer(OnlineVideos.Sites.IWebViewSiteUtil webviewSiteUtil)
+        void PreparePlayer(IWebViewSiteUtilBase webviewSiteUtil)
         {
             switch (PreparedPlayerType)
             {

@@ -2,11 +2,20 @@
 
 namespace OnlineVideos.Sites
 {
-    public interface IWebViewSiteUtil
+    public interface IWebViewSiteUtilBase
     {
-        void OnInitialized(WebViewHelper webViewHelper);
-        void OnPageLoaded(WebViewHelper webViewHelper);
-        void DoPause(WebViewHelper webViewHelper);
-        void DoPlay(WebViewHelper webViewHelper);
+        void OnInitialized();
+        void SetWebviewHelper(WebViewHelper webViewHelper);
+    }
+
+    public interface IWebViewSiteUtil : IWebViewSiteUtilBase
+    {
+        void OnPageLoaded(ref bool doStopPlayback);
+        void DoPause();
+        void DoPlay();
+    }
+    public interface IWebViewHTMLMediaElement : IWebViewSiteUtilBase
+    {
+        string VideoElementSelector { get; }
     }
 }
