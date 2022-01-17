@@ -32,7 +32,7 @@ namespace OnlineVideos.Helpers
 
 
         //Only access this from the WebViewPlayer, as it can only be accessed from the main appdomain.
-        public WebView2 GetWebViewForPlayer;
+        public WebView2 GetWebViewForPlayer { get { return webView; } }
         private WebView2 webView;
 
         private WebViewHelper()
