@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -173,6 +174,34 @@ namespace OnlineVideos.Helpers
                 webView.Invoke(d);
             else
                 d.Invoke();
+        }
+
+        /// <summary>
+        /// Returns a Point on screen according to fraction of width and height
+        /// so (0,0) will return the top left coordinate of the screen, (1,1) bottom right and (0.5,0.5) in the middle
+        /// Result is relative to Mediaportal Mainform
+        /// </summary>
+        /// <param name="relativePosition"></param>
+        /// <returns></returns>
+        public Point GetPointOnScreen(PointF relativePosition)
+        {
+            return new Point(Convert.ToInt32(webView.Location.X + webView.Size.Width * relativePosition.X),
+                Convert.ToInt32(webView.Location.Y + webView.Size.Height * relativePosition.Y));
+        }
+
+        /// <summary>
+        /// Sends a left-click to the webview at position p
+        /// </summary>
+        /// <param name="p">Position of the click, relative to Mediaportal Mainform</param>
+        public void SendClick(Point p)
+        {
+            webView.Enabled = true;
+            webView.Focus();
+            Application.DoEvents();
+            Cursor.Position = new Point(webView.Parent.Location.X + p.X, webView.Parent.Location.Y + p.Y);
+            CursorHelper.DoLeftMouseClick();
+            webView.Parent.Focus();
+            webView.Enabled = false;
         }
 
         private string doc()
