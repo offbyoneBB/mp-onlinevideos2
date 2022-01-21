@@ -68,6 +68,7 @@
     <Compile Include="DeferredResolveUtil.cs" />
     <Compile Include="EuroSportUtil.cs" />
     <Compile Include="FilmonUtil.cs" />
+    <Compile Include="Helpers\CustomProxyHelper.cs" />
     <Compile Include="Hoster\Archiv.cs" />
     <Compile Include="Hoster\EcoStream.cs" />
     <Compile Include="Hoster\FlashX.cs" />

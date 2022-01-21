@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
@@ -182,6 +183,8 @@ namespace OnlineVideos.Hoster
 
     public class DailyMotion : HosterBase
     {
+        [Category("OnlineVideosUserConfiguration"), Description("Proxy (requires custom proxytool running)")]
+        string customProxy = null;
         public override string GetHosterUrl()
         {
             return "dailymotion.com";
@@ -189,6 +192,12 @@ namespace OnlineVideos.Hoster
 
         public override Dictionary<string, string> GetPlaybackOptions(string url)
         {
+            var m = Regex.Match(url, @"/video/(?<videoid>.*)$");
+            if (m.Success)
+                url = @"https://www.dailymotion.com/player/metadata/video/" + m.Groups["videoid"].Value;
+
+            url = Sites.doskabouter.Helpers.CustomProxyHelper.GetProxyUrl(url, customProxy);
+
             string webData = WebCache.Instance.GetWebData(url);
 
             Dictionary<string, string> res = new Dictionary<string, string>();
@@ -196,7 +205,7 @@ namespace OnlineVideos.Hoster
             if (matchFileUrl.Success)
             {
                 string foundUrl = matchFileUrl.Groups["url"].Value;
-                foundUrl = foundUrl.Replace(@"\/", @"/");
+                foundUrl = Sites.doskabouter.Helpers.CustomProxyHelper.GetProxyUrl(foundUrl.Replace(@"\/", @"/"), customProxy);
                 var m3u8Data = GetWebData(foundUrl);
                 return Helpers.HlsPlaylistParser.GetPlaybackOptions(m3u8Data, foundUrl);
             }
