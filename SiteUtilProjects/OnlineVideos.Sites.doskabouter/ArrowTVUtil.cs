@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using System.ComponentModel;
 using Newtonsoft.Json.Linq;
 using OnlineVideos.Helpers;
 
@@ -7,6 +8,9 @@ namespace OnlineVideos.Sites
 {
     public class ArrowTVUtil : GenericSiteUtil
     {
+        [Category("OnlineVideosUserConfiguration"), Description("Proxy (requires custom proxytool running)")]
+        string customProxy = null;
+
         private string userHash = null;
         private string lastId = null;
 
@@ -25,7 +29,12 @@ namespace OnlineVideos.Sites
 
         public override string GetVideoUrl(VideoInfo video)
         {
-            var data = GetWebData(video.VideoUrl);
+            var url = video.VideoUrl;
+            if (!string.IsNullOrEmpty(customProxy))
+            {
+                url = customProxy + url.Replace("://", "/");
+            }
+            var data = GetWebData(url);
             video.PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(data, video.VideoUrl, (x, y) => y.Bandwidth.CompareTo(x.Bandwidth), (x) => x.Width + "x" + x.Height);
             return video.GetPreferredUrl(true);
         }
