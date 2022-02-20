@@ -2350,16 +2350,17 @@ namespace OnlineVideos.MediaPortal1
             //try to find previously chosen playbackoption in playItem.Video.Playbackoptiohs. If found, take that one and don't display dialog
             if (!skipPlaybackOptionsDialog && currentPlaylistIndex >= 0 && playItem.Video.PlaybackOptions != null && playItem.Video.PlaybackOptions.Count > 1)
             {
-                if (playItem.Video.PlaybackOptions.ContainsKey(currentPlaylist[currentPlaylistIndex].ChosenPlaybackOption))
+                var cpo=currentPlaylist[currentPlaylistIndex].ChosenPlaybackOption;
+                if (!String.IsNullOrEmpty(cpo) && playItem.Video.PlaybackOptions.ContainsKey(cpo))
                 {
                     resolve = true;
-                    lsUrl = currentPlaylist[currentPlaylistIndex].ChosenPlaybackOption;
+                    lsUrl = cpo;
                 }
                 else
                 {
                     //if previously chosen playbackoption was the first, then just take the first for this one too
                     var currPlaybackOptions = currentPlaylist[currentPlaylistIndex].Video.PlaybackOptions;
-                    if (currPlaybackOptions.FirstOrDefault().Key == currentPlaylist[currentPlaylistIndex].ChosenPlaybackOption)
+                    if (currPlaybackOptions.FirstOrDefault().Key == cpo)
                     {
                         resolve = true;
                         lsUrl = playItem.Video.PlaybackOptions.First().Key;
