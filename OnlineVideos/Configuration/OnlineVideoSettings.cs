@@ -304,5 +304,10 @@ namespace OnlineVideos
         {
             SiteSettingsList[index] = settings;
         }
+
+        public void SetSite(string name, SiteUtilBase site)
+        {
+            SiteUtilsList[name] = site;
+        }
     }
 }
