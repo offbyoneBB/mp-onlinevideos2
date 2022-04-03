@@ -356,7 +356,7 @@ namespace OnlineVideos.MediaPortal1.Player
                     // MediaPortal IPTV filter and url source splitter
                     Log.Instance.Info("BufferFile : using 'MediaPortal IPTV filter and url source splitter' as source filter");
 
-                    String url = OnlineVideos.MPUrlSourceFilter.UrlBuilder.GetFilterUrl(siteUtil, m_strCurrentFile);
+                    String url = OnlineVideos.MPUrlSourceFilter.UrlBuilder.GetFilterUrl(siteUtil, m_strCurrentFile, true);
 
                     Log.Instance.Info("BufferFile : loading url: '{0}'", url);
                     result = filterStateEx.LoadAsync(url);
@@ -467,6 +467,11 @@ namespace OnlineVideos.MediaPortal1.Player
                 }
                 else
                 {
+                    if (m_strCurrentFile.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) >= 0)
+                    {
+                        m_strCurrentFile = MPUrlSourceFilter.UrlBuilder.GetFilterUrl(siteUtil, m_strCurrentFile, false);
+                    }
+
                     Marshal.ThrowExceptionForHR(((IFileSourceFilter)sourceFilter).Load(m_strCurrentFile, null));
 
                     Log.Instance.Info("BufferFile : using unknown filter as source filter");
