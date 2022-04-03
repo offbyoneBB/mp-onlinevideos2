@@ -712,7 +712,7 @@ namespace OnlineVideos.MediaPortal1.Player
             IAudioPostEngine audioEngine = AudioPostEngine.GetInstance(true);
             if (audioEngine != null && !audioEngine.LoadPostProcessing(graphBuilder))
             {
-              AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
+                AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
             }
 
             AnalyseStreams();

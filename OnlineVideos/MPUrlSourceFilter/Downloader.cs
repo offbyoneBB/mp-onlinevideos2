@@ -152,7 +152,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// Defines MediaPortal Url Source Splitter.
         /// </summary>
         [ComImport, Guid(FilterCLSID)]
-        private class MPUrlSourceSplitter { } ;
+        private class MPUrlSourceSplitter { };
 
         #endregion
 
