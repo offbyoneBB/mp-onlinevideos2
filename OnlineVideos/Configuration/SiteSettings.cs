@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -241,6 +242,7 @@ namespace OnlineVideos
         #endregion
     }
 
+    [DebuggerDisplay("{Name}")]
     [DataContract]
     [KnownType(typeof(RssLink))]
     [KnownType(typeof(Group))]
@@ -334,6 +336,11 @@ namespace OnlineVideos
             Category c = this;
             while (c != null)
             {
+                if (c is SearchCategory && this is RssLink)
+                {
+                    result = ((RssLink)this).Url;
+                    break;
+                }
                 result = c.Name + (result == "" ? "" : divider) + result;
                 c = c.ParentCategory;
             }
@@ -409,5 +416,12 @@ namespace OnlineVideos
             if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
+    }
+
+    /// <summary>
+    /// Category used to store the results of a search which returns categories
+    /// </summary>
+    public class SearchCategory : Category
+    {
     }
 }

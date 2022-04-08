@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
@@ -135,9 +137,11 @@ namespace OnlineVideos.Hoster
             if (m.Success)
             {
                 data = GetWebData(m.Groups["url"].Value);
-                var res= Helpers.HlsPlaylistParser.GetPlaybackOptions(data, m.Groups["url"].Value);
+                var res = Helpers.HlsPlaylistParser.GetPlaybackOptions(data, m.Groups["url"].Value);
                 return res.FirstOrDefault().Value;
             }
+            if (data.IndexOf("The file you were looking for could not be found, sorry for any inconvenience.") >= 0)
+                throw new OnlineVideosException("The file you were looking for could not be found, sorry for any inconvenience.");
 
             return null;
         }
@@ -179,6 +183,8 @@ namespace OnlineVideos.Hoster
 
     public class DailyMotion : HosterBase
     {
+        [Category("OnlineVideosUserConfiguration"), Description("Proxy (requires custom proxytool running)")]
+        string customProxy = null;
         public override string GetHosterUrl()
         {
             return "dailymotion.com";
@@ -186,6 +192,12 @@ namespace OnlineVideos.Hoster
 
         public override Dictionary<string, string> GetPlaybackOptions(string url)
         {
+            var m = Regex.Match(url, @"/video/(?<videoid>.*)$");
+            if (m.Success)
+                url = @"https://www.dailymotion.com/player/metadata/video/" + m.Groups["videoid"].Value;
+
+            url = Sites.doskabouter.Helpers.CustomProxyHelper.GetProxyUrl(url, customProxy);
+
             string webData = WebCache.Instance.GetWebData(url);
 
             Dictionary<string, string> res = new Dictionary<string, string>();
@@ -193,7 +205,7 @@ namespace OnlineVideos.Hoster
             if (matchFileUrl.Success)
             {
                 string foundUrl = matchFileUrl.Groups["url"].Value;
-                foundUrl = foundUrl.Replace(@"\/", @"/");
+                foundUrl = Sites.doskabouter.Helpers.CustomProxyHelper.GetProxyUrl(foundUrl.Replace(@"\/", @"/"), customProxy);
                 var m3u8Data = GetWebData(foundUrl);
                 return Helpers.HlsPlaylistParser.GetPlaybackOptions(m3u8Data, foundUrl);
             }
@@ -204,6 +216,87 @@ namespace OnlineVideos.Hoster
         {
             var res = GetPlaybackOptions(url);
             return res.FirstOrDefault().Key;
+        }
+    }
+
+    public class Doodso : Dood
+    {
+        public override string GetHosterUrl()
+        {
+            return "dood.so";
+        }
+    }
+
+    public class Dood : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "dood.to";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            url = url.Replace("/d/", "/e/");
+            var data = GetWebData(url);
+            var m = Regex.Match(data, @"\$\.get\('(?<url>/pass[^']*)'");
+            if (m.Success)
+            {
+                var tmpUrl = m.Groups["url"].Value;
+                if (!Uri.IsWellFormedUriString(tmpUrl, UriKind.Absolute))
+                {
+                    Uri uri = null;
+                    if (Uri.TryCreate(new Uri(url), tmpUrl, out uri))
+                    {
+                        tmpUrl = uri.ToString();
+                    }
+                }
+                data = GetWebData(tmpUrl, referer: url);
+                int i = tmpUrl.LastIndexOf('/');
+                TimeSpan span = DateTime.Now.Subtract(new DateTime(1970, 1, 1, 0, 0, 0));
+                var newurl = data + "SQPPQsSXKD?token=" + tmpUrl.Substring(i + 1) + "&expiry=" + Math.Truncate(span.TotalSeconds);
+                HttpUrl finalUrl = new HttpUrl(newurl);
+                finalUrl.Referer = "https://dood.to";
+                return finalUrl.ToString();
+            }
+            m = Regex.Match(data, @"<title>(?<Title>[^<]*)</title>");
+            if (m.Success)
+                throw new OnlineVideosException(m.Groups["Title"].Value);
+            return null;
+        }
+    }
+
+    public class DoodWatch : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "dood.watch";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            url = url.Replace("/d/", "/e/");
+            var data = GetWebData(url);
+            var m = Regex.Match(data, @"\$\.get\('(?<url>/pass[^']*)'");
+            if (m.Success)
+            {
+                var tmpUrl = m.Groups["url"].Value;
+                if (!Uri.IsWellFormedUriString(tmpUrl, UriKind.Absolute))
+                {
+                    Uri uri = null;
+                    if (Uri.TryCreate(new Uri(url), tmpUrl, out uri))
+                    {
+                        tmpUrl = uri.ToString();
+                    }
+                }
+                data = GetWebData(tmpUrl, referer: url);
+                int i = tmpUrl.LastIndexOf('/');
+                TimeSpan span = DateTime.Now.Subtract(new DateTime(1970, 1, 1, 0, 0, 0));
+                var newurl = data + "SQPPQsSXKD?token=" + tmpUrl.Substring(i + 1) + "&expiry=" + Math.Truncate(span.TotalMilliseconds);
+                HttpUrl finalUrl = new HttpUrl(newurl);
+                finalUrl.Referer = "https://dood.watch";
+                return finalUrl.ToString();
+            }
+            return null;
         }
     }
 
@@ -419,6 +512,36 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class Gomoplayer : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "gomoplayer.com";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            var data = GetWebData(url);
+            string packed = Helpers.StringUtils.GetSubString(data, @"return p}", @"</script>");
+            if (!String.IsNullOrEmpty(packed))
+            {
+                packed = packed.Replace(@"\'", @"'");
+                string unpacked = Helpers.StringUtils.UnPack(packed);
+                var resUrl = Helpers.StringUtils.GetSubString(unpacked, @"file:""", @"""");
+                if (resUrl.EndsWith(".m3u8"))
+                {
+                    var m3u8Data = GetWebData(resUrl);
+                    var res = Helpers.HlsPlaylistParser.GetPlaybackOptions(m3u8Data, resUrl);
+                    var finalUrl = res.LastOrDefault().Value;
+                    return finalUrl;
+                }
+                else
+                    return resUrl;
+            }
+            return null;
+        }
+    }
+
     public class GoogleVideo : HosterBase
     {
         public override string GetHosterUrl()
@@ -447,6 +570,31 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class Mightyupload : MyHosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "mightyupload";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            string data = WebCache.Instance.GetWebData(url);
+            if (!string.IsNullOrEmpty(data))
+            {
+                var m2 = Regex.Match(data, @"return\sp(?<data>.*?)</script", DefaultRegexOptions);
+                if (m2.Success)
+                {
+                    var res = Helpers.StringUtils.UnPack(m2.Groups["data"].Value.Replace(@"\'", @"'"));
+                    m2 = Regex.Match(res, @"{file:""(?<url>[^""]*)"",flashplayer");
+                }
+                if (m2.Success)
+                    return m2.Groups["url"].Value;
+            }
+            return url;
+        }
+    }
+
     public class Mixdrop : MyHosterBase
     {
 
@@ -457,35 +605,45 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
+            if (!url.Contains("/e/"))
+            {
+                var data2 = GetWebData(url);
+                Match m2 = Regex.Match(data2, @"<iframe\swidth=""[^%]*%""\sheight=""[^""]*""\ssrc=""(?<url>[^""]*)""");
+                if (m2.Success)
+                {
+                    var newUrl = m2.Groups["url"].Value;
+                    if (!Uri.IsWellFormedUriString(newUrl, UriKind.Absolute))
+                    {
+                        Uri uri = null;
+                        if (Uri.TryCreate(new Uri(url), newUrl, out uri))
+                        {
+                            newUrl = uri.ToString();
+                        }
+                        else
+                        {
+                            newUrl = string.Empty;
+                        }
+                    }
+                    url = newUrl;
+                }
+                else
+                {
+                    m2 = Regex.Match(data2, @"<h2>(?<line1>[^<]*)</h2>\s*<p>(?<line2>[^<]*)</p>");
+                    if (m2.Success)
+                        throw new OnlineVideosException(m2.Groups["line1"].Value + "\n" + m2.Groups["line2"].Value);
+                }
+            }
             var data = GetWebData(url);
-            Match m = Regex.Match(data, @"<iframe\swidth=""[^%]*%""\sheight=""[^""]*""\ssrc=""(?<url>[^""]*)""");
+            string packed = Helpers.StringUtils.GetSubString(data, @"return p}", @"</script>");
+            packed = packed.Replace(@"\'", @"'");
+            string unpacked = Helpers.StringUtils.UnPack(packed);
+            Match m = Regex.Match(unpacked, @"MDCore\.wurl=""(?<url>[^""]*)""");
             if (m.Success)
             {
-                var newUrl = m.Groups["url"].Value;
-                if (!Uri.IsWellFormedUriString(newUrl, UriKind.Absolute))
-                {
-                    Uri uri = null;
-                    if (Uri.TryCreate(new Uri(url), newUrl, out uri))
-                    {
-                        newUrl = uri.ToString();
-                    }
-                    else
-                    {
-                        newUrl = string.Empty;
-                    }
-                }
-                data = GetWebData(newUrl);
-                string packed = Helpers.StringUtils.GetSubString(data, @"return p}", @"</script>");
-                packed = packed.Replace(@"\'", @"'");
-                string unpacked = Helpers.StringUtils.UnPack(packed);
-                m = Regex.Match(unpacked, @"MDCore\.wurl=""(?<url>[^""]*)""");
-                if (m.Success)
-                {
-                    var finalUrl = m.Groups["url"].Value;
-                    if (!finalUrl.StartsWith("http"))
-                        finalUrl = "https:" + finalUrl;
-                    return finalUrl;
-                }
+                var finalUrl = m.Groups["url"].Value;
+                if (!finalUrl.StartsWith("http"))
+                    finalUrl = "https:" + finalUrl;
+                return finalUrl;
             }
             return String.Empty;
         }
@@ -943,6 +1101,132 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class Streamzz : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "streamzz.to";
+        }
+
+        public string MyGetRedirectedUrl(string url, string referer, CookieContainer cc, NameValueCollection headers)
+        {
+            HttpWebResponse httpWebresponse = null;
+            try
+            {
+                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+                if (request == null) return url;
+                foreach (var headerName in headers.AllKeys)
+                {
+                    switch (headerName.ToLowerInvariant())
+                    {
+                        case "accept":
+                            request.Accept = headers[headerName];
+                            break;
+                        case "user-agent":
+                            request.UserAgent = headers[headerName];
+                            break;
+                        case "referer":
+                            request.Referer = headers[headerName];
+                            break;
+                        default:
+                            request.Headers.Set(headerName, headers[headerName]);
+                            break;
+                    }
+                }
+
+                request.AllowAutoRedirect = true;
+                request.CookieContainer = cc;
+                request.Timeout = 15000;
+                if (!string.IsNullOrEmpty(referer)) request.Referer = referer;
+                var result = request.BeginGetResponse((ar) => request.Abort(), null);
+                while (!result.IsCompleted) Thread.Sleep(10);
+                httpWebresponse = request.EndGetResponse(result) as HttpWebResponse;
+                if (httpWebresponse == null) return url;
+                if (request.RequestUri.Equals(httpWebresponse.ResponseUri))
+                    return url;
+                else
+                    return httpWebresponse.ResponseUri.OriginalString;
+            }
+            catch (Exception ex)
+            {
+                Log.Warn(ex.ToString());
+            }
+            finally
+            {
+                if (httpWebresponse != null)
+                {
+                    try
+                    {
+                        httpWebresponse.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warn(ex.ToString());
+                    }
+                }
+            }
+            return url;
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            const string uagent = @"Mozilla/5.0 (Windows NT 6.1; rv:90.0) Gecko/20100101 Firefox/90.0";
+            CookieContainer cc = new CookieContainer();
+            NameValueCollection headers = new NameValueCollection();
+            headers.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,* /*;q=0.8");
+            headers.Set("Accept-Language", "en-US,en;q=0.5");
+            headers.Set("Accept-Encoding", "gzip, deflate, br");
+            var newUrl = MyGetRedirectedUrl(url, null, cc, headers);
+
+            var data = GetWebData(newUrl, cookies: cc, userAgent: uagent, headers: headers);
+            headers.Set("Accept", "*/*");
+
+            Match m = Regex.Match(data, @"history\.pushState\(stateObj,\s*""[^""]*"",\s""(?<url>[^""]*)""\);");
+            string referer = null;
+            if (m.Success)
+            {
+                referer = m.Groups["url"].Value;
+                if (!Uri.IsWellFormedUriString(referer, UriKind.Absolute))
+                {
+                    Uri uri = null;
+                    if (Uri.TryCreate(new Uri(url), referer, out uri))
+                        referer = uri.ToString();
+                }
+            }
+
+            m = Regex.Match(data, @"<script\stype='text/javascript'\ssrc='[^']*?(?<ppu_main>[^\./']*)\.js'></script>");
+            cc.Add(new Cookie("ppu_main_" + m.Groups["ppu_main"].Value, "1", "", @".streamzz.to"));
+            var data5 = GetWebData(@"https://streamzz.to/count.php?bcd=1", referer: referer, cookies: cc, userAgent: uagent, headers: headers);
+
+            cc.Add(new Cookie("ppu_sub_" + m.Groups["ppu_main"].Value, "1", "", @".streamzz.to"));
+            cc.Add(new Cookie("ppu_delay_" + m.Groups["ppu_main"].Value, "1", "", @".streamzz.to"));
+            //todo: experiment with not doing following request:
+            var data6 = GetWebData(@"https://streamzz.to/videoplayer.js", referer: referer, cookies: cc, userAgent: uagent, headers: headers);
+
+            m = Regex.Match(data, @"return\sp(?<pack>[^<]*)</script");
+            var l = new List<String>();
+            string url1 = null;
+            while (m.Success && url1 == null)
+            {
+                var unpacked = Helpers.StringUtils.UnPack(m.Groups["pack"].Value);
+                if (unpacked != null)
+                {
+                    Match m2 = Regex.Match(unpacked, @"src:\\'(?<p1>https://[^/]+)/getl1nk'\.split");
+                    if (m2.Success)
+                        url1 = m2.Groups["p1"].Value;
+                }
+                m = m.NextMatch();
+            }
+            m = Regex.Match(newUrl, @"/x(?<code>.*)");
+            if (m.Success)
+            {
+                url1 = url1 + "/getlink-" + m.Groups["code"].Value + ".dll";
+                var finalUrl = WebCache.Instance.GetRedirectedUrl(url1, @"https://streamzz.to/");
+                return finalUrl;
+            }
+            return null;
+        }
+    }
     public class TheFile : MyHosterBase
     {
         public override string GetHosterUrl()
@@ -1083,6 +1367,39 @@ namespace OnlineVideos.Hoster
             packed = packed.Replace(@"\'", @"'");
             string unpacked = Helpers.StringUtils.UnPack(packed);
             return Helpers.StringUtils.GetSubString(unpacked, @"'file','", @"'");
+        }
+    }
+
+
+    public class Upstream : MyHosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "upstream.to";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            string data = GetWebData(url);
+            string packed = Helpers.StringUtils.GetSubString(data, @"return p}", @"</script>");
+            if (!String.IsNullOrEmpty(packed))
+            {
+                packed = packed.Replace(@"\'", @"'");
+                string unpacked = Helpers.StringUtils.UnPack(packed);
+                var resUrl = Helpers.StringUtils.GetSubString(unpacked, @"file:""", @"""");
+                if (resUrl.EndsWith(".m3u8"))
+                {
+                    var m3u8Data = GetWebData(resUrl, referer: "https://upstream.to/");
+                    var res = Helpers.HlsPlaylistParser.GetPlaybackOptions(m3u8Data, resUrl);
+                    var finalUrl = res.LastOrDefault().Value;
+                    HttpUrl ress = new HttpUrl(finalUrl);
+                    ress.Referer = "https://upstream.to/";
+                    return ress.ToString();
+                }
+                else
+                    return resUrl;
+            }
+            return null;
         }
     }
 
@@ -1412,6 +1729,27 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class Voe : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "voe.sx";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            var data = GetWebData(url);
+            Match m = Regex.Match(data, @"""hls"":\s""(?<url>[^""]*)""");
+            if (m.Success)
+            {
+                var data2 = GetWebData(m.Groups["url"].Value);
+                var res = Helpers.HlsPlaylistParser.GetPlaybackOptions(data2, m.Groups["url"].Value);
+                return res.FirstOrDefault().Value;
+            }
+            return null;
+        }
+    }
+
     public class Vshare : MyHosterBase
     {
         public override string GetHosterUrl()
@@ -1517,5 +1855,25 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class Wolfstream : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "wolfstream.tv";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            var data = GetWebData(url);
+            Match m = Regex.Match(data, @"{file:""(?<url>[^""]*)""");
+            if (m.Success)
+            {
+                var data2 = GetWebData(m.Groups["url"].Value);
+                var res = Helpers.HlsPlaylistParser.GetPlaybackOptions(data2, m.Groups["url"].Value);
+                return res.FirstOrDefault().Value;
+            }
+            return null;
+        }
+    }
 
 }

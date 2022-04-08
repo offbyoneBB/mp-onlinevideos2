@@ -93,6 +93,9 @@ namespace OnlineVideos.MediaPortal1.Trakt
             if (watchedMovies != null)
                 foreach (var movies in watchedMovies)
                 {
+                    if (!String.IsNullOrEmpty(trackingInfo.ID_IMDB) && trackingInfo.ID_IMDB == movies.Movie.Ids.Imdb)
+                        //if imdb is filled in and equal then match is found regardless of the rest of the properties
+                        return true;
                     if ((trackingInfo.Year == 0 || trackingInfo.Year == movies.Movie.Year) &&
                         (String.IsNullOrEmpty(trackingInfo.ID_IMDB) || String.IsNullOrEmpty(movies.Movie.Ids.Imdb) || trackingInfo.ID_IMDB == movies.Movie.Ids.Imdb) &&
                         trackingInfo.Title.ToLowerInvariant() == movies.Movie.Title.ToLowerInvariant())

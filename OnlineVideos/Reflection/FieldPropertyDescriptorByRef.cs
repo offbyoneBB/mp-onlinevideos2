@@ -38,13 +38,33 @@ namespace OnlineVideos.Reflection
 
         public bool IsBool { get { return FieldPropertyDescriptor.PropertyType.Equals(typeof(bool)); } }
 
-        public bool IsEnum { get { return FieldPropertyDescriptor.PropertyType.IsEnum; } }
+        public bool IsEnum
+        {
+            get
+            {
+                return FieldPropertyDescriptor.PropertyType.IsEnum || 
+                    !String.IsNullOrEmpty(((TypeConverterAttribute)FieldPropertyDescriptor.Attributes[typeof(TypeConverterAttribute)]).ConverterTypeName);
+            }
+        }
 
         public string Namespace { get { return FieldPropertyDescriptor.PropertyType.Namespace; } }
 
         public string[] GetEnumValues()
         {
-            return Enum.GetNames(FieldPropertyDescriptor.PropertyType);
+            if (FieldPropertyDescriptor.PropertyType.IsEnum)
+                return Enum.GetNames(FieldPropertyDescriptor.PropertyType);
+            else
+            {
+                var res = FieldPropertyDescriptor.Converter.GetStandardValues();
+                var resStrings = new string[res.Count];
+                res.CopyTo(resStrings, 0);
+                return resStrings;
+            }
+        }
+
+        public override string ToString()
+        {
+            return FieldPropertyDescriptor.ToString();
         }
     }
 }

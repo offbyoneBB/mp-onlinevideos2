@@ -45,6 +45,7 @@ namespace OnlineVideos.MediaPortal1
         public uint LatestVideosGuiDataRefresh = 30; // seconds
         public bool AllowRefreshRateChange = false;
         public bool StoreLayoutPerCategory = true;
+        public bool useMPUrlSourceSplitter = true;
 
         // runtime (while inside MediaPortal OnlineVideos) changeable values
         public Dictionary<string, List<string>> searchHistory;
@@ -93,6 +94,7 @@ namespace OnlineVideos.MediaPortal1
         const string CFG_LATESTVIDEOS_GUIDATA_REFRESH = "latestVideosGuiDataRefresh";
         const string CFG_ALLOW_REFRESHRATE_CHANGE = "allowRefreshRateChange";
         const string CFG_STORE_LAYOUT_PER_CATEGORY = "storeLayoutPerCategory";
+        const string CFG_USE_MPURLSOURCESPLITTER = "useMPUrlSourceSplitter";
 
         // filter V2
         const string CFG_FILTER_V2_VIEW_MODE = "filterv2";
@@ -167,6 +169,7 @@ namespace OnlineVideos.MediaPortal1
                 LatestVideosGuiDataRefresh = (uint)settings.GetValueAsInt(CFG_SECTION, CFG_LATESTVIDEOS_GUIDATA_REFRESH, (int)LatestVideosGuiDataRefresh);
                 AllowRefreshRateChange = settings.GetValueAsBool(CFG_SECTION, CFG_ALLOW_REFRESHRATE_CHANGE, AllowRefreshRateChange);
                 StoreLayoutPerCategory = settings.GetValueAsBool(CFG_SECTION, CFG_STORE_LAYOUT_PER_CATEGORY, StoreLayoutPerCategory);
+                useMPUrlSourceSplitter=settings.GetValueAsBool(CFG_SECTION, CFG_USE_MPURLSOURCESPLITTER, useMPUrlSourceSplitter);
             }
         }
 
@@ -306,6 +309,7 @@ namespace OnlineVideos.MediaPortal1
 
                     AllowRefreshRateChange = settings.GetValueAsBool(CFG_SECTION, CFG_ALLOW_REFRESHRATE_CHANGE, AllowRefreshRateChange);
                     StoreLayoutPerCategory = settings.GetValueAsBool(CFG_SECTION, CFG_STORE_LAYOUT_PER_CATEGORY, StoreLayoutPerCategory);
+                    useMPUrlSourceSplitter = settings.GetValueAsBool(CFG_SECTION, CFG_USE_MPURLSOURCESPLITTER, useMPUrlSourceSplitter);
 
                     ovsconf.HttpPreferredNetworkInterface = settings.GetValueAsString(CFG_SECTION, CFG_FILTER_V2_HTTP_PREFERRED_NETWORK_INTERFACE, OnlineVideoSettings.NetworkInterfaceSystemDefault);
                     ovsconf.HttpOpenConnectionTimeout = settings.GetValueAsInt(CFG_SECTION, CFG_FILTER_V2_HTTP_OPEN_CONNECTION_TIMEOUT, ovsconf.HttpOpenConnectionTimeout);
@@ -411,6 +415,7 @@ namespace OnlineVideos.MediaPortal1
                         settings.SetValue(CFG_SECTION, CFG_LATESTVIDEOS_GUIDATA_REFRESH, LatestVideosGuiDataRefresh);
                         settings.SetValueAsBool(CFG_SECTION, CFG_ALLOW_REFRESHRATE_CHANGE, AllowRefreshRateChange);
                         settings.SetValueAsBool(CFG_SECTION, CFG_STORE_LAYOUT_PER_CATEGORY, StoreLayoutPerCategory);
+                        settings.SetValueAsBool(CFG_SECTION, CFG_USE_MPURLSOURCESPLITTER, useMPUrlSourceSplitter);
                         SaveSitesGroups();
                         ovsconf.SaveSites();
 

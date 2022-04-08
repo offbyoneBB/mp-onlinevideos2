@@ -215,8 +215,8 @@ namespace OnlineVideos.MPUrlSourceFilter.UserSettings
             rtspUrl.OpenConnectionSleepTime = this.OpenConnectionSleepTime;
             rtspUrl.OpenConnectionTimeout = this.OpenConnectionTimeout;
             rtspUrl.TotalReopenConnectionTimeout = this.TotalReopenConnectionTimeout;
-            rtspUrl.ClientPortMax = this.ClientPortMin;
-            rtspUrl.ClientPortMin = this.ClientPortMax;
+            rtspUrl.ClientPortMin = this.ClientPortMin;
+            rtspUrl.ClientPortMax = this.ClientPortMax;
         }
 
         #endregion

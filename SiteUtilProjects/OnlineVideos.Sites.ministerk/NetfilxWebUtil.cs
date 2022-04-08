@@ -49,6 +49,8 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         protected bool enableVerboseLog = false;
         [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Disable browser logging"), Description("Change only if necessary/nothing else helps. If browser player fails. Change back if it does not help!")]
         protected bool disableLogging = false;
+        [Category("OnlineVideosUserConfiguration"), LocalizableDisplayName("Enable IE debug mode"), Description("Use only for debugging purposes, normal use in onlinevideos will not work when this is set")]
+        protected bool enableIEDebug = false;
 
         protected Dictionary<string, string> i18n = null;
 
@@ -1040,7 +1042,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         private List<VideoInfo> GetLoginVideo(Category category)
         {
             List<VideoInfo> videos = new List<VideoInfo>();
-            videos.Add(new VideoInfo() { Title = "Play me", VideoUrl = "LOGIN" });
+            videos.Add(new VideoInfo() { Title = "Login", VideoUrl = "LOGIN" });
             return videos;
         }
 
@@ -1163,11 +1165,14 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         {
             get
             {
-                Dictionary<string, string> p = new Dictionary<string, string>();
-                p.Add("showLoadingSpinner", showLoadingSpinner.ToString());
-                p.Add("enableNetflixOsd", enableNetflixOsd.ToString());
-                p.Add("disableLogging", disableLogging.ToString());
-                string json = JsonConvert.SerializeObject(p);
+                var c = new ConnectorSettings()
+                {
+                    showLoadingSpinner = showLoadingSpinner,
+                    enableNetflixOsd = enableNetflixOsd,
+                    disableLogging = disableLogging,
+                    enableIEDebug = enableIEDebug
+                };
+                string json = JsonConvert.SerializeObject(c);
                 string base64 = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(json));
                 if (enableVerboseLog) Log.Debug("profile: {0}", ProfileToken);
                 return base64;
@@ -1184,4 +1189,15 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         #endregion
 
     }
+
+    #region ConnectorSettings
+    [Serializable]
+    public struct ConnectorSettings
+    {
+        public bool showLoadingSpinner { get; set; }
+        public bool enableNetflixOsd { get; set; }
+        public bool disableLogging { get; set; }
+        public bool enableIEDebug { get; set; }
+    }
+    #endregion
 }

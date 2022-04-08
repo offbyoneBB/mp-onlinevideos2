@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Player.PostProcessing;
+using MediaPortal.Player.LAV;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
@@ -236,7 +237,10 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 case "http":
                 case "rtmp":
-                    sourceFilterName = OnlineVideos.MPUrlSourceFilter.Downloader.FilterName;
+                    if (PluginConfiguration.Instance.useMPUrlSourceSplitter)
+                        sourceFilterName = OnlineVideos.MPUrlSourceFilter.Downloader.FilterName;
+                    else
+                        sourceFilterName = "LAV Splitter Source";
                     break;
                 case "sop":
                     sourceFilterName = "SopCast ASF Splitter";
@@ -352,7 +356,7 @@ namespace OnlineVideos.MediaPortal1.Player
                     // MediaPortal IPTV filter and url source splitter
                     Log.Instance.Info("BufferFile : using 'MediaPortal IPTV filter and url source splitter' as source filter");
 
-                    String url = OnlineVideos.MPUrlSourceFilter.UrlBuilder.GetFilterUrl(siteUtil, m_strCurrentFile);
+                    String url = OnlineVideos.MPUrlSourceFilter.UrlBuilder.GetFilterUrl(siteUtil, m_strCurrentFile, true);
 
                     Log.Instance.Info("BufferFile : loading url: '{0}'", url);
                     result = filterStateEx.LoadAsync(url);
@@ -463,11 +467,16 @@ namespace OnlineVideos.MediaPortal1.Player
                 }
                 else
                 {
+                    if (m_strCurrentFile.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) >= 0)
+                    {
+                        m_strCurrentFile = MPUrlSourceFilter.UrlBuilder.GetFilterUrl(siteUtil, m_strCurrentFile, false);
+                    }
+
                     Marshal.ThrowExceptionForHR(((IFileSourceFilter)sourceFilter).Load(m_strCurrentFile, null));
 
                     Log.Instance.Info("BufferFile : using unknown filter as source filter");
 
-                    if (sourceFilter is IAMOpenProgress && !m_strCurrentFile.Contains("live=true") && !m_strCurrentFile.Contains("RtmpLive=1"))
+                    if (PluginConfiguration.Instance.useMPUrlSourceSplitter && sourceFilter is IAMOpenProgress && !m_strCurrentFile.Contains("live=true") && !m_strCurrentFile.Contains("RtmpLive=1"))
                     {
                         // buffer before starting playback
                         bool filterConnected = false;
@@ -699,6 +708,13 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
             }
+
+            IAudioPostEngine audioEngine = AudioPostEngine.GetInstance(true);
+            if (audioEngine != null && !audioEngine.LoadPostProcessing(graphBuilder))
+            {
+                AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
+            }
+
             AnalyseStreams();
             SelectSubtitles();
             SelectAudioLanguage();

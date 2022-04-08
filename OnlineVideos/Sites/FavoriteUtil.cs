@@ -28,34 +28,46 @@ namespace OnlineVideos.Sites
 
             public void DiscoverSiteCategory()
             {
-                string[] hierarchy = FavoriteDbCategory.RecursiveName.Split('|');
-                for (int i = 0; i < hierarchy.Length; i++)
+                if (FavoriteDbCategory.IsSearchCat)
                 {
-                    if (SiteCategory != null)
+                    SiteCategory = new RssLink()
                     {
-                        if (!SiteCategory.SubCategoriesDiscovered) Site.DiscoverSubCategories(SiteCategory);
-                        Category foundCat = SiteCategory.SubCategories.FirstOrDefault(c => c.Name == hierarchy[i]);
-                        // nextpage until found or no more
-                        while (foundCat == null && SiteCategory.SubCategories.Last() is NextPageCategory)
-                        {
-                            Site.DiscoverNextPageCategories(SiteCategory.SubCategories.Last() as NextPageCategory);
-                            foundCat = SiteCategory.SubCategories.FirstOrDefault(c => c.Name == hierarchy[i]);
-                        }
-                        SiteCategory = foundCat;
-                    }
-                    else
+                        Name = FavoriteDbCategory.Name,
+                        Url = FavoriteDbCategory.RecursiveName,
+                        HasSubCategories = FavoriteDbCategory.SearchCatHasSubcategories
+                    };
+                }
+                else
+                {
+                    string[] hierarchy = FavoriteDbCategory.RecursiveName.Split('|');
+                    for (int i = 0; i < hierarchy.Length; i++)
                     {
-                        if (!Site.Settings.DynamicCategoriesDiscovered) Site.DiscoverDynamicCategories();
-                        Category foundCat = Site.Settings.Categories.FirstOrDefault(c => c.Name == hierarchy[i]);
-                        // nextpage until found or no more
-                        while (foundCat == null && Site.Settings.Categories.Last() is NextPageCategory)
+                        if (SiteCategory != null)
                         {
-                            Site.DiscoverNextPageCategories(Site.Settings.Categories.Last() as NextPageCategory);
-                            foundCat = Site.Settings.Categories.FirstOrDefault(c => c.Name == hierarchy[i]);
+                            if (!SiteCategory.SubCategoriesDiscovered) Site.DiscoverSubCategories(SiteCategory);
+                            Category foundCat = SiteCategory.SubCategories.FirstOrDefault(c => c.Name == hierarchy[i]);
+                            // nextpage until found or no more
+                            while (foundCat == null && SiteCategory.SubCategories.Last() is NextPageCategory)
+                            {
+                                Site.DiscoverNextPageCategories(SiteCategory.SubCategories.Last() as NextPageCategory);
+                                foundCat = SiteCategory.SubCategories.FirstOrDefault(c => c.Name == hierarchy[i]);
+                            }
+                            SiteCategory = foundCat;
                         }
-                        SiteCategory = foundCat;
+                        else
+                        {
+                            if (!Site.Settings.DynamicCategoriesDiscovered) Site.DiscoverDynamicCategories();
+                            Category foundCat = Site.Settings.Categories.FirstOrDefault(c => c.Name == hierarchy[i]);
+                            // nextpage until found or no more
+                            while (foundCat == null && Site.Settings.Categories.Last() is NextPageCategory)
+                            {
+                                Site.DiscoverNextPageCategories(Site.Settings.Categories.Last() as NextPageCategory);
+                                foundCat = Site.Settings.Categories.FirstOrDefault(c => c.Name == hierarchy[i]);
+                            }
+                            SiteCategory = foundCat;
+                        }
+                        if (SiteCategory == null) break;
                     }
-                    if (SiteCategory == null) break;
                 }
             }
         }
@@ -266,7 +278,7 @@ namespace OnlineVideos.Sites
                     videos.Sort((Comparison<VideoInfo>)((v1, v2) => v1.Title.CompareTo(v2.Title)));
                     break;
                 case "airdate":
-                    videos.Sort((Comparison<VideoInfo>)delegate(VideoInfo v1, VideoInfo v2)
+                    videos.Sort((Comparison<VideoInfo>)delegate (VideoInfo v1, VideoInfo v2)
                     {
                         DateTime airdate_v1;
                         DateTime airdate_v2;
@@ -277,7 +289,7 @@ namespace OnlineVideos.Sites
                     });
                     break;
                 case "runtime":
-                    videos.Sort((Comparison<VideoInfo>)delegate(VideoInfo v1, VideoInfo v2)
+                    videos.Sort((Comparison<VideoInfo>)delegate (VideoInfo v1, VideoInfo v2)
                     {
                         double seconds_v1 = TryGetSeconds(v1.Length);
                         double seconds_v2 = TryGetSeconds(v2.Length);

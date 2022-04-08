@@ -102,7 +102,7 @@ namespace OnlineVideos.MediaPortal1
                         catch (Exception threadException)
                         {
                             _CurrentError = threadException as OnlineVideosException;
-                            Log.Instance.Warn(threadException.ToString());
+                            Log.Instance.Warn(threadException.Message);
                             _CurrentTaskSuccess = false;
                         }
                         timeoutTimer.Stop();

@@ -253,7 +253,7 @@ namespace OnlineVideos.MediaPortal1
 
         public override bool Init()
         {
-           ServicePointManager.SecurityProtocol = (SecurityProtocolType) 3072|SecurityProtocolType.Ssl3|SecurityProtocolType.Tls;
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072 | SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
 
             CrossDomain.OnlineVideosAppDomain.UseSeperateDomain = true;
 
@@ -958,7 +958,11 @@ namespace OnlineVideos.MediaPortal1
                                 }
                                 else if (categoryToDisplay.HasSubCategories)
                                 {
-                                    DisplayCategories(categoryToDisplay, true);
+                                    if (SelectedSite is Sites.FavoriteUtil && categoryToDisplay.ParentCategory == null)
+                                        //do not diveDownOrUpIfSingle if Favorite, so you can remove the last category
+                                        DisplayCategories(categoryToDisplay, null);
+                                    else
+                                        DisplayCategories(categoryToDisplay, true);
                                 }
                                 else
                                 {
@@ -1825,12 +1829,12 @@ namespace OnlineVideos.MediaPortal1
                 }
                 else
                 {
-                    Category searchCategory = CrossDomain.OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(Category).Assembly.FullName, typeof(Category).FullName) as Category;
+                    Category searchCategory = CrossDomain.OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(SearchCategory).Assembly.FullName, typeof(SearchCategory).FullName) as Category;
                     searchCategory.Name = categoryName;
                     searchCategory.HasSubCategories = true;
                     searchCategory.SubCategoriesDiscovered = true;
                     searchCategory.SubCategories = resultList.ConvertAll(i => { (i as Category).ParentCategory = searchCategory; return i as Category; });
-                    SetCategoriesToFacade(searchCategory, searchCategory.SubCategories, true);
+                    SetCategoriesToFacade(searchCategory, searchCategory.SubCategories, null);
                 }
             }
             else
@@ -2167,8 +2171,9 @@ namespace OnlineVideos.MediaPortal1
             int currentPlaylistIndex = currentPlayingItem != null ? currentPlaylist.IndexOf(currentPlayingItem) : 0;
             if (currentPlaylist.Count > currentPlaylistIndex + 1)
             {
-                // if playing a playlist item, move to the next            
+                // if playing a playlist item, move to the next
                 currentPlaylistIndex++;
+                selectedVideo = currentPlaylist[currentPlaylistIndex].Video;
                 Play_Step1(currentPlaylist[currentPlaylistIndex], GUIWindowManager.ActiveWindow == GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
             }
             else
@@ -2181,6 +2186,7 @@ namespace OnlineVideos.MediaPortal1
                         var videos = SelectedSite.GetNextPageVideos();
                         currentPlaylist = VideosToPlayList(videos, currentPlaylist.Random, null);
                         currentPlaylist.Insert(0, currentPlayingItem);//keep one for chosenplaybackoption
+                        SetVideosToFacade(videos, currentVideosDisplayMode);
                     }
                     catch (Exception ex)
                     {
@@ -2190,7 +2196,7 @@ namespace OnlineVideos.MediaPortal1
                     if (currentPlaylist.Count > 1)
                     {
                         currentPlaylistIndex = 1;
-                        Play_Step1(currentPlaylist[1], true);
+                        Play_Step1(currentPlaylist[1], GUIWindowManager.ActiveWindow == GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
                     }
                     else
                     {
@@ -2341,12 +2347,27 @@ namespace OnlineVideos.MediaPortal1
             string lsUrl = loUrlList[0];
             int currentPlaylistIndex = currentPlayingItem != null ? currentPlaylist.IndexOf(currentPlayingItem) : -1;
             bool resolve;
-            //try to find previously chosen playbackoption in plaiItem.Video.Playbackoptiohs. If found, take that one and don't display dialog
-            if (!skipPlaybackOptionsDialog && currentPlaylistIndex >= 0 && playItem.Video.PlaybackOptions != null && playItem.Video.PlaybackOptions.Count > 1 &&
-                playItem.Video.PlaybackOptions.ContainsKey(currentPlaylist[currentPlaylistIndex].ChosenPlaybackOption))
+            //try to find previously chosen playbackoption in playItem.Video.Playbackoptiohs. If found, take that one and don't display dialog
+            if (!skipPlaybackOptionsDialog && currentPlaylistIndex >= 0 && playItem.Video.PlaybackOptions != null && playItem.Video.PlaybackOptions.Count > 1)
             {
-                resolve = true;
-                lsUrl = currentPlaylist[currentPlaylistIndex].ChosenPlaybackOption;
+                var cpo=currentPlaylist[currentPlaylistIndex].ChosenPlaybackOption;
+                if (!String.IsNullOrEmpty(cpo) && playItem.Video.PlaybackOptions.ContainsKey(cpo))
+                {
+                    resolve = true;
+                    lsUrl = cpo;
+                }
+                else
+                {
+                    //if previously chosen playbackoption was the first, then just take the first for this one too
+                    var currPlaybackOptions = currentPlaylist[currentPlaylistIndex].Video.PlaybackOptions;
+                    if (currPlaybackOptions.FirstOrDefault().Key == cpo)
+                    {
+                        resolve = true;
+                        lsUrl = playItem.Video.PlaybackOptions.First().Key;
+                    }
+                    else
+                        resolve = DisplayPlaybackOptions(playItem.Video, ref lsUrl, skipPlaybackOptionsDialog); // resolve only when any playbackoptions were set
+                }
             }
 
             else
@@ -2921,7 +2942,8 @@ namespace OnlineVideos.MediaPortal1
                     SaveSubtitles(saveItems.CurrentItem.VideoInfo, Path.ChangeExtension(saveItems.CurrentItem.LocalFile, ".srt"));
                     // save matroska tag
                     string niceTitle = saveItems.CurrentItem.Util.GetFileNameForDownload(saveItems.CurrentItem.VideoInfo, saveItems.CurrentItem.Category, null);
-                    File.WriteAllText(Path.ChangeExtension(saveItems.CurrentItem.LocalFile, ".xml"), saveItems.CurrentItem.VideoInfo.CreateMatroskaXmlTag(niceTitle), System.Text.Encoding.UTF8);
+                    ITrackingInfo ti = saveItems.CurrentItem.Util.GetTrackingInfo(saveItems.CurrentItem.VideoInfo);
+                    File.WriteAllText(Path.ChangeExtension(saveItems.CurrentItem.LocalFile, ".xml"), saveItems.CurrentItem.VideoInfo.CreateMatroskaXmlTag(niceTitle, ti), System.Text.Encoding.UTF8);
                 }
                 catch (Exception ex)
                 {

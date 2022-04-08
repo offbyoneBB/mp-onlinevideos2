@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using OnlineVideos.Downloading;
+using ExtraVideoInfo = System.Tuple<System.IO.FileInfo, OnlineVideos.TrackingInfo>;
 
 namespace OnlineVideos.Sites
 {
@@ -86,6 +87,11 @@ namespace OnlineVideos.Sites
             return getVideoList((category as RssLink).Url, "*", category.Name == Translation.Instance.All);
         }
 
+        public override ITrackingInfo GetTrackingInfo(VideoInfo video)
+        {
+            return video.Other is ExtraVideoInfo ? (video.Other as ExtraVideoInfo).Item2 : base.GetTrackingInfo(video);
+        }
+
         List<VideoInfo> getVideoList(string path, string search, bool recursive)
         {
             List<VideoInfo> loVideoInfoList = new List<VideoInfo>();
@@ -100,20 +106,66 @@ namespace OnlineVideos.Sites
                         string description_xml = "";
                         string airdate_xml = "";
                         string title_xml = "";
+                        TrackingInfo ti = new TrackingInfo();
                         // read info from Matroska Xml File if available
                         if (File.Exists(Path.ChangeExtension(file.FullName, ".xml")))
                         {
                             var matroskaTagsXmlDoc = XDocument.Load(Path.ChangeExtension(file.FullName, ".xml"));
-                            foreach (var simpleNode in matroskaTagsXmlDoc.Document.Descendants("Simple"))
+                            foreach (var tagNode in matroskaTagsXmlDoc.Document.Descendants("Tag"))
                             {
-                                if (simpleNode.Element("Name").Value == "TITLE")
-                                    title_xml = simpleNode.Element("String").Value;
-                                else if (simpleNode.Element("Name").Value == "DESCRIPTION")
-                                    description_xml = simpleNode.Element("String").Value;
-                                else if (simpleNode.Element("Name").Value == "DATE_RELEASED")
-                                    airdate_xml = simpleNode.Element("String").Value;
+                                var targetType = tagNode.Descendants("TargetTypeValue").First<XElement>().Value;
+                                switch (targetType)
+                                {
+                                    case "70":
+                                        {
+                                            ti.VideoKind = VideoKind.TvSeries;
+                                            ti.Title = tagNode.Descendants("String").First<XElement>().Value;
+                                            break;
+                                        }
+                                    case "60":
+                                        {
+                                            ti.Season = Convert.ToUInt32(tagNode.Descendants("String").First<XElement>().Value);
+                                            break;
+                                        }
+                                    case "50":
+                                        {
+                                            foreach (var simpleNode in tagNode.Descendants("Simple"))
+                                            {
+                                                if (simpleNode.Element("Name").Value == "TITLE")
+                                                {
+                                                    title_xml = simpleNode.Element("String").Value;
+                                                }
+                                                else if (simpleNode.Element("Name").Value == "DESCRIPTION")
+                                                    description_xml = simpleNode.Element("String").Value;
+                                                else if (simpleNode.Element("Name").Value == "DATE_RELEASED")
+                                                {
+                                                    airdate_xml = simpleNode.Element("String").Value;
+                                                    UInt32 year;
+                                                    if (UInt32.TryParse(airdate_xml, out year))
+                                                        ti.Year = year;
+                                                }
+                                                else if (simpleNode.Element("Name").Value == "PART_NUMBER")
+                                                    ti.Episode = Convert.ToUInt32(simpleNode.Element("String").Value);
+                                                else if (simpleNode.Element("Name").Value == "CONTENT_TYPE")
+                                                {
+                                                    VideoKind kind;
+                                                    if (VideoKind.TryParse(simpleNode.Element("String").Value, out kind))
+                                                    {
+                                                        ti.VideoKind = kind;
+                                                    }
+                                                }
+                                                else if (simpleNode.Element("Name").Value == "IMDB")
+                                                {
+                                                    ti.ID_IMDB = simpleNode.Element("String").Value;
+                                                }
+                                            }
+                                            break;
+                                        }
+                                }
                             }
                         }
+                        if (ti.VideoKind == VideoKind.Movie)
+                            ti.Title = title_xml;
                         VideoInfo loVideoInfo = new VideoInfo();
                         loVideoInfo.VideoUrl = file.FullName;
                         loVideoInfo.Thumb = file.FullName.Substring(0, file.FullName.LastIndexOf(".")) + ".jpg";
@@ -121,7 +173,7 @@ namespace OnlineVideos.Sites
                         loVideoInfo.Length = string.Format("{0} MB", (file.Length / 1024 / 1024).ToString("N0"));
                         loVideoInfo.Airdate = string.IsNullOrEmpty(airdate_xml) ? file.LastWriteTime.ToString("g", OnlineVideoSettings.Instance.Locale) : airdate_xml;
                         loVideoInfo.Description = description_xml;
-                        loVideoInfo.Other = file;
+                        loVideoInfo.Other = new ExtraVideoInfo(file, ti);
                         loVideoInfoList.Add(loVideoInfo);
                     }
                 }
@@ -129,21 +181,21 @@ namespace OnlineVideos.Sites
                 switch (lastSort)
                 {
                     case "name":
-                        loVideoInfoList.Sort((Comparison<VideoInfo>)delegate(VideoInfo v1, VideoInfo v2)
+                        loVideoInfoList.Sort((Comparison<VideoInfo>)delegate (VideoInfo v1, VideoInfo v2)
                         {
                             return v1.Title.CompareTo(v2.Title);
                         });
                         break;
                     case "date":
-                        loVideoInfoList.Sort((Comparison<VideoInfo>)delegate(VideoInfo v1, VideoInfo v2)
+                        loVideoInfoList.Sort((Comparison<VideoInfo>)delegate (VideoInfo v1, VideoInfo v2)
                         {
-                            return (v2.Other as FileInfo).LastWriteTime.CompareTo((v1.Other as FileInfo).LastWriteTime);
+                            return (v2.Other as ExtraVideoInfo).Item1.LastWriteTime.CompareTo((v1.Other as ExtraVideoInfo).Item1.LastWriteTime);
                         });
                         break;
                     case "size":
-                        loVideoInfoList.Sort((Comparison<VideoInfo>)delegate(VideoInfo v1, VideoInfo v2)
+                        loVideoInfoList.Sort((Comparison<VideoInfo>)delegate (VideoInfo v1, VideoInfo v2)
                         {
-                            return (v2.Other as FileInfo).Length.CompareTo((v1.Other as FileInfo).Length);
+                            return (v2.Other as ExtraVideoInfo).Item1.Length.CompareTo((v1.Other as ExtraVideoInfo).Item1.Length);
                         });
                         break;
                 }

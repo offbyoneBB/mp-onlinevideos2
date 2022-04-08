@@ -92,7 +92,7 @@ namespace OnlineVideos.MPUrlSourceFilter
                 this.cancelled = false;
 
                 sourceFilter = (IDownload)new MPUrlSourceSplitter();
-                String url = UrlBuilder.GetFilterUrl(downloadInfo.Util, downloadInfo.Url);
+                String url = UrlBuilder.GetFilterUrl(downloadInfo.Util, downloadInfo.Url, true);
 
                 IDownload downloadFilter = (IDownload)sourceFilter;
                 int result = downloadFilter.DownloadAsync(url, downloadInfo.LocalFile, this);
@@ -172,7 +172,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// Defines MediaPortal Url Source Splitter.
         /// </summary>
         [ComImport, Guid(FilterCLSID)]
-        private class MPUrlSourceSplitter { } ;
+        private class MPUrlSourceSplitter { };
 
         #endregion
 
