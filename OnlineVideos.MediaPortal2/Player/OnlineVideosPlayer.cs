@@ -130,7 +130,7 @@ namespace OnlineVideos.MediaPortal2
             if (item != null)
                 OnlineVideoSettings.Instance.SiteUtilsList.TryGetValue(item.SiteName, out siteUtil);
 
-            return MPUrlSourceFilter.UrlBuilder.GetFilterUrl(siteUtil, url);
+            return MPUrlSourceFilter.UrlBuilder.GetFilterUrl(siteUtil, url, true);
         }
 
         static string GetSourceFilterName(string url)
