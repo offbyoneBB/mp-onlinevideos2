@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\Packages\Microsoft.Net.Compilers.3.10.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\..\Packages\Microsoft.Net.Compilers.3.10.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="..\..\Packages\Microsoft.Net.Compilers.4.1.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\..\Packages\Microsoft.Net.Compilers.4.1.0\build\Microsoft.Net.Compilers.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -373,8 +373,8 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\Packages\Microsoft.Net.Compilers.3.10.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\Microsoft.Net.Compilers.3.10.0\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\..\Packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\Microsoft.Net.Compilers.4.1.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\Microsoft.Net.Compilers.4.1.0\build\Microsoft.Net.Compilers.props'))" />
   </Target>
   <Import Project="..\..\Packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\Packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
 </Project>
