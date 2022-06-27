@@ -508,7 +508,7 @@ namespace OnlineVideos.MediaPortal1
 					else
 					{
 						string userReason = "";
-						if (GUIOnlineVideos.GetUserInputString(ref userReason, false))
+						if (GUIOnlineVideos.GetUserInputString(ref userReason, false, false))
 						{
 							if (userReason.Length < 15)
 							{
