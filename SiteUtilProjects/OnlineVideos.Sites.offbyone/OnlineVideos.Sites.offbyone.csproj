@@ -367,6 +367,7 @@
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
+	<MakeDir Directories="$(SolutionDir)\Build\SiteUtilDlls" Condition="!Exists('$(SolutionDir)\Build\SiteUtilDlls')"/>
     <ILMerge InputAssemblies="@(MergeAsm)" LibraryPath="$(SolutionDir)\OnlineVideos\bin\$(Configuration)" DebugInfo="true" OutputFile="$(SolutionDir)\Build\SiteUtilDlls\$(TargetFileName)" />
   </Target>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
