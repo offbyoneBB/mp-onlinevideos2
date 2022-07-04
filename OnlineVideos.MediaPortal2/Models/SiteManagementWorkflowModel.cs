@@ -438,13 +438,14 @@ namespace OnlineVideos.MediaPortal2
         ItemsList GetUserReports(OnlineSiteViewModel item)
         {
             var items = new ItemsList();
-
+#if !NET6_0_OR_GREATER
             OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
             var reports = ws.GetReports(item.Site.Name);
             foreach (var report in reports.OrderByDescending(r => r.Date))
             {
                 items.Add(new ReportViewModel(report));
             }
+#endif
             return items;
         }
 
@@ -510,6 +511,7 @@ namespace OnlineVideos.MediaPortal2
             }
             else
             {
+#if !NET6_0_OR_GREATER
                 OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
                 string message = "";
                 bool success = ws.SubmitReport(site.Name, userReason, OnlineVideosWebservice.ReportType.Broken, out message);
@@ -520,12 +522,13 @@ namespace OnlineVideos.MediaPortal2
                     OnlineVideos.Sites.Updater.GetRemoteOverviews(true);
                     GetFilteredAndSortedSites();
                 }
+#endif
             }
         }
 
-        #endregion
+#endregion
 
-        #region Private members - Messaging
+#region Private members - Messaging
 
         void OnlineVideosMessageReceived(AsynchronousMessageQueue queue, SystemMessage message)
         {
@@ -553,6 +556,6 @@ namespace OnlineVideos.MediaPortal2
             }
         }
 
-        #endregion
+#endregion
     }
 }
