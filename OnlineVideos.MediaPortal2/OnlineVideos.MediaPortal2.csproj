@@ -1,137 +1,55 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{FA12B047-F5EC-4045-8D26-47C7B17B3B16}</ProjectGuid>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OnlineVideos.MediaPortal2</RootNamespace>
-    <AssemblyName>OnlineVideos.MediaPortal2</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DirectShowWrapper">
-      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\Plugins\VideoPlayers\DirectShowWrapper.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\Debug\net6.0-windows\Plugins\VideoPlayers\DirectShowWrapper.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Media">
-      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\Plugins\Media\Media.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\Debug\net6.0-windows\Plugins\Media\Media.dll</HintPath>
     </Reference>
     <Reference Include="FFMpegLib">
-      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\Plugins\FFMpegLib\FFMpegLib.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\Debug\net6.0-windows\Plugins\FFMpegLib\FFMpegLib.dll</HintPath>
     </Reference>
     <Reference Include="MediaPortal.Common">
-      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\MediaPortal.Common.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\Debug\net6.0-windows\MediaPortal.Common.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MediaPortal.UI">
-      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\MediaPortal.UI.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\Debug\net6.0-windows\MediaPortal.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MediaPortal.Utilities">
-      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\MediaPortal.Utilities.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\Debug\net6.0-windows\MediaPortal.Utilities.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct3D9">
-      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\Plugins\SkinEngine\SharpDX.Direct3D9.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\Debug\net6.0-windows\Plugins\SkinEngine\SharpDX.Direct3D9.dll</HintPath>
     </Reference>
     <Reference Include="SkinEngine">
-      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\Plugins\SkinEngine\SkinEngine.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\Debug\net6.0-windows\Plugins\SkinEngine\SkinEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Web.Services" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
     <Reference Include="VideoPlayers">
-      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\Plugins\VideoPlayers\VideoPlayers.dll</HintPath>
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\Debug\net6.0-windows\Plugins\VideoPlayers\VideoPlayers.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OnlineVideos.InputStream\InputStreamPlayer\InputStreamPlayer.csproj">
-      <Project>{3171D2FF-4E7F-4413-B7A9-03AA7355DC68}</Project>
-      <Name>InputStreamPlayer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OnlineVideos.InputStream\MediaPortalWrapper\MediaPortalWrapper.csproj">
-      <Project>{47731721-BA8A-4295-BCCE-399E5C289B4E}</Project>
-      <Name>MediaPortalWrapper</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OnlineVideos.MediaPortal2.Interfaces\OnlineVideos.MediaPortal2.Interfaces.csproj">
-      <Project>{F54CFB16-1599-4676-BED6-2AB1C6F4DE53}</Project>
-      <Name>OnlineVideos.MediaPortal2.Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OnlineVideos\OnlineVideos.csproj">
-      <Project>{E0D9D390-CDD6-4B98-86F3-6EB04A958882}</Project>
-      <Name>OnlineVideos</Name>
-      <Private>True</Private>
-    </ProjectReference>
+    <ProjectReference Include="..\OnlineVideos.InputStream\InputStreamPlayer\InputStreamPlayer.csproj" />
+    <ProjectReference Include="..\OnlineVideos.InputStream\MediaPortalWrapper\MediaPortalWrapper.csproj" />
+    <ProjectReference Include="..\OnlineVideos.MediaPortal2.Interfaces\OnlineVideos.MediaPortal2.Interfaces.csproj" />
+    <ProjectReference Include="..\OnlineVideos\OnlineVideos.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Build\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
-    <Compile Include="BackgroundTask.cs" />
-    <Compile Include="CommandContainer.cs" />
-    <Compile Include="Configuration\Configuration.cs" />
-    <Compile Include="ContentLists\OnlineVideosContentListProviderBase.cs" />
-    <Compile Include="Controls\OverlayPanel.cs" />
-    <Compile Include="DynamicWorkflow.cs" />
-    <Compile Include="Models\OnlineVideosListModel.cs" />
-    <Compile Include="Models\SiteUpdateWorkflowModels.cs" />
-    <Compile Include="Configuration\UserSiteSettingsStore.cs" />
-    <Compile Include="Models\SiteManagementWorkflowModel.cs" />
-    <Compile Include="OnlineVideosPlugin.cs" />
-    <Compile Include="Player\OnlineVideoPlayerBuilder.cs" />
-    <Compile Include="Player\AutomationVideoPlayer.cs" />
-    <Compile Include="Player\WebBrowserVideoPlayer.cs" />
-    <Compile Include="ViewModels\CategoryViewModel.cs" />
-    <Compile Include="Guids.cs" />
-    <Compile Include="LogDelegator.cs" />
-    <Compile Include="Player\OnlineVideosPlayer.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Models\OnlineVideosWorkflowModel.cs" />
-    <Compile Include="Actions\SearchAction.cs" />
-    <Compile Include="ViewModels\OnlineSiteViewModel.cs" />
-    <Compile Include="ViewModels\PlaylistItem.cs" />
-    <Compile Include="ViewModels\ReportViewModel.cs" />
-    <Compile Include="ViewModels\SiteGroupViewModel.cs" />
-    <Compile Include="ViewModels\SiteSettingViewModel.cs" />
-    <Compile Include="ViewModels\SiteViewModel.cs" />
-    <Compile Include="ValueConverter.cs" />
-    <Compile Include="ViewModels\VideoViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Language\strings_bg.xml" />
@@ -244,12 +162,6 @@
     <Content Include="Skin\Titanium\screens\details.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="NuGetPackage\OnlineVideos.MediaPortal2.nuspec" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="build.targets" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Skin\BlueVision\screens\categories.xaml" />
     <Content Include="Skin\BlueVision\screens\details.xaml" />
     <Content Include="Skin\BlueVision\screens\ovsSiteManagement.xaml" />
@@ -258,141 +170,6 @@
     <Content Include="Skin\BlueVision\screens\videos.xaml" />
     <Content Include="Skin\BlueVision\themes\default\styles\OnlineVideosConsts.xaml" />
     <Content Include="Skin\BlueVision\themes\default\styles\OnlineVideosStyles.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\BlueVision\screens\FullScreenContentOV.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\BlueVision\screens\CurrentlyPlayingOV.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\default\screens\CurrentlyPlayingOV.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\default\screens\FullScreenContentOV.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\default\screens\ovsSiteGroups.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\WMCSkin\screens\categories.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\WMCSkin\screens\CurrentlyPlayingOV.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\WMCSkin\screens\details.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\WMCSkin\screens\FullScreenContentOV.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\WMCSkin\screens\ovsSiteGroups.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\WMCSkin\screens\ovsSiteManagement.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\WMCSkin\screens\ovsSiteSettings.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\WMCSkin\screens\sites.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\WMCSkin\screens\videos.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\WMCSkin\themes\default\styles\OnlineVideosConsts.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\WMCSkin\themes\default\styles\OnlineVideosStyles.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\BlueVision\screens\ovsSiteGroups.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\Reflexion\themes\default\styles\OnlineVideosConsts.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\Titanium\screens\ovsSiteManagement.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\Titanium\screens\ovsSiteSettings.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Skin\BlueVision\themes\Titanium Extended\screens\categories.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\BlueVision\themes\Titanium Extended\screens\details.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\BlueVision\themes\Titanium Extended\screens\ovsSiteGroups.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\BlueVision\themes\Titanium Extended\screens\ovsSiteManagement.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\BlueVision\themes\Titanium Extended\screens\ovsSiteSettings.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\BlueVision\themes\Titanium Extended\screens\sites.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\BlueVision\themes\Titanium Extended\screens\videos.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\BlueVision\themes\Titanium Extended\styles\OnlineVideosConsts.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\BlueVision\themes\Titanium Extended\styles\OnlineVideosStyles.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\BlueVision\themes\Win10\screens\categories.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\BlueVision\themes\Win10\screens\details.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\BlueVision\themes\Win10\screens\ovsDialogGenericItems.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\BlueVision\themes\Win10\screens\ovsDialogItemContextMenu.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\BlueVision\themes\Win10\screens\ovsSiteGroups.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\BlueVision\themes\Win10\screens\ovsSiteManagement.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\BlueVision\themes\Win10\screens\sites.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\BlueVision\themes\Win10\screens\videos.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\BlueVision\themes\Win10\styles\OnlineVideosConsts.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Skin\BlueVision\themes\Win10\styles\OnlineVideosStyles.xaml">
-      <SubType>Designer</SubType>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MediaPortal.UrlSourceSplitter">
@@ -404,51 +181,19 @@
     <PackageReference Include="Selenium.WebDriver">
       <Version>3.141.0</Version>
     </PackageReference>
-    <PackageReference Include="SharpDX">
-      <Version>4.2.0</Version>
-    </PackageReference>
     <PackageReference Include="SharpDX.Mathematics">
       <Version>4.2.0</Version>
     </PackageReference>
     <PackageReference Include="WebDriver.Profiles.Firefox">
       <Version>0.1.0</Version>
     </PackageReference>
+    <PackageReference Include="System.ServiceModel.Federation" Version="4.8.1" />
+    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.3.330701">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Skin\Nereus\screens\categories.xaml">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Skin\Nereus\screens\CurrentlyPlayingOV.xaml">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Skin\Nereus\screens\details.xaml">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Skin\Nereus\screens\FullScreenContentOV.xaml">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Skin\Nereus\screens\ovsSiteGroups.xaml">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Skin\Nereus\screens\ovsSiteManagement.xaml">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Skin\Nereus\screens\ovsSiteSettings.xaml">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Skin\Nereus\screens\sites.xaml">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Skin\Nereus\screens\videos.xaml">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Skin\Nereus\themes\default\styles\OnlineVideosConsts.xaml">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Skin\Nereus\themes\default\styles\OnlineVideosStyles.xaml">
-      <SubType>Designer</SubType>
-    </None>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="build.targets" />
 </Project>
