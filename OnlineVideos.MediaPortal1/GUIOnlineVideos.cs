@@ -554,7 +554,7 @@ namespace OnlineVideos.MediaPortal1
                                     SaveVideo_Step1(DownloadList.Create(dlInfo));
                                     break;
                                 case "Filter":
-                                    if (GetUserInputString(ref videosVKfilter, false)) SetVideosToFacade(currentVideoList, currentVideosDisplayMode);
+                                    if (GetUserInputString(ref videosVKfilter, false, false)) SetVideosToFacade(currentVideoList, currentVideosDisplayMode);
                                     break;
                                 default:
                                     HandleCustomContextMenuEntry(dialogOptions[dlgSel.SelectedId - 1].Value, selectedCategory, aVideo);
@@ -576,7 +576,7 @@ namespace OnlineVideos.MediaPortal1
                 if (currentEntry.Action == Sites.ContextMenuEntry.UIAction.GetText)
                 {
                     string text = currentEntry.UserInputText ?? "";
-                    if (GetUserInputString(ref text, false))
+                    if (GetUserInputString(ref text, false, false))
                     {
                         currentEntry.UserInputText = text;
                         execute = true;
@@ -1107,7 +1107,7 @@ namespace OnlineVideos.MediaPortal1
             else if (control == GUI_btnEnterPin)
             {
                 string pin = String.Empty;
-                if (GetUserInputString(ref pin, true))
+                if (GetUserInputString(ref pin, true, false))
                 {
                     if (pin == PluginConfiguration.Instance.pinAgeConfirmation)
                     {
@@ -1749,7 +1749,7 @@ namespace OnlineVideos.MediaPortal1
 
             if (!directSearch)
             {
-                if (GetUserInputString(ref query, false))
+                if (GetUserInputString(ref query, false, false))
                 {
                     GUIControl.FocusControl(GetID, GUI_facadeView.GetID);
                     query = query.Trim();
@@ -1799,7 +1799,7 @@ namespace OnlineVideos.MediaPortal1
                     // set videos to the facade -> if none were found and an empty facade is currently shown, go to previous menu
                     if ((!success || resultList == null || resultList.Count == 0) && GUI_facadeView.Count == 0)
                     {
-                        if (loadParamInfo != null && loadParamInfo.ShowVKonFailedSearch && GetUserInputString(ref query, false)) Display_SearchResults(query);
+                        if (loadParamInfo != null && loadParamInfo.ShowVKonFailedSearch && GetUserInputString(ref query, false, false)) Display_SearchResults(query);
                         else ShowPreviousMenu();
                     }
                     else
@@ -2117,7 +2117,12 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-        internal static bool GetUserInputString(ref string sString, bool password)
+        private static void TrySetIsNumeric(VirtualKeyboard keyBoard)
+        {
+            keyBoard.IsNumeric = true;
+        }
+
+        internal static bool GetUserInputString(ref string sString, bool password, bool isNumeric)
         {
             VirtualKeyboard keyBoard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
             if (keyBoard == null) return false;
@@ -2125,6 +2130,8 @@ namespace OnlineVideos.MediaPortal1
             keyBoard.SetLabelAsInitialText(false); // set to false, otherwise our intial text is cleared
             keyBoard.Text = sString;
             keyBoard.Password = password;
+            if (isNumeric && keyBoard.GetType().GetProperty("IsNumeric") != null) // for backwards compatibility with MP 1.29 and earlier
+                TrySetIsNumeric(keyBoard);
             keyBoard.DoModal(GUIWindowManager.ActiveWindow); // show it...
             if (keyBoard.IsConfirmed) sString = keyBoard.Text;
             return keyBoard.IsConfirmed;
