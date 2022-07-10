@@ -438,14 +438,12 @@ namespace OnlineVideos.MediaPortal2
         ItemsList GetUserReports(OnlineSiteViewModel item)
         {
             var items = new ItemsList();
-#if !NET6_0_OR_GREATER
-            OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
+            OnlineVideosWebservice.OnlineVideosServiceSoapClient ws = new OnlineVideosWebservice.OnlineVideosServiceSoapClient(OnlineVideosWebservice.OnlineVideosServiceSoapClient.EndpointConfiguration.OnlineVideosServiceSoap);
             var reports = ws.GetReports(item.Site.Name);
             foreach (var report in reports.OrderByDescending(r => r.Date))
             {
                 items.Add(new ReportViewModel(report));
             }
-#endif
             return items;
         }
 
@@ -511,8 +509,7 @@ namespace OnlineVideos.MediaPortal2
             }
             else
             {
-#if !NET6_0_OR_GREATER
-                OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
+                OnlineVideosWebservice.OnlineVideosServiceSoapClient ws = new OnlineVideosWebservice.OnlineVideosServiceSoapClient(OnlineVideosWebservice.OnlineVideosServiceSoapClient.EndpointConfiguration.OnlineVideosServiceSoap);
                 string message = "";
                 bool success = ws.SubmitReport(site.Name, userReason, OnlineVideosWebservice.ReportType.Broken, out message);
                 ServiceRegistration.Get<IDialogManager>().ShowDialog(success ? "[OnlineVideos.Done]" : "[OnlineVideos.Error]", message, DialogType.OkDialog, false, DialogButtonType.Ok);
@@ -522,7 +519,6 @@ namespace OnlineVideos.MediaPortal2
                     OnlineVideos.Sites.Updater.GetRemoteOverviews(true);
                     GetFilteredAndSortedSites();
                 }
-#endif
             }
         }
 
