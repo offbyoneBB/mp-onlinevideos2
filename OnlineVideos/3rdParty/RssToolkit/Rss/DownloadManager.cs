@@ -15,8 +15,6 @@ using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Text;
-using System.Web;
-using System.Web.Hosting;
 using System.Xml;
 using System.Xml.Serialization;
 using RssToolkit.Rss;
@@ -70,11 +68,13 @@ namespace RssToolkit.Rss
 
                 if (string.IsNullOrEmpty(tempDir))
                 {
+#if !NET6_0_OR_GREATER
                     if (HostingEnvironment.IsHosted)
                     {
                         tempDir = HttpRuntime.CodegenDir;
                     }
                     else
+#endif
                     {
                         tempDir = Environment.GetEnvironmentVariable("TEMP");
 

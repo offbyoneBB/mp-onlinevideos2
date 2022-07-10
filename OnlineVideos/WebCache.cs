@@ -149,7 +149,9 @@ namespace OnlineVideos
                 if (cachedData != null) return cachedData;
 
                 // build the request
+#if !NET6_0_OR_GREATER
                 if (allowUnsafeHeader) Helpers.DotNetFrameworkHelper.SetAllowUnsafeHeaderParsing(true);
+#endif
                 HttpWebRequest request = WebRequest.Create(uri) as HttpWebRequest;
                 if (request == null) return "";
                 request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate; // turn on automatic decompression of both formats (adds header "AcceptEncoding: gzip,deflate" to the request)
@@ -227,8 +229,10 @@ namespace OnlineVideos
             finally
             {
                 if (response != null) ((IDisposable)response).Dispose();
+#if !NET6_0_OR_GREATER
                 // disable unsafe header parsing if it was enabled
                 if (allowUnsafeHeader) Helpers.DotNetFrameworkHelper.SetAllowUnsafeHeaderParsing(false);
+#endif
             }
         }
 

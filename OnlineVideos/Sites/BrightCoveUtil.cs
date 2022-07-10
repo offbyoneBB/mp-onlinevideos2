@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Text.RegularExpressions;
 using OnlineVideos.AMF;
 using System.Linq;
-using System.Web;
+using System.Net;
 
 namespace OnlineVideos.Sites
 {
@@ -128,7 +128,7 @@ namespace OnlineVideos.Sites
                 string nm = String.Format("{0}x{1} {2}K",
                     rendition.GetIntProperty("frameWidth"), rendition.GetIntProperty("frameHeight"),
                     rendition.GetIntProperty("encodingRate") / 1024);
-                string url = HttpUtility.UrlDecode(rendition.GetStringProperty("defaultURL"));
+                string url = WebUtility.UrlDecode(rendition.GetStringProperty("defaultURL"));
                 if (url.StartsWith("rtmp"))
                 {
                     //tested with ztele

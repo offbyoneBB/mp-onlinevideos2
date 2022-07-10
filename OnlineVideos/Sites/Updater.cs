@@ -260,11 +260,12 @@ namespace OnlineVideos.Sites
             else return false;
         }
 
-        public static SiteSettings GetRemoteSite(string siteName, OnlineVideosService ws = null)
+        public static SiteSettings GetRemoteSite(string siteName, OnlineVideosServiceSoapClient ws = null)
         {
             try
             {
-                if (ws == null) ws = new OnlineVideosService() { Timeout = 30000, EnableDecompression = true };
+                if (ws == null) ws = new OnlineVideosServiceSoapClient(OnlineVideosServiceSoapClient.EndpointConfiguration.OnlineVideosServiceSoap);
+                //{ Timeout = 30000, EnableDecompression = true };
                 string siteXml = ws.GetSiteXml(siteName);
                 if (siteXml.Length > 0)
                 {
@@ -323,7 +324,7 @@ namespace OnlineVideos.Sites
             if (DateTime.Now - _lastOverviewsRetrieved > TimeSpan.FromMinutes(10) || force) // only get overviews every 10 minutes
             {
                 bool newData = false;
-                OnlineVideosService ws = new OnlineVideosService() { Timeout = 30000, EnableDecompression = true };
+                var ws = new OnlineVideosServiceSoapClient(OnlineVideosServiceSoapClient.EndpointConfiguration.OnlineVideosServiceSoap);
                 try
                 {
                     Log.Info("Updater loading Sites Overview from Webservice");
@@ -354,7 +355,7 @@ namespace OnlineVideos.Sites
             try
             {
                 Log.Info("Downloading '{0}.dll'", dllName);
-                OnlineVideosService ws = new OnlineVideosService() { Timeout = 30000, EnableDecompression = true };
+                var ws = new OnlineVideosServiceSoapClient(OnlineVideosServiceSoapClient.EndpointConfiguration.OnlineVideosServiceSoap);
                 byte[] onlineDllData = ws.GetDll(dllName);
                 if (onlineDllData != null && onlineDllData.Length > 0) File.WriteAllBytes(localPath, onlineDllData);
                 return true;

@@ -5,6 +5,7 @@ namespace OnlineVideos.Helpers
 {
     public static class DotNetFrameworkHelper
     {
+#if !NET6_0_OR_GREATER
         /// <summary>
         /// Method to change the AllowUnsafeHeaderParsing property of HttpWebRequest.
         /// </summary>
@@ -47,6 +48,7 @@ namespace OnlineVideos.Helpers
                 return false;
             }
         }
+#endif
 
         /// <summary>
         /// Workaround for .net issue documented here: https://connect.microsoft.com/VisualStudio/feedback/details/386695/system-uri-incorrectly-strips-trailing-dots

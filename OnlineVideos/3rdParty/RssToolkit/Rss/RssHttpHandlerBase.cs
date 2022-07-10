@@ -10,9 +10,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Web;
-using System.Web.Security;
 using System.Xml;
+using Microsoft.AspNetCore.Http;
 using RssToolkit.Rss;
 
 namespace RssToolkit.Rss

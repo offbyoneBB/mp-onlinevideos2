@@ -95,10 +95,10 @@ namespace OnlineVideos.MediaPortal2
                 new NavigationContextConfig()
                 {
                     AdditionalContextVariables = new Dictionary<string, object>
-					{
-						{ Constants.CONTEXT_VAR_ITEMS, GetSiteOptions(item) },
-						{ Constants.CONTEXT_VAR_COMMAND, new CommandContainer<ListItem>(ExecuteSiteOption) }
-					}
+                    {
+                        { Constants.CONTEXT_VAR_ITEMS, GetSiteOptions(item) },
+                        { Constants.CONTEXT_VAR_COMMAND, new CommandContainer<ListItem>(ExecuteSiteOption) }
+                    }
                 });
         }
 
@@ -173,7 +173,7 @@ namespace OnlineVideos.MediaPortal2
                 }
                 if (newDataSaved || newDllsDownloaded)
                 {
-                    OnlineVideoSettings.Instance.BuildSiteUtilsList();                    
+                    OnlineVideoSettings.Instance.BuildSiteUtilsList();
                     ServiceRegistration.Get<IMessageBroker>().Send(OnlineVideosMessaging.CHANNEL, new SystemMessage(OnlineVideosMessaging.MessageType.RebuildSites));
                 }
             }
@@ -474,9 +474,9 @@ namespace OnlineVideos.MediaPortal2
                     {
                         NavigationContextDisplayLabel = site.Site.Name,
                         AdditionalContextVariables = new Dictionary<string, object>
-						{
-							{ Constants.CONTEXT_VAR_ITEMS, GetUserReports(site) }
-						}
+                        {
+                            { Constants.CONTEXT_VAR_ITEMS, GetUserReports(site) }
+                        }
                     });
                     break;
                 case "ReportBroken":
@@ -494,9 +494,9 @@ namespace OnlineVideos.MediaPortal2
                         {
                             NavigationContextDisplayLabel = site.Site.Name,
                             AdditionalContextVariables = new Dictionary<string, object>
-							{
-								{ Constants.CONTEXT_VAR_COMMAND, new CommandContainer<string, OnlineVideosWebservice.Site>(ReportSite, site.Site) }
-							}
+                            {
+                                { Constants.CONTEXT_VAR_COMMAND, new CommandContainer<string, OnlineVideosWebservice.Site>(ReportSite, site.Site) }
+                            }
                         });
                     }
                     break;
@@ -526,9 +526,9 @@ namespace OnlineVideos.MediaPortal2
             }
         }
 
-#endregion
+        #endregion
 
-#region Private members - Messaging
+        #region Private members - Messaging
 
         void OnlineVideosMessageReceived(AsynchronousMessageQueue queue, SystemMessage message)
         {
@@ -556,6 +556,6 @@ namespace OnlineVideos.MediaPortal2
             }
         }
 
-#endregion
+        #endregion
     }
 }

@@ -16,11 +16,11 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
 using System.Xml;
 using System.Xml.Xsl;
 using System.Xml.XPath;
 using System.Xml.Serialization;
+using OnlineVideos;
 
 namespace RssToolkit.Rss
 {
@@ -43,10 +43,10 @@ namespace RssToolkit.Rss
             {
                 throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "The argument '{0}' is Null or Empty", "link"));
             }
-
+#if !NET6_0_OR_GREATER
             if (!string.IsNullOrEmpty(link) && link.StartsWith("~/"))
             {
-                HttpContext context = HttpContext.Current;
+                HttpContext context = HttpContextHelper.Current;
 
                 if (context != null)
                 {
@@ -63,7 +63,7 @@ namespace RssToolkit.Rss
                     link = new Uri(context.Request.Url, link).ToString() + query;
                 }
             }
-
+#endif
             return link;
         }
 
@@ -383,11 +383,12 @@ namespace RssToolkit.Rss
         {
             Dictionary<string, int> timeZones = null;
 
-            if (HttpContext.Current != null)
+#if !NET6_0_OR_GREATER
+            if (HttpContextHelper.Current != null)
             {
-                timeZones = HttpContext.Current.Cache[TimeZoneCacheKey] as Dictionary<string, int>;
+                timeZones = HttpContextHelper.Current.Cache[TimeZoneCacheKey] as Dictionary<string, int>;
             }
-
+#endif
             if (timeZones == null)
             {
                 timeZones = new Dictionary<string, int>();
@@ -427,10 +428,12 @@ namespace RssToolkit.Rss
                 timeZones.Add("X", 3 * 60);
                 timeZones.Add("Y", 12 * 60);
 
-                if (HttpContext.Current != null)
+#if !NET6_0_OR_GREATER
+                if (HttpContextHelper.Current != null)
                 {
-                    HttpContext.Current.Cache.Insert(TimeZoneCacheKey, timeZones);
+                    HttpContextHelper.Current.Cache.Insert(TimeZoneCacheKey, timeZones);
                 }
+#endif
             }
 
             if (zone.IndexOfAny(new char[] { '+', '-' }) == 0)  // +hhmm format

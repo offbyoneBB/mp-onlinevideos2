@@ -1,6 +1,6 @@
 ﻿using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
 using System;
-using System.ServiceModel;
+using CoreWCF;
 
 namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
 {
@@ -8,8 +8,8 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
     /// Player service implementation - these are messages from the client (OV) to the server (BrowserHost)
     /// </summary>
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, 
-                    ConcurrencyMode = ConcurrencyMode.Multiple, 
-                    UseSynchronizationContext = false)]
+                    ConcurrencyMode = ConcurrencyMode.Multiple/*, 
+                    UseSynchronizationContext = false*/)]
     public class WebBrowserPlayerService :  IWebBrowserPlayerService
     {
         /// <summary>

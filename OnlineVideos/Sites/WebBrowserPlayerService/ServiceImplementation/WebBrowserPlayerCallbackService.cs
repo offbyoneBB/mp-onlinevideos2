@@ -1,8 +1,8 @@
 ﻿using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
 using System;
 using System.Collections.Generic;
-using System.ServiceModel;
 using System.Windows.Forms;
+using CoreWCF;
 
 namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
 {
@@ -10,9 +10,9 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
     /// The callback service implementation - track subscribers and send the callback to these
     /// </summary>
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, 
-                        InstanceContextMode = InstanceContextMode.PerSession,
-                        UseSynchronizationContext = false),
-        CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, UseSynchronizationContext = false)]
+                        InstanceContextMode = InstanceContextMode.PerSession
+                        /*,UseSynchronizationContext = false*/),
+        System.ServiceModel.CallbackBehavior(ConcurrencyMode = System.ServiceModel.ConcurrencyMode.Multiple, UseSynchronizationContext = false)]
     public class WebBrowserPlayerCallbackService : IWebBrowserPlayerCallbackService
     {
         private static readonly List<IWebBrowserPlayerCallback> _subscribers = new List<IWebBrowserPlayerCallback>();
