@@ -7,9 +7,6 @@
     <Site name="ARD Mediathek" util="ArdMediathek" agecheck="false" enabled="true" lang="de">
       <Description>ARD Mediathek - Videos von Das Erste und den Dritten Programmen: Das Beste aus der ARD per Stream - Filme, Serien, Dokumentationen, Nachrichten, Livestreams und mehr - Videos online anschauen</Description>
     </Site>
-    <Site name="Das Erste" util="DasErsteMediathek" agecheck="false" enabled="true" lang="de">
-      <Description>Die ARD Mediathek ist ein Gemeinschaftsangebot der Arbeitsgemeinschaft der Rundfunkanstalten der Bundesrepublik Deutschland (ARD) und der Deutschen Welle.</Description>
-    </Site>
     <Site name="BR" util="Br" agecheck="false" enabled="true" lang="de">
       <Description>Kostenlos verfügbare Sendungen aus der Mediathek des Bayerischen Rundfunks (BR).</Description>
       <Configuration>
