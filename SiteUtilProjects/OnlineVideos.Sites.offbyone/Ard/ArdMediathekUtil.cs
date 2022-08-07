@@ -100,13 +100,6 @@ namespace OnlineVideos.Sites.Ard
 
                 var streamUrl = video.PlaybackOptions.FirstOrDefault().Value;
 
-                if (streamUrl?.Contains("master.m3u8") ?? false)
-                {
-                    var m3u8Data = GetWebData<string>(streamUrl, cache: false);
-                    var m3u8PlaybackOptions = HlsPlaylistParser.GetPlaybackOptions(m3u8Data, streamUrl);
-                    video.PlaybackOptions = m3u8PlaybackOptions;
-                    streamUrl = video.PlaybackOptions.FirstOrDefault().Value;
-                }
                 return streamUrl;
             }
 
