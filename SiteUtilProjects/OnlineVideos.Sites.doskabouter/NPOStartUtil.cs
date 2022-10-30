@@ -6,10 +6,11 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
 using Newtonsoft.Json.Linq;
+using OnlineVideos.Helpers;
 
-namespace OnlineVideos.Sites.BrowserUtilConnectors
+namespace OnlineVideos.Sites
 {
-    public class NPOStartUtil : GenericSiteUtil, IBrowserSiteUtil
+    public class NPOStartUtil : GenericSiteUtil, IWebViewHTMLMediaElement
     {
         [Category("OnlineVideosConfiguration")]
         protected string seriesRegEx;
@@ -18,6 +19,7 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
         public override void Initialize(SiteSettings siteSettings)
         {
             base.Initialize(siteSettings);
+            siteSettings.Player = PlayerType.Webview;
             if (!string.IsNullOrEmpty(seriesRegEx)) regex_Series = new Regex(seriesRegEx, defaultRegexOptions);
         }
 
@@ -90,12 +92,13 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         public override string GetVideoUrl(VideoInfo video)
         {
+            vidSelector = null;
             Match m;
 
             if (video.VideoUrl.Contains("/live/"))
             {
                 var data = GetWebData(video.VideoUrl);
-                m = Regex.Match(data, @"data-iframeid=""iframe-(?<id>[^""]*)""", defaultRegexOptions);
+                m = Regex.Match(data, @"player-id=""(?<id>[^""]*)""", defaultRegexOptions);
             }
             else
                 m = Regex.Match(video.VideoUrl, @"/(?<id>[^/]*)$");
@@ -116,29 +119,34 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
             return String.Empty;
         }
 
-        #region IBrowserSiteUtil
-        string IBrowserSiteUtil.ConnectorEntityTypeName
+        #region IWebViewHTMLMediaElement
+        System.Windows.Forms.Timer timer = null;
+        string vidSelector = null;
+        WebViewHelper wvh = null;
+
+        void IWebViewSiteUtilBase.SetWebviewHelper(WebViewHelper webViewHelper)
         {
-            get
-            {
-                return "OnlineVideos.Sites.BrowserUtilConnectors.NPOStartConnector";
-            }
+            wvh = webViewHelper;
         }
 
-        string IBrowserSiteUtil.UserName
+        void IWebViewSiteUtilBase.StartPlayback()
         {
-            get
+            wvh.Execute(@"document.getElementsByClassName(""vjs-big-play-button"")[0].click()");
+            timer = new System.Windows.Forms.Timer();
+            timer.Tick += (s, e) =>
             {
-                return "";
-            }
+                vidSelector = @"document.getElementsByTagName(""video"")[0]";
+                timer.Stop();
+                timer = null;
+            };
+            timer.Interval = 2000;
+            timer.Start();
+            
         }
 
-        string IBrowserSiteUtil.Password
+        public string VideoElementSelector
         {
-            get
-            {
-                return "";
-            }
+            get { return vidSelector; }
         }
         #endregion
 
