@@ -4,7 +4,7 @@ namespace OnlineVideos.Sites
 {
     public interface IWebViewSiteUtilBase
     {
-        void OnInitialized();
+        void StartPlayback();
         void SetWebviewHelper(WebViewHelper webViewHelper);
     }
 

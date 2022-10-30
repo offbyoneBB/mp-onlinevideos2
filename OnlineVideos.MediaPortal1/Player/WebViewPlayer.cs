@@ -308,7 +308,7 @@ namespace OnlineVideos.MediaPortal1.Player
             webView.Visible = true;
             GUIWaitCursor.Hide(); // hide the wait cursor
             playState = PlayState.Playing;
-            _siteUtil.OnInitialized();
+            _siteUtil.StartPlayback();
             webView.NavigationCompleted -= WebView_FirstNavigationCompleted;
             webView.NavigationCompleted += WebView_FurtherNavigationCompleted;
         }
