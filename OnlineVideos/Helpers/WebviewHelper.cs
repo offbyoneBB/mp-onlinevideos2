@@ -99,7 +99,7 @@ namespace OnlineVideos.Helpers
         {
             var get = (Func<string>)delegate
             {
-                var rr = execfunc(js);
+                var rr = webView.ExecuteScriptAsync(js);
                 waitForTaskCompleted(rr);
                 return rr.Result;
             };
@@ -108,7 +108,9 @@ namespace OnlineVideos.Helpers
                 return (string)webView.Invoke(get);
             }
             else
-                return (string)get();
+            {
+                return (string)get.Invoke();
+            }
         }
 
         public string GetHtml(string url)
@@ -120,13 +122,26 @@ namespace OnlineVideos.Helpers
                     webView.Source = new Uri(url);
                     WaitUntilNavCompleted();
                 }
-                string encoded = doc();
-                return (String)Newtonsoft.Json.JsonConvert.DeserializeObject(encoded);
+                try
+                {
+                    var tsk = webView.CoreWebView2.ExecuteScriptAsync("document.documentElement.outerHTML");
+                    waitForTaskCompleted(tsk);
+                    string encoded = tsk.Result;
+                    return (String)Newtonsoft.Json.JsonConvert.DeserializeObject(encoded);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("Error getting html: " + e.Message);
+                    return null;
+                }
             };
             if (webView.InvokeRequired)
                 return (string)webView.Invoke(d);
             else
-                return d.Invoke();
+            {
+                Log.Error("GetHtml should not be called from main thread");//will get into infinite loop
+                return null;
+            }
         }
 
         private bool navCompleted;
@@ -153,14 +168,26 @@ namespace OnlineVideos.Helpers
         {
             var d = (Func<List<Cookie>>)delegate
             {
-                var rr = getCookies(url);
-                waitForTaskCompleted(rr);
-                return rr.Result;
+                try
+                {
+                    var tsk = webView.CoreWebView2.CookieManager.GetCookiesAsync(url);
+                    waitForTaskCompleted(tsk);
+                    return tsk.Result.ConvertAll(x => x.ToSystemNetCookie());
+                }
+                catch (Exception e)
+                {
+                    Log.Error("Error getting cookies for " + url + ": " + e.Message);
+                }
+                return null;
+
             };
             if (webView.InvokeRequired)
                 return (List<Cookie>)webView.Invoke(d);
             else
-                return d.Invoke();
+            {
+                Log.Error("GetCookies should not be called from main thread");//will get into infinite loop
+                return null;
+            }
         }
 
         public void SetCookie(Cookie cookie)
@@ -204,26 +231,7 @@ namespace OnlineVideos.Helpers
             webView.Enabled = false;
         }
 
-        private string doc()
-        {
-            var rr = getDoc();
-            waitForTaskCompleted(rr);
-            return rr.Result;
-        }
 
-        private async Task<List<Cookie>> getCookies(string url)
-        {
-            List<CoreWebView2Cookie> res = null;
-            try
-            {
-                res = await webView.CoreWebView2.CookieManager.GetCookiesAsync(url);
-            }
-            catch (Exception e)
-            {
-                Log.Error("Error getting cookies for " + url + ": " + e.Message);
-            }
-            return res.ConvertAll(x => x.ToSystemNetCookie());
-        }
 
         private void waitForTaskCompleted(Task t)
         {
@@ -232,24 +240,6 @@ namespace OnlineVideos.Helpers
                 Application.DoEvents();
             }
             while (!t.IsCompleted);
-        }
-
-        private async Task<String> getDoc()
-        {
-            try
-            {
-                return await webView.CoreWebView2.ExecuteScriptAsync("document.documentElement.outerHTML");
-            }
-            catch (Exception e)
-            {
-                Log.Error("Error getting html: " + e.Message);
-                return null;
-            }
-        }
-
-        private async Task<string> execfunc(string js)
-        {
-            return await webView.ExecuteScriptAsync(js);
         }
 
         private async void exec(string js)
