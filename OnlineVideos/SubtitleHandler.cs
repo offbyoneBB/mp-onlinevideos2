@@ -1,4 +1,5 @@
-﻿using SubtitleDownloader.Core;
+﻿extern alias SubtitleDownloader;
+using SubtitleDownloader::SubtitleDownloader.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
