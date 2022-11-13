@@ -66,4 +66,5 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
+  <Import Project="build.targets" />
 </Project>

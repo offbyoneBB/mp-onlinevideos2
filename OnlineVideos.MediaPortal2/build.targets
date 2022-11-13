@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
 
-  <Target Name="AfterBuild">
+  <Target Name="CopyToOutput" AfterTargets="Build">
 
     <PropertyGroup>
       <!--<PluginDestination>$(SolutionDir)..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\Plugins\OnlineVideos\</PluginDestination>-->
@@ -19,10 +19,10 @@
       <APIFiles Include="$(TargetDir)OnlineVideos.MediaPortal2.Interfaces.dll" />
       <WebDriverFiles Include="$(TargetDir)Profiles\**\*" />
       <APIFiles Include="$(TargetDir)OnlineVideos.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
-      <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\iexplore.exe*" />
+      <!--<BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\iexplore.exe*" />
       <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\iexplore.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
       <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\OnlineVideos.WebAutomation.BrowserHost.exe*" />
-      <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\OnlineVideos.WebAutomation.BrowserHost.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
+      <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\OnlineVideos.WebAutomation.BrowserHost.pdb" Condition=" '$(Configuration)' == 'Debug' "/>-->
       <LanguageFiles Include="$(ProjectDir)Language\*.*" />
       <SkinFiles Include="$(ProjectDir)Skin\**\*.*" Exclude="$(ProjectDir)Skin\**\.svn\**" />
       <MPUrlSourceSplitterFiles Include="$(TargetDir)MPUrlSourceSplitter\*.*" />
@@ -46,7 +46,7 @@
     </PropertyGroup>
     <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PackageContent)" />
     <Copy SourceFiles="@(APIFiles)" DestinationFolder="$(PackageContent)" />
-    <Copy SourceFiles="@(BrowserHostFiles)" DestinationFolder="$(PackageContent)" />
+    <!--<Copy SourceFiles="@(BrowserHostFiles)" DestinationFolder="$(PackageContent)" />-->
     <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(PackageContent)Language\" />
     <Copy SourceFiles="@(SkinFiles)" DestinationFiles="@(SkinFiles->'$(PackageContent)Skin\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(WebDriverFiles)" DestinationFiles="@(WebDriverFiles->'$(PackageContent)Profiles\%(RecursiveDir)%(Filename)%(Extension)')" />
