@@ -193,4 +193,5 @@
     <None Include="3rdParty\RssToolkit\Resources\Rss20ToOpml.xsl" />
     <None Include="3rdParty\RssToolkit\Resources\Rss20ToRdf.xsl" />
   </ItemGroup>
+  <Import Project="$(SolutionDir)\Build\Version.targets" />
 </Project>

@@ -2,24 +2,15 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
   <PropertyGroup>  
-    <MSBuildCommunityTasksPath Condition=" '$(MSBuildCommunityTasksPath)' == '' ">$(SolutionDir)\packages\MSBuildTasks.1.4.0.88\tools</MSBuildCommunityTasksPath>
+    <MSBuildCommunityTasksPath Condition=" '$(MSBuildCommunityTasksPath)' == '' ">$(USERPROFILE)\.nuget\packages\msbuildtasks\1.5.0.235\tools</MSBuildCommunityTasksPath>
     <VersionFile Condition=" '$(VersionFile)' == '' ">$(SolutionDir)\Build\Version.txt</VersionFile>
     <GeneratedAssemblyInfoFile Condition=" '$(GeneratedAssemblyInfoFile)' == '' ">$(SolutionDir)\Build\Version.cs</GeneratedAssemblyInfoFile>
 	
-	<BuildDependsOn>
-         SetAssemblyVersion;
-         $(BuildDependsOn)
-      </BuildDependsOn>
- 
-      <CleanDependsOn>
-         $(CleanDependsOn);
-         SetAssemblyVersionClean
-      </CleanDependsOn>
   </PropertyGroup>
   
   <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets" Condition="Exists('$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets')"/>
   
-  <Target Name="SetAssemblyVersion">
+  <Target Name="SetAssemblyVersion" BeforeTargets="Build">
     <PropertyGroup>
       <Version>$([System.IO.File]::ReadAllText($(VersionFile)))</Version>
     </PropertyGroup>
@@ -44,7 +35,7 @@
       AssemblyFileVersion="$(Version)" />
   </Target>
   
-  <Target Name="SetAssemblyVersionClean" Condition="Exists($(GeneratedAssemblyInfoFile))">
+  <Target Name="SetAssemblyVersionClean" BeforeTargets="Clean" Condition="Exists($(GeneratedAssemblyInfoFile))">
       <Delete Files="$(GeneratedAssemblyInfoFile)" />
    </Target>
 
