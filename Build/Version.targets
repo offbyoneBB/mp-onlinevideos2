@@ -10,7 +10,7 @@
   
   <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets" Condition="Exists('$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets')"/>
   
-  <Target Name="SetAssemblyVersion" BeforeTargets="Build">
+  <Target Name="SetAssemblyVersion" BeforeTargets="BeforeBuild">
     <PropertyGroup>
       <Version>$([System.IO.File]::ReadAllText($(VersionFile)))</Version>
     </PropertyGroup>
