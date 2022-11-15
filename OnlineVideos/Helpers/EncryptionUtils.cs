@@ -10,7 +10,7 @@ namespace OnlineVideos.Helpers
         public static string CalculateCRC32(string strLine)
         {
             if (string.IsNullOrEmpty(strLine)) return string.Empty;
-            Ionic.Zlib.CRC32 crc = new Ionic.Zlib.CRC32();
+            Ionic.Crc.CRC32 crc = new Ionic.Crc.CRC32();
             using (MemoryStream stream = new MemoryStream())
             using (StreamWriter writer = new StreamWriter(stream) { AutoFlush = true })
             {
