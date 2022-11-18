@@ -102,7 +102,7 @@ namespace OnlineVideos.MediaPortal2
 
             _contextMenuEntriesProperty = new WProperty(typeof(ItemsList), null);
 
-            _eventDelegator = OnlineVideosAppDomain.Domain.CreateInstanceAndUnwrap(typeof(PropertyChangedDelegator).Assembly.FullName, typeof(PropertyChangedDelegator).FullName) as PropertyChangedDelegator;
+            _eventDelegator = OnlineVideosAssemblyContext.CreateCrossDomainInstance(typeof(PropertyChangedDelegator)) as PropertyChangedDelegator;
             _eventDelegator.InvokeTarget = new PropertyChangedExecutor
             {
                 InvokeHandler = (s, e) =>

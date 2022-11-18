@@ -104,7 +104,7 @@ namespace OnlineVideos.MediaPortal2
             string ovConfigPath = GetCurrentUserConfigDirectory();
             string ovDataPath = ServiceRegistration.Get<IPathManager>().GetPath(@"<DATA>\OnlineVideos");
 
-            OnlineVideosAppDomain.UseSeperateDomain = true;
+            OnlineVideosAssemblyContext.UseSeperateDomain = true;
 
             OnlineVideoSettings.Instance.DllsDir = Path.Combine(ovDataPath, "SiteUtils");
             OnlineVideoSettings.Instance.ThumbsDir = Path.Combine(ovDataPath, "Thumbs");

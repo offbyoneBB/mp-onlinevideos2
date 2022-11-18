@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if NETFRAMEWORK
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,23 +7,19 @@ using System.Reflection;
 
 namespace OnlineVideos.CrossDomain
 {
-    public static class OnlineVideosAppDomain
+    public class OnlineVideosAppDomain
     {
-        static AppDomain _domain;
-        public static AppDomain Domain
-        {
-            get { if (_domain == null) Load(); return _domain; }
-        }
+        AppDomain _domain;
 
-        static PluginLoader _pluginLoader;
-        internal static PluginLoader PluginLoader
+        PluginLoader _pluginLoader;
+        internal PluginLoader PluginLoader
         {
             get { if (_pluginLoader == null) Load(); return _pluginLoader; }
         }
 
-        static bool _useSeperateDomain;
+        bool _useSeperateDomain;
 
-        public static bool UseSeperateDomain
+        public bool UseSeperateDomain
         {
             set
             {
@@ -31,7 +28,7 @@ namespace OnlineVideos.CrossDomain
             }
         }
 
-        static void Load()
+        void Load()
         {
             if (AppDomain.CurrentDomain.FriendlyName != "OnlineVideosSiteUtilDlls")
             {
@@ -75,7 +72,7 @@ namespace OnlineVideos.CrossDomain
             return asm;
         }
 
-        internal static object GetCrossDomainSingleton(Type type, params object[] args)
+        internal object GetCrossDomainSingleton(Type type, params object[] args)
         {
             if (_domain == null) Load();
 
@@ -98,7 +95,19 @@ namespace OnlineVideos.CrossDomain
             return instance; // return the instance
         }
 
-        internal static void Unload()
+        public object CreateCrossDomainInstance(Type type)
+        {
+            if (_domain == null) Load();
+            return _domain.CreateInstanceAndUnwrap(type.Assembly.FullName, type.FullName);
+        }
+
+        public object CreateCrossDomainInstance(Type type, BindingFlags bindingAttr, Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes)
+        {
+            if (_domain == null) Load();
+            return _domain.CreateInstanceAndUnwrap(type.Assembly.FullName, type.FullName, false, bindingAttr, binder, args, culture, activationAttributes);
+        }
+
+        internal void Unload()
         {
             List<object> singletonNames = AppDomain.CurrentDomain.GetData("Singletons") as List<object>;
             AppDomain.Unload(_domain);
@@ -109,10 +118,11 @@ namespace OnlineVideos.CrossDomain
                     s.GetType().InvokeMember("_Instance", BindingFlags.Static | BindingFlags.FlattenHierarchy | BindingFlags.NonPublic | BindingFlags.SetField, null, s, new object[] { null });
         }
 
-        internal static void Reload()
+        internal void Reload()
         {
             Unload();
             Load();
         }
     }
 }
+#endif

@@ -184,7 +184,7 @@
     <Compile Include="3rdParty\RssToolkit\Rss\RssXmlSchemaValidator.cs" />
   </ItemGroup>
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" Condition="'$(TargetFramework)' != 'net48'" />
   </ItemGroup>
   <ItemGroup>
     <None Include="3rdParty\RssToolkit\Resources\AtomToRss20.xsl" />

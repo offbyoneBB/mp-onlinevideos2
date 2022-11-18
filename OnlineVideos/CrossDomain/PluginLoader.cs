@@ -7,6 +7,9 @@ using System.Net;
 using System.Reflection;
 using OnlineVideos.Hoster;
 using OnlineVideos.Sites;
+#if NET5_0_OR_GREATER
+using System.Runtime.Loader;
+#endif
 
 namespace OnlineVideos.CrossDomain
 {
@@ -17,6 +20,7 @@ namespace OnlineVideos.CrossDomain
         readonly Dictionary<String, HosterBase> _hostersByName = new Dictionary<String, HosterBase>();
         readonly Dictionary<String, HosterBase> _hostersByDns = new Dictionary<String, HosterBase>();
 
+#if NETFRAMEWORK
         public PluginLoader()
         {
             AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
@@ -30,6 +34,23 @@ namespace OnlineVideos.CrossDomain
             var asm = (sender as AppDomain).GetAssemblies().FirstOrDefault(a => a.GetName().Name == an.Name);
             return asm;
         }
+#else
+        AssemblyLoadContext _assemblyLoadContext;
+
+        public PluginLoader(AssemblyLoadContext assemblyLoadContext)
+        {
+            _assemblyLoadContext = assemblyLoadContext;
+            _assemblyLoadContext.Resolving += AssemblyResolve;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls;
+        }
+
+        Assembly AssemblyResolve(AssemblyLoadContext context, AssemblyName name)
+        {
+            // this should only be called to resolve OnlineVideos.dll -> return it regardless of the version, only the name "OnlineVideos"
+            var asm = AssemblyLoadContext.Default.Assemblies.FirstOrDefault(a => a.GetName().Name == name.Name);
+            return asm;
+        }
+#endif
 
         internal void LoadAllSiteUtilDlls(string path)
         {
@@ -41,7 +62,11 @@ namespace OnlineVideos.CrossDomain
                 {
                     try
                     {
+#if NETFRAMEWORK
                         assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(dll)), Helpers.FileUtils.RetrieveLinkerTimestamp(dll));
+#else
+                        assemblies.Add(_assemblyLoadContext.LoadFromAssemblyPath(dll), Helpers.FileUtils.RetrieveLinkerTimestamp(dll));
+#endif
                     }
                     catch (Exception dllLoadException)
                     {
@@ -233,12 +258,12 @@ namespace OnlineVideos.CrossDomain
             return _hostersByDns.ContainsKey(uri.Host.Replace("www.", ""));
         }
 
-        #region MarshalByRefObject overrides
+#region MarshalByRefObject overrides
         public override object InitializeLifetimeService()
         {
             // In order to have the lease across appdomains live forever, we return null.
             return null;
         }
-        #endregion
+#endregion
     }
 }

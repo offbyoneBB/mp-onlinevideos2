@@ -55,7 +55,7 @@ namespace OnlineVideos
 " + siteXml + @"
 </Sites>
 </OnlineVideoSites>";
-            return CrossDomain.OnlineVideosAppDomain.PluginLoader.CreateSiteSettingsFromXml(siteXml);
+            return CrossDomain.OnlineVideosAssemblyContext.PluginLoader.CreateSiteSettingsFromXml(siteXml);
         }
 
         public static IList<SiteSettings> Deserialize(TextReader reader)

@@ -117,7 +117,7 @@ namespace OnlineVideos
         /// </summary>
         public static void Unload()
         {
-            OnlineVideosAppDomain.Unload();
+            OnlineVideosAssemblyContext.Unload();
         }
         /// <summary>
         /// Drops the current single instance, creates a new Appdomain and copies all settings to a new instance in the new AppDomain.
@@ -146,7 +146,7 @@ namespace OnlineVideos
             SortedList<string, bool> videoExtensions = Instance.VideoExtensions;
             bool favoritesFirst = Instance.FavoritesFirst;
             // reload domain and create new instance
-            OnlineVideosAppDomain.Reload();
+            OnlineVideosAssemblyContext.Reload();
             var newInstance = Instance;
             // set remembered settings
             newInstance.UserStore = userStore;
