@@ -19,6 +19,7 @@ namespace OnlineVideos.MediaPortal2.Controls
 
         private void SetPlayerBounds()
         {
+#if NETFRAMEWORK
             IPlayerContextManager playerContextManager = ServiceRegistration.Get<IPlayerContextManager>();
             for (int index = 0; index < playerContextManager.NumActivePlayerContexts; index++)
             {
@@ -29,6 +30,7 @@ namespace OnlineVideos.MediaPortal2.Controls
                     webPlayer.TargetBounds = TransformBoundingBox(BoundingBox);
                 }
             }
+#endif
         }
 
         /// <summary>

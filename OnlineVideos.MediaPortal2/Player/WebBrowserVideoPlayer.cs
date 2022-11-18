@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if NETFRAMEWORK
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -557,3 +558,4 @@ namespace OnlineVideos.MediaPortal2
         }
     }
 }
+#endif

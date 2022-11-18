@@ -57,10 +57,14 @@ namespace OnlineVideos.MediaPortal2
                 Aspects[OnlineVideosAspect.ASPECT_ID].First().SetAttribute(OnlineVideosAspect.ATTR_LONGURL, value);
 
                 var isBrowser = videoInfo.SiteSettings.Player == PlayerType.Browser;
+#if NETFRAMEWORK
                 providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_MIME_TYPE,
                     isBrowser
                         ? WebBrowserVideoPlayer.ONLINEVIDEOSBROWSER_MIMETYPE
                         : OnlineVideosPlayer.ONLINEVIDEOS_MIMETYPE);
+#else
+                providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_MIME_TYPE, OnlineVideosPlayer.ONLINEVIDEOS_MIMETYPE);
+#endif
             }
 
             MediaItemAspect.SetAttribute(Aspects, MediaAspect.ATTR_TITLE, videoInfo.Title);

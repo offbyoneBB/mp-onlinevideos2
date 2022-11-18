@@ -1,4 +1,5 @@
-﻿using MediaPortal.Common;
+﻿#if NETFRAMEWORK
+using MediaPortal.Common;
 using MediaPortal.Common.MediaManagement;
 using MediaPortal.Common.ResourceAccess;
 using MediaPortal.Common.Services.ResourceAccess.RawUrlResourceProvider;
@@ -309,7 +310,7 @@ namespace OnlineVideos.MediaPortal2
         public PlayerState State { get; private set; }
         public string MediaItemTitle { get; private set; }
 
-        #region Event handling
+#region Event handling
 
         protected void FireStarted()
         {
@@ -336,9 +337,9 @@ namespace OnlineVideos.MediaPortal2
             _playbackStateChanged?.Invoke(this);
         }
 
-        #endregion
+#endregion
 
-        #region IPlayerEvents implementation
+#region IPlayerEvents implementation
 
         public void InitializePlayerEvents(PlayerEventDlgt started, PlayerEventDlgt stateReady, PlayerEventDlgt stopped,
             PlayerEventDlgt ended, PlayerEventDlgt playbackStateChanged, PlayerEventDlgt playbackError)
@@ -361,7 +362,7 @@ namespace OnlineVideos.MediaPortal2
             _playbackError = null;
         }
 
-        #endregion
+#endregion
 
         public Type UIContributorType
         {
@@ -387,4 +388,4 @@ namespace OnlineVideos.MediaPortal2
         }
     }
 }
-
+#endif
