@@ -1511,6 +1511,23 @@ namespace OnlineVideos.Hoster
 
     }
 
+    public class VideoBin : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "videobin.co";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            var data = GetWebData(url);
+            Match m=Regex.Match(data,@"""(?<url>http[^""]*\.mp4)""");
+            if (m.Success)
+                return m.Groups["url"].Value;
+            return null;
+        }
+    }
+
     public class Vidoza : MyHosterBase
     {
         public override string GetHosterUrl()
