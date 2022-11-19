@@ -53,22 +53,16 @@
     <Compile Remove="3rdParty\Jurassic\**" />
     <Compile Remove="3rdParty\Newtonsoft.Json\**" />
     <Compile Remove="3rdParty\RssToolkit\**" />
-    <Compile Remove="Sites\WebBrowserPlayerService\Proxy\**" />
-    <Compile Remove="Sites\WebBrowserPlayerService\ServiceImplementation\**" />
     <EmbeddedResource Remove="3rdParty\DotNetZip\**" />
     <EmbeddedResource Remove="3rdParty\HtmlAgilityPack\**" />
     <EmbeddedResource Remove="3rdParty\Jurassic\**" />
     <EmbeddedResource Remove="3rdParty\Newtonsoft.Json\**" />
     <EmbeddedResource Remove="3rdParty\RssToolkit\**" />
-    <EmbeddedResource Remove="Sites\WebBrowserPlayerService\Proxy\**" />
-    <EmbeddedResource Remove="Sites\WebBrowserPlayerService\ServiceImplementation\**" />
     <None Remove="3rdParty\DotNetZip\**" />
     <None Remove="3rdParty\HtmlAgilityPack\**" />
     <None Remove="3rdParty\Jurassic\**" />
     <None Remove="3rdParty\Newtonsoft.Json\**" />
     <None Remove="3rdParty\RssToolkit\**" />
-    <None Remove="Sites\WebBrowserPlayerService\Proxy\**" />
-    <None Remove="Sites\WebBrowserPlayerService\ServiceImplementation\**" />
   </ItemGroup>
   <ItemGroup>
     <Reference Update="System.Data">
@@ -136,6 +130,7 @@
       <Version>1.5.0.235</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="ServiceWire" Version="5.5.2" />
     <PackageReference Include="SubtitleDownloader">
       <Version>3.0.16</Version>
       <Aliases>SubtitleDownloader</Aliases>

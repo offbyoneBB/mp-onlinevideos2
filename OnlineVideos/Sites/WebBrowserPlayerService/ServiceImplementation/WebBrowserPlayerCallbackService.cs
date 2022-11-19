@@ -1,33 +1,28 @@
 ﻿using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
+using ServiceWire.NamedPipes;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using CoreWCF;
 
 namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
 {
     /// <summary>
     /// The callback service implementation - track subscribers and send the callback to these
     /// </summary>
-    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, 
-                        InstanceContextMode = InstanceContextMode.PerSession
-                        /*,UseSynchronizationContext = false*/),
-        System.ServiceModel.CallbackBehavior(ConcurrencyMode = System.ServiceModel.ConcurrencyMode.Multiple, UseSynchronizationContext = false)]
     public class WebBrowserPlayerCallbackService : IWebBrowserPlayerCallbackService
     {
-        private static readonly List<IWebBrowserPlayerCallback> _subscribers = new List<IWebBrowserPlayerCallback>();
+        private static readonly ConcurrentDictionary<string, NpClient<IWebBrowserPlayerCallback>> _subscribers = new ConcurrentDictionary<string, NpClient<IWebBrowserPlayerCallback>>();
 
         /// <summary>
         /// New client is subscribing to the callback service
         /// </summary>
         /// <returns></returns>
-        public bool Subscribe()
+        public bool Subscribe(string endpoint)
         {
             try
             {
-                var callback = OperationContext.Current.GetCallbackChannel<IWebBrowserPlayerCallback>();
-                if (!_subscribers.Contains(callback))
-                    _subscribers.Add(callback);
+                _subscribers.GetOrAdd(endpoint, s => new NpClient<IWebBrowserPlayerCallback>(new NpEndPoint(endpoint)));
                 return true;
             }
             catch
@@ -40,13 +35,12 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
         /// Client is unsubscribing from the callback service
         /// </summary>
         /// <returns></returns>
-        public bool Unsubscribe()
+        public bool Unsubscribe(string endpoint)
         {
             try
             {
-                var callback = OperationContext.Current.GetCallbackChannel<IWebBrowserPlayerCallback>();
-                if (_subscribers.Contains(callback))
-                    _subscribers.Remove(callback);
+                if (_subscribers.TryRemove(endpoint, out var callback))
+                    callback.Dispose();
                 return true;
             }
             catch
@@ -159,20 +153,23 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
         /// <returns></returns>
         private static List<IWebBrowserPlayerCallback> GetActiveCallbacks()
         {
+            List<IWebBrowserPlayerCallback> callbacks = new List<IWebBrowserPlayerCallback>();
             try
             {
-                _subscribers.ForEach(delegate(IWebBrowserPlayerCallback callback)
+                foreach (var callback in _subscribers.ToArray())
                 {
-                    if (((ICommunicationObject)callback).State != CommunicationState.Opened)
-                        _subscribers.Remove(callback);
-                });
+                    if (callback.Value.IsConnected)
+                        callbacks.Add(callback.Value.Proxy);
+                    else if (_subscribers.TryRemove(callback))
+                        callback.Value.Dispose();
 
+                }
             }
             catch (Exception ex)
             {
                 Log.Error(ex);
             }
-            return _subscribers;
+            return callbacks;
         }
 
     }

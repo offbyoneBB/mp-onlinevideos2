@@ -1,5 +1,4 @@
-﻿#if NETFRAMEWORK
-using MediaPortal.Common;
+﻿using MediaPortal.Common;
 using MediaPortal.Common.MediaManagement;
 using MediaPortal.Common.ResourceAccess;
 using MediaPortal.Common.Services.ResourceAccess.RawUrlResourceProvider;
@@ -388,4 +387,3 @@ namespace OnlineVideos.MediaPortal2
         }
     }
 }
-#endif

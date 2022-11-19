@@ -92,7 +92,6 @@ namespace OnlineVideos.MediaPortal2
                 }
             }
 
-#if NETFRAMEWORK
             // Also try browser player as fallback if InputStream decoding failed
             if (mimeType == WebBrowserVideoPlayer.ONLINEVIDEOSBROWSER_MIMETYPE)
             {
@@ -117,7 +116,6 @@ namespace OnlineVideos.MediaPortal2
                     return player;
                 }
             }
-#endif
 
             return null;
         }

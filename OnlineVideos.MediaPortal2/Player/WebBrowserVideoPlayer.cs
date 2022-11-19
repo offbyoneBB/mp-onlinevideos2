@@ -1,5 +1,4 @@
-﻿#if NETFRAMEWORK
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -396,13 +395,11 @@ namespace OnlineVideos.MediaPortal2
             {
                 if (_serviceProxy != null)
                 {
-                    if (_serviceProxy.State == CommunicationState.Opened) _serviceProxy.Close();
                     _serviceProxy.Dispose();
                 }
                 // Clean up the callback service proxy
                 if (_callbackServiceProxy != null)
                 {
-                    if (_callbackServiceProxy.State == CommunicationState.Opened) _callbackServiceProxy.Close();
                     _callbackServiceProxy.Dispose();
                 }
             }
@@ -558,4 +555,3 @@ namespace OnlineVideos.MediaPortal2
         }
     }
 }
-#endif

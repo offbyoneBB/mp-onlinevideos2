@@ -1,4 +1,5 @@
-﻿using System.ServiceModel;
+﻿using ServiceWire.NamedPipes;
+using System.ServiceModel;
 
 namespace OnlineVideos.Sites.Interfaces.WebBrowserPlayerService
 {
@@ -12,10 +13,10 @@ namespace OnlineVideos.Sites.Interfaces.WebBrowserPlayerService
     {
 
         [OperationContract]
-        bool Subscribe();
+        bool Subscribe(string endpoint);
 
         [OperationContract]
-        bool Unsubscribe();
+        bool Unsubscribe(string endpoint);
 
     }
 }

@@ -16,8 +16,8 @@ namespace OnlineVideos.Sites.WebAutomation.BrowserHost.RemoteHandling.RemoteImpl
     /// </summary>
     public class WebServiceRemoteHandling : RemoteHandlingBase
     {
-        private ServiceHost _service;
-        private ServiceHost _callbackService;
+        private WebBrowserPlayerServiceHost _service;
+        private WebBrowserPlayerCallbackServiceHost _callbackService;
         private bool _shouldSendEventsToService = true;
         /// <summary>
         /// CTor

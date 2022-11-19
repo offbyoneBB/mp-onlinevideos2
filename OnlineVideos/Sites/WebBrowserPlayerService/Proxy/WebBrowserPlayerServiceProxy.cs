@@ -1,7 +1,7 @@
 ﻿using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
-using System;
-using System.ServiceModel;
 using OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation;
+using ServiceWire.NamedPipes;
+using System;
 
 namespace OnlineVideos.Sites.Proxy.WebBrowserPlayerService
 {
@@ -9,21 +9,16 @@ namespace OnlineVideos.Sites.Proxy.WebBrowserPlayerService
     /// Proxy class for communicating with the browser host
     /// Use this on the client side of the communication
     /// </summary>
-    public class WebBrowserPlayerServiceProxy : ClientBase<IWebBrowserPlayerService>, IDisposable
+    public class WebBrowserPlayerServiceProxy : IDisposable
     {
+        NpClient<IWebBrowserPlayerService> _npClient;
+
         /// <summary>
         /// 
         /// </summary>
         public WebBrowserPlayerServiceProxy()
-            : base(
-                new NetNamedPipeBinding
-                {
-                    SendTimeout = TimeSpan.FromMilliseconds(300), // We don't care about waiting for responses, so we'll ignore timeouts
-                    ReceiveTimeout = TimeSpan.MaxValue // Basically this is the connection idle timeout
-                }, 
-                    new EndpointAddress(WebBrowserPlayerServiceHost.PIPE_ROOT + "WebBrowserPlayerService"))
         {
-            Open();
+            _npClient = new NpClient<IWebBrowserPlayerService>(new NpEndPoint(WebBrowserPlayerServiceHost.PIPE_ROOT + "WebBrowserPlayerService"));
         }
         
         /// <summary>
@@ -32,16 +27,16 @@ namespace OnlineVideos.Sites.Proxy.WebBrowserPlayerService
         /// <param name="action"></param>
         public void OnNewAction(string action)
         {
-            if (State == CommunicationState.Opened)
+            if (_npClient.IsConnected)
             {
                 try
                 {
-                    Channel.OnNewAction(action);
+                    _npClient.Proxy.OnNewAction(action);
                 }
-                catch (TimeoutException)
+                catch (Exception)
                 {
                     // we'll just ignore timeouts for now
-                    Log.Error("WebBrowserPlayerServiceProxy, timeout sending " + action + " action to server");
+                    Log.Error("WebBrowserPlayerServiceProxy, exception sending " + action + " action to server");
                 }
             }
             else
@@ -53,7 +48,7 @@ namespace OnlineVideos.Sites.Proxy.WebBrowserPlayerService
         /// </summary>
         public void Dispose()
         {
-            Close();
+            _npClient.Dispose();
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
-using System;
-using System.ServiceModel;
 using OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation;
+using ServiceWire.NamedPipes;
+using System;
 
 namespace OnlineVideos.Sites.Proxy.WebBrowserPlayerService
 {
@@ -9,34 +9,25 @@ namespace OnlineVideos.Sites.Proxy.WebBrowserPlayerService
     /// Proxy class for consuming messages from the browser host
     /// Use this on the client side of the communication
     /// </summary>
-    public class WebBrowserPlayerCallbackServiceProxy : DuplexClientBase<IWebBrowserPlayerCallbackService>, IDisposable
+    public class WebBrowserPlayerCallbackServiceProxy : IDisposable
     {
-        /// <summary>
-        /// Build the binding with no security - if we enable security the first duplex call times out
-        /// </summary>
-        /// <returns></returns>
-        private static NetNamedPipeBinding GetBinding()
-        {
-            var binding = new NetNamedPipeBinding()
-                {
-                    SendTimeout = TimeSpan.FromMilliseconds(300), // We don't care about waiting for responses, so we'll ignore timeouts
-                    ReceiveTimeout = TimeSpan.MaxValue // Basically this is the connection idle timeout
-                };
-            binding.Security.Mode = NetNamedPipeSecurityMode.None;
-            return binding;
-        }
+        string _pipeName;
+        NpHost _npHost;
+        NpClient<IWebBrowserPlayerCallbackService> _npClient;
 
         /// <summary>
         /// Constructor will automatically subscribe for listening to the service
         /// </summary>
         /// <param name="callback"></param>
         public WebBrowserPlayerCallbackServiceProxy(IWebBrowserPlayerCallback callback)
-            : base(new InstanceContext(callback),
-                    GetBinding(),
-                    new EndpointAddress(WebBrowserPlayerServiceHost.PIPE_ROOT + "WebBrowserPlayerCallbackService"))
         {
-            Open();
-            Channel.Subscribe();
+            _pipeName = WebBrowserPlayerServiceHost.PIPE_ROOT + "WebBrowserPlayerCallbackService" + Guid.NewGuid();
+            _npHost = new NpHost(_pipeName);
+            _npHost.AddService(callback);
+            _npHost.Open();
+
+            _npClient = new NpClient<IWebBrowserPlayerCallbackService>(new NpEndPoint(WebBrowserPlayerServiceHost.PIPE_ROOT + "WebBrowserPlayerCallbackService"));
+            _npClient.Proxy.Subscribe(_npHost.PipeName);
         }
         
         /// <summary>
@@ -44,8 +35,17 @@ namespace OnlineVideos.Sites.Proxy.WebBrowserPlayerService
         /// </summary>
         public void Dispose()
         {
-            Channel.Unsubscribe();
-            Close();
+            if (_npClient != null)
+            {
+                _npClient.Proxy.Unsubscribe(_pipeName);
+                _npClient.Dispose();
+                _npClient = null;
+            }
+            if (_npHost != null)
+            {
+                _npHost.Dispose();
+                _npHost = null;
+            }
         }
     }
 }

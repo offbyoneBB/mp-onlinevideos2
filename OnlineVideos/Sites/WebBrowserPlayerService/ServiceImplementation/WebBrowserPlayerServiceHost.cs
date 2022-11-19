@@ -1,29 +1,28 @@
 ﻿using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
+using ServiceWire.NamedPipes;
 using System;
-using System.ServiceModel;
 
 namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
 {
     /// <summary>
     /// Service host for the WebBrowserPlayerService - construct this to get the server part of the service running
     /// </summary>
-    public class WebBrowserPlayerServiceHost : ServiceHost
+    public class WebBrowserPlayerServiceHost : IDisposable
     {
         public const string PIPE_ROOT = "net.pipe://localhost/MediaPortal/OnlineVideos/";
 
-        public WebBrowserPlayerServiceHost()
-            : base(typeof(WebBrowserPlayerService), new Uri[] { new Uri(PIPE_ROOT) })
-        {
-            var binding = new NetNamedPipeBinding
-            {
-                SendTimeout = TimeSpan.FromMilliseconds(100),
-                ReceiveTimeout = TimeSpan.MaxValue
-            };
+        NpHost _npHost;
 
-            AddServiceEndpoint(typeof(IWebBrowserPlayerService),
-                binding,
-                "WebBrowserPlayerService");
-            Open();
+        public WebBrowserPlayerServiceHost()
+        {
+            _npHost = new NpHost(PIPE_ROOT + "WebBrowserPlayerService");
+            _npHost.AddService<IWebBrowserPlayerService>(new WebBrowserPlayerService());
+            _npHost.Open();
+        }
+
+        public void Dispose()
+        {
+            _npHost.Dispose();
         }
     }
 }
