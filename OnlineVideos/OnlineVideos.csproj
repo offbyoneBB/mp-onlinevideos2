@@ -120,12 +120,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AspNetCore.LegacyAuthCookieCompat" Version="2.0.4" />
-    <PackageReference Include="CoreWCF.Http" Version="1.1.0" />
     <PackageReference Include="CoreWCF.NetTcp" Version="1.1.0" />
     <PackageReference Include="DotNetZip" Version="1.16.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.43" />
-    <PackageReference Include="Jurassic" Version="3.2.6" />
+    <PackageReference Include="Jurassic" Version="3.2.6">
+      <TreatAsUsed>true</TreatAsUsed>
+    </PackageReference>
     <PackageReference Include="MSBuildTasks">
       <Version>1.5.0.235</Version>
     </PackageReference>
@@ -140,7 +140,6 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
-    <PackageReference Include="System.ServiceModel.Syndication" Version="6.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="HttpContextHelper.cs" />
