@@ -113,14 +113,27 @@ namespace OnlineVideos.Helpers
             }
         }
 
-        public string GetHtml(string url)
+        public string GetHtml(string url, bool blockOtherRequests = true)
         {
             var d = (Func<string>)delegate
             {
                 if (webView.Source.ToString() != url)
                 {
+                    EventHandler<CoreWebView2WebResourceRequestedEventArgs> eventHandler = null;
+                    if (blockOtherRequests)
+                    {
+                        webView.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
+                        eventHandler = new EventHandler<CoreWebView2WebResourceRequestedEventArgs>((sender, e) => CoreWebView2_WebResourceRequested(sender, e, url));
+                        webView.CoreWebView2.WebResourceRequested += eventHandler;
+                    }
+
                     webView.Source = new Uri(url);
                     WaitUntilNavCompleted();
+                    if (blockOtherRequests)
+                    {
+                        webView.CoreWebView2.WebResourceRequested -= eventHandler;
+                        webView.CoreWebView2.RemoveWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
+                    }
                 }
                 try
                 {
@@ -141,6 +154,14 @@ namespace OnlineVideos.Helpers
             {
                 Log.Error("GetHtml should not be called from main thread");//will get into infinite loop
                 return null;
+            }
+        }
+
+        private void CoreWebView2_WebResourceRequested(object sender, CoreWebView2WebResourceRequestedEventArgs e, string url)
+        {
+            if (e.Request.Uri.ToString() != url)
+            {
+                e.Response = webView.CoreWebView2.Environment.CreateWebResourceResponse(null, 404, "Not found", null);
             }
         }
 
