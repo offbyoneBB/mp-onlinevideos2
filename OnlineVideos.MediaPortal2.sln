@@ -3,16 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.MediaPortal2", "OnlineVideos.MediaPortal2\OnlineVideos.MediaPortal2.csproj", "{FA12B047-F5EC-4045-8D26-47C7B17B3B16}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineVideos.MediaPortal2", "OnlineVideos.MediaPortal2\OnlineVideos.MediaPortal2.csproj", "{FA12B047-F5EC-4045-8D26-47C7B17B3B16}"
 	ProjectSection(ProjectDependencies) = postProject
 		{75F69467-7062-45CB-909A-7D9A5D7E4958} = {75F69467-7062-45CB-909A-7D9A5D7E4958}
 		{022D3A7F-676E-4741-95D3-6E5D0223BFE4} = {022D3A7F-676E-4741-95D3-6E5D0223BFE4}
 		{F1199685-8F68-4B99-A47B-BC8CA1817732} = {F1199685-8F68-4B99-A47B-BC8CA1817732}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos", "OnlineVideos\OnlineVideos.csproj", "{E0D9D390-CDD6-4B98-86F3-6EB04A958882}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineVideos", "OnlineVideos\OnlineVideos.csproj", "{E0D9D390-CDD6-4B98-86F3-6EB04A958882}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.WebAutomation.BrowserHost.MP2", "OnlineVideos.WebAutomation.BrowserHost\OnlineVideos.WebAutomation.BrowserHost.MP2.csproj", "{F1199685-8F68-4B99-A47B-BC8CA1817732}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineVideos.WebAutomation.BrowserHost.MP2", "OnlineVideos.WebAutomation.BrowserHost\OnlineVideos.WebAutomation.BrowserHost.MP2.csproj", "{F1199685-8F68-4B99-A47B-BC8CA1817732}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.JSurf", "SiteUtilProjects\OnlineVideos.Sites.JSurf\OnlineVideos.Sites.JSurf.csproj", "{75F69467-7062-45CB-909A-7D9A5D7E4958}"
 EndProject
@@ -28,19 +28,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{2D8D59
 		Build\Version.txt = Build\Version.txt
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.offbyone", "SiteUtilProjects\OnlineVideos.Sites.offbyone\OnlineVideos.Sites.offbyone.csproj", "{022D3A7F-676E-4741-95D3-6E5D0223BFE4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineVideos.Sites.offbyone", "SiteUtilProjects\OnlineVideos.Sites.offbyone\OnlineVideos.Sites.offbyone.csproj", "{022D3A7F-676E-4741-95D3-6E5D0223BFE4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.MediaPortal2.Interfaces", "OnlineVideos.MediaPortal2.Interfaces\OnlineVideos.MediaPortal2.Interfaces.csproj", "{F54CFB16-1599-4676-BED6-2AB1C6F4DE53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineVideos.MediaPortal2.Interfaces", "OnlineVideos.MediaPortal2.Interfaces\OnlineVideos.MediaPortal2.Interfaces.csproj", "{F54CFB16-1599-4676-BED6-2AB1C6F4DE53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InputStreamPlayer", "OnlineVideos.InputStream\InputStreamPlayer\InputStreamPlayer.csproj", "{3171D2FF-4E7F-4413-B7A9-03AA7355DC68}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InputStreamPlayer", "OnlineVideos.InputStream\InputStreamPlayer\InputStreamPlayer.csproj", "{3171D2FF-4E7F-4413-B7A9-03AA7355DC68}"
 	ProjectSection(ProjectDependencies) = postProject
 		{31E46B4E-8088-4E6A-B53E-7401BD660703} = {31E46B4E-8088-4E6A-B53E-7401BD660703}
 		{0AECC8D5-6010-4733-85DC-844BECAABC41} = {0AECC8D5-6010-4733-85DC-844BECAABC41}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InputStreamSourceFilter", "OnlineVideos.InputStream\InputStreamSourceFilter\InputStreamSourceFilter.csproj", "{E1DBE4EC-283B-4B94-AA14-BFCE0EFA67CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InputStreamSourceFilter", "OnlineVideos.InputStream\InputStreamSourceFilter\InputStreamSourceFilter.csproj", "{E1DBE4EC-283B-4B94-AA14-BFCE0EFA67CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortalWrapper", "OnlineVideos.InputStream\MediaPortalWrapper\MediaPortalWrapper.csproj", "{47731721-BA8A-4295-BCCE-399E5C289B4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaPortalWrapper", "OnlineVideos.InputStream\MediaPortalWrapper\MediaPortalWrapper.csproj", "{47731721-BA8A-4295-BCCE-399E5C289B4E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InputStream", "InputStream", "{6C556A69-5996-482E-8C9C-1B8C678E29CB}"
 EndProject
@@ -51,7 +51,15 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libXBMC_addon_cli", "Online
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libKODI_inputstream_cli", "OnlineVideos.InputStream\libKODI_inputstream_cli\libKODI_inputstream_cli.vcxproj", "{0AECC8D5-6010-4733-85DC-844BECAABC41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineVideos.Sites.Amazon", "SiteUtilProjects\OnlineVideos.Sites.Amazon\OnlineVideos.Sites.Amazon.csproj", "{894B2C5F-4C2F-49F6-AA5F-A693B7E04403}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineVideos.Sites.Amazon", "SiteUtilProjects\OnlineVideos.Sites.Amazon\OnlineVideos.Sites.Amazon.csproj", "{894B2C5F-4C2F-49F6-AA5F-A693B7E04403}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{77CA0C8E-6641-4032-B49E-D47E42C38794}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineVideos.Sites.Testv1", "Tests\OnlineVideos.Sites.Testv1\OnlineVideos.Sites.Testv1.csproj", "{BD3B4948-F1A8-48A2-812C-4B472387AD90}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineVideos.Sites.Testv2", "Tests\OnlineVideos.Sites.Testv2\OnlineVideos.Sites.Testv2.csproj", "{258AE235-E7C7-4036-892B-682BEFC94E29}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineVideos.Tests", "Tests\OnlineVideos.Tests\OnlineVideos.Tests.csproj", "{69523E97-840B-4ADA-AC2A-A13574F669C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -195,6 +203,42 @@ Global
 		{894B2C5F-4C2F-49F6-AA5F-A693B7E04403}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{894B2C5F-4C2F-49F6-AA5F-A693B7E04403}.Release|x64.ActiveCfg = Release|Any CPU
 		{894B2C5F-4C2F-49F6-AA5F-A693B7E04403}.Release|x86.ActiveCfg = Release|Any CPU
+		{BD3B4948-F1A8-48A2-812C-4B472387AD90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD3B4948-F1A8-48A2-812C-4B472387AD90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD3B4948-F1A8-48A2-812C-4B472387AD90}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BD3B4948-F1A8-48A2-812C-4B472387AD90}.Debug|x64.Build.0 = Debug|Any CPU
+		{BD3B4948-F1A8-48A2-812C-4B472387AD90}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BD3B4948-F1A8-48A2-812C-4B472387AD90}.Debug|x86.Build.0 = Debug|Any CPU
+		{BD3B4948-F1A8-48A2-812C-4B472387AD90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD3B4948-F1A8-48A2-812C-4B472387AD90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD3B4948-F1A8-48A2-812C-4B472387AD90}.Release|x64.ActiveCfg = Release|Any CPU
+		{BD3B4948-F1A8-48A2-812C-4B472387AD90}.Release|x64.Build.0 = Release|Any CPU
+		{BD3B4948-F1A8-48A2-812C-4B472387AD90}.Release|x86.ActiveCfg = Release|Any CPU
+		{BD3B4948-F1A8-48A2-812C-4B472387AD90}.Release|x86.Build.0 = Release|Any CPU
+		{258AE235-E7C7-4036-892B-682BEFC94E29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{258AE235-E7C7-4036-892B-682BEFC94E29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{258AE235-E7C7-4036-892B-682BEFC94E29}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{258AE235-E7C7-4036-892B-682BEFC94E29}.Debug|x64.Build.0 = Debug|Any CPU
+		{258AE235-E7C7-4036-892B-682BEFC94E29}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{258AE235-E7C7-4036-892B-682BEFC94E29}.Debug|x86.Build.0 = Debug|Any CPU
+		{258AE235-E7C7-4036-892B-682BEFC94E29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{258AE235-E7C7-4036-892B-682BEFC94E29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{258AE235-E7C7-4036-892B-682BEFC94E29}.Release|x64.ActiveCfg = Release|Any CPU
+		{258AE235-E7C7-4036-892B-682BEFC94E29}.Release|x64.Build.0 = Release|Any CPU
+		{258AE235-E7C7-4036-892B-682BEFC94E29}.Release|x86.ActiveCfg = Release|Any CPU
+		{258AE235-E7C7-4036-892B-682BEFC94E29}.Release|x86.Build.0 = Release|Any CPU
+		{69523E97-840B-4ADA-AC2A-A13574F669C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69523E97-840B-4ADA-AC2A-A13574F669C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69523E97-840B-4ADA-AC2A-A13574F669C1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{69523E97-840B-4ADA-AC2A-A13574F669C1}.Debug|x64.Build.0 = Debug|Any CPU
+		{69523E97-840B-4ADA-AC2A-A13574F669C1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{69523E97-840B-4ADA-AC2A-A13574F669C1}.Debug|x86.Build.0 = Debug|Any CPU
+		{69523E97-840B-4ADA-AC2A-A13574F669C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69523E97-840B-4ADA-AC2A-A13574F669C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69523E97-840B-4ADA-AC2A-A13574F669C1}.Release|x64.ActiveCfg = Release|Any CPU
+		{69523E97-840B-4ADA-AC2A-A13574F669C1}.Release|x64.Build.0 = Release|Any CPU
+		{69523E97-840B-4ADA-AC2A-A13574F669C1}.Release|x86.ActiveCfg = Release|Any CPU
+		{69523E97-840B-4ADA-AC2A-A13574F669C1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -208,6 +252,9 @@ Global
 		{31E46B4E-8088-4E6A-B53E-7401BD660703} = {6C556A69-5996-482E-8C9C-1B8C678E29CB}
 		{0AECC8D5-6010-4733-85DC-844BECAABC41} = {6C556A69-5996-482E-8C9C-1B8C678E29CB}
 		{894B2C5F-4C2F-49F6-AA5F-A693B7E04403} = {8064E323-422F-4DB2-92A8-AFE3875F0E95}
+		{BD3B4948-F1A8-48A2-812C-4B472387AD90} = {77CA0C8E-6641-4032-B49E-D47E42C38794}
+		{258AE235-E7C7-4036-892B-682BEFC94E29} = {77CA0C8E-6641-4032-B49E-D47E42C38794}
+		{69523E97-840B-4ADA-AC2A-A13574F669C1} = {77CA0C8E-6641-4032-B49E-D47E42C38794}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54648317-E70F-4E79-894A-ADC13205869F}
