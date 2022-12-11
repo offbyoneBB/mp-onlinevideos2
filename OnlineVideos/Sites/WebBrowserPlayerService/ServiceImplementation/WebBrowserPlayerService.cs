@@ -1,15 +1,11 @@
 ﻿using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
 using System;
-using CoreWCF;
 
 namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
 {
     /// <summary>
     /// Player service implementation - these are messages from the client (OV) to the server (BrowserHost)
     /// </summary>
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, 
-                    ConcurrencyMode = ConcurrencyMode.Multiple/*, 
-                    UseSynchronizationContext = false*/)]
     public class WebBrowserPlayerService :  IWebBrowserPlayerService
     {
         /// <summary>
@@ -20,10 +16,10 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
         /// <summary>
         /// New action has been received from the client
         /// </summary>
-        /// <param name="action"></param>
-        public void OnNewAction(string action)
+        /// <param name="request"></param>
+        public void OnNewAction(ActionRequest request)
         {
-            if (OnNewActionReceived != null) OnNewActionReceived.Invoke(action);
+            if (OnNewActionReceived != null) OnNewActionReceived.Invoke(request.Action);
         }
     }
 }

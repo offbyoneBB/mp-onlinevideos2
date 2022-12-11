@@ -1,4 +1,5 @@
-﻿using System.ServiceModel;
+﻿using System.Runtime.Serialization;
+using System.ServiceModel;
 
 namespace OnlineVideos.Sites.Interfaces.WebBrowserPlayerService
 {
@@ -9,7 +10,14 @@ namespace OnlineVideos.Sites.Interfaces.WebBrowserPlayerService
     [ServiceContract]
     public interface IWebBrowserPlayerService
     {
-        [OperationContract(IsOneWay = true)]
-        void OnNewAction(string action);
+        [OperationContract]
+        void OnNewAction(ActionRequest request);
+    }
+
+    [DataContract]
+    public class ActionRequest
+    {
+        [DataMember(Order = 1)]
+        public string Action { get; set; }
     }
 }

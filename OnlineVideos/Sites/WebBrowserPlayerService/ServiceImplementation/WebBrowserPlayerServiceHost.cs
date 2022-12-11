@@ -1,5 +1,6 @@
-﻿using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
-using ServiceWire.NamedPipes;
+﻿using GrpcDotNetNamedPipes;
+using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
+using OnlineVideos.Sites.WebBrowserPlayerService.ServiceBindings;
 using System;
 
 namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
@@ -11,18 +12,18 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
     {
         public const string PIPE_ROOT = "net.pipe://localhost/MediaPortal/OnlineVideos/";
 
-        NpHost _npHost;
+        NamedPipeServer _server;
 
         public WebBrowserPlayerServiceHost()
-        {
-            _npHost = new NpHost(PIPE_ROOT + "WebBrowserPlayerService");
-            _npHost.AddService<IWebBrowserPlayerService>(new WebBrowserPlayerService());
-            _npHost.Open();
+        {            
+            _server = new NamedPipeServer(PIPE_ROOT + "WebBrowserPlayerService");
+            _server.Bind<IWebBrowserPlayerService>(new WebBrowserPlayerService());
+            _server.Start();
         }
 
         public void Dispose()
         {
-            _npHost.Dispose();
+            _server.Dispose();
         }
     }
 }

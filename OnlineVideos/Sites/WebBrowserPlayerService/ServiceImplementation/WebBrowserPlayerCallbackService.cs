@@ -1,8 +1,10 @@
-﻿using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
-using ServiceWire.NamedPipes;
+﻿using GrpcDotNetNamedPipes;
+using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
+using ProtoBuf.Grpc.Client;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
@@ -12,22 +14,22 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
     /// </summary>
     public class WebBrowserPlayerCallbackService : IWebBrowserPlayerCallbackService
     {
-        private static readonly ConcurrentDictionary<string, NpClient<IWebBrowserPlayerCallback>> _subscribers = new ConcurrentDictionary<string, NpClient<IWebBrowserPlayerCallback>>();
+        private static readonly ConcurrentDictionary<string, IWebBrowserPlayerCallback> _subscribers = new ConcurrentDictionary<string, IWebBrowserPlayerCallback>();
 
         /// <summary>
         /// New client is subscribing to the callback service
         /// </summary>
         /// <returns></returns>
-        public bool Subscribe(string endpoint)
+        public BoolResponse Subscribe(SubscribeRequest request)
         {
             try
             {
-                _subscribers.GetOrAdd(endpoint, s => new NpClient<IWebBrowserPlayerCallback>(new NpEndPoint(endpoint)));
-                return true;
+                _subscribers.GetOrAdd(request.Endpoint, s => new NamedPipeChannel(".", request.Endpoint).CreateGrpcService<IWebBrowserPlayerCallback>());
+                return new BoolResponse { Result = true };
             }
             catch
             {
-                return false;
+                return new BoolResponse { Result = false };
             }
         }
 
@@ -35,17 +37,16 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
         /// Client is unsubscribing from the callback service
         /// </summary>
         /// <returns></returns>
-        public bool Unsubscribe(string endpoint)
+        public BoolResponse Unsubscribe(SubscribeRequest request)
         {
             try
             {
-                if (_subscribers.TryRemove(endpoint, out var callback))
-                    callback.Dispose();
-                return true;
+                _subscribers.TryRemove(request.Endpoint, out _);
+                return new BoolResponse { Result = true };
             }
             catch
             {
-                return false;
+                return new BoolResponse { Result = false };
             }
         }
 
@@ -58,7 +59,7 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
             {
                 GetActiveCallbacks().ForEach(delegate(IWebBrowserPlayerCallback callback)
                 {
-                    callback.OnClosing();
+                    callback.OnClosing(new ClosingRequest());
                 });
             }
             catch (Exception ex)
@@ -75,9 +76,10 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
         {
             try
             {
+                string message = exceptionToLog.ToString();
                 GetActiveCallbacks().ForEach(delegate(IWebBrowserPlayerCallback callback)
                 {
-                    callback.LogException(exceptionToLog);
+                    callback.LogError(new LogRequest { Message = message });
                 });
             }
             catch (Exception ex)
@@ -96,7 +98,7 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
             {
                 GetActiveCallbacks().ForEach(delegate(IWebBrowserPlayerCallback callback)
                 {
-                    callback.LogInfo(message);
+                    callback.LogInfo(new LogRequest { Message = message });
                 });
             }
             catch (Exception ex)
@@ -115,7 +117,7 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
             {
                 GetActiveCallbacks().ForEach(delegate(IWebBrowserPlayerCallback callback)
                 {
-                    callback.OnKeyPress(keyPressed);
+                    callback.OnKeyPress(new KeyPressRequest { KeyPressed = keyPressed });
                 });
             }
             catch (Exception ex)
@@ -133,10 +135,16 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
             var result = false;
             try
             {
-
+                WndProcRequest request = new WndProcRequest
+                {
+                    HWnd = msg.HWnd.ToInt64(),
+                    Msg = msg.Msg,
+                    WParam = msg.WParam.ToInt64(),
+                    LParam = msg.LParam.ToInt64()
+                };
                 GetActiveCallbacks().ForEach(delegate(IWebBrowserPlayerCallback callback)
                 {
-                    result = result || callback.OnWndProc(msg);
+                    result = result || callback.OnWndProc(request).Result;
                 });
 
             }
@@ -153,23 +161,7 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
         /// <returns></returns>
         private static List<IWebBrowserPlayerCallback> GetActiveCallbacks()
         {
-            List<IWebBrowserPlayerCallback> callbacks = new List<IWebBrowserPlayerCallback>();
-            try
-            {
-                foreach (var callback in _subscribers.ToArray())
-                {
-                    if (callback.Value.IsConnected)
-                        callbacks.Add(callback.Value.Proxy);
-                    else if (_subscribers.TryRemove(callback))
-                        callback.Value.Dispose();
-
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex);
-            }
-            return callbacks;
+            return new List<IWebBrowserPlayerCallback>(_subscribers.ToArray().Select(s => s.Value));
         }
 
     }

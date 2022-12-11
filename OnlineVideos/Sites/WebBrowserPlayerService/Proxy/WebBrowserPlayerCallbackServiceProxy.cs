@@ -1,6 +1,8 @@
-﻿using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
+﻿using GrpcDotNetNamedPipes;
+using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
+using OnlineVideos.Sites.WebBrowserPlayerService.ServiceBindings;
 using OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation;
-using ServiceWire.NamedPipes;
+using ProtoBuf.Grpc.Client;
 using System;
 
 namespace OnlineVideos.Sites.Proxy.WebBrowserPlayerService
@@ -12,22 +14,23 @@ namespace OnlineVideos.Sites.Proxy.WebBrowserPlayerService
     public class WebBrowserPlayerCallbackServiceProxy : IDisposable
     {
         string _pipeName;
-        NpHost _npHost;
-        NpClient<IWebBrowserPlayerCallbackService> _npClient;
+        NamedPipeServer _server;
+        IWebBrowserPlayerCallbackService _callback;
 
         /// <summary>
         /// Constructor will automatically subscribe for listening to the service
         /// </summary>
         /// <param name="callback"></param>
         public WebBrowserPlayerCallbackServiceProxy(IWebBrowserPlayerCallback callback)
-        {
+        {            
             _pipeName = WebBrowserPlayerServiceHost.PIPE_ROOT + "WebBrowserPlayerCallbackService" + Guid.NewGuid();
-            _npHost = new NpHost(_pipeName);
-            _npHost.AddService(callback);
-            _npHost.Open();
+            _server = new NamedPipeServer(_pipeName);
+            _server.Bind(callback);
+            _server.Start();
 
-            _npClient = new NpClient<IWebBrowserPlayerCallbackService>(new NpEndPoint(WebBrowserPlayerServiceHost.PIPE_ROOT + "WebBrowserPlayerCallbackService"));
-            _npClient.Proxy.Subscribe(_npHost.PipeName);
+            NamedPipeChannel channel = new NamedPipeChannel(".", WebBrowserPlayerServiceHost.PIPE_ROOT + "WebBrowserPlayerCallbackService");
+            _callback = channel.CreateGrpcService<IWebBrowserPlayerCallbackService>();
+            _callback.Subscribe(new SubscribeRequest { Endpoint = _pipeName });
         }
         
         /// <summary>
@@ -35,17 +38,7 @@ namespace OnlineVideos.Sites.Proxy.WebBrowserPlayerService
         /// </summary>
         public void Dispose()
         {
-            if (_npClient != null)
-            {
-                _npClient.Proxy.Unsubscribe(_pipeName);
-                _npClient.Dispose();
-                _npClient = null;
-            }
-            if (_npHost != null)
-            {
-                _npHost.Dispose();
-                _npHost = null;
-            }
+            _server.Dispose();
         }
     }
 }

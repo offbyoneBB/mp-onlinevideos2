@@ -1,5 +1,6 @@
-﻿using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
-using ServiceWire.NamedPipes;
+﻿using GrpcDotNetNamedPipes;
+using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
+using OnlineVideos.Sites.WebBrowserPlayerService.ServiceBindings;
 using System;
 
 namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
@@ -9,18 +10,18 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
     /// </summary>
     public class WebBrowserPlayerCallbackServiceHost : IDisposable
     {
-        NpHost _npHost;
+        NamedPipeServer _server;
 
         public WebBrowserPlayerCallbackServiceHost()
         {
-            _npHost = new NpHost(WebBrowserPlayerServiceHost.PIPE_ROOT + "WebBrowserPlayerCallbackService");
-            _npHost.AddService<IWebBrowserPlayerCallbackService>(new WebBrowserPlayerCallbackService());
-            _npHost.Open();
+            _server = new NamedPipeServer(WebBrowserPlayerServiceHost.PIPE_ROOT + "WebBrowserPlayerCallbackService");
+            _server.Bind<IWebBrowserPlayerCallbackService>(new WebBrowserPlayerCallbackService());
+            _server.Start();
         }
 
         public void Dispose()
         {
-            _npHost.Dispose();
+            _server.Dispose();
         }
     }
 }

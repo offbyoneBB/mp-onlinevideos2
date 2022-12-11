@@ -122,6 +122,7 @@
   <ItemGroup>
     <PackageReference Include="CoreWCF.NetTcp" Version="1.1.0" />
     <PackageReference Include="DotNetZip" Version="1.16.0" />
+    <PackageReference Include="GrpcDotNetNamedPipes" Version="2.0.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.43" />
     <PackageReference Include="Jurassic" Version="3.2.6">
       <TreatAsUsed>true</TreatAsUsed>
@@ -130,7 +131,11 @@
       <Version>1.5.0.235</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="ServiceWire" Version="5.5.2" />
+    <PackageReference Include="protobuf-net.BuildTools" Version="3.1.25">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="protobuf-net.Grpc" Version="1.0.179" />
     <PackageReference Include="SubtitleDownloader">
       <Version>3.0.16</Version>
       <Aliases>SubtitleDownloader</Aliases>

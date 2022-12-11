@@ -1,6 +1,7 @@
-﻿using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
+﻿using GrpcDotNetNamedPipes;
+using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
 using OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation;
-using ServiceWire.NamedPipes;
+using ProtoBuf.Grpc.Client;
 using System;
 
 namespace OnlineVideos.Sites.Proxy.WebBrowserPlayerService
@@ -11,36 +12,33 @@ namespace OnlineVideos.Sites.Proxy.WebBrowserPlayerService
     /// </summary>
     public class WebBrowserPlayerServiceProxy : IDisposable
     {
-        NpClient<IWebBrowserPlayerService> _npClient;
+        NamedPipeChannel _channel;
+        IWebBrowserPlayerService _service;
 
         /// <summary>
         /// 
         /// </summary>
         public WebBrowserPlayerServiceProxy()
         {
-            _npClient = new NpClient<IWebBrowserPlayerService>(new NpEndPoint(WebBrowserPlayerServiceHost.PIPE_ROOT + "WebBrowserPlayerService"));
+            _channel = new NamedPipeChannel(".", WebBrowserPlayerServiceHost.PIPE_ROOT + "WebBrowserPlayerService");
+            _service = _channel.CreateGrpcService<IWebBrowserPlayerService>();
         }
-        
+
         /// <summary>
         /// Send a new action message to the browser host
         /// </summary>
         /// <param name="action"></param>
         public void OnNewAction(string action)
         {
-            if (_npClient.IsConnected)
+            try
             {
-                try
-                {
-                    _npClient.Proxy.OnNewAction(action);
-                }
-                catch (Exception)
-                {
-                    // we'll just ignore timeouts for now
-                    Log.Error("WebBrowserPlayerServiceProxy, exception sending " + action + " action to server");
-                }
+                _service.OnNewAction(new ActionRequest { Action = action });
             }
-            else
-                Log.Error("WebBrowserPlayerServiceProxy, channel to server not opened");
+            catch (Exception)
+            {
+                // we'll just ignore timeouts for now
+                Log.Error("WebBrowserPlayerServiceProxy, exception sending " + action + " action to server");
+            }
         }
 
         /// <summary>
@@ -48,7 +46,6 @@ namespace OnlineVideos.Sites.Proxy.WebBrowserPlayerService
         /// </summary>
         public void Dispose()
         {
-            _npClient.Dispose();
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using OnlineVideos.Sites.Interfaces.WebBrowserPlayerService;
 using System;
-using System.ServiceModel;
 using System.Windows.Forms;
 
 namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
@@ -8,7 +7,6 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
     /// <summary>
     /// Class to handle the callbacks from the browser host
     /// </summary>
-    [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, UseSynchronizationContext = false)] 
     public class WebBrowserPlayerCallback : IWebBrowserPlayerCallback
     {
         /// <summary>
@@ -21,25 +19,26 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
         /// <summary>
         /// Browser host has requested an exception to be logged
         /// </summary>
-        /// <param name="exception"></param>
-        public void LogException(Exception exception)
+        /// <param name="request"></param>
+        public void LogError(LogRequest request)
         {
-            Log.Error(exception);
+            Log.Error(request.Message);
         }
 
         /// <summary>
         /// Browser host has requested an information message be logged
         /// </summary>
-        /// <param name="message"></param>
-        public void LogInfo(string message)
+        /// <param name="request"></param>
+        public void LogInfo(LogRequest request)
         {
-            Log.Info(message);
+            Log.Info(request.Message);
         }
 
         /// <summary>
         /// Browser host is closing
         /// </summary>
-        public void OnClosing()
+        /// <param name="request"></param>
+        public void OnClosing(ClosingRequest request)
         {
             if (OnBrowserClosing != null) OnBrowserClosing.Invoke(this, EventArgs.Empty);
         }
@@ -47,20 +46,23 @@ namespace OnlineVideos.Sites.WebBrowserPlayerService.ServiceImplementation
         /// <summary>
         /// Key was pressed in the browser
         /// </summary>
-        /// <param name="keyPressed"></param>
-        public void OnKeyPress(int keyPressed)
+        /// <param name="request"></param>
+        public void OnKeyPress(KeyPressRequest request)
         {
-            if (OnBrowserKeyPress != null) OnBrowserKeyPress.Invoke(keyPressed);
+            if (OnBrowserKeyPress != null) OnBrowserKeyPress.Invoke(request.KeyPressed);
         }
 
         /// <summary>
         /// Handle WndProc so that we can process media key events
         /// </summary>
-        /// <param name="msg"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
-        public bool OnWndProc(Message msg)
+        public BoolResponse OnWndProc(WndProcRequest request)
         {
-            return OnBrowserWndProc != null && OnBrowserWndProc.Invoke(msg);
+            bool result = OnBrowserWndProc != null && OnBrowserWndProc.Invoke(
+                Message.Create(new IntPtr(request.HWnd), request.Msg, new IntPtr(request.WParam), new IntPtr(request.LParam))
+                );
+            return new BoolResponse { Result = result };
         }
     }
 }

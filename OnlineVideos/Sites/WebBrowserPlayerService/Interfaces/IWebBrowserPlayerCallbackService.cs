@@ -1,4 +1,4 @@
-﻿using ServiceWire.NamedPipes;
+﻿using System.Runtime.Serialization;
 using System.ServiceModel;
 
 namespace OnlineVideos.Sites.Interfaces.WebBrowserPlayerService
@@ -6,17 +6,27 @@ namespace OnlineVideos.Sites.Interfaces.WebBrowserPlayerService
     /// <summary>
     /// The service contract for messages sent by the browser host
     /// </summary>
-    [ServiceContract(SessionMode = SessionMode.Required, 
-                        CallbackContract = typeof(IWebBrowserPlayerCallback)
-                        )]
+    [ServiceContract]
     public interface IWebBrowserPlayerCallbackService
     {
+        [OperationContract]
+        BoolResponse Subscribe(SubscribeRequest request);
 
         [OperationContract]
-        bool Subscribe(string endpoint);
+        BoolResponse Unsubscribe(SubscribeRequest request);
+    }
 
-        [OperationContract]
-        bool Unsubscribe(string endpoint);
+    [DataContract]
+    public class SubscribeRequest
+    {
+        [DataMember(Order = 1)]
+        public string Endpoint { get; set; }
+    }
 
+    [DataContract]
+    public class BoolResponse
+    {
+        [DataMember(Order = 1)]
+        public bool Result { get; set; }
     }
 }
