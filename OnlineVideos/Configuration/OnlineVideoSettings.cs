@@ -218,7 +218,7 @@ namespace OnlineVideos
                 // only need enabled sites
                 if (siteSettings.IsEnabled)
                 {
-                    SiteUtilBase siteutil = SiteUtilFactory.CreateFromShortName(siteSettings.UtilName, siteSettings);
+                    SiteUtilBase siteutil = SiteUtilFactory.Instance.CreateFromShortName(siteSettings.UtilName, siteSettings);
                     if (siteutil != null && !SiteUtilsList.ContainsKey(siteSettings.Name)) SiteUtilsList.Add(siteSettings.Name, siteutil);
                     if (siteutil is LatestVideosSiteUtilBase) LatestVideosSiteUtilsList.Add(siteutil as LatestVideosSiteUtilBase);
                 }
@@ -250,7 +250,7 @@ namespace OnlineVideos
                     UtilName = "Favorite",
                     IsEnabled = true
                 };
-                SiteUtilsList.Add(aSite.Name, SiteUtilFactory.CreateFromShortName(aSite.UtilName, aSite));
+                SiteUtilsList.Add(aSite.Name, SiteUtilFactory.Instance.CreateFromShortName(aSite.UtilName, aSite));
             }
         }
 
@@ -265,7 +265,7 @@ namespace OnlineVideos
                     UtilName = "DownloadedVideo",
                     IsEnabled = true
                 };
-                SiteUtilsList.Add(aSite.Name, SiteUtilFactory.CreateFromShortName(aSite.UtilName, aSite));
+                SiteUtilsList.Add(aSite.Name, SiteUtilFactory.Instance.CreateFromShortName(aSite.UtilName, aSite));
             }
         }
 

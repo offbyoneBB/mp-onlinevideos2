@@ -214,7 +214,7 @@ namespace OnlineVideos
 
             // 2. get a "clean" site by creating it with empty SiteSettings
             Configuration = new Helpers.StringHash();
-            Sites.SiteUtilBase cleanSiteUtil = Sites.SiteUtilFactory.CreateFromShortName(UtilName, this);
+            Sites.SiteUtilBase cleanSiteUtil = Sites.SiteUtilFactory.Instance.CreateFromShortName(UtilName, this);
 
             // 3. compare and collect different settings
             foreach (FieldInfo field in fieldInfos)

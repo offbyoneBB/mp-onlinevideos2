@@ -65,7 +65,12 @@ namespace OnlineVideos.CrossDomain
 #if NETFRAMEWORK
                         assemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(dll)), Helpers.FileUtils.RetrieveLinkerTimestamp(dll));
 #else
-                        assemblies.Add(_assemblyLoadContext.LoadFromAssemblyPath(dll), Helpers.FileUtils.RetrieveLinkerTimestamp(dll));
+                        // AssemblyLoadContext does not support shadow copying dlls (unlike AppDomain) so loading the assembly directly from
+                        // the path will lock the assembly preventing them from being overwritten if/when they are updated by the site updater.
+                        // As a workaround load the assembly from a stream, this has the downside that the entire assembly is loaded in memory
+                        // for the lifetime of the AssemblyLoadContext.
+                        using (FileStream fs = File.Open(dll, FileMode.Open, FileAccess.Read, FileShare.Read))
+                            assemblies.Add(_assemblyLoadContext.LoadFromStream(fs), Helpers.FileUtils.RetrieveLinkerTimestamp(dll));
 #endif
                     }
                     catch (Exception dllLoadException)
@@ -186,7 +191,7 @@ namespace OnlineVideos.CrossDomain
                 catch (Exception ex)
                 {
                     Log.Warn("SiteUtil '{0}' is faulty or not compatible with this build of OnlineVideos: {1}", name, ex.Message);
-                    return util;
+                    return null;
                 }
             }
             else

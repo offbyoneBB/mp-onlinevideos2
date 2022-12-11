@@ -52,7 +52,7 @@ namespace OnlineVideos.MediaPortal2
 
         public void RecreateSite()
         {
-            var newUtilInstance = Sites.SiteUtilFactory.CloneFreshSiteFromExisting(Site);
+            var newUtilInstance = Sites.SiteUtilFactory.Instance.CloneFreshSiteFromExisting(Site);
             OnlineVideoSettings.Instance.SiteUtilsList[Name] = newUtilInstance;
             _site = newUtilInstance;
             UserSettingsChanged = false;
