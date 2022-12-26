@@ -18,6 +18,8 @@ namespace OnlineVideos
         Auto,
         [XmlEnum(Name = "Internal")]
         Internal,
+        [XmlEnum(Name = "Internal_LAV")]
+        Internal_LAV,
         [XmlEnum(Name = "WMP")]
         WMP,
         [XmlEnum(Name = "VLC")]

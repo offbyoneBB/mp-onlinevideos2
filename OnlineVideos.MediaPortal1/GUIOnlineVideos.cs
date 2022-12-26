@@ -2427,7 +2427,7 @@ namespace OnlineVideos.MediaPortal1
 
             currentPlayingItem = null;
 
-            if (factory.PreparedPlayerType != PlayerType.Internal)
+            if (factory.PreparedPlayerType != PlayerType.Internal && factory.PreparedPlayerType != PlayerType.Internal_LAV)
             {
                 // Websites will just go to play
                 if (factory.PreparedPlayerType == PlayerType.Browser)

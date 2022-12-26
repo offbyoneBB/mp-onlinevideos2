@@ -142,10 +142,11 @@ namespace OnlineVideos.MediaPortal1.Player
             : base(type)
         { }
 
-        public OnlineVideosPlayer(string url)
+        public OnlineVideosPlayer(string url, bool useLAV)
             : base(g_Player.MediaType.Video)
         {
             m_strCurrentFile = url;
+            this.UseLAV = useLAV;
         }
 
         public override string CurrentFile // hack to get around the MP 1.3 Alpha bug with non http URLs
@@ -228,7 +229,13 @@ namespace OnlineVideos.MediaPortal1.Player
         protected bool skipBuffering = false;
         public void SkipBuffering() { skipBuffering = true; }
 
-        public static string GetSourceFilterName(string videoUrl)
+        public bool UseLAV { get; }
+        public string GetSourceFilterName(string videoUrl)
+        {
+            return GetSourceFilterName(videoUrl, UseLAV);
+        }
+
+        public static string GetSourceFilterName(string videoUrl, bool forceUseLAV)
         {
             string sourceFilterName = string.Empty;
             Uri uri = new Uri(videoUrl);
@@ -237,7 +244,7 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 case "http":
                 case "rtmp":
-                    if (PluginConfiguration.Instance.useMPUrlSourceSplitter)
+                    if (!forceUseLAV)
                         sourceFilterName = OnlineVideos.MPUrlSourceFilter.Downloader.FilterName;
                     else
                         sourceFilterName = "LAV Splitter Source";
@@ -476,7 +483,7 @@ namespace OnlineVideos.MediaPortal1.Player
 
                     Log.Instance.Info("BufferFile : using unknown filter as source filter");
 
-                    if (PluginConfiguration.Instance.useMPUrlSourceSplitter && sourceFilter is IAMOpenProgress && !m_strCurrentFile.Contains("live=true") && !m_strCurrentFile.Contains("RtmpLive=1"))
+                    if (!UseLAV && sourceFilter is IAMOpenProgress && !m_strCurrentFile.Contains("live=true") && !m_strCurrentFile.Contains("RtmpLive=1"))
                     {
                         // buffer before starting playback
                         bool filterConnected = false;
