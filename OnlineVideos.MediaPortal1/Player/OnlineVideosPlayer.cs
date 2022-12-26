@@ -142,10 +142,11 @@ namespace OnlineVideos.MediaPortal1.Player
             : base(type)
         { }
 
-        public OnlineVideosPlayer(string url)
+        public OnlineVideosPlayer(string url, bool useLAV)
             : base(g_Player.MediaType.Video)
         {
             m_strCurrentFile = url;
+            this.UseLAV = useLAV;
         }
 
         public override string CurrentFile // hack to get around the MP 1.3 Alpha bug with non http URLs
@@ -228,7 +229,13 @@ namespace OnlineVideos.MediaPortal1.Player
         protected bool skipBuffering = false;
         public void SkipBuffering() { skipBuffering = true; }
 
-        public static string GetSourceFilterName(string videoUrl)
+        public bool UseLAV { get; }
+        public string GetSourceFilterName(string videoUrl)
+        {
+            return GetSourceFilterName(videoUrl, UseLAV);
+        }
+
+        public static string GetSourceFilterName(string videoUrl, bool forceUseLAV)
         {
             string sourceFilterName = string.Empty;
             Uri uri = new Uri(videoUrl);
@@ -237,7 +244,7 @@ namespace OnlineVideos.MediaPortal1.Player
             {
                 case "http":
                 case "rtmp":
-                    if (PluginConfiguration.Instance.useMPUrlSourceSplitter)
+                    if (!forceUseLAV)
                         sourceFilterName = OnlineVideos.MPUrlSourceFilter.Downloader.FilterName;
                     else
                         sourceFilterName = "LAV Splitter Source";
@@ -356,7 +363,7 @@ namespace OnlineVideos.MediaPortal1.Player
                     // MediaPortal IPTV filter and url source splitter
                     Log.Instance.Info("BufferFile : using 'MediaPortal IPTV filter and url source splitter' as source filter");
 
-                    String url = OnlineVideos.MPUrlSourceFilter.UrlBuilder.GetFilterUrl(siteUtil, m_strCurrentFile);
+                    String url = OnlineVideos.MPUrlSourceFilter.UrlBuilder.GetFilterUrl(siteUtil, m_strCurrentFile, true);
 
                     Log.Instance.Info("BufferFile : loading url: '{0}'", url);
                     result = filterStateEx.LoadAsync(url);
@@ -467,11 +474,16 @@ namespace OnlineVideos.MediaPortal1.Player
                 }
                 else
                 {
+                    if (m_strCurrentFile.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) >= 0)
+                    {
+                        m_strCurrentFile = MPUrlSourceFilter.UrlBuilder.GetFilterUrl(siteUtil, m_strCurrentFile, false);
+                    }
+
                     Marshal.ThrowExceptionForHR(((IFileSourceFilter)sourceFilter).Load(m_strCurrentFile, null));
 
                     Log.Instance.Info("BufferFile : using unknown filter as source filter");
 
-                    if (PluginConfiguration.Instance.useMPUrlSourceSplitter && sourceFilter is IAMOpenProgress && !m_strCurrentFile.Contains("live=true") && !m_strCurrentFile.Contains("RtmpLive=1"))
+                    if (!UseLAV && sourceFilter is IAMOpenProgress && !m_strCurrentFile.Contains("live=true") && !m_strCurrentFile.Contains("RtmpLive=1"))
                     {
                         // buffer before starting playback
                         bool filterConnected = false;

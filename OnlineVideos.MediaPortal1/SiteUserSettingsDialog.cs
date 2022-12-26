@@ -89,7 +89,7 @@ namespace OnlineVideos.MediaPortal1
                         {
                             string value = selectedSite.GetConfigValueAsString(prop);
                             string newValue = (string)value.Clone();
-                            if (GUIOnlineVideos.GetUserInputString(ref newValue, prop.IsPassword))
+                            if (GUIOnlineVideos.GetUserInputString(ref newValue, prop.IsPassword, prop.IsNumeric))
                             {
                                 if (value != newValue)
                                 {
@@ -120,7 +120,7 @@ namespace OnlineVideos.MediaPortal1
                 if (changes)
                 {
                     var newUtilInstance = Sites.SiteUtilFactory.CloneFreshSiteFromExisting(selectedSite);
-                    OnlineVideoSettings.Instance.SiteUtilsList[newUtilInstance.Settings.Name] = newUtilInstance;
+                    OnlineVideoSettings.Instance.SetSite(newUtilInstance.Settings.Name, newUtilInstance);
                     return newUtilInstance;
                 }
             }

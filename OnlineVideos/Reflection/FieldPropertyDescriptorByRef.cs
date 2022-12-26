@@ -38,6 +38,8 @@ namespace OnlineVideos.Reflection
 
         public bool IsBool { get { return FieldPropertyDescriptor.PropertyType.Equals(typeof(bool)); } }
 
+        public bool IsNumeric { get { return FieldPropertyDescriptor.PropertyType.Equals(typeof(int)); } }
+
         public bool IsEnum
         {
             get

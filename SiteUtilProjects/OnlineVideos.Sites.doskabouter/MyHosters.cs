@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
@@ -182,6 +183,8 @@ namespace OnlineVideos.Hoster
 
     public class DailyMotion : HosterBase
     {
+        [Category("OnlineVideosUserConfiguration"), Description("Proxy (requires custom proxytool running)")]
+        string customProxy = null;
         public override string GetHosterUrl()
         {
             return "dailymotion.com";
@@ -189,6 +192,12 @@ namespace OnlineVideos.Hoster
 
         public override Dictionary<string, string> GetPlaybackOptions(string url)
         {
+            var m = Regex.Match(url, @"/video/(?<videoid>.*)$");
+            if (m.Success)
+                url = @"https://www.dailymotion.com/player/metadata/video/" + m.Groups["videoid"].Value;
+
+            url = Sites.doskabouter.Helpers.CustomProxyHelper.GetProxyUrl(url, customProxy);
+
             string webData = WebCache.Instance.GetWebData(url);
 
             Dictionary<string, string> res = new Dictionary<string, string>();
@@ -196,7 +205,7 @@ namespace OnlineVideos.Hoster
             if (matchFileUrl.Success)
             {
                 string foundUrl = matchFileUrl.Groups["url"].Value;
-                foundUrl = foundUrl.Replace(@"\/", @"/");
+                foundUrl = Sites.doskabouter.Helpers.CustomProxyHelper.GetProxyUrl(foundUrl.Replace(@"\/", @"/"), customProxy);
                 var m3u8Data = GetWebData(foundUrl);
                 return Helpers.HlsPlaylistParser.GetPlaybackOptions(m3u8Data, foundUrl);
             }
@@ -218,6 +227,14 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class Doodla : Dood
+    {
+        public override string GetHosterUrl()
+        {
+            return "dood.la";
+        }
+    }
+
     public class Dood : HosterBase
     {
         public override string GetHosterUrl()
@@ -227,7 +244,9 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
-            url = url.Replace("/d/", "/e/");
+            UriBuilder ub = new UriBuilder(url.Replace("/d/", "/e/"));
+            ub.Host = "dood.so";
+            url = ub.Uri.ToString();
             var data = GetWebData(url);
             var m = Regex.Match(data, @"\$\.get\('(?<url>/pass[^']*)'");
             if (m.Success)
@@ -246,7 +265,7 @@ namespace OnlineVideos.Hoster
                 TimeSpan span = DateTime.Now.Subtract(new DateTime(1970, 1, 1, 0, 0, 0));
                 var newurl = data + "SQPPQsSXKD?token=" + tmpUrl.Substring(i + 1) + "&expiry=" + Math.Truncate(span.TotalSeconds);
                 HttpUrl finalUrl = new HttpUrl(newurl);
-                finalUrl.Referer = "https://dood.to";
+                finalUrl.Referer = "https://dood.so";
                 return finalUrl.ToString();
             }
             m = Regex.Match(data, @"<title>(?<Title>[^<]*)</title>");
@@ -1169,7 +1188,7 @@ namespace OnlineVideos.Hoster
             headers.Set("Accept-Encoding", "gzip, deflate, br");
             var newUrl = MyGetRedirectedUrl(url, null, cc, headers);
 
-            var data = GetWebData(newUrl, cookies: cc, userAgent: uagent, headers: headers);
+            var data = GetWebData(newUrl, cookies: cc, userAgent: uagent);
             headers.Set("Accept", "*/*");
 
             Match m = Regex.Match(data, @"history\.pushState\(stateObj,\s*""[^""]*"",\s""(?<url>[^""]*)""\);");
@@ -1187,12 +1206,7 @@ namespace OnlineVideos.Hoster
 
             m = Regex.Match(data, @"<script\stype='text/javascript'\ssrc='[^']*?(?<ppu_main>[^\./']*)\.js'></script>");
             cc.Add(new Cookie("ppu_main_" + m.Groups["ppu_main"].Value, "1", "", @".streamzz.to"));
-            var data5 = GetWebData(@"https://streamzz.to/count.php?bcd=1", referer: referer, cookies: cc, userAgent: uagent, headers: headers);
-
-            cc.Add(new Cookie("ppu_sub_" + m.Groups["ppu_main"].Value, "1", "", @".streamzz.to"));
-            cc.Add(new Cookie("ppu_delay_" + m.Groups["ppu_main"].Value, "1", "", @".streamzz.to"));
-            //todo: experiment with not doing following request:
-            var data6 = GetWebData(@"https://streamzz.to/videoplayer.js", referer: referer, cookies: cc, userAgent: uagent, headers: headers);
+            GetWebData(@"https://cnt.streamzz.to/count.php?xyz=1", referer: referer, cookies: cc, userAgent: uagent, headers: headers);
 
             m = Regex.Match(data, @"return\sp(?<pack>[^<]*)</script");
             var l = new List<String>();
@@ -1495,6 +1509,23 @@ namespace OnlineVideos.Hoster
             return HexAsBytes;
         }
 
+    }
+
+    public class VideoBin : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "videobin.co";
+        }
+
+        public override string GetVideoUrl(string url)
+        {
+            var data = GetWebData(url);
+            Match m=Regex.Match(data,@"""(?<url>http[^""]*\.mp4)""");
+            if (m.Success)
+                return m.Groups["url"].Value;
+            return null;
+        }
     }
 
     public class Vidoza : MyHosterBase

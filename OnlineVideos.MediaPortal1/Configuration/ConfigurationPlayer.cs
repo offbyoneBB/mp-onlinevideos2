@@ -36,7 +36,7 @@ namespace OnlineVideos.MediaPortal1
             DirectShowUtil.ReleaseComObject(audioRenderer, 2000);
 
             // add the source filter
-            string sourceFilterName = OnlineVideos.MediaPortal1.Player.OnlineVideosPlayer.GetSourceFilterName(fileName);
+            string sourceFilterName = OnlineVideos.MediaPortal1.Player.OnlineVideosPlayer.GetSourceFilterName(fileName, false);
 			if (string.IsNullOrEmpty(sourceFilterName)) return false;
             IBaseFilter sourceFilter = null;
             try

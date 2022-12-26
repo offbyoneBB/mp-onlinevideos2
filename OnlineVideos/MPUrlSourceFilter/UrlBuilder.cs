@@ -10,7 +10,7 @@ namespace OnlineVideos.MPUrlSourceFilter
         /// <param name="siteUtil">The <see cref="Sites.SiteUtilBase"/> instance with url settings.</param>
         /// <param name="url">A string containing the base64 encoded binary serialized data of a supported <see cref="SimpleUrl"/> inheriting class.</param>
         /// <returns></returns>
-        public static String GetFilterUrl(Sites.SiteUtilBase siteUtil, String url)
+        public static String GetFilterUrl(Sites.SiteUtilBase siteUtil, String url, bool useMPUrlSourceSplitter)
         {
             int index = url.IndexOf(SimpleUrl.ParameterSeparator);
             SimpleUrl simpleUrl = null;
@@ -34,7 +34,11 @@ namespace OnlineVideos.MPUrlSourceFilter
             if (siteUtil != null)
                 simpleUrl.ApplySettings(siteUtil);
 
-            return simpleUrl.ToFilterString();
+            if (useMPUrlSourceSplitter)
+                return simpleUrl.ToFilterString();
+            else
+                return simpleUrl.Uri.ToString();
+
         }
     }
 }
