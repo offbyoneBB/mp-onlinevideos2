@@ -10,7 +10,7 @@ namespace OnlineVideos.MediaPortal1.Player
     {
         bool GoFullscreen { get; set; }
         string SubtitleFile { get; set; }
-		string PlaybackUrl { get; } // hack to get around the MP 1.3 Alpha bug with non http URLs
+        string PlaybackUrl { get; } // hack to get around the MP 1.3 Alpha bug with non http URLs
     }
 
     public class PlayerFactory : IPlayerFactory
@@ -31,7 +31,7 @@ namespace OnlineVideos.MediaPortal1.Player
         {
             if (PreparedPlayerType == PlayerType.Auto)
             {
-				Uri uri = new Uri(PreparedUrl);
+                Uri uri = new Uri(PreparedUrl);
                 // send all supported schemes to internal player
                 if (uri.Scheme.StartsWith("rtmp") || uri.Scheme.StartsWith("http") || uri.Scheme == "sop" || uri.Scheme == "mms")
                 {
@@ -67,7 +67,7 @@ namespace OnlineVideos.MediaPortal1.Player
                 case PlayerType.Internal: PreparedPlayer = new OnlineVideosPlayer(PreparedUrl); break;
                 case PlayerType.VLC: PreparedPlayer = new VLCPlayer(); break;
                 case PlayerType.Browser: PreparedPlayer = new WebBrowserVideoPlayer(); break;
-                case PlayerType.Webview: PreparedPlayer = new WebViewPlayer(webviewSiteUtil);break;
+                case PlayerType.Webview: PreparedPlayer = new WebViewPlayer(webviewSiteUtil); break;
                 default: PreparedPlayer = new WMPVideoPlayer(); break;
             }
         }
@@ -75,15 +75,15 @@ namespace OnlineVideos.MediaPortal1.Player
         public IPlayer Create(string filename)
         {
             return Create(filename, g_Player.MediaType.Video);
-        }  
+        }
 
         public IPlayer Create(string filename, g_Player.MediaType type)
         {
-			// hack to get around the MP 1.3 Alpha bug with non http URLs
+            // hack to get around the MP 1.3 Alpha bug with non http URLs
             /*if (filename != PreparedUrl)
                 throw new OnlineVideosException("Cannot play a different url than this PlayerFactory was created with!");
             else*/
-                return PreparedPlayer;
-        }              
+            return PreparedPlayer;
+        }
     }
 }

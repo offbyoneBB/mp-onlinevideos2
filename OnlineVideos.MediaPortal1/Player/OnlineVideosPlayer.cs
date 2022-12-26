@@ -476,7 +476,7 @@ namespace OnlineVideos.MediaPortal1.Player
                         // buffer before starting playback
                         bool filterConnected = false;
                         percentageBuffered = 0.0f;
-                        long total = 0, current = 0, last = 0;
+                        long total = 0, current = 0, last = 0;      
                         do
                         {
                             result = ((IAMOpenProgress)sourceFilter).QueryProgress(out total, out current);
@@ -564,6 +564,7 @@ namespace OnlineVideos.MediaPortal1.Player
                     throw new OnlineVideosException(errorText);
                 }
             }
+            
             catch (Exception ex)
             {
                 Log.Instance.Warn(ex.ToString());
@@ -707,7 +708,7 @@ namespace OnlineVideos.MediaPortal1.Player
             IAudioPostEngine audioEngine = AudioPostEngine.GetInstance(true);
             if (audioEngine != null && !audioEngine.LoadPostProcessing(graphBuilder))
             {
-              AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
+                AudioPostEngine.engine = new AudioPostEngine.DummyEngine();
             }
 
             AnalyseStreams();
