@@ -18,7 +18,8 @@ namespace OnlineVideos.Sites
         private String streamFileName = HttpUrl.DefaultStreamFileName;
         public override string GetVideoUrl(VideoInfo video)
         {
-            HttpUrl httpUrl = new HttpUrl(video.VideoUrl)
+            var vidurl = base.GetVideoUrl(video);
+            HttpUrl httpUrl = new HttpUrl(vidurl)
             {
                 LiveStream = liveStream,
                 Referer = referer,
