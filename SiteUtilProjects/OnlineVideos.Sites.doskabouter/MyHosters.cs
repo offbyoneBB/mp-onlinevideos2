@@ -245,7 +245,7 @@ namespace OnlineVideos.Hoster
         public override string GetVideoUrl(string url)
         {
             UriBuilder ub = new UriBuilder(url.Replace("/d/", "/e/"));
-            ub.Host = "dood.so";
+            ub.Host = "dood.yt";
             url = ub.Uri.ToString();
             var data = GetWebData(url);
             var m = Regex.Match(data, @"\$\.get\('(?<url>/pass[^']*)'");
@@ -265,7 +265,7 @@ namespace OnlineVideos.Hoster
                 TimeSpan span = DateTime.Now.Subtract(new DateTime(1970, 1, 1, 0, 0, 0));
                 var newurl = data + "SQPPQsSXKD?token=" + tmpUrl.Substring(i + 1) + "&expiry=" + Math.Truncate(span.TotalSeconds);
                 HttpUrl finalUrl = new HttpUrl(newurl);
-                finalUrl.Referer = "https://dood.so";
+                finalUrl.Referer = "https://dood.yt";
                 return finalUrl.ToString();
             }
             m = Regex.Match(data, @"<title>(?<Title>[^<]*)</title>");
