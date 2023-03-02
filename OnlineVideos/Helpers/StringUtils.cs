@@ -123,9 +123,9 @@ namespace OnlineVideos.Helpers
         public static string UnPack(string packed)
         {
             string res;
-            int p = packed.IndexOf('|');
+            int p = packed.IndexOf(@"});'");
             if (p < 0) return null;
-            p = packed.LastIndexOf('\'', p);
+            p = packed.IndexOf('\'', p+4);
 
             string pattern = packed.Substring(0, p - 1);
 
