@@ -124,8 +124,16 @@ namespace OnlineVideos.Helpers
         {
             string res;
             int p = packed.IndexOf(@"});'");
-            if (p < 0) return null;
-            p = packed.IndexOf('\'', p+4);
+            if (p >= 0)
+            {
+                p = packed.IndexOf('\'', p + 4);
+            }
+            else
+            {
+                p = packed.IndexOf('|');
+                if (p < 0) return null;
+                p = packed.LastIndexOf('\'', p);
+            }
 
             string pattern = packed.Substring(0, p - 1);
 
@@ -136,9 +144,9 @@ namespace OnlineVideos.Helpers
                         pars[i] = i.ToString();
                     else
                         if (i < 36)
-                            pars[i] = ((char)(i + 0x61 - 10)).ToString();
-                        else
-                            pars[i] = (i - 26).ToString();
+                        pars[i] = ((char)(i + 0x61 - 10)).ToString();
+                    else
+                        pars[i] = (i - 26).ToString();
             res = String.Empty;
             string num = "";
             for (int i = 0; i < pattern.Length; i++)
