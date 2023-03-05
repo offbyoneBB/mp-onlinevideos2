@@ -28,8 +28,7 @@ namespace OnlineVideos.Hoster
             string postData = @"op=download1&usr_login=&id=" + urlParts[3] + "&fname=" + urlParts[4] + "&referer=&method_free=Free+Stream";
             string webData = WebCache.Instance.GetWebData(url, postData);
             string packed = Helpers.StringUtils.GetSubString(webData, @"return p}", @"</script>");
-            packed = packed.Replace(@"\'", @"'");
-            string unpacked = Helpers.StringUtils.UnPack(packed);
+            string unpacked = MyStringUtils.MyUnPack(packed);
             string res = Helpers.StringUtils.GetSubString(unpacked, @"'file','", @"'");
             if (!String.IsNullOrEmpty(res))
                 return res;
