@@ -212,4 +212,70 @@ namespace OnlineVideos.Hoster
             }
         }
     }
+
+    public class MyStringUtils
+    {
+        private static string GetVal(string num, string[] pars)
+        {
+            int n = 0;
+            for (int i = 0; i < num.Length; i++)
+            {
+                n = n * 36;
+                char c = num[i];
+                if (Char.IsDigit(c))
+                    n += ((int)c) - 0x30;
+                else
+                    n += ((int)c) - 0x61 + 10;
+            }
+            if (n < 0 || n >= pars.Length)
+                return n.ToString();
+
+            return pars[n];
+        }
+
+        //todo: after release of new version use proper stringutils.unpack
+        public static string MyUnPack(string packed)
+        {
+            int p = 2;
+            while (p < packed.Length && !(packed[p] == '\'' && packed[p - 1] != '\\')) p++;
+            //packed[p]=first non-escaped single quote
+
+            string pattern = packed.Substring(0, p - 1).Replace(@"\'", @"'");
+            p = packed.IndexOf('\'', p+1 );
+            int q=packed.IndexOf('\'', p+1 );
+
+            string[] pars = packed.Substring(p+1,q-p-1).Split('|');
+            for (int i = 0; i < pars.Length; i++)
+                if (String.IsNullOrEmpty(pars[i]))
+                    if (i < 10)
+                        pars[i] = i.ToString();
+                    else
+                        if (i < 36)
+                        pars[i] = ((char)(i + 0x61 - 10)).ToString();
+                    else
+                        pars[i] = (i - 26).ToString();
+            string res = String.Empty;
+            string num = String.Empty;
+            for (int i = 0; i < pattern.Length; i++)
+            {
+                char c = pattern[i];
+                if (Char.IsDigit(c) || Char.IsLower(c))
+                    num += c;
+                else
+                {
+                    if (num.Length > 0)
+                    {
+                        res += GetVal(num, pars);
+                        num = String.Empty;
+                    }
+                    res += c;
+                }
+            }
+            if (num.Length > 0)
+                res += GetVal(num, pars);
+
+            return res;
+        }
+    }
+
 }

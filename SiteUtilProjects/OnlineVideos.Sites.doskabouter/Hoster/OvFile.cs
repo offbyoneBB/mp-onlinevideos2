@@ -72,8 +72,7 @@ namespace OnlineVideos.Hoster
                             string resUrl;
                             if (!String.IsNullOrEmpty(packed))
                             {
-                                packed = packed.Replace(@"\'", @"'");
-                                string unpacked = Helpers.StringUtils.UnPack(packed);
+                                string unpacked = MyStringUtils.MyUnPack(packed);
                                 string res = Helpers.StringUtils.GetSubString(unpacked, @"'file','", @"'");
                                 if (!String.IsNullOrEmpty(res))
                                     resUrl = res;

@@ -122,25 +122,26 @@ namespace OnlineVideos.Helpers
 
         public static string UnPack(string packed)
         {
-            string res;
-            int p = packed.IndexOf('|');
-            if (p < 0) return null;
-            p = packed.LastIndexOf('\'', p);
+            int p = 2;
+            while (p < packed.Length && !(packed[p] == '\'' && packed[p - 1] != '\\')) p++;
+            //packed[p]=first non-escaped single quote
 
-            string pattern = packed.Substring(0, p - 1);
+            string pattern = packed.Substring(0, p - 1).Replace(@"\'", @"'");
+            p = packed.IndexOf('\'', p+1 );
+            int q=packed.IndexOf('\'', p+1 );
 
-            string[] pars = packed.Substring(p).TrimStart('\'').Split('|');
+            string[] pars = packed.Substring(p+1,q-p-1).Split('|');
             for (int i = 0; i < pars.Length; i++)
                 if (String.IsNullOrEmpty(pars[i]))
                     if (i < 10)
                         pars[i] = i.ToString();
                     else
                         if (i < 36)
-                            pars[i] = ((char)(i + 0x61 - 10)).ToString();
-                        else
-                            pars[i] = (i - 26).ToString();
-            res = String.Empty;
-            string num = "";
+                        pars[i] = ((char)(i + 0x61 - 10)).ToString();
+                    else
+                        pars[i] = (i - 26).ToString();
+            string res = String.Empty;
+            string num = String.Empty;
             for (int i = 0; i < pattern.Length; i++)
             {
                 char c = pattern[i];
@@ -151,7 +152,7 @@ namespace OnlineVideos.Helpers
                     if (num.Length > 0)
                     {
                         res += GetVal(num, pars);
-                        num = "";
+                        num = String.Empty;
                     }
                     res += c;
                 }

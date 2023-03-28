@@ -25,17 +25,14 @@ namespace OnlineVideos.MediaPortal1.Player
         [DllImport("dshowhelper.dll", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
         static extern void EVRUpdateDisplayFPS();
 
+        private enum RefreshRateState { None, Reported, Done };
+
         string cacheFile = null;
-        bool refreshRateAdapted = false;
+        private RefreshRateState refreshRateAdapted = RefreshRateState.None;
+        private double reportedFPS_Matched;
 
         void AdaptRefreshRateFromCacheFile()
         {
-            if (!PluginConfiguration.Instance.AllowRefreshRateChange)
-            {
-                refreshRateAdapted = true;
-                return;
-            }
-
             if (!string.IsNullOrEmpty(cacheFile))
             {
                 try
@@ -50,7 +47,7 @@ namespace OnlineVideos.MediaPortal1.Player
                         double matchedFps = RefreshRateHelper.MatchConfiguredFPS(framerate);
                         if (matchedFps != default(double))
                         {
-                            refreshRateAdapted = true;
+                            refreshRateAdapted = RefreshRateState.Done;
                             RefreshRateHelper.ChangeRefreshRateToMatchedFps(matchedFps, cacheFile);
                             try
                             {
@@ -87,46 +84,62 @@ namespace OnlineVideos.MediaPortal1.Player
             }
         }
 
+        private double SetRefreshRate(double fps, double currentFps)
+        {
+            double matchedFps = RefreshRateHelper.MatchConfiguredFPS(fps);
+            if (matchedFps != default(double))
+            {
+                if (matchedFps != currentFps)
+                {
+                    RefreshRateHelper.ChangeRefreshRateToMatchedFps(matchedFps, m_strCurrentFile);
+                    EVRUpdateDisplayFPS();
+                }
+            }
+            else
+            {
+                Log.Instance.Info("No matching configured FPS found - skipping RefreshRate Adaption");
+            }
+            return matchedFps;
+        }
+
         void AdaptRefreshRateFromVideoRenderer()
         {
             if (GUIGraphicsContext.VideoRenderer == GUIGraphicsContext.VideoRendererType.EVR)
             {
-                if (!refreshRateAdapted && m_state == PlayState.Playing)
+                if (refreshRateAdapted != RefreshRateState.Done && m_state == PlayState.Playing)
                 {
                     try
                     {
-                        if (!PluginConfiguration.Instance.AllowRefreshRateChange)
+                        if (refreshRateAdapted == RefreshRateState.None)
                         {
-                            refreshRateAdapted = true;
-                            return;
-                        }
-
-                        double fps = EVRGetVideoFPS(0);
-                        if (fps > 1)
-                        {
-                            refreshRateAdapted = true;
-                            Log.Instance.Info("OnlineVideosPlayer got {0} FPS from dshowhelper.dll after {1} sec", fps, CurrentPosition);
-                            double matchedFps = RefreshRateHelper.MatchConfiguredFPS(fps);
-                            if (matchedFps != default(double))
+                            double fps = EVRGetVideoFPS(0);
+                            if (fps > 1)
                             {
-                                RefreshRateHelper.ChangeRefreshRateToMatchedFps(matchedFps, m_strCurrentFile);
-                                EVRUpdateDisplayFPS();
+                                refreshRateAdapted = RefreshRateState.Reported;
+                                Log.Instance.Info("OnlineVideosPlayer got {0} reported FPS from dshowhelper.dll after {1} sec", fps, CurrentPosition);
+                                reportedFPS_Matched = SetRefreshRate(fps, default(double));
                             }
-                            else
+                        }
+                        else
+                        {
+                            double fps = EVRGetVideoFPS(1);
+                            if (fps > 1)
                             {
-                                Log.Instance.Info("No matching configured FPS found - skipping RefreshRate Adaption");
+                                refreshRateAdapted = RefreshRateState.Done;
+                                Log.Instance.Info("OnlineVideosPlayer got {0} detected FPS from dshowhelper.dll after {1} sec", fps, CurrentPosition);
+                                SetRefreshRate(fps, reportedFPS_Matched);
                             }
                         }
                     }
                     catch (EntryPointNotFoundException)
                     {
                         Log.Instance.Warn("OnlineVideosPlayer: Your version of dshowhelper.dll does not support FPS reporting.");
-                        refreshRateAdapted = true;
+                        refreshRateAdapted = RefreshRateState.Done;
                     }
                     catch (Exception ex)
                     {
                         Log.Instance.Warn("OnlineVideosPlayer: Exception trying refresh rate change while playing : {0}", ex.ToString());
-                        refreshRateAdapted = true;
+                        refreshRateAdapted = RefreshRateState.Done;
                     }
                 }
             }
@@ -214,7 +227,8 @@ namespace OnlineVideos.MediaPortal1.Player
                         }
                     }
                 }
-                AdaptRefreshRateFromVideoRenderer();
+                if (PluginConfiguration.Instance.AllowRefreshRateChange)
+                    AdaptRefreshRateFromVideoRenderer();
             }
             base.Process();
         }
@@ -699,7 +713,8 @@ namespace OnlineVideos.MediaPortal1.Player
             string protocol = uri.Scheme.Substring(0, Math.Min(uri.Scheme.Length, 4));
             if (protocol == "file") cacheFile = m_strCurrentFile;
 
-            AdaptRefreshRateFromCacheFile();
+            if (PluginConfiguration.Instance.AllowRefreshRateChange)
+                AdaptRefreshRateFromCacheFile();
 
             ISubEngine engine = SubEngine.GetInstance(true);
             if (!engine.LoadSubtitles(graphBuilder, string.IsNullOrEmpty(SubtitleFile) ? m_strCurrentFile : SubtitleFile))
