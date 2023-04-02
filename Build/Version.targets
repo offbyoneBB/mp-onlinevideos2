@@ -19,7 +19,7 @@
   
   <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets" Condition="Exists('$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets')"/>
   
-  <Target Name="SetAssemblyVersion">
+  <Target Name="SetAssemblyVersion" BeforeTargets="BeforeBuild">
     <PropertyGroup>
       <Version>$([System.IO.File]::ReadAllText($(VersionFile)))</Version>
     </PropertyGroup>
@@ -44,7 +44,7 @@
       AssemblyFileVersion="$(Version)" />
   </Target>
   
-  <Target Name="SetAssemblyVersionClean" Condition="Exists($(GeneratedAssemblyInfoFile))">
+  <Target Name="SetAssemblyVersionClean" BeforeTargets="Clean" Condition="Exists($(GeneratedAssemblyInfoFile))">
       <Delete Files="$(GeneratedAssemblyInfoFile)" />
    </Target>
 
