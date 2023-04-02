@@ -40,53 +40,53 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AxInterop.WMPLib">
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\AxInterop.WMPLib.dll</HintPath>
+      <HintPath>$(MSBuildProgramFiles32)\Team MediaPortal\MediaPortal\AxInterop.WMPLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Common.GUIPlugins">
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\Common.GUIPlugins.dll</HintPath>
+      <HintPath>$(MSBuildProgramFiles32)\Team MediaPortal\MediaPortal\plugins\Windows\Common.GUIPlugins.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Common.Utils">
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Common.Utils.dll</HintPath>
+      <HintPath>$(MSBuildProgramFiles32)\Team MediaPortal\MediaPortal\Common.Utils.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Core">
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Core.dll</HintPath>
+      <HintPath>$(MSBuildProgramFiles32)\Team MediaPortal\MediaPortal\Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Databases">
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Databases.dll</HintPath>
+      <HintPath>$(MSBuildProgramFiles32)\Team MediaPortal\MediaPortal\Databases.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Dialogs">
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\Dialogs.dll</HintPath>
+      <HintPath>$(MSBuildProgramFiles32)\Team MediaPortal\MediaPortal\plugins\Windows\Dialogs.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DirectShowLib">
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\DirectShowLib.dll</HintPath>
+      <HintPath>$(MSBuildProgramFiles32)\Team MediaPortal\MediaPortal\DirectShowLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="GUIHome">
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\GUIHome.dll</HintPath>
+      <HintPath>$(MSBuildProgramFiles32)\Team MediaPortal\MediaPortal\plugins\Windows\GUIHome.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="GUIVideos">
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\GUIVideos.dll</HintPath>
+      <HintPath>$(MSBuildProgramFiles32)\Team MediaPortal\MediaPortal\plugins\Windows\GUIVideos.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Interop.WMPLib">
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Interop.WMPLib.dll</HintPath>
+      <HintPath>$(MSBuildProgramFiles32)\Team MediaPortal\MediaPortal\Interop.WMPLib.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
       <Private>False</Private>
     </Reference>
     <Reference Include="log4net">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\log4net.dll</HintPath>
+      <HintPath>$(MSBuildProgramFiles32)\Team MediaPortal\MediaPortal\log4net.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MediaInfo.Wrapper">
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\MediaInfo.Wrapper.dll</HintPath>
+      <HintPath>$(MSBuildProgramFiles32)\Team MediaPortal\MediaPortal\MediaInfo.Wrapper.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.1083.0, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
       <HintPath>..\Packages\Microsoft.Web.WebView2.1.0.1083-prerelease\lib\net45\Microsoft.Web.WebView2.Core.dll</HintPath>
@@ -95,7 +95,7 @@
       <HintPath>..\Packages\Microsoft.Web.WebView2.1.0.1083-prerelease\lib\net45\Microsoft.Web.WebView2.WinForms.dll</HintPath>
     </Reference>
     <Reference Include="RemotePlugins">
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\RemotePlugins.dll</HintPath>
+      <HintPath>$(MSBuildProgramFiles32)\Team MediaPortal\MediaPortal\RemotePlugins.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -119,7 +119,7 @@
       <HintPath>Trakt\TraktPlugin.dll</HintPath>
     </Reference>
     <Reference Include="Utils">
-      <HintPath>$(ProgramFiles)\Team MediaPortal\MediaPortal\Utils.dll</HintPath>
+      <HintPath>$(MSBuildProgramFiles32)\Team MediaPortal\MediaPortal\Utils.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

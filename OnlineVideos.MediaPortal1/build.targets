@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
 
   <PropertyGroup>
-    <PluginDestination>$(ProgramFiles)\Team MediaPortal\MediaPortal\plugins\Windows\</PluginDestination>
+    <PluginDestination>$(MSBuildProgramFiles32)\Team MediaPortal\MediaPortal\plugins\Windows\</PluginDestination>
     <DataDestination>$(ProgramData)\Team MediaPortal\MediaPortal\</DataDestination>
   </PropertyGroup>
 
