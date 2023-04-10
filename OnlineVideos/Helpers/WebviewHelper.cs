@@ -22,6 +22,12 @@ namespace OnlineVideos.Helpers
             }
         }
 
+        public override object InitializeLifetimeService()
+        {
+            // In order to have the lease across appdomains live forever, we return null.
+            return null;
+        }
+
         public static void Dispose()
         {
             if (_Instance != null)
