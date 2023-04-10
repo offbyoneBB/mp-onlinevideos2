@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Threading.Tasks;
 using Microsoft.Web.WebView2.WinForms;
 using System.Windows.Forms;
@@ -119,7 +120,7 @@ namespace OnlineVideos.Helpers
             }
         }
 
-        public string GetHtml(string url, bool blockOtherRequests = true)
+        public string GetHtml(string url, string postData = null, string referer = null, NameValueCollection headers = null, bool blockOtherRequests = true)
         {
             var d = (Func<string>)delegate
             {
@@ -129,11 +130,22 @@ namespace OnlineVideos.Helpers
                     if (blockOtherRequests)
                     {
                         webView.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
-                        eventHandler = new EventHandler<CoreWebView2WebResourceRequestedEventArgs>((sender, e) => CoreWebView2_WebResourceRequested(sender, e, url));
+                        eventHandler = new EventHandler<CoreWebView2WebResourceRequestedEventArgs>((sender, e) => CoreWebView2_WebResourceRequested(e, url, referer, headers));
                         webView.CoreWebView2.WebResourceRequested += eventHandler;
                     }
 
-                    webView.Source = new Uri(url);
+                    if (postData == null)
+                    {
+                        webView.Source = new Uri(url);
+                    }
+                    else
+                    {
+                        byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(postData);
+                        MemoryStream stream = new MemoryStream(byteArray);
+                        var request = webView.CoreWebView2.Environment.CreateWebResourceRequest(url,
+                                      "POST", stream, "Content-Type: application/x-www-form-urlencoded");
+                        webView.CoreWebView2.NavigateWithWebResourceRequest(request);
+                    }
                     WaitUntilNavCompleted();
                     if (blockOtherRequests)
                     {
@@ -163,8 +175,16 @@ namespace OnlineVideos.Helpers
             }
         }
 
-        private void CoreWebView2_WebResourceRequested(object sender, CoreWebView2WebResourceRequestedEventArgs e, string url)
+        private void CoreWebView2_WebResourceRequested(CoreWebView2WebResourceRequestedEventArgs e, string url, string referer, NameValueCollection headers)
         {
+            if (headers != null)
+                foreach (var key in headers.AllKeys)
+                {
+                    e.Request.Headers.SetHeader(key, headers[key]);
+                }
+
+            if (referer != null)
+                e.Request.Headers.SetHeader("Referer", referer);
             if (e.Request.Uri.ToString() != url)
             {
                 e.Response = webView.CoreWebView2.Environment.CreateWebResourceResponse(null, 404, "Not found", null);
