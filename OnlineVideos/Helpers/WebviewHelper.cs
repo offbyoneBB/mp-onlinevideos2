@@ -124,6 +124,7 @@ namespace OnlineVideos.Helpers
         {
             var d = (Func<string>)delegate
             {
+                Log.Debug("GetHtml-{1}: '{0}'", url, postData != null ? "POST" : "GET");
                 if (webView.Source.ToString() != url)
                 {
                     EventHandler<CoreWebView2WebResourceRequestedEventArgs> eventHandler = null;
