@@ -320,5 +320,25 @@ namespace OnlineVideos.Sites
         }
 
         #endregion
+
+        public bool NeedsWebView(Category parentCat)
+        {
+            foreach (FavoriteCategory favCat in parentCat.SubCategories)
+            {
+                if (favCat.Site is INeedsWebView)
+                    return true;
+            }
+            return false;
+        }
+
+        public void SetWebviewHelper(Category parentCat,Helpers.WebViewHelper webViewHelper)
+        {
+            foreach (FavoriteCategory favCat in parentCat.SubCategories)
+            {
+                if (favCat.Site is INeedsWebView)
+                    ((INeedsWebView)favCat.Site).SetWebviewHelper(webViewHelper);
+            }
+        }
     }
+
 }

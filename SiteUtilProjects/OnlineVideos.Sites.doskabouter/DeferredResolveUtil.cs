@@ -6,7 +6,7 @@ using OnlineVideos.Subtitles;
 
 namespace OnlineVideos.Sites
 {
-    public class DeferredResolveUtil : GenericSiteUtil
+    public class DeferredResolveUtil : GenericSiteUtil, INeedsWebView
     {
         /// <summary>
         /// Defines the number of urls that are shown for each hoster. 
@@ -159,7 +159,20 @@ namespace OnlineVideos.Sites
         {
             if (getRedirectedFileUrlForHoster)
                 url = WebCache.Instance.GetRedirectedUrl(url);
-            return GetVideoUrl(url);
+
+            Uri uri = new Uri(url);
+            foreach (HosterBase hosterUtil in HosterFactory.GetAllHosters())
+                if (hosterUtil.Matches(uri.Host))
+                {
+                    if (hosterUtil is INeedsWebView)
+                        ((INeedsWebView)hosterUtil).SetWebviewHelper(wv);
+                    string ret = hosterUtil.GetVideoUrl(url);
+                    if (!string.IsNullOrEmpty(ret))
+                        return ret;
+                    else
+                        return String.Empty;
+                }
+            return url;
         }
 
         private static int IntComparer(int i1, int i2)
@@ -273,6 +286,13 @@ namespace OnlineVideos.Sites
                 url = aUrl;
             }
 
+        }
+
+        protected Helpers.WebViewHelper wv = null;
+
+        void INeedsWebView.SetWebviewHelper(Helpers.WebViewHelper webViewHelper)
+        {
+            wv = webViewHelper;
         }
     }
 }

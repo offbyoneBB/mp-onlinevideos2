@@ -1384,9 +1384,9 @@ namespace OnlineVideos.MediaPortal1
             {
                 if (!SelectedSite.Settings.DynamicCategoriesDiscovered)
                 {
-                    if (SelectedSite is IWebViewSiteUtilBase)
+                    if (SelectedSite is INeedsWebView)
                     {
-                        ((IWebViewSiteUtilBase)SelectedSite).SetWebviewHelper(WebViewHelper.Instance);
+                        ((INeedsWebView)SelectedSite).SetWebviewHelper(WebViewHelper.Instance);
                     }
                     Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
                     {
@@ -1431,6 +1431,12 @@ namespace OnlineVideos.MediaPortal1
                 }
                 else
                 {
+                    if (SelectedSite is FavoriteUtil)
+                    {
+                        if (((FavoriteUtil)SelectedSite).NeedsWebView(parentCategory))
+                            ((FavoriteUtil)SelectedSite).SetWebviewHelper(parentCategory, WebViewHelper.Instance);
+                    }
+
                     SetCategoriesToFacade(parentCategory, parentCategory.SubCategories, diveDownOrUpIfSingle);
                 }
             }
@@ -2363,7 +2369,7 @@ namespace OnlineVideos.MediaPortal1
             //try to find previously chosen playbackoption in playItem.Video.Playbackoptiohs. If found, take that one and don't display dialog
             if (!skipPlaybackOptionsDialog && currentPlaylistIndex >= 0 && playItem.Video.PlaybackOptions != null && playItem.Video.PlaybackOptions.Count > 1)
             {
-                var cpo=currentPlaylist[currentPlaylistIndex].ChosenPlaybackOption;
+                var cpo = currentPlaylist[currentPlaylistIndex].ChosenPlaybackOption;
                 if (!String.IsNullOrEmpty(cpo) && playItem.Video.PlaybackOptions.ContainsKey(cpo))
                 {
                     resolve = true;
