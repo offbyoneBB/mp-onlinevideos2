@@ -249,7 +249,7 @@ namespace OnlineVideos.Hoster
         }
     }
 
-    public class Dood : HosterBase
+    public class Dood : HosterBaseWithWebView
     {
         public override string GetHosterUrl()
         {
@@ -261,7 +261,7 @@ namespace OnlineVideos.Hoster
             UriBuilder ub = new UriBuilder(url.Replace("/d/", "/e/"));
             ub.Host = "dood.yt";
             url = ub.Uri.ToString();
-            var data = GetWebData(url);
+            var data = wv.GetHtml(url);
             var m = Regex.Match(data, @"\$\.get\('(?<url>/pass[^']*)'");
             if (m.Success)
             {
@@ -274,13 +274,19 @@ namespace OnlineVideos.Hoster
                         tmpUrl = uri.ToString();
                     }
                 }
-                data = GetWebData(tmpUrl, referer: url);
-                int i = tmpUrl.LastIndexOf('/');
-                TimeSpan span = DateTime.Now.Subtract(new DateTime(1970, 1, 1, 0, 0, 0));
-                var newurl = data + "SQPPQsSXKD?token=" + tmpUrl.Substring(i + 1) + "&expiry=" + Math.Truncate(span.TotalSeconds);
-                HttpUrl finalUrl = new HttpUrl(newurl);
-                finalUrl.Referer = "https://dood.yt";
-                return finalUrl.ToString();
+                data = wv.GetHtml(tmpUrl, referer: url);
+                m = Regex.Match(data, @"<body>(?<url>[^<]*)</body></html>(?<rest>.*)");
+                if (m.Success)
+                {
+                    int i = tmpUrl.LastIndexOf('/');
+                    TimeSpan span = DateTime.Now.Subtract(new DateTime(1970, 1, 1, 0, 0, 0));
+                    var newurl = m.Groups["url"].Value + //m.Groups["rest"].Value;
+                       "SQPPQsSXKD?token=" + tmpUrl.Substring(i + 1) + "&expiry=" + Math.Truncate(span.TotalSeconds);
+                    HttpUrl finalUrl = new HttpUrl(newurl);
+                    finalUrl.Referer = "https://dood.yt";
+                    return finalUrl.ToString();
+                }
+                return null;
             }
             m = Regex.Match(data, @"<title>(?<Title>[^<]*)</title>");
             if (m.Success)
@@ -1354,7 +1360,7 @@ namespace OnlineVideos.Hoster
     }
 
 
-    public class Upstream : MyHosterBase
+    public class Upstream : HosterBaseWithWebView
     {
         public override string GetHosterUrl()
         {
@@ -1363,7 +1369,7 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
-            string data = GetWebData(url);
+            string data = wv.GetHtml(url);
             string packed = Helpers.StringUtils.GetSubString(data, @"return p}", @"</script>");
             if (!String.IsNullOrEmpty(packed))
             {

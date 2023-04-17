@@ -70,4 +70,14 @@ namespace OnlineVideos.Hoster
             return Regex.IsMatch(name.ToLowerInvariant(), @"\b" + GetHosterUrl().ToLowerInvariant() + @"\b");
         }
     }
+
+    public abstract class HosterBaseWithWebView : HosterBase, Sites.INeedsWebView
+    {
+         protected Helpers.WebViewHelper wv = null;
+
+        void Sites.INeedsWebView.SetWebviewHelper(Helpers.WebViewHelper webViewHelper)
+        {
+            wv = webViewHelper;
+        }
+   }
 }
