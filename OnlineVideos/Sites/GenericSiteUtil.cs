@@ -355,11 +355,18 @@ namespace OnlineVideos.Sites
 
         public virtual Dictionary<string, string> GetPlaybackOptions(string playlistUrl)
         {
-            string dataPage;
-            if (String.IsNullOrEmpty(fileUrlPostString))
-                dataPage = GetWebData<string>(playlistUrl, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
-            else
-                dataPage = GetWebData<string>(playlistUrl, fileUrlPostString, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
+            return GetPlaybackOptions(playlistUrl, null);
+        }
+
+        public virtual Dictionary<string, string> GetPlaybackOptions(string playlistUrl, string dataPage = null)
+        {
+            if (dataPage == null)
+            {
+                if (String.IsNullOrEmpty(fileUrlPostString))
+                    dataPage = GetWebData<string>(playlistUrl, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
+                else
+                    dataPage = GetWebData<string>(playlistUrl, fileUrlPostString, cookies: GetCookie(), forceUTF8: forceUTF8Encoding, allowUnsafeHeader: allowUnsafeHeaders, encoding: encodingOverride);
+            }
 
             Dictionary<string, string> playbackOptions = new Dictionary<string, string>();
             Match matchFileUrl = regEx_FileUrl.Match(dataPage);
