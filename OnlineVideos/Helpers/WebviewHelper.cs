@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Collections.Generic;
@@ -206,21 +207,22 @@ namespace OnlineVideos.Helpers
 
         private void Wv2_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
-            if (e.IsSuccess)
+            navCompleted = true;
+            if (!e.IsSuccess)
             {
-                navCompleted = true;
+                Log.Error("Error navigating, result: {0}", e.HttpStatusCode);
             }
         }
 
-        public List<Cookie> GetCookies(string url)
+        public Dictionary<String, Cookie> GetCookies(string url)
         {
-            var d = (Func<List<Cookie>>)delegate
+            var d = (Func<Dictionary<String, Cookie>>)delegate
             {
                 try
                 {
                     var tsk = webView.CoreWebView2.CookieManager.GetCookiesAsync(url);
                     waitForTaskCompleted(tsk);
-                    return tsk.Result.ConvertAll(x => x.ToSystemNetCookie());
+                    return tsk.Result.ToDictionary(x => x.Name, x => x.ToSystemNetCookie());
                 }
                 catch (Exception e)
                 {
@@ -230,7 +232,7 @@ namespace OnlineVideos.Helpers
 
             };
             if (webView.InvokeRequired)
-                return (List<Cookie>)webView.Invoke(d);
+                return (Dictionary<String, Cookie>)webView.Invoke(d);
             else
             {
                 Log.Error("GetCookies should not be called from main thread");//will get into infinite loop
