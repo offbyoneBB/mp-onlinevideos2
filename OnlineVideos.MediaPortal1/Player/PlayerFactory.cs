@@ -67,7 +67,6 @@ namespace OnlineVideos.MediaPortal1.Player
                 case PlayerType.Internal: PreparedPlayer = new OnlineVideosPlayer(PreparedUrl, !PluginConfiguration.Instance.useMPUrlSourceSplitter); break;
                 case PlayerType.Internal_LAV: PreparedPlayer = new OnlineVideosPlayer(PreparedUrl, true); break;
                 case PlayerType.VLC: PreparedPlayer = new VLCPlayer(); break;
-                case PlayerType.Browser: PreparedPlayer = new WebBrowserVideoPlayer(); break;
                 case PlayerType.Webview: PreparedPlayer = new WebViewPlayer(webviewSiteUtil); break;
                 default: PreparedPlayer = new WMPVideoPlayer(); break;
             }

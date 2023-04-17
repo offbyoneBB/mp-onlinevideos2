@@ -12,10 +12,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 
-namespace OnlineVideos.Sites.BrowserUtilConnectors
+namespace OnlineVideos.Sites
 {
 
-    public class NetfilxWebUtil : SiteUtilBase, IBrowserVersionEmulation
+    public class NetfilxWebUtil : SiteUtilBase
     {
 
         [DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
@@ -1144,60 +1144,6 @@ namespace OnlineVideos.Sites.BrowserUtilConnectors
 
         #endregion
 
-        #region IBrowserSiteUtil
-        string IBrowserSiteUtil.ConnectorEntityTypeName
-        {
-            get
-            {
-                return "OnlineVideos.Sites.BrowserUtilConnectors.NetflixConnector";
-            }
-        }
-
-        string IBrowserSiteUtil.UserName
-        {
-            get
-            {
-                return _cc == null ? "GET" : "";
-            }
-        }
-
-        string IBrowserSiteUtil.Password
-        {
-            get
-            {
-                var c = new ConnectorSettings()
-                {
-                    showLoadingSpinner = showLoadingSpinner,
-                    enableNetflixOsd = enableNetflixOsd,
-                    disableLogging = disableLogging,
-                    enableIEDebug = enableIEDebug
-                };
-                string json = JsonConvert.SerializeObject(c);
-                string base64 = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(json));
-                if (enableVerboseLog) Log.Debug("profile: {0}", ProfileToken);
-                return base64;
-            }
-        }
-
-        public int EmulatedVersion
-        {
-            get
-            {
-                return 11000;
-            }
-        }
-        #endregion
-
     }
 
-    #region ConnectorSettings
-    [Serializable]
-    public struct ConnectorSettings
-    {
-        public bool showLoadingSpinner { get; set; }
-        public bool enableNetflixOsd { get; set; }
-        public bool disableLogging { get; set; }
-        public bool enableIEDebug { get; set; }
-    }
-    #endregion
 }

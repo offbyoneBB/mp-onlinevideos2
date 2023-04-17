@@ -48,26 +48,9 @@
     <Compile Include="..\..\Build\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
-    <Compile Include="ConnectorImplementations\4OD\Connectors\_4ODConnector.cs" />
-    <Compile Include="ConnectorImplementations\4OD\Connectors\_4ODInformationConnector.cs" />
-    <Compile Include="ConnectorImplementations\4OD\Extensions\_4ODCategoryData.cs" />
-    <Compile Include="ConnectorImplementations\4OD\Extensions\_4ODCategoryParser.cs" />
-    <Compile Include="ConnectorImplementations\4OD\Extensions\_4ODVideoParser.cs" />
-    <Compile Include="ConnectorImplementations\BrowserSessionBase.cs" />
-    <Compile Include="ConnectorImplementations\BrowserUtilConnectorBase.cs" />
-    <Compile Include="ConnectorImplementations\FormElementCollection.cs" />
-    <Compile Include="ConnectorImplementations\SkyGo\Connectors\CursorHelper.cs" />
-    <Compile Include="ConnectorImplementations\SkyGo\Connectors\SkyGoConnector.cs" />
-    <Compile Include="ConnectorImplementations\SkyGo\Connectors\SkyGoInformationConnector.cs" />
-    <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoCategoryData.cs" />
-    <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoJSONExtensions.cs" />
-    <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoLiveTvChannelItem.cs" />
-    <Compile Include="ConnectorImplementations\SkyGo\Extensions\SkyGoVideoData.cs" />
-    <Compile Include="ConnectorImplementations\SkyGo\SkyGoBrowserSession.cs" />
     <Compile Include="Entities\ExtendedCategory.cs" />
     <Compile Include="Extensions\HtmlAgilityPackExtensions.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />
-    <Compile Include="Factories\ConnectorFactory.cs" />
     <Compile Include="Factories\ConnectorType.cs" />
     <Compile Include="Interfaces\IInformationConnector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -82,7 +65,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="SingleAssemblyComponentResourceManager.cs" />
-    <Compile Include="WebAutomationSiteUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\OnlineVideos\OnlineVideos.csproj">

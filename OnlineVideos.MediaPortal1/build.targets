@@ -10,9 +10,6 @@
     <PluginFiles Include="$(TargetDir)$(ProjectName).*" />
     <APIFiles Include="$(TargetDir)OnlineVideos.dll" />
     <APIFiles Include="$(TargetDir)OnlineVideos.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
-    <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\OnlineVideos.WebAutomation.BrowserHost.exe" />
-    <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\OnlineVideos.WebAutomation.BrowserHost.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
-    <BrowserHostConfigFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\OnlineVideos.WebAutomation.BrowserHost.exe.config" />
     <SiteUtilDllFiles Include="$(SolutionDir)Build\SiteUtilDlls\OnlineVideos.Sites.*.dll" />
     <SiteUtilDllFiles Include="$(SolutionDir)Build\SiteUtilDlls\OnlineVideos.Sites.*.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
   </ItemGroup>
@@ -29,10 +26,6 @@
   <Target Name="AfterBuild">
     <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginDestination)" />
     <Copy SourceFiles="@(APIFiles)" DestinationFolder="$(PluginDestination)OnlineVideos\" />
-    <Copy SourceFiles="@(BrowserHostFiles)" DestinationFolder="$(PluginDestination)OnlineVideos\" />
-    <Copy SourceFiles="@(BrowserHostConfigFiles)" DestinationFolder="$(PluginDestination)OnlineVideos\" />
-    <Copy SourceFiles="@(BrowserHostFiles)" DestinationFiles="@(BrowserHostFiles->'$(PluginDestination)OnlineVideos\iexplore%(Extension)')" />
-    <Copy SourceFiles="@(BrowserHostConfigFiles)" DestinationFiles="@(BrowserHostConfigFiles->'$(PluginDestination)OnlineVideos\iexplore.exe%(Extension)')" />
     <Copy SourceFiles="@(SiteUtilDllFiles)" DestinationFolder="$(PluginDestination)OnlineVideos\" />
     <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(DataDestination)language\OnlineVideos\" />
     <Copy SourceFiles="@(SkinFiles)"

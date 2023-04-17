@@ -367,7 +367,6 @@
     </Compile>
     <Compile Include="Player\Vlc.DotNet\Vlc.DotNet.Forms\VlcVideoProperties.Common.cs" />
     <Compile Include="Player\VLCPlayer.cs" />
-    <Compile Include="Player\WebBrowserVideoPlayer.cs" />
     <Compile Include="Player\WebViewPlayer.cs" />
     <Compile Include="Player\WMPVideoPlayer.cs" />
     <Compile Include="..\Build\Version.cs">

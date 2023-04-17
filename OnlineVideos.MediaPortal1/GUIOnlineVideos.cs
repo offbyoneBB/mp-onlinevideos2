@@ -2303,7 +2303,7 @@ namespace OnlineVideos.MediaPortal1
         private void Play_Step2(PlayListItem playItem, List<String> loUrlList, bool goFullScreen, bool skipPlaybackOptionsDialog)
         {
 
-            if (playItem.Util.Settings.Player != PlayerType.Browser && playItem.Util.Settings.Player != PlayerType.Webview)
+            if (playItem.Util.Settings.Player != PlayerType.Webview)
                 Helpers.UriUtils.RemoveInvalidUrls(loUrlList);
 
             // if no valid urls were returned show error msg
@@ -2430,7 +2430,7 @@ namespace OnlineVideos.MediaPortal1
             if ((String.IsNullOrEmpty(lsUrl) ||
                 !Helpers.UriUtils.IsValidUri((lsUrl.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator) > 0) ? lsUrl.Substring(0, lsUrl.IndexOf(MPUrlSourceFilter.SimpleUrl.ParameterSeparator)) : lsUrl))
                 &&
-                factory.PreparedPlayerType != PlayerType.Browser && playItem.Util.Settings.Player != PlayerType.Webview)
+                playItem.Util.Settings.Player != PlayerType.Webview)
             {
                 DisplayUnableToPlayDialog();
                 return;
@@ -2444,13 +2444,6 @@ namespace OnlineVideos.MediaPortal1
             if (factory.PreparedPlayerType != PlayerType.Internal && factory.PreparedPlayerType != PlayerType.Internal_LAV)
             {
                 // Websites will just go to play
-                if (factory.PreparedPlayerType == PlayerType.Browser)
-                {
-                    (factory.PreparedPlayer as WebBrowserVideoPlayer).Initialise(playItem.Util);
-                    factory.PreparedPlayer.Play(lsUrl);
-                    return;
-                }
-
                 // external players can only be created on the main thread
                 Play_Step5(playItem, lsUrl, goFullScreen, factory, true, true);
             }

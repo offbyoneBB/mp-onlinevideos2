@@ -969,7 +969,6 @@
     </Compile>
     <Compile Include="3rdParty\Newtonsoft.Json\WriteState.cs" />
     <Compile Include="OnlineVideosException.cs" />
-    <Compile Include="Helpers\ProcessHelper.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1012,13 +1011,7 @@
     <Compile Include="Helpers\SerializableDictionary.cs" />
     <Compile Include="Sites\AMF.cs" />
     <Compile Include="Sites\Base\ContextMenu.cs" />
-    <Compile Include="Sites\Entities\AsyncWaitResult.cs" />
-    <Compile Include="Sites\Entities\EventResult.cs" />
-    <Compile Include="Sites\Entities\EventResultType.cs" />
     <Compile Include="Sites\BrightCoveUtil.cs" />
-    <Compile Include="Sites\Base\BrowserUtilConnector.cs" />
-    <Compile Include="Sites\Interfaces\IBrowserSiteUtil.cs" />
-    <Compile Include="Sites\Interfaces\IBrowserVersionEmulation.cs" />
     <Compile Include="Sites\Interfaces\IChoice.cs" />
     <Compile Include="IFavoritesDatabase.cs" />
     <Compile Include="Sites\Interfaces\IFilter.cs" />
@@ -1055,7 +1048,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\WebBrowserHelper.cs" />
     <Compile Include="WebCache.cs" />
   </ItemGroup>
   <ItemGroup>

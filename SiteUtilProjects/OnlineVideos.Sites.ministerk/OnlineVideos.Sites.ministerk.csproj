@@ -67,16 +67,6 @@
     <Compile Include="..\..\Build\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
-    <Compile Include="BrowserUtilConnectors\DplayConnector.cs" />
-    <Compile Include="BrowserUtilConnectors\KatsomoConnector.cs" />
-    <Compile Include="BrowserUtilConnectors\NetflixConnector.cs" />
-    <Compile Include="BrowserUtilConnectors\TV4PlayConnector.cs" />
-    <Compile Include="BrowserUtilConnectors\ViaplayConnectorNo.cs" />
-    <Compile Include="BrowserUtilConnectors\ViaplayConnectorFi.cs" />
-    <Compile Include="BrowserUtilConnectors\ViaplayConnectorDa.cs" />
-    <Compile Include="BrowserUtilConnectors\ViaplayConnectorBase.cs" />
-    <Compile Include="BrowserUtilConnectors\ViaplayConnectorSv.cs" />
-    <Compile Include="DplayUtil.cs" />
     <Compile Include="DrakenFilmUtil.cs" />
     <Compile Include="DreamfilmHDUtil.cs" />
     <Compile Include="Hoster\123movieshd.cs" />
@@ -98,7 +88,6 @@
     <Compile Include="Hoster\Videomega.cs" />
     <Compile Include="Hoster\VkPass.cs" />
     <Compile Include="Hoster\vk.cs" />
-    <Compile Include="KatsomoWebUtil.cs" />
     <Compile Include="YleUtil.cs" />
     <Compile Include="NetfilxWebUtil.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -106,7 +95,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ViaplayWebUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SVTPlayUtil.cs" />
     <Compile Include="TV4Play.cs" />

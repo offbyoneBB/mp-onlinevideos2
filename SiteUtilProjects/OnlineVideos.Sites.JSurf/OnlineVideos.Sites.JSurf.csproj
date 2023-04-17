@@ -188,22 +188,11 @@
     <Compile Include="..\..\Build\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
-    <Compile Include="ConnectorImplementations\AmazonPrimeUs\Connectors\AmazonPrimeUsConnector.cs" />
-    <Compile Include="ConnectorImplementations\AmazonPrime\Connectors\AmazonPrimeConnector.cs" />
-    <Compile Include="ConnectorImplementations\AmazonPrimeDe\Connectors\AmazonPrimeDeConnector.cs" />
-    <Compile Include="ConnectorImplementations\AmazonPrime\Connectors\AmazonPrimeInformationConnector.cs" />
-    <Compile Include="ConnectorImplementations\AmazonPrime\Extensions\AmazonPrimeCategoryParser.cs" />
-    <Compile Include="ConnectorImplementations\AmazonPrime\Extensions\AmazonPrimeVideoParser.cs" />
-    <Compile Include="ConnectorImplementations\AmazonPrime\Connectors\AmazonBrowserSession.cs" />
-    <Compile Include="ConnectorImplementations\BrowserSessionBase.cs" />
-    <Compile Include="ConnectorImplementations\BrowserUtilConnectorBase.cs" />
-    <Compile Include="ConnectorImplementations\FormElementCollection.cs" />
     <Compile Include="Entities\ExtendedCategory.cs" />
     <Compile Include="Entities\ExtendedProperties.cs" />
     <Compile Include="Extensions\HashExtension.cs" />
     <Compile Include="Extensions\HtmlAgilityPackExtensions.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />
-    <Compile Include="Factories\ConnectorFactory.cs" />
     <Compile Include="Factories\ConnectorType.cs" />
     <Compile Include="Interfaces\IInformationConnector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -213,7 +202,6 @@
       <DependentUpon>ResourceGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="SingleAssemblyComponentResourceManager.cs" />
-    <Compile Include="AmazonPrimeSiteUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\OnlineVideos\OnlineVideos.csproj">

@@ -24,8 +24,6 @@ namespace OnlineVideos
         WMP,
         [XmlEnum(Name = "VLC")]
         VLC,
-        [XmlEnum(Name = "Browser")]
-        Browser,
         [XmlEnum(Name = "Webview")]
         Webview
 

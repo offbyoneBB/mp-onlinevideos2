@@ -48,12 +48,10 @@
   <ItemGroup>
     <Compile Include="Antena3NuevoUtil.cs" />
     <Compile Include="AtresplayerUtil.cs" />
-    <Compile Include="BrowserUtilConnectors\OrangeTVConnector.cs" />
     <Compile Include="DiscoveryMAXUtil.cs" />
     <Compile Include="EITBUtil.cs" />
     <Compile Include="MiteleUtil.cs" />
     <Compile Include="LaSextaUtil.cs" />
-    <Compile Include="OrangeTVWebUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\Flowplayer\Commercial\V3_1_5_17_002\Aes.cs" />
     <Compile Include="Utils\Flowplayer\Commercial\V3_1_5_17_002\Base64.cs" />

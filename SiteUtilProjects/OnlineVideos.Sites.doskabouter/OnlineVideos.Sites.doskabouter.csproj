@@ -65,7 +65,6 @@
     <Compile Include="..\..\Build\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
-    <Compile Include="BrowserUtilConnectors\NPOStartConnector.cs" />
     <Compile Include="DeferredResolveUtil.cs" />
     <Compile Include="EuroSportUtil.cs" />
     <Compile Include="Helpers\CustomProxyHelper.cs" />
