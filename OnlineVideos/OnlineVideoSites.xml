@@ -703,23 +703,8 @@
     <Site name="URPlay" util="URPlay" agecheck="false" enabled="true" lang="sv">
       <Description>UR Play är Sveriges mest kunskapsspäckade Playtjänst med program om allt från historia till matematik och språk.</Description>
     </Site>
-    <Site name="Viaplay.se" util="ViaplayWeb" agecheck="false" enabled="true" lang="sv" player="Browser">
-      <Description>TV, Film online och Sport på nätet - Viaplay.se</Description>
-    </Site>
-    <Site name="Viaplay.no" util="ViaplayWeb" agecheck="false" enabled="true" lang="no" player="Browser">
-      <Description>TV, film og sport på nettet - Viaplay.no</Description>
-    </Site>
-    <Site name="Viaplay.dk" util="ViaplayWeb" agecheck="false" enabled="true" lang="da" player="Browser">
-      <Description>Se TV, Film og sport på nettet - Viaplay.dk</Description>
-    </Site>
-    <Site name="Viaplay.fi" util="ViaplayWeb" agecheck="false" enabled="true" lang="fi" player="Browser">
-      <Description>Tv-ohjelmat, urheilua ja elokuvat netissä  - Viaplay.fi</Description>
-    </Site>
     <Site name="Draken Film" util="DrakenFilm" agecheck="false" enabled="true" lang="sv">
       <Description>På Göteborg Film Festivals filmtjänst Draken Film ser du filmhistoriens främsta klassiker och nya festivalfavoriter från vår tids mest spännande filmskapare. Hundratals handplockade filmer från hela världen - nya premiärer varje vecka.</Description>
-    </Site>
-    <Site name="Netflix" util="NetfilxWeb" agecheck="false" enabled="true" lang="--" player="Browser">
-      <Description>Watch Netflix in OnlineVideos</Description>
     </Site>
     <Site name="Last.fm" util="LastFm" agecheck="false" enabled="true" lang="--">
       <Description>Play your personal Last.fm YouTube Radio in OnlineVideos</Description>
@@ -740,9 +725,6 @@
     </Site>
     <Site name="Yle Areena" util="Yle" agecheck="false" enabled="true" lang="fi">
       <Description>Yle Areena</Description>
-    </Site>
-    <Site name="Katsomo.fi" util="KatsomoWeb" agecheck="false" enabled="true" lang="fi" player="Browser">
-      <Description>MTV Katsomo on netti-tv, joka tuo katseltavaksesi suosikkiohjelmiesi uusimmat jaksot ilmaiseksi heti samaan aikaan kuin ne näytetään televisiokanavalla. Voit katsella MTV3:n, Subin ja AVA:n ohjelmia silloin kuin sinulle parhaiten sopii, ajankohdasta riippumatta tietokoneelta, puhelimesta, tabletista, MediaPortalista ja Samsung Smart TV:stä.</Description>
     </Site>
     <Site name="Первый канал" util="PervyjKanalRu" agecheck="false" enabled="true" lang="ru">
       <Description>Официальный сайт. Новости. Премьеры. Вещание.</Description>
@@ -837,22 +819,6 @@
       </Configuration>
       <Categories>
         <Category xsi:type="RssLink" thumb="" desc="" name="Recent Items">https://www.liveleak.com/browse</Category>
-      </Categories>
-    </Site>
-    <Site name="NPOStart" util="NPOStart" agecheck="false" enabled="true" lang="nl" player="Browser">
-      <Description>Het beste van NPO vind je op NPO Start</Description>
-      <Configuration>
-        <item key="dynamicSubCategoriesRegEx"><![CDATA[<li><a\sclass="close-dropdown"\s*title="[^"]*"\s*data-value="(?<url>[^"]+)"\s*data-title-tracking="[^"]*"\s*data-display="[^"]*"\s*data-argument="az"\s*data-target="">(?<title>[^<]*)</a>\s*</li>]]></item>
-        <item key="dynamicSubCategoryUrlFormatString"><![CDATA[https://www.npostart.nl/media/series?page=1&az={0}&tileMapping=normal&tileType=teaser&pageType=catalogue]]></item>
-        <item key="seriesRegEx"><![CDATA[<div\sclass="npo-ankeiler-tile-container\snpo-ankeiler-tile-weblink\snpo-tile"\sdata-id="(?<dataid>[^"]*)">\s*<a\shref="(?<url>[^"]*)"\stitle="[^"]*"\sclass="npo-ankeiler-tile"\s*data-ts-click\sdata-ts-name="[^"]*"\s*data-ts-type="navigation"\sdata-ts-niveau1="programmas"\s*data-ts-destination="(?<datadest>[^"]*)"\s*>\s*<div\sclass="npo-ankeiler-tile-image">\s*<img\ssrc="[^"]*"\salt="[^"]*"\sdata-src="(?<thumb>[^"]*)"\sclass="js-lazy-image">\s*<h2>(?<title>[^<]*)</h2>\s*</div>\s*</a>\s*</div>]]></item>
-        <item key="videoListRegEx"><![CDATA[
-(?#live)(<a\shref="(?<VideoUrl>[^"]*)"\sclass="npo-tile-link"\sdata-radio=""\sdata-mediatarget=""\s*data-ts-click\sdata-ts-name="(?<Title>[^"]*)"\s*data-ts-type="navigation"\sdata-ts-niveau1="live"\s*data-ts-niveau2="tv"\sdata-ts-niveau3=""\s*data-ts-offer\s*data-ts-editorial="live-tv"\s*data-ts-destination="[^"]*">\s*<div\sclass="npo-asset-tile\s">\s*<div\sclass="npo-asset-tile-image">\s*<img[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-play"></div>\s*<div\sclass="npo-asset-info">\s*<div[^>]*></div>\s*<h2>(?<Description>[^<]*)</h2>)
-|(?#programmas)((?<!Laatste\safleveringen.*)<div\sclass="npo-asset-tile-container\snpo-tile\s*"\sdata-id="(?<dataid>[^"]*)">\s*<a\shref="(?<VideoUrl>[^"]*)"[^>]*>\s*<div\sclass="npo-asset-tile\s">\s*<div\sclass="npo-asset-tile-availability"\s*data-from="[^"]*"\s*data-to="[^"]*"\s*data-prediction="[^"]*"\s*data-premium-from="[^"]*"\s*data-premium-to="[^"]*"\s*data-premium-prediction="[^"]*">\s*</div>\s*<div\sclass="npo-asset-tile-timer">(?<Duration>[^<]*)</div>\s*<div\sclass="npo-asset-tile-timer\s_short-timer">[^<]*</div>\s*<div\sclass="npo-asset-tile-image">\s*<img\sdata-src="(?<ImageUrl>[^"]*)"[^>]*>\s*</div>\s*<div\sclass="npo-asset-tile-new">nieuw</div>\s*<div\sclass="npo-asset-tile-play\s"></div>\s*<div\sclass="npo-asset-tile-watched">bekeken</div>\s*<div\sclass="npo-asset-tile-progress">\s*<div\sclass="npo-asset-tile-progress-bar"\sstyle="width:\s0%"></div>\s*</div>\s*</div>\s*<div\sclass="npo-asset-tile-title">\s*<h2>(?<Title>[^<]*)</h2>\s*<p>(?<Description>[^-]*)-(?<Airdate>[^<]*)<)]]></item>
-        <item key="baseUrl"><![CDATA[https://www.npostart.nl/]]></item>
-      </Configuration>
-      <Categories>
-        <Category xsi:type="RssLink" name="Live">https://www.npostart.nl/live</Category>
-        <Category xsi:type="RssLink" name="Programmas">https://www.npostart.nl/programmas</Category>
       </Categories>
     </Site>
     <Site name="Ruutu.fi" util="Ruutu" agecheck="false" enabled="true" lang="fi">
@@ -1178,24 +1144,6 @@
         <item key="baseUrl"><![CDATA[http://www.empflix.com/categories.php]]></item>
       </Configuration>
     </Site>
-      <Site name="Sky Go Uk" util="WebAutomationSite" agecheck="false" enabled="true" player="Browser" lang="en">
-          <Description>Sky Go lets you watch TV channels live on your PC. Watch catch-up TV from all channels - up to 500 great movies and the best sports &amp; entertainment around!  Requires a user name/password.</Description>
-          <Configuration>
-              <item key="webAutomationType"><![CDATA[SkyGo]]></item>
-          </Configuration>
-      </Site>
-      <Site name="4oD Web" util="WebAutomationSite" agecheck="false" enabled="true" player="Browser" lang="en">
-          <Description>Catchup on all your favourite Channel 4 shows (only available in the UK). Requires a user name/password.</Description>
-          <Configuration>
-              <item key="webAutomationType"><![CDATA[_4oD]]></item>
-          </Configuration>
-      </Site>
-      <Site name="Amazon Prime Uk" util="AmazonPrimeSite" agecheck="false" enabled="true" player="Browser" lang="en">
-          <Description>Amazon Prime allows unlimited streaming of 15,000 titles!  Requires a user name/password.</Description>
-          <Configuration>
-              <item key="webAutomationType"><![CDATA[AmazonPrime]]></item>
-          </Configuration>
-      </Site>
       <Site name="Amazon Prime De" util="AmazonPrimeSite" agecheck="false" enabled="true" lang="de">
           <Description>Amazon Prime allows unlimited streaming of 15,000 titles!  Requires a user name/password.</Description>
           <Configuration>
