@@ -77,11 +77,11 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.1083.0, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
-      <HintPath>..\Packages\Microsoft.Web.WebView2.1.0.1083-prerelease\lib\net45\Microsoft.Web.WebView2.Core.dll</HintPath>
+    <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.1722.45, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\Packages\Microsoft.Web.WebView2.1.0.1722.45\lib\net45\Microsoft.Web.WebView2.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.1083.0, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
-      <HintPath>..\Packages\Microsoft.Web.WebView2.1.0.1083-prerelease\lib\net45\Microsoft.Web.WebView2.WinForms.dll</HintPath>
+    <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.1722.45, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>..\Packages\Microsoft.Web.WebView2.1.0.1722.45\lib\net45\Microsoft.Web.WebView2.WinForms.dll</HintPath>
     </Reference>
     <Reference Include="SubtitleDownloader, Version=3.0.20.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\Packages\SubtitleDownloader.3.0.20.1\lib\net35\SubtitleDownloader.dll</HintPath>
@@ -1123,7 +1123,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\Packages\SubtitleDownloader.3.0.20.1\build\SubtitleDownloader.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\Packages\SubtitleDownloader.3.0.20.1\build\SubtitleDownloader.targets'))" />
-    <Error Condition="!Exists('..\Packages\Microsoft.Web.WebView2.1.0.1083-prerelease\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\Packages\Microsoft.Web.WebView2.1.0.1083-prerelease\build\Microsoft.Web.WebView2.targets'))" />
+    <Error Condition="!Exists('..\Packages\Microsoft.Web.WebView2.1.0.1722.45\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\Packages\Microsoft.Web.WebView2.1.0.1722.45\build\Microsoft.Web.WebView2.targets'))" />
   </Target>
-  <Import Project="..\Packages\Microsoft.Web.WebView2.1.0.1083-prerelease\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\Packages\Microsoft.Web.WebView2.1.0.1083-prerelease\build\Microsoft.Web.WebView2.targets')" />
+  <Import Project="..\Packages\Microsoft.Web.WebView2.1.0.1722.45\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\Packages\Microsoft.Web.WebView2.1.0.1722.45\build\Microsoft.Web.WebView2.targets')" />
 </Project>
