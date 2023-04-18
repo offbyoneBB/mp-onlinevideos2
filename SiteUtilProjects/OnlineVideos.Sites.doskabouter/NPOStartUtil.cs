@@ -105,16 +105,21 @@ namespace OnlineVideos.Sites
 
             if (m.Success)
             {
+                string episode_id = m.Groups["id"].Value;
                 var headers = new NameValueCollection();
                 headers.Add("X-Requested-With", "XMLHttpRequest");
-                CookieContainer cc = new CookieContainer();
-                string token = GetWebData<JObject>("https://www.npostart.nl/api/token", headers: headers, cookies: cc).Value<string>("token");
-
-                string url = "https://www.npostart.nl/player/" + m.Groups["id"].Value;
-                string postData = "autoplay=1&share=0&pageUrl=" + HttpUtility.UrlEncode(video.VideoUrl) + "&hasAdConsent=0&_token=" + token;
-                string url2 = GetWebData<JObject>(url, postData: postData, cookies: cc, headers: headers).Value<string>("embedUrl");
-                Log.Debug(url2);
-                return url2;
+                wvh.GetHtml("https://www.npostart.nl/api/token", headers: headers);//needed to get cookies
+                var cookies = wvh.GetCookies("https://www.npostart.nl");
+                string xsrf = cookies.TryGetValue("XSRF-TOKEN", out Cookie tmp) ? tmp.Value : null;
+                headers.Add("x-xsrf-token", HttpUtility.UrlDecode(xsrf));
+                string data = wvh.GetHtml("https://www.npostart.nl/player/" + episode_id, postData: "", headers: headers);
+                m = Regex.Match(data, @"""embedUrl"":""(?<url>[^""]*)""");
+                if (m.Success)
+                {
+                    return m.Groups["url"].Value;
+                }
+                else
+                    return String.Empty;
             }
             return String.Empty;
         }
@@ -141,7 +146,6 @@ namespace OnlineVideos.Sites
             };
             timer.Interval = 2000;
             timer.Start();
-            
         }
 
         public string VideoElementSelector
