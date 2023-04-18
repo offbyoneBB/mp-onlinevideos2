@@ -210,7 +210,7 @@ namespace OnlineVideos.Helpers
             navCompleted = true;
             if (!e.IsSuccess)
             {
-                Log.Error("Error navigating, result: {0}", e.HttpStatusCode);
+                Log.Debug("Error navigating, result: {0}", e.HttpStatusCode);
             }
         }
 
