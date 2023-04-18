@@ -1029,16 +1029,6 @@
     <Compile Include="Sites\Interfaces\IInputStreamSite.cs" />
     <Compile Include="Sites\Interfaces\IWebViewSiteUtil.cs" />
     <Compile Include="Sites\Updater.cs" />
-    <Compile Include="Sites\WebBrowserPlayerService\Proxy\WebBrowserPlayerServiceProxy.cs" />
-    <Compile Include="Sites\WebBrowserPlayerService\Interfaces\IWebBrowserPlayerCallback.cs" />
-    <Compile Include="Sites\WebBrowserPlayerService\Interfaces\IWebBrowserPlayerCallbackService.cs" />
-    <Compile Include="Sites\WebBrowserPlayerService\Interfaces\IWebBrowserPlayerService.cs" />
-    <Compile Include="Sites\WebBrowserPlayerService\Proxy\WebBrowserPlayerCallbackServiceProxy.cs" />
-    <Compile Include="Sites\WebBrowserPlayerService\ServiceImplementation\WebBrowserPlayerCallbackServiceHost.cs" />
-    <Compile Include="Sites\WebBrowserPlayerService\ServiceImplementation\WebBrowserPlayerService.cs" />
-    <Compile Include="Sites\WebBrowserPlayerService\ServiceImplementation\WebBrowserPlayerCallbackService.cs" />
-    <Compile Include="Sites\WebBrowserPlayerService\ServiceImplementation\WebBrowserPlayerServiceHost.cs" />
-    <Compile Include="Sites\WebBrowserPlayerService\ServiceImplementation\WebBrowserPlayerCallback.cs" />
     <Compile Include="Helpers\SubtitleUtils.cs" />
     <Compile Include="SubtitleHandler.cs" />
     <Compile Include="Translation.cs" />
