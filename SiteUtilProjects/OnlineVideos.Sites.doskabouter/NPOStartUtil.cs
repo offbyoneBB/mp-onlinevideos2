@@ -124,7 +124,7 @@ namespace OnlineVideos.Sites
         string vidSelector = null;
         WebViewHelper wvh = null;
 
-        void IWebViewSiteUtilBase.SetWebviewHelper(WebViewHelper webViewHelper)
+        void INeedsWebView.SetWebviewHelper(WebViewHelper webViewHelper)
         {
             wvh = webViewHelper;
         }
