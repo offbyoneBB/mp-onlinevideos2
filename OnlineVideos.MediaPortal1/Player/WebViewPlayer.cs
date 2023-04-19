@@ -51,6 +51,7 @@ namespace OnlineVideos.MediaPortal1.Player
                 webView.Visible = false;
                 webView.Enabled = false;
                 playState = PlayState.Init;
+                Log.Instance.Info("WebViewPlayer: Play '{0}'", strFile);
 
                 webView.NavigationCompleted += WebView_FirstNavigationCompleted;
                 GUIGraphicsContext.form.Controls.Add(webView);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿//#define fulllogging
+using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -67,7 +68,20 @@ namespace OnlineVideos.Helpers
         {
             if (!e.IsSuccess)
                 Log.Error("Error initializing webview: {0}", e.InitializationException.Message);
+#if fulllogging
+            webView.CoreWebView2.WebResourceResponseReceived += CoreWebView2_WebResourceResponseReceived;
+#endif
         }
+
+#if fulllogging
+        private void CoreWebView2_WebResourceResponseReceived(object sender, CoreWebView2WebResourceResponseReceivedEventArgs e)
+        {
+            Log.Debug("Response for: "+e.Request.Uri);
+            Log.Debug("Headers");
+            foreach (var key in e.Request.Headers)
+                Log.Debug(key.Key + ":" + key.Value);
+        }
+#endif
 
         public void SetEnabled(bool enabled)
         {
@@ -187,7 +201,13 @@ namespace OnlineVideos.Helpers
 
             if (referer != null)
                 e.Request.Headers.SetHeader("Referer", referer);
-            if (e.Request.Uri.ToString() != url)
+#if fulllogging
+            Log.Debug("Request:" + e.Request.Method + " " + url);
+            Log.Debug("Headers");
+            foreach (var key in e.Request.Headers)
+                Log.Debug(key.Key + ":" + key.Value);
+#endif
+            if (blockOtherRequests && e.Request.Uri != url)
             {
                 e.Response = webView.CoreWebView2.Environment.CreateWebResourceResponse(null, 404, "Not found", null);
             }
@@ -207,6 +227,9 @@ namespace OnlineVideos.Helpers
 
         private void Wv2_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
+#if fulllogging
+            Log.Debug("Navigation complete, id=" + e.NavigationId + " " + e.IsSuccess.ToString() + " " + e.HttpStatusCode.ToString());
+#endif
             navCompleted = true;
             if (!e.IsSuccess)
             {
