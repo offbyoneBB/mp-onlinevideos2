@@ -2068,14 +2068,14 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.MediaPortal1.dll</LocalFileName>
+              <LocalFileName>..\OnlineVideos.MediaPortal1\bin\Release\OnlineVideos.MediaPortal1.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{c795f3a7-881d-4376-b2a2-e8ac9eec9eaa}-OnlineVideos.MediaPortal1.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
               <Param1 />
               <UpdateOption>AlwaysOverwrite</UpdateOption>
-              <LocalFileName>..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.dll</LocalFileName>
+              <LocalFileName>..\OnlineVideos\bin\Release\OnlineVideos.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{acc12d0d-7e32-4ca4-8385-c6cff6c8b321}-OnlineVideos.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.dll</DestinationFilename>
             </FileItem>
@@ -2204,6 +2204,27 @@
               <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.titof.dll</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{1e050af9-a5ca-4683-afea-7c4648c2c0d3}-OnlineVideos.Sites.titof.dll</ZipFileName>
               <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\OnlineVideos.MediaPortal1\bin\Release\runtimes\win-x86\native\WebView2Loader.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{78c0c2e7-ae9e-49f6-86c4-83615874202d}-WebView2Loader.dll</ZipFileName>
+              <DestinationFilename>%Base%\WebView2Loader.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\OnlineVideos.MediaPortal1\bin\Release\Microsoft.Web.WebView2.Core.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{37055bf6-abc8-48ff-bbbb-b866a4ca76ac}-Microsoft.Web.WebView2.Core.dll</ZipFileName>
+              <DestinationFilename>%Base%\Microsoft.Web.WebView2.Core.dll</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>..\OnlineVideos.MediaPortal1\bin\Release\Microsoft.Web.WebView2.WinForms.dll</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{b71e541a-ab96-47d8-8c49-fccd3b5267ab}-Microsoft.Web.WebView2.WinForms.dll</ZipFileName>
+              <DestinationFilename>%Base%\Microsoft.Web.WebView2.WinForms.dll</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -5468,14 +5489,14 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos.MediaPortal1.dll</LocalFileName>
+        <LocalFileName>..\OnlineVideos.MediaPortal1\bin\Release\OnlineVideos.MediaPortal1.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{c795f3a7-881d-4376-b2a2-e8ac9eec9eaa}-OnlineVideos.MediaPortal1.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos.MediaPortal1.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
         <UpdateOption>AlwaysOverwrite</UpdateOption>
-        <LocalFileName>..\..\..\..\Program Files (x86)\Team MediaPortal\MediaPortal\plugins\Windows\OnlineVideos\OnlineVideos.dll</LocalFileName>
+        <LocalFileName>..\OnlineVideos\bin\Release\OnlineVideos.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{acc12d0d-7e32-4ca4-8385-c6cff6c8b321}-OnlineVideos.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.dll</DestinationFilename>
       </FileItem>
@@ -5604,6 +5625,27 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
         <LocalFileName>..\Build\SiteUtilDlls\OnlineVideos.Sites.titof.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{1e050af9-a5ca-4683-afea-7c4648c2c0d3}-OnlineVideos.Sites.titof.dll</ZipFileName>
         <DestinationFilename>%Plugins%\Windows\OnlineVideos\OnlineVideos.Sites.titof.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\OnlineVideos.MediaPortal1\bin\Release\runtimes\win-x86\native\WebView2Loader.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{78c0c2e7-ae9e-49f6-86c4-83615874202d}-WebView2Loader.dll</ZipFileName>
+        <DestinationFilename>%Base%\WebView2Loader.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\OnlineVideos.MediaPortal1\bin\Release\Microsoft.Web.WebView2.Core.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{37055bf6-abc8-48ff-bbbb-b866a4ca76ac}-Microsoft.Web.WebView2.Core.dll</ZipFileName>
+        <DestinationFilename>%Base%\Microsoft.Web.WebView2.Core.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>..\OnlineVideos.MediaPortal1\bin\Release\Microsoft.Web.WebView2.WinForms.dll</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{b71e541a-ab96-47d8-8c49-fccd3b5267ab}-Microsoft.Web.WebView2.WinForms.dll</ZipFileName>
+        <DestinationFilename>%Base%\Microsoft.Web.WebView2.WinForms.dll</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
