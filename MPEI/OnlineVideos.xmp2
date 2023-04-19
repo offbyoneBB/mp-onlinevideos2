@@ -48,13 +48,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\cinemassacre.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{7ff0816a-3e6c-45e3-a3d2-508959bfd651}-cinemassacre.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\cinemassacre.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\CNN.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{5c056a67-f345-4a73-b4f0-511569b43f58}-CNN.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\CNN.png</DestinationFilename>
@@ -62,23 +55,9 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\CollegeHumor.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{e57e29e4-09e2-4030-839b-86ad3fadd395}-CollegeHumor.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\CollegeHumor.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\DailyMotion.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{4df22113-6406-4e83-a0a0-152fa5d61493}-DailyMotion.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\DailyMotion.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Das Erste.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{c1e0970a-1ece-4af0-9059-0cf777ada939}-Das Erste.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Das Erste.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -160,13 +139,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\nos.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{26850b11-576f-4739-9a22-8a1ac8b519a0}-nos.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\nos.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\onsnetnuenen.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{89ace876-e8da-47ea-bda0-c0283124ff2a}-onsnetnuenen.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\onsnetnuenen.png</DestinationFilename>
@@ -184,13 +156,6 @@
               <LocalFileName>..\SiteImages\Icons\Revision3.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{be7c1e5d-4ddc-49d3-827c-3aa7ee6425fc}-Revision3.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Revision3.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\SesameStreet.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{8e11f7e6-d0b2-45a1-86d5-ac63368d7aea}-SesameStreet.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SesameStreet.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -335,13 +300,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\cinemassacre.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{78e0560b-5a99-49c0-9218-f441378bb713}-cinemassacre.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\cinemassacre.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Banners\CNN.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{8fcdffa5-8a53-4c61-977a-cf082d781105}-CNN.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\CNN.png</DestinationFilename>
@@ -349,23 +307,9 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\CollegeHumor.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{e88e19a5-2d85-4f05-a7ee-8cded4bdbc28}-CollegeHumor.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\CollegeHumor.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Banners\DailyMotion.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{76c1ce96-4282-43cf-acf7-932d63128714}-DailyMotion.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\DailyMotion.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Das Erste.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{1edd043f-2505-4f08-92eb-3e3163177b5d}-Das Erste.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Das Erste.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -447,13 +391,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\nos.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{1d5e4cc7-1ec7-463c-aff6-ced8293432e0}-nos.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\nos.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Banners\OnlineVideos.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{dc61f7da-b8a2-4aa7-99c2-ff8d8119a5b2}-OnlineVideos.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\OnlineVideos.png</DestinationFilename>
@@ -478,13 +415,6 @@
               <LocalFileName>..\SiteImages\Banners\Revision3.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{4ca68d15-a42d-4e39-bbd0-8a2f3c266467}-Revision3.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Revision3.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\SesameStreet.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{baa66d43-1904-49b0-b1f4-4e1378304df6}-SesameStreet.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SesameStreet.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -727,23 +657,9 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\watch-series.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{da52e33a-2820-422e-aa24-45aba3911041}-watch-series.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\watch-series.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Banners\TVNZOnDemand.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{6a4b4a0f-2d62-481c-9ebf-9d1f5b5debd0}-TVNZOnDemand.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TVNZOnDemand.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\watch-series.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{842d7436-39f5-4762-ab97-9b6e477886cd}-watch-series.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\watch-series.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -790,20 +706,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\academic earth.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{dc64df6b-d8a7-4abb-b6d1-65edb1aa63af}-academic earth.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\academic earth.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\EscapistMagazine.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{7d23a312-ec4f-4216-bde7-9cc1503ff0cd}-EscapistMagazine.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\EscapistMagazine.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\watch-movies.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{b3113f22-1dc0-4d8d-83ea-37a9988ae097}-watch-movies.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\watch-movies.png</DestinationFilename>
@@ -811,37 +713,9 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\academic earth.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{550a6617-3b0c-4290-b0b4-d03a94f57c53}-academic earth.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\academic earth.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\EscapistMagazine.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{20568f42-f14f-4f56-9361-852e93b8af8f}-EscapistMagazine.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\EscapistMagazine.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Banners\watch-movies.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{8db14530-2dcf-46b6-8618-c41392ffd509}-watch-movies.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\watch-movies.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\rtl xl.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{e2a5faff-6716-447a-b751-6631c08ef55f}-rtl xl.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\rtl xl.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\rtl xl.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{aca124d3-d00d-4705-95ae-9c03411b0773}-rtl xl.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\rtl xl.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -1105,30 +979,9 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\luckytv.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{4875a8c3-1eb7-481c-87be-e87cd9666e10}-luckytv.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\luckytv.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\TVLinks.cc.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{a22f0d74-dbbb-4e25-ab56-fbc7478e7504}-TVLinks.cc.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TVLinks.cc.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Uitzending Gemist.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{ea47145c-3a17-46d5-9e9a-bf32f3d8c11a}-Uitzending Gemist.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Uitzending Gemist.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\luckytv.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{04781930-2db8-4a18-923e-3c95d684d3b8}-luckytv.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\luckytv.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -1140,30 +993,9 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Uitzending Gemist.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{0fc25c9f-5b52-4d35-b0fa-7d1d5d150b9f}-Uitzending Gemist.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Uitzending Gemist.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Nickelodeon.NL.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{5fe0c17a-217e-4570-b1d3-44e70260f9af}-Nickelodeon.NL.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Nickelodeon.NL.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\Red Bull TV.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{ee36caee-7289-412a-bf9a-2a9df2cd7908}-Red Bull TV.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Red Bull TV.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\RTE.ie.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{9ce0f357-c3e8-4842-8274-7db032584266}-RTE.ie.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\RTE.ie.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -1175,23 +1007,9 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Nickelodeon.NL.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{7d6bcffd-aa87-480a-a2e4-9895ea88b42a}-Nickelodeon.NL.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Nickelodeon.NL.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Banners\Red Bull TV.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{caec1df0-5914-4da5-a745-74b2e0dcbd6f}-Red Bull TV.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Red Bull TV.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\RTE.ie.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{22ea0dff-087b-43a5-84d7-919bcec81566}-RTE.ie.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\RTE.ie.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -1283,20 +1101,6 @@
               <LocalFileName>..\SiteImages\Banners\TV4Play.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{d4dea2d6-70aa-465c-ad1f-77bc53d1e6dd}-TV4Play.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TV4Play.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\BrassBandTube.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{d57a2296-074a-44eb-80bd-20bc300b59ce}-BrassBandTube.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\BrassBandTube.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\BrassBandTube.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{d1dd2831-6d4c-49ba-8b59-ccd6b7744568}-BrassBandTube.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\BrassBandTube.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -1658,13 +1462,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\League of Legends Streams.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{ad6d6d59-a553-4387-b262-31f3ada4a6e3}-League of Legends Streams.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\League of Legends Streams.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\Twitch.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{81bba484-37d6-40ec-a2e4-291d26807357}-Twitch.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Twitch.png</DestinationFilename>
@@ -1675,13 +1472,6 @@
               <LocalFileName>..\SiteImages\Banners\family.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{57b2ed1f-2d30-43c1-991f-823aaf654b0a}-family.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\family.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\League of Legends Streams.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{09666a02-9539-4f50-96a6-56132cc3e9bc}-League of Legends Streams.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\League of Legends Streams.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -1728,23 +1518,9 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Kijk.nl.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{2a615864-d49a-4b96-94bd-6c821be2f804}-Kijk.nl.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Kijk.nl.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\muvi.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{17e8540d-06c3-4979-b72b-41f40a817612}-muvi.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\muvi.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Rockpalast.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{27a902f7-0abf-4254-bd05-544d876bc8a3}-Rockpalast.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Rockpalast.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -1770,23 +1546,9 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Kijk.nl.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{4b00f286-354c-4c2a-9127-fb47ebdf3d01}-Kijk.nl.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Kijk.nl.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Banners\muvi.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{082bf072-d340-4b3c-a86c-2f6d464a10a0}-muvi.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\muvi.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Rockpalast.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{d3993842-06f1-4841-ad80-f98c815b28f3}-Rockpalast.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Rockpalast.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -1819,13 +1581,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\EventCaster.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{2350cd75-6ed0-4093-a5e6-4a8878b820b5}-EventCaster.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\EventCaster.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\hgtv canada.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{57d82cba-40f0-4f9a-a995-df72dcd3a003}-hgtv canada.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\hgtv canada.png</DestinationFilename>
@@ -1833,72 +1588,9 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\EventCaster.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{ad672493-8c96-41be-b4f8-a40fb7c1f151}-EventCaster.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\EventCaster.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\NicoNico.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{9fbe55eb-d97b-43d1-9dd6-eb7cdd10fe44}-NicoNico.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\NicoNico.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\NicoNico.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{fff95193-4fdf-4c5f-9572-1879936ae500}-NicoNico.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\NicoNico.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\De redactie.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{5d8c8648-1483-4447-96ac-85991a101953}-De redactie.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\De redactie.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Ipla.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{56b91865-d1f2-49ac-83b2-f94864376f95}-Ipla.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Ipla.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Power Unlimited.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{4522e43f-6c3f-4841-ac60-1c70c5689b1a}-Power Unlimited.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Power Unlimited.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\Vod.tvp.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{36f1976a-4a8b-4564-b5f2-10bf8c29d5b7}-Vod.tvp.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Vod.tvp.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\De redactie.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{830b6883-f8e3-4066-aeae-b3078d13fc82}-De redactie.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\De redactie.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Ipla.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{b6084aff-05b3-43c9-b796-bedf10629363}-Ipla.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Ipla.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Power Unlimited.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{5696a915-79e6-4de6-952f-f778728b04a6}-Power Unlimited.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Power Unlimited.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -1924,13 +1616,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\ToonsTv.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{da3491d4-1394-4cf9-aa94-f5debaf72c7f}-ToonsTv.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ToonsTv.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\URPlay.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{1beaaed8-52ad-4f76-bcda-ce642376659b}-URPlay.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\URPlay.png</DestinationFilename>
@@ -1952,23 +1637,9 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\ToonsTv.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{04e7aec9-dea6-496a-a2a4-418cca5f7b3d}-ToonsTv.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ToonsTv.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Banners\URPlay.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{f811db3c-e35d-42ff-8e56-bbfad32ea260}-URPlay.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\URPlay.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Filmon.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{71dc95ce-5cb1-4e7b-ab54-952ccc1d133e}-Filmon.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Filmon.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -2004,13 +1675,6 @@
               <LocalFileName>..\SiteImages\Banners\Viaplay.se.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{66670d6d-3724-413c-aac7-aa967b6e7a3c}-Viaplay.se.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Viaplay.se.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Filmon.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{0f39fbbe-7522-49f8-9373-8f64dcc56634}-Filmon.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Filmon.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -2074,20 +1738,6 @@
               <LocalFileName>..\SiteImages\Icons\gamekings.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{45aab5b1-af40-499b-9b91-5131e98e49c0}-gamekings.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\gamekings.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Gamersnet.nl.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{bf508d24-acbb-4d31-bcf3-ba7393b22c12}-Gamersnet.nl.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Gamersnet.nl.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Gamersnet.nl.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{f0d738c1-fc64-43b7-9a76-6dabc4201284}-Gamersnet.nl.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Gamersnet.nl.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -2197,34 +1847,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\KissAnime.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{d87e6f1f-b779-4c3e-bd65-cc05cb1e7386}-KissAnime.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\KissAnime.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\MovieNight.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{d24b5bc8-7cfb-461c-a057-7cc12d27f243}-MovieNight.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MovieNight.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\KissAnime.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{33b7efb1-aeb2-4fe2-84cd-e5f925369064}-KissAnime.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\KissAnime.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\MovieNight.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{eb38ab57-a58e-4158-aebf-878a8ac5859d}-MovieNight.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\MovieNight.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Banners\Dplay.dk.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{d68d41bd-2ca7-4734-a382-51bcf0fb4dc8}-Dplay.dk.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Dplay.dk.png</DestinationFilename>
@@ -2249,20 +1871,6 @@
               <LocalFileName>..\SiteImages\Banners\liveLEAK.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{5cafffbf-aae6-4f2a-9444-c83d70f69aa8}-liveLEAK.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\liveLEAK.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\NPO Livestreams.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{2b4a4067-425c-408f-882b-376e308a86a8}-NPO Livestreams.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\NPO Livestreams.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\Telewizjada.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{e7d20a14-62bb-4843-9eb5-f3f8f4ce7d9f}-Telewizjada.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Telewizjada.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -2302,20 +1910,6 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\NPO Livestreams.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{c88cb5a1-c2a8-4bef-a543-a505cb0dc78a}-NPO Livestreams.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\NPO Livestreams.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\Telewizjada.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{9c01551f-6ece-45a5-960a-2d7856c03ad3}-Telewizjada.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Telewizjada.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Banners\Draken Film.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{a4e1547c-33f7-499b-aac4-4b0ff7291d10}-Draken Film.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Draken Film.png</DestinationFilename>
@@ -2337,23 +1931,9 @@
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
               <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Banners\RTBF.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{ee0f1a61-2e70-4b79-a1a5-6c492abf4c12}-RTBF.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\RTBF.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
               <LocalFileName>..\SiteImages\Icons\Last.fm.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{0b6f3786-6ce2-4a87-bb53-d4f474905d1d}-Last.fm.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Last.fm.png</DestinationFilename>
-            </FileItem>
-            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-              <Param1 />
-              <UpdateOption>OverwriteIfOlder</UpdateOption>
-              <LocalFileName>..\SiteImages\Icons\RTBF.png</LocalFileName>
-              <ZipFileName>Installer{CopyFile}\{19ac104a-d1e1-400d-9aa8-351d20f32569}-RTBF.png</ZipFileName>
-              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\RTBF.png</DestinationFilename>
             </FileItem>
             <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
               <Param1 />
@@ -2410,6 +1990,62 @@
               <LocalFileName>..\SiteImages\Icons\Tiny Desk.png</LocalFileName>
               <ZipFileName>Installer{CopyFile}\{4a599421-0e79-40aa-a3fb-16d5dc0a77c4}-Tiny Desk.png</ZipFileName>
               <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tiny Desk.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\ARD Mediathek.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{22a07386-0d59-4993-a61e-8a8621b626e3}-ARD Mediathek.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ARD Mediathek.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\NPOStart.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{10355bfc-7ba6-49c4-bd20-5ba74160df2d}-NPOStart.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\NPOStart.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\SBS.au.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{bb1bfa90-57a0-4a29-825e-b4c10b6e87dd}-SBS.au.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SBS.au.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Banners\VRT.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{5d9d5f81-c49d-479d-b979-3e758b7aa331}-VRT.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Banners\VRT.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\ARD Mediathek.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{44df02fe-5ef1-4add-9adc-c8e3f753ae24}-ARD Mediathek.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ARD Mediathek.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\NPOStart.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{261e7045-a304-47c6-9291-cf9f56868fa7}-NPOStart.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\NPOStart.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\SBS.au.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{a29ff405-ed87-4c9e-979f-b90504e7bd7e}-SBS.au.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SBS.au.png</DestinationFilename>
+            </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+              <Param1 />
+              <UpdateOption>OverwriteIfOlder</UpdateOption>
+              <LocalFileName>..\SiteImages\Icons\VRT.png</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{ea5bce65-d9b7-4ded-89d4-4841fee4df11}-VRT.png</ZipFileName>
+              <DestinationFilename>%Thumbs%\OnlineVideos\Icons\VRT.png</DestinationFilename>
             </FileItem>
           </Items>
         </Files>
@@ -3830,13 +3466,6 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\cinemassacre.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{7ff0816a-3e6c-45e3-a3d2-508959bfd651}-cinemassacre.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\cinemassacre.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\CNN.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{5c056a67-f345-4a73-b4f0-511569b43f58}-CNN.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\CNN.png</DestinationFilename>
@@ -3844,23 +3473,9 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\CollegeHumor.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{e57e29e4-09e2-4030-839b-86ad3fadd395}-CollegeHumor.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\CollegeHumor.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\DailyMotion.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{4df22113-6406-4e83-a0a0-152fa5d61493}-DailyMotion.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\DailyMotion.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Das Erste.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{c1e0970a-1ece-4af0-9059-0cf777ada939}-Das Erste.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Das Erste.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -3942,13 +3557,6 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\nos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{26850b11-576f-4739-9a22-8a1ac8b519a0}-nos.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\nos.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\onsnetnuenen.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{89ace876-e8da-47ea-bda0-c0283124ff2a}-onsnetnuenen.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\onsnetnuenen.png</DestinationFilename>
@@ -3966,13 +3574,6 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
         <LocalFileName>..\SiteImages\Icons\Revision3.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{be7c1e5d-4ddc-49d3-827c-3aa7ee6425fc}-Revision3.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Revision3.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\SesameStreet.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{8e11f7e6-d0b2-45a1-86d5-ac63368d7aea}-SesameStreet.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SesameStreet.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -4117,13 +3718,6 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\cinemassacre.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{78e0560b-5a99-49c0-9218-f441378bb713}-cinemassacre.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\cinemassacre.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Banners\CNN.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{8fcdffa5-8a53-4c61-977a-cf082d781105}-CNN.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\CNN.png</DestinationFilename>
@@ -4131,23 +3725,9 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\CollegeHumor.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{e88e19a5-2d85-4f05-a7ee-8cded4bdbc28}-CollegeHumor.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\CollegeHumor.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Banners\DailyMotion.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{76c1ce96-4282-43cf-acf7-932d63128714}-DailyMotion.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\DailyMotion.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Das Erste.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{1edd043f-2505-4f08-92eb-3e3163177b5d}-Das Erste.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Das Erste.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -4229,13 +3809,6 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\nos.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{1d5e4cc7-1ec7-463c-aff6-ced8293432e0}-nos.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\nos.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Banners\OnlineVideos.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{dc61f7da-b8a2-4aa7-99c2-ff8d8119a5b2}-OnlineVideos.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\OnlineVideos.png</DestinationFilename>
@@ -4260,13 +3833,6 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
         <LocalFileName>..\SiteImages\Banners\Revision3.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{4ca68d15-a42d-4e39-bbd0-8a2f3c266467}-Revision3.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Revision3.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\SesameStreet.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{baa66d43-1904-49b0-b1f4-4e1378304df6}-SesameStreet.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SesameStreet.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -4509,23 +4075,9 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\watch-series.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{da52e33a-2820-422e-aa24-45aba3911041}-watch-series.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\watch-series.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Banners\TVNZOnDemand.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{6a4b4a0f-2d62-481c-9ebf-9d1f5b5debd0}-TVNZOnDemand.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TVNZOnDemand.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\watch-series.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{842d7436-39f5-4762-ab97-9b6e477886cd}-watch-series.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\watch-series.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -4572,20 +4124,6 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\academic earth.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{dc64df6b-d8a7-4abb-b6d1-65edb1aa63af}-academic earth.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\academic earth.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\EscapistMagazine.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{7d23a312-ec4f-4216-bde7-9cc1503ff0cd}-EscapistMagazine.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\EscapistMagazine.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\watch-movies.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{b3113f22-1dc0-4d8d-83ea-37a9988ae097}-watch-movies.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\watch-movies.png</DestinationFilename>
@@ -4593,37 +4131,9 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\academic earth.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{550a6617-3b0c-4290-b0b4-d03a94f57c53}-academic earth.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\academic earth.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\EscapistMagazine.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{20568f42-f14f-4f56-9361-852e93b8af8f}-EscapistMagazine.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\EscapistMagazine.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Banners\watch-movies.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{8db14530-2dcf-46b6-8618-c41392ffd509}-watch-movies.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\watch-movies.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\rtl xl.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{e2a5faff-6716-447a-b751-6631c08ef55f}-rtl xl.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\rtl xl.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\rtl xl.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{aca124d3-d00d-4705-95ae-9c03411b0773}-rtl xl.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\rtl xl.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -4887,30 +4397,9 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\luckytv.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{4875a8c3-1eb7-481c-87be-e87cd9666e10}-luckytv.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\luckytv.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\TVLinks.cc.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{a22f0d74-dbbb-4e25-ab56-fbc7478e7504}-TVLinks.cc.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\TVLinks.cc.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Uitzending Gemist.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{ea47145c-3a17-46d5-9e9a-bf32f3d8c11a}-Uitzending Gemist.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Uitzending Gemist.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\luckytv.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{04781930-2db8-4a18-923e-3c95d684d3b8}-luckytv.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\luckytv.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -4922,30 +4411,9 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Uitzending Gemist.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{0fc25c9f-5b52-4d35-b0fa-7d1d5d150b9f}-Uitzending Gemist.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Uitzending Gemist.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Nickelodeon.NL.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{5fe0c17a-217e-4570-b1d3-44e70260f9af}-Nickelodeon.NL.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Nickelodeon.NL.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\Red Bull TV.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{ee36caee-7289-412a-bf9a-2a9df2cd7908}-Red Bull TV.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Red Bull TV.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\RTE.ie.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{9ce0f357-c3e8-4842-8274-7db032584266}-RTE.ie.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\RTE.ie.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -4957,23 +4425,9 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Nickelodeon.NL.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{7d6bcffd-aa87-480a-a2e4-9895ea88b42a}-Nickelodeon.NL.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Nickelodeon.NL.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Banners\Red Bull TV.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{caec1df0-5914-4da5-a745-74b2e0dcbd6f}-Red Bull TV.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Red Bull TV.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\RTE.ie.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{22ea0dff-087b-43a5-84d7-919bcec81566}-RTE.ie.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\RTE.ie.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -5065,20 +4519,6 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
         <LocalFileName>..\SiteImages\Banners\TV4Play.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{d4dea2d6-70aa-465c-ad1f-77bc53d1e6dd}-TV4Play.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\TV4Play.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\BrassBandTube.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{d57a2296-074a-44eb-80bd-20bc300b59ce}-BrassBandTube.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\BrassBandTube.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\BrassBandTube.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{d1dd2831-6d4c-49ba-8b59-ccd6b7744568}-BrassBandTube.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\BrassBandTube.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -5440,13 +4880,6 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\League of Legends Streams.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{ad6d6d59-a553-4387-b262-31f3ada4a6e3}-League of Legends Streams.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\League of Legends Streams.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\Twitch.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{81bba484-37d6-40ec-a2e4-291d26807357}-Twitch.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Twitch.png</DestinationFilename>
@@ -5457,13 +4890,6 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
         <LocalFileName>..\SiteImages\Banners\family.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{57b2ed1f-2d30-43c1-991f-823aaf654b0a}-family.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\family.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\League of Legends Streams.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{09666a02-9539-4f50-96a6-56132cc3e9bc}-League of Legends Streams.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\League of Legends Streams.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -5510,23 +4936,9 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Kijk.nl.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{2a615864-d49a-4b96-94bd-6c821be2f804}-Kijk.nl.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Kijk.nl.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\muvi.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{17e8540d-06c3-4979-b72b-41f40a817612}-muvi.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\muvi.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Rockpalast.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{27a902f7-0abf-4254-bd05-544d876bc8a3}-Rockpalast.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Rockpalast.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -5552,23 +4964,9 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Kijk.nl.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{4b00f286-354c-4c2a-9127-fb47ebdf3d01}-Kijk.nl.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Kijk.nl.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Banners\muvi.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{082bf072-d340-4b3c-a86c-2f6d464a10a0}-muvi.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\muvi.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Rockpalast.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{d3993842-06f1-4841-ad80-f98c815b28f3}-Rockpalast.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Rockpalast.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -5601,13 +4999,6 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\EventCaster.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{2350cd75-6ed0-4093-a5e6-4a8878b820b5}-EventCaster.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\EventCaster.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\hgtv canada.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{57d82cba-40f0-4f9a-a995-df72dcd3a003}-hgtv canada.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\hgtv canada.png</DestinationFilename>
@@ -5615,72 +5006,9 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\EventCaster.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{ad672493-8c96-41be-b4f8-a40fb7c1f151}-EventCaster.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\EventCaster.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\NicoNico.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{9fbe55eb-d97b-43d1-9dd6-eb7cdd10fe44}-NicoNico.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\NicoNico.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\NicoNico.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{fff95193-4fdf-4c5f-9572-1879936ae500}-NicoNico.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\NicoNico.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\De redactie.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{5d8c8648-1483-4447-96ac-85991a101953}-De redactie.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\De redactie.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Ipla.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{56b91865-d1f2-49ac-83b2-f94864376f95}-Ipla.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Ipla.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Power Unlimited.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{4522e43f-6c3f-4841-ac60-1c70c5689b1a}-Power Unlimited.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Power Unlimited.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\Vod.tvp.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{36f1976a-4a8b-4564-b5f2-10bf8c29d5b7}-Vod.tvp.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Vod.tvp.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\De redactie.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{830b6883-f8e3-4066-aeae-b3078d13fc82}-De redactie.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\De redactie.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Ipla.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{b6084aff-05b3-43c9-b796-bedf10629363}-Ipla.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Ipla.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Power Unlimited.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{5696a915-79e6-4de6-952f-f778728b04a6}-Power Unlimited.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Power Unlimited.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -5706,13 +5034,6 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\ToonsTv.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{da3491d4-1394-4cf9-aa94-f5debaf72c7f}-ToonsTv.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ToonsTv.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\URPlay.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{1beaaed8-52ad-4f76-bcda-ce642376659b}-URPlay.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\URPlay.png</DestinationFilename>
@@ -5734,23 +5055,9 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\ToonsTv.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{04e7aec9-dea6-496a-a2a4-418cca5f7b3d}-ToonsTv.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ToonsTv.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Banners\URPlay.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{f811db3c-e35d-42ff-8e56-bbfad32ea260}-URPlay.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\URPlay.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Filmon.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{71dc95ce-5cb1-4e7b-ab54-952ccc1d133e}-Filmon.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Filmon.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -5786,13 +5093,6 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
         <LocalFileName>..\SiteImages\Banners\Viaplay.se.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{66670d6d-3724-413c-aac7-aa967b6e7a3c}-Viaplay.se.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Viaplay.se.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Filmon.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{0f39fbbe-7522-49f8-9373-8f64dcc56634}-Filmon.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Filmon.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -5856,20 +5156,6 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
         <LocalFileName>..\SiteImages\Icons\gamekings.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{45aab5b1-af40-499b-9b91-5131e98e49c0}-gamekings.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\gamekings.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Gamersnet.nl.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{bf508d24-acbb-4d31-bcf3-ba7393b22c12}-Gamersnet.nl.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Gamersnet.nl.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Gamersnet.nl.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{f0d738c1-fc64-43b7-9a76-6dabc4201284}-Gamersnet.nl.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Gamersnet.nl.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -5979,34 +5265,6 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\KissAnime.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{d87e6f1f-b779-4c3e-bd65-cc05cb1e7386}-KissAnime.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\KissAnime.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\MovieNight.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{d24b5bc8-7cfb-461c-a057-7cc12d27f243}-MovieNight.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\MovieNight.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\KissAnime.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{33b7efb1-aeb2-4fe2-84cd-e5f925369064}-KissAnime.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\KissAnime.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\MovieNight.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{eb38ab57-a58e-4158-aebf-878a8ac5859d}-MovieNight.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\MovieNight.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Banners\Dplay.dk.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{d68d41bd-2ca7-4734-a382-51bcf0fb4dc8}-Dplay.dk.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Dplay.dk.png</DestinationFilename>
@@ -6031,20 +5289,6 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
         <LocalFileName>..\SiteImages\Banners\liveLEAK.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{5cafffbf-aae6-4f2a-9444-c83d70f69aa8}-liveLEAK.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\liveLEAK.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\NPO Livestreams.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{2b4a4067-425c-408f-882b-376e308a86a8}-NPO Livestreams.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\NPO Livestreams.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\Telewizjada.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{e7d20a14-62bb-4843-9eb5-f3f8f4ce7d9f}-Telewizjada.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Telewizjada.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -6084,20 +5328,6 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\NPO Livestreams.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{c88cb5a1-c2a8-4bef-a543-a505cb0dc78a}-NPO Livestreams.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\NPO Livestreams.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\Telewizjada.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{9c01551f-6ece-45a5-960a-2d7856c03ad3}-Telewizjada.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Telewizjada.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Banners\Draken Film.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{a4e1547c-33f7-499b-aac4-4b0ff7291d10}-Draken Film.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Banners\Draken Film.png</DestinationFilename>
@@ -6119,23 +5349,9 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Banners\RTBF.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{ee0f1a61-2e70-4b79-a1a5-6c492abf4c12}-RTBF.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\RTBF.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>..\SiteImages\Icons\Last.fm.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{0b6f3786-6ce2-4a87-bb53-d4f474905d1d}-Last.fm.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Last.fm.png</DestinationFilename>
-      </FileItem>
-      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
-        <Param1 />
-        <UpdateOption>OverwriteIfOlder</UpdateOption>
-        <LocalFileName>..\SiteImages\Icons\RTBF.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{19ac104a-d1e1-400d-9aa8-351d20f32569}-RTBF.png</ZipFileName>
-        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\RTBF.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
@@ -6192,6 +5408,62 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
         <LocalFileName>..\SiteImages\Icons\Tiny Desk.png</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{4a599421-0e79-40aa-a3fb-16d5dc0a77c4}-Tiny Desk.png</ZipFileName>
         <DestinationFilename>%Thumbs%\OnlineVideos\Icons\Tiny Desk.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\ARD Mediathek.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{22a07386-0d59-4993-a61e-8a8621b626e3}-ARD Mediathek.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\ARD Mediathek.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\NPOStart.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{10355bfc-7ba6-49c4-bd20-5ba74160df2d}-NPOStart.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\NPOStart.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\SBS.au.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{bb1bfa90-57a0-4a29-825e-b4c10b6e87dd}-SBS.au.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\SBS.au.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Banners\VRT.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{5d9d5f81-c49d-479d-b979-3e758b7aa331}-VRT.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Banners\VRT.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\ARD Mediathek.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{44df02fe-5ef1-4add-9adc-c8e3f753ae24}-ARD Mediathek.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\ARD Mediathek.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\NPOStart.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{261e7045-a304-47c6-9291-cf9f56868fa7}-NPOStart.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\NPOStart.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\SBS.au.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{a29ff405-ed87-4c9e-979f-b90504e7bd7e}-SBS.au.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\SBS.au.png</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
+        <Param1 />
+        <UpdateOption>OverwriteIfOlder</UpdateOption>
+        <LocalFileName>..\SiteImages\Icons\VRT.png</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{ea5bce65-d9b7-4ded-89d4-4841fee4df11}-VRT.png</ZipFileName>
+        <DestinationFilename>%Thumbs%\OnlineVideos\Icons\VRT.png</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
         <Param1 />
