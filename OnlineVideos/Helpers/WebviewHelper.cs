@@ -142,13 +142,13 @@ namespace OnlineVideos.Helpers
                 Log.Debug("GetHtml-{1}: '{0}'", url, postData != null ? "POST" : "GET");
                 if (webView.Source.ToString() != url)
                 {
-                    EventHandler<CoreWebView2WebResourceRequestedEventArgs> eventHandler = null;
-                    if (blockOtherRequests)
-                    {
-                        webView.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
-                        eventHandler = new EventHandler<CoreWebView2WebResourceRequestedEventArgs>((sender, e) => CoreWebView2_WebResourceRequested(e, url, referer, headers));
-                        webView.CoreWebView2.WebResourceRequested += eventHandler;
-                    }
+
+
+                    var eventHandler = new EventHandler<CoreWebView2WebResourceRequestedEventArgs>(
+                        (sender, e) => CoreWebView2_WebResourceRequested(e, url, referer, headers, blockOtherRequests)
+                        );
+                    webView.CoreWebView2.WebResourceRequested += eventHandler;
+                    webView.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
 
                     if (postData == null)
                     {
@@ -163,11 +163,8 @@ namespace OnlineVideos.Helpers
                         webView.CoreWebView2.NavigateWithWebResourceRequest(request);
                     }
                     WaitUntilNavCompleted();
-                    if (blockOtherRequests)
-                    {
-                        webView.CoreWebView2.WebResourceRequested -= eventHandler;
-                        webView.CoreWebView2.RemoveWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
-                    }
+                    webView.CoreWebView2.WebResourceRequested -= eventHandler;
+                    webView.CoreWebView2.RemoveWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
                 }
                 try
                 {
@@ -191,7 +188,8 @@ namespace OnlineVideos.Helpers
             }
         }
 
-        private void CoreWebView2_WebResourceRequested(CoreWebView2WebResourceRequestedEventArgs e, string url, string referer, NameValueCollection headers)
+        private void CoreWebView2_WebResourceRequested(CoreWebView2WebResourceRequestedEventArgs e, string url, string referer, NameValueCollection headers,
+            bool blockOtherRequests)
         {
             if (headers != null)
                 foreach (var key in headers.AllKeys)
