@@ -1,4 +1,5 @@
-﻿using System;
+﻿//#define OSDForDevTools
+using System;
 using System.Drawing;
 using OnlineVideos.Sites;
 using OnlineVideos.Helpers;
@@ -59,7 +60,9 @@ namespace OnlineVideos.MediaPortal1.Player
 
                 webView.Source = new Uri(strFile);
                 if (GoFullscreen) GUIWindowManager.ActivateWindow(GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
+#if OSDForDevTools
                 GUIWindowManager.OnNewAction += GUIWindowManager_OnNewAction;
+#endif
 
                 return true;
             }
@@ -70,6 +73,7 @@ namespace OnlineVideos.MediaPortal1.Player
             }
         }
 
+#if OSDForDevTools
         private void GUIWindowManager_OnNewAction(MediaPortal.GUI.Library.Action action)
         {
             if (action.wID == MediaPortal.GUI.Library.Action.ActionType.ACTION_SHOW_OSD)
@@ -77,6 +81,7 @@ namespace OnlineVideos.MediaPortal1.Player
                 webView.CoreWebView2.OpenDevToolsWindow();
             }
         }
+#endif
 
         public override void SetVideoWindow()
         {
@@ -147,7 +152,10 @@ namespace OnlineVideos.MediaPortal1.Player
             playState = PlayState.Ended;
             if (webView != null)
                 DoDispose();
+
+#if OSDForDevTools
             GUIWindowManager.OnNewAction -= GUIWindowManager_OnNewAction;
+#endif
 
             if (disableVMRWhenRunning)
                 GUIGraphicsContext.Vmr9Active = false;
