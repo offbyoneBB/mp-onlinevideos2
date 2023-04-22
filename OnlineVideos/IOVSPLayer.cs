@@ -1,6 +1,6 @@
 ﻿namespace OnlineVideos
 {
-    enum PlayState { Init, Playing, Paused, Ended };
+    public enum PlayState { Init, Playing, Paused, Ended };
 
     public interface IOVSPLayer
     {
