@@ -5,6 +5,7 @@ using MediaPortal.Common.MediaManagement;
 using MediaPortal.Common.ResourceAccess;
 using MediaPortal.Common.Services.ResourceAccess.RawUrlResourceProvider;
 using MediaPortal.UI.Presentation.Players;
+using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.Utilities.Screens;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
@@ -15,6 +16,7 @@ using OnlineVideos.Sites;
 using System;
 using System.Drawing;
 using System.Globalization;
+using System.Windows.Forms;
 
 namespace OnlineVideos.MediaPortal2.Player
 {
@@ -127,6 +129,12 @@ namespace OnlineVideos.MediaPortal2.Player
                 ServiceRegistration.Get<ILog>().Info("WebViewPlayer: Play '{0}'", _fileOrUrl);
 
                 _webView.NavigationCompleted += WebView_FirstNavigationCompleted;
+
+                var mainForm = Control.FromHandle(ServiceRegistration.Get<IScreenControl>().MainWindowHandle);
+                if (mainForm != null)
+                {
+                    mainForm.Controls.Add(_webView);
+                }
                 // TODO:
                 //GUIGraphicsContext.form.Controls.Add(_webView);
                 //GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor while buffering
@@ -162,10 +170,14 @@ namespace OnlineVideos.MediaPortal2.Player
             {
                 // TODO:
                 //GUIGraphicsContext.form.Controls.Remove(_webView);
+                var mainForm = Control.FromHandle(ServiceRegistration.Get<IScreenControl>().MainWindowHandle);
+                if (mainForm != null)
+                {
+                    mainForm.Controls.Remove(_webView);
+                }
                 _webView.NavigationCompleted -= WebView_FirstNavigationCompleted;
                 _webView.NavigationCompleted -= WebView_FurtherNavigationCompleted;
                 _webView.Source = new Uri("about:blank");
-                //_webView?.Dispose();
             }
             catch { }
         }
@@ -280,7 +292,7 @@ namespace OnlineVideos.MediaPortal2.Player
 
         public bool SetPlaybackRate(double value)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public void Pause()
@@ -324,12 +336,12 @@ namespace OnlineVideos.MediaPortal2.Player
 
         public void Resume()
         {
-            throw new NotImplementedException();
+            Play();
         }
 
         public void Restart()
         {
-            throw new NotImplementedException();
+            CurrentTime = TimeSpan.Zero;
         }
 
         public TimeSpan CurrentTime
