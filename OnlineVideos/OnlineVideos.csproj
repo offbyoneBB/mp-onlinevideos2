@@ -481,6 +481,7 @@
     <Compile Include="3rdParty\Jurassic\Library\RegExp\RegExpInstance.cs" />
     <Compile Include="3rdParty\Jurassic\Library\String\StringConstructor.cs" />
     <Compile Include="3rdParty\Jurassic\Library\String\StringInstance.cs" />
+    <Compile Include="IOVSPLayer.cs" />
     <Compile Include="LocalizableDisplayNameAttribute.cs" />
     <Compile Include="ILog.cs" />
     <Compile Include="MPUrlSourceFilter\AfhsManifestUrl.cs" />

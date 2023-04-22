@@ -15,7 +15,7 @@ using System.IO;
 
 namespace OnlineVideos.MediaPortal1.Player
 {
-    public class OnlineVideosPlayer : VideoPlayerVMR9, OVSPLayer
+    public class OnlineVideosPlayer : VideoPlayerVMR9, IOVSPLayer
     {
         #region Refeshrate Adaption
 

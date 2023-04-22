@@ -2507,7 +2507,7 @@ namespace OnlineVideos.MediaPortal1
             }
             else
             {
-                (factory.PreparedPlayer as OVSPLayer).GoFullscreen = goFullScreen;
+                (factory.PreparedPlayer as IOVSPLayer).GoFullscreen = goFullScreen;
 
                 Uri subtitleUri = null;
                 bool validUri = !String.IsNullOrEmpty(playItem.Video.SubtitleUrl) && Uri.TryCreate(playItem.Video.SubtitleUrl, UriKind.Absolute, out subtitleUri);
@@ -2522,7 +2522,7 @@ namespace OnlineVideos.MediaPortal1
                         {
                             string subFile = Path.Combine(Path.GetTempPath(), "OnlineVideoSubtitles.txt");
                             File.WriteAllText(subFile, subs, System.Text.Encoding.UTF8);
-                            (factory.PreparedPlayer as OVSPLayer).SubtitleFile = subFile;
+                            (factory.PreparedPlayer as IOVSPLayer).SubtitleFile = subFile;
                         }
                         return true;
                     },
@@ -2535,7 +2535,7 @@ namespace OnlineVideos.MediaPortal1
                 else
                 {
                     if (validUri && subtitleUri.IsFile)
-                        (factory.PreparedPlayer as OVSPLayer).SubtitleFile = subtitleUri.AbsolutePath;
+                        (factory.PreparedPlayer as IOVSPLayer).SubtitleFile = subtitleUri.AbsolutePath;
                     Play_Step6(playItem, lsUrl, factory);
                 }
             }
@@ -3374,7 +3374,7 @@ namespace OnlineVideos.MediaPortal1
 
                     System.Threading.Thread.Sleep(2000);
 
-                    string quality = video.PlaybackOptions != null ? video.PlaybackOptions.FirstOrDefault(po => po.Value == (g_Player.Player as OVSPLayer).PlaybackUrl).Key : null;
+                    string quality = video.PlaybackOptions != null ? video.PlaybackOptions.FirstOrDefault(po => po.Value == (g_Player.Player as IOVSPLayer).PlaybackUrl).Key : null;
 
                     string titleToShow = "";
                     if (!string.IsNullOrEmpty(alternativeTitle))

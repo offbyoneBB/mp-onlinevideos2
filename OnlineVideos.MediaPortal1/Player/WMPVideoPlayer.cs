@@ -9,7 +9,7 @@ using MediaPortal.Dialogs;
 
 namespace OnlineVideos.MediaPortal1.Player
 {
-    public class WMPVideoPlayer : IPlayer, OVSPLayer
+    public class WMPVideoPlayer : IPlayer, IOVSPLayer
     {
         AxWindowsMediaPlayer wmpCtrl;
         PlayState playState;

@@ -15,7 +15,7 @@ using System.IO;
 
 namespace OnlineVideos.MediaPortal1.Player
 {
-    public class VLCPlayer : IPlayer, OVSPLayer
+    public class VLCPlayer : IPlayer, IOVSPLayer
     {
         VlcControl vlcCtrl;
         PathMedia media;

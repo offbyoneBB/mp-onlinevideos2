@@ -10,7 +10,7 @@ using Microsoft.Web.WebView2.WinForms;
 
 namespace OnlineVideos.MediaPortal1.Player
 {
-    public class WebViewPlayer : IPlayer, OVSPLayer
+    public class WebViewPlayer : IPlayer, IOVSPLayer
     {
         private bool disableVMRWhenRunning = true;//when true no mousecursor is rendered...
         private IWebViewSiteUtilBase _siteUtil;
