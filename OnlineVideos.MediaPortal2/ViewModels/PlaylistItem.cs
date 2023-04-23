@@ -9,6 +9,7 @@ using MediaPortal.Common.ResourceAccess;
 using MediaPortal.Common.Services.ResourceAccess;
 using MediaPortal.Common.Services.ResourceAccess.RawUrlResourceProvider;
 using OnlineVideos.MediaPortal2.Interfaces.Metadata;
+using OnlineVideos.MediaPortal2.Player;
 using OnlineVideos.MediaPortal2.ResourceAccess;
 using OnlineVideos.Sites.Interfaces;
 
@@ -36,7 +37,7 @@ namespace OnlineVideos.MediaPortal2
             MediaItemAspect.TryGetAspects(Aspects, ProviderResourceAspect.Metadata, out providerResourceAspects);
             MultipleMediaItemAspect providerResourceAspect = providerResourceAspects.First();
 
-            providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_PRIMARY, true);
+            providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_TYPE, ProviderResourceAspect.TYPE_PRIMARY);
             providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_SYSTEM_ID, systemResolver.LocalSystemId);
 
             if (videoInfo.SiteUtilName == "DownloadedVideo")
@@ -56,10 +57,10 @@ namespace OnlineVideos.MediaPortal2
                 providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_RESOURCE_ACCESSOR_PATH, value);
                 Aspects[OnlineVideosAspect.ASPECT_ID].First().SetAttribute(OnlineVideosAspect.ATTR_LONGURL, value);
 
-                var isBrowser = videoInfo.SiteSettings.Player == PlayerType.Browser;
+                var isBrowser = videoInfo.SiteSettings.Player == PlayerType.Webview;
                 providerResourceAspect.SetAttribute(ProviderResourceAspect.ATTR_MIME_TYPE,
                     isBrowser
-                        ? WebBrowserVideoPlayer.ONLINEVIDEOSBROWSER_MIMETYPE
+                        ? WebViewPlayer.WEBVIEW_MIMETYPE
                         : OnlineVideosPlayer.ONLINEVIDEOS_MIMETYPE);
             }
 

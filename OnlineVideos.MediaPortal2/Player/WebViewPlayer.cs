@@ -6,6 +6,7 @@ using MediaPortal.Common.ResourceAccess;
 using MediaPortal.Common.Services.ResourceAccess.RawUrlResourceProvider;
 using MediaPortal.UI.Presentation.Players;
 using MediaPortal.UI.Presentation.Screens;
+using MediaPortal.UiComponents.Media.Models;
 using MediaPortal.Utilities.Screens;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
@@ -22,7 +23,9 @@ namespace OnlineVideos.MediaPortal2.Player
 {
     public class WebViewPlayer : IPlayer, IPlayerEvents, IMediaPlaybackControl, IUIContributorPlayer, IOVSPLayer
     {
+        public const string WEBVIEW_MIMETYPE = "video/webview2";
         private string _fileOrUrl;
+        private Control _mainForm;
 
         // Player event delegates
         protected PlayerEventDlgt _started = null;
@@ -42,6 +45,39 @@ namespace OnlineVideos.MediaPortal2.Player
         public string SubtitleFile { get; set; }
         public string PlaybackUrl { get; set; }
         public bool GoFullscreen { get; set; }
+
+        public WebViewPlayer()
+        {
+            _mainForm = Control.FromHandle(ServiceRegistration.Get<IScreenControl>().MainWindowHandle);
+        }
+
+        private void Invoke(Action action)
+        {
+            if (_mainForm.InvokeRequired)
+            {
+                IAsyncResult iar = _mainForm.BeginInvoke(action);
+                iar.AsyncWaitHandle.WaitOne();
+            }
+            else
+            {
+                action.Invoke();
+            }
+        }
+
+        private bool Invoke(Func<bool> func)
+        {
+            if (_mainForm.InvokeRequired)
+            {
+                IAsyncResult iar = _mainForm.BeginInvoke(func);
+                iar.AsyncWaitHandle.WaitOne();
+                return (bool)_mainForm.EndInvoke(iar);
+            }
+            else
+            {
+                return func.Invoke();
+            }
+        }
+
 
         /// <summary>
         /// We require the command line parameters for the web browser host
@@ -103,6 +139,11 @@ namespace OnlineVideos.MediaPortal2.Player
         /// <returns></returns>
         public bool Play()
         {
+            return Invoke(PlayInternal);
+        }
+
+        private bool PlayInternal()
+        {
             SplashScreen loadingScreen = null;
             try
             {
@@ -120,21 +161,19 @@ namespace OnlineVideos.MediaPortal2.Player
 
                 _wvHelper = WebViewHelper.Instance;
                 _webView = _wvHelper.GetWebViewForPlayer;
-                _webView.Location = new Point((int)TargetBounds.Left, (int)TargetBounds.Top);
-                _webView.Size = new Size((int)TargetBounds.Width, (int)TargetBounds.Height);
-                _webView.Name = "webview";
-                _webView.Visible = false;
-                _webView.Enabled = false;
+                //_webView.Location = new Point((int)TargetBounds.Left, (int)TargetBounds.Top);
+                //_webView.Size = new Size(400, 300); //new Size((int)TargetBounds.Width, (int)TargetBounds.Height);
+                //_webView.Name = "webview";
+                //_webView.Visible = false;
+                //_webView.Enabled = false;
                 _playState = PlayState.Init;
-                ServiceRegistration.Get<ILog>().Info("WebViewPlayer: Play '{0}'", _fileOrUrl);
+                ServiceRegistration.Get<MediaPortal.Common.Logging.ILogger>().Info("WebViewPlayer: Play '{0}'", _fileOrUrl);
 
                 _webView.NavigationCompleted += WebView_FirstNavigationCompleted;
-
-                var mainForm = Control.FromHandle(ServiceRegistration.Get<IScreenControl>().MainWindowHandle);
-                if (mainForm != null)
-                {
-                    mainForm.Controls.Add(_webView);
-                }
+                //if (_mainForm != null)
+                //{
+                //    _mainForm.Controls.Add(_webView);
+                //}
                 // TODO:
                 //GUIGraphicsContext.form.Controls.Add(_webView);
                 //GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor while buffering
@@ -170,11 +209,10 @@ namespace OnlineVideos.MediaPortal2.Player
             {
                 // TODO:
                 //GUIGraphicsContext.form.Controls.Remove(_webView);
-                var mainForm = Control.FromHandle(ServiceRegistration.Get<IScreenControl>().MainWindowHandle);
-                if (mainForm != null)
-                {
-                    mainForm.Controls.Remove(_webView);
-                }
+                //if (_mainForm != null)
+                //{
+                //    _mainForm.Controls.Remove(_webView);
+                //}
                 _webView.NavigationCompleted -= WebView_FirstNavigationCompleted;
                 _webView.NavigationCompleted -= WebView_FurtherNavigationCompleted;
                 _webView.Source = new Uri("about:blank");
@@ -255,7 +293,7 @@ namespace OnlineVideos.MediaPortal2.Player
 
         public Type UIContributorType
         {
-            get { return typeof(WebBrowserPlayerUIContributor); }
+            get { return typeof(WebViewPlayerUIContributor); }
         }
 
         public RectangleF TargetBounds
@@ -273,17 +311,7 @@ namespace OnlineVideos.MediaPortal2.Player
                         //_webView.Location = new Point(FullScreen ? 0 : GUIGraphicsContext.VideoWindow.X, FullScreen ? 0 : GUIGraphicsContext.VideoWindow.Y);
                         //_webView.ClientSize = new Size(FullScreen ? GUIGraphicsContext.Width : GUIGraphicsContext.VideoWindow.Width, FullScreen ? GUIGraphicsContext.Height : GUIGraphicsContext.VideoWindow.Height);
                     };
-
-                    if (_webView.InvokeRequired)
-                    {
-                        IAsyncResult iar = _webView.BeginInvoke(si);
-                        iar.AsyncWaitHandle.WaitOne();
-                    }
-                    else
-                    {
-                        si();
-                    }
-
+                    Invoke(si);
                     //_videoRectangle = new Rectangle(_webView.Location.X, _webView.Location.Y, _webView.ClientSize.Width, _webView.ClientSize.Height);
                     //_sourceRectangle = _videoRectangle;
                 }
@@ -435,4 +463,26 @@ namespace OnlineVideos.MediaPortal2.Player
     }
 
 
+    public class WebViewPlayerUIContributor : BaseVideoPlayerUIContributor
+    {
+        public const string SCREEN_FS = "FullscreenContentOV";
+        public const string SCREEN_CP = "CurrentlyPlayingOV";
+
+        public override bool BackgroundDisabled
+        {
+            get { return false; }
+        }
+
+        public override string Screen
+        {
+            get
+            {
+                if (_mediaWorkflowStateType == MediaWorkflowStateType.CurrentlyPlaying)
+                    return SCREEN_CP;
+                if (_mediaWorkflowStateType == MediaWorkflowStateType.FullscreenContent)
+                    return SCREEN_FS;
+                return null;
+            }
+        }
+    }
 }

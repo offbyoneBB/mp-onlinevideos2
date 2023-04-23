@@ -67,12 +67,14 @@
     <Reference Include="Microsoft.Web.WebView2.Wpf, Version=1.0.1722.45, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
       <HintPath>..\Packages\Microsoft.Web.WebView2.1.0.1722.45\lib\net45\Microsoft.Web.WebView2.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX">
-      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\net48\Plugins\SkinEngine\SharpDX.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\Packages\SharpDX.4.2.0\lib\net45\SharpDX.dll</HintPath>
     </Reference>
     <Reference Include="SharpDX.Direct3D9">
       <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\net48\Plugins\SkinEngine\SharpDX.Direct3D9.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Mathematics, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\Packages\SharpDX.Mathematics.4.2.0\lib\net45\SharpDX.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="SkinEngine">
       <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\net48\Plugins\SkinEngine\SkinEngine.dll</HintPath>
@@ -92,14 +94,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OnlineVideos.InputStream\InputStreamPlayer\InputStreamPlayer.csproj">
-      <Project>{3171D2FF-4E7F-4413-B7A9-03AA7355DC68}</Project>
-      <Name>InputStreamPlayer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OnlineVideos.InputStream\MediaPortalWrapper\MediaPortalWrapper.csproj">
-      <Project>{47731721-BA8A-4295-BCCE-399E5C289B4E}</Project>
-      <Name>MediaPortalWrapper</Name>
-    </ProjectReference>
     <ProjectReference Include="..\OnlineVideos.MediaPortal2.Interfaces\OnlineVideos.MediaPortal2.Interfaces.csproj">
       <Project>{F54CFB16-1599-4676-BED6-2AB1C6F4DE53}</Project>
       <Name>OnlineVideos.MediaPortal2.Interfaces</Name>
@@ -124,7 +118,7 @@
     <Compile Include="Models\SiteManagementWorkflowModel.cs" />
     <Compile Include="OnlineVideosPlugin.cs" />
     <Compile Include="Player\OnlineVideoPlayerBuilder.cs" />
-    <Compile Include="Player\WebBrowserVideoPlayer.cs" />
+    <Compile Include="Player\STAFormHelper.cs" />
     <Compile Include="Player\WebViewPlayer.cs" />
     <Compile Include="ViewModels\CategoryViewModel.cs" />
     <Compile Include="Guids.cs" />

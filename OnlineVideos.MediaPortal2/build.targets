@@ -4,8 +4,8 @@
   <Target Name="AfterBuild">
 
     <PropertyGroup>
-      <PluginDestination>$(SolutionDir)..\MediaPortal\Bin\MP2-Client\bin\x86\$(Configuration)\Plugins\OnlineVideos\</PluginDestination>
-	  <DataDestination>$(ProgramData)\Team MediaPortal\MP2-Client\OnlineVideos\</DataDestination>
+      <PluginDestination>$(SolutionDir)..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\net48\Plugins\OnlineVideos\</PluginDestination>
+      <DataDestination>$(ProgramData)\Team MediaPortal\MP2-Client\OnlineVideos\</DataDestination>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,22 +14,25 @@
       <APIFiles Include="$(TargetDir)OnlineVideos.dll" />
       <APIFiles Include="$(TargetDir)OnlineVideos.MediaPortal2.Interfaces.dll" />
       <APIFiles Include="$(TargetDir)OnlineVideos.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
-      <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\iexplore.exe*" />
+      <WebView2Files Include="$(TargetDir)Microsoft.Web.WebView2.*.dll" />
+      <WebView2Runtimes Include="$(TargetDir)\runtimes\**\*.dll" />
+      <!--<BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\iexplore.exe*" />
       <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\iexplore.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
       <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\OnlineVideos.WebAutomation.BrowserHost.exe*" />
-      <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\OnlineVideos.WebAutomation.BrowserHost.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
+      <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\OnlineVideos.WebAutomation.BrowserHost.pdb" Condition=" '$(Configuration)' == 'Debug' "/>-->
       <LanguageFiles Include="$(ProjectDir)Language\*.*" />
       <SkinFiles Include="$(ProjectDir)Skin\**\*.*" Exclude="$(ProjectDir)Skin\**\.svn\**" />
       <MPUrlSourceSplitterFiles Include="$(TargetDir)MPUrlSourceSplitter\*.*" />
-	  <SiteUtilDllFiles Include="$(SolutionDir)Build\SiteUtilDlls\OnlineVideos.Sites.*.dll" />
+      <SiteUtilDllFiles Include="$(SolutionDir)Build\SiteUtilDlls\OnlineVideos.Sites.*.dll" />
       <SiteUtilDllFiles Include="$(SolutionDir)Build\SiteUtilDlls\OnlineVideos.Sites.*.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
-	  <SiteIconFiles Include="$(SolutionDir)SiteImages\Icons\*.*" />
+      <SiteIconFiles Include="$(SolutionDir)SiteImages\Icons\*.*" />
     </ItemGroup>
 
     <!-- Copy all plugin files to MediaPortal2 Plugins\OnlineVideos folder -->
     <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginDestination)" />
     <Copy SourceFiles="@(APIFiles)" DestinationFolder="$(PluginDestination)" />
-    <Copy SourceFiles="@(BrowserHostFiles)" DestinationFolder="$(PluginDestination)" />
+    <Copy SourceFiles="@(WebView2Files)" DestinationFolder="$(PluginDestination)" />
+    <Copy SourceFiles="@(WebView2Runtimes)" DestinationFiles="@(WebView2Runtimes->'$(PluginDestination)runtimes\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(PluginDestination)Language\" />
     <Copy SourceFiles="@(SkinFiles)" DestinationFiles="@(SkinFiles->'$(PluginDestination)Skin\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(MPUrlSourceSplitterFiles)" DestinationFolder="$(PluginDestination)MPUrlSourceSplitter\" />
@@ -40,7 +43,8 @@
     </PropertyGroup>
     <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PackageContent)" />
     <Copy SourceFiles="@(APIFiles)" DestinationFolder="$(PackageContent)" />
-    <Copy SourceFiles="@(BrowserHostFiles)" DestinationFolder="$(PackageContent)" />
+    <Copy SourceFiles="@(WebView2Files)" DestinationFolder="$(PackageContent)" />
+    <Copy SourceFiles="@(WebView2Runtimes)" DestinationFiles="@(WebView2Runtimes->'$(PackageContent)runtimes\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(PackageContent)Language\" />
     <Copy SourceFiles="@(SkinFiles)" DestinationFiles="@(SkinFiles->'$(PackageContent)Skin\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(MPUrlSourceSplitterFiles)" DestinationFolder="$(PackageContent)MPUrlSourceSplitter\" />

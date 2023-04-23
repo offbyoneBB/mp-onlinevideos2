@@ -4,6 +4,7 @@ using MediaPortal.Common.Logging;
 using MediaPortal.UI.Presentation.Players;
 using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.UI.SkinEngine.Controls.Panels;
+using OnlineVideos.MediaPortal2.Player;
 using SharpDX;
 using Point = System.Drawing.Point;
 
@@ -23,9 +24,9 @@ namespace OnlineVideos.MediaPortal2.Controls
             for (int index = 0; index < playerContextManager.NumActivePlayerContexts; index++)
             {
                 IPlayerContext playerContext = playerContextManager.GetPlayerContext(index);
-                if (playerContext != null && playerContext.CurrentPlayer is WebBrowserVideoPlayer)
+                if (playerContext != null && playerContext.CurrentPlayer is WebViewPlayer)
                 {
-                    WebBrowserVideoPlayer webPlayer = (WebBrowserVideoPlayer)playerContext.CurrentPlayer;
+                    WebViewPlayer webPlayer = (WebViewPlayer)playerContext.CurrentPlayer;
                     webPlayer.TargetBounds = TransformBoundingBox(BoundingBox);
                 }
             }
@@ -36,11 +37,11 @@ namespace OnlineVideos.MediaPortal2.Controls
         /// </summary>
         /// <param name="boundingBox"></param>
         /// <returns></returns>
-        private RectangleF TransformBoundingBox(RectangleF boundingBox)
+        private System.Drawing.RectangleF TransformBoundingBox(RectangleF boundingBox)
         {
             var mainForm = ServiceRegistration.Get<IScreenControl>() as Form;
             if (mainForm == null)
-                return boundingBox;
+                return new System.Drawing.RectangleF(boundingBox.X, boundingBox.Y, boundingBox.Width, boundingBox.Height);
 
             var mainFormScreen = System.Windows.Forms.Screen.FromControl(mainForm);
             var mainLocation = mainForm.Location;
@@ -69,7 +70,7 @@ namespace OnlineVideos.MediaPortal2.Controls
             // Then move to compensate window position
             var newX = boundingBox.X * ratioScreenToSkinWidth + mainLocation.X;
             var newY = boundingBox.Y * ratioScreenToSkinHeight + mainLocation.Y;
-            RectangleF newBBOX = new RectangleF(newX, newY, newWidth, newHeight);
+            System.Drawing.RectangleF newBBOX = new System.Drawing.RectangleF(newX, newY, newWidth, newHeight);
             ServiceRegistration.Get<ILogger>().Info("OVP: Transformed BBOX: {0}", newBBOX);
             return newBBOX;
         }

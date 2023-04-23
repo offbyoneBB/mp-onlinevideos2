@@ -38,7 +38,7 @@ namespace OnlineVideos.MediaPortal2
 
             // All non-default media item aspects must be registered
             var miatr = ServiceRegistration.Get<IMediaItemAspectTypeRegistration>();
-            miatr.RegisterLocallyKnownMediaItemAspectType(OnlineVideosAspect.Metadata);
+            miatr.RegisterLocallyKnownMediaItemAspectTypeAsync(OnlineVideosAspect.Metadata).Wait();
 
             InitializeOnlineVideoSettings();
 

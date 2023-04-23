@@ -52,7 +52,7 @@ namespace OnlineVideos.Helpers
             {
                 Log.Error("WebViewHelper creation not called on the MPMain thread");
             }
-            else
+            //else
             {
                 Log.Debug("Creating WebViewHelper");
                 webView = new WebView2();

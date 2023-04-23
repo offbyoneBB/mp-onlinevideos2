@@ -185,7 +185,7 @@ namespace OnlineVideos.MediaPortal2
 
         public void Play(List<string> urls)
         {
-            if (SiteSettings.Player != PlayerType.Browser)
+            if (SiteSettings.Player != PlayerType.Webview)
                 Helpers.UriUtils.RemoveInvalidUrls(urls);
             if (urls != null && urls.Count > 0)
             {

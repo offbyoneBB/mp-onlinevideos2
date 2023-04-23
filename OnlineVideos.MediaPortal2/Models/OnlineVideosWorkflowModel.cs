@@ -7,9 +7,13 @@ using MediaPortal.UI.Presentation.Models;
 using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.UI.Presentation.Workflow;
 using OnlineVideos.Downloading;
+using OnlineVideos.Helpers;
+using OnlineVideos.MediaPortal2.Player;
+using OnlineVideos.Sites;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -19,16 +23,22 @@ namespace OnlineVideos.MediaPortal2
         {
             SiteGroupsList = new ItemsList();
             SitesList = new ItemsList();
-            
+
             // create a message queue where we listen to changes to the sites
             _messageQueue = new AsynchronousMessageQueue(this, new string[] { OnlineVideosMessaging.CHANNEL });
             _messageQueue.MessageReceived += new MessageReceivedHandler(OnlineVideosMessageReceived);
             _messageQueue.Start();
+
+
+            // Dummy access from MainThread to init control
+            var helper = new STAFormHelper();
+            _webViewForm = helper.CreateSTAForm();
         }
 
         protected AsynchronousMessageQueue _messageQueue;
-        
-        bool sitesListHasAllSites = false;
+        protected readonly Form _webViewForm;
+
+        bool _sitesListHasAllSites = false;
 
         SiteViewModel _focusedSite;
         public SiteViewModel FocusedSite
@@ -65,7 +75,7 @@ namespace OnlineVideos.MediaPortal2
                 var siteutils = OnlineVideoSettings.Instance.SiteUtilsList;
                 SitesList.Add(new SiteViewModel(siteutils[siteName]));
             }
-            sitesListHasAllSites = false;
+            _sitesListHasAllSites = false;
             SitesList.FireChange();
             IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
             workflowManager.NavigatePushAsync(Guids.WorkflowStateSites, new NavigationContextConfig() { NavigationContextDisplayLabel = siteGroupModel.Labels["Name"].ToString() });
@@ -79,7 +89,7 @@ namespace OnlineVideos.MediaPortal2
                 BackgroundTask.Instance.Start<bool>(
                     () =>
                     {
-                        siteModel.Site.DiscoverDynamicCategories();
+                        siteModel.Site.SetWebView().DiscoverDynamicCategories();
                         return true;
                     },
                     (success, result) =>
@@ -95,7 +105,7 @@ namespace OnlineVideos.MediaPortal2
             else
             {
                 SelectedSite = siteModel;
-                ShowCategories(siteModel.Site.Settings.Categories, SelectedSite.Name);
+                ShowCategories(siteModel.Site.SetWebView().Settings.Categories, SelectedSite.Name);
             }
         }
 
@@ -108,7 +118,7 @@ namespace OnlineVideos.MediaPortal2
                 BackgroundTask.Instance.Start<bool>(
                     () =>
                     {
-                        SelectedSite.Site.DiscoverNextPageCategories(categoryModel.Category as NextPageCategory);
+                        SelectedSite.Site.SetWebView().DiscoverNextPageCategories(categoryModel.Category as NextPageCategory);
                         return true;
                     },
                     (success, result) =>
@@ -135,7 +145,7 @@ namespace OnlineVideos.MediaPortal2
                         BackgroundTask.Instance.Start<bool>(
                             () =>
                             {
-                                SelectedSite.Site.DiscoverSubCategories(categoryModel.Category);
+                                SelectedSite.Site.SetWebView().DiscoverSubCategories(categoryModel.Category);
                                 return true;
                             },
                             (success, result) =>
@@ -160,7 +170,7 @@ namespace OnlineVideos.MediaPortal2
                     BackgroundTask.Instance.Start<List<VideoInfo>>(
                         () =>
                         {
-                            return SelectedSite.Site.GetVideos(categoryModel.Category);
+                            return SelectedSite.Site.SetWebView().GetVideos(categoryModel.Category);
                         },
                         (success, videos) =>
                         {
@@ -183,7 +193,7 @@ namespace OnlineVideos.MediaPortal2
                 BackgroundTask.Instance.Start<List<VideoInfo>>(
                     () =>
                     {
-                        return SelectedSite.Site.GetNextPageVideos();
+                        return SelectedSite.Site.SetWebView().GetNextPageVideos();
                     },
                     (success, nextPageVideos) =>
                     {
@@ -207,7 +217,7 @@ namespace OnlineVideos.MediaPortal2
                     BackgroundTask.Instance.Start<List<DetailVideoInfo>>(
                         () =>
                         {
-                            return ((Sites.IChoice)SelectedSite.Site).GetVideoChoices(videoModel.VideoInfo);
+                            return ((Sites.IChoice)SelectedSite.Site.SetWebView()).GetVideoChoices(videoModel.VideoInfo);
                         },
                         (success, choices) =>
                         {
@@ -225,13 +235,13 @@ namespace OnlineVideos.MediaPortal2
                     BackgroundTask.Instance.Start<List<string>>(
                         () =>
                         {
-                            return SelectedSite.Site.GetMultipleVideoUrls(videoModel.VideoInfo);
+                            return SelectedSite.Site.SetWebView().GetMultipleVideoUrls(videoModel.VideoInfo);
                         },
                         (success, urls) =>
                         {
                             if (success)
                             {
-                                if (SelectedSite.Site.Settings.Player != PlayerType.Browser)
+                                if (SelectedSite.Site.Settings.Player != PlayerType.Webview)
                                     Helpers.UriUtils.RemoveInvalidUrls(urls);
                                 // if no valid urls were returned show error msg
                                 if (urls == null || urls.Count == 0)
@@ -256,13 +266,13 @@ namespace OnlineVideos.MediaPortal2
             BackgroundTask.Instance.Start<List<string>>(
                 () =>
                 {
-                    return SelectedSite.Site.GetMultipleVideoUrls(videoModel.VideoInfo);
+                    return SelectedSite.Site.SetWebView().GetMultipleVideoUrls(videoModel.VideoInfo);
                 },
                 (success, urls) =>
                 {
                     if (success)
                     {
-                        if (SelectedSite.Site.Settings.Player != PlayerType.Browser)
+                        if (SelectedSite.Site.Settings.Player != PlayerType.Webview)
                             Helpers.UriUtils.RemoveInvalidUrls(urls);
                         // if no valid urls were returned show error msg
                         if (urls == null || urls.Count == 0)
@@ -285,7 +295,7 @@ namespace OnlineVideos.MediaPortal2
             BackgroundTask.Instance.Start<List<SearchResultItem>>(
                 () =>
                 {
-                    return SelectedSite.Site.Search(SearchString);
+                    return SelectedSite.Site.SetWebView().Search(SearchString);
                 },
                 (success, result) =>
                 {
@@ -302,7 +312,7 @@ namespace OnlineVideos.MediaPortal2
             var settings = ServiceRegistration.Get<ISettingsManager>().Load<Configuration.Settings>();
 
             // when going to sites we need to rebuild the list of sites with all sites if not already done
-            if (!settings.GroupSitesByLanguage && !sitesListHasAllSites)
+            if (!settings.GroupSitesByLanguage && !_sitesListHasAllSites)
             {
                 BuildSitesList();
             }
@@ -327,7 +337,7 @@ namespace OnlineVideos.MediaPortal2
                     SitesList.Add(new SiteViewModel(site.Value));
                 }
             }
-            sitesListHasAllSites = true;
+            _sitesListHasAllSites = true;
             SitesList.FireChange();
         }
 
@@ -395,7 +405,7 @@ namespace OnlineVideos.MediaPortal2
         {
             // pop all states up to the site state from the current navigation stack
             IWorkflowManager workflowManager = ServiceRegistration.Get<IWorkflowManager>();
-            while (workflowManager.NavigationContextStack.Peek().Predecessor != null && 
+            while (workflowManager.NavigationContextStack.Peek().Predecessor != null &&
                 workflowManager.NavigationContextStack.Peek().Predecessor.WorkflowState.StateId != Guids.WorkflowStateSites)
             {
                 workflowManager.NavigationContextStack.Pop();
@@ -431,7 +441,7 @@ namespace OnlineVideos.MediaPortal2
                     case OnlineVideosMessaging.MessageType.RebuildSites:
                         SiteGroupsList.Clear();
                         SitesList.Clear();
-                        sitesListHasAllSites = false;
+                        _sitesListHasAllSites = false;
                         break;
                 }
             }
@@ -556,4 +566,16 @@ namespace OnlineVideos.MediaPortal2
         #endregion
     }
 
+    public static class WebViewExtensions
+    {
+        public static SiteUtilBase SetWebView(this SiteUtilBase siteUtil)
+        {
+            if (siteUtil is INeedsWebView webView)
+            {
+                webView.SetWebviewHelper(WebViewHelper.Instance);
+            }
+            return siteUtil;
+        }
+
+    }
 }
