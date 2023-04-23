@@ -142,8 +142,6 @@ namespace OnlineVideos.MediaPortal1.Player
                         ((IWebViewSiteUtil)_siteUtil).DoPlay();
                     }
                 }
-                if (disableVMRWhenRunning)
-                    GUIGraphicsContext.Vmr9Active = playState==PlayState.Playing;
             }
         }
 
