@@ -118,7 +118,6 @@
     <Compile Include="Models\SiteManagementWorkflowModel.cs" />
     <Compile Include="OnlineVideosPlugin.cs" />
     <Compile Include="Player\OnlineVideoPlayerBuilder.cs" />
-    <Compile Include="Player\STAFormHelper.cs" />
     <Compile Include="Player\WebViewPlayer.cs" />
     <Compile Include="ViewModels\CategoryViewModel.cs" />
     <Compile Include="Guids.cs" />

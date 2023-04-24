@@ -159,7 +159,8 @@ namespace OnlineVideos.MediaPortal2.Player
                 //// Fullscreen splash
                 //loadingScreen.ShowSplashScreen();
 
-                _wvHelper = WebViewHelper.Instance;
+                var mainForm = ServiceRegistration.Get<IScreenControl>() as Form;
+                _wvHelper = WebViewHelper.GetInstance(mainForm);
                 _webView = _wvHelper.GetWebViewForPlayer;
                 //_webView.Location = new Point((int)TargetBounds.Left, (int)TargetBounds.Top);
                 //_webView.Size = new Size(400, 300); //new Size((int)TargetBounds.Width, (int)TargetBounds.Height);

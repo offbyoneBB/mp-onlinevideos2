@@ -579,7 +579,7 @@ namespace OnlineVideos.MediaPortal1
 				ovGuiInstance.LatestVideosManager.Stop();
 			}
             //Dispose of the webviewhelper if it was created
-            OnlineVideos.Helpers.WebViewHelper.Dispose();
+            OnlineVideos.Helpers.WebViewHelper.DisposeInstance();
 
 			// now reload the appdomain
 			OnlineVideoSettings.Reload();

@@ -141,7 +141,7 @@ namespace OnlineVideos.Sites
             timer.Tick += (s, e) =>
             {
                 vidSelector = @"document.getElementsByTagName(""video"")[0]";
-                timer.Stop();
+                timer?.Stop();
                 timer = null;
             };
             timer.Interval = 2000;

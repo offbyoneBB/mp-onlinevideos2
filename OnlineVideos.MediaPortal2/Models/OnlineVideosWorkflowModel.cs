@@ -8,7 +8,6 @@ using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.UI.Presentation.Workflow;
 using OnlineVideos.Downloading;
 using OnlineVideos.Helpers;
-using OnlineVideos.MediaPortal2.Player;
 using OnlineVideos.Sites;
 using System;
 using System.Collections.Generic;
@@ -28,15 +27,9 @@ namespace OnlineVideos.MediaPortal2
             _messageQueue = new AsynchronousMessageQueue(this, new string[] { OnlineVideosMessaging.CHANNEL });
             _messageQueue.MessageReceived += new MessageReceivedHandler(OnlineVideosMessageReceived);
             _messageQueue.Start();
-
-
-            // Dummy access from MainThread to init control
-            var helper = new STAFormHelper();
-            _webViewForm = helper.CreateSTAForm();
         }
 
         protected AsynchronousMessageQueue _messageQueue;
-        protected readonly Form _webViewForm;
 
         bool _sitesListHasAllSites = false;
 
@@ -572,7 +565,8 @@ namespace OnlineVideos.MediaPortal2
         {
             if (siteUtil is INeedsWebView webView)
             {
-                webView.SetWebviewHelper(WebViewHelper.Instance);
+                var mainForm = ServiceRegistration.Get<IScreenControl>() as Form;
+                webView.SetWebviewHelper(WebViewHelper.GetInstance(mainForm));
             }
             return siteUtil;
         }
