@@ -2748,23 +2748,16 @@ namespace OnlineVideos.MediaPortal1
             if (resolve)
             {
                 saveItems.ChosenPlaybackOption = lsUrl;
-                if (saveItems.CurrentItem.VideoInfo.GetType().FullName == typeof(VideoInfo).FullName)
+                // display wait cursor as GetPlaybackOptionUrl might do webrequests when overridden
+                Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
                 {
-                    SaveVideo_Step3(saveItems, saveItems.CurrentItem.VideoInfo.GetPlaybackOptionUrl(lsUrl), enque);
-                }
-                else
+                    return saveItems.CurrentItem.VideoInfo.GetPlaybackOptionUrl(lsUrl);
+                },
+                delegate (bool success, object result)
                 {
-                    // display wait cursor as GetPlaybackOptionUrl might do webrequests when overridden
-                    Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(delegate ()
-                    {
-                        return saveItems.CurrentItem.VideoInfo.GetPlaybackOptionUrl(lsUrl);
-                    },
-                    delegate (bool success, object result)
-                    {
-                        if (success) SaveVideo_Step3(saveItems, result as string, enque);
-                    }
-                    , Translation.Instance.GettingPlaybackUrlsForVideo, true);
+                    if (success) SaveVideo_Step3(saveItems, result as string, enque);
                 }
+                , Translation.Instance.GettingPlaybackUrlsForVideo, true);
             }
             else
             {
