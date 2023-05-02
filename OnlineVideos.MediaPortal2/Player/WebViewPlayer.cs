@@ -25,7 +25,7 @@ namespace OnlineVideos.MediaPortal2.Player
     {
         public const string WEBVIEW_MIMETYPE = "video/webview2";
         private string _fileOrUrl;
-        private Control _mainForm;
+        private Control _playerForm;
 
         // Player event delegates
         protected PlayerEventDlgt _started = null;
@@ -48,14 +48,14 @@ namespace OnlineVideos.MediaPortal2.Player
 
         public WebViewPlayer()
         {
-            _mainForm = Control.FromHandle(ServiceRegistration.Get<IScreenControl>().MainWindowHandle);
+            //_mainForm = Control.FromHandle(ServiceRegistration.Get<IScreenControl>().MainWindowHandle);
         }
 
         private void Invoke(Action action)
         {
-            if (_mainForm.InvokeRequired)
+            if (_playerForm.InvokeRequired)
             {
-                IAsyncResult iar = _mainForm.BeginInvoke(action);
+                IAsyncResult iar = _playerForm.BeginInvoke(action);
                 iar.AsyncWaitHandle.WaitOne();
             }
             else
@@ -66,11 +66,11 @@ namespace OnlineVideos.MediaPortal2.Player
 
         private bool Invoke(Func<bool> func)
         {
-            if (_mainForm.InvokeRequired)
+            if (_playerForm.InvokeRequired)
             {
-                IAsyncResult iar = _mainForm.BeginInvoke(func);
+                IAsyncResult iar = _playerForm.BeginInvoke(func);
                 iar.AsyncWaitHandle.WaitOne();
-                return (bool)_mainForm.EndInvoke(iar);
+                return (bool)_playerForm.EndInvoke(iar);
             }
             else
             {
@@ -139,6 +139,13 @@ namespace OnlineVideos.MediaPortal2.Player
         /// <returns></returns>
         public bool Play()
         {
+            if (_wvHelper == null)
+            {
+                var mainForm = ServiceRegistration.Get<IScreenControl>() as Form;
+                _wvHelper = WebViewHelper.GetInstance(mainForm);
+                _webView = _wvHelper.GetWebViewForPlayer;
+                _playerForm = _wvHelper.SynchronizationContext;
+            }
             return Invoke(PlayInternal);
         }
 
@@ -159,9 +166,6 @@ namespace OnlineVideos.MediaPortal2.Player
                 //// Fullscreen splash
                 //loadingScreen.ShowSplashScreen();
 
-                var mainForm = ServiceRegistration.Get<IScreenControl>() as Form;
-                _wvHelper = WebViewHelper.GetInstance(mainForm);
-                _webView = _wvHelper.GetWebViewForPlayer;
                 //_webView.Location = new Point((int)TargetBounds.Left, (int)TargetBounds.Top);
                 //_webView.Size = new Size(400, 300); //new Size((int)TargetBounds.Width, (int)TargetBounds.Height);
                 //_webView.Name = "webview";
@@ -216,7 +220,7 @@ namespace OnlineVideos.MediaPortal2.Player
                 //}
                 _webView.NavigationCompleted -= WebView_FirstNavigationCompleted;
                 _webView.NavigationCompleted -= WebView_FurtherNavigationCompleted;
-                _webView.Source = new Uri("about:blank");
+                _wvHelper.SetUrl("about:blank");
             }
             catch { }
         }
@@ -231,7 +235,7 @@ namespace OnlineVideos.MediaPortal2.Player
         {
             Shutdown();
             State = PlayerState.Ended;
-            FireEnded();
+            FireStopped();
         }
 
         public string Name { get; private set; }
@@ -307,8 +311,8 @@ namespace OnlineVideos.MediaPortal2.Player
                 {
                     System.Action si = () =>
                     {
-                        _webView.Location = new Point((int)_targetBounds.Left, (int)_targetBounds.Top);
-                        _webView.Size = new Size((int)_targetBounds.Width, (int)_targetBounds.Height);
+                        _playerForm.Location = new Point((int)_targetBounds.Left, (int)_targetBounds.Top);
+                        _playerForm.Size = new Size((int)_targetBounds.Width, (int)_targetBounds.Height);
                         //_webView.Location = new Point(FullScreen ? 0 : GUIGraphicsContext.VideoWindow.X, FullScreen ? 0 : GUIGraphicsContext.VideoWindow.Y);
                         //_webView.ClientSize = new Size(FullScreen ? GUIGraphicsContext.Width : GUIGraphicsContext.VideoWindow.Width, FullScreen ? GUIGraphicsContext.Height : GUIGraphicsContext.VideoWindow.Height);
                     };
@@ -445,7 +449,7 @@ namespace OnlineVideos.MediaPortal2.Player
         {
             //if (disableVMRWhenRunning)
             //    GUIGraphicsContext.Vmr9Active = true;
-            _webView.Visible = true;
+            _playerForm.Visible = true;
             //GUIWaitCursor.Hide(); // hide the wait cursor
             _playState = PlayState.Playing;
             _siteUtil.StartPlayback();

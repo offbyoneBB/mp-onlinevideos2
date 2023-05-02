@@ -11,10 +11,12 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WebView2.DevTools.Dom;
+using HtmlElement = WebView2.DevTools.Dom.HtmlElement;
 
 namespace OnlineVideos.Helpers
 {
-    public class WebViewHelper : MarshalByRefObject, IDisposable
+    public class WebViewHelper : MarshalByRefObject, IAsyncDisposable
     {
         protected static WebViewHelper _instance = null;
         protected static readonly ManualResetEvent _readyEvent = new ManualResetEvent(false);
@@ -40,9 +42,9 @@ namespace OnlineVideos.Helpers
             }
         }
 
-        private static void OnMainFormClosed(object sender, FormClosedEventArgs formClosedEventArgs)
+        private static async void OnMainFormClosed(object sender, FormClosedEventArgs formClosedEventArgs)
         {
-            DisposeInstance();
+            await DisposeInstance();
         }
 
         private static void CreateInstance()
@@ -54,13 +56,11 @@ namespace OnlineVideos.Helpers
             // ... until form gets closed
         }
 
-        public static void DisposeInstance()
+        public static async Task DisposeInstance()
         {
-            lock (_readyEvent)
-            {
-                _instance?.Dispose();
-                _instance = null;
-            }
+            if (_instance != null)
+                await _instance.DisposeAsync();
+            _instance = null;
         }
 
         public override object InitializeLifetimeService()
@@ -69,19 +69,28 @@ namespace OnlineVideos.Helpers
             return null;
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
+            if (_devtoolsContext != null && !_webView.IsDisposed)
+                await Invoke(() => _devtoolsContext.DisposeAsync());
             _form.Closed -= FormOnClosed;
             _form.Close();
         }
 
 
         //Only access this from the WebViewPlayer, as it can only be accessed from the main appdomain.
-        public WebView2 GetWebViewForPlayer { get { return _webView; } }
+        public Microsoft.Web.WebView2.WinForms.WebView2 GetWebViewForPlayer { get { return _webView; } }
+        public WebView2DevToolsContext DevTools => _devtoolsContext;
 
         private readonly Form _form;
-        private readonly WebView2 _webView;
+        private readonly Microsoft.Web.WebView2.WinForms.WebView2 _webView;
         private bool _navCompleted;
+        private WebView2DevToolsContext _devtoolsContext;
+
+        public Form SynchronizationContext
+        {
+            get { return _form; }
+        }
 
         private WebViewHelper()
         {
@@ -95,14 +104,14 @@ namespace OnlineVideos.Helpers
                 Log.Debug("Creating WebViewHelper");
 
                 _form = new Form();
-                _form.FormBorderStyle = FormBorderStyle.SizableToolWindow;
+                _form.FormBorderStyle = FormBorderStyle.None;
                 _form.AutoScaleMode = AutoScaleMode.None;
                 _form.TopMost = true;
                 _form.Width = 400;
                 _form.Height = 300;
                 _form.Closed += FormOnClosed;
 
-                _webView = new WebView2();
+                _webView = new Microsoft.Web.WebView2.WinForms.WebView2();
                 _webView.Name = "OV_Webview";
                 _webView.CoreWebView2InitializationCompleted += WebView_CoreWebView2InitializationCompleted;
                 String cacheFolder = Path.Combine(Path.GetTempPath(), "WebViewplayer");
@@ -115,9 +124,9 @@ namespace OnlineVideos.Helpers
             }
         }
 
-        private static void FormOnClosed(object sender, EventArgs args)
+        private static async void FormOnClosed(object sender, EventArgs args)
         {
-            DisposeInstance();
+            await DisposeInstance();
         }
 
         private void WebView_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
@@ -282,12 +291,16 @@ namespace OnlineVideos.Helpers
             while (!_navCompleted);
         }
 
-        private void Wv2_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
+        private async void Wv2_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
 #if fulllogging
             Log.Debug("Navigation complete, id=" + e.NavigationId + " " + e.IsSuccess.ToString() + " " + e.HttpStatusCode.ToString());
 #endif
             _navCompleted = true;
+
+            if (_devtoolsContext == null)
+                _devtoolsContext = await _webView.CoreWebView2.CreateDevToolsContextAsync();
+
             if (!e.IsSuccess)
             {
                 Log.Debug("Error navigating, result: {0}", e.HttpStatusCode);
@@ -370,5 +383,25 @@ namespace OnlineVideos.Helpers
         {
             await _webView.ExecuteScriptAsync(js);
         }
+    }
+
+    public static class DomExtensions
+    {
+        public static async Task<string> GetTextContentBySelector(this HtmlElement webElement, string selector)
+        {
+            var element = await webElement.QuerySelectorAsync(selector);
+            if (element != null)
+                return await element.GetTextContentAsync();
+            return null;
+        }
+
+        public static async Task<string> GetAttributeBySelector(this HtmlElement webElement, string selector, string attribute)
+        {
+            var element = await webElement.QuerySelectorAsync(selector);
+            if (element != null)
+                return await element.GetAttributeAsync(attribute);
+            return null;
+        }
+
     }
 }
