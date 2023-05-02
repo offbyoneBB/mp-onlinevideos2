@@ -330,6 +330,23 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class DropLoad : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "dropload.io";
+        }
+        public override string GetVideoUrl(string url)
+        {
+            var data = GetWebData(url);
+            string packed = Helpers.StringUtils.GetSubString(data, @"return p}", @"</script>");
+            string unpacked = MyStringUtils.MyUnPack(packed);
+            var m3u8url = Helpers.StringUtils.GetSubString(unpacked, @"file:""", @"""");
+            var m3u8data = GetWebData(m3u8url);
+            return Helpers.HlsPlaylistParser.GetPlaybackOptions(m3u8data, m3u8url).LastOrDefault().Value;
+        }
+    }
+
     public class EnterVIdeo : HosterBase, ISubtitle
     {
         string subUrl;
@@ -1055,6 +1072,22 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class StreamHide : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "streamhide.to";
+        }
+        public override string GetVideoUrl(string url)
+        {
+            var data = GetWebData(url);
+            string packed = Helpers.StringUtils.GetSubString(data, @"return p}", @"</script>");
+            string unpacked = MyStringUtils.MyUnPack(packed);
+            var m3u8url = Helpers.StringUtils.GetSubString(unpacked, @"file:""", @"""");
+            var m3u8data = GetWebData(m3u8url);
+            return Helpers.HlsPlaylistParser.GetPlaybackOptions(m3u8data, m3u8url).LastOrDefault().Value;
+        }
+    }
     public class StreamIn : MyHosterBase
     {
         public override string GetHosterUrl()
@@ -1369,7 +1402,7 @@ namespace OnlineVideos.Hoster
 
         public override string GetVideoUrl(string url)
         {
-            string data = wv.GetHtml(url);
+            string data = wv.GetHtml(url, blockOtherRequests: false);
             string packed = Helpers.StringUtils.GetSubString(data, @"return p}", @"</script>");
             if (!String.IsNullOrEmpty(packed))
             {
@@ -1859,6 +1892,22 @@ namespace OnlineVideos.Hoster
                 TcUrl = streamer
             };
             return rtmpUrl.ToString();
+        }
+    }
+
+    public class YoudBoox : HosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "youdboox.com";
+        }
+        public override string GetVideoUrl(string url)
+        {
+            var data = GetWebData(url);
+            var m = Regex.Match(data, @"<source\ssrc=""(?<url>[^""]*)""\stype=""video/mp4""\s*/>");
+            if (m.Success)
+                return m.Groups["url"].Value;
+            return null;
         }
     }
 
