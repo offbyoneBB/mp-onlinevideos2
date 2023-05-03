@@ -61,16 +61,12 @@ namespace OnlineVideos.MediaPortal2.Controls
                 mainHeight = mainFormScreen.Bounds.Height;
             }
 
-            // First compensate size: ratio between "control to screen" vs. "screen to mainwindow"
-            var ratioScreenToSkinWidth = mainFormScreen.Bounds.Width / (float)Screen.SkinWidth;
-            var ratioScreenToSkinHeight = mainFormScreen.Bounds.Height / (float)Screen.SkinHeight;
-            var newWidth = boundingBox.Width / mainFormScreen.Bounds.Width * mainWidth * ratioScreenToSkinWidth;
-            var newHeight = boundingBox.Height / mainFormScreen.Bounds.Height * mainHeight * ratioScreenToSkinHeight;
+            var screenWidthToSkin = boundingBox.Width * mainWidth / Screen.SkinWidth;
+            var screenHeightToSkin = boundingBox.Height * mainHeight / Screen.SkinHeight;
+            var boxLeft = mainLocation.X + boundingBox.Left * mainWidth / Screen.SkinWidth;
+            var boxTop = mainLocation.Y + boundingBox.Top * mainHeight / Screen.SkinHeight;
 
-            // Then move to compensate window position
-            var newX = boundingBox.X * ratioScreenToSkinWidth + mainLocation.X;
-            var newY = boundingBox.Y * ratioScreenToSkinHeight + mainLocation.Y;
-            System.Drawing.RectangleF newBBOX = new System.Drawing.RectangleF(newX, newY, newWidth, newHeight);
+            System.Drawing.RectangleF newBBOX = new System.Drawing.RectangleF(boxLeft, boxTop, screenWidthToSkin, screenHeightToSkin);
             ServiceRegistration.Get<ILogger>().Info("OVP: Transformed BBOX: {0}", newBBOX);
             return newBBOX;
         }
