@@ -1,0 +1,842 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary
+    xmlns="www.team-mediaportal.com/2008/mpf/directx"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ovs="clr-namespace:OnlineVideos.MediaPortal2;assembly=OnlineVideos.MediaPortal2"
+    DependsOnStyleResources="Buttons,Colors,Consts,OnlineVideosConsts,OtherControlsOverrides">
+
+    <ovs:SiteUtilIconConverter x:Key="ovsSiteUtilIconConverter"/>
+    <ovs:LanguageIconConverter x:Key="ovsLanguageIconConverter"/>
+    <ovs:BoolFocusPrioConverter x:Key="ovsBoolFocusPrioConverter"/>
+    <ovs:SiteStateColorConverter x:Key="ovsSiteStateColorConverter"/>
+
+    <Model x:Key="GenericViewModeModel" Id="08BB1CFE-8AF3-4DD1-BB9C-582DD7EA8BBF"/>
+    <Model x:Key="SkinSettingsModel" Id="13961014-16C4-4361-9751-8E2C585EFD44"/>
+
+    <ControlTemplate x:Key="ViewTemplate" TargetType="{x:Type ListView}">
+      <ScrollViewer CanContentScroll="True" Margin="0" Style="{ThemeResource VerticalMediaScrollViewerStyle}"
+                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                    HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Disabled" >
+        <ItemsPresenter VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+      </ScrollViewer>
+    </ControlTemplate>
+    
+  <!-- ################################################################# -->
+  <!-- #################   SITE GROUP VIEW STYLES   #################### -->
+  <!-- ################################################################# -->
+
+  <Style x:Key="SiteGroupListItemContainerStyle" TargetType="{x:Type ListViewItem}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListViewItem}">
+          <Button Style="{ThemeResource ButtonWideStyle_List}">
+            <Button.Command>
+              <Command Source="{DynamicResource OnlineVideosModel}" Path="SelectSiteGroup" Parameters="{LateBoundValue BindingValue={Binding}}"/>
+            </Button.Command>
+            <Button.Triggers>
+              <Trigger Property="HasFocus" Value="True">
+                <Setter TargetName="ItemLabel" Property="Color" Value="{ThemeResource TextColor}"/>
+                <Setter TargetName="ItemNum" Property="Color" Value="{ThemeResource TextColor}"/>
+                <Setter TargetName="ItemLabel" Property="Scroll" Value="Auto"/>
+                <Setter Property="StackPanel.ZIndex" Value="100.0"/>
+              </Trigger>
+            </Button.Triggers>
+          </Button>
+          <ControlTemplate.Triggers>
+            <Trigger Property="Selected" Value="True">
+              <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  
+  <Style x:Key="SiteGroupGridItemContainerStyle" TargetType="{x:Type ListViewItem}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListViewItem}">
+          <Button Style="{ThemeResource ButtonWideStyle_Grid}">
+            <Button.Command>
+              <Command Source="{DynamicResource OnlineVideosModel}" Path="SelectSiteGroup" Parameters="{LateBoundValue BindingValue={Binding}}"/>
+            </Button.Command>
+            <Button.Triggers>
+              <Trigger Property="HasFocus" Value="True">
+                <Setter TargetName="ItemLabel" Property="Color" Value="{ThemeResource TextColor}"/>
+                <Setter TargetName="ItemLabel" Property="Scroll" Value="Auto"/>
+                <Setter Property="StackPanel.ZIndex" Value="100.0"/>
+              </Trigger>
+            </Button.Triggers>      
+          </Button>
+          <ControlTemplate.Triggers>
+            <Trigger Property="Selected" Value="True">
+              <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <DataTemplate x:Key="SiteGroupListItemDataTemplate" DataType="{x:Type ovs:SiteGroupViewModel}">
+    <DockPanel x:Name="ItemControl" LastChildFill="False">
+      <Image DockPanel.Dock="Left" x:Name="thumb" Stretch="Uniform" Margin="10,0,0,0" Source="{Binding Path=Thumb}" Height="40"/>
+      <Label DockPanel.Dock="Center" x:Name="ItemLabel" FontFamily="SegoeUIBold" Margin="10,0,10,0" Content="{Binding [Name]}"
+             FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource MediaItemUnwatchedColor}"/>
+      <Label x:Name="ItemNum" DockPanel.Dock="Right" HorizontalAlignment="Right" 
+             FontSize="{ThemeResource SmallFontSize}" FontFamily="SegoeUIBold"
+             Margin="0,0,10,0" Content="{Binding Path=Sites.Count}" Color="{ThemeResource MediaItemUnwatchedColor}"/>
+    </DockPanel>
+  </DataTemplate>
+
+  <DataTemplate x:Key="SiteGroupGridItemDataTemplate" DataType="{x:Type ovs:SiteGroupViewModel}">
+    <DockPanel Width="{StaticResource THUMBNAIL_GRID_WIDTH}" Height="{StaticResource THUMBNAIL_GRID_HEIGHT}" Margin="2">
+      <Image DockPanel.Dock="Center" Source="Thumbnail_medium.png" Stretch="Fill" Margin="-6"/>
+      <Rectangle DockPanel.Dock="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Rectangle.Fill>
+          <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} ? {1} : {2}">
+            <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type Button}}" Path="HasFocus"/>
+            <Binding Source="{ThemeResource NereusColorLight}"/>
+            <Binding Source="{ThemeResource NereusColorMedium}"/>
+          </MultiBinding>
+        </Rectangle.Fill>
+      </Rectangle>
+      <Image DockPanel.Dock="Center" x:Name="thumb" Stretch="Uniform" 
+             Margin="{ResolutionResource ovsSiteGroupItemThumbMargin}" Source="{Binding Path=Thumb}"/>
+      <Label DockPanel.Dock="Bottom" x:Name="ItemLabelBig" HorizontalAlignment="Center" Wrap="true" 
+             Content="{Binding [Name]}" IsVisible="{Binding ElementName=thumb, Path=!HasImage}"
+             FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}"/>
+      <Label DockPanel.Dock="Top" HorizontalAlignment="Right" FontSize="{ThemeResource SmallerFontSize}" 
+             Margin="0,8,8,5" Content="{Binding Path=Sites.Count}" Color="{ThemeResource TextColor}"/>
+    </DockPanel>
+  </DataTemplate>
+  
+  <Style x:Key="SiteGroupsListViewStyle" TargetType="{x:Type ListView}">
+    <Setter Property="Template" Value="{ThemeResource ViewTemplate}"/>
+    <BindingSetter Property="ItemTemplate">
+      <BindingSetter.BindingWrapper>
+        <BindingWrapper>
+          <BindingWrapper.Binding>
+            <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
+              <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
+              <Binding Source="{ThemeResource SiteGroupListItemDataTemplate}"/>
+              <Binding Source="{ThemeResource SiteGroupGridItemDataTemplate}"/>
+            </MultiBinding>
+          </BindingWrapper.Binding>
+        </BindingWrapper>
+      </BindingSetter.BindingWrapper>
+    </BindingSetter>
+    <BindingSetter Property="ItemContainerStyle">
+      <BindingSetter.BindingWrapper>
+        <BindingWrapper>
+          <BindingWrapper.Binding>
+            <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
+              <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
+              <Binding Source="{ThemeResource SiteGroupListItemContainerStyle}"/>
+              <Binding Source="{ThemeResource SiteGroupGridItemContainerStyle}"/>
+            </MultiBinding>
+          </BindingWrapper.Binding>
+        </BindingWrapper>
+      </BindingSetter.BindingWrapper>
+    </BindingSetter>
+    <BindingSetter Property="ItemsPanel">
+      <BindingSetter.BindingWrapper>
+        <BindingWrapper>
+          <BindingWrapper.Binding>
+            <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
+              <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
+              <!-- List layout -->
+              <Binding>
+                <Binding.Source>
+                  <ItemsPanelTemplate>
+                    <AnimatedStackPanel x:Name="ListItemsHost" IsItemsHost="True" ScrollMargin="130,130" Margin="1,-10,0,-40"
+                                        LoopScroll="{Binding Source={StaticResource SkinSettingsModel}, Path=[Nereus].EnableLoopScrolling}">
+                      <AnimatedStackPanel.Resources>
+                        <Storyboard x:Key="ScrollAnimation" FillBehavior="HoldEnd">
+                          <DoubleAnimation BeginTime="00:00:00" From="0" To="1" Duration="00:00:00.300" DecelerationRatio="0.3" AccelerationRatio="0.3"
+                                           FillBehavior="HoldEnd" Storyboard.TargetName="ListItemsHost" Storyboard.TargetProperty="ScrollOffsetMultiplier" />
+                        </Storyboard>
+                      </AnimatedStackPanel.Resources>
+                      <AnimatedStackPanel.Triggers>
+                        <EventTrigger RoutedEvent="AnimatedStackPanel.Scroll">
+                          <EventTrigger.Actions>
+                            <BeginStoryboard Storyboard="{ThemeResource ScrollAnimation}"/>
+                          </EventTrigger.Actions>
+                        </EventTrigger>
+                      </AnimatedStackPanel.Triggers>
+                    </AnimatedStackPanel>
+                  </ItemsPanelTemplate>
+                </Binding.Source>
+              </Binding>
+              <!-- Grid layout -->
+              <Binding>
+                <Binding.Source>
+                  <ItemsPanelTemplate>
+                    <AnimatedWrapPanel x:Name="GridItemsHost" IsItemsHost="True" Orientation="Horizontal" ScrollMargin="400,400" Margin="50,-270,0,-305"
+                                       LoopScroll="{Binding Source={StaticResource SkinSettingsModel}, Path=[Nereus].EnableLoopScrolling}">
+                      <AnimatedWrapPanel.Resources>
+                        <Storyboard x:Key="ScrollAnimation" FillBehavior="HoldEnd">
+                          <DoubleAnimation BeginTime="00:00:00" From="0" To="1" Duration="00:00:00.400" DecelerationRatio="0.3" AccelerationRatio="0.3"
+                                           FillBehavior="HoldEnd" Storyboard.TargetName="GridItemsHost" Storyboard.TargetProperty="ScrollOffsetMultiplier" />
+                        </Storyboard>
+                      </AnimatedWrapPanel.Resources>
+                      <AnimatedWrapPanel.Triggers>
+                        <EventTrigger RoutedEvent="AnimatedWrapPanel.Scroll">
+                          <EventTrigger.Actions>
+                            <BeginStoryboard Storyboard="{ThemeResource ScrollAnimation}"/>
+                          </EventTrigger.Actions>
+                        </EventTrigger>
+                      </AnimatedWrapPanel.Triggers>
+                    </AnimatedWrapPanel>
+                  </ItemsPanelTemplate>
+                </Binding.Source>
+              </Binding>
+            </MultiBinding>
+          </BindingWrapper.Binding>
+        </BindingWrapper>
+      </BindingSetter.BindingWrapper>
+    </BindingSetter>
+    <Setter Property="DataStringProvider" Value="{ThemeResource DefaultItemDataStringProvider}"/>
+  </Style>
+
+  <!-- ################################################################# -->
+  <!-- #####################   SITE VIEW STYLES   ###################### -->
+  <!-- ################################################################# -->
+
+  <DataTemplate x:Key="SiteListItemDataTemplate" DataType="{x:Type ovs:SiteViewModel}">
+    <DockPanel x:Name="ItemControl" LastChildFill="False">
+      <Image DockPanel.Dock="Left" x:Name="thumb" Stretch="Uniform" Margin="10,0,0,0" Height="40"
+             Source="{Binding Path=Site, Converter={StaticResource ovsSiteUtilIconConverter}}" />
+      <Label DockPanel.Dock="Center" x:Name="ItemLabel" FontFamily="SegoeUIBold" Margin="10,0,10,0" Content="{Binding Path=Name}"
+             FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource MediaItemUnwatchedColor}"/>
+    </DockPanel>
+  </DataTemplate>
+
+  <DataTemplate x:Key="SiteGridItemDataTemplate" DataType="{x:Type ovs:SiteViewModel}">
+    <DockPanel Width="{StaticResource THUMBNAIL_GRID_WIDTH}" Height="{StaticResource THUMBNAIL_GRID_HEIGHT}" Margin="2">
+      <Image DockPanel.Dock="Center" Source="Thumbnail_medium.png" Stretch="Fill" Margin="-6"/>
+      <Rectangle DockPanel.Dock="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Rectangle.Fill>
+          <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} ? {1} : {2}">
+            <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type Button}}" Path="HasFocus"/>
+            <Binding Source="{ThemeResource NereusColorLight}"/>
+            <Binding Source="{ThemeResource NereusColorMedium}"/>
+          </MultiBinding>
+        </Rectangle.Fill>
+      </Rectangle>
+      <Image DockPanel.Dock="Center" x:Name="thumb" Stretch="Uniform" Source="{Binding Path=Site, Converter={StaticResource ovsSiteUtilIconConverter}}"
+             Margin="{ResolutionResource ovsSiteGroupItemThumbMargin}"/>
+      <Label DockPanel.Dock="Bottom" x:Name="ItemLabel" HorizontalAlignment="Center" VerticalAlignment="Center"
+             Content="{Binding Path=Name}" IsVisible="{Binding ElementName=thumb, Path=!HasImage}" Wrap="true"
+             FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}"/>
+    </DockPanel>
+  </DataTemplate>
+
+  <Style x:Key="SiteListItemContainerStyle" TargetType="{x:Type ListViewItem}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListViewItem}">
+          <Button x:Name="ovsGrowControl" Style="{ThemeResource ButtonWideStyle_List}" Margin="{ResolutionResource ovsSiteItemContainerMargin}">
+            <Button.Command>
+              <Command Source="{DynamicResource OnlineVideosModel}" Path="SelectSite" Parameters="{LateBoundValue BindingValue={Binding}}"/>
+            </Button.Command>
+            <Button.ContextMenuCommand>
+              <Command Source="{Service ScreenManager}" Path="ShowDialog" Parameters="ovsDialogItemContextMenu"/>
+            </Button.ContextMenuCommand>
+            <Button.Triggers>
+              <Trigger Property="HasFocus" Value="True">
+                <Setter TargetName="ItemLabel" Property="Color" Value="{ThemeResource TextColor}"/>
+                <Setter TargetName="ItemLabel" Property="Scroll" Value="Auto"/>
+              </Trigger>
+            </Button.Triggers>
+          </Button>
+          <ControlTemplate.Triggers>
+            <Trigger Property="Selected" Value="True">
+              <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="SiteGridItemContainerStyle" TargetType="{x:Type ListViewItem}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListViewItem}">
+          <Button Style="{ThemeResource ButtonWideStyle_Grid}">
+            <Button.Command>
+              <Command Source="{DynamicResource OnlineVideosModel}" Path="SelectSite" Parameters="{LateBoundValue BindingValue={Binding}}"/>
+            </Button.Command>
+            <Button.ContextMenuCommand>
+              <Command Source="{Service ScreenManager}" Path="ShowDialog" Parameters="ovsDialogItemContextMenu"/>
+            </Button.ContextMenuCommand>
+            <Button.Triggers>
+              <Trigger Property="HasFocus" Value="True">
+                <Setter TargetName="ItemLabel" Property="Color" Value="{ThemeResource TextColor}"/>
+                <Setter TargetName="ItemLabel" Property="Scroll" Value="Auto"/>
+                <Setter Property="StackPanel.ZIndex" Value="100.0"/>
+              </Trigger>
+            </Button.Triggers>
+          </Button>
+          <ControlTemplate.Triggers>
+            <Trigger Property="Selected" Value="True">
+              <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  
+  <Style x:Key="SitesListViewStyle" TargetType="{x:Type ListView}" BasedOn="{ThemeResource SiteGroupsListViewStyle}">
+    <BindingSetter Property="ItemTemplate">
+      <BindingSetter.BindingWrapper>
+        <BindingWrapper>
+          <BindingWrapper.Binding>
+            <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
+              <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
+              <Binding Source="{ThemeResource SiteListItemDataTemplate}"/>
+              <Binding Source="{ThemeResource SiteGridItemDataTemplate}"/>
+            </MultiBinding>
+          </BindingWrapper.Binding>
+        </BindingWrapper>
+      </BindingSetter.BindingWrapper>
+    </BindingSetter>
+    <BindingSetter Property="ItemContainerStyle">
+      <BindingSetter.BindingWrapper>
+        <BindingWrapper>
+          <BindingWrapper.Binding>
+            <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
+              <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
+              <Binding Source="{ThemeResource SiteListItemContainerStyle}"/>
+              <Binding Source="{ThemeResource SiteGridItemContainerStyle}"/>
+            </MultiBinding>
+          </BindingWrapper.Binding>
+        </BindingWrapper>
+      </BindingSetter.BindingWrapper>
+    </BindingSetter>
+    <Setter Property="DataStringProvider" Value="{ThemeResource DefaultItemDataStringProvider}"/>
+  </Style>
+
+  <!-- ################################################################# -->
+  <!-- ###################   CATEGORY VIEW STYLES   #################### -->
+  <!-- ################################################################# -->
+
+  <DataTemplate x:Key="CategoryGridItemDataTemplate" DataType="{x:Type ovs:CategoryViewModel}">
+    <DockPanel Width="{StaticResource THUMBNAIL_GRID_WIDTH}" Height="{StaticResource THUMBNAIL_GRID_HEIGHT}" Margin="2">
+      <Image DockPanel.Dock="Center" Source="Thumbnail_medium.png" Stretch="Fill" Margin="-6"/>
+      <Rectangle DockPanel.Dock="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Rectangle.Fill>
+          <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} ? {1} : {2}">
+            <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type Button}}" Path="HasFocus"/>
+            <Binding Source="{ThemeResource NereusColorLight}"/>
+            <Binding Source="{ThemeResource NereusColorMedium}"/>
+          </MultiBinding>
+        </Rectangle.Fill>
+      </Rectangle>
+      <Label DockPanel.Dock="Top" HorizontalAlignment="Right" FontSize="{ThemeResource SmallerFontSize}" Margin="8" 
+             Content="{Binding Path=EstimatedChildren}" Color="{ThemeResource TextColor}" IsVisible="{Binding ElementName=thumb, Path=!HasImage}"/>
+      <Image DockPanel.Dock="Center" x:Name="thumb" Stretch="UniformToFill" Source="{Binding Path=Thumb}"/>
+      <Label DockPanel.Dock="Center" x:Name="ItemLabel" HorizontalAlignment="Center" VerticalAlignment="Center" TextTrimming="WordEllipsis"
+             Content="{Binding Path=Name}" IsVisible="{Binding ElementName=thumb, Path=!HasImage}" Wrap="True"
+             FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}" HorizontalContentAlignment="Center"/>
+    </DockPanel>
+  </DataTemplate>
+
+  <Style x:Key="CategoryGridItemContainerStyle" TargetType="{x:Type ListViewItem}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListViewItem}">
+          <Button x:Name="ovsGrowControl" Style="{ThemeResource ButtonWideStyle_Grid}"
+                  SetFocusPrio="{Binding Path=Selected, Mode=OneTime, Converter={StaticResource ovsBoolFocusPrioConverter}}"
+                  Margin="{ResolutionResource ovsCategoryItemContainerMargin}">
+            <Button.Command>
+              <Command Source="{DynamicResource OnlineVideosModel}" Path="SelectCategory" Parameters="{LateBoundValue BindingValue={Binding}}"/>
+            </Button.Command>
+            <Button.Triggers>
+              <Trigger Property="HasFocus" Value="True">
+                <Setter TargetName="ItemLabel" Property="Color" Value="{ThemeResource TextColor}"/>
+                <Setter TargetName="ItemLabel" Property="Scroll" Value="Auto"/>
+                <Setter Property="StackPanel.ZIndex" Value="100.0"/>
+              </Trigger>
+            </Button.Triggers>
+          </Button>
+          <ControlTemplate.Triggers>
+            <Trigger Property="Selected" Value="True">
+              <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <DataTemplate x:Key="CategoryListItemDataTemplate" DataType="{x:Type ovs:CategoryViewModel}">
+    <DockPanel x:Name="ItemControl" LastChildFill="False">
+      <Image x:Name="thumb" DockPanel.Dock="Left" Stretch="Uniform" Height="40" Source="{Binding Path=Thumb}">
+        <Image.Margin>
+          <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} ? {1} : {2}">
+            <Binding Source="{Binding ElementName=thumb, Path=HasImage}"/>
+            <Binding Source="10,0,0,0"/>
+            <Binding Source="-10,0,0,0"/>
+          </MultiBinding>
+        </Image.Margin>
+      </Image>  
+      <Label DockPanel.Dock="Center" x:Name="ItemLabel" FontFamily="SegoeUIBold" Margin="10,0,10,0" Content="{Binding Path=Name}"
+             FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource MediaItemUnwatchedColor}"/>
+      <Label DockPanel.Dock="Right" x:Name="NumLabel" FontFamily="SegoeUIBold" Margin="10,0,10,0" Content="{Binding Path=EstimatedChildren}"
+             FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource MediaItemUnwatchedColor}"/>
+    </DockPanel>
+  </DataTemplate>
+
+  <Style x:Key="CategoryListItemContainerStyle" TargetType="{x:Type ListViewItem}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListViewItem}">
+          <Button x:Name="ovsGrowControl" Style="{ThemeResource ButtonWideStyle_List}" Margin="{ResolutionResource ovsSiteItemContainerMargin}">
+            <Button.Command>
+              <Command Source="{DynamicResource OnlineVideosModel}" Path="SelectCategory" Parameters="{LateBoundValue BindingValue={Binding}}"/>
+            </Button.Command>
+            <Button.ContextMenuCommand>
+              <Command Source="{Service ScreenManager}" Path="ShowDialog" Parameters="ovsDialogItemContextMenu"/>
+            </Button.ContextMenuCommand>
+            <Button.Triggers>
+              <Trigger Property="HasFocus" Value="True">
+                <Setter TargetName="ItemLabel" Property="Color" Value="{ThemeResource TextColor}"/>
+                <Setter TargetName="NumLabel" Property="Color" Value="{ThemeResource TextColor}"/>
+                <Setter TargetName="ItemLabel" Property="Scroll" Value="Auto"/>
+              </Trigger>
+            </Button.Triggers>
+          </Button>
+          <ControlTemplate.Triggers>
+            <Trigger Property="Selected" Value="True">
+              <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="CategoriesListViewStyle" TargetType="{x:Type ListView}" BasedOn="{ThemeResource SiteGroupsListViewStyle}">
+    <BindingSetter Property="ItemTemplate">
+      <BindingSetter.BindingWrapper>
+        <BindingWrapper>
+          <BindingWrapper.Binding>
+            <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
+              <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
+              <Binding Source="{ThemeResource CategoryListItemDataTemplate}"/>
+              <Binding Source="{ThemeResource CategoryGridItemDataTemplate}"/>
+            </MultiBinding>
+          </BindingWrapper.Binding>
+        </BindingWrapper>
+      </BindingSetter.BindingWrapper>
+    </BindingSetter>
+    <BindingSetter Property="ItemContainerStyle">
+      <BindingSetter.BindingWrapper>
+        <BindingWrapper>
+          <BindingWrapper.Binding>
+            <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
+              <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
+              <Binding Source="{ThemeResource CategoryListItemContainerStyle}"/>
+              <Binding Source="{ThemeResource CategoryGridItemContainerStyle}"/>
+            </MultiBinding>
+          </BindingWrapper.Binding>
+        </BindingWrapper>
+      </BindingSetter.BindingWrapper>
+    </BindingSetter>
+    <Setter Property="DataStringProvider" Value="{ThemeResource DefaultItemDataStringProvider}"/>
+  </Style>
+
+  
+  <!-- ################################################################# -->
+  <!-- #####################   VIDEO VIEW STYLES   ##################### -->
+  <!-- ################################################################# -->
+
+  <DataTemplate x:Key="VideoGridItemDataTemplate" DataType="{x:Type ovs:VideoViewModel}">
+    <DockPanel Width="{StaticResource THUMBNAIL_GRID_WIDTH}" Height="{StaticResource THUMBNAIL_GRID_HEIGHT}" Margin="2">
+      <Image DockPanel.Dock="Center" Source="Thumbnail_medium.png" Stretch="Fill" Margin="-6"/>
+      <Rectangle DockPanel.Dock="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Rectangle.Fill>
+          <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} ? {1} : {2}">
+            <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type Button}}" Path="HasFocus"/>
+            <Binding Source="{ThemeResource NereusColorLight}"/>
+            <Binding Source="{ThemeResource NereusColorMedium}"/>
+          </MultiBinding>
+        </Rectangle.Fill>
+      </Rectangle>
+      <Image DockPanel.Dock="Center" x:Name="thumb" Stretch="Uniform" Source="{Binding Path=ThumbnailImage}"/>
+      <Label DockPanel.Dock="Center" x:Name="ItemLabel" HorizontalAlignment="Center" VerticalAlignment="Center" TextTrimming="WordEllipsis"
+             Content="{Binding Path=Title}" IsVisible="{Binding ElementName=thumb, Path=!HasImage}" Wrap="True" Margin="10"
+             VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+             FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}"/>
+    </DockPanel>
+  </DataTemplate>
+
+  <Style x:Key="VideoGridItemContainerStyle" TargetType="{x:Type ListViewItem}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListViewItem}">
+          <Button x:Name="ovsGrowControl" Style="{ThemeResource ButtonWideStyle_Grid}"
+                  SetFocusPrio="{Binding Path=Selected, Mode=OneTime, Converter={StaticResource ovsBoolFocusPrioConverter}}">
+            <Button.Command>
+              <Command Source="{DynamicResource OnlineVideosModel}" Path="SelectVideo" Parameters="{LateBoundValue BindingValue={Binding}}"/>
+            </Button.Command>
+            <Button.Triggers>
+              <Trigger Property="HasFocus" Value="True">
+                <Setter TargetName="ItemLabel" Property="Color" Value="{ThemeResource TextColor}"/>
+                <Setter TargetName="ItemLabel" Property="Scroll" Value="Auto"/>
+              </Trigger>
+            </Button.Triggers>
+            <Button.ContextMenuCommand>
+              <Command Source="{Service ScreenManager}" Path="ShowDialog" Parameters="ovsDialogItemContextMenu"/>
+            </Button.ContextMenuCommand>
+          </Button>
+          <ControlTemplate.Triggers>
+            <Trigger Property="Selected" Value="True">
+              <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <DataTemplate x:Key="VideoListItemDataTemplate" DataType="{x:Type ovs:VideoViewModel}">
+    <DockPanel x:Name="ItemControl" LastChildFill="True">
+      <Image x:Name="thumb" DockPanel.Dock="Left" Stretch="Uniform" Height="40" Source="{Binding Path=ThumbnailImage}">
+        <Image.Margin>
+          <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} ? {1} : {2}">
+            <Binding Source="{Binding ElementName=thumb, Path=HasImage}"/>
+            <Binding Source="10,0,0,0"/>
+            <Binding Source="-10,0,0,0"/>
+          </MultiBinding>
+        </Image.Margin>
+      </Image>
+      <Label DockPanel.Dock="Right" x:Name="DurationLabel" FontFamily="SegoeUIBold" Margin="10,0,10,0" Content="{Binding Path=Length}"
+             FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource MediaItemUnwatchedColor}"/>
+      <Label DockPanel.Dock="Center" x:Name="ItemLabel" FontFamily="SegoeUIBold" Margin="10,0,10,0" Content="{Binding Path=Title}"
+             FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource MediaItemUnwatchedColor}" ScrollDelay="0"/>
+    </DockPanel>
+  </DataTemplate>
+
+  <Style x:Key="VideoListItemContainerStyle" TargetType="{x:Type ListViewItem}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListViewItem}">
+          <Button x:Name="ovsGrowControl" Style="{ThemeResource ButtonWideStyle_List}" Margin="{ResolutionResource ovsSiteItemContainerMargin}">
+            <Button.Command>
+              <Command Source="{DynamicResource OnlineVideosModel}" Path="SelectVideo" Parameters="{LateBoundValue BindingValue={Binding}}"/>
+            </Button.Command>
+            <Button.ContextMenuCommand>
+              <Command Source="{Service ScreenManager}" Path="ShowDialog" Parameters="ovsDialogItemContextMenu"/>
+            </Button.ContextMenuCommand>
+            <Button.Triggers>
+              <Trigger Property="HasFocus" Value="True">
+                <Setter TargetName="ItemLabel" Property="Color" Value="{ThemeResource TextColor}"/>
+                <Setter TargetName="DurationLabel" Property="Color" Value="{ThemeResource TextColor}"/>
+                <Setter TargetName="ItemLabel" Property="Scroll" Value="Auto"/>
+              </Trigger>
+            </Button.Triggers>
+          </Button>
+          <ControlTemplate.Triggers>
+            <Trigger Property="Selected" Value="True">
+              <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+  
+  <Style x:Key="VideosListViewStyle" TargetType="{x:Type ListView}" BasedOn="{ThemeResource SiteGroupsListViewStyle}">
+    <BindingSetter Property="ItemTemplate">
+      <BindingSetter.BindingWrapper>
+        <BindingWrapper>
+          <BindingWrapper.Binding>
+            <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
+              <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
+              <Binding Source="{ThemeResource VideoListItemDataTemplate}"/>
+              <Binding Source="{ThemeResource VideoGridItemDataTemplate}"/>
+            </MultiBinding>
+          </BindingWrapper.Binding>
+        </BindingWrapper>
+      </BindingSetter.BindingWrapper>
+    </BindingSetter>
+    <BindingSetter Property="ItemContainerStyle">
+      <BindingSetter.BindingWrapper>
+        <BindingWrapper>
+          <BindingWrapper.Binding>
+            <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
+              <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
+              <Binding Source="{ThemeResource VideoListItemContainerStyle}"/>
+              <Binding Source="{ThemeResource VideoGridItemContainerStyle}"/>
+            </MultiBinding>
+          </BindingWrapper.Binding>
+        </BindingWrapper>
+      </BindingSetter.BindingWrapper>
+    </BindingSetter>
+    <Setter Property="DataStringProvider" Value="{ThemeResource DefaultItemDataStringProvider}"/>
+  </Style>
+
+  <!-- ################################################################# -->
+  <!-- ################  DETAILS VIDEOS VIEW STYLES   ################## -->
+  <!-- ################################################################# -->
+
+  <DataTemplate x:Key="DetailsVideoGridItemDataTemplate" DataType="{x:Type ovs:VideoViewModel}">
+    <Grid Width="{StaticResource THUMBNAIL_GRID_WIDTH}" Height="{StaticResource THUMBNAIL_GRID_HEIGHT}" Margin="2">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="75"/>
+      </Grid.RowDefinitions>
+      <Image Grid.RowSpan="2" Source="Thumbnail_medium.png" Stretch="Fill" Margin="-6"/>
+      <Rectangle Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Rectangle.Fill>
+          <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} ? {1} : {2}">
+            <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type Button}}" Path="HasFocus"/>
+            <Binding Source="{ThemeResource NereusColorLight}"/>
+            <Binding Source="{ThemeResource NereusColorMedium}"/>
+          </MultiBinding>
+        </Rectangle.Fill>
+      </Rectangle>
+      <Image Grid.RowSpan="2" x:Name="thumb" Stretch="UniformToFill" Source="{Binding Path=ThumbnailImage}"/>
+      <Label x:Name="ItemLabel" HorizontalAlignment="Center" VerticalAlignment="Center" TextTrimming="WordEllipsis"
+             Content="{Binding Path=Title}" IsVisible="{Binding ElementName=thumb, Path=!HasImage}" Wrap="True" Margin="10"
+             VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.RowSpan="2"
+             FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}"/>
+      <!-- Darkened band -->
+      <Rectangle Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                 IsVisible="{Binding ElementName=thumb, Path=HasImage}">
+        <Rectangle.Fill>
+          <LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">
+            <GradientStop Color="#D8000000" Offset="0"/>
+            <GradientStop Color="#00000000" Offset="1"/>
+          </LinearGradientBrush>
+        </Rectangle.Fill>
+      </Rectangle>
+      <Label x:Name="ItemLabel2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+             Content="{Binding Path=Title}" Wrap="True" Margin="5" IsVisible="{Binding ElementName=thumb, Path=HasImage}"
+             VerticalContentAlignment="Bottom" HorizontalContentAlignment="Center" Grid.Row="1"
+             FontSize="{ThemeResource SmallerFontSize}" Color="{ThemeResource TextColor}">
+        <Label.Scroll>
+          <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} ? {1} : {2}">
+            <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type Button}}" Path="HasFocus"/>
+            <Binding Source="Auto"/>
+            <Binding Source="None"/>
+          </MultiBinding>
+        </Label.Scroll>
+        <Label.TextTrimming>
+          <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} ? {1} : {2}">
+            <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type Button}}" Path="HasFocus"/>
+            <Binding Source="None"/>
+            <Binding Source="CharacterEllipsis"/>
+          </MultiBinding>
+        </Label.TextTrimming>
+      </Label>
+    </Grid>
+  </DataTemplate>
+
+  <Style x:Key="DetailsVideoGridItemContainerStyle" TargetType="{x:Type ListViewItem}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListViewItem}">
+          <Button x:Name="ovsGrowControl" Style="{ThemeResource ButtonWideStyle_Grid}"
+                  SetFocusPrio="{Binding Path=Selected, Mode=OneTime, Converter={StaticResource ovsBoolFocusPrioConverter}}"
+                  Command="{DynamicResource ResourceKey=Menu_Command}">
+            <Button.Triggers>
+              <Trigger Property="HasFocus" Value="True">
+                <Setter TargetName="ItemLabel" Property="Color" Value="{ThemeResource TextColor}"/>
+                <Setter TargetName="ItemLabel" Property="Scroll" Value="Auto"/>
+              </Trigger>
+            </Button.Triggers>
+            <Button.ContextMenuCommand>
+              <Command Source="{Service ScreenManager}" Path="ShowDialog" Parameters="ovsDialogItemContextMenu"/>
+            </Button.ContextMenuCommand>
+          </Button>
+          <ControlTemplate.Triggers>
+            <Trigger Property="Selected" Value="True">
+              <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style x:Key="DetailsVideoListItemContainerStyle" TargetType="{x:Type ListViewItem}">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="{x:Type ListViewItem}">
+          <Button x:Name="ovsGrowControl" Style="{ThemeResource ButtonWideStyle_List}" Margin="{ResolutionResource ovsSiteItemContainerMargin}"
+                  Command="{DynamicResource ResourceKey=Menu_Command}">
+            <Button.ContextMenuCommand>
+              <Command Source="{Service ScreenManager}" Path="ShowDialog" Parameters="ovsDialogItemContextMenu"/>
+            </Button.ContextMenuCommand>
+            <Button.Triggers>
+              <Trigger Property="HasFocus" Value="True">
+                <Setter TargetName="ItemLabel" Property="Color" Value="{ThemeResource TextColor}"/>
+                <Setter TargetName="ItemLabel" Property="Scroll" Value="Auto"/>
+              </Trigger>
+            </Button.Triggers>
+          </Button>
+          <ControlTemplate.Triggers>
+            <Trigger Property="Selected" Value="True">
+              <Setter Property="WrapPanel.ZIndex" Value="100.0"/>
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <DataTemplate x:Key="DetailsVideoListItemDataTemplate" DataType="{x:Type ovs:VideoViewModel}">
+    <DockPanel x:Name="ItemControl" LastChildFill="False">
+      <Image x:Name="thumb" DockPanel.Dock="Left" Stretch="Uniform" Height="40" Source="{Binding Path=ThumbnailImage}">
+        <Image.Margin>
+          <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} ? {1} : {2}">
+            <Binding Source="{Binding ElementName=thumb, Path=HasImage}"/>
+            <Binding Source="10,0,0,0"/>
+            <Binding Source="-10,0,0,0"/>
+          </MultiBinding>
+        </Image.Margin>
+      </Image>
+      <Label DockPanel.Dock="Center" x:Name="ItemLabel" FontFamily="SegoeUIBold" Margin="10,0,10,0" Content="{Binding Path=Title}"
+             FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource MediaItemUnwatchedColor}"/>
+    </DockPanel>
+  </DataTemplate>
+
+  <Style x:Key="DetailsVideosListViewStyle" BasedOn="{ThemeResource SiteGroupsListViewStyle}">
+      <BindingSetter Property="ItemTemplate">
+        <BindingSetter.BindingWrapper>
+          <BindingWrapper>
+            <BindingWrapper.Binding>
+              <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
+                <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
+                <Binding Source="{ThemeResource DetailsVideoListItemDataTemplate}"/>
+                <Binding Source="{ThemeResource DetailsVideoGridItemDataTemplate}"/>
+              </MultiBinding>
+            </BindingWrapper.Binding>
+          </BindingWrapper>
+        </BindingSetter.BindingWrapper>
+      </BindingSetter>
+      <BindingSetter Property="ItemContainerStyle">
+        <BindingSetter.BindingWrapper>
+          <BindingWrapper>
+            <BindingWrapper.Binding>
+              <MultiBinding Converter="{StaticResource ExpressionMultiValueConverter}" ConverterParameter="{}{0} == {LayoutType}.{ListLayout} ? {1} : {2}">
+                <Binding Source="{StaticResource GenericViewModeModel}" Path="LayoutType"/>
+                <Binding Source="{ThemeResource DetailsVideoListItemContainerStyle}"/>
+                <Binding Source="{ThemeResource DetailsVideoGridItemContainerStyle}"/>
+              </MultiBinding>
+            </BindingWrapper.Binding>
+          </BindingWrapper>
+        </BindingSetter.BindingWrapper>
+      </BindingSetter>
+      <Setter Property="DataStringProvider" Value="{ThemeResource DefaultItemDataStringProvider}"/>
+    </Style>
+
+  <!-- ################################################################# -->
+  <!-- #####################   OTHER VIEW STYLES   ##################### -->
+  <!-- ################################################################# -->
+
+  <DataTemplate x:Key="ovsSiteSettingsItemDataTemplate" DataType="{x:Type ovs:SiteSettingViewModel}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="{Binding [Name]}"
+                   HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="{ThemeResource SmallFontSize}"
+                   Color="{ThemeResource TextColor}"/>
+            <Label Grid.Column="1" Content="{Binding Value}"
+                   HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="{ThemeResource SmallFontSize}"
+                   Color="{ThemeResource TextColor}"/>
+        </Grid>
+    </DataTemplate>
+
+    <Style x:Key="ovsSiteSettingsListViewStyle" BasedOn="{ThemeResource ContentsMenuListViewStyle}">
+        <Setter Property="ItemTemplate" Value="{ThemeResource ovsSiteSettingsItemDataTemplate}"/>
+    </Style>
+
+    <DataTemplate x:Key="ovsOnlineSiteItemDataTemplate" DataType="{x:Type ovs:OnlineSiteViewModel}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Ellipse Width="{ResolutionResource ovsSiteStateRadius}" Height="{ResolutionResource ovsSiteStateRadius}" Margin="2">
+                <Ellipse.Fill>
+                    <SolidColorBrush Color="{Binding Path=Site.State, Converter={StaticResource ovsSiteStateColorConverter}}"/>
+                </Ellipse.Fill>
+            </Ellipse>
+            <Image Grid.Column="1" Width="{ResolutionResource ovsLanguageImageWidth}" Stretch="Uniform" Source="{Binding Path=Site.Language, Converter={StaticResource ovsLanguageIconConverter}}"
+                    Margin="2"/>
+            <Label Grid.Column="2" Content="{Binding [Name]}"
+                   HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="{ThemeResource SmallFontSize}"
+                   Color="{ThemeResource TextColor}"/>
+            <Label Grid.Column="3" Color="{ThemeResource HintTextColor}"
+                HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="{ThemeResource SmallerFontSize}" Margin="2">
+                <Label.Content>
+                    <Binding Path="LastUpdated" Converter="{StaticResource StringFormatConverter}" ConverterParameter="{}{0:g}"/>
+                </Label.Content>
+            </Label>
+            <Label Grid.Column="4" Content="{Binding Owner}"
+                   HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="{ThemeResource SmallFontSize}"
+                   Color="{ThemeResource TextColor}"/>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ovsUserReportItemDataTemplate" DataType="{x:Type ovs:ReportViewModel}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="{ResolutionResource ovsReportLabelWidth}"/>
+                <ColumnDefinition Width="{ResolutionResource ovsReportLabelWidth}"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="{Binding Path=Report.Type}" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="{ThemeResource LittleFontSize}" Color="{ThemeResource TextColor}"/>
+            <Label Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="{ThemeResource LittleFontSize}" Color="{ThemeResource TextColor}">
+                <Label.Content>
+                    <Binding Path="Report.Date" Converter="{StaticResource StringFormatConverter}" ConverterParameter="{}{0:g}"/>
+                </Label.Content>
+            </Label>
+            <Label Grid.Column="2" Content="{Binding Path=Report.Message}" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="{ThemeResource SmallerFontSize}" Color="{ThemeResource TextColor}" Wrap="true"/>
+        </Grid>
+    </DataTemplate>
+
+    <Style x:Key="ovsOnlineSiteListViewStyle" BasedOn="{ThemeResource ContentsMenuListViewStyle}">
+        <Setter Property="ItemTemplate" Value="{ThemeResource ovsOnlineSiteItemDataTemplate}"/>
+    </Style>
+
+    <Style x:Key="ovsUserReportListViewStyle" BasedOn="{ThemeResource ContentsMenuListViewStyle}">
+        <Setter Property="ItemTemplate" Value="{ThemeResource ovsUserReportItemDataTemplate}"/>
+    </Style>
+
+    <Style x:Key="ovsPasswordTextBoxStyle" TargetType="{x:Type TextBox}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TextBox}">
+                    <Border Background="{ThemeResource TextBoxBackgroundColor}" BorderBrush="{ThemeResource TextBoxBorderColor}"
+                        BorderThickness="{ThemeResource TextBoxBorderThickness}" CornerRadius="{ThemeResource TextBoxCornerRadius}">
+                        <TextControl x:Name="TextControl" PreferredTextLength="{TemplateBinding Path=PreferredTextLength}"
+                            CaretIndex="{TemplateBinding Path=CaretIndex,Mode=TwoWay}" IsPassword="{Binding IsPassword}" Text="{TemplateBinding Path=Text,Mode=TwoWay}"
+                            Color="{TemplateBinding Color}" TextAlign="{TemplateBinding TextAlign}"
+                            IsEnabled="{TemplateBinding IsEnabled}"/>
+                        <Border.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=TextControl,Path=HasFocus}" Value="True">
+                                <Setter Property="BorderBrush" Value="{ThemeResource TextBoxBorderFocusColor}"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ElementName=TextControl,Path=IsEnabled}" Value="False">
+                                <Setter Property="Background" Value="{ThemeResource TextBoxDisabledBackgroundColor}"/>
+                            </DataTrigger>
+                        </Border.Triggers>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

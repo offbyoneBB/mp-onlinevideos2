@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -20,6 +21,7 @@ namespace OnlineVideos.CrossDomain
         }
 
         static bool _useSeperateDomain;
+
         public static bool UseSeperateDomain
         {
             set
@@ -31,11 +33,13 @@ namespace OnlineVideos.CrossDomain
 
         static void Load()
         {
-             if (AppDomain.CurrentDomain.FriendlyName != "OnlineVideosSiteUtilDlls")
+            if (AppDomain.CurrentDomain.FriendlyName != "OnlineVideosSiteUtilDlls")
             {
                 if (_useSeperateDomain)
                 {
-                    _domain = AppDomain.CreateDomain("OnlineVideosSiteUtilDlls", null, null, null, true);
+                    // When passing the folder of OnlineVideos plugin to the AppDomain, it is able to lookup all dependencies in this folder.
+                    string appBasePath = Path.GetDirectoryName(typeof(OnlineVideosAppDomain).Assembly.Location);
+                    _domain = AppDomain.CreateDomain("OnlineVideosSiteUtilDlls", AppDomain.CurrentDomain.Evidence, appBasePath, null, true);
 
                     // we need to subscribe to AssemblyResolve on the MP2 AppDomain because OnlineVideos.dll is loaded in the LoadFrom Context
                     // and when unwrapping transparent proxy from our AppDomain, resolving types will fail because it looks only in the default Load context
@@ -71,7 +75,7 @@ namespace OnlineVideos.CrossDomain
             return asm;
         }
 
-        internal static object GetCrossDomainSingleton(Type type)
+        internal static object GetCrossDomainSingleton(Type type, params object[] args)
         {
             if (_domain == null) Load();
 
@@ -79,7 +83,7 @@ namespace OnlineVideos.CrossDomain
             if (instance == null) // no instance in the OV domain yet
             {
                 // create an instance in the OV domain
-                instance = _domain.CreateInstanceAndUnwrap(type.Assembly.FullName, type.FullName, false, BindingFlags.CreateInstance | BindingFlags.Instance | BindingFlags.NonPublic, null, null, null, null);
+                instance = _domain.CreateInstanceAndUnwrap(type.Assembly.FullName, type.FullName, false, BindingFlags.CreateInstance | BindingFlags.Instance | BindingFlags.NonPublic, null, args.Length == 0 ? null : args, null, null);
                 // register the instance in the OV domain
                 _domain.SetData(type.FullName, instance);
             }
@@ -94,7 +98,7 @@ namespace OnlineVideos.CrossDomain
             return instance; // return the instance
         }
 
-        internal static void Reload()
+        internal static void Unload()
         {
             List<object> singletonNames = AppDomain.CurrentDomain.GetData("Singletons") as List<object>;
             AppDomain.Unload(_domain);
@@ -103,6 +107,11 @@ namespace OnlineVideos.CrossDomain
             if (singletonNames != null)
                 foreach (var s in singletonNames)
                     s.GetType().InvokeMember("_Instance", BindingFlags.Static | BindingFlags.FlattenHierarchy | BindingFlags.NonPublic | BindingFlags.SetField, null, s, new object[] { null });
+        }
+
+        internal static void Reload()
+        {
+            Unload();
             Load();
         }
     }

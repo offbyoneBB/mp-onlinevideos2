@@ -23,8 +23,8 @@
     <Assembly FileName="InputStreamPlayer.dll"/>
     <Assembly FileName="MediaPortalWrapper.dll"/>
     <Assembly FileName="..\VideoPlayers\DirectShowWrapper.dll"/>
-    <Assembly FileName="library.xbmc.addon\libXBMC_addon.dll"/>
-    <Assembly FileName="library.kodi.inputstream\libKODI_inputstream.dll"/>
+    <Assembly FileName="$(Platform)\library.xbmc.addon\libXBMC_addon.dll"/>
+    <Assembly FileName="$(Platform)\library.kodi.inputstream\libKODI_inputstream.dll"/>
   </Runtime>
 
 </Plugin>

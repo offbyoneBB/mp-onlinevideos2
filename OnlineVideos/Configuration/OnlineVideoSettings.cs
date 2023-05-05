@@ -9,19 +9,44 @@ using OnlineVideos.Sites;
 
 namespace OnlineVideos
 {
+    public delegate string GetConfigDirDelegate();
+    public sealed class DelegateWrapper : MarshalByRefObject
+    {
+        public string Invoke()
+        {
+            return _delegate();
+        }
+
+        private readonly GetConfigDirDelegate _delegate;
+
+        public DelegateWrapper(GetConfigDirDelegate dlgt)
+        {
+            _delegate = dlgt;
+        }
+    }
     /// <summary>
     /// Singleton class holding all Settings that are used througout the OnlineVideos system.
     /// Make sure all fields are initialized before using any OnlineVideos functionality.
     /// </summary>
     public class OnlineVideoSettings : CrossDomainSingleton<OnlineVideoSettings>
     {
+        private string _configDir = null;
         protected bool SiteUtilsWereBuilt = false;
 
         public IUserStore UserStore;
         public IFavoritesDatabase FavDB;
         public ILog Logger;
         public ImageDownloader.ResizeOptions ThumbsResizeOptions { get; set; }
-        public string ConfigDir;
+        // Gets or sets a delegate which can return a dynamic config dir.
+        // This is required for MP2.2+ user management, where the user profiles can be changed at runtime.
+        public DelegateWrapper GetConfigDir { get; set; }
+
+        public string ConfigDir
+        {
+            get { return GetConfigDir != null ? GetConfigDir.Invoke() : _configDir; }
+            set { _configDir = value; }
+        }
+
         public string ThumbsDir;
         public string DownloadDir;
         public string DllsDir;
@@ -88,6 +113,13 @@ namespace OnlineVideos
         }
 
         /// <summary>
+        /// Unloads the OnlineVideos app domain and frees all resources.
+        /// </summary>
+        public static void Unload()
+        {
+            OnlineVideosAppDomain.Unload();
+        }
+        /// <summary>
         /// Drops the current single instance, creates a new Appdomain and copies all settings to a new instance in the new AppDomain.
         /// SiteUtil (and DLLs) are not loaded.
         /// </summary>
@@ -98,6 +130,7 @@ namespace OnlineVideos
             IFavoritesDatabase favDb = Instance.FavDB;
             ILog logger = Instance.Logger;
             ImageDownloader.ResizeOptions thumbsResizeOptions = Instance.ThumbsResizeOptions;
+            DelegateWrapper getConfigDirDelegateconfigDir = Instance.GetConfigDir;
             string configDir = Instance.ConfigDir;
             string thumbsDir = Instance.ThumbsDir;
             string downloadDir = Instance.DownloadDir;
@@ -120,6 +153,7 @@ namespace OnlineVideos
             newInstance.FavDB = favDb;
             newInstance.Logger = logger;
             newInstance.ThumbsResizeOptions = thumbsResizeOptions;
+            newInstance.GetConfigDir = getConfigDirDelegateconfigDir;
             newInstance.ConfigDir = configDir;
             newInstance.ThumbsDir = thumbsDir;
             newInstance.DownloadDir = downloadDir;

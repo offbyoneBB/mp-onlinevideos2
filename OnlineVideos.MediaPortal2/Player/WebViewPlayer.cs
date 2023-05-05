@@ -9,7 +9,6 @@ using MediaPortal.UI.Presentation.Screens;
 using MediaPortal.UiComponents.Media.Models;
 using MediaPortal.Utilities.Screens;
 using Microsoft.Web.WebView2.Core;
-using Microsoft.Web.WebView2.WinForms;
 using OnlineVideos.Helpers;
 using OnlineVideos.MediaPortal2.Interfaces.Metadata;
 using OnlineVideos.MediaPortal2.ResourceAccess;
@@ -38,7 +37,7 @@ namespace OnlineVideos.MediaPortal2.Player
         private IWebViewSiteUtilBase _siteUtil;
         private WebViewHelper _wvHelper;
 
-        private WebView2 _webView;
+        private Microsoft.Web.WebView2.WinForms.WebView2 _webView;
 
         private PlayState _playState;
         private RectangleF _targetBounds;

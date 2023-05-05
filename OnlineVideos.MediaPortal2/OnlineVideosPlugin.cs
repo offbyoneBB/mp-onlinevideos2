@@ -16,6 +16,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using OnlineVideos.Helpers;
+using MediaPortal.Common.SystemResolver;
+using MediaPortal.Common.UserManagement;
+using MediaPortal.UI.General;
+using OnlineVideos.MediaPortal2.Configuration;
 
 namespace OnlineVideos.MediaPortal2
 {
@@ -44,7 +48,8 @@ namespace OnlineVideos.MediaPortal2
             InitializeOnlineVideoSettings();
 
             // create a message queue for OnlineVideos to broadcast that the list of site utils was rebuild
-            _messageQueue = new AsynchronousMessageQueue(this, new string[] { OnlineVideosMessaging.CHANNEL });
+            _messageQueue = new AsynchronousMessageQueue(this, new string[] { UserMessaging.CHANNEL });
+            _messageQueue.MessageReceived += OnUserMessageReceived;
             _messageQueue.Start();
 
             // load and update sites in a background thread, it takes time and we are on the Main thread delaying MP2 startup
@@ -54,6 +59,23 @@ namespace OnlineVideos.MediaPortal2
                 QueuePriority.Low,
                 ThreadPriority.BelowNormal,
                 AfterInitialLoad);
+        }
+
+        private void OnUserMessageReceived(AsynchronousMessageQueue queue, SystemMessage message)
+        {
+            if (message.ChannelName == UserMessaging.CHANNEL)
+            {
+                if ((UserMessaging.MessageType)message.MessageType == UserMessaging.MessageType.UserChanged)
+                {
+                    Log.Info("Received UserChange message, update settings");
+
+                    // re-load the xml that holds all configured sites
+                    OnlineVideoSettings.Instance.LoadSites();
+
+                    var settings = ServiceRegistration.Get<ISettingsManager>().Load<Settings>();
+                    UpdateSettings(settings, true, true);
+                }
+            }
         }
 
         public bool RequestEnd()
@@ -71,6 +93,8 @@ namespace OnlineVideos.MediaPortal2
 
         public void Shutdown()
         {
+            // Forces unloading of AppDomain on exit. This is required i.e. for WebDriver player to stop external processes.
+            OnlineVideoSettings.Unload();
             _messageQueue.Shutdown();
         }
 
@@ -78,7 +102,7 @@ namespace OnlineVideos.MediaPortal2
 
         private static void InitializeOnlineVideoSettings()
         {
-            string ovConfigPath = ServiceRegistration.Get<IPathManager>().GetPath(string.Format(@"<CONFIG>\{0}\", Environment.UserName));
+            string ovConfigPath = GetCurrentUserConfigDirectory();
             string ovDataPath = ServiceRegistration.Get<IPathManager>().GetPath(@"<DATA>\OnlineVideos");
 
             OnlineVideosAppDomain.UseSeperateDomain = true;
@@ -86,6 +110,7 @@ namespace OnlineVideos.MediaPortal2
             OnlineVideoSettings.Instance.DllsDir = Path.Combine(ovDataPath, "SiteUtils");
             OnlineVideoSettings.Instance.ThumbsDir = Path.Combine(ovDataPath, "Thumbs");
             OnlineVideoSettings.Instance.ConfigDir = ovConfigPath;
+            OnlineVideoSettings.Instance.GetConfigDir = new DelegateWrapper(GetCurrentUserConfigDirectory);
             OnlineVideoSettings.Instance.AddSupportedVideoExtensions(new List<string> { ".asf", ".asx", ".flv", ".m4v", ".mov", ".mkv", ".mp4", ".wmv", ".webm" });
             OnlineVideoSettings.Instance.Logger = new LogDelegator();
             OnlineVideoSettings.Instance.UserStore = new Configuration.UserSiteSettingsStore();
@@ -97,6 +122,18 @@ namespace OnlineVideos.MediaPortal2
 
             // The default .Net implementation for URI parsing removes trailing dots, which is not correct
             Helpers.DotNetFrameworkHelper.FixUriTrailingDots();
+        }
+
+        private static string GetCurrentUserConfigDirectory()
+        {
+            var userManagement = ServiceRegistration.Get<IUserManagement>();
+            var profileId = userManagement.CurrentUser.ProfileId;
+            // If not logged in, we use the system ID as profile (see UserManagement.GetOrCreateDefaultUser)
+            if (profileId == Guid.Empty)
+                profileId = Guid.Parse(ServiceRegistration.Get<ISystemResolver>().LocalSystemId);
+
+            string ovConfigPath = ServiceRegistration.Get<IPathManager>().GetPath(string.Format(@"<CONFIG>\{0}\", profileId));
+            return ovConfigPath;
         }
 
         private static void InitialSitesUpdateAndLoad()
@@ -200,6 +237,11 @@ namespace OnlineVideos.MediaPortal2
                 rebuildList = true;
             }
 
+            UpdateSettings(settings, rebuildList, rebuildUtils);
+        }
+
+        private void UpdateSettings(Settings settings, bool rebuildList, bool rebuildUtils)
+        {
             // usage of age confirmation has changed
             if (settings.UseAgeConfirmation != OnlineVideoSettings.Instance.UseAgeConfirmation)
             {
@@ -214,7 +256,8 @@ namespace OnlineVideos.MediaPortal2
                     OnlineVideoSettings.Instance.BuildSiteUtilsList();
                 if (rebuildList)
                 {
-                    ServiceRegistration.Get<IMessageBroker>().Send(OnlineVideosMessaging.CHANNEL, new SystemMessage(OnlineVideosMessaging.MessageType.RebuildSites));
+                    ServiceRegistration.Get<IMessageBroker>().Send(OnlineVideosMessaging.CHANNEL,
+                        new SystemMessage(OnlineVideosMessaging.MessageType.RebuildSites));
                 }
             }
 
@@ -223,7 +266,8 @@ namespace OnlineVideos.MediaPortal2
             if (_autoUpdateTask != null)
             {
                 // if automatic update no longer requested or different update interval -> delete the current task
-                if (!settings.AutomaticUpdate || (int)_autoUpdateTask.WorkInterval.TotalHours != settings.AutomaticUpdateInterval)
+                if (!settings.AutomaticUpdate ||
+                    (int) _autoUpdateTask.WorkInterval.TotalHours != settings.AutomaticUpdateInterval)
                 {
                     threadPool.RemoveIntervalWork(_autoUpdateTask);
                     _autoUpdateTask = null;

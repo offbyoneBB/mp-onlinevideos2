@@ -1,4 +1,5 @@
-﻿using HtmlAgilityPack;
+﻿using System;
+using HtmlAgilityPack;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -65,9 +66,13 @@ namespace OnlineVideos.Sites.JSurf.Extensions
         /// <returns></returns>
         public static List<HtmlNode> GetNodesByClass(this HtmlNode node, string className, bool allowPartialMatch = false)
         {
-            var results = node.DescendantNodes().Where(x => x.GetAttribute("class") == className
-                                                            || x.GetAttribute("class").Contains((allowPartialMatch ? "": " ") + className)
-                                                            || x.GetAttribute("class").Contains(className + (allowPartialMatch ? "" : " "))).ToList();
+            var results = node.DescendantNodes().Where(x =>
+            {
+                var clsAttr = x.GetAttribute("class") ?? "";
+                return clsAttr == className
+                       || clsAttr.Contains((allowPartialMatch ? "" : " ") + className)
+                       || clsAttr.Contains(className + (allowPartialMatch ? "" : " "));
+            }).ToList();
             if (results.Count == 0)
                 return null;
             return results.ToList();
@@ -92,6 +97,19 @@ namespace OnlineVideos.Sites.JSurf.Extensions
         public static List<HtmlNode> FindAllChildElements(this HtmlNode node)
         {
             return node.ChildNodes.Where(childNode => childNode.NodeType == HtmlNodeType.Element && childNode.Name != "script").ToList();
+        }
+
+        /// <summary>
+        /// Find all child nodes of the given node.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public static List<HtmlNode> FindAllChildElementsRecursive(this HtmlNode node, Func<HtmlNode, bool> filter)
+        {
+            var htmlNodes = FindAllChildElements(node).Where(filter).ToList();
+            foreach (HtmlNode childNode in node.ChildNodes)
+                htmlNodes.AddRange(FindAllChildElementsRecursive(childNode, filter));
+            return htmlNodes;
         }
 
         /// <summary>

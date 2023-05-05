@@ -79,11 +79,6 @@ namespace OnlineVideos.MediaPortal2
 
         public string SiteName { get; private set; }
 
-        public IInputStreamSite InputStreamSite
-        {
-            get { return OnlineVideoSettings.Instance.SiteUtilsList[SiteName] as IInputStreamSite; }
-        }
-
         /// <summary>
         /// Returns a resource locator instance for this item.
         /// </summary>

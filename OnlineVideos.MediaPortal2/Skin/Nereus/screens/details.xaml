@@ -1,0 +1,176 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Include
+    xmlns="www.team-mediaportal.com/2008/mpf/directx"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ovs="clr-namespace:OnlineVideos.MediaPortal2;assembly=OnlineVideos.MediaPortal2"
+    Source="screens\master_mediamenu.xaml"
+    >
+  <Include.Resources>
+    <Model x:Key="OnlineVideosModel" Id="C418243F-5BD3-4637-8871-DA6545387929"/>
+    <ovs:ExtendedInfoConverter x:Key="ExtendedInfoConverter"/>
+
+    <!-- Header -->
+    <ResourceWrapper x:Key="Header_Text" Resource="[OnlineVideos.Details]"/>
+
+    <!-- Top and Bottom Fades -->
+    <ControlTemplate x:Key="TopGradient_Template">
+      <Border HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0" Margin="0,0,0,0" Panel.ZIndex="1000">
+        <Border.Background>
+          <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+            <GradientStop Color="#E6000000" Offset="0" />
+            <GradientStop Color="#00000000" Offset="1" />
+          </LinearGradientBrush>
+        </Border.Background>
+      </Border>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="BottomGradient_Template">
+      <Border HorizontalAlignment="Stretch" VerticalAlignment="Bottom" BorderThickness="0" Margin="0,0,0,0" Height="100" Panel.ZIndex="1000">
+        <Border.Background>
+          <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+            <GradientStop Color="#00000000" Offset="0" />
+            <GradientStop Color="#E6000000" Offset="1" />
+          </LinearGradientBrush>
+        </Border.Background>
+      </Border>
+    </ControlTemplate>
+
+    <!-- Background -->
+    <ControlTemplate x:Key="FanArtBackground_Template">
+      <Image Stretch="Fill" Opacity="1">
+        <Image.Source>
+          <Binding Source="Background_GridView.png"/>
+        </Image.Source>
+      </Image>
+    </ControlTemplate>
+
+    <!-- Contents -->
+    <ControlTemplate x:Key="Contents_Template">
+      <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,-90,0,-270"
+            DataContext="{Binding Source={StaticResource OnlineVideosModel}}">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="1290"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="45,0,-20,0" Height="1200">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+
+          <Grid.Resources>
+            <Model x:Key="FanArtBackgroundModel" Id="8F42C8E9-E8A3-475C-A50A-99E1E644DC91"/>
+            <Model x:Key="SkinSettingsModel" Id="13961014-16C4-4361-9751-8E2C585EFD44"/>
+          </Grid.Resources>
+
+          <Image x:Name="FanArtImageBackground" Stretch="Fill" VerticalAlignment="Top" Source="ov_sites.jpg" HorizontalAlignment="Stretch" Height="780"
+                 IsVisible="{Binding Source={StaticResource SkinSettingsModel}, Path=[Nereus].EnableFanart}"/>
+          <Image Grid.RowSpan="2" Stretch="Fill" Source="List_overlay.png"/>
+          <Image Grid.RowSpan="2" Source="ContentGlow.png" Stretch="Uniform" VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="-20,0,0,0"/>
+
+          <Border Grid.RowSpan="2" BorderThickness="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Border.Background>
+              <LinearGradientBrush StartPoint="1,0.3" EndPoint="0,1">
+                <GradientStop Color="#44000000" Offset="0.0"/>
+                <GradientStop Color="#77000000" Offset="1"/>
+              </LinearGradientBrush>
+            </Border.Background>
+          </Border>
+        </Grid>
+
+        <!-- Content -->
+        <ListView x:Name="videoslist" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                  Style="{ThemeResource DetailsVideosListViewStyle}" Margin="-10,-20,-45,-20" RestoreFocus="True"
+                  ItemsSource="{Binding Path=DetailsVideosList , Mode=OneTime}" SetFocusPrio="RestoreState">
+          <ListView.Resources>
+            <CommandList x:Key="Menu_Command">
+              <Command Source="{StaticResource OnlineVideosModel}" Path="SelectDetailsVideo">
+                <Command.Parameters>
+                  <LateBoundValue BindingValue="{Binding}"/>
+                </Command.Parameters>
+              </Command>
+            </CommandList>
+          </ListView.Resources>
+        </ListView>
+
+        <!-- Details -->
+        <Grid Grid.Row="0" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="70,120,0,80">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="50*"/>
+            <RowDefinition Height="50*"/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="65*"/>
+            <ColumnDefinition Width="35*"/>
+          </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Vertical" VerticalAlignment="Top" Margin="5" DataContext="{Binding Source={StaticResource OnlineVideosModel}}">
+              <Label Content="{Binding Path=SelectedVideo, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Title}"
+                     FontSize="{ThemeResource NormalFontSize}" Color="{ThemeResource TextColor}" FontFamily="SegoeUIBold"/>
+              <Grid IsVisible="{Binding ElementName=SiteName, Path=Content, Converter={StaticResource EmptyStringToFalseConverter}}">
+                <Image Source="HomeContentIcons\page.png" Height="27" Width="27" Stretch="Uniform" Margin="0,-1,3,1"
+                       VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Label x:Name="SiteName" Content="{Binding Path=SelectedSite.Name}" Color="{ThemeResource TextColorForeground}"
+                       FontSize="{ThemeResource SmallFontSize}" Margin="40,0,0,0"/>
+              </Grid>
+              <Grid IsVisible="{Binding ElementName=CategoryName, Path=Content, Converter={StaticResource EmptyStringToFalseConverter}}">
+                <Image Source="HomeContentIcons\category.png" Height="27" Width="27" Stretch="Uniform" Margin="0,-1,3,1"
+                       VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Label x:Name="CategoryName" Content="{Binding Path=SelectedCategory.Name}" Color="{ThemeResource TextColorForeground}"
+                       FontSize="{ThemeResource SmallFontSize}" Margin="40,0,0,0"/>
+              </Grid>
+              <Grid IsVisible="{Binding ElementName=Actor, Path=Content, Converter={StaticResource EmptyStringToFalseConverter}}" Margin="0,0,-200,0">
+                <Image Source="HomeContentIcons\person.png" Height="27" Width="27" Stretch="Uniform" Margin="0,10,3,1"
+                       VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                <Label Content="{Binding Path=SelectedVideo, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Actors}"
+                       x:Name="Actor" Wrap="True" TextTrimming="WordEllipsis" VerticalAlignment="Stretch"
+                       Color="{ThemeResource TextColorForeground}" FontSize="{ThemeResource SmallFontSize}" Margin="40,0,0,0"/>
+              </Grid>
+              <Grid IsVisible="{Binding ElementName=Director, Path=Content, Converter={StaticResource EmptyStringToFalseConverter}}">
+                <Image Source="HomeContentIcons\director.png" Height="27" Width="27" Stretch="Uniform" Margin="0,-1,3,1"
+                       VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Label Content="{Binding Path=SelectedVideo, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Directors}"
+                       x:Name="Director" Color="{ThemeResource TextColorForeground}" FontSize="{ThemeResource SmallFontSize}" Margin="40,0,0,0"/>
+              </Grid>
+              <Grid IsVisible="{Binding ElementName=Genre, Path=Content, Converter={StaticResource EmptyStringToFalseConverter}}">
+                <Image Source="HomeContentIcons\genre.png" Height="27" Width="27" Stretch="Uniform" Margin="0,-1,3,1"
+                       VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Label Content="{Binding Path=SelectedVideo, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Genres}"
+                       x:Name="Genre" Color="{ThemeResource TextColorForeground}" FontSize="{ThemeResource SmallFontSize}" Margin="40,0,0,0"/>
+              </Grid>
+              <Grid IsVisible="{Binding ElementName=Duration, Path=Content, Converter={StaticResource EmptyStringToFalseConverter}}">
+                <Image Source="HomeContentIcons\duration.png" Height="27" Width="27" Stretch="Uniform" Margin="0,-1,3,1"
+                       VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Label Content="{Binding Path=SelectedVideo, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=ReleaseDate}"
+                       x:Name="Duration" Color="{ThemeResource TextColorForeground}" FontSize="{ThemeResource SmallFontSize}" Margin="40,0,0,0"/>
+              </Grid>
+              <Grid IsVisible="{Binding ElementName=Certificate, Path=Content, Converter={StaticResource EmptyStringToFalseConverter}}">
+                <Image Source="HomeContentIcons\rating.png" Height="27" Width="27" Stretch="Uniform" Margin="0,-1,3,1"
+                       VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                <Label Content="{Binding Path=SelectedVideo, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Rating}"
+                       x:Name="Certificate" FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColorForeground}" Margin="40,0,0,0"/>
+              </Grid>
+            </StackPanel>
+
+          <Image Stretch="Uniform" SkinNeutralAR="True" Grid.Column="1" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Center"
+                 Source="{Binding SelectedVideo.ThumbnailImage}" Margin="10,0,20,20"/>
+
+          <Image Width="170" Stretch="Uniform" Margin="0,5,30,60" HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Column="1"
+                 Source="{Binding Path=SelectedSite.Site, Converter={ThemeResource ovsSiteUtilIconConverter}}"/>
+
+          <Label Content="{Binding Path=SelectedVideo, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Plot}"
+                 Grid.Row="1" Margin="5,5,5,20" VerticalAlignment="Stretch" TextTrimming="WordEllipsis"
+                 FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource MediaItemUnwatchedColor}" Wrap="true" />
+
+        </Grid>
+      </Grid>
+    </ControlTemplate>
+  </Include.Resources>
+</Include>

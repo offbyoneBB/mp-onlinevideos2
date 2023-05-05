@@ -12,7 +12,11 @@
       <PluginFiles Include="$(TargetDir)$(ProjectName).*" />
       <PluginFiles Include="$(TargetDir)plugin.xml" />
       <APIFiles Include="$(TargetDir)OnlineVideos.dll" />
+      <APIFiles Include="$(TargetDir)loading.gif" />
+      <APIFiles Include="$(TargetDir)geckodriver.exe" />
+      <APIFiles Include="$(TargetDir)webdriver.dll" />
       <APIFiles Include="$(TargetDir)OnlineVideos.MediaPortal2.Interfaces.dll" />
+      <WebDriverFiles Include="$(TargetDir)Profiles\**\*" />
       <APIFiles Include="$(TargetDir)OnlineVideos.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
       <WebView2Files Include="$(TargetDir)Microsoft.Web.WebView2.*.dll" />
       <WebView2Runtimes Include="$(TargetDir)\runtimes\**\*.dll" />
@@ -35,6 +39,7 @@
     <Copy SourceFiles="@(WebView2Runtimes)" DestinationFiles="@(WebView2Runtimes->'$(PluginDestination)runtimes\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(PluginDestination)Language\" />
     <Copy SourceFiles="@(SkinFiles)" DestinationFiles="@(SkinFiles->'$(PluginDestination)Skin\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(WebDriverFiles)" DestinationFiles="@(WebDriverFiles->'$(PluginDestination)Profiles\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(MPUrlSourceSplitterFiles)" DestinationFolder="$(PluginDestination)MPUrlSourceSplitter\" />
 
     <!-- Copy again to NuGetPackage folder for simple package creation -->
@@ -47,6 +52,7 @@
     <Copy SourceFiles="@(WebView2Runtimes)" DestinationFiles="@(WebView2Runtimes->'$(PackageContent)runtimes\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(LanguageFiles)" DestinationFolder="$(PackageContent)Language\" />
     <Copy SourceFiles="@(SkinFiles)" DestinationFiles="@(SkinFiles->'$(PackageContent)Skin\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(WebDriverFiles)" DestinationFiles="@(WebDriverFiles->'$(PackageContent)Profiles\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(MPUrlSourceSplitterFiles)" DestinationFolder="$(PackageContent)MPUrlSourceSplitter\" />
 
     <!-- Uncomment to enable automatic packaging -->
@@ -54,10 +60,10 @@
     It might be worth also to change the BeforeBuild subversion revision detection to make it a MSBuild property and reuse it here.
     <Exec WorkingDirectory="$(ProjectDir)NuGetPackage" Command="$(NuGetExePath) pack OnlineVideos.MediaPortal2.nuspec -Version 2.1.0" />
     -->
-	<!-- Copy site util binaries to MediaPortal2 data folder -->
-	<Copy SourceFiles="@(SiteUtilDllFiles)" DestinationFolder="$(DataDestination)SiteUtils\" />
-	
-	<!-- Copy site icons to MediaPortal2 data folder -->
-	<Copy SourceFiles="@(SiteIconFiles)" DestinationFolder="$(DataDestination)Thumbs\Icons\" />
+    <!-- Copy site util binaries to MediaPortal2 data folder -->
+    <Copy SourceFiles="@(SiteUtilDllFiles)" DestinationFolder="$(DataDestination)SiteUtils\" />
+
+    <!-- Copy site icons to MediaPortal2 data folder -->
+    <Copy SourceFiles="@(SiteIconFiles)" DestinationFolder="$(DataDestination)Thumbs\Icons\" />
   </Target>
 </Project>

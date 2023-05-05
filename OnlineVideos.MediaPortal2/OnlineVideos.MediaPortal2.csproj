@@ -15,6 +15,7 @@
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -24,7 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -34,7 +35,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
@@ -42,11 +43,13 @@
       <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\net48\Plugins\VideoPlayers\DirectShowWrapper.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="FFMpegLib">
+      <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\Debug\net48\Plugins\FFMpegLib\FFMpegLib.dll</HintPath>
+    </Reference>
     <Reference Include="Media">
       <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\net48\Plugins\Media\Media.dll</HintPath>
     </Reference>
-    <Reference Include="MediaPortal.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="MediaPortal.Common">
       <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\net48\MediaPortal.Common.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -54,8 +57,7 @@
       <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\net48\MediaPortal.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="MediaPortal.Utilities, Version=2.0.0.1510, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="MediaPortal.Utilities">
       <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\net48\MediaPortal.Utilities.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.1722.45, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
@@ -67,14 +69,8 @@
     <Reference Include="Microsoft.Web.WebView2.Wpf, Version=1.0.1722.45, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
       <HintPath>..\Packages\Microsoft.Web.WebView2.1.0.1722.45\lib\net45\Microsoft.Web.WebView2.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\Packages\SharpDX.4.2.0\lib\net45\SharpDX.dll</HintPath>
-    </Reference>
     <Reference Include="SharpDX.Direct3D9">
       <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\net48\Plugins\SkinEngine\SharpDX.Direct3D9.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Mathematics, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\Packages\SharpDX.Mathematics.4.2.0\lib\net45\SharpDX.Mathematics.dll</HintPath>
     </Reference>
     <Reference Include="SkinEngine">
       <HintPath>..\..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\net48\Plugins\SkinEngine\SkinEngine.dll</HintPath>
@@ -111,8 +107,10 @@
     <Compile Include="BackgroundTask.cs" />
     <Compile Include="CommandContainer.cs" />
     <Compile Include="Configuration\Configuration.cs" />
+    <Compile Include="ContentLists\OnlineVideosContentListProviderBase.cs" />
     <Compile Include="Controls\OverlayPanel.cs" />
     <Compile Include="DynamicWorkflow.cs" />
+    <Compile Include="Models\OnlineVideosListModel.cs" />
     <Compile Include="Models\SiteUpdateWorkflowModels.cs" />
     <Compile Include="Configuration\UserSiteSettingsStore.cs" />
     <Compile Include="Models\SiteManagementWorkflowModel.cs" />
@@ -163,6 +161,9 @@
     <Content Include="Language\strings_sv.xml" />
     <Content Include="Language\strings_tr.xml" />
     <Content Include="Language\strings_zh.xml" />
+    <Content Include="loading.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="plugin.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -226,6 +227,11 @@
     <Content Include="Skin\default\themes\default\styles\OnlineVideosConsts.xaml" />
     <Content Include="Skin\default\themes\default\styles\OnlineVideosStyles.xaml" />
     <Content Include="Skin\default\screens\ovsSiteSettings.xaml" />
+    <Content Include="Skin\Nereus\images\NextPage.png" />
+    <Content Include="Skin\Nereus\images\ov_languages.jpg" />
+    <Content Include="Skin\Nereus\images\ov_sites.jpg" />
+    <Content Include="Skin\Nereus\images\ov_sites1.jpg" />
+    <Content Include="Skin\Nereus\images\ov_sites2.jpg" />
     <Content Include="Skin\Titanium\themes\default\styles\OnlineVideosStyles.xaml" />
     <Content Include="Skin\default\screens\ovsDialogSiteSettingText.xaml" />
     <Content Include="Skin\default\screens\ovsDialogSiteSettingChoice.xaml" />
@@ -239,7 +245,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="NuGetPackage\OnlineVideos.MediaPortal2.nuspec" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include="build.targets" />
@@ -389,15 +394,60 @@
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MediaPortal.UrlSourceSplitter">
+      <Version>2.2.10.5911</Version>
+    </PackageReference>
+    <PackageReference Include="Selenium.Firefox.WebDriver">
+      <Version>0.26.0</Version>
+    </PackageReference>
+    <PackageReference Include="Selenium.WebDriver">
+      <Version>3.141.0</Version>
+    </PackageReference>
+    <PackageReference Include="SharpDX">
+      <Version>4.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="SharpDX.Mathematics">
+      <Version>4.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="WebDriver.Profiles.Firefox">
+      <Version>0.1.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Skin\Nereus\screens\categories.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Skin\Nereus\screens\CurrentlyPlayingOV.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Skin\Nereus\screens\details.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Skin\Nereus\screens\FullScreenContentOV.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Skin\Nereus\screens\ovsSiteGroups.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Skin\Nereus\screens\ovsSiteManagement.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Skin\Nereus\screens\ovsSiteSettings.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Skin\Nereus\screens\sites.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Skin\Nereus\screens\videos.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Skin\Nereus\themes\default\styles\OnlineVideosConsts.xaml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Skin\Nereus\themes\default\styles\OnlineVideosStyles.xaml">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="build.targets" />
-  <Import Project="..\packages\MediaPortal.UrlSourceSplitter.2.2.10.5911\build\MediaPortal.UrlSourceSplitter.targets" Condition="Exists('..\packages\MediaPortal.UrlSourceSplitter.2.2.10.5911\build\MediaPortal.UrlSourceSplitter.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\MediaPortal.UrlSourceSplitter.2.2.10.5911\build\MediaPortal.UrlSourceSplitter.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MediaPortal.UrlSourceSplitter.2.2.10.5911\build\MediaPortal.UrlSourceSplitter.targets'))" />
-    <Error Condition="!Exists('..\Packages\Microsoft.Web.WebView2.1.0.1722.45\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\Packages\Microsoft.Web.WebView2.1.0.1722.45\build\Microsoft.Web.WebView2.targets'))" />
-  </Target>
-  <Import Project="..\Packages\Microsoft.Web.WebView2.1.0.1722.45\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\Packages\Microsoft.Web.WebView2.1.0.1722.45\build\Microsoft.Web.WebView2.targets')" />
 </Project>

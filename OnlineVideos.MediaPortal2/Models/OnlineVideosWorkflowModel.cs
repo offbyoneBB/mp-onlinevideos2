@@ -13,11 +13,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using MediaPortal.Common.UserManagement;
+using MediaPortal.UI.Services.UserManagement;
 
 namespace OnlineVideos.MediaPortal2
 {
     public class OnlineVideosWorkflowModel : IWorkflowModel
     {
+        public static Guid WF_MODEL_ID = new Guid("C418243F-5BD3-4637-8871-DA6545387929");
+
         public OnlineVideosWorkflowModel()
         {
             SiteGroupsList = new ItemsList();
@@ -100,6 +104,10 @@ namespace OnlineVideos.MediaPortal2
                 SelectedSite = siteModel;
                 ShowCategories(siteModel.Site.SetWebView().Settings.Categories, SelectedSite.Name);
             }
+
+            string key = string.IsNullOrEmpty(siteModel.Site.Settings.Language) ? "--" : siteModel.Site.Settings.Language;
+            _ = ServiceRegistration.Get<IUserManagement>().NotifyUsage("onlinevideos", siteModel.Name);
+            _ = ServiceRegistration.Get<IUserManagement>().NotifyUsage("onlinevideos-lang", key);
         }
 
         public void SelectCategory(CategoryViewModel categoryModel)
