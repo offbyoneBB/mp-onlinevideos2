@@ -67,25 +67,19 @@ namespace OnlineVideos.Hoster
                 NameValueCollection headers = new NameValueCollection
                 {
                     { "X-Youtube-Client-Name", "3" },
-                    { "X-Youtube-Client-Version", "16.20" },
+                    { "X-Youtube-Client-Version", "17.31.35" },
                     { "Origin", "https://www.youtube.com" },
                     { "Content-Type", "application/json" },
-                    { "User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.81 Safari/537.36" },
+                    { "User-Agent", "com.google.android.youtube/17.31.35 (Linux; U; Android 11) gzip" },
                     { "Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.7" },
                     { "Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" },
                     { "Accept-Encoding", "gzip, deflate" },
                     { "Accept-Language", "en-us,en;q=0.5" }
                 };
 
-                string postdata = String.Format(@"{{""context"": {{""client"": {{""clientName"": ""ANDROID"", ""clientVersion"": ""16.20"", ""hl"": ""en""}}}}, ""videoId"": ""{0}"", ""playbackContext"": {{""contentPlaybackContext"": {{""html5Preference"": ""HTML5_PREF_WANTS""}}}}, ""contentCheckOk"": true, ""racyCheckOk"": true}}", videoId);
+                string postdata = String.Format(@"{{""context"": {{""client"": {{""clientName"": ""ANDROID"", ""clientVersion"": ""17.31.35"", ""androidSdkVersion"": 30, ""userAgent"": ""com.google.android.youtube/17.31.35 (Linux; U; Android 11) gzip"", ""hl"": ""en"", ""timeZone"": ""UTC"", ""utcOffsetMinutes"": 0}}}}, ""videoId"": ""{0}"", ""params"": ""8AEB"", ""playbackContext"": {{""contentPlaybackContext"": {{""html5Preference"": ""HTML5_PREF_WANTS""}}}}, ""contentCheckOk"": true, ""racyCheckOk"": true}}", videoId);
                 var apicontents = WebCache.Instance.GetWebData<JObject>(YoutubePlayerUrl, postData: postdata, headers: headers);
                 parsePlayerStatus(apicontents["streamingData"], qualities);
-                if (qualities.Count == 0)
-                {
-                    postdata = String.Format(@"{{""context"": {{""client"": {{""clientName"": ""ANDROID"", ""clientVersion"": ""16.20"", ""hl"": ""en"", ""clientScreen"": ""EMBED""}}, ""thirdParty"": {{""embedUrl"": ""https://google.com""}}}}, ""videoId"": ""{0}"", ""playbackContext"": {{""contentPlaybackContext"": {{""html5Preference"": ""HTML5_PREF_WANTS""}}}}, ""contentCheckOk"": true, ""racyCheckOk"": true}}", videoId);
-                    apicontents = WebCache.Instance.GetWebData<JObject>(YoutubePlayerUrl, postData: postdata, headers: headers);
-                    parsePlayerStatus(apicontents["streamingData"], qualities);
-                }
 
                 if (qualities.Count == 0)
                 {
