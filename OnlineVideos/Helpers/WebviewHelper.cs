@@ -20,6 +20,7 @@ namespace OnlineVideos.Helpers
     {
         protected static WebViewHelper _instance = null;
         protected static readonly ManualResetEvent _readyEvent = new ManualResetEvent(false);
+        protected static Form _mainForm;
 
         public static WebViewHelper GetInstance(Form mainForm = null)
         {
@@ -28,16 +29,20 @@ namespace OnlineVideos.Helpers
                 if (_instance != null)
                     return _instance;
 
+                _mainForm = mainForm;
+                if (_mainForm != null)
+                {
+                    _mainForm.FormClosed += OnMainFormClosed;
+                    _mainForm.Deactivate += (s, e) => { _mainForm.Activate(); };
+                }
+
                 _readyEvent.Reset();
                 Thread newThread = new Thread(CreateInstance);
                 newThread.SetApartmentState(ApartmentState.STA);
                 newThread.Start();
 
-                // Get the current main form of application
-                if (mainForm != null)
-                    mainForm.FormClosed += OnMainFormClosed;
-
                 _readyEvent.WaitOne();
+
                 return _instance;
             }
         }
@@ -106,10 +111,22 @@ namespace OnlineVideos.Helpers
                 _form = new Form();
                 _form.FormBorderStyle = FormBorderStyle.None;
                 _form.AutoScaleMode = AutoScaleMode.None;
-                _form.TopMost = true;
-                _form.Width = 400;
-                _form.Height = 300;
-                _form.Closed += FormOnClosed;
+                _form.TopMost = false;
+                // Start hidden, some sites just do background work first
+                _form.Visible = false;
+                _form.Left = -1000;
+                _form.Top = -1000;
+                _form.Width = 1;
+                _form.Height = 1;
+
+                if (_mainForm != null)
+                {
+                    _form.Shown += (sender, args) =>
+                    {
+                        _mainForm.BringToFront();
+                        _mainForm.Activate();
+                    };
+                }
 
                 _webView = new Microsoft.Web.WebView2.WinForms.WebView2();
                 _webView.Name = "OV_Webview";
@@ -121,7 +138,22 @@ namespace OnlineVideos.Helpers
                 _form.Controls.Add(_webView);
 
                 WaitForTaskCompleted(_webView.EnsureCoreWebView2Async());
+
+
+
             }
+        }
+
+        public void Show()
+        {
+            _form.TopMost = true;
+            _form.Visible = true;
+        }
+
+        public void Hide()
+        {
+            _form.TopMost = false;
+            _form.Visible = false;
         }
 
         private static async void FormOnClosed(object sender, EventArgs args)

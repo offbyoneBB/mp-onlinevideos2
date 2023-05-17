@@ -183,6 +183,8 @@ namespace OnlineVideos.MediaPortal2.Player
                 //GUIWaitCursor.Init(); GUIWaitCursor.Show(); // init and show the wait cursor while buffering
 
                 _webView.Source = new Uri(_fileOrUrl);
+                _wvHelper.Show();
+
                 //if (GoFullscreen) GUIWindowManager.ActivateWindow(GUIOnlineVideoFullscreen.WINDOW_FULLSCREEN_ONLINEVIDEO);
 #if OSDForDevTools
                 GUIWindowManager.OnNewAction += GUIWindowManager_OnNewAction;
@@ -219,6 +221,7 @@ namespace OnlineVideos.MediaPortal2.Player
                 //}
                 _webView.NavigationCompleted -= WebView_FirstNavigationCompleted;
                 _webView.NavigationCompleted -= WebView_FurtherNavigationCompleted;
+                _wvHelper.Hide();
                 _wvHelper.SetUrl("about:blank");
             }
             catch { }
@@ -385,7 +388,8 @@ namespace OnlineVideos.MediaPortal2.Player
                 {
                     var bb = _wvHelper.ExecuteFunc(v + @".currentTime");
                     float res;
-                    if (float.TryParse(bb, out res)) return TimeSpan.FromSeconds(res);
+                    if (float.TryParse(bb, NumberStyles.Any, CultureInfo.InvariantCulture, out res)) 
+                        return TimeSpan.FromSeconds(res);
                 }
                 return TimeSpan.Zero;
             }
@@ -408,7 +412,7 @@ namespace OnlineVideos.MediaPortal2.Player
                 {
                     var bb = _wvHelper.ExecuteFunc(v + @".duration");
                     float res;
-                    if (float.TryParse(bb, out res)) return TimeSpan.FromSeconds(res);
+                    if (float.TryParse(bb, NumberStyles.Any, CultureInfo.InvariantCulture, out res)) return TimeSpan.FromSeconds(res);
                 }
                 return TimeSpan.Zero;
             }
