@@ -25,6 +25,8 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <Include Source="screens\FullScreenContentVideoKeyBindings.inc"/>
+
         <mp_special_controls:PlayerControl PlayerContext="CurrentPlayer">
             <mp_special_controls:PlayerControl.TemplateControl>
                 <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}">
