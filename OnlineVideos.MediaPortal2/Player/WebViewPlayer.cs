@@ -35,6 +35,9 @@ namespace OnlineVideos.MediaPortal2.Player
         protected PlayerEventDlgt _playbackError = null;
 
         private IWebViewSiteUtilBase _siteUtil;
+        private IWebViewHTMLMediaElement _siteUtilME;
+        private string _videoElementSelector = null;
+
         private WebViewHelper _wvHelper;
 
         private Microsoft.Web.WebView2.WinForms.WebView2 _webView;
@@ -89,6 +92,13 @@ namespace OnlineVideos.MediaPortal2.Player
 
             _siteUtil = util as IWebViewSiteUtilBase;
             if (_siteUtil == null) throw new ArgumentException("SiteUtil does not implement IWebDriverSite");
+
+            _siteUtilME = util as IWebViewHTMLMediaElement;
+            if (_siteUtilME != null)
+            {
+                // Query only once because of large stack allocation warning from VS
+                _videoElementSelector = _siteUtilME.VideoElementSelector;
+            }
         }
 
         public bool Init(MediaItem mediaItem)
@@ -308,15 +318,15 @@ namespace OnlineVideos.MediaPortal2.Player
                 if (_playState == PlayState.Playing)
                 {
                     _playState = PlayState.Paused;
-                    if (_siteUtil is IWebViewHTMLMediaElement)
+                    if (_siteUtilME != null)
                     {
-                        var v = GetVideoElementSelector;
+                        var v = _videoElementSelector;
                         if (!String.IsNullOrEmpty(v))
                             _wvHelper.Execute(v + ".pause()");
                     }
-                    else if (_siteUtil is IWebViewSiteUtil)
+                    else if (_siteUtil is IWebViewSiteUtil siteUtil)
                     {
-                        ((IWebViewSiteUtil)_siteUtil).DoPause();
+                        siteUtil.DoPause();
                     }
                 }
                 else
@@ -324,13 +334,13 @@ namespace OnlineVideos.MediaPortal2.Player
                     _playState = PlayState.Playing;
                     if (_siteUtil is IWebViewHTMLMediaElement)
                     {
-                        var v = GetVideoElementSelector;
+                        var v = _videoElementSelector;
                         if (!String.IsNullOrEmpty(v))
                             _wvHelper.Execute(v + ".play()");
                     }
-                    else if (_siteUtil is IWebViewSiteUtil)
+                    else if (_siteUtil is IWebViewSiteUtil siteUtil)
                     {
-                        ((IWebViewSiteUtil)_siteUtil).DoPlay();
+                        siteUtil.DoPlay();
                     }
                 }
             }
@@ -350,7 +360,7 @@ namespace OnlineVideos.MediaPortal2.Player
         {
             get
             {
-                var v = GetVideoElementSelector;
+                var v = _videoElementSelector;
                 if (!String.IsNullOrEmpty(v))
                 {
                     var bb = _wvHelper.ExecuteFunc(v + @".currentTime");
@@ -362,7 +372,7 @@ namespace OnlineVideos.MediaPortal2.Player
             }
             set
             {
-                var v = GetVideoElementSelector;
+                var v = _videoElementSelector;
                 if (!String.IsNullOrEmpty(v))
                 {
                     _wvHelper.ExecuteFunc(v + ".currentTime=" + value.TotalSeconds.ToString(CultureInfo.InvariantCulture));
@@ -374,7 +384,7 @@ namespace OnlineVideos.MediaPortal2.Player
         {
             get
             {
-                var v = GetVideoElementSelector;
+                var v = _videoElementSelector;
                 if (!String.IsNullOrEmpty(v))
                 {
                     var bb = _wvHelper.ExecuteFunc(v + @".duration");
@@ -393,17 +403,6 @@ namespace OnlineVideos.MediaPortal2.Player
 
         public bool CanSeekForwards { get; } = true;
         public bool CanSeekBackwards { get; } = true;
-
-
-        private string GetVideoElementSelector
-        {
-            get
-            {
-                if (_siteUtil is IWebViewHTMLMediaElement)
-                    return ((IWebViewHTMLMediaElement)_siteUtil).VideoElementSelector;
-                return null;
-            }
-        }
 
         private void WebView_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
         {
@@ -430,8 +429,8 @@ namespace OnlineVideos.MediaPortal2.Player
         private void WebView_FurtherNavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
             bool doStopPlayback = false;
-            if (_siteUtil is IWebViewSiteUtil)
-                ((IWebViewSiteUtil)_siteUtil).OnPageLoaded(ref doStopPlayback);
+            if (_siteUtil is IWebViewSiteUtil siteUtil)
+                siteUtil.OnPageLoaded(ref doStopPlayback);
             if (doStopPlayback)
                 Stop();
         }

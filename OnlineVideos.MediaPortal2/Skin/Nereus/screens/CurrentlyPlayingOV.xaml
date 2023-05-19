@@ -10,6 +10,8 @@
     >
     <Include.Resources>
 
+        <Model x:Key="WebViewPlayerHelperModel" Id="E3C534DF-C1AB-4AB1-AC65-F0F86756CDDC"/>
+
         <ResourceWrapper x:Key="Header_Text" Resource="[Media.VideoCurrentlyPlayingHeader]"/>
 
         <ControlTemplate x:Key="Client_Template">
@@ -35,7 +37,7 @@
 
                         <Control x:Name="CP_MovieGeneral" Grid.Row="1" Grid.Column="0" IsVisible="{Binding ElementName=General, Path=IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
                             <Control.TemplateControl>
-                                <Include Source="screens\CP_MovieGeneral.inc"/>
+                                <Include Source="screens\CurrentlyPlayingMovieDetails.inc"/>
                             </Control.TemplateControl>
                         </Control>
 
@@ -51,6 +53,14 @@
                     </Grid>
                 </mp_special_controls:PlayerControl.TemplateControl>
             </mp_special_controls:PlayerControl>
+
+            <ControlTemplate.Triggers>
+                <EventTrigger RoutedEvent="Screen.Hide">
+                    <EventTrigger.Actions>
+                        <TriggerCommand Command="{Command Source={StaticResource WebViewPlayerHelperModel}, Path=UpdateOverlayPosition}"/>
+                    </EventTrigger.Actions>
+                </EventTrigger>
+            </ControlTemplate.Triggers>
 
         </ControlTemplate>
     </Include.Resources>
