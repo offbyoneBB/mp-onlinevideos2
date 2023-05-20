@@ -33,7 +33,7 @@ namespace OnlineVideos.Helpers
                 if (_mainForm != null)
                 {
                     _mainForm.FormClosed += OnMainFormClosed;
-                    _mainForm.Deactivate += (s, e) => { _mainForm.Activate(); };
+                    _mainForm.Deactivate += OnMainFormDeactivate();
                 }
 
                 _readyEvent.Reset();
@@ -47,9 +47,19 @@ namespace OnlineVideos.Helpers
             }
         }
 
+        private static EventHandler OnMainFormDeactivate()
+        {
+            return (s, e) =>
+            {
+                Log.Debug("MainForm got deactivated, activate it again");
+                _mainForm.Activate();
+            };
+        }
+
         private static async void OnMainFormClosed(object sender, FormClosedEventArgs formClosedEventArgs)
         {
-            await DisposeInstance();
+            Log.Debug("MainForm got closed, close WebView");
+            await DisposeInstance().ConfigureAwait(false);
         }
 
         private static void CreateInstance()
@@ -57,15 +67,23 @@ namespace OnlineVideos.Helpers
             _instance = new WebViewHelper();
             _readyEvent.Set();
             // Window blocks here
+            Log.Debug("WebView: Run viewer form now");
             Application.Run(_instance._form);
             // ... until form gets closed
         }
 
         public static async Task DisposeInstance()
         {
-            if (_instance != null)
-                await _instance.DisposeAsync();
-            _instance = null;
+            Log.Debug("WebView: DisposeInstance");
+            WebViewHelper instance;
+            lock (_readyEvent)
+            {
+                instance = _instance;
+                _instance = null;
+            }
+
+            if (instance != null)
+                await instance.DisposeAsync().ConfigureAwait(false);
         }
 
         public override object InitializeLifetimeService()
@@ -76,10 +94,11 @@ namespace OnlineVideos.Helpers
 
         public async ValueTask DisposeAsync()
         {
-            if (_devtoolsContext != null && !_webView.IsDisposed)
-                await Invoke(() => _devtoolsContext.DisposeAsync());
+            Log.Debug("WebView: DisposeAsync");
             _form.Closed -= FormOnClosed;
+            Log.Debug("WebView: Form.Close()");
             _form.Close();
+            Log.Debug("WebView: Form.Close() done...");
         }
 
 
@@ -118,11 +137,14 @@ namespace OnlineVideos.Helpers
                 _form.Top = -1000;
                 _form.Width = 1;
                 _form.Height = 1;
+                _form.Closed += FormOnClosed;
 
                 if (_mainForm != null)
                 {
                     _form.Shown += (sender, args) =>
                     {
+                        Log.Debug("WebViewForm created, bring back MainForm to from and activate");
+                        _form.Hide();
                         _mainForm.BringToFront();
                         _mainForm.Activate();
                     };
@@ -138,26 +160,26 @@ namespace OnlineVideos.Helpers
                 _form.Controls.Add(_webView);
 
                 WaitForTaskCompleted(_webView.EnsureCoreWebView2Async());
-
-
-
             }
         }
 
         public void Show()
         {
+            Log.Debug("WebViewForm: Show");
             _form.TopMost = true;
             _form.Visible = true;
         }
 
         public void Hide()
         {
+            Log.Debug("WebViewForm: Hide");
             _form.TopMost = false;
             _form.Visible = false;
         }
 
         private static async void FormOnClosed(object sender, EventArgs args)
         {
+            Log.Debug("WebView: FormOnClosed");
             await DisposeInstance();
         }
 
@@ -182,6 +204,8 @@ namespace OnlineVideos.Helpers
 
         private void Invoke(Action action)
         {
+            if (_webView.IsDisposed)
+                return;
             if (_webView.InvokeRequired)
             {
                 IAsyncResult iar = _webView.BeginInvoke(action);
@@ -195,6 +219,8 @@ namespace OnlineVideos.Helpers
 
         private TE Invoke<TE>(Func<TE> func)
         {
+            if (_webView.IsDisposed)
+                return default;
             if (_webView.InvokeRequired)
             {
                 IAsyncResult iar = _webView.BeginInvoke(func);

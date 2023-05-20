@@ -36,7 +36,6 @@ namespace OnlineVideos.MediaPortal2.Player
 
         private IWebViewSiteUtilBase _siteUtil;
         private IWebViewHTMLMediaElement _siteUtilME;
-        private string _videoElementSelector = null;
 
         private WebViewHelper _wvHelper;
 
@@ -94,11 +93,6 @@ namespace OnlineVideos.MediaPortal2.Player
             if (_siteUtil == null) throw new ArgumentException("SiteUtil does not implement IWebDriverSite");
 
             _siteUtilME = util as IWebViewHTMLMediaElement;
-            if (_siteUtilME != null)
-            {
-                // Query only once because of large stack allocation warning from VS
-                _videoElementSelector = _siteUtilME.VideoElementSelector;
-            }
         }
 
         public bool Init(MediaItem mediaItem)
@@ -320,7 +314,7 @@ namespace OnlineVideos.MediaPortal2.Player
                     _playState = PlayState.Paused;
                     if (_siteUtilME != null)
                     {
-                        var v = _videoElementSelector;
+                        var v = _siteUtilME?.VideoElementSelector;
                         if (!String.IsNullOrEmpty(v))
                             _wvHelper.Execute(v + ".pause()");
                     }
@@ -334,7 +328,7 @@ namespace OnlineVideos.MediaPortal2.Player
                     _playState = PlayState.Playing;
                     if (_siteUtil is IWebViewHTMLMediaElement)
                     {
-                        var v = _videoElementSelector;
+                        var v = _siteUtilME?.VideoElementSelector;
                         if (!String.IsNullOrEmpty(v))
                             _wvHelper.Execute(v + ".play()");
                     }
@@ -360,7 +354,7 @@ namespace OnlineVideos.MediaPortal2.Player
         {
             get
             {
-                var v = _videoElementSelector;
+                var v = _siteUtilME?.VideoElementSelector;
                 if (!String.IsNullOrEmpty(v))
                 {
                     var bb = _wvHelper.ExecuteFunc(v + @".currentTime");
@@ -372,7 +366,7 @@ namespace OnlineVideos.MediaPortal2.Player
             }
             set
             {
-                var v = _videoElementSelector;
+                var v = _siteUtilME?.VideoElementSelector;
                 if (!String.IsNullOrEmpty(v))
                 {
                     _wvHelper.ExecuteFunc(v + ".currentTime=" + value.TotalSeconds.ToString(CultureInfo.InvariantCulture));
@@ -384,7 +378,7 @@ namespace OnlineVideos.MediaPortal2.Player
         {
             get
             {
-                var v = _videoElementSelector;
+                var v = _siteUtilME?.VideoElementSelector;
                 if (!String.IsNullOrEmpty(v))
                 {
                     var bb = _wvHelper.ExecuteFunc(v + @".duration");
