@@ -4,7 +4,7 @@
   <Target Name="AfterBuild">
 
     <PropertyGroup>
-      <PluginDestination>$(SolutionDir)..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\Plugins\OnlineVideos\</PluginDestination>
+      <PluginDestination>$(SolutionDir)..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\net48\Plugins\OnlineVideos\</PluginDestination>
       <DataDestination>$(ProgramData)\Team MediaPortal\MP2-Client\OnlineVideos\</DataDestination>
     </PropertyGroup>
 

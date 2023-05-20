@@ -10,7 +10,7 @@
 
   <Target Name="AfterBuild">
     <PropertyGroup>
-      <PluginDestination>$(SolutionDir)..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\Plugins\$(ProjectName)\</PluginDestination>
+      <PluginDestination>$(SolutionDir)..\MediaPortal\Bin\MP2-Client\bin\$(Configuration)\net48\Plugins\$(ProjectName)\</PluginDestination>
     </PropertyGroup>
     <ItemGroup>
       <References Include="$(TargetDir)x86\InputStream.*\**\*.*" />
