@@ -13,12 +13,12 @@
       <PluginFiles Include="$(TargetDir)plugin.xml" />
       <APIFiles Include="$(TargetDir)OnlineVideos.dll" />
       <APIFiles Include="$(TargetDir)loading.gif" />
-      <APIFiles Include="$(TargetDir)geckodriver.exe" />
-      <APIFiles Include="$(TargetDir)webdriver.dll" />
       <APIFiles Include="$(TargetDir)OnlineVideos.MediaPortal2.Interfaces.dll" />
       <WebDriverFiles Include="$(TargetDir)Profiles\**\*" />
       <APIFiles Include="$(TargetDir)OnlineVideos.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
       <WebView2Files Include="$(TargetDir)Microsoft.Web.WebView2.*.dll" />
+      <WebView2Files Include="$(TargetDir)Microsoft.Bcl.AsyncInterfaces.dll" />
+      <WebView2Files Include="$(TargetDir)System.Threading.Tasks.Extensions.dll" />
       <WebView2Runtimes Include="$(TargetDir)\runtimes\**\*.dll" />
       <!--<BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\iexplore.exe*" />
       <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\iexplore.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
