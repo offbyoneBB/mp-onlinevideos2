@@ -188,7 +188,7 @@ namespace OnlineVideos.Helpers
             if (!e.IsSuccess)
                 Log.Error("Error initializing webview: {0}", e.InitializationException.Message);
 #if fulllogging
-            webView.CoreWebView2.WebResourceResponseReceived += CoreWebView2_WebResourceResponseReceived;
+            _webView.CoreWebView2.WebResourceResponseReceived += CoreWebView2_WebResourceResponseReceived;
 #endif
         }
 
@@ -276,19 +276,31 @@ namespace OnlineVideos.Helpers
                     _webView.CoreWebView2.WebResourceRequested += eventHandler;
                     _webView.CoreWebView2.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
 
-                    if (postData == null)
+                    try
                     {
-                        _webView.Source = new Uri(url);
+                        _navCompleted = false;
+                        _webView.NavigationCompleted += Wv2_NavigationCompleted;
+
+                        if (postData == null)
+                        {
+                            _webView.Source = new Uri(url);
+                        }
+                        else
+                        {
+                            byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(postData);
+                            MemoryStream stream = new MemoryStream(byteArray);
+                            var request = _webView.CoreWebView2.Environment.CreateWebResourceRequest(url,
+                                "POST", stream, "Content-Type: application/x-www-form-urlencoded");
+                            _webView.CoreWebView2.NavigateWithWebResourceRequest(request);
+                        }
+
+                        WaitUntilNavCompleted();
                     }
-                    else
+                    finally
                     {
-                        byte[] byteArray = System.Text.Encoding.ASCII.GetBytes(postData);
-                        MemoryStream stream = new MemoryStream(byteArray);
-                        var request = _webView.CoreWebView2.Environment.CreateWebResourceRequest(url,
-                                      "POST", stream, "Content-Type: application/x-www-form-urlencoded");
-                        _webView.CoreWebView2.NavigateWithWebResourceRequest(request);
+                        _webView.NavigationCompleted -= Wv2_NavigationCompleted;
                     }
-                    WaitUntilNavCompleted();
+
                     _webView.CoreWebView2.WebResourceRequested -= eventHandler;
                     _webView.CoreWebView2.RemoveWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.All);
                 }
@@ -340,11 +352,17 @@ namespace OnlineVideos.Helpers
 
         public void WaitUntilNavCompleted()
         {
-            _navCompleted = false;
-            _webView.NavigationCompleted += Wv2_NavigationCompleted;
+            TimeSpan timeout = TimeSpan.FromSeconds(10);
+            DateTime start = DateTime.Now;
             do
             {
+                Thread.Sleep(10);
                 Application.DoEvents();
+                if (DateTime.Now - start > timeout)
+                {
+                    Log.Warn("WebViewHelper: Timeout of request (10s)");
+                    break;
+                }
             }
             while (!_navCompleted);
         }

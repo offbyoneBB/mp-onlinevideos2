@@ -198,8 +198,12 @@ namespace OnlineVideos.MediaPortal2.Player
         {
             try
             {
-                _webView.NavigationCompleted -= WebView_FirstNavigationCompleted;
-                _webView.NavigationCompleted -= WebView_FurtherNavigationCompleted;
+                if (_webView != null)
+                {
+                    _webView.NavigationCompleted -= WebView_FirstNavigationCompleted;
+                    _webView.NavigationCompleted -= WebView_FurtherNavigationCompleted;
+                }
+
                 _wvHelper.Hide();
                 _wvHelper.SetUrl("about:blank");
             }
