@@ -48,7 +48,7 @@
             <RowDefinition Height="*"/>
           </Grid.RowDefinitions>
   
-          <Label Color="{ThemeResource TextColor}" FontFamily="SegoeUIBold" FontSize="{ThemeResource SmallFontSize}"
+          <Label Color="{ThemeResource TextColor}" FontFamily="Noto-Bold" FontSize="{ThemeResource SmallFontSize}"
                  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" TextTrimming="WordEllipsis"
                  DataContext="{Binding ElementName=categorylist,Path=CurrentItem}"
                  Content="{Binding Path=Name}" />

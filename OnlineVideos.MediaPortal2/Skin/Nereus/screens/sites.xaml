@@ -108,7 +108,7 @@
                  HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
 
           <StackPanel Orientation="Vertical" Grid.Row="0" Grid.ColumnSpan="2" Margin="5">
-            <Label Color="{ThemeResource TextColor}" FontFamily="SegoeUIBold"
+            <Label Color="{ThemeResource TextColor}" FontFamily="Noto-Bold"
                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontSize="{ThemeResource NormalFontSize}"
                    DataContext="{Binding ElementName=siteslist,Path=CurrentItem}" Content="{Binding Path=Name}" />
             <Image Width="{ResolutionResource ovsLanguageImageWidth}" Stretch="Uniform" Margin="0,2,0,2" DataContext="{Binding ElementName=siteslist,Path=CurrentItem}"

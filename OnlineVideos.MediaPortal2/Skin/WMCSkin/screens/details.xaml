@@ -45,7 +45,7 @@
         <Grid DockPanel.Dock="Bottom" VerticalAlignment="Top" Margin="50,0,50,20" Height="235">          
           <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="0" DataContext="{Binding Source={StaticResource OnlineVideosModel}}">            
             <Label Content="{Binding Path=SelectedVideo, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Title}" 
-                   FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}" FontFamily="SegoeUIBold"/>            
+                   FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource TextColor}" FontFamily="Noto-Bold"/>            
             <Label Content="{Binding Path=SelectedCategory.Name}" Opacity="1.3" 
                    Color="{ThemeResource MenuTextBackground}" FontSize="{ThemeResource SmallFontSize}"/>
             <Label Content="{Binding Path=SelectedSite.Name}" Color="{ThemeResource MenuTextBackground}"

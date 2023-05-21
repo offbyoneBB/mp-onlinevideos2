@@ -51,7 +51,7 @@
             <RowDefinition Height="*"/>
           </Grid.RowDefinitions>
 
-          <Label Grid.ColumnSpan="3" Color="{ThemeResource TextColor}" Content="{Binding Title}" FontFamily="SegoeUIBold"
+          <Label Grid.ColumnSpan="3" Color="{ThemeResource TextColor}" Content="{Binding Title}" FontFamily="Noto-Bold"
                  VerticalAlignment="Top" Wrap="True" FontSize="{ThemeResource SmallFontSize}"
                  DataContext="{Binding ElementName=videoslist,Path=CurrentItem}" TextTrimming="WordEllipsis"/>
 

@@ -81,10 +81,10 @@
   <DataTemplate x:Key="SiteGroupListItemDataTemplate" DataType="{x:Type ovs:SiteGroupViewModel}">
     <DockPanel x:Name="ItemControl" LastChildFill="False">
       <Image DockPanel.Dock="Left" x:Name="thumb" Stretch="Uniform" Margin="10,0,0,0" Source="{Binding Path=Thumb}" Height="40"/>
-      <Label DockPanel.Dock="Center" x:Name="ItemLabel" FontFamily="SegoeUIBold" Margin="10,0,10,0" Content="{Binding [Name]}"
+      <Label DockPanel.Dock="Center" x:Name="ItemLabel" FontFamily="Noto-Bold" Margin="10,0,10,0" Content="{Binding [Name]}"
              FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource MediaItemUnwatchedColor}"/>
       <Label x:Name="ItemNum" DockPanel.Dock="Right" HorizontalAlignment="Right" 
-             FontSize="{ThemeResource SmallFontSize}" FontFamily="SegoeUIBold"
+             FontSize="{ThemeResource SmallFontSize}" FontFamily="Noto-Bold"
              Margin="0,0,10,0" Content="{Binding Path=Sites.Count}" Color="{ThemeResource MediaItemUnwatchedColor}"/>
     </DockPanel>
   </DataTemplate>
@@ -207,7 +207,7 @@
     <DockPanel x:Name="ItemControl" LastChildFill="False">
       <Image DockPanel.Dock="Left" x:Name="thumb" Stretch="Uniform" Margin="10,0,0,0" Height="40"
              Source="{Binding Path=Site, Converter={StaticResource ovsSiteUtilIconConverter}}" />
-      <Label DockPanel.Dock="Center" x:Name="ItemLabel" FontFamily="SegoeUIBold" Margin="10,0,10,0" Content="{Binding Path=Name}"
+      <Label DockPanel.Dock="Center" x:Name="ItemLabel" FontFamily="Noto-Bold" Margin="10,0,10,0" Content="{Binding Path=Name}"
              FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource MediaItemUnwatchedColor}"/>
     </DockPanel>
   </DataTemplate>
@@ -383,9 +383,9 @@
           </MultiBinding>
         </Image.Margin>
       </Image>  
-      <Label DockPanel.Dock="Center" x:Name="ItemLabel" FontFamily="SegoeUIBold" Margin="10,0,10,0" Content="{Binding Path=Name}"
+      <Label DockPanel.Dock="Center" x:Name="ItemLabel" FontFamily="Noto-Bold" Margin="10,0,10,0" Content="{Binding Path=Name}"
              FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource MediaItemUnwatchedColor}"/>
-      <Label DockPanel.Dock="Right" x:Name="NumLabel" FontFamily="SegoeUIBold" Margin="10,0,10,0" Content="{Binding Path=EstimatedChildren}"
+      <Label DockPanel.Dock="Right" x:Name="NumLabel" FontFamily="Noto-Bold" Margin="10,0,10,0" Content="{Binding Path=EstimatedChildren}"
              FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource MediaItemUnwatchedColor}"/>
     </DockPanel>
   </DataTemplate>
@@ -514,9 +514,9 @@
           </MultiBinding>
         </Image.Margin>
       </Image>
-      <Label DockPanel.Dock="Right" x:Name="DurationLabel" FontFamily="SegoeUIBold" Margin="10,0,10,0" Content="{Binding Path=Length}"
+      <Label DockPanel.Dock="Right" x:Name="DurationLabel" FontFamily="Noto-Bold" Margin="10,0,10,0" Content="{Binding Path=Length}"
              FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource MediaItemUnwatchedColor}"/>
-      <Label DockPanel.Dock="Center" x:Name="ItemLabel" FontFamily="SegoeUIBold" Margin="10,0,10,0" Content="{Binding Path=Title}"
+      <Label DockPanel.Dock="Center" x:Name="ItemLabel" FontFamily="Noto-Bold" Margin="10,0,10,0" Content="{Binding Path=Title}"
              FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource MediaItemUnwatchedColor}" ScrollDelay="0"/>
     </DockPanel>
   </DataTemplate>
@@ -701,7 +701,7 @@
           </MultiBinding>
         </Image.Margin>
       </Image>
-      <Label DockPanel.Dock="Center" x:Name="ItemLabel" FontFamily="SegoeUIBold" Margin="10,0,10,0" Content="{Binding Path=Title}"
+      <Label DockPanel.Dock="Center" x:Name="ItemLabel" FontFamily="Noto-Bold" Margin="10,0,10,0" Content="{Binding Path=Title}"
              FontSize="{ThemeResource SmallFontSize}" Color="{ThemeResource MediaItemUnwatchedColor}"/>
     </DockPanel>
   </DataTemplate>

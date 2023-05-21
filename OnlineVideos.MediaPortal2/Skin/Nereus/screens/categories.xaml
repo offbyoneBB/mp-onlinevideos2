@@ -109,7 +109,7 @@
           <StackPanel Orientation="Vertical" Grid.ColumnSpan="2" Margin="5"
                       DataContext="{Binding Source={StaticResource OnlineVideosModel}}">
             
-            <Label Color="{ThemeResource TextColor}" FontFamily="SegoeUIBold" FontSize="{ThemeResource NormalFontSize}"
+            <Label Color="{ThemeResource TextColor}" FontFamily="Noto-Bold" FontSize="{ThemeResource NormalFontSize}"
                    VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Content="{Binding Path=Name}"
                    DataContext="{Binding ElementName=categorylist,Path=CurrentItem}" />
 

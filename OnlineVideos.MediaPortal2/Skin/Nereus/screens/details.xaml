@@ -113,7 +113,7 @@
 
             <StackPanel Orientation="Vertical" VerticalAlignment="Top" Margin="5" DataContext="{Binding Source={StaticResource OnlineVideosModel}}">
               <Label Content="{Binding Path=SelectedVideo, Converter={StaticResource ExtendedInfoConverter}, ConverterParameter=Title}"
-                     FontSize="{ThemeResource NormalFontSize}" Color="{ThemeResource TextColor}" FontFamily="SegoeUIBold"/>
+                     FontSize="{ThemeResource NormalFontSize}" Color="{ThemeResource TextColor}" FontFamily="Noto-Bold"/>
               <Grid IsVisible="{Binding ElementName=SiteName, Path=Content, Converter={StaticResource EmptyStringToFalseConverter}}">
                 <Image Source="HomeContentIcons\page.png" Height="27" Width="27" Stretch="Uniform" Margin="0,-1,3,1"
                        VerticalAlignment="Center" HorizontalAlignment="Left"/>

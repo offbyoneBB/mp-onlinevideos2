@@ -53,7 +53,7 @@
             <RowDefinition Height="*"/>
           </Grid.RowDefinitions>
           
-          <Label Grid.Row="0" Grid.Column="0" Color="{ThemeResource TextColor}" FontFamily="SegoeUIBold"
+          <Label Grid.Row="0" Grid.Column="0" Color="{ThemeResource TextColor}" FontFamily="Noto-Bold"
                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontSize="{ThemeResource SmallFontSize}"
                  DataContext="{Binding ElementName=siteslist,Path=CurrentItem}" Content="{Binding Path=Name}" />
           <Image Grid.Row="1" Grid.Column="0" Width="{ResolutionResource ovsLanguageImageWidth}" Stretch="Uniform" Margin="0,2,0,2" DataContext="{Binding ElementName=siteslist,Path=CurrentItem}"

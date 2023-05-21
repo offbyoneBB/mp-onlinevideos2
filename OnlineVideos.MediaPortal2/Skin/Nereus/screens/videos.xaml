@@ -112,7 +112,7 @@
           
           <StackPanel Orientation="Vertical" Margin="5" VerticalAlignment="Top"
                       DataContext="{Binding Source={StaticResource OnlineVideosModel}}">
-            <Label Color="{ThemeResource TextColor}" Content="{Binding Title}" FontFamily="SegoeUIBold"
+            <Label Color="{ThemeResource TextColor}" Content="{Binding Title}" FontFamily="Noto-Bold"
                    Wrap="True" FontSize="{ThemeResource NormalFontSize}" TextTrimming="WordEllipsis" Width="900" Margin="0,0,-400,0"
                    DataContext="{Binding ElementName=videoslist,Path=CurrentItem}" />
 

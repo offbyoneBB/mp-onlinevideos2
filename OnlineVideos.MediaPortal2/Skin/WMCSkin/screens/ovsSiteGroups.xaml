@@ -46,7 +46,7 @@
           </Grid.RowDefinitions>
           
           <Label Grid.Row="0" Grid.Column="0" Color="{ThemeResource TextColor}" FontSize="{ThemeResource SmallFontSize}"
-                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontFamily="SegoeUIBold"
+                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontFamily="Noto-Bold"
                  DataContext="{Binding ElementName=siteGroupsList,Path=CurrentItem}" Content="{Binding [Name]}"/>
           <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0"
                       DataContext="{Binding ElementName=siteGroupsList,Path=CurrentItem}"

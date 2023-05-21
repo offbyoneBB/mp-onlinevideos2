@@ -108,7 +108,7 @@
           
           <StackPanel Orientation="Vertical" Grid.Row="0" Grid.ColumnSpan="2" Margin="5">          
             <Label Color="{ThemeResource TextColor}" FontSize="{ThemeResource NormalFontSize}"
-                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontFamily="SegoeUIBold"
+                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontFamily="Noto-Bold"
                    DataContext="{Binding ElementName=siteGroupsList,Path=CurrentItem}" Content="{Binding [Name]}"/>
             
             <Grid IsVisible="{Binding Path=Sites.Count, Converter={StaticResource ReferenceToBoolConverter}}">
