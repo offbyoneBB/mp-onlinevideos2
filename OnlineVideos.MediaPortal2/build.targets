@@ -18,7 +18,9 @@
       <APIFiles Include="$(TargetDir)OnlineVideos.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
       <WebView2Files Include="$(TargetDir)Microsoft.Web.WebView2.*.dll" />
       <WebView2Files Include="$(TargetDir)Microsoft.Bcl.AsyncInterfaces.dll" />
-      <WebView2Files Include="$(TargetDir)System.Threading.Tasks.Extensions.dll" />
+      <WebView2Files Include="$(TargetDir)Microsoft.Extensions.*.dll" />
+      <WebView2Files Include="$(TargetDir)System.*.dll" />
+      <WebView2Files Include="$(TargetDir)WebView2.DevTools.Dom.dll" />
       <WebView2Runtimes Include="$(TargetDir)\runtimes\**\*.dll" />
       <!--<BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\iexplore.exe*" />
       <BrowserHostFiles Include="$(SolutionDir)OnlineVideos.WebAutomation.BrowserHost\bin\$(Configuration)\iexplore.pdb" Condition=" '$(Configuration)' == 'Debug' "/>
