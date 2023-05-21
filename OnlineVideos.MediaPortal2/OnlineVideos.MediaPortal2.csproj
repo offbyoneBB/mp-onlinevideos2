@@ -416,6 +416,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Skin\.editorconfig" />
     <None Include="Skin\Nereus\screens\categories.xaml">
       <SubType>Designer</SubType>
     </None>
