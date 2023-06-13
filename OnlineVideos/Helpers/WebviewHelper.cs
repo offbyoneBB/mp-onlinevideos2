@@ -163,6 +163,8 @@ namespace OnlineVideos.Helpers
                 String cacheFolder = Path.Combine(Path.GetTempPath(), "WebViewplayer");
                 _webView.CreationProperties = new CoreWebView2CreationProperties { UserDataFolder = cacheFolder };
 
+                _webView.NavigationCompleted += Wv2_NavigationCompleted;
+
                 _webView.Dock = DockStyle.Fill;
                 _form.Controls.Add(_webView);
 
@@ -267,7 +269,6 @@ namespace OnlineVideos.Helpers
                 var uri = new Uri(url);
                 if (uri == _webView.Source)
                     return;
-                _webView.Source = uri;
                 _navCompleted = false;
                 _webView.Source = uri;
                 WaitUntilNavCompleted();
