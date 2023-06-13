@@ -11,8 +11,6 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using WebView2.DevTools.Dom;
-using HtmlElement = WebView2.DevTools.Dom.HtmlElement;
 
 namespace OnlineVideos.Helpers
 {
@@ -104,12 +102,11 @@ namespace OnlineVideos.Helpers
 
         //Only access this from the WebViewPlayer, as it can only be accessed from the main appdomain.
         public Microsoft.Web.WebView2.WinForms.WebView2 GetWebViewForPlayer { get { return _webView; } }
-        public WebView2DevToolsContext DevTools => _devtoolsContext;
 
         private readonly Form _form;
         private readonly Microsoft.Web.WebView2.WinForms.WebView2 _webView;
         private bool _navCompleted;
-        private WebView2DevToolsContext _devtoolsContext;
+        private bool _isDebug;
 
         public Form SynchronizationContext
         {
@@ -119,10 +116,10 @@ namespace OnlineVideos.Helpers
         private WebViewHelper()
         {
             //should be created in main appdomain
-            if (Thread.CurrentThread.ManagedThreadId != 1)
-            {
-                Log.Error("WebViewHelper creation not called on the MPMain thread");
-            }
+            //if (Thread.CurrentThread.ManagedThreadId != 1)
+            //{
+            //    Log.Error("WebViewHelper creation not called on the MPMain thread");
+            //}
             //else
             {
                 Log.Debug("Creating WebViewHelper");
@@ -132,11 +129,20 @@ namespace OnlineVideos.Helpers
                 _form.AutoScaleMode = AutoScaleMode.None;
                 _form.TopMost = false;
                 // Start hidden, some sites just do background work first
-                _form.Visible = false;
-                _form.Left = -1000;
-                _form.Top = -1000;
-                _form.Width = 1;
-                _form.Height = 1;
+                if (!_isDebug)
+                {
+                    _form.Visible = false;
+                    _form.Left = -1000;
+                    _form.Top = -1000;
+                    _form.Width = 1;
+                    _form.Height = 1;
+                }
+                else
+                {
+                    _form.Size = new System.Drawing.Size(400, 300);
+                    _form.Location = new Point(0, 0);
+                }
+
                 _form.Closed += FormOnClosed;
 
                 if (_mainForm != null)
@@ -144,7 +150,8 @@ namespace OnlineVideos.Helpers
                     _form.Shown += (sender, args) =>
                     {
                         Log.Debug("WebViewForm created, bring back MainForm to from and activate");
-                        _form.Hide();
+                        if (!_isDebug)
+                            _form.Hide();
                         _mainForm.BringToFront();
                         _mainForm.Activate();
                     };
@@ -161,6 +168,16 @@ namespace OnlineVideos.Helpers
 
                 WaitForTaskCompleted(_webView.EnsureCoreWebView2Async());
             }
+        }
+
+        public void DebugMode(bool enabled)
+        {
+            _isDebug = true;
+            if (!enabled)
+                Hide();
+            _form.Size = new System.Drawing.Size(400, 300);
+            _form.Location = new Point(0, 0);
+            Show();
         }
 
         public void Show()
@@ -242,6 +259,42 @@ namespace OnlineVideos.Helpers
         {
             Invoke(() => _webView.Source = new Uri(url));
         }
+        public void SetUrlAndWait(string url)
+        {
+            Invoke(() =>
+            {
+                // Don't try to load same page
+                var uri = new Uri(url);
+                if (uri == _webView.Source)
+                    return;
+                _webView.Source = uri;
+                _navCompleted = false;
+                _webView.Source = uri;
+                WaitUntilNavCompleted();
+            });
+        }
+        public void ExecuteAndWait(string js, string waitIfResultIs)
+        {
+            Invoke(() =>
+            {
+                _navCompleted = false;
+                var result = ExecuteFunc(js);
+                if (result == waitIfResultIs)
+                {
+                    WaitUntilNavCompleted();
+                }
+            });
+        }
+        public string GetCurrentPageContent()
+        {
+            return Invoke(() =>
+            {
+                var tsk = _webView.CoreWebView2.ExecuteScriptAsync("document.documentElement.outerHTML");
+                WaitForTaskCompleted(tsk);
+                string encoded = tsk.Result;
+                return (String)Newtonsoft.Json.JsonConvert.DeserializeObject(encoded);
+            });
+        }
 
         public string GetUrl()
         {
@@ -279,7 +332,7 @@ namespace OnlineVideos.Helpers
                     try
                     {
                         _navCompleted = false;
-                        _webView.NavigationCompleted += Wv2_NavigationCompleted;
+                        //_webView.NavigationCompleted += Wv2_NavigationCompleted;
 
                         if (postData == null)
                         {
@@ -298,7 +351,7 @@ namespace OnlineVideos.Helpers
                     }
                     finally
                     {
-                        _webView.NavigationCompleted -= Wv2_NavigationCompleted;
+                        //_webView.NavigationCompleted -= Wv2_NavigationCompleted;
                     }
 
                     _webView.CoreWebView2.WebResourceRequested -= eventHandler;
@@ -373,9 +426,6 @@ namespace OnlineVideos.Helpers
             Log.Debug("Navigation complete, id=" + e.NavigationId + " " + e.IsSuccess.ToString() + " " + e.HttpStatusCode.ToString());
 #endif
             _navCompleted = true;
-
-            if (_devtoolsContext == null)
-                _devtoolsContext = await _webView.CoreWebView2.CreateDevToolsContextAsync();
 
             if (!e.IsSuccess)
             {
@@ -459,25 +509,10 @@ namespace OnlineVideos.Helpers
         {
             await _webView.ExecuteScriptAsync(js);
         }
-    }
 
-    public static class DomExtensions
-    {
-        public static async Task<string> GetTextContentBySelector(this HtmlElement webElement, string selector)
+        public void DeleteAllCookies()
         {
-            var element = await webElement.QuerySelectorAsync(selector);
-            if (element != null)
-                return await element.GetTextContentAsync();
-            return null;
+            Invoke(() => _webView.CoreWebView2.CookieManager.DeleteAllCookies());
         }
-
-        public static async Task<string> GetAttributeBySelector(this HtmlElement webElement, string selector, string attribute)
-        {
-            var element = await webElement.QuerySelectorAsync(selector);
-            if (element != null)
-                return await element.GetAttributeAsync(attribute);
-            return null;
-        }
-
     }
 }
