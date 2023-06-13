@@ -411,7 +411,7 @@ namespace OnlineVideos.Sites.Amazon
                         {
                             categoriesToPopulate.Add(new Category
                             {
-                                Name = container.title,
+                                Name = container.title ?? "Highlights",
                                 ParentCategory = parentCategory,
                                 HasSubCategories = container.entities.Any(e => e.entityType == null), /* categories have null type */
                                 SubCategories = new List<Category>(),
