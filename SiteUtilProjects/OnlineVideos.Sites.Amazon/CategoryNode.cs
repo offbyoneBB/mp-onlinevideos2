@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace OnlineVideos.Sites.Amazon
 {
@@ -18,11 +19,13 @@ namespace OnlineVideos.Sites.Amazon
             /// </summary>
             public UrlType UrlType { get; set; }
 
+            public Regex ParseRegex { get; set; }
         }
 
         private enum UrlType
         {
             Undefined,
+            Home,
             SeriesCategory,
             Movies,
             SearchResults,
