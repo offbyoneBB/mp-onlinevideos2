@@ -9,6 +9,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using OnlineVideos.Sites.Amazon.Navigation;
+using OnlineVideos.Sites.Amazon.Watchlist;
 
 namespace OnlineVideos.Sites.Amazon
 {

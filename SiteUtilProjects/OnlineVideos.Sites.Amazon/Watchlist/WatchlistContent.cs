@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace OnlineVideos.Sites.Amazon
+namespace OnlineVideos.Sites.Amazon.Watchlist
 {
     // Created by online helper: https://json2csharp.com/
     // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);

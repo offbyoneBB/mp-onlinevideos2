@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OnlineVideos.Sites.Amazon.Watchlist;
 
 namespace OnlineVideos.Sites.Amazon.EpisodeList
 {

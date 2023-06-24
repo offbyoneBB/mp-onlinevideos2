@@ -51,14 +51,14 @@
       <Link>Properties\Version.cs</Link>
     </Compile>
     <Compile Include="AmazonUtil.cs" />
-    <Compile Include="CategoryNode.cs" />
+    <Compile Include="Navigation\CategoryNode.cs" />
     <Compile Include="EpisodeList\EpisodeList.cs" />
     <Compile Include="ExtendedProperties.cs" />
     <Compile Include="GenreList\GenreListItems.cs" />
     <Compile Include="GenreList\GenreList.cs" />
     <Compile Include="HomeContent\HomeContent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WatchlistContent.cs" />
+    <Compile Include="Watchlist\WatchlistContent.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe">
