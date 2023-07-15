@@ -452,6 +452,24 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class FileLions : MyHosterBase
+    {
+        public override string GetHosterUrl()
+        {
+            return "filelions.to";
+        }
+        public override string GetVideoUrl(string url)
+        {
+
+            string data = WebCache.Instance.GetWebData(url);
+            string packed = Helpers.StringUtils.GetSubString(data, @"return p}", @"</script>");
+            string unpacked = MyStringUtils.MyUnPack(packed);
+            var m3u8url = Helpers.StringUtils.GetSubString(unpacked, @"file:""", @"""");
+            var m3u8data = GetWebData(m3u8url);
+            return Helpers.HlsPlaylistParser.GetPlaybackOptions(m3u8data, m3u8url).LastOrDefault().Value;
+        }
+    }
+
     public class FileNuke : MyHosterBase
     {
         public override string GetHosterUrl()

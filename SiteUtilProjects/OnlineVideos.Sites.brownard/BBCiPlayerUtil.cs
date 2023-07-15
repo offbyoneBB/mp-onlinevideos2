@@ -413,22 +413,38 @@ namespace OnlineVideos.Sites
         {
             JObject data = JObject.Parse(json);
 
-            var entities = data["entities"];
+            var entities = data["entities"]?["elements"];
             if (entities != null)
             {
                 foreach (var entity in entities)
                 {
-                    var properties = entity["contentItemProps"];
                     categories.Add(new RssLink
                     {
                         ParentCategory = parentCategory,
-                        Url = GetAbsoluteUri(properties["href"].ToString(), BASE_URL).ToString(),
-                        Name = properties["title"].ToString(),
-                        Description = properties["synopsis"].ToString(),
-                        Thumb = getImageUrl(properties["sources"][0]["srcset"].ToString())
+                        Url = getUrl(entity),
+                        Name = entity["title"].ToString(),
+                        Description = getSynopsis(entity["synopses"]),
+                        Thumb = getImage(entity["images"]),
+                        EstimatedVideoCount = entity["count"]?.Value<uint>()
                     });
                 }
             }
+        }
+
+        string getUrl(JToken element)
+        {
+            string url = element["type"].ToString() == "episode" ? "/iplayer/episode/" : "/iplayer/episodes/";
+            return GetAbsoluteUri(url + element["id"], BASE_URL).ToString();
+        }
+
+        string getSynopsis(JToken synopsesToken)
+        {
+            return (synopsesToken["large"] ?? synopsesToken["medium"] ?? synopsesToken["small"])?.ToString();
+        }
+
+        string getImage(JToken imageToken)
+        {
+            return (imageToken["standard"] ?? imageToken.FirstOrDefault())?.ToString().Replace("{recipe}", "432x243");
         }
 
         #endregion
