@@ -65,7 +65,7 @@ namespace OnlineVideos.Sites
             {
                 VideoInfo vid = new VideoInfo()
                 {
-                    VideoUrl = fullBasePath + node.SelectSingleNode(".//a:href", result.Item2).InnerText
+                    VideoUrl = new Uri(new Uri(fullBasePath), node.SelectSingleNode(".//a:href", result.Item2).InnerText).AbsoluteUri
                 };
                 int p = vid.VideoUrl.LastIndexOf('/');
                 vid.Title = HttpUtility.UrlDecode(vid.VideoUrl.Substring(p + 1));
@@ -107,7 +107,7 @@ namespace OnlineVideos.Sites
             {
                 RssLink cat = new RssLink()
                 {
-                    Url = basePath + node.SelectSingleNode(".//a:href", result.Item2).InnerText,
+                    Url = new Uri(new Uri(basePath), node.SelectSingleNode(".//a:href", result.Item2).InnerText).AbsoluteUri,
                     HasSubCategories = true
                 };
                 cat.Name = HttpUtility.UrlDecode(Path.GetFileName(cat.Url.TrimEnd('/')));
