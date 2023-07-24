@@ -232,7 +232,7 @@ namespace OnlineVideos
             }
         }
 
-        public string GetRedirectedUrl(string url, string referer = null)
+        public string GetRedirectedUrl(string url, string referer = null, bool allowAutoRedirect = true)
         {
             HttpWebResponse httpWebresponse = null;
             try
@@ -240,7 +240,7 @@ namespace OnlineVideos
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
                 if (request == null) return url;
                 request.UserAgent = OnlineVideoSettings.Instance.UserAgent;
-                request.AllowAutoRedirect = true;
+                request.AllowAutoRedirect = allowAutoRedirect;
                 request.Timeout = 15000;
                 if (!string.IsNullOrEmpty(referer)) request.Referer = referer;
                 // invoke getting the Response async and abort as soon as data is coming in 
@@ -250,6 +250,9 @@ namespace OnlineVideos
                 while (!result.IsCompleted) Thread.Sleep(10);
                 httpWebresponse = request.EndGetResponse(result) as HttpWebResponse;
                 if (httpWebresponse == null) return url;
+                if (allowAutoRedirect)
+                    return httpWebresponse.Headers["location"];
+
                 if (request.RequestUri.Equals(httpWebresponse.ResponseUri))
                     return url;
                 else

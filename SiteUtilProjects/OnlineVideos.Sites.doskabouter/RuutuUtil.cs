@@ -16,9 +16,6 @@ namespace OnlineVideos.Sites
         {
             int res = base.DiscoverDynamicCategories();
 
-            //TODO: remove after next release
-            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072 | SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
-
             foreach (RssLink cat in Settings.Categories)
                 cat.HasSubCategories = true;
             return res;

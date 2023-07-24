@@ -65,7 +65,7 @@ namespace OnlineVideos.Hoster
                             string packed = Helpers.StringUtils.GetSubString(page2, @"return p}", @"</script>");
                             if (!String.IsNullOrEmpty(packed))
                             {
-                                string unpacked = MyStringUtils.MyUnPack(packed);
+                                string unpacked = Helpers.StringUtils.UnPack(packed);
                                 string res = Helpers.StringUtils.GetSubString(unpacked, @"'file','", @"'");
                                 if (!String.IsNullOrEmpty(res))
                                     return res;
