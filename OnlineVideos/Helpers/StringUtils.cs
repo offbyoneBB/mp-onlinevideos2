@@ -127,10 +127,10 @@ namespace OnlineVideos.Helpers
             //packed[p]=first non-escaped single quote
 
             string pattern = packed.Substring(0, p - 1).Replace(@"\'", @"'");
-            p = packed.IndexOf('\'', p+1 );
-            int q=packed.IndexOf('\'', p+1 );
+            p = packed.IndexOf('\'', p + 1);
+            int q = packed.IndexOf('\'', p + 1);
 
-            string[] pars = packed.Substring(p+1,q-p-1).Split('|');
+            string[] pars = packed.Substring(p + 1, q - p - 1).Split('|');
             for (int i = 0; i < pars.Length; i++)
                 if (String.IsNullOrEmpty(pars[i]))
                     if (i < 10)
