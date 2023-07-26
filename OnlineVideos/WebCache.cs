@@ -250,7 +250,7 @@ namespace OnlineVideos
                 while (!result.IsCompleted) Thread.Sleep(10);
                 httpWebresponse = request.EndGetResponse(result) as HttpWebResponse;
                 if (httpWebresponse == null) return url;
-                if (allowAutoRedirect)
+                if (!allowAutoRedirect)
                     return httpWebresponse.Headers["location"];
 
                 if (request.RequestUri.Equals(httpWebresponse.ResponseUri))
