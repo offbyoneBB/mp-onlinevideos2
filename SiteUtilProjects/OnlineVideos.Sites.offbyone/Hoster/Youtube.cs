@@ -77,7 +77,7 @@ namespace OnlineVideos.Hoster
                     { "Accept-Language", "en-us,en;q=0.5" }
                 };
 
-                string postdata = String.Format(@"{{""context"": {{""client"": {{""clientName"": ""ANDROID"", ""clientVersion"": ""17.31.35"", ""androidSdkVersion"": 30, ""userAgent"": ""com.google.android.youtube/17.31.35 (Linux; U; Android 11) gzip"", ""hl"": ""en"", ""timeZone"": ""UTC"", ""utcOffsetMinutes"": 0}}}}, ""videoId"": ""{0}"", ""params"": ""8AEB"", ""playbackContext"": {{""contentPlaybackContext"": {{""html5Preference"": ""HTML5_PREF_WANTS""}}}}, ""contentCheckOk"": true, ""racyCheckOk"": true}}", videoId);
+                string postdata = String.Format(@"{{""context"": {{""client"": {{""clientName"": ""ANDROID"", ""clientVersion"": ""17.31.35"", ""androidSdkVersion"": 30, ""userAgent"": ""com.google.android.youtube/17.31.35 (Linux; U; Android 11) gzip"", ""hl"": ""en"", ""timeZone"": ""UTC"", ""utcOffsetMinutes"": 0}}}}, ""videoId"": ""{0}"", ""params"": ""CgIQBg=="", ""playbackContext"": {{""contentPlaybackContext"": {{""html5Preference"": ""HTML5_PREF_WANTS""}}}}, ""contentCheckOk"": true, ""racyCheckOk"": true}}", videoId);
                 var apicontents = WebCache.Instance.GetWebData<JObject>(YoutubePlayerUrl, postData: postdata, headers: headers);
                 parsePlayerStatus(apicontents["streamingData"], qualities);
 
