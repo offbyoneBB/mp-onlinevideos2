@@ -259,7 +259,7 @@ namespace OnlineVideos.Hoster
         public override string GetVideoUrl(string url)
         {
             UriBuilder ub = new UriBuilder(url.Replace("/d/", "/e/"));
-            ub.Host = "dood.yt";
+            ub.Host = "ds2play.com";
             url = ub.Uri.ToString();
             var data = wv.GetHtml(url);
             var m = Regex.Match(data, @"\$\.get\('(?<url>/pass[^']*)'");
