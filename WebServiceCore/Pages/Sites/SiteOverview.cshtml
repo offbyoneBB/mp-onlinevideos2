@@ -1,0 +1,10 @@
+﻿@page
+@model WebServiceCore.Pages.Sites.SiteOverviewModel
+
+@{
+    ViewData["Title"] = "Site Overview";
+}
+
+<h1>Site Overview</h1>
+
+@await Html.PartialAsync("_SiteGridPartial", Model)

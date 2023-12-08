@@ -1,0 +1,87 @@
+﻿@using WebServiceCore.Models.Entities
+@{
+}
+@model SiteOverviewModel
+<div id="siteGrid">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    Logo
+                </th>
+                <th>
+                    <a asp-page-handler="SiteGrid" asp-route-sortingProperty="@nameof(Site.Name)" data-ajax="true" data-ajax-update="#siteGrid">
+                        @Html.DisplayNameFor(model => model.Sites[0].Name)
+                    </a>
+                </th>
+                <th>
+                    <a asp-page-handler="SiteGrid" asp-route-sortingProperty="@nameof(Site.OwnerId)" data-ajax="true" data-ajax-update="#siteGrid">
+                        @Html.DisplayNameFor(model => model.Sites[0].OwnerId)
+                    </a>
+                </th>
+                <th>
+                    <a asp-page-handler="SiteGrid" asp-route-sortingProperty="@nameof(Site.Language)" data-ajax="true" data-ajax-update="#siteGrid">
+                        @Html.DisplayNameFor(model => model.Sites[0].Language)
+                    </a>
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Sites[0].State)
+                </th>
+                <th>
+                    <a asp-page-handler="SiteGrid" asp-route-sortingProperty="@nameof(Site.LastUpdated)" data-ajax="true" data-ajax-update="#siteGrid">
+                        @Html.DisplayNameFor(model => model.Sites[0].LastUpdated)
+                    </a>
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Sites[0].Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Sites[0].IsAdult)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Sites[0].DllId)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Sites)
+            {
+                <tr>
+                    <td>
+                        <img src="~/Icons/@(item.Name).png" width="48px" height="48px" />
+                    </td>
+                    <td>
+                        <div style="position:relative">
+                            <a asp-page="/Reports/SiteReports" asp-route-site="@item.Name">
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </a>
+                            <span title="Reports" style="position:absolute;bottom:0;right:0;font-size:small;font-weight:normal">@(item.Reports?.Count ?? 0)</span>
+                        </div>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OwnerId)
+                    </td>
+                    <td>
+                        <img src="~/Langs/@(item.Language).png" height="38px" />
+                        @Html.DisplayFor(modelItem => item.Language)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.State)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LastUpdated)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsAdult)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DllId)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
