@@ -54,7 +54,7 @@ namespace WebServiceCore.Pages.Reports
         }
 
         /// <summary>
-        /// Called when a new report is POSTed.
+        /// Called using ajax when a new report is POSTed.
         /// </summary>
         /// <returns></returns>
         public async Task<IActionResult> OnPostSubmitReport()
