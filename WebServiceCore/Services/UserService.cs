@@ -38,12 +38,4 @@ namespace WebServiceCore.Services
             return user.Password == password;
         }
     }
-
-    public static class OnlineVideosUserServiceExtensions
-    {
-        public static void AddOnlineVideosUserService(this IServiceCollection services) 
-        {
-            services.TryAddScoped<IUserService, UserService>();
-        }
-    }
 }

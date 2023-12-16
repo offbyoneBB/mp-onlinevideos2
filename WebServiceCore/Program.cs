@@ -21,7 +21,7 @@ namespace WebServiceCore
 
             builder.Services.AddControllers();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddOnlineVideosUserService();
+            builder.Services.AddOnlineVideosServices();
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(opt=>
                 {

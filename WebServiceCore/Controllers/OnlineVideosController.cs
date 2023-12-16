@@ -5,6 +5,7 @@ using System.Xml;
 using WebServiceCore.Models;
 using WebServiceCore.Models.Dto;
 using WebServiceCore.Models.Entities;
+using WebServiceCore.Services;
 
 namespace WebServiceCore.Controllers
 {
@@ -14,11 +15,13 @@ namespace WebServiceCore.Controllers
     {
         private readonly OnlineVideosDataContext _context;
         private readonly IWebHostEnvironment _environment;
+        private readonly IImageService _imageService;
 
-        public OnlineVideosController(OnlineVideosDataContext context, IWebHostEnvironment environment)
+        public OnlineVideosController(OnlineVideosDataContext context, IWebHostEnvironment environment, IImageService imageService)
         {
             _context = context;
             _environment = environment;
+            _imageService = imageService;
         }
 
         [HttpGet]
@@ -111,7 +114,7 @@ namespace WebServiceCore.Controllers
                     if (site.DllId != dto.RequiredDll) site.DllId = dto.RequiredDll;
                     site.State = SiteState.Working;
                     await _context.SaveChangesAsync();
-                    return Ok("Site successfully updated!" + SaveImages(siteName, dto.Icon, dto.Banner));
+                    return Ok("Site successfully updated!" + await SaveImages(siteName, dto.Icon, dto.Banner));
                 }
                 else
                     return Unauthorized("Only the owner or an admin can update existing sites!");
@@ -133,7 +136,7 @@ namespace WebServiceCore.Controllers
                 };
                 _context.Sites.Add(site);
                 await _context.SaveChangesAsync();
-                return Ok("Site successfully added!" + SaveImages(siteName, dto.Icon, dto.Banner));
+                return Ok("Site successfully added!" + await SaveImages(siteName, dto.Icon, dto.Banner));
             }
         }
 
@@ -389,63 +392,17 @@ namespace WebServiceCore.Controllers
             return Path.Combine(_environment.WebRootPath, "Dlls", name + ".dll");
         }
 
-        string SaveImages(string siteName, byte[] icon, byte[] banner)
+        async Task<string> SaveImages(string siteName, byte[] icon, byte[] banner)
         {
             string message = "";
             if (icon != null && icon.Length > 0)
             {
-                try
-                {
-                    System.Drawing.Image iconImage = System.Drawing.Image.FromStream(new System.IO.MemoryStream(icon));
-                    if (iconImage.Width == iconImage.Height)
-                    {
-                        if (iconImage.RawFormat.Guid == System.Drawing.Imaging.ImageFormat.Png.Guid)
-                        {
-                            System.IO.File.WriteAllBytes(GetIconPath(siteName), icon);
-                            message += "Icon saved!";
-                        }
-                        else
-                        {
-                            message += "Icon not saved! Must be PNG!";
-                        }
-                    }
-                    else
-                    {
-                        message += "Icon not saved! Height must be equal to width!";
-                    }
-                }
-                catch
-                {
-                    message += "Icon invalid!";
-                }
+                message += await _imageService.TrySaveIcon(icon, GetIconPath(siteName));
                 message += " ";
             }
             if (banner != null && banner.Length > 0)
             {
-                try
-                {
-                    System.Drawing.Image bannerImage = System.Drawing.Image.FromStream(new System.IO.MemoryStream(banner));
-                    if (bannerImage.Width == 3 * bannerImage.Height)
-                    {
-                        if (bannerImage.RawFormat.Guid == System.Drawing.Imaging.ImageFormat.Png.Guid)
-                        {
-                            System.IO.File.WriteAllBytes(GetBannerPath(siteName), banner);
-                            message += "Banner saved!";
-                        }
-                        else
-                        {
-                            message += "Banner not saved! Must be PNG!";
-                        }
-                    }
-                    else
-                    {
-                        message += "Banner not saved! Width must be 3 times height!";
-                    }
-                }
-                catch
-                {
-                    message += "Banner invalid!";
-                }
+                message += await _imageService.TrySaveBanner(banner, GetBannerPath(siteName));
             }
             return message;
         }
