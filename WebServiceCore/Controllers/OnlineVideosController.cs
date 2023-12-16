@@ -409,7 +409,7 @@ namespace WebServiceCore.Controllers
 
         string GetMD5Hash(byte[] data)
         {
-            System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+            System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create();
             byte[] md5Hash = md5.ComputeHash(data);
             string md5String = BitConverter.ToString(md5Hash).Replace("-", "").ToLower();
             return md5String;
