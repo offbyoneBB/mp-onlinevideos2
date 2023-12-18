@@ -277,7 +277,7 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.onlineVideosService1 = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
+            this.onlineVideosService1 = new OnlineVideos.WebService.OnlineVideosService();
             this.chkUseMPUrlSourceSplitter = new System.Windows.Forms.CheckBox();
             siteNameIconPanel = new System.Windows.Forms.Panel();
             siteColumnName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -3108,7 +3108,7 @@
             // onlineVideosService1
             // 
             this.onlineVideosService1.Credentials = null;
-            this.onlineVideosService1.Url = "http://onlinevideos.nocrosshair.de/OnlineVideos.asmx";
+            //this.onlineVideosService1.Url = "http://onlinevideos.nocrosshair.de/OnlineVideos.asmx";
             this.onlineVideosService1.UseDefaultCredentials = false;
             // 
             // chkUseMPUrlSourceSplitter
@@ -3360,7 +3360,7 @@
 		private System.Windows.Forms.TextBox tbxLatestVideosOnlineRefresh;
 		private System.Windows.Forms.TextBox tbxLatestVideosAmount;
 		private System.Windows.Forms.CheckBox chkLatestVideosRandomize;
-		private OnlineVideosWebservice.OnlineVideosService onlineVideosService1;
+		private WebService.OnlineVideosService onlineVideosService1;
         private System.Windows.Forms.TabPage tabSites;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ToolStrip toolStripSites;

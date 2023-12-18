@@ -19,7 +19,7 @@ namespace OnlineVideos.MediaPortal1
         {
             string strColumnName = dgvSites.Columns[e.ColumnIndex].DataPropertyName;
             SortOrder strSortOrder = getSortOrder(e.ColumnIndex);
-            List<OnlineVideosWebservice.Site> sites = dgvSites.DataSource as List<OnlineVideosWebservice.Site>;
+            List<WebService.Site> sites = dgvSites.DataSource as List<WebService.Site>;
             sites.Sort(new SiteComparer(strColumnName, strSortOrder));
             dgvSites.DataSource = null;
             dgvSites.DataSource = sites;
@@ -41,11 +41,11 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-        class SiteComparer : IComparer<OnlineVideosWebservice.Site>
+        class SiteComparer : IComparer<WebService.Site>
         {
             string memberName = string.Empty; // specifies the member name to be sorted
             SortOrder sortOrder = SortOrder.None; // Specifies the SortOrder.
-            Type siteType = typeof(OnlineVideosWebservice.Site);
+            Type siteType = typeof(WebService.Site);
             System.Reflection.PropertyInfo propInfo = null;
 
             /// <summary>
@@ -60,7 +60,7 @@ namespace OnlineVideos.MediaPortal1
                 sortOrder = sortingOrder;
             }
 
-            public int Compare(OnlineVideosWebservice.Site site1, OnlineVideosWebservice.Site site2)
+            public int Compare(WebService.Site site1, WebService.Site site2)
             {
                 if (sortOrder == SortOrder.Ascending)
                     return propInfo.GetValue(site1, null).ToString().CompareTo(propInfo.GetValue(site2, null).ToString());

@@ -23,7 +23,7 @@ namespace OnlineVideos.MediaPortal1
     public partial class Configuration : Form
     {
         ConfigurationPlayer confPlayer;
-        OnlineVideosWebservice.Site[] onlineSites = null;
+        WebService.Site[] onlineSites = null;
 
         public Configuration()
         {
@@ -558,7 +558,7 @@ namespace OnlineVideos.MediaPortal1
                 try
                 {
                     string dll = Sites.SiteUtilFactory.RequiredDll(site.UtilName);
-                    OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
+                    WebService.OnlineVideosService ws = new OnlineVideos.WebService.OnlineVideosService();
                     string msg = "";
                     if (!string.IsNullOrEmpty(dll))
                     {
@@ -630,22 +630,22 @@ namespace OnlineVideos.MediaPortal1
         {
             if (onlineSites == null)
             {
-                OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
+                WebService.OnlineVideosService ws = new OnlineVideos.WebService.OnlineVideosService();
                 onlineSites = ws.GetSitesOverview();
             }
 
             Dictionary<string, SiteSettings> hashedLocalSites = new Dictionary<string, SiteSettings>();
             foreach (SiteSettings ss in OnlineVideoSettings.Instance.SiteSettingsList) if (!hashedLocalSites.ContainsKey(ss.Name)) hashedLocalSites.Add(ss.Name, ss);
 
-            List<OnlineVideosWebservice.Site> onlyOnlineSites = new List<OnlineVideos.OnlineVideosWebservice.Site>();
+            List<WebService.Site> onlyOnlineSites = new List<OnlineVideos.WebService.Site>();
 
             int i = 0;
             while (i < onlineSites.Length)
             {
                 if (!hashedLocalSites.ContainsKey(onlineSites[i].Name))
                 {
-                    int indexOfAt = onlineSites[i].Owner_FK.IndexOf('@');
-                    if (indexOfAt > 0) onlineSites[i].Owner_FK = onlineSites[i].Owner_FK.Substring(0, onlineSites[i].Owner_FK.IndexOf('@'));
+                    int indexOfAt = onlineSites[i].OwnerId.IndexOf('@');
+                    if (indexOfAt > 0) onlineSites[i].OwnerId = onlineSites[i].OwnerId.Substring(0, onlineSites[i].OwnerId.IndexOf('@'));
                     onlyOnlineSites.Add(onlineSites[i]);
                 }
                 i++;
@@ -659,10 +659,10 @@ namespace OnlineVideos.MediaPortal1
                 try
                 {
                     Cursor = Cursors.WaitCursor;
-                    OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
+                    WebService.OnlineVideosService ws = new OnlineVideos.WebService.OnlineVideosService();
                     foreach (DataGridViewRow dgvr in frm.dgvSites.SelectedRows)
                     {
-                        OnlineVideosWebservice.Site onlineSite = (OnlineVideosWebservice.Site)dgvr.DataBoundItem;
+                        WebService.Site onlineSite = (WebService.Site)dgvr.DataBoundItem;
                         string siteXml = ws.GetSiteXml(onlineSite.Name);
                         IList<SiteSettings> sitesFromServer = SerializableSettings.Deserialize(siteXml);
                         if (sitesFromServer != null)

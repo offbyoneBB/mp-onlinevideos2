@@ -16,8 +16,8 @@ namespace OnlineVideos.MediaPortal1
         {
             InitializeComponent();
 
-            cbType.Items.AddRange(Enum.GetNames(typeof(OnlineVideosWebservice.ReportType)));
-            cbType.SelectedItem = OnlineVideosWebservice.ReportType.Broken.ToString();
+            cbType.Items.AddRange(Enum.GetNames(typeof(WebService.ReportType)));
+            cbType.SelectedItem = WebService.ReportType.Broken.ToString();
         }
 
         private void SubmitSiteReport_Load(object sender, EventArgs e)
@@ -34,8 +34,8 @@ namespace OnlineVideos.MediaPortal1
             }
             try
             {
-                OnlineVideosWebservice.ReportType type = (OnlineVideosWebservice.ReportType)Enum.Parse(typeof(OnlineVideosWebservice.ReportType), cbType.SelectedItem.ToString());
-                OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
+                WebService.ReportType type = (WebService.ReportType)Enum.Parse(typeof(WebService.ReportType), cbType.SelectedItem.ToString());
+                WebService.OnlineVideosService ws = new OnlineVideos.WebService.OnlineVideosService();
                 string msg = "";
                 bool success = ws.SubmitReport(SiteName, tbxMessage.Text, type, out msg);
                 MessageBox.Show(msg, success ? "Success" : "Error", MessageBoxButtons.OK, success ? MessageBoxIcon.Information : MessageBoxIcon.Error);

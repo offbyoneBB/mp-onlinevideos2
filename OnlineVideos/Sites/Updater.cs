@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Xml;
-using OnlineVideos.OnlineVideosWebservice;
+using OnlineVideos.WebService;
 
 namespace OnlineVideos.Sites
 {

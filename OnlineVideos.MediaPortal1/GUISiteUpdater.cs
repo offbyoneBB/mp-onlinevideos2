@@ -152,13 +152,13 @@ namespace OnlineVideos.MediaPortal1
 
             var localSitesDic = OnlineVideoSettings.Instance.SiteSettingsList.ToDictionary(s => s.Name, s => s);
             var onlyLocalSites = OnlineVideoSettings.Instance.SiteSettingsList.ToDictionary(s => s.Name, s => s);
-			List<OnlineVideosWebservice.Site> filteredsortedSites = new List<OnlineVideos.OnlineVideosWebservice.Site>(Sites.Updater.OnlineSites);
+			List<WebService.Site> filteredsortedSites = new List<OnlineVideos.WebService.Site>(Sites.Updater.OnlineSites);
             filteredsortedSites.ForEach(os => { if (localSitesDic.ContainsKey(os.Name)) onlyLocalSites.Remove(os.Name); });
-            filteredsortedSites.AddRange(onlyLocalSites.Select(ls => new OnlineVideosWebservice.Site() { Name = ls.Value.Name, IsAdult = ls.Value.ConfirmAge, Description = ls.Value.Description, Language = ls.Value.Language, LastUpdated = ls.Value.LastUpdated }));
+            filteredsortedSites.AddRange(onlyLocalSites.Select(ls => new WebService.Site() { Name = ls.Value.Name, IsAdult = ls.Value.ConfirmAge, Description = ls.Value.Description, Language = ls.Value.Language, LastUpdated = ls.Value.LastUpdated }));
             filteredsortedSites = filteredsortedSites.FindAll(SitePassesFilter);
             filteredsortedSites.Sort(CompareSiteForSort);
 
-            foreach (OnlineVideosWebservice.Site site in filteredsortedSites)
+            foreach (WebService.Site site in filteredsortedSites)
             {
                 if (!site.IsAdult || !OnlineVideoSettings.Instance.UseAgeConfirmation || OnlineVideoSettings.Instance.AgeConfirmed)
                 {
@@ -168,7 +168,7 @@ namespace OnlineVideos.MediaPortal1
                     loListItem.Label3 = site.LastUpdated.ToLocalTime().ToString("g", OnlineVideoSettings.Instance.Locale);
 					string image = SiteImageExistenceCache.GetImageForSite(site.Name, "", "Icon", false);
                     if (!string.IsNullOrEmpty(image)) { loListItem.IconImage = image; loListItem.ThumbnailImage = image; }
-                    if (!string.IsNullOrEmpty(site.Owner_FK)) loListItem.PinImage = GUIGraphicsContext.Skin + @"\Media\OnlineVideos\" + site.State.ToString() + ".png";
+                    if (!string.IsNullOrEmpty(site.OwnerId)) loListItem.PinImage = GUIGraphicsContext.Skin + @"\Media\OnlineVideos\" + site.State.ToString() + ".png";
                     loListItem.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(OnSiteSelected);
 					loListItem.IsPlayed = localSitesDic.ContainsKey(site.Name);// GetLocalSite(site.Name) != -1;
                     GUI_infoList.Add(loListItem);
@@ -192,10 +192,10 @@ namespace OnlineVideos.MediaPortal1
 
         private void OnSiteSelected(GUIListItem item, GUIControl parent)
         {
-            OnlineVideosWebservice.Site site = item.TVTag as OnlineVideosWebservice.Site;
+            WebService.Site site = item.TVTag as WebService.Site;
             if (site != null)
             {
-                if (!string.IsNullOrEmpty(site.Owner_FK)) GUIPropertyManager.SetProperty("#OnlineVideos.owner", site.Owner_FK.Substring(0, site.Owner_FK.IndexOf('@')));
+                if (!string.IsNullOrEmpty(site.OwnerId)) GUIPropertyManager.SetProperty("#OnlineVideos.owner", site.OwnerId.Substring(0, site.OwnerId.IndexOf('@')));
                 else GUIPropertyManager.SetProperty("#OnlineVideos.owner", string.Empty);
                 if (!string.IsNullOrEmpty(site.Description)) GUIPropertyManager.SetProperty("#OnlineVideos.desc", site.Description);
                 else GUIPropertyManager.SetProperty("#OnlineVideos.desc", string.Empty);
@@ -204,7 +204,7 @@ namespace OnlineVideos.MediaPortal1
 
         private void OnReportSelected(GUIListItem item, GUIControl parent)
         {
-            OnlineVideosWebservice.Report report = item.TVTag as OnlineVideosWebservice.Report;
+            WebService.Report report = item.TVTag as WebService.Report;
             if (report != null)
             {
                 GUIPropertyManager.SetProperty("#OnlineVideos.owner", string.Empty);
@@ -217,7 +217,7 @@ namespace OnlineVideos.MediaPortal1
         {
             if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
             {
-                if (GUI_infoList.ListItems.Count > 0 && GUI_infoList.ListItems[0].TVTag is OnlineVideosWebservice.Report) 
+                if (GUI_infoList.ListItems.Count > 0 && GUI_infoList.ListItems[0].TVTag is WebService.Report) 
                 { 
                     RefreshDisplayedOnlineSites(); 
                     return; 
@@ -232,9 +232,9 @@ namespace OnlineVideos.MediaPortal1
 
         protected override void OnShowContextMenu()
         {
-            if (GUI_infoList.Focus && GUI_infoList.SelectedListItem.TVTag is OnlineVideosWebservice.Site)
+            if (GUI_infoList.Focus && GUI_infoList.SelectedListItem.TVTag is WebService.Site)
             {
-                ShowOptionsForSite(GUI_infoList.SelectedListItem.TVTag as OnlineVideosWebservice.Site);
+                ShowOptionsForSite(GUI_infoList.SelectedListItem.TVTag as WebService.Site);
             }
             else
             {
@@ -268,9 +268,9 @@ namespace OnlineVideos.MediaPortal1
             }
             else if (control == GUI_infoList && actionType == Action.ActionType.ACTION_SELECT_ITEM)
             {
-                if (GUI_infoList.SelectedListItem.TVTag is OnlineVideosWebservice.Site)
+                if (GUI_infoList.SelectedListItem.TVTag is WebService.Site)
                 {
-                    ShowOptionsForSite(GUI_infoList.SelectedListItem.TVTag as OnlineVideosWebservice.Site);
+                    ShowOptionsForSite(GUI_infoList.SelectedListItem.TVTag as WebService.Site);
                 }
             }
             else if (control == GUI_btnAutoUpdate)
@@ -318,7 +318,7 @@ namespace OnlineVideos.MediaPortal1
 			return dlgPrgrs;
 		}
 
-        void ShowOptionsForSite(OnlineVideosWebservice.Site site)
+        void ShowOptionsForSite(WebService.Site site)
         {
 			SiteSettings localSite = null;
 			int localSiteIndex = OnlineVideoSettings.Instance.GetSiteByName(site.Name, out localSite);
@@ -332,11 +332,11 @@ namespace OnlineVideos.MediaPortal1
 
 				if (localSiteIndex == -1)
                 {
-					if (site.State != OnlineVideosWebservice.SiteState.Broken) dlgSel.Add(Translation.Instance.AddToMySites);
+					if (site.State != WebService.SiteState.Broken) dlgSel.Add(Translation.Instance.AddToMySites);
                 }
                 else
                 {
-					if ((site.LastUpdated - localSite.LastUpdated).TotalMinutes > 2 && site.State != OnlineVideosWebservice.SiteState.Broken)
+					if ((site.LastUpdated - localSite.LastUpdated).TotalMinutes > 2 && site.State != WebService.SiteState.Broken)
                     {
 						dlgSel.Add(Translation.Instance.UpdateMySite);
 						dlgSel.Add(Translation.Instance.UpdateMySiteSkipCategories);
@@ -351,10 +351,10 @@ namespace OnlineVideos.MediaPortal1
 					dlgSel.Add(Translation.Instance.UpdateAllSkipCategories);
                 }
 
-                if (!string.IsNullOrEmpty(site.Owner_FK) && localSiteIndex >= 0) // !only local && ! only global
+                if (!string.IsNullOrEmpty(site.OwnerId) && localSiteIndex >= 0) // !only local && ! only global
                 {
                     dlgSel.Add(Translation.Instance.ShowReports);
-                    if (site.State != OnlineVideosWebservice.SiteState.Broken) dlgSel.Add(Translation.Instance.ReportBroken);
+                    if (site.State != WebService.SiteState.Broken) dlgSel.Add(Translation.Instance.ReportBroken);
                 }
             }
             dlgSel.DoModal(GUIWindowManager.ActiveWindow);
@@ -368,7 +368,7 @@ namespace OnlineVideos.MediaPortal1
 					Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
 						() =>
 						{
-							bool? updateResult = OnlineVideos.Sites.Updater.UpdateSites(null, new List<OnlineVideosWebservice.Site> { site }, false,
+							bool? updateResult = OnlineVideos.Sites.Updater.UpdateSites(null, new List<WebService.Site> { site }, false,
 								dlgSel.SelectedLabelText == Translation.Instance.UpdateMySiteSkipCategories);
 							if (updateResult == true) newDllsDownloaded = true;
 							else if (updateResult == null) newDataSaved = true;
@@ -402,7 +402,7 @@ namespace OnlineVideos.MediaPortal1
 								return dlgPrgrs.ShouldRenderLayer();
 							}
 							else return true;
-						}, GUI_infoList.ListItems.Select(g => g.TVTag as OnlineVideosWebservice.Site).ToList(), dlgSel.SelectedLabelText == Translation.Instance.UpdateAllSkipCategories);
+						}, GUI_infoList.ListItems.Select(g => g.TVTag as WebService.Site).ToList(), dlgSel.SelectedLabelText == Translation.Instance.UpdateAllSkipCategories);
 						if (updateResult == true) newDllsDownloaded = true;
 						else if (updateResult == null) newDataSaved = true;
 						if (updateResult != false) SiteImageExistenceCache.ClearCache();
@@ -421,7 +421,7 @@ namespace OnlineVideos.MediaPortal1
 			else if (dlgSel.SelectedLabelText == Translation.Instance.RemoveAllFromMySites)
 			{
 				bool needRefresh = false;
-				foreach (var siteToRemove in GUI_infoList.ListItems.Where(g => g.IsPlayed).Select(g => g.TVTag as OnlineVideosWebservice.Site).ToList())
+				foreach (var siteToRemove in GUI_infoList.ListItems.Where(g => g.IsPlayed).Select(g => g.TVTag as WebService.Site).ToList())
 				{
 					localSiteIndex = OnlineVideoSettings.Instance.GetSiteByName(siteToRemove.Name, out localSite);
 					if (localSiteIndex >= 0)
@@ -442,14 +442,14 @@ namespace OnlineVideos.MediaPortal1
 				Gui2UtilConnector.Instance.ExecuteInBackgroundAndCallback(
 					() =>
 					{
-						OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
+						WebService.OnlineVideosService ws = new WebService.OnlineVideosService();
 						return ws.GetReports(site.Name);
 					},
 					(success, result) =>
 					{
 						if (success)
 						{
-							OnlineVideosWebservice.Report[] reports = result as OnlineVideosWebservice.Report[];
+							WebService.Report[] reports = result as WebService.Report[];
 
 							if (reports == null || reports.Length == 0)
 							{
@@ -468,12 +468,12 @@ namespace OnlineVideos.MediaPortal1
 								selectedSite = site.Name;
 								GUIControl.ClearControl(GetID, GUI_infoList.GetID);
 
-								Array.Sort(reports, new Comparison<OnlineVideosWebservice.Report>(delegate(OnlineVideosWebservice.Report a, OnlineVideosWebservice.Report b)
+								Array.Sort(reports, new Comparison<WebService.Report>(delegate(WebService.Report a, WebService.Report b)
 								{
 									return b.Date.CompareTo(a.Date);
 								}));
 
-								foreach (OnlineVideosWebservice.Report report in reports)
+								foreach (WebService.Report report in reports)
 								{
 									string shortMsg = report.Message.Replace(Environment.NewLine, " ").Replace("\n", " ").Replace("\r", " ");
 									GUIListItem loListItem = new GUIListItem(shortMsg.Length > 44 ? shortMsg.Substring(0, 40) + " ..." : shortMsg);
@@ -523,9 +523,9 @@ namespace OnlineVideos.MediaPortal1
 							}
 							else
 							{
-								OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideosWebservice.OnlineVideosService();
+								WebService.OnlineVideosService ws = new WebService.OnlineVideosService();
 								string message = "";
-								bool success = ws.SubmitReport(site.Name, userReason, OnlineVideosWebservice.ReportType.Broken, out message);
+								bool success = ws.SubmitReport(site.Name, userReason, WebService.ReportType.Broken, out message);
 								GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
 								if (dlg != null)
 								{
@@ -591,14 +591,14 @@ namespace OnlineVideos.MediaPortal1
 			ovGuiInstance.LatestVideosManager.Start();
 		}
 
-        bool SitePassesFilter(OnlineVideosWebservice.Site site)
+        bool SitePassesFilter(WebService.Site site)
         {
             // language
 			if (GUI_btnFilterLang.SelectedLabel != Translation.Instance.All && site.Language != GUI_btnFilterLang.SelectedLabel) return false;
             // owner
 			if (GUI_btnFilterCreator.SelectedLabel != Translation.Instance.All)
             {
-                string owner = site.Owner_FK != null ? site.Owner_FK.Substring(0, site.Owner_FK.IndexOf('@')) : "";
+                string owner = site.OwnerId != null ? site.OwnerId.Substring(0, site.OwnerId.IndexOf('@')) : "";
                 if (owner != GUI_btnFilterCreator.SelectedLabel) return false;
             }
             // state
@@ -606,11 +606,11 @@ namespace OnlineVideos.MediaPortal1
             switch (fo)
             {
                 case FilterStateOption.Working:
-                    return site.State == OnlineVideos.OnlineVideosWebservice.SiteState.Working;
+                    return site.State == OnlineVideos.WebService.SiteState.Working;
                 case FilterStateOption.Reported:
-                    return site.State == OnlineVideos.OnlineVideosWebservice.SiteState.Reported;
+                    return site.State == OnlineVideos.WebService.SiteState.Reported;
                 case FilterStateOption.Broken:
-                    return site.State == OnlineVideos.OnlineVideosWebservice.SiteState.Broken;
+                    return site.State == OnlineVideos.WebService.SiteState.Broken;
                 case FilterStateOption.Updatable:
 					SiteSettings localSite = null;
 					if (OnlineVideoSettings.Instance.GetSiteByName(site.Name, out localSite) >= 0)
@@ -627,7 +627,7 @@ namespace OnlineVideos.MediaPortal1
             }
         }
 
-        int CompareSiteForSort(OnlineVideosWebservice.Site site1, OnlineVideosWebservice.Site site2)
+        int CompareSiteForSort(WebService.Site site1, WebService.Site site2)
         {
             SortOption so = (SortOption)GUI_btnSort.SelectedItem;
             switch (so)
@@ -661,9 +661,9 @@ namespace OnlineVideos.MediaPortal1
             // get a sorted list of all site owners and languages to display in filter buttons
             Dictionary<string, bool> creatorsHash = new Dictionary<string, bool>();
             Dictionary<string, bool> languagesHash = new Dictionary<string, bool>();
-			foreach (OnlineVideosWebservice.Site site in Sites.Updater.OnlineSites)
+			foreach (WebService.Site site in Sites.Updater.OnlineSites)
             {
-                string owner = site.Owner_FK.Substring(0, site.Owner_FK.IndexOf('@'));
+                string owner = site.OwnerId.Substring(0, site.OwnerId.IndexOf('@'));
                 bool temp;
                 if (!creatorsHash.TryGetValue(owner, out temp)) creatorsHash.Add(owner, true);
                 if (!string.IsNullOrEmpty(site.Language))

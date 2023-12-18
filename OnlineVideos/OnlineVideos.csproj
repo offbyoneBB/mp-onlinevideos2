@@ -1039,6 +1039,10 @@
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
     <Compile Include="WebCache.cs" />
+    <Compile Include="WebService\CompressionWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="WebService\OnlineVideosService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
