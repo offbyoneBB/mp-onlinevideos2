@@ -379,17 +379,26 @@ namespace WebServiceCore.Controllers
 
         string GetIconPath(string siteName)
         {
-            return Path.Combine(_environment.WebRootPath, "Icons", siteName + ".png");
+            return GetSafeWebRootPath("Icons", siteName, ".png");
         }
 
         string GetBannerPath(string siteName)
         {
-            return Path.Combine(_environment.WebRootPath, "Banners", siteName + ".png");
+            return GetSafeWebRootPath("Banners", siteName, ".png");
         }
 
         string GetDllPath(string name)
         {
-            return Path.Combine(_environment.WebRootPath, "Dlls", name + ".dll");
+            return GetSafeWebRootPath("Dlls", name, ".dll");
+        }
+
+        string GetSafeWebRootPath(string directory, string fileName, string extension)
+        {
+            // Ensures that the filename does not contain any invalid characters, which also includes
+            // directory separators that could be used to traverse the server's file system, e.g. by passing
+            // a site name that begins with ..\
+            string safeFileName = Path.GetInvalidFileNameChars().Aggregate(fileName, (current, c) => current.Replace(c, '_'));
+            return Path.Combine(_environment.WebRootPath, directory, safeFileName + extension);
         }
 
         async Task<string> SaveImages(string siteName, byte[] icon, byte[] banner)
