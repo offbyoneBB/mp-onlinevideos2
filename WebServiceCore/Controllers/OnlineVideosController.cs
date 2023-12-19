@@ -394,11 +394,19 @@ namespace WebServiceCore.Controllers
 
         string GetSafeWebRootPath(string directory, string fileName, string extension)
         {
-            // Ensures that the filename does not contain any invalid characters, which also includes
-            // directory separators that could be used to traverse the server's file system, e.g. by passing
-            // a site name that begins with ..\
-            string safeFileName = Path.GetInvalidFileNameChars().Aggregate(fileName, (current, c) => current.Replace(c, '_'));
-            return Path.Combine(_environment.WebRootPath, directory, safeFileName + extension);
+            // Check that the filename is valid, no sanitization is performed to retain the
+            // behaviour of the previous API
+            if (Path.GetInvalidFileNameChars().Any(c => fileName.Contains(c)))
+                throw new ArgumentException($"Invalid filename '{fileName}'", nameof(fileName));
+
+            // The above check should prevent directory traversal attacks, e.g. by passing a filename starting with ..\,
+            // as path separators are not valid in filenames, however as an additional layer resolve the absolute path
+            // and confirm that it is a subdirectory of WebRootPath.
+            var subPath = Path.Combine(directory, fileName + extension);
+            string absolutePath = Path.GetFullPath(subPath, _environment.WebRootPath);
+            if (!absolutePath.StartsWith(_environment.WebRootPath))
+                throw new ArgumentException($"Invalid filename '{fileName}'", nameof(fileName));
+            return absolutePath;
         }
 
         async Task<string> SaveImages(string siteName, byte[] icon, byte[] banner)
