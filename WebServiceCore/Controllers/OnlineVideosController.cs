@@ -100,7 +100,7 @@ namespace WebServiceCore.Controllers
                 return BadRequest("Required Dll not found on Server!");
 
             // does the site already exist?
-            Site site = await _context.Sites.FirstOrDefaultAsync(s => s.Name == siteName);
+            Site site = await _context.Sites.Include(s => s.Owner).FirstOrDefaultAsync(s => s.Name == siteName);
             if (site != null)
             {
                 // need to update
@@ -153,11 +153,10 @@ namespace WebServiceCore.Controllers
             if (user.Password != dto.Password)
                 return Unauthorized("Wrong password!");
 
-            // write the file and calc its MD5 hash
-            await System.IO.File.WriteAllBytesAsync(GetDllPath(dto.Name), dto.Data);
+            // calc dll's MD5 hash
             string md5String = GetMD5Hash(dto.Data);
             // does the dll already exist?
-            Dll dll = await _context.Dlls.FirstOrDefaultAsync(d => d.Name == dto.Name);
+            Dll dll = await _context.Dlls.Include(d => d.Owner).FirstOrDefaultAsync(d => d.Name == dto.Name);
             if (dll != null)
             {
                 // need to update                        
@@ -166,6 +165,8 @@ namespace WebServiceCore.Controllers
                     dll.MD5 = md5String;
                     dll.LastUpdated = DateTime.Now;
                     await _context.SaveChangesAsync();
+                    // write the file
+                    await System.IO.File.WriteAllBytesAsync(GetDllPath(dto.Name), dto.Data);
                     return Ok("Dll successfully updated!");
                 }
                 else
@@ -183,6 +184,8 @@ namespace WebServiceCore.Controllers
                 };
                 _context.Dlls.Add(newDll);
                 await _context.SaveChangesAsync();
+                // write the file
+                await System.IO.File.WriteAllBytesAsync(GetDllPath(dto.Name), dto.Data);
                 return Ok("Dll successfully added!");
             }
         }
