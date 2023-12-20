@@ -91,6 +91,11 @@ namespace OnlineVideos.WebService
         public string GetDllOwner(string dllName, out string md5)
         {
             var dllOwner = Get<GetDllOwnerDto>("GetDllOwner", "dllName", dllName);
+            if (dllOwner == null)
+            {
+                md5 = null;
+                return null;
+            }
             md5 = dllOwner.MD5;
             return dllOwner.OwnerId;
         }
