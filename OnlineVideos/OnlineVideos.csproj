@@ -1033,11 +1033,6 @@
     <Compile Include="SubtitleHandler.cs" />
     <Compile Include="Translation.cs" />
     <Compile Include="VideoInfo.cs" />
-    <Compile Include="Web References\OnlineVideosWebservice\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
     <Compile Include="WebCache.cs" />
     <Compile Include="WebService\CompressionWebClient.cs">
       <SubType>Component</SubType>
@@ -1046,7 +1041,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Web References\OnlineVideosWebservice\OnlineVideos.wsdl" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -1059,39 +1053,6 @@
     <EmbeddedResource Include="3rdParty\RssToolkit\Resources\Rss20ToAtom.xsl" />
     <EmbeddedResource Include="3rdParty\RssToolkit\Resources\Rss20ToOpml.xsl" />
     <EmbeddedResource Include="3rdParty\RssToolkit\Resources\Rss20ToRdf.xsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <WebReferences Include="Web References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <WebReferenceUrl Include="http://onlinevideos.nocrosshair.de/OnlineVideos.asmx">
-      <UrlBehavior>Static</UrlBehavior>
-      <RelPath>Web References\OnlineVideosWebservice\</RelPath>
-      <UpdateFromURL>http://onlinevideos.nocrosshair.de/OnlineVideos.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedSettingsPropName>OnlineVideos_OnlineVideosWebservice_OnlineVideosService</CachedSettingsPropName>
-      <CachedAppSettingsObjectName>
-      </CachedAppSettingsObjectName>
-    </WebReferenceUrl>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\OnlineVideosWebservice\OnlineVideos.disco" />
-    <None Include="Web References\OnlineVideosWebservice\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\OnlineVideosWebservice\Report.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\OnlineVideosWebservice\Site.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\OnlineVideosWebservice\Dll.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="OnlineVideoSites.xml">
