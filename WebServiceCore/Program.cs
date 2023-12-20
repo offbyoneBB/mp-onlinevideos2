@@ -17,7 +17,7 @@ namespace WebServiceCore
             // In-memory database for testing, this is not persisted after a restart of the app
             // It is seeded with some test data with the call to SeedData.Initialize() below
             builder.Services.AddDbContext<OnlineVideosDataContext>(opt =>
-               opt.UseInMemoryDatabase("OnlineVideos"));
+               opt.UseSqlite("Data Source=Onlinevideos.db3"));
 
             builder.Services.AddControllers();
             builder.Services.AddSwaggerGen();
