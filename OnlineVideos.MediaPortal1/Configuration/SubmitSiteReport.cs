@@ -53,8 +53,9 @@ namespace OnlineVideos.MediaPortal1
 
         private void LinkReportsClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
+            WebService.OnlineVideosService ws = new OnlineVideos.WebService.OnlineVideosService();
             System.Diagnostics.Process.Start(
-				string.Format("http://onlinevideos.nocrosshair.de/Reports.aspx?site={0}", System.Web.HttpUtility.UrlEncode(SiteName)));
+                string.Format(ws.SiteReportsUrl(SiteName)));
         }
     }
 }

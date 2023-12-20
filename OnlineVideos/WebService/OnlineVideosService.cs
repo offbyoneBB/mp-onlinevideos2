@@ -15,11 +15,6 @@ namespace OnlineVideos.WebService
         private const string DEFAULT_BASE_URL = "https://localhost:7259";
         private const string API_PATH = "/api/OnlineVideos";
 
-        public OnlineVideosService(string url)
-        {
-            Url = url;
-        }
-
         public OnlineVideosService()
         {
             Url = DEFAULT_BASE_URL + API_PATH;
@@ -29,7 +24,12 @@ namespace OnlineVideos.WebService
         public bool EnableDecompression { get; set; }
         public ICredentials Credentials { get; set; }
         public bool UseDefaultCredentials { get; set; }
-        public string Url { get; set; }
+        public string Url { get; }
+
+        public string SiteReportsUrl(string siteName)
+        {
+            return Url + "/Reports/SiteReports/" + System.Web.HttpUtility.UrlEncode(siteName);
+        }
 
         public bool RegisterEmail(string email, out string message)
         {
