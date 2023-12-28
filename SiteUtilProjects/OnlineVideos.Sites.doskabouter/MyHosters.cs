@@ -683,6 +683,14 @@ namespace OnlineVideos.Hoster
         }
     }
 
+    public class MixdropAg : Mixdrop
+    {
+        public override string GetHosterUrl()
+        {
+            return "mixdrop.ag";
+        }
+    }
+
 
     public class MovDivX : MyHosterBase
     {
@@ -1815,6 +1823,8 @@ namespace OnlineVideos.Hoster
         {
             var data = GetWebData(url);
             Match m = Regex.Match(data, @"""hls"":\s""(?<url>[^""]*)""");
+            if (!m.Success)
+                m = Regex.Match(data, @"'hls':\s'(?<url>[^']*)'");
             if (m.Success)
             {
                 var data2 = GetWebData(m.Groups["url"].Value);
