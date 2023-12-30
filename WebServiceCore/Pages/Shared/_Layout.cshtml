@@ -10,9 +10,24 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-page="/Index">OnlineVideos</a>
+
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <form class="d-flex" method="post">
+                        <div class="me-3"><span class="align-middle">@User.Identity.Name</span></div>
+                        <button type="submit" class="btn btn-outline-primary btn-sm" asp-page="/Login" asp-page-handler="Logout">Log out</button>
+                    </form>
+                }
+                else
+                {
+                    <form class="d-flex">
+                        <button type="submit" class="btn btn-outline-primary btn-sm" asp-page="/Login">Log in</button>
+                    </form>
+                }
             </div>
         </nav>
     </header>
