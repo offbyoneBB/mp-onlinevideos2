@@ -11,35 +11,26 @@
                 </th>
                 <th>
                     <a asp-page-handler="SiteGrid" asp-route-sortingProperty="@nameof(Site.Name)" data-ajax="true" data-ajax-update="#siteGrid">
-                        @Html.DisplayNameFor(model => model.Sites[0].Name)
+                        Site
                     </a>
                 </th>
                 <th>
                     <a asp-page-handler="SiteGrid" asp-route-sortingProperty="@nameof(Site.OwnerId)" data-ajax="true" data-ajax-update="#siteGrid">
-                        @Html.DisplayNameFor(model => model.Sites[0].OwnerId)
+                        Creator
                     </a>
                 </th>
                 <th>
                     <a asp-page-handler="SiteGrid" asp-route-sortingProperty="@nameof(Site.Language)" data-ajax="true" data-ajax-update="#siteGrid">
-                        @Html.DisplayNameFor(model => model.Sites[0].Language)
+                        Language
                     </a>
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Sites[0].State)
                 </th>
                 <th>
                     <a asp-page-handler="SiteGrid" asp-route-sortingProperty="@nameof(Site.LastUpdated)" data-ajax="true" data-ajax-update="#siteGrid">
-                        @Html.DisplayNameFor(model => model.Sites[0].LastUpdated)
+                        Updated
                     </a>
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Sites[0].Description)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Sites[0].IsAdult)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Sites[0].DllId)
+                    Description
                 </th>
             </tr>
         </thead>
@@ -53,32 +44,23 @@
                     <td>
                         <div style="position:relative">
                             <a asp-page="/Reports/SiteReports" asp-route-site="@item.Name">
-                                @Html.DisplayFor(modelItem => item.Name)
+                                @item.Name
                             </a>
                             <span title="Reports" style="position:absolute;bottom:0;right:0;font-size:small;font-weight:normal">@(item.Reports?.Count ?? 0)</span>
                         </div>
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.OwnerId)
+                        @item.OwnerId.Substring(0, item.OwnerId.IndexOf('@')).Replace('.', ' ').Replace('_', ' ')
                     </td>
                     <td>
                         <img src="~/Langs/@(item.Language).png" height="38px" />
-                        @Html.DisplayFor(modelItem => item.Language)
+                        @item.Language
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.State)
+                        @item.LastUpdated.ToString("g")
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.LastUpdated)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.IsAdult)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.DllId)
+                        @item.Description
                     </td>
                 </tr>
             }
