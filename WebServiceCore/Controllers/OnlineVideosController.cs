@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 using System.Net.Mail;
 using System.Xml;
 using WebServiceCore.Models;
@@ -16,12 +17,14 @@ namespace WebServiceCore.Controllers
         private readonly OnlineVideosDataContext _context;
         private readonly IWebHostEnvironment _environment;
         private readonly IImageService _imageService;
+        private readonly IConfiguration _config;
 
-        public OnlineVideosController(OnlineVideosDataContext context, IWebHostEnvironment environment, IImageService imageService)
+        public OnlineVideosController(OnlineVideosDataContext context, IWebHostEnvironment environment, IImageService imageService, IConfiguration config)
         {
             _context = context;
             _environment = environment;
             _imageService = imageService;
+            _config = config;
         }
 
         [HttpGet]
@@ -346,14 +349,21 @@ namespace WebServiceCore.Controllers
             return builder.ToString();
         }
 
-        static async Task<bool> SendPasswordEmail(User user)
+        async Task<bool> SendPasswordEmail(User user)
         {
             try
             {
-                MailMessage m = new MailMessage("offbyone@offbyone.de", user.Email);
+                var smtpSettings = _config.GetSection("Smtp");
+
+                MailMessage m = new MailMessage(smtpSettings.GetValue<String>("FromAddress"), user.Email);
                 m.Subject = "Thank you for registering with MediaPortal OnlineVideos Plugin.";
                 m.Body = "Your registered password is: " + user.Password;
                 var smtpClient = new SmtpClient();
+                smtpClient.Port = smtpSettings.GetValue<int>("Port");
+                smtpClient.EnableSsl = true;
+                smtpClient.Host = smtpSettings.GetValue<String>("Server");
+                smtpClient.UseDefaultCredentials = true;
+                smtpClient.Credentials = new NetworkCredential(smtpSettings.GetValue<String>("User"), smtpSettings.GetValue<String>("Password"));
                 await smtpClient.SendMailAsync(m);
                 return true;
             }
