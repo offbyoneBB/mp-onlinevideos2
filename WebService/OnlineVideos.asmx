@@ -1,1 +1,0 @@
-﻿<%@ WebService Language="C#" CodeBehind="OnlineVideos.asmx.cs" Class="OnlineVideos.WebService.OnlineVideosService" %>

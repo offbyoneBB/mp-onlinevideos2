@@ -30,10 +30,6 @@ namespace WebServiceCore
 
             var app = builder.Build();
 
-            // Seed the database with dummy data for testing
-            using (var scope = app.Services.CreateScope())
-                SeedData.Initialize(scope.ServiceProvider);
-
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
@@ -43,6 +39,9 @@ namespace WebServiceCore
             }
             else
             {
+                // Seed the database with dummy data for testing
+                using (var scope = app.Services.CreateScope())
+                    SeedData.Initialize(scope.ServiceProvider);
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI();
