@@ -1,0 +1,70 @@
+﻿@using WebServiceCore.Models.Entities
+@{
+}
+@model SiteReportsModel
+<div id="reportGrid">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Reports[0].Type)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Reports[0].Date)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Reports[0].Message)
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Reports)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Type)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Date)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Message)
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            }
+            @if (Model.CanEdit)
+            {
+                <tr>
+                    <td>
+                        <select form="submitReportForm" name="NewReport.Type">
+                            <option value="@ReportType.Fixed">@ReportType.Fixed</option>
+                            <option value="@ReportType.Suggestion">@ReportType.Suggestion</option>
+                            <option value="@ReportType.ConfirmedBroken">@ReportType.ConfirmedBroken</option>
+                            <option value="@ReportType.RejectedBroken">@ReportType.RejectedBroken</option>
+                            <option value="@ReportType.Broken">@ReportType.Broken</option>
+                        </select>
+                        <span asp-validation-for="NewReport.Type" class="text-danger"></span>
+                    </td>
+                    <td>
+                        @DateTime.Now
+                        <input form="submitReportForm" type="hidden" name="NewReport.Date" value="@DateTime.Now" />
+                    </td>
+                    <td>
+                        <input form="submitReportForm" type="text" name="NewReport.Message" />
+                        <span asp-validation-for="NewReport.Message" class="text-danger"></span>
+                    </td>
+                    <td>
+                        
+                        <form id="submitReportForm" method="post" data-ajax="true" data-ajax-method="post" data-ajax-update="#reportGrid" asp-page-handler="SubmitReport">
+                            <input type="submit" value="Add" />
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

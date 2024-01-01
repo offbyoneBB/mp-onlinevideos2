@@ -78,7 +78,7 @@
             // 
             // siteBindingSource
             // 
-            this.siteBindingSource.DataSource = typeof(OnlineVideos.OnlineVideosWebservice.Site);
+            this.siteBindingSource.DataSource = typeof(OnlineVideos.WebService.Site);
             // 
             // panel1
             // 

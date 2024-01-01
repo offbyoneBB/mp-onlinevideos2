@@ -1,0 +1,16 @@
+﻿@page "{site}"
+@model WebServiceCore.Pages.Reports.SiteReportsModel
+
+@{
+    ViewData["Title"] = Model.Site;
+}
+
+<h1>@Model.Site</h1>
+
+@await Html.PartialAsync("_ReportGridPartial")
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

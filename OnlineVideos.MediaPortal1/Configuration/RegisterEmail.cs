@@ -26,7 +26,7 @@ namespace OnlineVideos.MediaPortal1
             }
             try
             {
-                OnlineVideosWebservice.OnlineVideosService ws = new OnlineVideos.OnlineVideosWebservice.OnlineVideosService();
+                WebService.OnlineVideosService ws = new OnlineVideos.WebService.OnlineVideosService();
                 string msg = "";
                 bool success = ws.RegisterEmail(tbxEmail.Text, out msg);
                 MessageBox.Show(msg, success ? "Success" : "Error", MessageBoxButtons.OK, success ? MessageBoxIcon.Information : MessageBoxIcon.Error);

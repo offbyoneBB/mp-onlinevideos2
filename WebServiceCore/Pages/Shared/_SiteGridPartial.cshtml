@@ -1,0 +1,69 @@
+﻿@using WebServiceCore.Models.Entities
+@{
+}
+@model IndexModel
+<div id="siteGrid">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    Logo
+                </th>
+                <th>
+                    <a asp-page-handler="SiteGrid" asp-route-sortingProperty="@nameof(Site.Name)" data-ajax="true" data-ajax-update="#siteGrid">
+                        Site
+                    </a>
+                </th>
+                <th>
+                    <a asp-page-handler="SiteGrid" asp-route-sortingProperty="@nameof(Site.OwnerId)" data-ajax="true" data-ajax-update="#siteGrid">
+                        Creator
+                    </a>
+                </th>
+                <th>
+                    <a asp-page-handler="SiteGrid" asp-route-sortingProperty="@nameof(Site.Language)" data-ajax="true" data-ajax-update="#siteGrid">
+                        Language
+                    </a>
+                </th>
+                <th>
+                    <a asp-page-handler="SiteGrid" asp-route-sortingProperty="@nameof(Site.LastUpdated)" data-ajax="true" data-ajax-update="#siteGrid">
+                        Updated
+                    </a>
+                </th>
+                <th>
+                    Description
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Sites)
+            {
+                <tr>
+                    <td>
+                        <img src="~/Icons/@(item.Name).png" width="48px" height="48px" />
+                    </td>
+                    <td>
+                        <div style="position:relative">
+                            <a asp-page="/Reports/SiteReports" asp-route-site="@item.Name">
+                                @item.Name
+                            </a>
+                            <span title="Reports" style="position:absolute;bottom:0;right:0;font-size:small;font-weight:normal">@(item.Reports?.Count ?? 0)</span>
+                        </div>
+                    </td>
+                    <td>
+                        @item.OwnerId.Substring(0, item.OwnerId.IndexOf('@')).Replace('.', ' ').Replace('_', ' ')
+                    </td>
+                    <td>
+                        <img src="~/Langs/@(item.Language).png" height="38px" />
+                        @item.Language
+                    </td>
+                    <td>
+                        @item.LastUpdated.ToString("g")
+                    </td>
+                    <td>
+                        @item.Description
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

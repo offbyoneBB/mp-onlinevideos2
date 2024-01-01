@@ -1,0 +1,7 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Sites";
+}
+
+@await Html.PartialAsync("_SiteGridPartial", Model)
