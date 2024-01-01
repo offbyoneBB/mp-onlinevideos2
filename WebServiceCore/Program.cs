@@ -14,8 +14,6 @@ namespace WebServiceCore
             // Add services to the container.
             builder.Services.AddRazorPages();
 
-            // In-memory database for testing, this is not persisted after a restart of the app
-            // It is seeded with some test data with the call to SeedData.Initialize() below
             builder.Services.AddDbContext<OnlineVideosDataContext>(opt =>
                opt.UseSqlite("Data Source=Onlinevideos.db3"));
 
@@ -23,7 +21,7 @@ namespace WebServiceCore
             builder.Services.AddSwaggerGen();
             builder.Services.AddOnlineVideosServices();
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(opt=>
+                .AddCookie(opt =>
                 {
                     // Add cookie options
                 });
