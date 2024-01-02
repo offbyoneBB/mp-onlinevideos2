@@ -6,6 +6,34 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Content Include="..\SiteImages\Langs\--.png" Link="wwwroot\Langs\--.png" />
+      <Content Include="..\SiteImages\Langs\af.png" Link="wwwroot\Langs\af.png" />
+      <Content Include="..\SiteImages\Langs\bg.png" Link="wwwroot\Langs\bg.png" />
+      <Content Include="..\SiteImages\Langs\cs.png" Link="wwwroot\Langs\cs.png" />
+      <Content Include="..\SiteImages\Langs\da.png" Link="wwwroot\Langs\da.png" />
+      <Content Include="..\SiteImages\Langs\de.png" Link="wwwroot\Langs\de.png" />
+      <Content Include="..\SiteImages\Langs\el.png" Link="wwwroot\Langs\el.png" />
+      <Content Include="..\SiteImages\Langs\en-us.png" Link="wwwroot\Langs\en-us.png" />
+      <Content Include="..\SiteImages\Langs\en.png" Link="wwwroot\Langs\en.png" />
+      <Content Include="..\SiteImages\Langs\es.png" Link="wwwroot\Langs\es.png" />
+      <Content Include="..\SiteImages\Langs\et.png" Link="wwwroot\Langs\et.png" />
+      <Content Include="..\SiteImages\Langs\fi.png" Link="wwwroot\Langs\fi.png" />
+      <Content Include="..\SiteImages\Langs\fr.png" Link="wwwroot\Langs\fr.png" />
+      <Content Include="..\SiteImages\Langs\hr.png" Link="wwwroot\Langs\hr.png" />
+      <Content Include="..\SiteImages\Langs\it.png" Link="wwwroot\Langs\it.png" />
+      <Content Include="..\SiteImages\Langs\lt.png" Link="wwwroot\Langs\lt.png" />
+      <Content Include="..\SiteImages\Langs\lv.png" Link="wwwroot\Langs\lv.png" />
+      <Content Include="..\SiteImages\Langs\nl.png" Link="wwwroot\Langs\nl.png" />
+      <Content Include="..\SiteImages\Langs\no.png" Link="wwwroot\Langs\no.png" />
+      <Content Include="..\SiteImages\Langs\pl.png" Link="wwwroot\Langs\pl.png" />
+      <Content Include="..\SiteImages\Langs\ro.png" Link="wwwroot\Langs\ro.png" />
+      <Content Include="..\SiteImages\Langs\ru.png" Link="wwwroot\Langs\ru.png" />
+      <Content Include="..\SiteImages\Langs\sk.png" Link="wwwroot\Langs\sk.png" />
+      <Content Include="..\SiteImages\Langs\sv.png" Link="wwwroot\Langs\sv.png" />
+      <Content Include="..\SiteImages\Langs\zh.png" Link="wwwroot\Langs\zh.png" />
+    </ItemGroup>
+
+    <ItemGroup>
         <!--<PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.0" />-->
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.25">
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -27,6 +55,12 @@
       <Folder Include="wwwroot\Banners\" />
       <Folder Include="wwwroot\Langs\" />
       <Folder Include="wwwroot\Dlls\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="Onlinevideos.db3">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
