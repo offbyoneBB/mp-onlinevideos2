@@ -349,21 +349,29 @@ namespace WebServiceCore.Controllers
             return builder.ToString();
         }
 
+        private SmtpClient getSmtpClient(string toAddress, out MailMessage m)
+        {
+            var smtpSettings = _config.GetSection("Smtp");
+
+            m = new MailMessage(smtpSettings.GetValue<String>("FromAddress"), toAddress);
+
+            var smtpClient = new SmtpClient();
+            smtpClient.Port = smtpSettings.GetValue<int>("Port");
+            smtpClient.EnableSsl = true;
+            smtpClient.Host = smtpSettings.GetValue<String>("Server");
+            smtpClient.Credentials = new NetworkCredential(smtpSettings.GetValue<String>("User"), smtpSettings.GetValue<String>("Password"));
+            return smtpClient;
+        }
+
         async Task<bool> SendPasswordEmail(User user)
         {
             try
             {
-                var smtpSettings = _config.GetSection("Smtp");
+                MailMessage m;
+                var smtpClient = getSmtpClient(user.Email, out m);
 
-                MailMessage m = new MailMessage(smtpSettings.GetValue<String>("FromAddress"), user.Email);
                 m.Subject = "Thank you for registering with MediaPortal OnlineVideos Plugin.";
                 m.Body = "Your registered password is: " + user.Password;
-                var smtpClient = new SmtpClient();
-                smtpClient.Port = smtpSettings.GetValue<int>("Port");
-                smtpClient.EnableSsl = true;
-                smtpClient.Host = smtpSettings.GetValue<String>("Server");
-                smtpClient.UseDefaultCredentials = true;
-                smtpClient.Credentials = new NetworkCredential(smtpSettings.GetValue<String>("User"), smtpSettings.GetValue<String>("Password"));
                 await smtpClient.SendMailAsync(m);
                 return true;
             }
@@ -373,14 +381,15 @@ namespace WebServiceCore.Controllers
             }
         }
 
-        static bool SendNewReportEmail(Report report)
+        bool SendNewReportEmail(Report report)
         {
             try
             {
-                MailMessage m = new MailMessage("offbyone@offbyone.de", report.Site.Owner.Email);
+                MailMessage m;
+                var smtpClient = getSmtpClient(report.Site.Owner.Email, out m);
+
                 m.Subject = string.Format("OnlineVideos: New Report ({0}) for {1}", report.Type.ToString(), report.Site.Name);
                 m.Body = report.Message;
-                var smtpClient = new SmtpClient();
                 smtpClient.Send(m);
                 return true;
             }
