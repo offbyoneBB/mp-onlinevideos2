@@ -12,7 +12,7 @@ namespace OnlineVideos.WebService
     public class OnlineVideosService
     {
         // ToDo: Update this to the actual url when published
-        private const string DEFAULT_BASE_URL = "http://localhost:5000";
+        private const string DEFAULT_BASE_URL = "https://ov2.team-mediaportal.com";
         private const string API_PATH = "/api/OnlineVideos";
 
         public OnlineVideosService()
