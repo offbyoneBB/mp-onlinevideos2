@@ -2226,6 +2226,13 @@
               <ZipFileName>Installer{CopyFile}\{b71e541a-ab96-47d8-8c49-fccd3b5267ab}-Microsoft.Web.WebView2.WinForms.dll</ZipFileName>
               <DestinationFilename>%Base%\Microsoft.Web.WebView2.WinForms.dll</DestinationFilename>
             </FileItem>
+            <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+              <Param1 />
+              <UpdateOption>AlwaysOverwrite</UpdateOption>
+              <LocalFileName>Webview2\bin\Release\Webview2Installer.exe</LocalFileName>
+              <ZipFileName>Installer{CopyFile}\{14b97aa7-23e4-4842-9a58-3b6745f0da5f}-Webview2Installer.exe</ZipFileName>
+              <DestinationFilename>%Temp%\Webview2Installer.exe</DestinationFilename>
+            </FileItem>
           </Items>
         </Files>
       </GroupItem>
@@ -3275,6 +3282,49 @@ public class Script
                     <Value>NO</Value>
                     <ValueType>Bool</ValueType>
                     <Description>Silent install, No wizard screen will be displayed </Description>
+                  </SectionParam>
+                </Items>
+              </Params>
+              <ExecuteLocation>AfterPanelShow</ExecuteLocation>
+            </ActionItem>
+            <ActionItem Name="RunApplication" ActionType="RunApplication" ConditionGroup="">
+              <Params>
+                <Items>
+                  <SectionParam Name="Path to application">
+                    <Value>%Temp%\Webview2Installer.exe</Value>
+                    <ValueType>Template</ValueType>
+                    <Description>Path to the application like 
+ %Base%\MediaPortal.exe</Description>
+                  </SectionParam>
+                  <SectionParam Name="Parameters for application">
+                    <Value />
+                    <ValueType>String</ValueType>
+                    <Description>Command line parameters</Description>
+                  </SectionParam>
+                  <SectionParam Name="Wait for exit">
+                    <Value>YES</Value>
+                    <ValueType>Bool</ValueType>
+                    <Description>Wait for exit </Description>
+                  </SectionParam>
+                  <SectionParam Name="Don't run when silent install">
+                    <Value>NO</Value>
+                    <ValueType>Bool</ValueType>
+                    <Description>If set to Yes the aplication don't run when the istalation is silent </Description>
+                  </SectionParam>
+                  <SectionParam Name="Path to uninstall application">
+                    <Value />
+                    <ValueType>Template</ValueType>
+                    <Description>Path to the application which should be executed when uninstall</Description>
+                  </SectionParam>
+                  <SectionParam Name="Parameters for uninstall application">
+                    <Value />
+                    <ValueType>String</ValueType>
+                    <Description>Command line parameters for uninstall app</Description>
+                  </SectionParam>
+                  <SectionParam Name="Wait for exit on uninstall">
+                    <Value />
+                    <ValueType>Bool</ValueType>
+                    <Description>Wait for exit on uninstall </Description>
                   </SectionParam>
                 </Items>
               </Params>
@@ -5646,6 +5696,13 @@ Fixed https://github.com/offbyoneBB/mp-onlinevideos2/issues/163
         <LocalFileName>..\OnlineVideos.MediaPortal1\bin\Release\Microsoft.Web.WebView2.WinForms.dll</LocalFileName>
         <ZipFileName>Installer{CopyFile}\{b71e541a-ab96-47d8-8c49-fccd3b5267ab}-Microsoft.Web.WebView2.WinForms.dll</ZipFileName>
         <DestinationFilename>%Base%\Microsoft.Web.WebView2.WinForms.dll</DestinationFilename>
+      </FileItem>
+      <FileItem InstallType="CopyFile" SystemFile="false" Modified="true">
+        <Param1 />
+        <UpdateOption>AlwaysOverwrite</UpdateOption>
+        <LocalFileName>Webview2\bin\Release\Webview2Installer.exe</LocalFileName>
+        <ZipFileName>Installer{CopyFile}\{14b97aa7-23e4-4842-9a58-3b6745f0da5f}-Webview2Installer.exe</ZipFileName>
+        <DestinationFilename>%Temp%\Webview2Installer.exe</DestinationFilename>
       </FileItem>
       <FileItem InstallType="CopyFile" SystemFile="false" Modified="false">
         <Param1 />
