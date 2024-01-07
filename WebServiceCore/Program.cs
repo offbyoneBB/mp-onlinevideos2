@@ -11,6 +11,14 @@ namespace WebServiceCore
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.WebHost.UseKestrel(opt =>
+            {
+                // The default limit for a request body is 28.6MB, realistically we probably don't need more
+                // than that, even when base 64 encoding a site dll in a json request which increases the size somewhat,
+                // however to avoid any potential issues set the max size to null to allow an unlimited size. 
+                opt.Limits.MaxRequestBodySize = null;
+            });
+
             // Add services to the container.
             builder.Services.AddRazorPages();
 
