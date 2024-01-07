@@ -18,13 +18,15 @@ namespace WebServiceCore.Controllers
         private readonly IWebHostEnvironment _environment;
         private readonly IImageService _imageService;
         private readonly IConfiguration _config;
+        private readonly ILogger<OnlineVideosController> _logger;
 
-        public OnlineVideosController(OnlineVideosDataContext context, IWebHostEnvironment environment, IImageService imageService, IConfiguration config)
+        public OnlineVideosController(OnlineVideosDataContext context, IWebHostEnvironment environment, IImageService imageService, IConfiguration config, ILogger<OnlineVideosController> logger)
         {
             _context = context;
             _environment = environment;
             _imageService = imageService;
             _config = config;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -369,14 +371,14 @@ namespace WebServiceCore.Controllers
             {
                 MailMessage m;
                 var smtpClient = getSmtpClient(user.Email, out m);
-
                 m.Subject = "Thank you for registering with MediaPortal OnlineVideos Plugin.";
                 m.Body = "Your registered password is: " + user.Password;
                 await smtpClient.SendMailAsync(m);
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error sending password email");
                 return false;
             }
         }
@@ -393,8 +395,9 @@ namespace WebServiceCore.Controllers
                 smtpClient.Send(m);
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error sending new report email");
                 return false;
             }
         }
