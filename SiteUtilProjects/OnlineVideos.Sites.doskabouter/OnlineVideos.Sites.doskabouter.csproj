@@ -62,6 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DumpertUtil.cs" />
     <Compile Include="..\..\Build\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
