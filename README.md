@@ -1,3 +1,6 @@
+# This repository is deprecated.
+New locaion is https://github.com/Mediaportal/mp-onlinevideos2
+
 # Description
 
 OnlineVideos is a plug-in for the open-source media center application [MediaPortal](http://www.team-mediaportal.com/) running on the Windows platform. The main goal of this plug-in is the seamless integration of video content provided by various websites with the main application. In order to achieve this, playback is heavily dependent on [directshow](http://wikipedia.org/wiki/DirectShow) filters installed on the users operating system. The discovery or scraping of playback links is very flexible and can be done by reading rss feeds, parsing html with regular expressions or even programming against APIs provided by websites.
